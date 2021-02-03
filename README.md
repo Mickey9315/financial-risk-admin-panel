@@ -1,2 +1,1 @@
-# Admin Panel
-
+# TRAD admin panel
