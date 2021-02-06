@@ -7,9 +7,10 @@ import BigInput from '../../../common/BigInput/BigInput';
 
 function ForgotPassword() {
   const { screenType } = useParams();
+
   return (
     <AuthScreenContainer>
-      {screenType === 'forgotPassword' ? (
+      {screenType === 'forgot' ? (
         <>
           <div className="login-field-name">Email or Number</div>
           <BigInput
@@ -69,7 +70,7 @@ function ForgotPassword() {
         ''
       )}
 
-      {screenType === 'resetPassword' ? (
+      {screenType === 'reset' ? (
         <>
           <div className="login-field-name">New Password</div>
           <BigInput
