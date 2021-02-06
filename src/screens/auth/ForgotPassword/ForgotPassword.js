@@ -1,14 +1,14 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import './ForgotPassword.scss';
-import CommonAuthScreen from '../common/CommonAuthScreen/CommonAuthScreen';
+import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
 
 function ForgotPassword() {
   const { screenType } = useParams();
   return (
-    <CommonAuthScreen>
+    <AuthScreenContainer>
       {screenType === 'forgotPassword' ? (
         <>
           <div className="login-field-name">Email or Number</div>
@@ -94,7 +94,7 @@ function ForgotPassword() {
       ) : (
         ''
       )}
-    </CommonAuthScreen>
+    </AuthScreenContainer>
   );
 }
 

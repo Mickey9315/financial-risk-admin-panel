@@ -15,7 +15,13 @@ const Button = props => {
 
 Button.propTypes = {
   title: PropTypes.func.isRequired,
-  buttonType: PropTypes.oneOf(['primary', 'secondary', 'outlined-primary', 'outlined-secondary']),
+  buttonType: PropTypes.oneOf(['primary', 'secondary', 'outlined-primary', 'outlined-secondary'])
+    .isRequired,
   className: PropTypes.string,
 };
+
+Button.defaultProps = {
+  className: '',
+};
+
 export default Button;

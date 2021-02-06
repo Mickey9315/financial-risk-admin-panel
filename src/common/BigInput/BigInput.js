@@ -38,7 +38,17 @@ BigInput.propTypes = {
   suffix: PropTypes.string,
   suffixClass: PropTypes.string,
   placeholder: PropTypes.string,
-  type: PropTypes.string,
+  type: PropTypes.string.isRequired,
   className: PropTypes.string,
 };
+
+BigInput.defaultProps = {
+  prefix: '',
+  prefixClass: '',
+  suffix: '',
+  suffixClass: '',
+  placeholder: '',
+  className: '',
+};
+
 export default BigInput;

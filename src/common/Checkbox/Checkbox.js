@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import './Checkbox.scss';
 
 const Checkbox = props => {
-  const { checked, value, ...restProps } = props;
+  const { checked, title, ...restProps } = props;
   return (
     <>
       <label className="checkbox-container">
-        {value}
+        {title}
         <input type="checkbox" checked={checked} {...restProps} />
         <span className="checkmark" />
       </label>
@@ -16,7 +16,8 @@ const Checkbox = props => {
 };
 
 Checkbox.propTypes = {
-  value: PropTypes.string,
+  checked: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default Checkbox;

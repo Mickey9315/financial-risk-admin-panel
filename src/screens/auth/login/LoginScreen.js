@@ -1,15 +1,14 @@
 import React from 'react';
 import './LoginScreen.scss';
-import logo from '../../../assets/images/logo.svg';
 import grayLogo from '../../../assets/images/logo-light.svg';
 import Button from '../../../common/Button/Button';
-import CommonAuthScreen from '../common/CommonAuthScreen/CommonAuthScreen';
+import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 
 function LoginScreen() {
   return (
-    <CommonAuthScreen>
+    <AuthScreenContainer>
       <div className="login-field-name">Email or Number</div>
       <BigInput
         prefix="drafts"
@@ -32,7 +31,7 @@ function LoginScreen() {
 
       <Button title="Login" buttonType="secondary" />
       <img alt="TCR" className="gray-logo" src={grayLogo} />
-    </CommonAuthScreen>
+    </AuthScreenContainer>
   );
 }
 

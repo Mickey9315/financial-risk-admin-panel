@@ -15,16 +15,21 @@ const IconButton = props => {
 };
 
 IconButton.propTypes = {
-  title: PropTypes.string,
+  title: PropTypes.string.isRequired,
   buttonType: PropTypes.oneOf([
     'primary',
     'secondary',
     'outlined-bg',
     'outlined-primary',
     'outlined-secondary',
-  ]),
+  ]).isRequired,
   className: PropTypes.string,
   iconColor: PropTypes.string,
+};
+
+IconButton.defaultProps = {
+  className: '',
+  iconColor: '',
 };
 
 export default IconButton;

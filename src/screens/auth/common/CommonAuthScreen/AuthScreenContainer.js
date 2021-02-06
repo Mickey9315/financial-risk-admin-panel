@@ -1,9 +1,10 @@
 import React from 'react';
 import './CommonAuthScreen.scss';
+import PropTypes from 'prop-types';
 import logo from '../../../../assets/images/logo.svg';
 import grayLogo from '../../../../assets/images/logo-light.svg';
 
-function CommonAuthScreen(props) {
+function AuthScreenContainer(props) {
   const { children } = props;
   return (
     <div className="main-bg">
@@ -26,4 +27,8 @@ function CommonAuthScreen(props) {
   );
 }
 
-export default CommonAuthScreen;
+AuthScreenContainer.propTypes = {
+  children: PropTypes.element.isRequired,
+};
+
+export default AuthScreenContainer;
