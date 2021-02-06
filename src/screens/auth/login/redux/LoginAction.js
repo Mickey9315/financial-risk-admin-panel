@@ -9,7 +9,7 @@ import {
 export const loginUser = ({ email, password }, rememberMe) => {
   return async dispatch => {
     try {
-      const data = { userId: email, password };
+      const data = { userId: email.trim(), password: password.trim() };
       const response = await AuthApiService.loginUser(data);
 
       if (response.data.status === 'SUCCESS') {
@@ -26,14 +26,17 @@ export const loginUser = ({ email, password }, rememberMe) => {
           saveTokenToSession(token);
         }
 
-        successNotification('Login successfully');
+        successNotification('Login successfully.');
       }
     } catch (e) {
       if (e.response.data.status === undefined) {
         errorNotification('It seems like server is down, Please try again later.');
       } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
         errorNotification('Internal server error');
+      } else if (e.response.data.status === 'ERROR') {
+        errorNotification(e);
       }
+      throw Error();
     }
   };
 };
