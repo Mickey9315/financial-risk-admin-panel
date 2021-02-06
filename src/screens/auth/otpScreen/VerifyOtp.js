@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './OtpScreen.scss';
+import './VerifyOtp.scss';
 import { Link, useHistory } from 'react-router-dom';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import Button from '../../../common/Button/Button';
