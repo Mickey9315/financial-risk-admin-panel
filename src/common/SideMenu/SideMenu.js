@@ -1,7 +1,7 @@
-import React from "react";
-import "./SideMenu.scss";
-import logo from "../../assets/images/logo.svg";
-import { NavLink } from "react-router-dom";
+import React from 'react';
+import './SideMenu.scss';
+import { NavLink } from 'react-router-dom';
+import logo from '../../assets/images/logo.svg';
 
 const SideMenu = () => {
   return (

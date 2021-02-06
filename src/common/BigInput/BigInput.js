@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import "./BigInput.scss";
+import React from 'react';
+import PropTypes from 'prop-types';
+import './BigInput.scss';
 
-const BigInput = (props) => {
+const BigInput = props => {
   const {
     prefix,
     prefixClass,

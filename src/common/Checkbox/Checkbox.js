@@ -1,21 +1,22 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import './Checkbox.scss';
 
-const Checkbox = (props) => {
-    const {checked, value, ...restProps} = props;
-    return (
-        <>
-            <label className="checkbox-container">{value}
-                <input type="checkbox" checked={checked} {...restProps}/>
-                    <span className="checkmark"></span>
-            </label>
-        </>
-)
-}
+const Checkbox = props => {
+  const { checked, value, ...restProps } = props;
+  return (
+    <>
+      <label className="checkbox-container">
+        {value}
+        <input type="checkbox" checked={checked} {...restProps} />
+        <span className="checkmark" />
+      </label>
+    </>
+  );
+};
 
 Checkbox.propTypes = {
-    value: PropTypes.string
-}
+  value: PropTypes.string,
+};
 
 export default Checkbox;
