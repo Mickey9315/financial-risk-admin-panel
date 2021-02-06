@@ -25,7 +25,7 @@ function LoginScreen() {
         placeholder="Enter password"
       />
       <div className="login-action-row">
-        <Checkbox value="Remember me" />
+        <Checkbox title="Remember me" checked={false} />
         <a href="/">Forgot Password?</a>
       </div>
 
