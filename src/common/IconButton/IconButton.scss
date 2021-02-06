@@ -1,0 +1,15 @@
+@import "../../../src/index";
+
+.outlined-bg-button {
+  background-color: $background-color;
+  border: 1px solid white;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  width: 56px;
+  padding: 12px;
+}

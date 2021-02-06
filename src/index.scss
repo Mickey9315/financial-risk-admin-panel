@@ -1,0 +1,47 @@
+@import '../src/utilities/color-palette';
+@import '../src/utilities/typography';
+@import '../src/utilities/utility';
+
+body {
+  margin: 0;
+  font-family: $font-regular;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body * {
+  box-sizing: border-box;
+}
+
+code {
+  font-family: $font-regular;
+}
+
+input::placeholder {
+  font: $subtitle $font-regular;
+  color: $placeholder-color;
+}
+
+/* scrollbar starts here */
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: $background-color;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $primary-color;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $primary-variant-color;
+}
+/* scrollbar ends here */

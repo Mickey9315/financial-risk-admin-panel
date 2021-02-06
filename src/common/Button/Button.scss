@@ -1,0 +1,37 @@
+@import "../../index";
+
+.button {
+  padding: 14px 25px;
+  font: $sub-text;
+  color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid $primary-color;
+  outline: none;
+  cursor: pointer;
+}
+
+.primary-button {
+  background-color: $primary-color;
+  border-color: $primary-color;
+}
+
+.secondary-button {
+  background-color: $secondary-color;
+  border-color: $secondary-color;
+}
+
+.outlined-primary-button {
+  background-color: #ffffff;
+  color: $primary-color;
+  border-color: $primary-color;
+}
+
+.outlined-secondary-button {
+  background-color: #ffffff;
+  color: $secondary-color;
+  border-color: $secondary-color;
+}
+
+.icon-button {
+  padding: 18px;
+}

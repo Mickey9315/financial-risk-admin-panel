@@ -1,0 +1,51 @@
+@import "../../../src/index";
+
+.side-menu-container {
+  width: 215px;
+  height: calc(100vh - 32px);
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px #82828229;
+}
+
+.side-menu-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 55px;
+  margin: 7px;
+  border-bottom: 1px solid $border-color;
+
+  img {
+    height: 35px;
+  }
+}
+
+.menu-container {
+  max-height: calc(100% - 60px);
+  padding: 10px 0 0 7px;
+  overflow-y: auto;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  width: calc(100% - 7px);
+  margin-bottom: 10px;
+  padding: 10px;
+  font: $subtitle $font-regular;
+  color: $placeholder-color;
+  border-radius: 10px;
+  text-decoration: none;
+
+  span {
+    margin-right: 5px;
+    font-size: 18px;
+    color: $placeholder-color;
+  }
+}
+
+.active {
+  background-color: $primary-color;
+  color: white;
+}

@@ -1,0 +1,31 @@
+@import "../../../src/index";
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.screen-title {
+  font: $h5 $font-medium;
+  color: $primary-color;
+}
+
+.header-right-part {
+  display: flex;
+}
+
+.user-dp {
+  height: 3.5rem;
+  width: 3.5rem;
+  margin-left: 0.625rem;
+  object-position: center;
+  object-fit: cover;
+  border-radius: 0.625rem
+;
+}
+
+.search {
+  width: 13.125rem;
+}
