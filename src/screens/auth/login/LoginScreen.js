@@ -26,8 +26,12 @@ function LoginScreen() {
     else if (replaceHiddenCharacters(password.toString()).trim().length === 0)
       errorNotification('Please enter password');
     else {
-      await dispatch(loginUser({ email, password }, rememberUser));
-      history.push('/dashboard');
+      try {
+        await dispatch(loginUser({ email, password }, rememberUser));
+        history.push('/dashboard');
+      } catch (e) {
+        /**/
+      }
     }
   };
 
@@ -70,7 +74,7 @@ function LoginScreen() {
       />
       <div className="login-action-row">
         <Checkbox title="Remember me" checked={rememberUser} onChange={onChangeRememberUser} />
-        <Link to="/forgot-password/forgot">Forgot Password?</Link>
+        <Link to="/forgot-password">Forgot Password?</Link>
       </div>
       <Button title="Login" buttonType="secondary" onClick={onClickLogin} />
       <img alt="TCR" className="gray-logo" src={grayLogo} />
