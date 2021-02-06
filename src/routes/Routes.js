@@ -5,7 +5,7 @@ import ForgotPassword from '../screens/auth/forgotPassword/ForgotPassword';
 import Dashboard from '../common/Dashboard/Dashboard';
 import { saveTokenFromLocalStorageToSession } from '../helpers/LocalStorageHelper';
 import ResetPassword from '../screens/auth/resetPassword/ResetPassword';
-import OtpScreen from '../screens/auth/otpScreen/OtpScreen';
+import VerifyOtp from '../screens/auth/otpScreen/VerifyOtp';
 
 function Routes() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -32,7 +32,7 @@ function Routes() {
         <Route exact path="/login" component={LoginScreen} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
         <Route exact path="/reset-password" component={ResetPassword} />
-        <Route exact path="/verify-otp" component={OtpScreen} />
+        <Route exact path="/verify-otp" component={VerifyOtp} />
         {/* </> */}
         {/* )} */}
       </Switch>
