@@ -2,4 +2,5 @@ export const BASE_URL = 'https://client.trad.dev.gradlesol.com/app/';
 
 export const AUTH_URLS = {
   LOGIN_URL: `${BASE_URL}rp/auth/login`,
+  FORGOT_PASSWORD_URL: `${BASE_URL}rp/auth/forget-password`,
 };
