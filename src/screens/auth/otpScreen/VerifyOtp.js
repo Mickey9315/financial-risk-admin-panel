@@ -6,12 +6,12 @@ import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer'
 import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
 import { errorNotification } from '../../../common/Toast';
-import { verifyOtp } from './redux/VerifyOtpAction';
+import { resendOtp, verifyOtp } from './redux/VerifyOtpAction';
 import { SESSION_VARIABLES } from '../../../constants/SessionStorage';
 
 function VerifyOtp() {
-  const [otp, setOtp] = useState();
-// TODO handle redirect user when directly hit url
+  const [otp, setOtp] = useState('');
+  // TODO handle redirect user when directly hit url
   const history = useHistory();
 
   const onChangeOtp = e => {
@@ -28,6 +28,12 @@ function VerifyOtp() {
       } catch (e) {
         /**/
       }
+    }
+  };
+
+  const resendOTP = async () => {
+    if (SESSION_VARIABLES.USER_EMAIL) {
+      await resendOtp();
     }
   };
 
@@ -57,7 +63,7 @@ function VerifyOtp() {
         <div />
         <Link to="/login">Back To Login</Link>
       </div>
-      <Button title="Resend OTP" buttonType="outlined-secondary" />
+      <Button title="Resend OTP" buttonType="outlined-secondary" onClick={resendOTP} />
       <Button title="Submit" buttonType="secondary" className="ml-15" onClick={onClickVerifyOTP} />
     </AuthScreenContainer>
   );
