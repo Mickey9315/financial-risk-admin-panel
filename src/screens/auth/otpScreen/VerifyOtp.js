@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './VerifyOtp.scss';
 import { Link, useHistory } from 'react-router-dom';
+import OtpInput from 'react-otp-input';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
 import { errorNotification } from '../../../common/Toast';
 import { verifyOtp } from './redux/VerifyOtpAction';
+import { SESSION_VARIABLES } from '../../../constants/SessionStorage';
 
 function VerifyOtp() {
   const [otp, setOtp] = useState();
@@ -13,9 +15,7 @@ function VerifyOtp() {
   const history = useHistory();
 
   const onChangeOtp = e => {
-    const otpText = e.target.value;
-
-    setOtp(otpText);
+    setOtp(e);
   };
 
   const onClickVerifyOTP = async () => {
@@ -39,29 +39,19 @@ function VerifyOtp() {
         prefixClass="login-input-icon"
         type="email"
         placeholder="Enter email or number"
-        value={otp}
-        onChange={onChangeOtp}
+        value={SESSION_VARIABLES.USER_EMAIL}
+        disabled
       />
       <div className="login-field-name">Enter OTP</div>
-      <div className="otp-row">
-        <div className="login-input">
-          <input maxLength="1" placeholder="0" />
-        </div>
-        <div className="login-input">
-          <input maxLength="1" placeholder="0" />
-        </div>
-        <div className="login-input">
-          <input maxLength="1" placeholder="0" />
-        </div>
-        <div className="login-input">
-          <input maxLength="1" placeholder="0" />
-        </div>
-        <div className="login-input">
-          <input maxLength="1" placeholder="0" />
-        </div>
-        <div className="login-input">
-          <input maxLength="1" placeholder="0" />
-        </div>
+      <div className="code-container">
+        <OtpInput
+          value={otp}
+          isInputNum
+          onChange={onChangeOtp}
+          className=""
+          numInputs={6}
+          separator={<span className="mr-5"> </span>}
+        />
       </div>
       <div className="login-action-row">
         <div />
@@ -74,5 +64,3 @@ function VerifyOtp() {
 }
 
 export default VerifyOtp;
-
-// TODO handle resent OTP
