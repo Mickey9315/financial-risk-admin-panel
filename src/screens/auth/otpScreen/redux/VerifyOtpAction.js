@@ -4,7 +4,7 @@ import { SESSION_VARIABLES } from '../../../../constants/SessionStorage';
 
 export const verifyOtp = async verificationOtp => {
   try {
-    const data = { _id: SESSION_VARIABLES.USER_ID, verificationOtp };
+    const data = { email: SESSION_VARIABLES.USER_EMAIL, verificationOtp };
     const response = await AuthApiService.verifyOtp(data);
 
     if (response.data.status === 'SUCCESS') {
@@ -14,11 +14,31 @@ export const verifyOtp = async verificationOtp => {
       successNotification('OTP verified successfully.');
     }
   } catch (e) {
-    if (e.response.data.status === undefined) {
-      errorNotification('It seems like server is down, Please try again later.');
-    } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-      errorNotification('Internal server error');
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        errorNotification('Internal server error');
+      } else if (e.response.data.status === 'ERROR') {
+        if (e.response.data.messageCode) {
+          switch (e.response.data.messageCode) {
+            case 'OTP_EXPIRED':
+              errorNotification('OTP expired please try again');
+              break;
+            case 'REQUIRE_FIELD_MISSING':
+              errorNotification('Please enter user id');
+              break;
+            case 'WRONG_OTP':
+              errorNotification('Please enter correct OTP');
+              break;
+            default:
+              break;
+          }
+        } else {
+          errorNotification(e);
+        }
+      }
+      throw Error();
     }
-    throw Error();
   }
 };
