@@ -1,16 +1,14 @@
 @import "../../../index";
 
-.otp-row {
+.code-container {
   display: flex;
+  align-items: center;
+  margin-top: 10px;
 
-  > div {
-    justify-content: center;
-    flex: 1 0 calc(16% - 0.563rem);
-    margin-right: 0.938rem;
-  }
   input {
     flex: 0;
-    width: 1.25rem;
+    width: 56px !important;
+    height: 56px !important;
     font: $title $font-regular;
     color: $primary-color;
   }
@@ -19,3 +17,4 @@
     color: $primary-color;
   }
 }
+
