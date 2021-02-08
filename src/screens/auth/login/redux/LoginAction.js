@@ -29,18 +29,27 @@ export const loginUser = ({ email, password }, rememberMe) => {
         successNotification('Login successfully.');
       }
     } catch (e) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-        errorNotification('Internal server error');
-      } else if (e.response.data.status === 'ERROR') {
-        if (e.response.data.messageCode === 'EMAIL_NOT_FOUND') {
-          errorNotification('User not found');
-        } else {
-          errorNotification(e);
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          if (e.response.data.messageCode) {
+            switch (e.response.data.messageCode) {
+              case 'USER_NOT_FOUND':
+              case 'EMAIL_NOT_FOUND':
+                errorNotification('User not found');
+                break;
+              default:
+                break;
+            }
+          } else {
+            errorNotification(e);
+          }
         }
+        throw Error();
       }
-      throw Error();
     }
   };
 };
