@@ -11,7 +11,7 @@ import { SESSION_VARIABLES } from '../../../constants/SessionStorage';
 
 function VerifyOtp() {
   const [otp, setOtp] = useState();
-
+// TODO handle redirect user when directly hit url
   const history = useHistory();
 
   const onChangeOtp = e => {
