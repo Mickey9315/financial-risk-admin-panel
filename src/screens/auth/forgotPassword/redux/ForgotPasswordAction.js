@@ -29,7 +29,7 @@ export const forgotPassword = async email => {
               break;
           }
         } else {
-          errorNotification(e);
+          errorNotification('It seems like server is down, Please try again later.');
         }
       }
       throw Error();

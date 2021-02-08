@@ -35,30 +35,8 @@ export const verifyOtp = async verificationOtp => {
               break;
           }
         } else {
-          errorNotification(e);
+          errorNotification('It seems like server is down, Please try again later.');
         }
-      }
-      throw Error();
-    }
-  }
-};
-
-export const resendOtp = async () => {
-  try {
-    const data = { email: SESSION_VARIABLES.USER_EMAIL };
-    const response = await AuthApiService.resentOtp(data);
-
-    if (response.data.status === 'SUCCESS') {
-      successNotification('OTP sent successfully.');
-    }
-  } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-        errorNotification('Internal server error');
-      } else if (e.response.data.status === 'ERROR') {
-        errorNotification(e);
       }
       throw Error();
     }

@@ -45,7 +45,7 @@ export const loginUser = ({ email, password }, rememberMe) => {
                 break;
             }
           } else {
-            errorNotification(e);
+            errorNotification('It seems like server is down, Please try again later.');
           }
         }
         throw Error();
