@@ -7,3 +7,7 @@ export const AUTH_URLS = {
   RESEND_OTP_URL: `${BASE_URL}rp/auth/resend-otp/`,
   RESET_PASSWORD_URL: `${BASE_URL}rp/auth/reset-password`,
 };
+
+export const USER_MANAGEMENT_URLS = {
+  USER_LIST_URL: `${BASE_URL}rp/user`,
+};
