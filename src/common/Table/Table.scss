@@ -1,0 +1,45 @@
+@import "../../index";
+
+table {
+  position: relative;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  font: $subtitle $font-bold;
+  color: $field-color;
+  background-color: $background-color;
+}
+
+tbody {
+  height: calc(100% - 9rem);
+  box-shadow: 0 0 0 .063rem white;
+  border-top-left-radius: .625rem;
+  border-top-right-radius: .625rem;
+  overflow-y: auto;
+}
+
+th {
+  padding: 0.313rem 1.25rem;
+}
+
+tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+tr:nth-child(even) {
+  background-color: $background-color;
+}
+
+td {
+  height: 2.5rem;
+  padding: 0.4rem 1.25rem;
+  font: $subtitle $font-regular;
+  color: $field-color;
+}
+
+tr:first-child td:first-child { border-top-left-radius: 10px; }
+tr:first-child td:last-child { border-top-right-radius: 10px; }

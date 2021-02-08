@@ -20,7 +20,7 @@ const Header = () => {
         <IconButton
           title="notifications_active"
           buttonType="outlined-bg"
-          className="font-primary ml-10"
+          className="notification"
         />
         <img className="user-dp" src={dummy} />
       </div>

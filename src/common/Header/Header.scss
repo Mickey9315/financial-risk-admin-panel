@@ -8,7 +8,7 @@
 }
 
 .screen-title {
-  font: $h5 $font-medium;
+  font: $h3 $font-medium;
   color: $primary-color;
 }
 
@@ -28,4 +28,10 @@
 
 .search {
   width: 13.125rem;
+}
+
+.notification {
+  width: 3.5rem;
+  margin-left: 10px;
+  color: $primary-color;
 }

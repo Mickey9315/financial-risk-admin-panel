@@ -1,46 +1,46 @@
 @import "../../../src/index";
 
 .side-menu-container {
-  width: 215px;
-  height: calc(100vh - 32px);
+  width: 13.438rem;
+  height: calc(100vh - 2rem);
   background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0px 0px 30px #82828229;
+  border-radius: 0.625rem;
+  box-shadow: 0px 0px 1.875rem #82828229;
 }
 
 .side-menu-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 55px;
-  margin: 7px;
-  border-bottom: 1px solid $border-color;
+  height: 3.438rem;
+  margin: 0.438rem;
+  border-bottom: 0.063rem solid $border-color;
 
   img {
-    height: 35px;
+    height: 2.188rem;
   }
 }
 
 .menu-container {
-  max-height: calc(100% - 60px);
-  padding: 10px 0 0 7px;
+  max-height: calc(100% - 4.313rem);
+  padding: 0.625rem 0 0 0.438rem;
   overflow-y: auto;
 }
 
 .menu {
   display: flex;
   align-items: center;
-  width: calc(100% - 7px);
-  margin-bottom: 10px;
-  padding: 10px;
+  width: calc(100% -  0.438rem);
+  margin-bottom: 0.625rem ;
+  padding: 0.625rem;
   font: $subtitle $font-regular;
   color: $placeholder-color;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   text-decoration: none;
 
   span {
-    margin-right: 5px;
-    font-size: 18px;
+    margin-right: 0.313rem;
+    font-size: $h5;
     color: $placeholder-color;
   }
 }
@@ -48,4 +48,7 @@
 .active {
   background-color: $primary-color;
   color: white;
+  span {
+    color: white;
+  }
 }

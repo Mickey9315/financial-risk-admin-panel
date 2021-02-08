@@ -14,8 +14,8 @@ const BigInput = props => {
     ...restProps
   } = props;
   const inputClass = `input ${className}`;
-  const prefixClassName = `material-icons prefix ${prefixClass}`;
-  const suffixClassName = `material-icons suffix ${suffixClass}`;
+  const prefixClassName = `material-icons-round prefix ${prefixClass}`;
+  const suffixClassName = `material-icons-round suffix ${suffixClass}`;
 
   return (
     <div className="big-input-container">

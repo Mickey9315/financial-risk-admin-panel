@@ -1,0 +1,60 @@
+@import "../../index";
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background-color: #ffffff;
+}
+
+.records-per-page-container {
+  display: flex;
+  align-items: center;
+  font: $title $font-medium;
+  color: $placeholder-color;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  font: $title $font-medium;
+  color: $placeholder-color;
+}
+
+.page-handler {
+  display: flex;
+  height: 2.188rem;
+  border: 0.063rem solid $border-color;
+}
+
+.first-page, .last-page, .prev-page, .next-page, .page-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 2.188rem;
+
+  span {
+    font-size: $title;
+    color: $font-color;
+  }
+}
+
+.first-page span, .last-page span {
+  font-size: $h5;
+}
+
+.first-page span {
+  transform: rotate(180deg);
+}
+
+.page-number {
+  font-size: $title;
+  border-left: 0.063rem solid $border-color;
+  border-right: 0.063rem solid $border-color;
+}
+
+.first-page:disabled, .prev-page:disabled, .next-page:disabled, .last-page:disabled {
+  color: $border-color;
+}

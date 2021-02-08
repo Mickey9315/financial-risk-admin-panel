@@ -1,12 +1,20 @@
 @import "typography";
 @import "color-palette";
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .font-primary {
   color: $primary-color;
 }
 
 .font-placeholder {
   color: $placeholder-color;
+}
+
+.font-field {
+  color: $field-color;
 }
 
 .d-flex {
@@ -29,3 +37,14 @@
   margin-left: 0.938rem;
 }
 
+.mr-5 {
+  margin-right: 0.313rem;
+}
+
+.mr-10 {
+  margin-right: 0.625rem;
+}
+
+.mr-15 {
+  margin-right: 0.938rem;
+}

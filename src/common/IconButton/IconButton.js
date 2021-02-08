@@ -9,7 +9,7 @@ const IconButton = props => {
 
   return (
     <button type="button" className={buttonClass} {...restProps}>
-      <span className="material-icons"> {title} </span>
+      <span className="material-icons-round"> {title} </span>
     </button>
   );
 };

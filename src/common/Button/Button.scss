@@ -15,9 +15,19 @@
   border-color: $primary-color;
 }
 
+.primary-button:hover {
+  background-color: $primary-variant-color;
+  border-color: $primary-variant-color;
+}
+
 .secondary-button {
   background-color: $secondary-color;
   border-color: $secondary-color;
+}
+
+.secondary-button:hover {
+  background-color: $secondary-variant-color;
+  border-color: $secondary-variant-color;
 }
 
 .outlined-primary-button {
@@ -34,4 +44,9 @@
 
 .icon-button {
   padding: 18px;
+}
+
+.success-button {
+  background-color: $success-color;
+  border-color: $success-color;
 }
