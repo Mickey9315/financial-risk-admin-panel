@@ -34,7 +34,11 @@ export const loginUser = ({ email, password }, rememberMe) => {
       } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
         errorNotification('Internal server error');
       } else if (e.response.data.status === 'ERROR') {
-        errorNotification(e);
+        if (e.response.data.messageCode === 'EMAIL_NOT_FOUND') {
+          errorNotification('User not found');
+        } else {
+          errorNotification(e);
+        }
       }
       throw Error();
     }
