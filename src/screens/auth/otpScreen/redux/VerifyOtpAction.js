@@ -8,7 +8,7 @@ export const verifyOtp = async verificationOtp => {
     const response = await AuthApiService.verifyOtp(data);
 
     if (response.data.status === 'SUCCESS') {
-      const { token } = response.data.data;
+      const { token } = response.data;
       SESSION_VARIABLES.RESET_PASSWORD_TOKEN = token;
 
       successNotification('OTP verified successfully.');
@@ -37,6 +37,28 @@ export const verifyOtp = async verificationOtp => {
         } else {
           errorNotification(e);
         }
+      }
+      throw Error();
+    }
+  }
+};
+
+export const resendOtp = async () => {
+  try {
+    const data = { email: SESSION_VARIABLES.USER_EMAIL };
+    const response = await AuthApiService.resentOtp(data);
+
+    if (response.data.status === 'SUCCESS') {
+      successNotification('OTP sent successfully.');
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        errorNotification('Internal server error');
+      } else if (e.response.data.status === 'ERROR') {
+        errorNotification(e);
       }
       throw Error();
     }
