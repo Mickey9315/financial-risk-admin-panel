@@ -8,6 +8,11 @@ export const AUTH_URLS = {
   RESET_PASSWORD_URL: `${BASE_URL}rp/auth/reset-password`,
 };
 
+export const HEADER_URLS = {
+  CHANGE_PASSWORD_URL: `${BASE_URL}rp/auth/change-password/`,
+  LOGOUT_URL: `${BASE_URL}rp/auth/logout/`,
+};
+
 export const USER_MANAGEMENT_URLS = {
   USER_LIST_URL: `${BASE_URL}rp/user`,
 };
