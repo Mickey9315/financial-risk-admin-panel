@@ -13,7 +13,12 @@ const Pagination = props => {
     <div className={paginationClass}>
       <div className="records-per-page-container">
         <span className="font-field mr-10">Show </span>
-        <Select selectedValue={selectedValue} options={noPerPage} {...restProps} />
+        <Select
+          className="no-per-page-select"
+          selectedValue={selectedValue}
+          options={noPerPage}
+          {...restProps}
+        />
         <span className="ml-10"> Records 1 to {selectedValue} of 65</span>
       </div>
       <div className="pagination">

@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 const Table = props => {
   const { align, valign, header, data } = props;
+  const [showActionMenu, setShowActionMenu] = React.useState(false);
+  const onClickAction = () => setShowActionMenu(true);
   return (
     <table>
       <thead>
@@ -22,8 +24,23 @@ const Table = props => {
               <td align={align}>{fieldValue}</td>
             ))}
             {header.actions.length > 0 && (
-              <td align="right" valign={valign}>
-                <span className="material-icons-round cursor-pointer">more_vert</span>
+              <td align="right" valign={valign} className="fixed-action-menu">
+                <span
+                  className="material-icons-round cursor-pointer table-action"
+                  onClick={onClickAction}
+                >
+                  more_vert
+                </span>
+                {showActionMenu && (
+                  <div className="action-menu">
+                    <div className="menu-name">
+                      <span className="material-icons-round">edit</span> Edit
+                    </div>
+                    <div className="menu-name">
+                      <span className="material-icons-round">delete</span> Delete
+                    </div>
+                  </div>
+                )}
               </td>
             )}
           </tr>

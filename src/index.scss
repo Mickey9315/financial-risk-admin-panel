@@ -29,6 +29,7 @@ input::placeholder {
 /* scrollbar starts here */
 /* width */
 ::-webkit-scrollbar {
+  height: 5px;
   width: 5px;
 }
 

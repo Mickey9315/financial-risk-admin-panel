@@ -3,8 +3,18 @@ import './Header.scss';
 import BigInput from '../BigInput/BigInput';
 import dummy from '../../assets/images/dummy.svg';
 import IconButton from '../IconButton/IconButton';
+import Modal from '../Modal/Modal';
+import Input from '../Input/Input';
 
 const Header = () => {
+  const [showUserSettings, setShowUserSettings] = React.useState(false);
+  const openUserSettings = () => setShowUserSettings(true);
+  const [showChangePasswordModal, setShowChangePasswordModal] = React.useState(false);
+  const toggleChangePasswordModal = () => setShowChangePasswordModal(e => !e);
+  const changePasswordBtns = [
+    { title: 'Close', buttonType: 'background-color', onClick: toggleChangePasswordModal },
+    { title: 'Save', buttonType: 'primary', onClick: toggleChangePasswordModal },
+  ];
   return (
     <div className="header-container">
       <div className="screen-title">User</div>
@@ -22,8 +32,43 @@ const Header = () => {
           buttonType="outlined-bg"
           className="notification"
         />
-        <img className="user-dp" src={dummy} />
+        <img className="user-dp" src={dummy} onClick={openUserSettings} />
+        {showUserSettings && (
+          <div className="user-settings">
+            <div>
+              <span className="material-icons-round">edit</span> Profile
+            </div>
+            <div onClick={toggleChangePasswordModal}>
+              <span className="material-icons-round">lock</span> Change Password
+            </div>
+            <div>
+              <span className="material-icons-round">exit_to_app</span> Logout
+            </div>
+          </div>
+        )}
       </div>
+      {showChangePasswordModal && (
+        <Modal
+          header="Change Password"
+          buttons={changePasswordBtns}
+          className="change-password-dialog"
+        >
+          <div className="change-password-grid">
+            <div className="form-title">Current password</div>
+            <div>
+              <Input type="password" placeholder="Enter Current Password" />{' '}
+            </div>
+            <div className="form-title">New password</div>
+            <div>
+              <Input type="password" placeholder="Enter New Password" />{' '}
+            </div>
+            <div className="form-title">Re Enter password</div>
+            <div>
+              <Input type="password" placeholder="Re Enter Password" />{' '}
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

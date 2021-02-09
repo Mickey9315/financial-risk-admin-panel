@@ -8,6 +8,10 @@
   background-color: #ffffff;
 }
 
+.no-per-page-select {
+  height: 36px;
+}
+
 .records-per-page-container {
   display: flex;
   align-items: center;
@@ -34,6 +38,7 @@
   justify-content: center;
   height: 100%;
   width: 2.188rem;
+  cursor: pointer;
 
   span {
     font-size: $title;
@@ -53,6 +58,7 @@
   font-size: $title;
   border-left: 0.063rem solid $border-color;
   border-right: 0.063rem solid $border-color;
+  cursor: text;
 }
 
 .first-page:disabled, .prev-page:disabled, .next-page:disabled, .last-page:disabled {

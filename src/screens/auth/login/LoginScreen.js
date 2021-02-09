@@ -74,7 +74,9 @@ function LoginScreen() {
       />
       <div className="login-action-row">
         <Checkbox title="Remember me" checked={rememberUser} onChange={onChangeRememberUser} />
-        <Link to="/forgot-password">Forgot Password?</Link>
+        <Link to="/forgot-password" className="font-primary">
+          Forgot Password?
+        </Link>
       </div>
       <Button title="Login" buttonType="secondary" onClick={onClickLogin} />
       <img alt="TCR" className="gray-logo" src={grayLogo} />

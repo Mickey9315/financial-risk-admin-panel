@@ -15,8 +15,14 @@ const Button = props => {
 
 Button.propTypes = {
   title: PropTypes.func.isRequired,
-  buttonType: PropTypes.oneOf(['primary', 'secondary', 'outlined-primary', 'outlined-secondary'])
-    .isRequired,
+  buttonType: PropTypes.oneOf([
+    'primary',
+    'secondary',
+    'success',
+    'background-color',
+    'outlined-primary',
+    'outlined-secondary',
+  ]).isRequired,
   className: PropTypes.string,
 };
 

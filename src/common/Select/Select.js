@@ -7,15 +7,13 @@ const Select = props => {
   const selectClass = `select ${className}`;
 
   return (
-    <div className="select-container">
-      <select placeholder={placeholder} className={selectClass} {...restProps}>
-        {options.map(e => (
-          <option className="select-option" value={e}>
-            {e}
-          </option>
-        ))}
-      </select>
-    </div>
+    <select placeholder={placeholder} className={selectClass} {...restProps}>
+      {options.map(e => (
+        <option className="select-option" value={e}>
+          {e}
+        </option>
+      ))}
+    </select>
   );
 };
 

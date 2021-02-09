@@ -26,3 +26,45 @@
   border-bottom-left-radius: .625rem;
   border-bottom-right-radius: .625rem;
 }
+
+.filter-modal {
+  width: 60vw;
+  max-width: 600px;
+}
+
+.filter-modal-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.filter-select {
+  width: 200px;
+}
+
+.filter-date-picker-container {
+  width: 200px;
+  margin-right: 20px;
+}
+
+.custom-field-modal {
+  width: 60vw;
+  min-width: 500px;
+  max-width: 600px;
+}
+
+.custom-field-content {
+  display: flex;
+  > div {
+    margin-right: 60px;
+   label {
+      margin: 20px 0;
+    }
+  }
+}
+
+.custom-field-title {
+  font: $h5 $font-medium;
+  color: $primary-color;
+  margin-bottom: 20px;
+}

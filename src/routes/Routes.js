@@ -7,6 +7,7 @@ import { saveTokenFromLocalStorageToSession } from '../helpers/LocalStorageHelpe
 import ResetPassword from '../screens/auth/resetPassword/ResetPassword';
 import VerifyOtp from '../screens/auth/otpScreen/VerifyOtp';
 import UserList from '../screens/Users/UserList/UserList';
+import AddUser from '../screens/Users/AddUser/AddUser';
 
 function Routes() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -35,6 +36,7 @@ function Routes() {
         <Route exact path="/reset-password" component={ResetPassword} />
         <Route exact path="/verify-otp" component={VerifyOtp} />
         <Route exact path="/users" component={UserList} />
+        <Route exact path="/addUser" component={AddUser} />
         {/* </> */}
         {/* )} */}
       </Switch>

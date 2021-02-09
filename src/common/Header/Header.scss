@@ -17,13 +17,40 @@
 }
 
 .user-dp {
+  position: relative;
   height: 3.5rem;
   width: 3.5rem;
   margin-left: 0.625rem;
   object-position: center;
   object-fit: cover;
-  border-radius: 0.625rem
-;
+  border-radius: 0.625rem;
+}
+
+.user-settings {
+  position: absolute;
+  top: 75px;
+  right: 30px;
+  width: 220px;
+  padding: 10px 25px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px #82828229;
+  z-index: 9;
+
+  > div {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    font: $title $font-medium;
+    color: $primary-color;
+    cursor: pointer;
+
+    span {
+      margin-right: 10px;
+      font-size: 18px;
+      color: $secondary-color;
+    }
+  }
 }
 
 .search {
@@ -34,4 +61,18 @@
   width: 3.5rem;
   margin-left: 10px;
   color: $primary-color;
+}
+
+.change-password-dialog {
+  width: 40vw;
+  max-width: 450px;
+  min-width: 400px;
+}
+
+.change-password-grid {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 40% 60%;
+  gap: 10px;
+  width: 100%;
 }

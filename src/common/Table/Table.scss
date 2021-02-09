@@ -16,7 +16,7 @@ th {
 
 tbody {
   height: calc(100% - 9rem);
-  box-shadow: 0 0 0 .063rem white;
+  box-shadow: 0 0 0 1px white;
   border-top-left-radius: .625rem;
   border-top-right-radius: .625rem;
   overflow-y: auto;
@@ -43,3 +43,50 @@ td {
 
 tr:first-child td:first-child { border-top-left-radius: 10px; }
 tr:first-child td:last-child { border-top-right-radius: 10px; }
+
+.table-action {
+  position: relative;
+}
+
+.action-menu {
+  position: absolute;
+  top: 60px;
+  right: 25px;
+  background-color: $background-color;
+  border: 1px solid white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 1.875rem #82828229;
+  overflow: hidden;
+
+  .menu-name {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    width: 100%;
+    min-width: 100px;
+    padding: 5px 10px;
+    border-top: 1px solid white;
+
+    span {
+      font-size: 20px;
+      margin-right: 5px;
+    }
+  }
+}
+
+.fixed-action-menu {
+  position: sticky;
+  right: 0;
+}
+
+tr:nth-child(odd) .fixed-action-menu {
+  background-color: white;
+}
+
+tr:first-child .fixed-action-menu {
+  border-top-right-radius: 10px;
+}
+
+tr:nth-child(even) .fixed-action-menu {
+  background-color: $background-color;
+}
