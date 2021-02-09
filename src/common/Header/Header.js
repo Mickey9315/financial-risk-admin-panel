@@ -1,20 +1,28 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './Header.scss';
 import BigInput from '../BigInput/BigInput';
 import dummy from '../../assets/images/dummy.svg';
 import IconButton from '../IconButton/IconButton';
 import Modal from '../Modal/Modal';
 import Input from '../Input/Input';
+import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 
 const Header = () => {
   const [showUserSettings, setShowUserSettings] = React.useState(false);
-  const openUserSettings = () => setShowUserSettings(true);
   const [showChangePasswordModal, setShowChangePasswordModal] = React.useState(false);
   const toggleChangePasswordModal = () => setShowChangePasswordModal(e => !e);
   const changePasswordBtns = [
     { title: 'Close', buttonType: 'background-color', onClick: toggleChangePasswordModal },
     { title: 'Save', buttonType: 'primary', onClick: toggleChangePasswordModal },
   ];
+
+  const openUserSettings = () => setShowUserSettings(true);
+  const closeUserSettings = () => setShowUserSettings(false);
+
+  const userSettingsRef = useRef();
+
+  useOnClickOutside(userSettingsRef, closeUserSettings);
+
   return (
     <div className="header-container">
       <div className="screen-title">User</div>
@@ -34,14 +42,14 @@ const Header = () => {
         />
         <img className="user-dp" src={dummy} onClick={openUserSettings} />
         {showUserSettings && (
-          <div className="user-settings">
-            <div>
+          <div ref={userSettingsRef} className="user-settings">
+            <div onClick={closeUserSettings}>
               <span className="material-icons-round">edit</span> Profile
             </div>
             <div onClick={toggleChangePasswordModal}>
               <span className="material-icons-round">lock</span> Change Password
             </div>
-            <div>
+            <div onClick={closeUserSettings}>
               <span className="material-icons-round">exit_to_app</span> Logout
             </div>
           </div>
