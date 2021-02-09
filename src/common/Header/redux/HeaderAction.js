@@ -32,3 +32,24 @@ export const changePassword = async (oldPassword, newPassword) => {
     }
   }
 };
+
+export const logoutUser = async () => {
+  try {
+    const response = await HeaderApiService.logoutUser();
+
+    if (response.data.status === 'SUCCESS') {
+      successNotification('Logged out successfully.');
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        errorNotification('Internal server error');
+      } else {
+        errorNotification('Please try again later.');
+      }
+      throw Error();
+    }
+  }
+};
