@@ -65,6 +65,29 @@ const UserList = () => {
       },
     ],
   };
+
+  const { total, pages, page, limit } = userListWithPageData;
+
+  const onSelectLimit = e => {
+    console.log(e);
+  };
+
+  const lastClick = e => {
+    console.log(e);
+  };
+
+  const firstClick = e => {
+    console.log(e);
+  };
+
+  const prevClick = e => {
+    console.log(e);
+  };
+
+  const nextClick = e => {
+    console.log(e);
+  };
+
   const [filterModal, setFilterModal] = React.useState(false);
   const toggleFilterModal = () => setFilterModal(e => !e);
   const filterModalButtons = [
@@ -123,7 +146,18 @@ const UserList = () => {
         <div className="user-list-container">
           <Table align="left" valign="center" data={userData} header={columnStructure} />
         </div>
-        <Pagination className="user-list-pagination" />
+        <Pagination
+          className="user-list-pagination"
+          total={total}
+          pages={pages}
+          page={page}
+          limit={limit}
+          nextClick={nextClick}
+          prevClick={prevClick}
+          firstClick={firstClick}
+          lastClick={lastClick}
+          onSelectLimit={onSelectLimit}
+        />
         {filterModal && (
           <Modal
             headerIcon="filter_list"

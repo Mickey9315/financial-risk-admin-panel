@@ -3,14 +3,14 @@ import './Select.scss';
 import PropTypes from 'prop-types';
 
 const Select = props => {
-  const { selectedValue, placeholder, options, className, ...restProps } = props;
+  const { placeholder, options, className, ...restProps } = props;
   const selectClass = `select ${className}`;
 
   return (
     <select placeholder={placeholder} className={selectClass} {...restProps}>
       {options.map(e => (
-        <option className="select-option" value={e}>
-          {e}
+        <option className="select-option" value={e.value}>
+          {e.label}
         </option>
       ))}
     </select>
@@ -20,14 +20,12 @@ const Select = props => {
 Select.propTypes = {
   placeholder: PropTypes.string,
   options: PropTypes.string,
-  selectedValue: PropTypes.string,
   className: PropTypes.string,
 };
 
 Select.defaultProps = {
   placeholder: '',
   options: [],
-  selectedValue: '',
   className: '',
 };
 

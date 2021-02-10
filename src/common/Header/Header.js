@@ -50,8 +50,8 @@ const Header = () => {
     }
 
     try {
-      toggleChangePasswordModal(false);
       await changePassword(currentPassword, newPassword);
+      toggleChangePasswordModal(false);
       resetInputs();
     } catch (e) {
       /**/

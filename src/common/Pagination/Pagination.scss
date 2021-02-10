@@ -61,6 +61,6 @@
   cursor: text;
 }
 
-.first-page:disabled, .prev-page:disabled, .next-page:disabled, .last-page:disabled {
+.pagination-button-disabled span{
   color: $border-color;
 }

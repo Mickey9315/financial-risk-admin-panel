@@ -37,9 +37,8 @@ export const loginUser = ({ email, password }, rememberMe) => {
         } else if (e.response.data.status === 'ERROR') {
           if (e.response.data.messageCode) {
             switch (e.response.data.messageCode) {
-              case 'USER_NOT_FOUND':
-              case 'EMAIL_NOT_FOUND':
-                errorNotification('User not found');
+              case 'INCORRECT_EMAIL_OR_PASSWORD':
+                errorNotification('Incorrect email or password');
                 break;
               default:
                 break;
