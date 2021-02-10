@@ -2,7 +2,7 @@ import { errorNotification } from '../../../common/Toast';
 import UserManagementApiService from '../services/UserManagementApiService';
 import { USER_MANAGEMENT_REDUX_CONSTANTS } from './UserManagementReduxConstants';
 
-export const getUserManagementList = params => {
+export const getUserManagementList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
       const response = await UserManagementApiService.getAllUserList(params);

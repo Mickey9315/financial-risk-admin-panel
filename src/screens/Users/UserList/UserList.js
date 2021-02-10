@@ -68,24 +68,24 @@ const UserList = () => {
 
   const { total, pages, page, limit } = userListWithPageData;
 
-  const onSelectLimit = e => {
-    console.log(e);
+  const onSelectLimit = newLimit => {
+    dispatch(getUserManagementList({ page, limit: newLimit }));
   };
 
-  const lastClick = e => {
-    console.log(e);
+  const lastClick = newPage => {
+    dispatch(getUserManagementList({ page: newPage, limit }));
   };
 
-  const firstClick = e => {
-    console.log(e);
+  const firstClick = newPage => {
+    dispatch(getUserManagementList({ page: newPage, limit }));
   };
 
-  const prevClick = e => {
-    console.log(e);
+  const prevClick = newPage => {
+    dispatch(getUserManagementList({ page: newPage, limit }));
   };
 
-  const nextClick = e => {
-    console.log(e);
+  const nextClick = newPage => {
+    dispatch(getUserManagementList({ page: newPage, limit }));
   };
 
   const [filterModal, setFilterModal] = React.useState(false);
