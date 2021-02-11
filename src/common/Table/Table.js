@@ -3,19 +3,19 @@ import './Table.scss';
 import PropTypes from 'prop-types';
 
 const Table = props => {
-  const { align, valign, header, data } = props;
+  const { align, valign, headers, data } = props;
   const [showActionMenu, setShowActionMenu] = React.useState(false);
   const onClickAction = () => setShowActionMenu(true);
   return (
     <table>
       <thead>
-        {header.columns.length > 0 &&
-          header.columns.map(heading => (
+        {headers.columns.length > 0 &&
+          headers.columns.map(heading => (
             <th align={align} valign={valign}>
               {heading.name}
             </th>
           ))}
-        {header.actions.length > 0 && <th align={align} valign={valign} />}
+        {headers.actions.length > 0 && <th align={align} valign={valign} />}
       </thead>
       <tbody>
         {data.map(e => (
@@ -23,7 +23,7 @@ const Table = props => {
             {Object.values(e).map(fieldValue => (
               <td align={align}>{fieldValue}</td>
             ))}
-            {header.actions.length > 0 && (
+            {headers.actions.length > 0 && (
               <td align="right" valign={valign} className="fixed-action-menu">
                 <span
                   className="material-icons-round cursor-pointer table-action"
@@ -53,7 +53,7 @@ const Table = props => {
 Table.propTypes = {
   align: PropTypes.oneOf(['left', 'center', 'right']),
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
-  header: PropTypes.shape({
+  headers: PropTypes.shape({
     columns: PropTypes.array,
     actions: PropTypes.array,
   }),
@@ -63,7 +63,7 @@ Table.propTypes = {
 Table.defaultProps = {
   align: 'left',
   valign: 'left',
-  header: {
+  headers: {
     columns: [],
     actions: [],
   },
