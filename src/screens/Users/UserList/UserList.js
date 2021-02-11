@@ -18,55 +18,29 @@ const UserList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const userListWithPageData = useSelector(({ userManagementList }) => userManagementList);
-  const userData = useMemo(() => userListWithPageData?.docs || [], [userListWithPageData]);
 
   useEffect(() => {
     dispatch(getUserManagementList());
   }, []);
 
-  const columnStructure = {
-    columns: [
-      {
-        type: 'text',
-        name: 'Name',
-        value: 'name',
-      },
-      {
-        type: 'text',
-        name: 'Email',
-        value: 'email',
-      },
-      {
-        type: 'text',
-        name: 'Phone',
-        value: 'phone',
-      },
-      {
-        type: 'text',
-        name: 'Role',
-        value: 'role',
-      },
-      {
-        type: 'text',
-        name: 'Date',
-        value: 'date',
-      },
-    ],
-    actions: [
-      {
-        type: 'edit',
-        name: 'Edit',
-        icon: 'edit-outline',
-      },
-      {
-        type: 'delete',
-        name: 'Delete',
-        icon: 'trash-outline',
-      },
-    ],
-  };
+  const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
+    userListWithPageData,
+  ]);
 
-  const { total, pages, page, limit } = userListWithPageData;
+  const tableData = useMemo(() => {
+    return docs.map(e => {
+      const finalObj = {
+        id: e._id,
+      };
+      headers.forEach(f => {
+        finalObj[`${f.name}`] = e[`${f.name}`];
+      });
+
+      return finalObj;
+    });
+  }, [docs]);
+
+  // const tableHeaders = useMemo(() => headers.map(header => header.label), [headers]);
 
   const onSelectLimit = newLimit => {
     dispatch(getUserManagementList({ page, limit: newLimit }));
@@ -144,7 +118,7 @@ const UserList = () => {
           </div>
         </div>
         <div className="user-list-container">
-          <Table align="left" valign="center" data={userData} header={columnStructure} />
+          <Table align="left" valign="center" data={tableData} headers={headers} />
         </div>
         <Pagination
           className="user-list-pagination"
