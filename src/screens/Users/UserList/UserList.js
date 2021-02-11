@@ -1,23 +1,56 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useReducer } from 'react';
 import './UserList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 import Dashboard from '../../../common/Dashboard/Dashboard';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
-import { getUserManagementList } from '../redux/UserManagementAction';
+import {
+  getUserManagementList,
+  getUserManagementListByFilter,
+} from '../redux/UserManagementAction';
 import Modal from '../../../common/Modal/Modal';
 import Select from '../../../common/Select/Select';
 import Checkbox from '../../../common/Checkbox/Checkbox';
+import { USER_ROLES } from '../../../constants/UserlistConstants';
+import { errorNotification } from '../../../common/Toast';
+
+const initialFilterState = {
+  role: 'riskAnalyst',
+  startDate: null,
+  endDate: null,
+};
+
+const USER_FILTER_REDUCER_ACTIONS = {
+  UPDATE_DATA: 'UPDATE_DATA',
+  RESET_STATE: 'RESET_STATE',
+};
+
+function filterReducer(state, action) {
+  switch (action.type) {
+    case USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
+      return {
+        ...state,
+        [`${action.name}`]: action.value,
+      };
+    case USER_FILTER_REDUCER_ACTIONS.RESET_STATE:
+      return { ...initialFilterState };
+    default:
+      return state;
+  }
+}
 
 const UserList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const userListWithPageData = useSelector(({ userManagementList }) => userManagementList);
+
+  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
 
   useEffect(() => {
     dispatch(getUserManagementList());
@@ -26,6 +59,14 @@ const UserList = () => {
   const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
     userListWithPageData,
   ]);
+
+  const handleFilterChange = event => {
+    dispatchFilter({
+      type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: event.target.name,
+      value: event.target.value,
+    });
+  };
 
   const tableData = useMemo(() => {
     return docs.map(e => {
@@ -62,11 +103,48 @@ const UserList = () => {
     dispatch(getUserManagementList({ page: newPage, limit }));
   };
 
+  const handleStartDateChange = date => {
+    dispatchFilter({
+      type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'startDate',
+      value: date,
+    });
+  };
+
+  const handleEndDateChange = date => {
+    dispatchFilter({
+      type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'endDate',
+      value: date,
+    });
+  };
+
   const [filterModal, setFilterModal] = React.useState(false);
   const toggleFilterModal = () => setFilterModal(e => !e);
+
+  const { role, startDate, endDate } = filter;
+
+  const onClickApplyFilter = () => {
+    if (moment(startDate).isAfter(endDate)) {
+      errorNotification('Please enter from date before to date');
+    } else if (moment(endDate).isBefore(startDate)) {
+      errorNotification('Please enter to date after from date');
+    } else {
+      const data = {
+        page,
+        limit,
+        role: role || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+      };
+      dispatch(getUserManagementListByFilter(data));
+      toggleFilterModal();
+    }
+  };
+
   const filterModalButtons = [
     { title: 'Close', buttonType: 'background-color', onClick: toggleFilterModal },
-    { title: 'Apply', buttonType: 'primary' },
+    { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
   ];
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
@@ -91,11 +169,10 @@ const UserList = () => {
     'Expiry Date',
     'Inception Date',
   ];
-  const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
   const openAddUser = () => {
     history.push('/addUser');
   };
+
   return (
     <>
       <Dashboard>
@@ -141,7 +218,14 @@ const UserList = () => {
           >
             <div className="filter-modal-row">
               <div className="form-title">Role</div>
-              <Select className="filter-select" placeholder="Select" />
+              <Select
+                className="filter-select"
+                placeholder="Select"
+                name="role"
+                options={USER_ROLES}
+                value={role}
+                onChange={handleFilterChange}
+              />
             </div>
             <div className="filter-modal-row">
               <div className="form-title">Date</div>
@@ -149,7 +233,7 @@ const UserList = () => {
                 <DatePicker
                   className="filter-date-picker"
                   selected={startDate}
-                  onChange={date => setStartDate(date)}
+                  onChange={handleStartDateChange}
                 />
                 <span className="material-icons-round">event_available</span>
               </div>
@@ -157,7 +241,7 @@ const UserList = () => {
                 <DatePicker
                   className="filter-date-picker"
                   selected={endDate}
-                  onChange={date => setEndDate(date)}
+                  onChange={handleEndDateChange}
                 />
                 <span className="material-icons-round">event_available</span>
               </div>
