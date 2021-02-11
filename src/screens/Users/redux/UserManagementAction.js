@@ -1,6 +1,9 @@
 import { errorNotification } from '../../../common/Toast';
 import UserManagementApiService from '../services/UserManagementApiService';
-import { USER_MANAGEMENT_REDUX_CONSTANTS } from './UserManagementReduxConstants';
+import {
+  USER_MANAGEMENT_REDUX_CONSTANTS as USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  USER_MANAGEMENT_REDUX_CONSTANTS,
+} from './UserManagementReduxConstants';
 
 export const getUserManagementList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -20,7 +23,6 @@ export const getUserManagementList = (params = { page: 1, limit: 15 }) => {
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
-          // TODO handle cases
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();
@@ -29,14 +31,14 @@ export const getUserManagementList = (params = { page: 1, limit: 15 }) => {
   };
 };
 
-export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) => {
+export const getUserColumnListName = () => {
   return async dispatch => {
     try {
-      const response = await UserManagementApiService.getAllUserListByFilter(params);
+      const response = await UserManagementApiService.getUserColumnListName();
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: USER_MANAGEMENT_REDUX_CONSTANTS.USER_MANAGEMENT_LIST_USER_ACTION,
+          type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_LIST_USER_ACTION,
           data: response.data.data,
         });
       }
@@ -47,7 +49,6 @@ export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) =
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
-          // TODO handle cases
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();
