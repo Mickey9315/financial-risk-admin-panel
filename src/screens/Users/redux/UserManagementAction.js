@@ -1,7 +1,7 @@
 import { errorNotification } from '../../../common/Toast';
 import UserManagementApiService from '../services/UserManagementApiService';
 import {
-  USER_MANAGEMENT_REDUX_CONSTANTS as USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
   USER_MANAGEMENT_REDUX_CONSTANTS,
 } from './UserManagementReduxConstants';
 
@@ -65,7 +65,7 @@ export const getUserColumnListName = () => {
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_LIST_USER_ACTION,
+          type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
       }
