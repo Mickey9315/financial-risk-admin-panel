@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import {
   USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
@@ -23,6 +24,23 @@ export const userManagementColumnList = (state = null, action) => {
   switch (action.type) {
     case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION:
       return action.data;
+    case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_USER_MANAGEMENT_COLUMN_LIST_ACTION:
+      const temp = {
+        ...state,
+      };
+
+      const { type, name, value } = action.data;
+
+      temp[`${type}`] = temp[`${type}`].map(e =>
+        e.name === name
+          ? {
+              ...e,
+              isChecked: value,
+            }
+          : e
+      );
+
+      return temp;
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
