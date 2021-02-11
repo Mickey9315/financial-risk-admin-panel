@@ -73,7 +73,7 @@ const Pagination = props => {
           >
             <span className="material-icons-round">arrow_back_ios</span>
           </div>
-          <div className="page-number">1</div>
+          <div className="page-number">{page}</div>
           <div
             className={`next-page ${page === pages && 'pagination-button-disabled'}`}
             onClick={onNextClick}
