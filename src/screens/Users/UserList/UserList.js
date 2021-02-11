@@ -43,7 +43,7 @@ const UserList = () => {
   // const tableHeaders = useMemo(() => headers.map(header => header.label), [headers]);
 
   const onSelectLimit = newLimit => {
-    dispatch(getUserManagementList({ page, limit: newLimit }));
+    dispatch(getUserManagementList({ page: 1, limit: newLimit }));
   };
 
   const lastClick = newPage => {
