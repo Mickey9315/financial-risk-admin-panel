@@ -38,6 +38,8 @@ const Pagination = props => {
 
   const onNextClick = () => (page < pages ? nextClick(page + 1) : null);
   const onPrevClick = () => (page > 1 ? prevClick(page - 1) : null);
+  const onFirstClick = () => firstClick(1);
+  const onLastClick = () => lastClick(pages);
   const onChangeLimit = e => {
     setRecordLimit(e.target.value);
     onSelectLimit(e.target.value);
@@ -63,7 +65,7 @@ const Pagination = props => {
         <div className="page-handler">
           <div
             className={`first-page ${page === 1 && 'pagination-button-disabled'}`}
-            onClick={firstClick}
+            onClick={onFirstClick}
           >
             <span className="material-icons-round">double_arrow</span>
           </div>
@@ -82,7 +84,7 @@ const Pagination = props => {
           </div>
           <div
             className={`last-page ${page === pages && 'pagination-button-disabled'}`}
-            onClick={lastClick}
+            onClick={onLastClick}
           >
             <span className="material-icons-round">double_arrow</span>
           </div>
