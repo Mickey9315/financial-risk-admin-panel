@@ -83,3 +83,12 @@ export const getUserColumnListName = () => {
     }
   };
 };
+
+export const changeUserColumnListStatus = data => {
+  return async dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_USER_MANAGEMENT_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
