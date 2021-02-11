@@ -3,6 +3,8 @@ import { USER_MANAGEMENT_URLS } from '../../../constants/UrlConstants';
 
 const UserManagementApiService = {
   getAllUserList: params => ApiService.getData(USER_MANAGEMENT_URLS.USER_LIST_URL, { params }),
+  getAllUserListByFilter: params =>
+    ApiService.getData(USER_MANAGEMENT_URLS.USER_LIST_BY_FILTER_URL, { params }),
 };
 
 export default UserManagementApiService;
