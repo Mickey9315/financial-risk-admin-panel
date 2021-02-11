@@ -15,4 +15,5 @@ export const HEADER_URLS = {
 
 export const USER_MANAGEMENT_URLS = {
   USER_LIST_URL: `${BASE_URL}rp/user`,
+  USER_LIST_BY_FILTER_URL: `${BASE_URL}rp/user/filter`,
 };
