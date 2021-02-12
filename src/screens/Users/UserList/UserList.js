@@ -11,8 +11,11 @@ import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import {
+  changeUserColumnListStatus,
+  getUserColumnListName,
   getUserManagementList,
   getUserManagementListByFilter,
+  saveUserColumnListName,
 } from '../redux/UserManagementAction';
 import Modal from '../../../common/Modal/Modal';
 import Select from '../../../common/Select/Select';
@@ -49,11 +52,13 @@ const UserList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const userListWithPageData = useSelector(({ userManagementList }) => userManagementList);
+  const userColumnList = useSelector(({ userManagementColumnList }) => userManagementColumnList);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
 
   useEffect(() => {
     dispatch(getUserManagementList());
+    dispatch(getUserColumnListName());
   }, []);
 
   const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
@@ -148,29 +153,39 @@ const UserList = () => {
   ];
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
+
+  const onClickSaveColumnSelection = async () => {
+    await dispatch(saveUserColumnListName({ userColumnList }));
+    toggleCustomField();
+  };
+
+  const onClickResetDefaultColumnSelection = async () => {
+    await dispatch(saveUserColumnListName({ isReset: true }));
+    dispatch(getUserColumnListName());
+    toggleCustomField();
+  };
+
   const customFieldsModalButtons = [
-    { title: 'Reset Defaults', buttonType: 'outlined-primary' },
+    {
+      title: 'Reset Defaults',
+      buttonType: 'outlined-primary',
+      onClick: onClickResetDefaultColumnSelection,
+    },
     { title: 'Close', buttonType: 'background-color', onClick: toggleCustomField },
-    { title: 'Save', buttonType: 'primary' },
+    { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
   ];
-  const defaultFields = [
-    'Client Name',
-    'Client Id',
-    'Country',
-    'Address',
-    'Created Date',
-    'Modified Date',
-  ];
-  const customFields = [
-    'Phone',
-    'Trading As',
-    'Net of brokerage',
-    'Policy Type',
-    'Expiry Date',
-    'Inception Date',
-  ];
+  const { defaultFields, customFields } = useMemo(
+    () => userColumnList || { defaultFields: [], customFields: [] },
+    [userColumnList]
+  );
+
   const openAddUser = () => {
     history.push('/addUser');
+  };
+
+  const onChangeSelectedColumn = (type, name, value) => {
+    const data = { type, name, value };
+    dispatch(changeUserColumnListStatus(data));
   };
 
   return (
@@ -258,14 +273,27 @@ const UserList = () => {
             <div className="custom-field-content">
               <div>
                 <div className="custom-field-title">Default Fields</div>
-                {defaultFields.map(e => (
-                  <Checkbox title={e} />
+                {defaultFields.map(data => (
+                  <Checkbox
+                    title={data.label}
+                    name={data.name}
+                    checked={data.isChecked}
+                    onChange={e =>
+                      onChangeSelectedColumn('defaultFields', data.name, e.target.checked)
+                    }
+                  />
                 ))}
               </div>
               <div>
                 <div className="custom-field-title">Custom Fields</div>
-                {customFields.map(e => (
-                  <Checkbox title={e} />
+                {customFields.map(data => (
+                  <Checkbox
+                    title={data.label}
+                    checked={data.isChecked}
+                    onChange={e =>
+                      onChangeSelectedColumn('customFields', data.name, e.target.checked)
+                    }
+                  />
                 ))}
               </div>
             </div>
