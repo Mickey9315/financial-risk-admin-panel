@@ -38,7 +38,7 @@ function Routes() {
         <Route exact path="/reset-password" component={ResetPassword} />
         <Route exact path="/verify-otp" component={VerifyOtp} />
         <Route exact path="/users" component={UserList} />
-        <Route exact path="/addUser" component={AddUser} />
+        <Route exact path="/addUser/:id" component={AddUser} />
         <Route exact path="/clients" component={ClientList} />
         <Route exact path="/viewClient" component={ViewClient} />
         {/* </> */}
