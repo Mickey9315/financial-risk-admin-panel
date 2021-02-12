@@ -220,3 +220,27 @@ export const changeUserManageAccess = data => {
     });
   };
 };
+
+export const addNewUser = data => {
+  return async dispatch => {
+    try {
+      const response = await UserManagementApiService.addNewUser(data);
+
+      if (response.data.status === 'SUCCESS') {
+        successNotification('Added user successfully.');
+        dispatch(getUserManagementList());
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
