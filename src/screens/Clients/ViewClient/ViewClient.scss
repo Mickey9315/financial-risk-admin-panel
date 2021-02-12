@@ -1,0 +1,18 @@
+@import "../../../index";
+
+.client-details-container {
+  display: grid!important;
+  grid-template-columns: 15% calc(35% - 7px) 15% calc(35% - 7px);
+  align-items: center;
+  padding: 25px 30px;
+  gap: 15px 5px;
+
+  span {
+    color: $primary-color;
+  }
+
+  input, select, > div {
+    width: 70%;
+    min-width: 170px;
+  }
+}

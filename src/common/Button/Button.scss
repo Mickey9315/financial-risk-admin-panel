@@ -42,6 +42,12 @@
   border-color: $secondary-color;
 }
 
+.outlined-red-button {
+  background-color: #ffffff;
+  color: $error-color;
+  border-color: $error-color;
+}
+
 .icon-button {
   padding: 18px;
 }
@@ -51,8 +57,18 @@
   border-color: $success-color;
 }
 
-.background-color-button {
+.success-button:hover {
+  background-color: $success-variant-color;
+  border-color: $success-variant-color;
+}
+
+.primary-1-button {
   background-color: $primary-color-1;
   color: $primary-color;
   border-color: $primary-color-1;
+}
+
+.primary-1-button:hover {
+  background-color: $primary-color-1-variant-color;
+  border-color: $primary-color-1-variant-color;
 }

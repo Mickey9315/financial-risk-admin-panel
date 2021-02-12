@@ -17,5 +17,7 @@
 }
 
 .page-container {
+  max-height: calc(100vh - 88px);
   padding-top: 0.938rem;
+  overflow-y: auto;
 }

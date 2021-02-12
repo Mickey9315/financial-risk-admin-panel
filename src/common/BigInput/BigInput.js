@@ -10,15 +10,16 @@ const BigInput = props => {
     suffixClass,
     placeholder,
     type,
+    borderClass,
     className,
     ...restProps
   } = props;
-  const inputClass = `input ${className}`;
+  const inputClass = `big-input ${className}`;
   const prefixClassName = `material-icons-round prefix ${prefixClass}`;
   const suffixClassName = `material-icons-round suffix ${suffixClass}`;
-
+  const inputBorderClass = `big-input-container ${borderClass}`;
   return (
-    <div className="big-input-container">
+    <div className={inputBorderClass}>
       {prefix && <span className={prefixClassName}>{prefix}</span>}
       <input
         autoComplete="off"
@@ -40,6 +41,7 @@ BigInput.propTypes = {
   placeholder: PropTypes.string,
   type: PropTypes.string.isRequired,
   className: PropTypes.string,
+  borderClass: PropTypes.string,
 };
 
 BigInput.defaultProps = {
@@ -49,6 +51,7 @@ BigInput.defaultProps = {
   suffixClass: '',
   placeholder: '',
   className: '',
+  borderClass: '',
 };
 
 export default BigInput;

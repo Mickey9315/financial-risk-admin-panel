@@ -1,5 +1,6 @@
 import React from 'react';
 import './AddUser.scss';
+import { useHistory } from 'react-router-dom';
 import Dashboard from '../../../common/Dashboard/Dashboard';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
@@ -7,21 +8,25 @@ import Select from '../../../common/Select/Select';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 
 const AddUser = () => {
+  const history = useHistory();
+  const backToUser = () => {
+    history.push('/users');
+  };
   return (
     <Dashboard>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
-          <span>User List</span>
+          <span onClick={backToUser}>User List</span>
           <span className="material-icons-round">navigate_next</span>
           <span>View User</span>
         </div>
         <div className="buttons-row">
-          <Button buttonType="background-color" title="Close" />
+          <Button buttonType="primary-1" title="Close" />
           <Button buttonType="primary" title="Save" />
         </div>
       </div>
 
-      <div className="add-user-detail-container">
+      <div className="common-white-container">
         <div className="add-user-detail">
           <span className="font-primary">Name</span>
           <Input type="text" className="add-user-input" placeholder="Jason Gatt" />

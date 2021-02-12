@@ -21,11 +21,12 @@
   }
 }
 
-.input {
-  font: $subtitle $font-regular;
+.big-input {
+  font: $title $font-regular;
   color: $field-color!important;
 }
 
 .suffix {
   text-align: right;
+  cursor: pointer;
 }

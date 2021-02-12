@@ -22,6 +22,7 @@ import Select from '../../../common/Select/Select';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import { USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
+import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 
 const initialFilterState = {
   role: 'riskAnalyst',
@@ -148,7 +149,7 @@ const UserList = () => {
   };
 
   const filterModalButtons = [
-    { title: 'Close', buttonType: 'background-color', onClick: toggleFilterModal },
+    { title: 'Close', buttonType: 'primary-1', onClick: toggleFilterModal },
     { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
   ];
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
@@ -171,7 +172,7 @@ const UserList = () => {
       buttonType: 'outlined-primary',
       onClick: onClickResetDefaultColumnSelection,
     },
-    { title: 'Close', buttonType: 'background-color', onClick: toggleCustomField },
+    { title: 'Close', buttonType: 'primary-1', onClick: toggleCustomField },
     { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
   ];
   const { defaultFields, customFields } = useMemo(
@@ -209,11 +210,11 @@ const UserList = () => {
             <Button title="Add User" buttonType="success" onClick={openAddUser} />
           </div>
         </div>
-        <div className="user-list-container">
+        <div className="common-list-container">
           <Table align="left" valign="center" data={tableData} headers={headers} />
         </div>
         <Pagination
-          className="user-list-pagination"
+          className="common-list-pagination"
           total={total}
           pages={pages}
           page={page}
@@ -300,6 +301,13 @@ const UserList = () => {
           </Modal>
         )}
       </Dashboard>
+      {customFieldModal && (
+        <CustomFieldModal
+          defaultFields={defaultFields}
+          customFields={customFields}
+          toggleCustomField={toggleFilterModal}
+        />
+      )}
     </>
   );
 };

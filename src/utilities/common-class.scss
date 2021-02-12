@@ -1,0 +1,143 @@
+@import "typography";
+@import "color-palette";
+
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding-left: 10px;
+  background-color: #ffffff;
+  border: 0.063rem solid $border-color;
+  border-radius: 0.313rem;
+
+  input {
+    width: 100%;
+    font: $text $font-regular;
+    color: $field-color;
+    border: none;
+    outline: none;
+  }
+
+  span {
+    margin-left: 10px;
+    font-size: 24px;
+    color: $placeholder-color;
+  }
+}
+
+.breadcrumb-button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buttons-row {
+  display: flex;
+  align-items: center;
+
+  button {
+    margin-left: 10px;
+  }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font: $h6 $font-medium;
+  color: $field-color;
+  cursor: pointer;
+
+  > span:last-child {
+    color: $primary-color;
+    cursor: text;
+  }
+}
+
+.phone-number-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  width: 200px;
+  border: 1px solid $border-color;
+  border-radius: 5px;
+
+  input {
+    width: calc(100% - 70px);
+    padding: 0 5px;
+    flex: 1;
+    border: none;
+    outline: none;
+  }
+}
+
+.phone-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  height: 100%;
+  color: $placeholder-color;
+  border-right: 1px solid $border-color;
+  border-radius: 5px;
+}
+
+.common-white-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px 20px;
+  font: $sub-text;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.tab-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 7px 10px;
+  background-color: $primary-color-1;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.tab {
+  margin-right: 10px;
+  padding: 15px;
+  font: $title $font-medium;
+  color: $field-color;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.active-tab {
+  color: white;
+  background-color: $primary-color;
+}
+
+.tag {
+  padding: 5px 15px;
+  border-radius: 5px;
+}
+
+.red-tag {
+  color: $error-color;
+  background-color: $error-color-light;
+}
+
+.primary-tag {
+  color: $primary-color-1;
+  background-color: $primary-color;
+}
+
+.secondary-tag {
+  color: $secondary-color;
+  background-color: $secondary-color-light;
+}
+
+.alert-blue-tag {
+  color: $alert-blue;
+  background-color: $alert-blue-light;
+}

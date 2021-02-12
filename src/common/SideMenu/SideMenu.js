@@ -22,7 +22,7 @@ const SideMenu = () => {
           <span className="material-icons-round">business_center</span>
           Application
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/clients" replace>
           <span className="material-icons-round">people</span>
           Clients
         </NavLink>

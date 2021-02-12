@@ -24,6 +24,7 @@
   object-position: center;
   object-fit: cover;
   border-radius: 0.625rem;
+  cursor: pointer;
 }
 
 .user-settings {
@@ -75,4 +76,8 @@
   grid-template-columns: 40% 60%;
   gap: 10px;
   width: 100%;
+
+  input {
+    min-width: 200px;
+  }
 }

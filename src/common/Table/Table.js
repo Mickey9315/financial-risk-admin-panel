@@ -3,7 +3,7 @@ import './Table.scss';
 import PropTypes from 'prop-types';
 
 const Table = props => {
-  const { align, valign, headers, data } = props;
+  const { align, valign, headers, headerClass, data,rowClass, recordSelected } = props;
   const [showActionMenu, setShowActionMenu] = React.useState(false);
   const onClickAction = () => setShowActionMenu(true);
 
@@ -12,14 +12,14 @@ const Table = props => {
       <thead>
         {headers.length > 0 &&
           headers.map(heading => (
-            <th align={align} valign={valign}>
+            <th align={align} valign={valign} className={headerClass}>
               {heading.label}
             </th>
           ))}
       </thead>
       <tbody>
         {data.map(e => (
-          <tr>
+          <tr onClick={recordSelected} className={rowClass}>
             {Object.entries(e).map(([key, value]) =>
               key !== 'id' ? <td align={align}>{value}</td> : null
             )}
@@ -52,14 +52,20 @@ Table.propTypes = {
   align: PropTypes.oneOf(['left', 'center', 'right']),
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   headers: PropTypes.array,
+  headerClass: PropTypes.string,
   data: PropTypes.array,
+  recordSelected: PropTypes.func,
+  rowClass: PropTypes.string,
 };
 
 Table.defaultProps = {
   align: 'left',
   valign: 'left',
   headers: [],
+  headerClass: '',
+  rowClass: '',
   data: [],
+  recordSelected: '',
 };
 
 export default Table;

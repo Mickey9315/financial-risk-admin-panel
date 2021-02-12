@@ -19,9 +19,10 @@ Button.propTypes = {
     'primary',
     'secondary',
     'success',
-    'background-color',
+    'primary-1',
     'outlined-primary',
     'outlined-secondary',
+    'outlined-red',
   ]).isRequired,
   className: PropTypes.string,
 };

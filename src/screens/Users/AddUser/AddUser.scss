@@ -1,31 +1,5 @@
 @import "../../../index";
 
-.breadcrumb-button-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.buttons-row {
-  display: flex;
-  align-items: center;
-
-  button {
-    margin-left: 10px;
-  }
-}
-
-.add-user-detail-container {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  margin: 15px 0;
-  padding: 10px 20px;
-  font: $sub-text;
-  background-color: white;
-  border-radius: 10px;
-}
-
 .add-user-detail {
   display: flex;
   align-items: center;
@@ -46,6 +20,7 @@
   display: -ms-grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 200px));
   gap: 15px;
+  margin-top: 15px;
 }
 
 .module {

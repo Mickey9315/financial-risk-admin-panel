@@ -19,3 +19,7 @@ export const USER_MANAGEMENT_URLS = {
   UPDATE_USER_COLUMN_NAME_LIST_URL: `${BASE_URL}rp/user/column-name/`,
   USER_LIST_BY_FILTER_URL: `${BASE_URL}rp/user/filter/`,
 };
+
+export const CLIENT_URLS = {
+  CLIENT_LIST_URL: `${BASE_URL}rp/client`,
+};

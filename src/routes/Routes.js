@@ -8,6 +8,8 @@ import ResetPassword from '../screens/auth/resetPassword/ResetPassword';
 import VerifyOtp from '../screens/auth/otpScreen/VerifyOtp';
 import UserList from '../screens/Users/UserList/UserList';
 import AddUser from '../screens/Users/AddUser/AddUser';
+import ClientList from '../screens/Clients/ClientList/ClientList';
+import ViewClient from '../screens/Clients/ViewClient/ViewClient';
 
 function Routes() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -37,6 +39,8 @@ function Routes() {
         <Route exact path="/verify-otp" component={VerifyOtp} />
         <Route exact path="/users" component={UserList} />
         <Route exact path="/addUser" component={AddUser} />
+        <Route exact path="/clients" component={ClientList} />
+        <Route exact path="/viewClient" component={ViewClient} />
         {/* </> */}
         {/* )} */}
       </Switch>

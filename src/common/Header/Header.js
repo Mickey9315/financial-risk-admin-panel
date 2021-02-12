@@ -73,7 +73,7 @@ const Header = () => {
   const changePasswordBtns = [
     {
       title: 'Close',
-      buttonType: 'background-color',
+      buttonType: 'primary-1',
       onClick: onCloseChangePasswordClick,
     },
     { title: 'Save', buttonType: 'primary', onClick: onChangePasswordClick },

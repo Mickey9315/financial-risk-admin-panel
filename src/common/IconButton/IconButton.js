@@ -19,9 +19,12 @@ IconButton.propTypes = {
   buttonType: PropTypes.oneOf([
     'primary',
     'secondary',
-    'outlined-bg',
+    'success',
+    'primary-1',
     'outlined-primary',
     'outlined-secondary',
+    'outlined-red',
+    'outlined-bg',
   ]).isRequired,
   className: PropTypes.string,
   iconColor: PropTypes.string,
