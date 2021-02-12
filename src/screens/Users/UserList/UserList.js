@@ -19,7 +19,6 @@ import {
 } from '../redux/UserManagementAction';
 import Modal from '../../../common/Modal/Modal';
 import Select from '../../../common/Select/Select';
-import Checkbox from '../../../common/Checkbox/Checkbox';
 import { USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -264,48 +263,13 @@ const UserList = () => {
             </div>
           </Modal>
         )}
-        {customFieldModal && (
-          <Modal
-            headerIcon="format_line_spacing"
-            header="Custom Fields"
-            buttons={customFieldsModalButtons}
-            className="custom-field-modal"
-          >
-            <div className="custom-field-content">
-              <div>
-                <div className="custom-field-title">Default Fields</div>
-                {defaultFields.map(data => (
-                  <Checkbox
-                    title={data.label}
-                    name={data.name}
-                    checked={data.isChecked}
-                    onChange={e =>
-                      onChangeSelectedColumn('defaultFields', data.name, e.target.checked)
-                    }
-                  />
-                ))}
-              </div>
-              <div>
-                <div className="custom-field-title">Custom Fields</div>
-                {customFields.map(data => (
-                  <Checkbox
-                    title={data.label}
-                    checked={data.isChecked}
-                    onChange={e =>
-                      onChangeSelectedColumn('customFields', data.name, e.target.checked)
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-          </Modal>
-        )}
       </Dashboard>
       {customFieldModal && (
         <CustomFieldModal
           defaultFields={defaultFields}
           customFields={customFields}
-          toggleCustomField={toggleFilterModal}
+          onChangeSelectedColumn={onChangeSelectedColumn}
+          buttons={customFieldsModalButtons}
         />
       )}
     </>

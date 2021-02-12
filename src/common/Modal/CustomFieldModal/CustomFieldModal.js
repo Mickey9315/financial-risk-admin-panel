@@ -5,31 +5,35 @@ import Modal from '../Modal';
 import Checkbox from '../../Checkbox/Checkbox';
 
 const CustomFieldModal = props => {
-  const { defaultFields, customFields, toggleCustomField } = props;
+  const { defaultFields, customFields, buttons, onChangeSelectedColumn } = props;
 
-  const customFieldsModalButtons = [
-    { title: 'Reset Defaults', buttonType: 'outlined-primary' },
-    { title: 'Close', buttonType: 'primary-1', onClick: toggleCustomField },
-    { title: 'Save', buttonType: 'primary' },
-  ];
   return (
     <Modal
       headerIcon="format_line_spacing"
       header="Custom Fields"
-      buttons={customFieldsModalButtons}
+      buttons={buttons}
       className="custom-field-modal"
     >
       <div className="custom-field-content">
         <div>
           <div className="custom-field-title">Default Fields</div>
-          {defaultFields.map(e => (
-            <Checkbox title={e} />
+          {defaultFields.map(data => (
+            <Checkbox
+              title={data.label}
+              name={data.name}
+              checked={data.isChecked}
+              onChange={e => onChangeSelectedColumn('defaultFields', data.name, e.target.checked)}
+            />
           ))}
         </div>
         <div>
           <div className="custom-field-title">Custom Fields</div>
-          {customFields.map(e => (
-            <Checkbox title={e} />
+          {customFields.map(data => (
+            <Checkbox
+              title={data.label}
+              checked={data.isChecked}
+              onChange={e => onChangeSelectedColumn('customFields', data.name, e.target.checked)}
+            />
           ))}
         </div>
       </div>
@@ -40,13 +44,15 @@ const CustomFieldModal = props => {
 CustomFieldModal.propTypes = {
   customFields: PropTypes.array,
   defaultFields: PropTypes.array,
-  toggleCustomField: PropTypes.any,
+  buttons: PropTypes.array,
+  onChangeSelectedColumn: PropTypes.func,
 };
 
 CustomFieldModal.defaultProps = {
   customFields: [],
   defaultFields: [],
-  toggleCustomField: '',
+  buttons: [],
+  onChangeSelectedColumn: () => {},
 };
 
 export default CustomFieldModal;
