@@ -1,4 +1,4 @@
-import { errorNotification } from '../../../common/Toast';
+import { errorNotification, successNotification } from '../../../common/Toast';
 import UserManagementApiService from '../services/UserManagementApiService';
 import {
   USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
@@ -68,6 +68,46 @@ export const getUserColumnListName = () => {
           type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const saveUserColumnListName = ({ userColumnList = {}, isReset = false }) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+      };
+
+      if (!isReset) {
+        const defaultColumns = userColumnList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = userColumnList.customFields.filter(e => e.isChecked).map(e => e.name);
+        data = {
+          isReset: false,
+          columns: [...defaultColumns, ...customFields],
+        };
+      }
+
+      const response = await UserManagementApiService.updateUserColumnListName(data);
+
+      if (response && response.data && response.data.status === 'SUCCESS') {
+        dispatch(getUserManagementList());
+        successNotification('Columns updated successfully.');
       }
     } catch (e) {
       if (e.response && e.response.data) {
