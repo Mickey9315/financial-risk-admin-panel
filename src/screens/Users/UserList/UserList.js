@@ -180,7 +180,7 @@ const UserList = () => {
   );
 
   const openAddUser = () => {
-    history.push('/addUser');
+    history.push('/addUser/add');
   };
 
   const onChangeSelectedColumn = (type, name, value) => {
