@@ -73,7 +73,7 @@ export const selectedUserData = (state = null, action) => {
 export const organizationModulesList = (state = [], action) => {
   switch (action.type) {
     case ORGANISATION_MODULE_REDUX_CONSTANTS.GET_ORGANISATION_MODULE_REDUX_ACTION:
-      return action.data.filter(e => !e.isDefault);
+      return action.data;
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
