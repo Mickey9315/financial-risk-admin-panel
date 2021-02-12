@@ -135,6 +135,22 @@ export const changeUserColumnListStatus = data => {
   };
 };
 
+export const setNewUserInitialStates = moduleAccess => {
+  const data = {
+    name: '',
+    role: '',
+    email: '',
+    contactNumber: '',
+    moduleAccess,
+  };
+  return async dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
+      data,
+    });
+  };
+};
+
 export const getSelectedUserData = id => {
   return async dispatch => {
     try {
@@ -191,6 +207,15 @@ export const changeUserData = data => {
   return async dispatch => {
     dispatch({
       type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION,
+      data,
+    });
+  };
+};
+
+export const changeUserManageAccess = data => {
+  return async dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_CHANGE_MANAGE_ACCESS_USER_ACTION,
       data,
     });
   };
