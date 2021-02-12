@@ -186,3 +186,12 @@ export const getAllOrganisationModulesList = () => {
     }
   };
 };
+
+export const changeUserData = data => {
+  return async dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION,
+      data,
+    });
+  };
+};
