@@ -1,4 +1,5 @@
 export const USER_ROLES = [
+  { label: 'Select', value: '' },
   { label: 'Risk Analyst', value: 'riskAnalyst' },
   { label: 'Service Manager', value: 'serviceManager' },
   { label: 'Super Admin', value: 'superAdmin' },
