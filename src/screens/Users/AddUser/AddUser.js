@@ -16,6 +16,10 @@ const AddUser = () => {
   const allOrganisationList = useSelector(({ organizationModulesList }) => organizationModulesList);
   const selectedUser = useSelector(({ selectedUserData }) => selectedUserData);
   // const { id } = useParams();
+  const filteredOrganisationList = useMemo(() => allOrganisationList.filter(e => !e.isDefault), [
+    allOrganisationList,
+  ]);
+
   useEffect(() => {
     dispatch(getAllOrganisationModulesList());
   }, []);
@@ -106,7 +110,7 @@ const AddUser = () => {
         </div>
       </div>
       <div className="module-container">
-        {allOrganisationList.map(module => (
+        {filteredOrganisationList.map(module => (
           <div className="module">
             <div className="module-title">{module.label}</div>
             {USER_MODULE_ACCESS.map(access => (
