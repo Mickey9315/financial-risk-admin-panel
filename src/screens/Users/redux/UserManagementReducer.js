@@ -61,7 +61,34 @@ export const selectedUserData = (state = null, action) => {
         ...state,
         [`${action.data.name}`]: action.data.value,
       };
+    case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_CHANGE_MANAGE_ACCESS_USER_ACTION:
+      if (state && state.moduleAccess) {
+        let moduleAccess = [...state.moduleAccess];
+        moduleAccess = moduleAccess.map(e => {
+          if (e.name === action.data.name) {
+            const accessTypes = [...e.accessTypes];
 
+            if (accessTypes.includes(action.data.value)) {
+              accessTypes.filter(f => f !== action.data.value);
+            } else {
+              accessTypes.push(action.data.value);
+            }
+            return {
+              ...e,
+              accessTypes,
+            };
+          }
+          return e;
+        });
+        return {
+          ...state,
+          moduleAccess,
+        };
+      }
+      return {
+        ...state,
+        moduleAccess: [],
+      };
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
 
