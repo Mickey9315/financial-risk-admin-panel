@@ -1,5 +1,6 @@
 import HeaderApiService from '../services/HeaderApiService';
 import { errorNotification, successNotification } from '../../Toast';
+import { clearAuthToken } from '../../../helpers/LocalStorageHelper';
 
 export const changePassword = async (oldPassword, newPassword) => {
   try {
@@ -38,6 +39,7 @@ export const logoutUser = async () => {
     const response = await HeaderApiService.logoutUser();
 
     if (response.data.status === 'SUCCESS') {
+      clearAuthToken();
       successNotification('Logged out successfully.');
     }
   } catch (e) {
