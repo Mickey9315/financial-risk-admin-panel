@@ -1,13 +1,18 @@
 import React, { useEffect, useMemo } from 'react';
 import './AddUser.scss';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Dashboard from '../../../common/Dashboard/Dashboard';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Select from '../../../common/Select/Select';
 import Checkbox from '../../../common/Checkbox/Checkbox';
-import { changeUserData, getAllOrganisationModulesList } from '../redux/UserManagementAction';
+import {
+  changeUserData,
+  changeUserManageAccess,
+  getAllOrganisationModulesList,
+  setNewUserInitialStates,
+} from '../redux/UserManagementAction';
 import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
 
 const AddUser = () => {
@@ -15,14 +20,26 @@ const AddUser = () => {
   const dispatch = useDispatch();
   const allOrganisationList = useSelector(({ organizationModulesList }) => organizationModulesList);
   const selectedUser = useSelector(({ selectedUserData }) => selectedUserData);
-  // const { id } = useParams();
-  const filteredOrganisationList = useMemo(() => allOrganisationList.filter(e => !e.isDefault), [
-    allOrganisationList,
-  ]);
+  const { id } = useParams();
+  const filteredOrganisationList = useMemo(
+    () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) || [],
+    [selectedUser]
+  );
 
   useEffect(() => {
     dispatch(getAllOrganisationModulesList());
   }, []);
+
+  useEffect(() => {
+    if (
+      id === 'add' &&
+      selectedUser === null &&
+      allOrganisationList &&
+      allOrganisationList.length !== 0
+    ) {
+      dispatch(setNewUserInitialStates(allOrganisationList));
+    }
+  }, [selectedUser, allOrganisationList]);
 
   const backToUser = () => {
     history.replace('/users');
@@ -46,6 +63,10 @@ const AddUser = () => {
     // eslint-disable-next-line no-shadow
     const { name, value } = e.target;
     dispatch(changeUserData({ name, value }));
+  };
+
+  const onChangeUserAccess = (module, value) => {
+    dispatch(changeUserManageAccess({ name: module, value }));
   };
 
   return (
@@ -118,7 +139,7 @@ const AddUser = () => {
                 title={access.label}
                 name={access.value}
                 checked={module.accessTypes.includes(access.value)}
-                onChange={() => {}}
+                onChange={() => onChangeUserAccess(module.name, access.value)}
               />
             ))}
           </div>
