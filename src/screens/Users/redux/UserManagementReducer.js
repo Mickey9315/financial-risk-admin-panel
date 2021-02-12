@@ -2,6 +2,7 @@
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import {
   USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  USER_MANAGEMENT_CRUD_REDUX_CONSTANTS,
   USER_MANAGEMENT_REDUX_CONSTANTS,
 } from './UserManagementReduxConstants';
 
@@ -41,6 +42,19 @@ export const userManagementColumnList = (state = null, action) => {
       );
 
       return temp;
+
+    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
+      return null;
+
+    default:
+      return state;
+  }
+};
+
+export const selectedUserData = (state = null, action) => {
+  switch (action.type) {
+    case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION:
+      return action.data;
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
