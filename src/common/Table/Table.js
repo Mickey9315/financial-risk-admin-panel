@@ -3,7 +3,7 @@ import './Table.scss';
 import PropTypes from 'prop-types';
 
 const Table = props => {
-  const { align, valign, headers, headerClass, data,rowClass, recordSelected } = props;
+  const { align, valign, headers, headerClass, data, rowClass, recordSelected } = props;
   const [showActionMenu, setShowActionMenu] = React.useState(false);
   const onClickAction = () => setShowActionMenu(true);
 
