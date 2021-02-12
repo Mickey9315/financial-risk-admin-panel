@@ -2,6 +2,7 @@ import { errorNotification, successNotification } from '../../../common/Toast';
 import UserManagementApiService from '../services/UserManagementApiService';
 import {
   USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  USER_MANAGEMENT_CRUD_REDUX_CONSTANTS,
   USER_MANAGEMENT_REDUX_CONSTANTS,
 } from './UserManagementReduxConstants';
 
@@ -130,5 +131,31 @@ export const changeUserColumnListStatus = data => {
       type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_USER_MANAGEMENT_COLUMN_LIST_ACTION,
       data,
     });
+  };
+};
+
+export const getSelectedUserData = id => {
+  return async dispatch => {
+    try {
+      const response = await UserManagementApiService.getSelectedUserData(id);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
   };
 };
