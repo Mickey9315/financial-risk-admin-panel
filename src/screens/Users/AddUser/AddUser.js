@@ -8,6 +8,7 @@ import Input from '../../../common/Input/Input';
 import Select from '../../../common/Select/Select';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import {
+  addNewUser,
   changeUserData,
   changeUserManageAccess,
   getAllOrganisationModulesList,
@@ -69,6 +70,15 @@ const AddUser = () => {
     dispatch(changeUserManageAccess({ name: module, value }));
   };
 
+  const onClickAddUser = async () => {
+    try {
+      await dispatch(addNewUser(selectedUser));
+      backToUser();
+    } catch (e) {
+      /**/
+    }
+  };
+
   return (
     <Dashboard>
       <div className="breadcrumb-button-row">
@@ -79,7 +89,7 @@ const AddUser = () => {
         </div>
         <div className="buttons-row">
           <Button buttonType="primary-1" title="Close" onClick={backToUser} />
-          <Button buttonType="primary" title="Save" />
+          <Button buttonType="primary" title="Save" onClick={onClickAddUser} />
         </div>
       </div>
 
