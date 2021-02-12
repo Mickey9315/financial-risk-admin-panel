@@ -1,6 +1,7 @@
 import { errorNotification, successNotification } from '../../../common/Toast';
 import UserManagementApiService from '../services/UserManagementApiService';
 import {
+  ORGANISATION_MODULE_REDUX_CONSTANTS,
   USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
   USER_MANAGEMENT_CRUD_REDUX_CONSTANTS,
   USER_MANAGEMENT_REDUX_CONSTANTS,
@@ -142,6 +143,32 @@ export const getSelectedUserData = id => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const getAllOrganisationModulesList = () => {
+  return async dispatch => {
+    try {
+      const response = await UserManagementApiService.getAllOrganisationModuleList();
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: ORGANISATION_MODULE_REDUX_CONSTANTS.GET_ORGANISATION_MODULE_REDUX_ACTION,
           data: response.data.data,
         });
       }
