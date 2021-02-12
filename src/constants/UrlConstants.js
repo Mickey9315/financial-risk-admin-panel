@@ -21,6 +21,10 @@ export const USER_MANAGEMENT_URLS = {
   USER_LIST_BY_FILTER_URL: `${BASE_URL}rp/user/filter/`,
 };
 
+export const ORGANISATION_MODULE_URLS = {
+  GET_ORGANIZATION_MODULE_LIST_URL: `${BASE_URL}rp/organization/module`,
+};
+
 export const CLIENT_URLS = {
   CLIENT_LIST_URL: `${BASE_URL}rp/client`,
 };
