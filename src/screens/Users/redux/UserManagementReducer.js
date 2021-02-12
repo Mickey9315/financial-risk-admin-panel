@@ -22,7 +22,7 @@ export const userManagementList = (state = initialUserManagementListState, actio
   }
 };
 
-export const userManagementColumnList = (state = null, action) => {
+export const userManagementColumnList = (state = [], action) => {
   switch (action.type) {
     case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION:
       return action.data;
@@ -65,7 +65,7 @@ export const selectedUserData = (state = null, action) => {
   }
 };
 
-export const organizationModulesList = (state = null, action) => {
+export const organizationModulesList = (state = [], action) => {
   switch (action.type) {
     case ORGANISATION_MODULE_REDUX_CONSTANTS.GET_ORGANISATION_MODULE_REDUX_ACTION:
       return action.data;
