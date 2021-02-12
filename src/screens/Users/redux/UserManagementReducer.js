@@ -56,6 +56,11 @@ export const selectedUserData = (state = null, action) => {
   switch (action.type) {
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION:
       return action.data;
+    case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION:
+      return {
+        ...state,
+        [`${action.data.name}`]: action.data.value,
+      };
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
