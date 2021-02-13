@@ -14,6 +14,7 @@ import {
   getAllOrganisationModulesList,
   getSelectedUserData,
   setNewUserInitialStates,
+  updateUserDetails,
 } from '../redux/UserManagementAction';
 import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
 
@@ -31,15 +32,19 @@ const AddUser = () => {
 
   useEffect(() => {
     dispatch(getAllOrganisationModulesList());
+    if (action !== 'add' && id) {
+      dispatch(getSelectedUserData(id));
+    }
   }, []);
 
   useEffect(() => {
-    if (action === 'add') {
-      if (selectedUser === null && allOrganisationList && allOrganisationList.length !== 0) {
-        dispatch(setNewUserInitialStates(allOrganisationList));
-      }
-    } else {
-      dispatch(getSelectedUserData(id));
+    if (
+      action === 'add' &&
+      selectedUser === null &&
+      allOrganisationList &&
+      allOrganisationList.length !== 0
+    ) {
+      dispatch(setNewUserInitialStates(allOrganisationList));
     }
   }, [selectedUser, allOrganisationList]);
 
@@ -73,7 +78,11 @@ const AddUser = () => {
 
   const onClickAddUser = async () => {
     try {
-      await dispatch(addNewUser(selectedUser));
+      if (action === 'add') {
+        await dispatch(addNewUser(selectedUser));
+      } else if (action === 'edit') {
+        await dispatch(updateUserDetails(id, selectedUser));
+      }
       backToUser();
     } catch (e) {
       /**/
