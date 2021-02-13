@@ -54,8 +54,8 @@ Table.propTypes = {
   headers: PropTypes.array,
   headerClass: PropTypes.string,
   data: PropTypes.array,
-  recordSelected: PropTypes.func,
   rowClass: PropTypes.string,
+  recordSelected: PropTypes.func,
 };
 
 Table.defaultProps = {
@@ -63,9 +63,9 @@ Table.defaultProps = {
   valign: 'left',
   headers: [],
   headerClass: '',
-  rowClass: '',
   data: [],
-  recordSelected: '',
+  rowClass: '',
+  recordSelected: () => {},
 };
 
 export default Table;
