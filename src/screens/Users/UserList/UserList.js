@@ -196,7 +196,7 @@ const UserList = () => {
   );
 
   const openAddUser = useCallback(() => {
-    history.push('/user/add');
+    history.push('/user/add/new');
   }, [history]);
 
   const onChangeSelectedColumn = useCallback(
