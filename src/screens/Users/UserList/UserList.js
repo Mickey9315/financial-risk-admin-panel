@@ -207,6 +207,10 @@ const UserList = () => {
     [dispatch]
   );
 
+  const onSelectUserRecord = id => {
+    history.replace(`/user/view/${id}`);
+  };
+
   useEffect(() => {
     getUserManagementByFilter();
     dispatch(getUserColumnListName());
@@ -234,7 +238,13 @@ const UserList = () => {
           </div>
         </div>
         <div className="common-list-container">
-          <Table align="left" valign="center" data={tableData} headers={headers} />
+          <Table
+            align="left"
+            valign="center"
+            data={tableData}
+            headers={headers}
+            recordSelected={onSelectUserRecord}
+          />
         </div>
         <Pagination
           className="common-list-pagination"
