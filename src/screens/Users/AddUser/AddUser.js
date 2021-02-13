@@ -23,7 +23,7 @@ const AddUser = () => {
   const allOrganisationList = useSelector(({ organizationModulesList }) => organizationModulesList);
   const selectedUser = useSelector(({ selectedUserData }) => selectedUserData);
   const { action, id } = useParams();
-  console.log(action);
+
   const filteredOrganisationList = useMemo(
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) || [],
     [selectedUser]
