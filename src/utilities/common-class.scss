@@ -141,3 +141,10 @@
   color: $alert-blue;
   background-color: $alert-blue-light;
 }
+
+.view-only-mode-overlay{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
