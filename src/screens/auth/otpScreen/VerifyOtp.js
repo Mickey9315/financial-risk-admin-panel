@@ -25,7 +25,7 @@ function VerifyOtp() {
       try {
         const token = await verifyOtp(email.trim(), otp.trim());
         if (token) {
-          history.push(`/reset-password?token=${token}`);
+          history.replace(`/reset-password?token=${token}`);
         }
       } catch (e) {
         /**/
