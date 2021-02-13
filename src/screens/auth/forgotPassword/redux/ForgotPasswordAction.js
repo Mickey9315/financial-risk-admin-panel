@@ -1,6 +1,5 @@
 import AuthApiService from '../../services/AuthApiService';
 import { errorNotification, successNotification } from '../../../../common/Toast';
-import { SESSION_VARIABLES } from '../../../../constants/SessionStorage';
 
 export const forgotPassword = async email => {
   try {
@@ -8,8 +7,6 @@ export const forgotPassword = async email => {
     const response = await AuthApiService.forgotPassword(data);
 
     if (response.data.status === 'SUCCESS') {
-      SESSION_VARIABLES.USER_EMAIL = email;
-
       successNotification('OTP has been sent successfully to your registered email address.');
     }
   } catch (e) {
