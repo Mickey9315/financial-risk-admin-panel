@@ -82,7 +82,7 @@ export const saveUserColumnListName = ({ userColumnList = {}, isReset = false })
       const response = await UserManagementApiService.updateUserColumnListName(data);
 
       if (response && response.data && response.data.status === 'SUCCESS') {
-        dispatch(getUserManagementList());
+        dispatch(getUserManagementListByFilter());
         successNotification('Columns updated successfully.');
       }
     } catch (e) {
@@ -202,7 +202,7 @@ export const addNewUser = data => {
 
       if (response.data.status === 'SUCCESS') {
         successNotification('Added user successfully.');
-        dispatch(getUserManagementList());
+        dispatch(getUserManagementListByFilter());
       }
     } catch (e) {
       if (e.response && e.response.data) {
