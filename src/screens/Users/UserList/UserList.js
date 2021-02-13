@@ -98,7 +98,7 @@ const UserList = () => {
   const tableData = useMemo(() => {
     return docs.map(e => {
       const finalObj = {
-        id: e._id,
+        id: e.id,
       };
       headers.forEach(f => {
         finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
