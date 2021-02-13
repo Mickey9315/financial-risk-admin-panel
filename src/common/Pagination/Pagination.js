@@ -4,18 +4,7 @@ import PropTypes from 'prop-types';
 import Select from '../Select/Select';
 
 const Pagination = props => {
-  const {
-    total,
-    limit,
-    pages,
-    page,
-    className,
-    nextClick,
-    prevClick,
-    firstClick,
-    lastClick,
-    onSelectLimit,
-  } = props;
+  const { total, limit, pages, page, className, pageActionClick, onSelectLimit } = props;
   const noPerPage = [
     { label: '5', value: 5 },
     { label: '10', value: 10 },
@@ -36,10 +25,10 @@ const Pagination = props => {
     total,
   ]);
 
-  const onNextClick = () => (page < pages ? nextClick(page + 1) : null);
-  const onPrevClick = () => (page > 1 ? prevClick(page - 1) : null);
-  const onFirstClick = () => firstClick(1);
-  const onLastClick = () => lastClick(pages);
+  const onNextClick = () => (page < pages ? pageActionClick(page + 1) : null);
+  const onPrevClick = () => (page > 1 ? pageActionClick(page - 1) : null);
+  const onFirstClick = () => pageActionClick(1);
+  const onLastClick = () => pageActionClick(pages);
   const onChangeLimit = e => {
     setRecordLimit(e.target.value);
     onSelectLimit(e.target.value);
@@ -100,10 +89,7 @@ Pagination.propTypes = {
   limit: PropTypes.number,
   pages: PropTypes.number,
   page: PropTypes.number,
-  nextClick: PropTypes.func,
-  prevClick: PropTypes.func,
-  firstClick: PropTypes.func,
-  lastClick: PropTypes.func,
+  pageActionClick: PropTypes.func,
   onSelectLimit: PropTypes.func,
 };
 
@@ -113,10 +99,7 @@ Pagination.defaultProps = {
   limit: 0,
   pages: 0,
   page: 0,
-  nextClick: null,
-  prevClick: null,
-  firstClick: null,
-  lastClick: null,
+  pageActionClick: null,
   onSelectLimit: null,
 };
 
