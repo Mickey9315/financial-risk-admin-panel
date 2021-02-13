@@ -1,18 +1,18 @@
 import AuthApiService from '../../services/AuthApiService';
 import { errorNotification, successNotification } from '../../../../common/Toast';
-import { SESSION_VARIABLES } from '../../../../constants/SessionStorage';
 
-export const verifyOtp = async verificationOtp => {
+export const verifyOtp = async (email, verificationOtp) => {
   try {
-    const data = { email: SESSION_VARIABLES.USER_EMAIL, verificationOtp };
+    const data = { email, verificationOtp };
     const response = await AuthApiService.verifyOtp(data);
 
     if (response.data.status === 'SUCCESS') {
       const { token } = response.data;
-      SESSION_VARIABLES.RESET_PASSWORD_TOKEN = token;
-
       successNotification('OTP verified successfully.');
+      return token;
     }
+
+    return null;
   } catch (e) {
     if (e.response && e.response.data) {
       if (e.response.data.status === undefined) {
@@ -40,12 +40,13 @@ export const verifyOtp = async verificationOtp => {
       }
       throw Error();
     }
+    return null;
   }
 };
 
-export const resendOtp = async () => {
+export const resendOtp = async email => {
   try {
-    const data = { email: SESSION_VARIABLES.USER_EMAIL };
+    const data = { email };
     const response = await AuthApiService.resentOtp(data);
 
     if (response.data.status === 'SUCCESS') {
