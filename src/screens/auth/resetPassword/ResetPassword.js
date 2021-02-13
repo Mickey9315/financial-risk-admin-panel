@@ -7,12 +7,14 @@ import BigInput from '../../../common/BigInput/BigInput';
 import { replaceHiddenCharacters } from '../../../helpers/ValidationHelper';
 import { errorNotification } from '../../../common/Toast';
 import { resetPassword } from './redux/ResetPasswordAction';
+import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 
 function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const history = useHistory();
+  const { token } = useQueryParams();
 
   const onChangePassword = e => {
     const changedPassword = e.target.value;
@@ -35,7 +37,7 @@ function ResetPassword() {
       errorNotification('Both passwords should match');
     } else {
       try {
-        await resetPassword(password.toString().trim());
+        await resetPassword(token, password.toString().trim());
         history.replace('/login');
       } catch (e) {
         /**/
