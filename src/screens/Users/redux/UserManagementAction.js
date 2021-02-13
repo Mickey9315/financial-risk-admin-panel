@@ -25,7 +25,6 @@ export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) =
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
-          // TODO handle cases
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();
@@ -222,7 +221,8 @@ export const addNewUser = data => {
 export const updateUserDetails = (id, data) => {
   return async dispatch => {
     try {
-      const response = await UserManagementApiService.updateUser(id, data);
+      const finalData = { ...data, _id: undefined, email: undefined };
+      const response = await UserManagementApiService.updateUser(id, finalData);
 
       if (response.data.status === 'SUCCESS') {
         successNotification('User details updated successfully.');
