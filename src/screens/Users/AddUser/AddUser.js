@@ -12,6 +12,7 @@ import {
   changeUserData,
   changeUserManageAccess,
   getAllOrganisationModulesList,
+  getSelectedUserData,
   setNewUserInitialStates,
 } from '../redux/UserManagementAction';
 import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
@@ -21,7 +22,8 @@ const AddUser = () => {
   const dispatch = useDispatch();
   const allOrganisationList = useSelector(({ organizationModulesList }) => organizationModulesList);
   const selectedUser = useSelector(({ selectedUserData }) => selectedUserData);
-  const { id } = useParams();
+  const { action, id } = useParams();
+  console.log(action);
   const filteredOrganisationList = useMemo(
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) || [],
     [selectedUser]
@@ -32,13 +34,12 @@ const AddUser = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      id === 'add' &&
-      selectedUser === null &&
-      allOrganisationList &&
-      allOrganisationList.length !== 0
-    ) {
-      dispatch(setNewUserInitialStates(allOrganisationList));
+    if (action === 'add') {
+      if (selectedUser === null && allOrganisationList && allOrganisationList.length !== 0) {
+        dispatch(setNewUserInitialStates(allOrganisationList));
+      }
+    } else {
+      dispatch(getSelectedUserData(id));
     }
   }, [selectedUser, allOrganisationList]);
 
