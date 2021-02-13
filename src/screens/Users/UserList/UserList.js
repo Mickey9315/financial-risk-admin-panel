@@ -150,7 +150,7 @@ const UserList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getUserManagementByFilter({}, toggleFilterModal);
+    getUserManagementByFilter({ page: 1 }, toggleFilterModal);
   }, [getUserManagementByFilter]);
 
   const filterModalButtons = useMemo(
