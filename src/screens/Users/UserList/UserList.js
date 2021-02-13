@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import './UserList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -13,7 +13,6 @@ import Pagination from '../../../common/Pagination/Pagination';
 import {
   changeUserColumnListStatus,
   getUserColumnListName,
-  getUserManagementList,
   getUserManagementListByFilter,
   saveUserColumnListName,
 } from '../redux/UserManagementAction';
@@ -24,7 +23,7 @@ import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 
 const initialFilterState = {
-  role: 'riskAnalyst',
+  role: '',
   startDate: null,
   endDate: null,
 };
@@ -55,23 +54,45 @@ const UserList = () => {
   const userColumnList = useSelector(({ userManagementColumnList }) => userManagementColumnList);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-
-  useEffect(() => {
-    dispatch(getUserManagementList());
-    dispatch(getUserColumnListName());
-  }, []);
-
+  const { role, startDate, endDate } = useMemo(() => filter, [filter]);
   const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
     userListWithPageData,
   ]);
 
-  const handleFilterChange = event => {
-    dispatchFilter({
-      type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-      name: event.target.name,
-      value: event.target.value,
-    });
-  };
+  const getUserManagementByFilter = useCallback(
+    (params = {}, cb) => {
+      if (moment(startDate).isAfter(endDate)) {
+        errorNotification('Please enter from date before to date');
+      } else if (moment(endDate).isBefore(startDate)) {
+        errorNotification('Please enter to date after from date');
+      } else {
+        const data = {
+          page: page || 1,
+          limit: limit || 15,
+          role: role && role.trim().length > 0 ? role : undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          ...params,
+        };
+        dispatch(getUserManagementListByFilter(data));
+        if (cb && typeof cb === 'function') {
+          cb();
+        }
+      }
+    },
+    [page, limit, role, startDate, endDate, filter]
+  );
+
+  const handleFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: event.target.name,
+        value: event.target.value,
+      });
+    },
+    [dispatchFilter]
+  );
 
   const tableData = useMemo(() => {
     return docs.map(e => {
@@ -86,107 +107,109 @@ const UserList = () => {
     });
   }, [docs]);
 
-  // const tableHeaders = useMemo(() => headers.map(header => header.label), [headers]);
+  const onSelectLimit = useCallback(
+    newLimit => {
+      getUserManagementByFilter({ page: 1, limit: newLimit });
+    },
+    [dispatch, getUserManagementByFilter]
+  );
 
-  const onSelectLimit = newLimit => {
-    dispatch(getUserManagementList({ page: 1, limit: newLimit }));
-  };
+  const pageActionClick = useCallback(
+    newPage => {
+      getUserManagementByFilter({ page: newPage, limit });
+    },
+    [dispatch, limit, getUserManagementByFilter]
+  );
 
-  const lastClick = newPage => {
-    dispatch(getUserManagementList({ page: newPage, limit }));
-  };
+  const handleStartDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'startDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
 
-  const firstClick = newPage => {
-    dispatch(getUserManagementList({ page: newPage, limit }));
-  };
+  const handleEndDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'endDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
 
-  const prevClick = newPage => {
-    dispatch(getUserManagementList({ page: newPage, limit }));
-  };
+  const [filterModal, setFilterModal] = useState(false);
+  const toggleFilterModal = useCallback(
+    value => setFilterModal(value !== undefined ? value : e => !e),
+    [setFilterModal]
+  );
 
-  const nextClick = newPage => {
-    dispatch(getUserManagementList({ page: newPage, limit }));
-  };
+  const onClickApplyFilter = useCallback(() => {
+    getUserManagementByFilter({}, toggleFilterModal);
+  }, [getUserManagementByFilter]);
 
-  const handleStartDateChange = date => {
-    dispatchFilter({
-      type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-      name: 'startDate',
-      value: date,
-    });
-  };
+  const filterModalButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
+    ],
+    [toggleFilterModal, onClickApplyFilter]
+  );
+  const [customFieldModal, setCustomFieldModal] = useState(false);
+  const toggleCustomField = useCallback(
+    value => setCustomFieldModal(value !== undefined ? value : e => !e),
+    [setCustomFieldModal]
+  );
 
-  const handleEndDateChange = date => {
-    dispatchFilter({
-      type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-      name: 'endDate',
-      value: date,
-    });
-  };
-
-  const [filterModal, setFilterModal] = React.useState(false);
-  const toggleFilterModal = () => setFilterModal(e => !e);
-
-  const { role, startDate, endDate } = filter;
-
-  const onClickApplyFilter = () => {
-    if (moment(startDate).isAfter(endDate)) {
-      errorNotification('Please enter from date before to date');
-    } else if (moment(endDate).isBefore(startDate)) {
-      errorNotification('Please enter to date after from date');
-    } else {
-      const data = {
-        page,
-        limit,
-        role: role || undefined,
-        startDate: startDate || undefined,
-        endDate: endDate || undefined,
-      };
-      dispatch(getUserManagementListByFilter(data));
-      toggleFilterModal();
-    }
-  };
-
-  const filterModalButtons = [
-    { title: 'Close', buttonType: 'primary-1', onClick: toggleFilterModal },
-    { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
-  ];
-  const [customFieldModal, setCustomFieldModal] = React.useState(false);
-  const toggleCustomField = () => setCustomFieldModal(e => !e);
-
-  const onClickSaveColumnSelection = async () => {
+  const onClickSaveColumnSelection = useCallback(async () => {
     await dispatch(saveUserColumnListName({ userColumnList }));
     toggleCustomField();
-  };
+  }, [dispatch, toggleCustomField, userColumnList]);
 
-  const onClickResetDefaultColumnSelection = async () => {
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveUserColumnListName({ isReset: true }));
     dispatch(getUserColumnListName());
     toggleCustomField();
-  };
+  }, [dispatch, toggleCustomField]);
 
-  const customFieldsModalButtons = [
-    {
-      title: 'Reset Defaults',
-      buttonType: 'outlined-primary',
-      onClick: onClickResetDefaultColumnSelection,
-    },
-    { title: 'Close', buttonType: 'primary-1', onClick: toggleCustomField },
-    { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
-  ];
+  const customFieldsModalButtons = useMemo(
+    () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: onClickResetDefaultColumnSelection,
+      },
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+    ],
+    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+  );
   const { defaultFields, customFields } = useMemo(
     () => userColumnList || { defaultFields: [], customFields: [] },
     [userColumnList]
   );
 
-  const openAddUser = () => {
+  const openAddUser = useCallback(() => {
     history.push('/addUser/add');
-  };
+  }, [history]);
 
-  const onChangeSelectedColumn = (type, name, value) => {
-    const data = { type, name, value };
-    dispatch(changeUserColumnListStatus(data));
-  };
+  const onChangeSelectedColumn = useCallback(
+    (type, name, value) => {
+      const data = { type, name, value };
+      dispatch(changeUserColumnListStatus(data));
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    getUserManagementByFilter();
+    dispatch(getUserColumnListName());
+  }, []);
 
   return (
     <>
@@ -198,13 +221,13 @@ const UserList = () => {
               buttonType="secondary"
               title="filter_list"
               className="mr-10"
-              onClick={toggleFilterModal}
+              onClick={() => toggleFilterModal()}
             />
             <IconButton
               buttonType="primary"
               title="format_line_spacing"
               className="mr-10"
-              onClick={toggleCustomField}
+              onClick={() => toggleCustomField()}
             />
             <Button title="Add User" buttonType="success" onClick={openAddUser} />
           </div>
@@ -218,10 +241,7 @@ const UserList = () => {
           pages={pages}
           page={page}
           limit={limit}
-          nextClick={nextClick}
-          prevClick={prevClick}
-          firstClick={firstClick}
-          lastClick={lastClick}
+          pageActionClick={pageActionClick}
           onSelectLimit={onSelectLimit}
         />
         {filterModal && (
