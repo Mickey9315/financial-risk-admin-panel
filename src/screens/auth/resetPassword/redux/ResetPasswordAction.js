@@ -1,15 +1,12 @@
 import AuthApiService from '../../services/AuthApiService';
 import { errorNotification, successNotification } from '../../../../common/Toast';
-import { SESSION_VARIABLES } from '../../../../constants/SessionStorage';
 
-export const resetPassword = async password => {
+export const resetPassword = async (token, password) => {
   try {
-    const data = { token: SESSION_VARIABLES.RESET_PASSWORD_TOKEN, password };
+    const data = { token, password };
     const response = await AuthApiService.resetPassword(data);
 
     if (response.data.status === 'SUCCESS') {
-      delete SESSION_VARIABLES.RESET_PASSWORD_TOKEN;
-
       successNotification('Password changed successfully.');
     }
   } catch (e) {
