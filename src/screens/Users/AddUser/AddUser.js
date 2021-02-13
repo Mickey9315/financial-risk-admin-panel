@@ -89,6 +89,12 @@ const AddUser = () => {
     }
   };
 
+  const editUserClick = () => {
+    history.replace(`/user/edit/${id}`);
+  };
+
+  const deleteUserClick = () => {};
+
   return (
     <Dashboard>
       <div className="breadcrumb-button-row">
@@ -98,11 +104,20 @@ const AddUser = () => {
           <span>View User</span>
         </div>
         <div className="buttons-row">
-          <Button buttonType="primary-1" title="Close" onClick={backToUser} />
-          <Button buttonType="primary" title="Save" onClick={onClickAddUser} />
+          {action === 'view' ? (
+            <>
+              <Button buttonType="primary-1" title="Edit" onClick={editUserClick} />
+              <Button buttonType="primary" title="Delete" onClick={deleteUserClick} />
+            </>
+          ) : (
+            <>
+              <Button buttonType="primary-1" title="Close" onClick={backToUser} />
+              <Button buttonType="primary" title="Save" onClick={onClickAddUser} />
+            </>
+          )}
         </div>
       </div>
-
+      {action === 'view' && <div className="view-only-mode-overlay" />}
       <div className="common-white-container">
         <div className="add-user-detail">
           <span className="font-primary">Name</span>
