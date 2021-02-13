@@ -21,6 +21,7 @@ import Select from '../../../common/Select/Select';
 import { USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
+import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
 
 const initialFilterState = {
   role: '',
@@ -100,7 +101,7 @@ const UserList = () => {
         id: e._id,
       };
       headers.forEach(f => {
-        finalObj[`${f.name}`] = e[`${f.name}`];
+        finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
       });
 
       return finalObj;
