@@ -27,7 +27,7 @@ function ForgotPassword() {
     else {
       try {
         await forgotPassword(email.trim());
-        history.push('/verify-otp');
+        history.push(`/verify-otp?email=${email}`);
       } catch (e) {
         /**/
       }
