@@ -19,7 +19,7 @@ const Table = props => {
       </thead>
       <tbody>
         {data.map(e => (
-          <tr onClick={recordSelected} className={rowClass}>
+          <tr onClick={() => recordSelected(e.id)} className={rowClass}>
             {Object.entries(e).map(([key, value]) =>
               key !== 'id' ? <td align={align}>{value}</td> : null
             )}
