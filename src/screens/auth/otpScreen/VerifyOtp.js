@@ -7,12 +7,12 @@ import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
 import { errorNotification } from '../../../common/Toast';
 import { resendOtp, verifyOtp } from './redux/VerifyOtpAction';
-import { SESSION_VARIABLES } from '../../../constants/SessionStorage';
+import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 
 function VerifyOtp() {
   const [otp, setOtp] = useState('');
-  // TODO handle redirect user when directly hit url
   const history = useHistory();
+  const { email } = useQueryParams();
 
   const onChangeOtp = e => {
     setOtp(e);
@@ -23,8 +23,10 @@ function VerifyOtp() {
     else if (otp.toString().trim().length !== 6) errorNotification('Please enter a valid otp');
     else {
       try {
-        await verifyOtp(otp.trim());
-        history.push('/reset-password');
+        const token = await verifyOtp(email.trim(), otp.trim());
+        if (token) {
+          history.push(`/reset-password?token=${token}`);
+        }
       } catch (e) {
         /**/
       }
@@ -32,8 +34,8 @@ function VerifyOtp() {
   };
 
   const resendOTP = async () => {
-    if (SESSION_VARIABLES.USER_EMAIL) {
-      await resendOtp();
+    if (email) {
+      await resendOtp(email);
     }
   };
 
@@ -45,7 +47,7 @@ function VerifyOtp() {
         prefixClass="login-input-icon"
         type="email"
         placeholder="Enter email or number"
-        value={SESSION_VARIABLES.USER_EMAIL}
+        value={email}
         disabled
       />
       <div className="login-field-name">Enter OTP</div>
