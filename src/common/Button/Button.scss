@@ -62,6 +62,16 @@
   border-color: $success-variant-color;
 }
 
+.danger-button {
+  background-color: $error-color;
+  border-color: $error-color;
+}
+
+.danger-button:hover {
+  background-color: $error-variant-color;
+  border-color: $error-variant-color;
+}
+
 .primary-1-button {
   background-color: $primary-color-1;
   color: $primary-color;

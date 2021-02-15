@@ -141,8 +141,8 @@ const AddUser = () => {
         <div className="buttons-row">
           {action === 'view' ? (
             <>
-              <Button buttonType="primary-1" title="Edit" onClick={editUserClick} />
-              <Button buttonType="primary" title="Delete" onClick={deleteUserClick} />
+              <Button buttonType="primary" title="Edit" onClick={editUserClick} />
+              <Button buttonType="danger" title="Delete" onClick={deleteUserClick} />
             </>
           ) : (
             <>

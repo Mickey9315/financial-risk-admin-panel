@@ -19,6 +19,7 @@ Button.propTypes = {
     'primary',
     'secondary',
     'success',
+    'danger',
     'primary-1',
     'outlined-primary',
     'outlined-secondary',
