@@ -19,6 +19,7 @@ import {
 import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
 import { MOBILE_NUMBER_REGEX } from '../../../constants/RegexConstants';
+import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 
 const AddUser = () => {
   const history = useHistory();
@@ -36,6 +37,11 @@ const AddUser = () => {
     dispatch(getAllOrganisationModulesList());
     if (action !== 'add' && id) {
       dispatch(getSelectedUserData(id));
+    } else {
+      dispatch({
+        type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
+        data: null,
+      });
     }
   }, []);
 
