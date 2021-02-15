@@ -66,6 +66,8 @@
     width: calc(100% - 70px);
     padding: 0 5px;
     flex: 1;
+    font: $subtitle $font-medium;
+    color: $field-color!important;
     border: none;
     outline: none;
   }

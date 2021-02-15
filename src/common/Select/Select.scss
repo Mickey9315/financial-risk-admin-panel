@@ -7,7 +7,8 @@
   height: 32px;
   min-width: 5rem;
   padding: 5px 10px;
-  font: $title $font-medium;
+  font: $subtitle $font-medium;
+  color: $field-color!important;
   color: $font-color;
   background-color: #ffffff;
   border: 0.063rem solid $border-color;
