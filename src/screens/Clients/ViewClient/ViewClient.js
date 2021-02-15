@@ -3,7 +3,6 @@ import './ViewClient.scss';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import Button from '../../../common/Button/Button';
-import Dashboard from '../../../common/Dashboard/Dashboard';
 import Input from '../../../common/Input/Input';
 import Select from '../../../common/Select/Select';
 import Tab from '../../../common/Tab/Tab';
@@ -38,7 +37,7 @@ const ViewClient = () => {
     'Notes',
   ];
   return (
-    <Dashboard>
+    <>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
           <span onClick={backToClient}>Client List</span>
@@ -102,7 +101,7 @@ const ViewClient = () => {
         {activeTabIndex === 7 && <DocumentsTab />}
         {activeTabIndex === 8 && <NotesTab />}
       </div>
-    </Dashboard>
+    </>
   );
 };
 

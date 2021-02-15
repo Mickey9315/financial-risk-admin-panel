@@ -128,7 +128,7 @@ const ClientList = () => {
     history.push('/viewClient');
   };
   return (
-    <Dashboard>
+    <>
       <div className="page-header">
         <div className="page-header-name">Client List</div>
         <div className="page-header-button-container">
@@ -224,7 +224,7 @@ const ClientList = () => {
           </div>
         </Modal>
       )}
-    </Dashboard>
+    </>
   );
 };
 

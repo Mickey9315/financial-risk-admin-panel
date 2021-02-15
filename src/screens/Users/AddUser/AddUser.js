@@ -109,7 +109,7 @@ const AddUser = () => {
     setClient({ selectedClient });
   };
   return (
-    <Dashboard>
+    <>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
           <span onClick={backToUser}>User List</span>
@@ -215,7 +215,7 @@ const AddUser = () => {
           </div>
         ))}
       </div>
-    </Dashboard>
+    </>
   );
 };
 

@@ -218,83 +218,81 @@ const UserList = () => {
 
   return (
     <>
-      <Dashboard>
-        <div className="page-header">
-          <div className="page-header-name">User List</div>
-          <div className="page-header-button-container">
-            <IconButton
-              buttonType="secondary"
-              title="filter_list"
-              className="mr-10"
-              onClick={() => toggleFilterModal()}
-            />
-            <IconButton
-              buttonType="primary"
-              title="format_line_spacing"
-              className="mr-10"
-              onClick={() => toggleCustomField()}
-            />
-            <Button title="Add User" buttonType="success" onClick={openAddUser} />
-          </div>
-        </div>
-        <div className="common-list-container">
-          <Table
-            align="left"
-            valign="center"
-            data={tableData}
-            headers={headers}
-            recordSelected={onSelectUserRecord}
+      <div className="page-header">
+        <div className="page-header-name">User List</div>
+        <div className="page-header-button-container">
+          <IconButton
+            buttonType="secondary"
+            title="filter_list"
+            className="mr-10"
+            onClick={() => toggleFilterModal()}
           />
+          <IconButton
+            buttonType="primary"
+            title="format_line_spacing"
+            className="mr-10"
+            onClick={() => toggleCustomField()}
+          />
+          <Button title="Add User" buttonType="success" onClick={openAddUser} />
         </div>
-        <Pagination
-          className="common-list-pagination"
-          total={total}
-          pages={pages}
-          page={page}
-          limit={limit}
-          pageActionClick={pageActionClick}
-          onSelectLimit={onSelectLimit}
+      </div>
+      <div className="common-list-container">
+        <Table
+          align="left"
+          valign="center"
+          data={tableData}
+          headers={headers}
+          recordSelected={onSelectUserRecord}
         />
-        {filterModal && (
-          <Modal
-            headerIcon="filter_list"
-            header="Filter"
-            buttons={filterModalButtons}
-            className="filter-modal"
-          >
-            <div className="filter-modal-row">
-              <div className="form-title">Role</div>
-              <Select
-                className="filter-select"
-                placeholder="Select"
-                name="role"
-                options={USER_ROLES}
-                value={role}
-                onChange={handleFilterChange}
+      </div>
+      <Pagination
+        className="common-list-pagination"
+        total={total}
+        pages={pages}
+        page={page}
+        limit={limit}
+        pageActionClick={pageActionClick}
+        onSelectLimit={onSelectLimit}
+      />
+      {filterModal && (
+        <Modal
+          headerIcon="filter_list"
+          header="Filter"
+          buttons={filterModalButtons}
+          className="filter-modal"
+        >
+          <div className="filter-modal-row">
+            <div className="form-title">Role</div>
+            <Select
+              className="filter-select"
+              placeholder="Select"
+              name="role"
+              options={USER_ROLES}
+              value={role}
+              onChange={handleFilterChange}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title">Date</div>
+            <div className="date-picker-container filter-date-picker-container mr-15">
+              <DatePicker
+                className="filter-date-picker"
+                selected={startDate}
+                onChange={handleStartDateChange}
               />
+              <span className="material-icons-round">event_available</span>
             </div>
-            <div className="filter-modal-row">
-              <div className="form-title">Date</div>
-              <div className="date-picker-container filter-date-picker-container mr-15">
-                <DatePicker
-                  className="filter-date-picker"
-                  selected={startDate}
-                  onChange={handleStartDateChange}
-                />
-                <span className="material-icons-round">event_available</span>
-              </div>
-              <div className="date-picker-container filter-date-picker-container">
-                <DatePicker
-                  className="filter-date-picker"
-                  selected={endDate}
-                  onChange={handleEndDateChange}
-                />
-                <span className="material-icons-round">event_available</span>
-              </div>
+            <div className="date-picker-container filter-date-picker-container">
+              <DatePicker
+                className="filter-date-picker"
+                selected={endDate}
+                onChange={handleEndDateChange}
+              />
+              <span className="material-icons-round">event_available</span>
             </div>
-          </Modal>
-        )}
-      </Dashboard>
+          </div>
+        </Modal>
+      )}
       {customFieldModal && (
         <CustomFieldModal
           defaultFields={defaultFields}
