@@ -11,6 +11,7 @@ import {
   addNewUser,
   changeUserData,
   changeUserManageAccess,
+  deleteUserDetails,
   getAllOrganisationModulesList,
   getSelectedUserData,
   setNewUserInitialStates,
@@ -116,7 +117,11 @@ const AddUser = () => {
     history.replace(`/user/edit/${id}`);
   };
 
-  const deleteUserClick = () => {};
+  const deleteUserClick = async () => {
+    await dispatch(deleteUserDetails(id));
+    backToUser();
+  };
+
   const clients = [
     { value: 'chocolate', label: 'Chocolate' },
     { value: 'strawberry', label: 'Strawberry' },
