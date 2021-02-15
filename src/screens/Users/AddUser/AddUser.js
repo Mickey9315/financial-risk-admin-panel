@@ -19,7 +19,7 @@ import {
 } from '../redux/UserManagementAction';
 import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
-import { MOBILE_NUMBER_REGEX } from '../../../constants/RegexConstants';
+import { EMAIL_ADDRESS_REGEX, NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 
 const AddUser = () => {
@@ -93,12 +93,12 @@ const AddUser = () => {
       errorNotification('Please enter name');
     } else if (!email || email.trim().length === 0) {
       errorNotification('Please enter email');
-    } else if (!contactNumber || contactNumber.trim().length === 0) {
-      errorNotification('Please enter contact number');
-    } else if (contactNumber.match(MOBILE_NUMBER_REGEX)) {
-      errorNotification('Please enter valid contact number');
+    } else if (!email.match(EMAIL_ADDRESS_REGEX)) {
+      errorNotification('Please enter valid email');
     } else if (!role || role.trim().length === 0) {
       errorNotification('Please select role');
+    } else if (contactNumber && !contactNumber.match(NUMBER_REGEX)) {
+      errorNotification('Please enter valid contact number');
     } else {
       try {
         if (action === 'add') {
@@ -200,6 +200,7 @@ const AddUser = () => {
               prefixType="pincode"
               prefixClass="phone-code"
               borderClass="w-100 phone-number-input"
+              onChange={onChangeUserData}
             />
           </div>
         </div>
