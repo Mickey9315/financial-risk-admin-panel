@@ -11,6 +11,7 @@ const UserManagementApiService = {
   addNewUser: data => ApiService.postData(USER_MANAGEMENT_URLS.SELECTED_USER_DETAILS_URL, data),
   updateUser: (id, data) =>
     ApiService.putData(`${USER_MANAGEMENT_URLS.SELECTED_USER_DETAILS_URL}${id}`, data),
+  deleteUser: id => ApiService.deleteData(`${USER_MANAGEMENT_URLS.SELECTED_USER_DETAILS_URL}${id}`),
   updateUserColumnListName: data =>
     ApiService.putData(USER_MANAGEMENT_URLS.UPDATE_USER_COLUMN_NAME_LIST_URL, data),
   getAllUserListByFilter: params =>
