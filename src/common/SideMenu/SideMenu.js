@@ -14,7 +14,7 @@ const SideMenu = () => {
           <span className="material-icons-round">insert_chart</span>
           Dashboard
         </NavLink>
-        <NavLink className="menu" to="/myWork" replace>
+        <NavLink className="menu" to="/my-work" replace>
           <span className="material-icons-round">event_available</span>
           My Work
         </NavLink>
@@ -46,7 +46,7 @@ const SideMenu = () => {
           <span className="material-icons-round">class</span>
           Claims
         </NavLink>
-        <NavLink className="menu" to="/overdues" replace>
+        <NavLink className="menu" to="/over-dues" replace>
           <span className="material-icons-round">list_alt</span>
           Overdues
         </NavLink>
@@ -54,7 +54,7 @@ const SideMenu = () => {
           <span className="material-icons-round">settings</span>
           Settings
         </NavLink>
-        <NavLink className="menu" to="/auditLog" replace>
+        <NavLink className="menu" to="/audit-log" replace>
           <span className="material-icons-round">fact_check</span>
           Audit Log
         </NavLink>
