@@ -242,3 +242,29 @@ export const updateUserDetails = (id, data) => {
     }
   };
 };
+
+export const deleteUserDetails = id => {
+  return async dispatch => {
+    try {
+      const response = await UserManagementApiService.deleteUser(id);
+
+      if (response.data.status === 'SUCCESS') {
+        successNotification('User deleted successfully.');
+        dispatch(getUserManagementListByFilter());
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+// TODO need to handle delete user case
