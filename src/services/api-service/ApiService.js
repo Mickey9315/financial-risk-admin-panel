@@ -49,8 +49,8 @@ const ApiService = {
   patchData(url, data) {
     return instance.patch(url, data);
   },
-  deleteData(url) {
-    return instance.delete(url);
+  deleteData(url, config = {}) {
+    return instance.delete(url, config);
   },
 };
 
