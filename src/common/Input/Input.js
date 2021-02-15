@@ -16,14 +16,29 @@ const Input = props => {
     ...restProps
   } = props;
   const inputClass = `input ${className}`;
-  const prefixClassName = `material-icons-round prefix ${prefixClass}`;
+  const prefixIconClassName = `material-icons-round prefix ${prefixClass}`;
+  const prefixClassName = `prefix ${prefixClass}`;
   const suffixClassName = `material-icons-round suffix ${suffixClass}`;
   const inputBorderClass = `input-container ${borderClass}`;
+  const chipClass = `chips-container ${prefixClass}`;
+  const chips = [];
 
   return (
     <div className={inputBorderClass}>
-      {prefix && prefixType === 'icon' && <span className={prefixClassName}>{prefix}</span>}
-      {prefix && prefixType === 'pincode' && <div className={prefixClassName}>{prefix}</div>}
+      {prefix && prefixType === 'icon' && <span className={prefixIconClassName}>{prefix}</span>}
+      {prefix && prefixType === 'pincode' && (
+        <input className={prefixClassName} placeholder="+01" />
+      )}
+      {prefix && prefixType === 'chip' && (
+        <div className={chipClass}>
+          {chips.map(e => (
+            <div>
+              {e}
+              <span className="material-icons-round close">close</span>
+            </div>
+          ))}
+        </div>
+      )}
       <input
         autoComplete="off"
         type={type}
@@ -38,7 +53,7 @@ const Input = props => {
 
 Input.propTypes = {
   prefix: PropTypes.string,
-  prefixType: PropTypes.oneOf(['icon','pincode']),
+  prefixType: PropTypes.oneOf(['icon', 'pincode', 'chip']),
   prefixClass: PropTypes.string,
   suffix: PropTypes.string,
   suffixClass: PropTypes.string,
@@ -50,6 +65,7 @@ Input.propTypes = {
 
 Input.defaultProps = {
   prefix: '',
+  prefixType: '',
   prefixClass: '',
   suffix: '',
   suffixClass: '',

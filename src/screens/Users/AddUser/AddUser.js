@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import ReactSelect from 'react-dropdown-select';
 import Dashboard from '../../../common/Dashboard/Dashboard';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
@@ -94,7 +95,19 @@ const AddUser = () => {
   };
 
   const deleteUserClick = () => {};
-
+  const clients = [
+    { value: 'chocolate', label: 'Chocolate' },
+    { value: 'strawberry', label: 'Strawberry' },
+    { value: 'vanilla', label: 'Vanilla' },
+    { value: 'orange', label: 'orange' },
+    { value: 'cherry', label: 'Cherry' },
+    { value: 'peach', label: 'Peach' },
+    { value: 'ocean', label: 'Ocean' },
+  ];
+  const { client, setClient } = useState(null);
+  const clientSelected = selectedClient => {
+    setClient({ selectedClient });
+  };
   return (
     <Dashboard>
       <div className="breadcrumb-button-row">
@@ -118,51 +131,73 @@ const AddUser = () => {
         </div>
       </div>
       {action === 'view' && <div className="view-only-mode-overlay" />}
-      <div className="common-white-container">
-        <div className="add-user-detail">
-          <span className="font-primary">Name</span>
-          <Input
-            type="text"
-            className="add-user-input"
-            placeholder="Jason Gatt"
-            name="name"
-            value={name}
-            onChange={onChangeUserData}
-          />
-        </div>
-        <div className="add-user-detail">
-          <span className="font-primary">Email</span>
-          <Input
-            type="email"
-            className="add-user-input"
-            placeholder="jason@trad.au"
-            name="email"
-            value={email}
-            onChange={onChangeUserData}
-          />
-        </div>
-        <div className="add-user-detail">
-          <span className="font-primary">Phone Number</span>
-          <div className="phone-number-input">
-            <div className="phone-code">+01</div>
-            <input
-              placeholder="1234567890"
+      <div className="user-detail-container">
+        <div className="user-detail-grid">
+          <div className="add-user-detail">
+            <span className="user-detail-title">Name</span>
+            <Input
+              type="text"
+              placeholder="Jason Gatt"
+              name="name"
+              value={name}
+              onChange={onChangeUserData}
+            />
+          </div>
+          <div className="add-user-detail">
+            <span className="user-detail-title">Email</span>
+            <Input
+              type="email"
+              placeholder="jason@trad.au"
+              name="email"
+              value={email}
+              onChange={onChangeUserData}
+            />
+          </div>
+          <div className="add-user-detail">
+            <span className="user-detail-title">Role</span>
+            <Select
+              placeholder="Select"
+              name="role"
+              options={USER_ROLES}
+              value={role}
+              onChange={onChangeUserData}
+            />
+          </div>
+          <div className="add-user-detail">
+            <span className="user-detail-title">Phone Number</span>
+            <Input
               name="contactNumber"
               value={contactNumber}
-              onChange={onChangeUserData}
+              type="text"
+              prefix="+01"
+              prefixType="pincode"
+              prefixClass="phone-code"
+              borderClass="w-100 phone-number-input"
             />
           </div>
         </div>
         <div className="add-user-detail">
-          <span className="font-primary">Role</span>
-          <Select
-            className="add-user-select"
-            placeholder="Select"
-            name="role"
-            options={USER_ROLES}
-            value={role}
-            onChange={onChangeUserData}
+          <span className="user-detail-title">Select Client</span>
+          <ReactSelect
+            multi
+            value={clients}
+            onChange={client && clientSelected}
+            options={clients}
+            className="select-client-list-container"
+            color="#003A78"
+            placeholder="Select Client"
+            dropdownHandle={false}
           />
+          {/* <div className="select-client-list-container">
+            {clientList.length > 0}
+            <Input
+              type="text"
+              borderClass="w-100"
+              name="client"
+              value={name}
+              onChange={onSelectClient}
+            />
+          </div> */}
         </div>
       </div>
       <div className="module-container">

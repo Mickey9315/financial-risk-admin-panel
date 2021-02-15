@@ -14,11 +14,11 @@ const SideMenu = () => {
           <span className="material-icons-round">insert_chart</span>
           Dashboard
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/myWork" replace>
           <span className="material-icons-round">event_available</span>
           My Work
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/application" replace>
           <span className="material-icons-round">business_center</span>
           Application
         </NavLink>
@@ -26,15 +26,15 @@ const SideMenu = () => {
           <span className="material-icons-round">people</span>
           Clients
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/debtors" replace>
           <span className="material-icons-round">account_circle</span>
           Debtors
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/reports" replace>
           <span className="material-icons-round">pie_chart</span>
           Reports
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/insurer" replace>
           <span className="material-icons-round">text_snippet</span>
           Insurer
         </NavLink>
@@ -42,19 +42,19 @@ const SideMenu = () => {
           <span className="material-icons-round">admin_panel_settings</span>
           Users
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/claims" replace>
           <span className="material-icons-round">class</span>
           Claims
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/overdues" replace>
           <span className="material-icons-round">list_alt</span>
           Overdues
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/settings" replace>
           <span className="material-icons-round">settings</span>
           Settings
         </NavLink>
-        <NavLink className="menu" to="/user" replace>
+        <NavLink className="menu" to="/auditLog" replace>
           <span className="material-icons-round">fact_check</span>
           Audit Log
         </NavLink>
