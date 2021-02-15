@@ -18,6 +18,8 @@ import {
   updateUserDetails,
 } from '../redux/UserManagementAction';
 import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
+import { errorNotification } from '../../../common/Toast';
+import { MOBILE_NUMBER_REGEX } from '../../../constants/RegexConstants';
 
 const AddUser = () => {
   const history = useHistory();
@@ -78,15 +80,30 @@ const AddUser = () => {
   };
 
   const onClickAddUser = async () => {
-    try {
-      if (action === 'add') {
-        await dispatch(addNewUser(selectedUser));
-      } else if (action === 'edit') {
-        await dispatch(updateUserDetails(id, selectedUser));
+    if (!selectedUser) {
+      return;
+    }
+    if (!name || name.trim().length === 0) {
+      errorNotification('Please enter name');
+    } else if (!email || email.trim().length === 0) {
+      errorNotification('Please enter email');
+    } else if (!contactNumber || contactNumber.trim().length === 0) {
+      errorNotification('Please enter contact number');
+    } else if (contactNumber.trim().length !== 10 || contactNumber.match(MOBILE_NUMBER_REGEX)) {
+      errorNotification('Please enter valid contact number');
+    } else if (!role || role.trim().length === 0) {
+      errorNotification('Please select role');
+    } else {
+      try {
+        if (action === 'add') {
+          await dispatch(addNewUser(selectedUser));
+        } else if (action === 'edit') {
+          await dispatch(updateUserDetails(id, selectedUser));
+        }
+        backToUser();
+      } catch (e) {
+        /**/
       }
-      backToUser();
-    } catch (e) {
-      /**/
     }
   };
 
