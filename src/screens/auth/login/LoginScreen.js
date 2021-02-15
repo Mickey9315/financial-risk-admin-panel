@@ -28,7 +28,7 @@ function LoginScreen() {
     else {
       try {
         await dispatch(loginUser({ email, password }, rememberUser));
-        history.push('/dashboard');
+        history.replace('/dashboard');
       } catch (e) {
         /**/
       }
