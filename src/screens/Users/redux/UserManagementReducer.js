@@ -69,7 +69,6 @@ export const selectedUserData = (state = null, action) => {
             let accessTypes = [...e.accessTypes];
 
             if (accessTypes.includes(action.data.value)) {
-              console.log('72');
               accessTypes = accessTypes.filter(f => f !== action.data.value);
             } else {
               accessTypes.push(action.data.value);
