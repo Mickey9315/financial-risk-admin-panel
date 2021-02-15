@@ -147,3 +147,12 @@
   height: 100%;
   z-index: 9999;
 }
+
+.disabled-icon {
+  opacity: .5;
+}
+
+.disabled {
+  color: $field-color!important;
+  opacity: .5;
+}

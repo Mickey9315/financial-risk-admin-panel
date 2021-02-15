@@ -41,10 +41,11 @@ function VerifyOtp() {
 
   return (
     <AuthScreenContainer>
-      <div className="login-field-name">Email or Number</div>
+      <div className="login-field-name disabled">Email or Number</div>
       <BigInput
         prefix="drafts"
-        prefixClass="login-input-icon"
+        className="disabled"
+        prefixClass="login-input-icon disabled-icon"
         type="email"
         placeholder="Enter email or number"
         value={email}
@@ -57,6 +58,7 @@ function VerifyOtp() {
           isInputNum
           onChange={onChangeOtp}
           className=""
+          placeholder="0"
           numInputs={6}
           separator={<span className="mr-5"> </span>}
         />
