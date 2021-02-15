@@ -3,7 +3,6 @@ import './ClientList.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
-import Dashboard from '../../../common/Dashboard/Dashboard';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';

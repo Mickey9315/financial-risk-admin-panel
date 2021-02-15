@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
-import Dashboard from '../../../common/Dashboard/Dashboard';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Select from '../../../common/Select/Select';
