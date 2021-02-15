@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 
 const Table = props => {
   const { align, valign, headers, headerClass, data, rowClass, recordSelected } = props;
-  const [showActionMenu, setShowActionMenu] = React.useState(false);
-  const onClickAction = () => setShowActionMenu(true);
 
   return (
     <table>
@@ -19,29 +17,13 @@ const Table = props => {
       </thead>
       <tbody>
         {data.map(e => (
-          <tr onClick={() => recordSelected(e.id)} className={rowClass}>
-            {Object.entries(e).map(([key, value]) =>
-              key !== 'id' ? <td align={align}>{value}</td> : null
-            )}
-            <td align="right" valign={valign} className="fixed-action-menu">
-              <span
-                className="material-icons-round cursor-pointer table-action"
-                onClick={onClickAction}
-              >
-                more_vert
-              </span>
-              {showActionMenu && (
-                <div className="action-menu">
-                  <div className="menu-name">
-                    <span className="material-icons-round">edit</span> Edit
-                  </div>
-                  <div className="menu-name">
-                    <span className="material-icons-round">delete</span> Delete
-                  </div>
-                </div>
-              )}
-            </td>
-          </tr>
+          <Row
+            data={e}
+            align={align}
+            valign={valign}
+            rowClass={rowClass}
+            recordSelected={recordSelected}
+          />
         ))}
       </tbody>
     </table>
@@ -69,3 +51,53 @@ Table.defaultProps = {
 };
 
 export default Table;
+
+function Row(props) {
+  const { align, valign, data, rowClass, recordSelected } = props;
+
+  const [showActionMenu, setShowActionMenu] = React.useState(false);
+  const onClickAction = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowActionMenu(prev => !prev);
+  };
+
+  return (
+    <tr onClick={() => recordSelected(data.id)} className={rowClass}>
+      {Object.entries(data).map(([key, value]) =>
+        key !== 'id' ? <td align={align}>{value}</td> : null
+      )}
+      <td align="right" valign={valign} className="fixed-action-menu">
+        <span className="material-icons-round cursor-pointer table-action" onClick={onClickAction}>
+          more_vert
+        </span>
+        {showActionMenu && (
+          <div className="action-menu">
+            <div className="menu-name">
+              <span className="material-icons-round">edit</span> Edit
+            </div>
+            <div className="menu-name">
+              <span className="material-icons-round">delete</span> Delete
+            </div>
+          </div>
+        )}
+      </td>
+    </tr>
+  );
+}
+
+Row.propTypes = {
+  align: PropTypes.oneOf(['left', 'center', 'right']),
+  valign: PropTypes.oneOf(['top', 'center', 'bottom']),
+  data: PropTypes.oneOf([PropTypes.object]),
+  rowClass: PropTypes.string,
+  recordSelected: PropTypes.func,
+};
+
+Row.defaultProps = {
+  align: 'left',
+  valign: 'left',
+  data: {},
+  rowClass: '',
+  recordSelected: () => {},
+};
