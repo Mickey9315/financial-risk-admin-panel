@@ -7,10 +7,11 @@ import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
-import Table from '../../../common/Table/Table';
+import Table, { TABLE_ROW_ACTIONS } from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import {
   changeUserColumnListStatus,
+  deleteUserDetails,
   getUserColumnListName,
   getUserManagementListByFilter,
   saveUserColumnListName,
@@ -206,9 +207,23 @@ const UserList = () => {
     [dispatch]
   );
 
-  const onSelectUserRecord = id => {
-    history.replace(`/user/view/${id}`);
-  };
+  const onSelectUserRecord = useCallback(
+    id => {
+      history.push(`/user/view/${id}`);
+    },
+    [history]
+  );
+
+  const onSelectUserRecordActionClick = useCallback(
+    async (type, id) => {
+      if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
+        history.push(`/user/edit/${id}`);
+      } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
+        dispatch(deleteUserDetails(id));
+      }
+    },
+    [history]
+  );
 
   useEffect(() => {
     getUserManagementByFilter();
@@ -242,6 +257,7 @@ const UserList = () => {
           data={tableData}
           headers={headers}
           recordSelected={onSelectUserRecord}
+          recordActionClick={onSelectUserRecordActionClick}
         />
       </div>
       <Pagination
