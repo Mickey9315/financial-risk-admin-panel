@@ -94,7 +94,7 @@ const AddUser = () => {
       errorNotification('Please enter email');
     } else if (!contactNumber || contactNumber.trim().length === 0) {
       errorNotification('Please enter contact number');
-    } else if (contactNumber.trim().length !== 10 || contactNumber.match(MOBILE_NUMBER_REGEX)) {
+    } else if (contactNumber.match(MOBILE_NUMBER_REGEX)) {
       errorNotification('Please enter valid contact number');
     } else if (!role || role.trim().length === 0) {
       errorNotification('Please select role');
