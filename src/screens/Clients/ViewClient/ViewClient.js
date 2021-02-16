@@ -56,10 +56,7 @@ const ViewClient = () => {
         <span>Brokers Commission</span>
         <Input type="text" placeholder="Enter Commission" />
         <span>Phone</span>
-        <div className="phone-number-input">
-          <div className="phone-code">+01</div>
-          <input placeholder="1234567890" />
-        </div>
+        <Input type="text" placeholder="1234567890" />
         <span>ABN</span>
         <Input type="number" placeholder="1234567890" />
         <span>ACN</span>

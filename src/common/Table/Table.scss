@@ -59,7 +59,7 @@ tr td:last-child {
 
 .action-menu {
   position: absolute;
-  top: 60px;
+  top: 30px;
   right: 25px;
   background-color: $background-color;
   border: 1px solid white;
@@ -77,7 +77,7 @@ tr td:last-child {
     border-top: 1px solid white;
 
     span {
-      font-size: 20px;
+      font-size: 18px;
       margin-right: 5px;
     }
   }
@@ -86,6 +86,9 @@ tr td:last-child {
 .fixed-action-menu {
   position: sticky;
   right: 0;
+}
+
+.fixed-action-menu-clicked {
   z-index: 1;
 }
 

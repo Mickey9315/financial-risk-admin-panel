@@ -196,10 +196,7 @@ const AddUser = () => {
               name="contactNumber"
               value={contactNumber}
               type="text"
-              prefix="+01"
-              prefixType="pincode"
-              prefixClass="phone-code"
-              borderClass="w-100 phone-number-input"
+              placeholder="1234567890"
               onChange={onChangeUserData}
             />
           </div>

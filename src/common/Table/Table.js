@@ -80,8 +80,12 @@ function Row(props) {
 
   const onClickActionToggleButton = useCallback(
     e => {
+      e.persist();
       e.stopPropagation();
       setShowActionMenu(prev => !prev);
+      /*  const posX = e.offset().left;
+      const posY = e.offset().top; */
+      console.log(`e.pageX: ${e.offsetX}, e.pageY:${e.offsetY} `);
     },
     [setShowActionMenu]
   );
@@ -99,7 +103,11 @@ function Row(props) {
       {Object.entries(data).map(([key, value]) =>
         key !== 'id' ? <td align={align}>{value}</td> : null
       )}
-      <td align="right" valign={valign} className="fixed-action-menu">
+      <td
+        align="right"
+        valign={valign}
+        className={`fixed-action-menu ${showActionMenu && 'fixed-action-menu-clicked'}`}
+      >
         <span
           className="material-icons-round cursor-pointer table-action"
           onClick={onClickActionToggleButton}

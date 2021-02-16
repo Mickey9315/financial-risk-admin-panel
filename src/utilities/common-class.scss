@@ -53,33 +53,6 @@
   }
 }
 
-.phone-number-input {
-  display: flex;
-  align-items: center;
-  padding: 0;
-  input:first-child {
-    height: 32px;
-  }
-  input:last-child {
-    width: calc(100% - 60px);
-  }
-}
-
-.phone-code {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 100%;
-  padding: 0 10px;
-  color: $placeholder-color;
-  border-top: 1px solid $border-color!important;
-  border-right: .3px solid $border-color!important;
-  border-bottom: .3px solid $border-color!important;
-  border-left: 0;
-  border-radius: 5px;
-}
-
 .common-white-container {
   display: flex;
   flex-wrap: wrap;
