@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -60,9 +60,9 @@ const AddUser = () => {
     }
   }, [selectedUser, allOrganisationList]);
 
-  const backToUser = () => {
+  const backToUser = useCallback(() => {
     history.replace('/users');
-  };
+  }, [history]);
 
   const { name, role, email, contactNumber, clientIds } = useMemo(() => {
     if (selectedUser) {
@@ -79,17 +79,17 @@ const AddUser = () => {
     return { name: '', role: '', email: '', contactNumber: '', clientIds: [] };
   }, [selectedUser]);
 
-  const onChangeUserData = e => {
+  const onChangeUserData = useCallback(e => {
     // eslint-disable-next-line no-shadow
     const { name, value } = e.target;
     dispatch(changeUserData({ name, value }));
-  };
+  }, []);
 
-  const onChangeUserAccess = (module, value) => {
+  const onChangeUserAccess = useCallback((module, value) => {
     dispatch(changeUserManageAccess({ name: module, value }));
-  };
+  }, []);
 
-  const onClickAddUser = async () => {
+  const onClickAddUser = useCallback(async () => {
     if (!selectedUser) {
       return;
     }
@@ -115,16 +115,16 @@ const AddUser = () => {
         /**/
       }
     }
-  };
+  }, [selectedUser, name, email, role, contactNumber, action, id, backToUser]);
 
-  const editUserClick = () => {
+  const editUserClick = useCallback(() => {
     history.replace(`/users/user/edit/${id}`);
-  };
+  }, [history, id]);
 
-  const deleteUserClick = async () => {
+  const deleteUserClick = useCallback(async () => {
     await dispatch(deleteUserDetails(id));
     backToUser();
-  };
+  }, [id, backToUser]);
 
   const clients = useMemo(() => {
     let finalData = [];
@@ -142,11 +142,11 @@ const AddUser = () => {
       label: e.name,
       value: e._id,
     }));
-  }, [allClientList]);
+  }, [role, allClientList]);
 
-  const clientSelected = value => {
+  const clientSelected = useCallback(value => {
     dispatch(changeUserData({ name: 'clientIds', value: value.map(e => e.value) }));
-  };
+  }, []);
 
   return (
     <>
