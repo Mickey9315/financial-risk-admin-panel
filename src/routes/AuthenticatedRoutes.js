@@ -33,7 +33,7 @@ export const AllAuthenticatedRoutes = () => {
   return (
     <Dashboard>
       <AuthenticatedRoute exact path="/users" component={UserList} />
-      <AuthenticatedRoute exact path="/user/:action/:id" component={AddUser} />
+      <AuthenticatedRoute exact path="/users/user/:action/:id" component={AddUser} />
       <AuthenticatedRoute exact path="/clients" component={ClientList} />
       <AuthenticatedRoute exact path="/viewClient" component={ViewClient} />
     </Dashboard>

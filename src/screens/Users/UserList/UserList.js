@@ -197,7 +197,7 @@ const UserList = () => {
   );
 
   const openAddUser = useCallback(() => {
-    history.push('/user/add/new');
+    history.push('/users/user/add/new');
   }, [history]);
 
   const onChangeSelectedColumn = useCallback(
@@ -210,7 +210,7 @@ const UserList = () => {
 
   const onSelectUserRecord = useCallback(
     id => {
-      history.push(`/user/view/${id}`);
+      history.push(`/users/user/view/${id}`);
     },
     [history]
   );
@@ -226,7 +226,7 @@ const UserList = () => {
   const onSelectUserRecordActionClick = useCallback(
     async (type, id) => {
       if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
-        history.push(`/user/edit/${id}`);
+        history.push(`/users/user/edit/${id}`);
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
         onDeleteUserClick();
       }

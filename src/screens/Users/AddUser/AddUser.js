@@ -114,7 +114,7 @@ const AddUser = () => {
   };
 
   const editUserClick = () => {
-    history.replace(`/user/edit/${id}`);
+    history.replace(`/users/user/edit/${id}`);
   };
 
   const deleteUserClick = async () => {
