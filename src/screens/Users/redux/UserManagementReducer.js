@@ -111,7 +111,12 @@ export const organizationModulesList = (state = [], action) => {
   }
 };
 
-export const userManagementClientList = (state = [], action) => {
+const initialUserManagementClientListState = {
+  riskAnalystList: [],
+  serviceManagerList: [],
+};
+
+export const userManagementClientList = (state = initialUserManagementClientListState, action) => {
   switch (action.type) {
     case USER_MANAGEMENT_CLIENT_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_CLIENT_LIST_ACTION:
       return action.data;
