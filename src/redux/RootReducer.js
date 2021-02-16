@@ -3,6 +3,7 @@ import { loggedUser } from '../screens/auth/login/redux/LoginReducer';
 import {
   organizationModulesList,
   selectedUserData,
+  userManagementClientList,
   userManagementColumnList,
   userManagementList,
 } from '../screens/Users/redux/UserManagementReducer';
@@ -15,5 +16,6 @@ const rootReducer = combineReducers({
   clientList,
   selectedUserData,
   organizationModulesList,
+  userManagementClientList,
 });
 export default rootReducer;
