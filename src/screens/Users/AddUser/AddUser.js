@@ -129,7 +129,7 @@ const AddUser = () => {
   const clients = useMemo(() => {
     let finalData = [];
 
-    if (allClientList) {
+    if (allClientList && role !== '') {
       if (role === 'riskAnalyst') {
         finalData = allClientList.riskAnalystList;
       }
@@ -145,7 +145,7 @@ const AddUser = () => {
   }, [role, allClientList]);
 
   const clientSelected = useCallback(value => {
-    dispatch(changeUserData({ name: 'clientIds', value: value.map(e => e.value) }));
+    dispatch(changeUserData({ name: 'clientIds', value }));
   }, []);
 
   return (
@@ -225,7 +225,7 @@ const AddUser = () => {
           <span className="user-detail-title">Select Client</span>
           <ReactSelect
             multi
-            value={clientIds}
+            values={clientIds}
             onChange={clientSelected}
             options={clients}
             disabled={action === 'view'}
