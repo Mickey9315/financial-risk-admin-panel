@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,18 +64,19 @@ const AddUser = () => {
     history.replace('/users');
   };
 
-  const { name, role, email, contactNumber } = useMemo(() => {
+  const { name, role, email, contactNumber, clientIds } = useMemo(() => {
     if (selectedUser) {
       // eslint-disable-next-line no-shadow
-      const { name, role, email, contactNumber } = selectedUser;
+      const { name, role, email, contactNumber, clientIds } = selectedUser;
       return {
         name: name || '',
         role: role || '',
         email: email || '',
+        clientIds: clientIds || [],
         contactNumber: contactNumber || '',
       };
     }
-    return { name: '', role: '', email: '', contactNumber: '' };
+    return { name: '', role: '', email: '', contactNumber: '', clientIds: [] };
   }, [selectedUser]);
 
   const onChangeUserData = e => {
@@ -143,10 +144,10 @@ const AddUser = () => {
     }));
   }, [allClientList]);
 
-  const { client, setClient } = useState(null);
-  const clientSelected = selectedClient => {
-    setClient({ selectedClient });
+  const clientSelected = value => {
+    dispatch(changeUserData({ name: 'clientIds', value: value.map(e => e.value) }));
   };
+
   return (
     <>
       <div className="breadcrumb-button-row">
@@ -224,14 +225,15 @@ const AddUser = () => {
           <span className="user-detail-title">Select Client</span>
           <ReactSelect
             multi
-            value={clients}
-            onChange={client && clientSelected}
+            value={clientIds}
+            onChange={clientSelected}
             options={clients}
+            disabled={action === 'view'}
             className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
             color="#003A78"
             placeholder={action === 'view' ? '' : 'Select Client'}
             dropdownHandle={false}
-            disabled={action === 'view'}
+            keepSelectedInList={false}
           />
         </div>
       </div>
