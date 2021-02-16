@@ -16,6 +16,7 @@ const Table = props => {
     headerClass,
     data,
     rowClass,
+    rowTitle,
     recordSelected,
     recordActionClick,
   } = props;
@@ -37,6 +38,7 @@ const Table = props => {
             align={align}
             valign={valign}
             rowClass={rowClass}
+            rowTitle={rowTitle}
             recordSelected={recordSelected}
             recordActionClick={recordActionClick}
           />
@@ -53,6 +55,7 @@ Table.propTypes = {
   headerClass: PropTypes.string,
   data: PropTypes.array,
   rowClass: PropTypes.string,
+  rowTitle: PropTypes.string,
   recordSelected: PropTypes.func,
   recordActionClick: PropTypes.func,
 };
@@ -64,6 +67,7 @@ Table.defaultProps = {
   headerClass: '',
   data: [],
   rowClass: '',
+  rowTitle: '',
   recordSelected: () => {},
   recordActionClick: () => {},
 };
@@ -71,7 +75,7 @@ Table.defaultProps = {
 export default Table;
 
 function Row(props) {
-  const { align, valign, data, rowClass, recordSelected, recordActionClick } = props;
+  const { align, valign, data, rowClass, rowTitle, recordSelected, recordActionClick } = props;
 
   const [showActionMenu, setShowActionMenu] = React.useState(false);
   const actionMenuRef = useRef();
@@ -99,7 +103,7 @@ function Row(props) {
   );
 
   return (
-    <tr onClick={() => recordSelected(data.id)} className={rowClass}>
+    <tr onClick={() => recordSelected(data.id)} className={rowClass} title={rowTitle}>
       {Object.entries(data).map(([key, value]) =>
         key !== 'id' ? <td align={align}>{value}</td> : null
       )}
@@ -137,6 +141,7 @@ Row.propTypes = {
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   data: PropTypes.oneOf([PropTypes.object]),
   rowClass: PropTypes.string,
+  rowTitle: PropTypes.string,
   recordSelected: PropTypes.func,
   recordActionClick: PropTypes.func,
 };
@@ -146,6 +151,7 @@ Row.defaultProps = {
   valign: 'left',
   data: {},
   rowClass: '',
+  rowTitle: '',
   recordSelected: () => {},
   recordActionClick: () => {},
 };

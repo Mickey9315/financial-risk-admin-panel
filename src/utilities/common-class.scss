@@ -129,3 +129,15 @@
   color: $field-color!important;
   opacity: .5;
 }
+
+.disabled-control {
+  border: none!important;
+  -moz-appearance: window;
+  -webkit-appearance: none;
+}
+
+.disabled-control.select::-ms-expand {
+  -moz-appearance: window;
+  -webkit-appearance: none;
+  display: none;
+}

@@ -39,9 +39,13 @@
   border-radius: 0.313rem!important;
 }
 
-.select-client-list-container:hover, .select-client-list-container:focus {
+.select-client-list-container:hover, .select-client-list-container:focus, .select-client-list-container:focus-within {
   border: 0.063rem solid $border-color!important;
   box-shadow: unset!important;
+}
+
+.select-client-list-container.disabled-control {
+  border: 0!important;
 }
 
 .module-container {

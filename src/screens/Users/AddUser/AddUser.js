@@ -164,30 +164,36 @@ const AddUser = () => {
             <span className="user-detail-title">Name</span>
             <Input
               type="text"
-              placeholder="Jason Gatt"
+              placeholder={action === 'view' ? '' : 'Jason Gatt"'}
               name="name"
               value={name}
               onChange={onChangeUserData}
+              disabled={action === 'view'}
+              borderClass={action === 'view' && 'disabled-control'}
             />
           </div>
           <div className="add-user-detail">
             <span className="user-detail-title">Email</span>
             <Input
               type="email"
-              placeholder="jason@trad.au"
+              placeholder={action === 'view' ? '' : 'jason@trad.au'}
               name="email"
               value={email}
               onChange={onChangeUserData}
+              disabled={action === 'view'}
+              borderClass={action === 'view' && 'disabled-control'}
             />
           </div>
           <div className="add-user-detail">
             <span className="user-detail-title">Role</span>
             <Select
-              placeholder="Select"
+              placeholder={action === 'view' ? '' : 'Select'}
               name="role"
               options={USER_ROLES}
               value={role}
               onChange={onChangeUserData}
+              disabled={action === 'view'}
+              className={action === 'view' && 'disabled-control'}
             />
           </div>
           <div className="add-user-detail">
@@ -198,6 +204,8 @@ const AddUser = () => {
               type="text"
               placeholder="1234567890"
               onChange={onChangeUserData}
+              disabled={action === 'view'}
+              borderClass={action === 'view' && 'disabled-control'}
             />
           </div>
         </div>
@@ -208,21 +216,12 @@ const AddUser = () => {
             value={clients}
             onChange={client && clientSelected}
             options={clients}
-            className="select-client-list-container"
+            className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
             color="#003A78"
-            placeholder="Select Client"
+            placeholder={action === 'view' ? '' : 'Select Client'}
             dropdownHandle={false}
+            disabled={action === 'view'}
           />
-          {/* <div className="select-client-list-container">
-            {clientList.length > 0}
-            <Input
-              type="text"
-              borderClass="w-100"
-              name="client"
-              value={name}
-              onChange={onSelectClient}
-            />
-          </div> */}
         </div>
       </div>
       <div className="module-container">

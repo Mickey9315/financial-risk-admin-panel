@@ -9,7 +9,6 @@
   padding: 5px 10px;
   font: $subtitle $font-medium;
   color: $field-color!important;
-  color: $font-color;
   background-color: #ffffff;
   border: 0.063rem solid $border-color;
   border-radius: .25rem;
@@ -27,6 +26,10 @@ select[multiple]:focus option:checked {
 }
 
 .select-option {
-  font: $title $font-medium;
-  color: $font-color;
+  font: $subtitle $font-medium;
+  color: $field-color;
+}
+
+select:disabled {
+  opacity: 1;
 }

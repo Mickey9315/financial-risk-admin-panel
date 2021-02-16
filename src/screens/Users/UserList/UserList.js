@@ -258,6 +258,8 @@ const UserList = () => {
           headers={headers}
           recordSelected={onSelectUserRecord}
           recordActionClick={onSelectUserRecordActionClick}
+          rowClass="cursor-pointer"
+          rowTitle="Click to View User Details"
         />
       </div>
       <Pagination
