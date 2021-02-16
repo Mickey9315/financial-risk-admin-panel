@@ -5,7 +5,7 @@
   justify-content: space-between;
   height: 100vh;
   width: 100%;
-  padding: 1rem 2rem 1rem 1rem;
+  padding: 1rem 0 1rem 1rem;
   background-color: $background-color;
   overflow: hidden;
 }
@@ -18,6 +18,6 @@
 
 .page-container {
   max-height: calc(100vh - 88px);
-  padding-top: 0.938rem;
+  padding: 0.938rem 2rem 0 0;
   overflow-y: auto;
 }
