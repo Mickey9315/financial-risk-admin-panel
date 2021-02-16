@@ -23,6 +23,7 @@ import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
 import Loader from '../../../common/Loader/Loader';
+import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 
 const initialFilterState = {
   role: '',
@@ -251,10 +252,53 @@ const UserList = () => {
     [history]
   );
 
+  const {
+    page: paramPage,
+    limit: paramLimit,
+    role: paramRole,
+    startDate: paramStartDate,
+    endDate: paramEndDate,
+  } = useQueryParams();
+
   useEffect(() => {
-    getUserManagementByFilter();
+    const params = {
+      page: paramPage || 1,
+      limit: paramLimit || 15,
+    };
+
+    const filters = {
+      role: paramRole && paramRole.trim().length > 0 ? paramRole : undefined,
+      startDate: paramStartDate || undefined,
+      endDate: paramEndDate || undefined,
+    };
+
+    Object.entries(filters).forEach(([name, value]) => {
+      dispatchFilter({
+        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name,
+        value,
+      });
+    });
+
+    getUserManagementByFilter({ ...params, ...filters });
     dispatch(getUserColumnListName());
   }, []);
+
+  useEffect(() => {
+    const params = {
+      page: page || 1,
+      limit: limit || 15,
+      role: role && role.trim().length > 0 ? role : undefined,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    };
+    const url = Object.entries(params)
+      .filter(arr => arr[1] !== undefined)
+      .map(([k, v]) => `${k}=${v}`)
+      .join('&');
+
+    history.replace(`${history.location.pathname}?${url}`);
+  }, [history, total, pages, page, limit, role, startDate, endDate]);
 
   return (
     <>
