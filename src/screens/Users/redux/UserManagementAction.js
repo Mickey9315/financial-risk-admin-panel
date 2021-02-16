@@ -224,7 +224,12 @@ export const changeUserManageAccess = data => {
 export const addNewUser = data => {
   return async dispatch => {
     try {
-      const response = await UserManagementApiService.addNewUser(data);
+      const finalData = {
+        ...data,
+        clientIds: data.clientIds ? data.clientIds.map(e => e.value) : [],
+      };
+
+      const response = await UserManagementApiService.addNewUser(finalData);
 
       if (response.data.status === 'SUCCESS') {
         successNotification('Added user successfully.');
@@ -248,7 +253,13 @@ export const addNewUser = data => {
 export const updateUserDetails = (id, data) => {
   return async dispatch => {
     try {
-      const finalData = { ...data, _id: undefined, email: undefined };
+      const finalData = {
+        ...data,
+        clientIds: data.clientIds ? data.clientIds.map(e => e.value) : [],
+        _id: undefined,
+        email: undefined,
+      };
+
       const response = await UserManagementApiService.updateUser(id, finalData);
 
       if (response.data.status === 'SUCCESS') {
@@ -293,5 +304,3 @@ export const deleteUserDetails = id => {
     }
   };
 };
-
-// TODO need to handle delete user case
