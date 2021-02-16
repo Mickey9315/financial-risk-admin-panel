@@ -227,7 +227,14 @@ const UserList = () => {
       buttonType: 'danger',
       onClick: async () => {
         toggleConfirmationModal(false);
-        await dispatch(deleteUserDetails(deleteId));
+        const data = {
+          page: page || 1,
+          limit: limit || 15,
+          role: role && role.trim().length > 0 ? role : undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+        };
+        await dispatch(deleteUserDetails(deleteId, data));
         setDeleteId(null);
       },
     },

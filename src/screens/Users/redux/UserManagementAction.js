@@ -281,14 +281,14 @@ export const updateUserDetails = (id, data) => {
   };
 };
 
-export const deleteUserDetails = id => {
+export const deleteUserDetails = (id, params) => {
   return async dispatch => {
     try {
       const response = await UserManagementApiService.deleteUser(id);
 
       if (response.data.status === 'SUCCESS') {
         successNotification('User deleted successfully.');
-        dispatch(getUserManagementListByFilter());
+        dispatch(getUserManagementListByFilter(params));
       }
     } catch (e) {
       if (e.response && e.response.data) {
