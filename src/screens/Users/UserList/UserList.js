@@ -56,6 +56,7 @@ const UserList = () => {
   const userColumnList = useSelector(({ userManagementColumnList }) => userManagementColumnList);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
+  const [deleteId, setDeleteId] = useState(null);
   const { role, startDate, endDate } = useMemo(() => filter, [filter]);
   const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
     userListWithPageData,
@@ -215,20 +216,29 @@ const UserList = () => {
     [history]
   );
   const [deleteModal, setDeleteModal] = useState(false);
-  const onDeleteUserClick = useCallback(
+  const toggleConfirmationModal = useCallback(
     value => setDeleteModal(value !== undefined ? value : e => !e),
     [setDeleteModal]
   );
   const deleteUserButtons = [
-    { title: 'Close', buttonType: 'primary-1', onClick: () => onDeleteUserClick() },
-    { title: 'Delete', buttonType: 'danger', onClick: id => dispatch(deleteUserDetails(id)) },
+    { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal(false) },
+    {
+      title: 'Delete',
+      buttonType: 'danger',
+      onClick: async () => {
+        toggleConfirmationModal(false);
+        await dispatch(deleteUserDetails(deleteId));
+        setDeleteId(null);
+      },
+    },
   ];
   const onSelectUserRecordActionClick = useCallback(
     async (type, id) => {
       if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
         history.push(`/users/user/edit/${id}`);
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
-        onDeleteUserClick();
+        setDeleteId(id);
+        toggleConfirmationModal();
       }
     },
     [history]
