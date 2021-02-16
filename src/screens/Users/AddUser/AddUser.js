@@ -12,6 +12,7 @@ import {
   changeUserData,
   changeUserManageAccess,
   deleteUserDetails,
+  getAllClientList,
   getAllOrganisationModulesList,
   getSelectedUserData,
   setNewUserInitialStates,
@@ -26,6 +27,7 @@ const AddUser = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const allOrganisationList = useSelector(({ organizationModulesList }) => organizationModulesList);
+  const allClientList = useSelector(({ userManagementClientList }) => userManagementClientList);
   const selectedUser = useSelector(({ selectedUserData }) => selectedUserData);
   const { action, id } = useParams();
 
@@ -36,6 +38,7 @@ const AddUser = () => {
 
   useEffect(() => {
     dispatch(getAllOrganisationModulesList());
+    dispatch(getAllClientList());
     if (action !== 'add' && id) {
       dispatch(getSelectedUserData(id));
     } else {
@@ -122,15 +125,24 @@ const AddUser = () => {
     backToUser();
   };
 
-  const clients = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' },
-    { value: 'orange', label: 'orange' },
-    { value: 'cherry', label: 'Cherry' },
-    { value: 'peach', label: 'Peach' },
-    { value: 'ocean', label: 'Ocean' },
-  ];
+  const clients = useMemo(() => {
+    let finalData = [];
+
+    if (allClientList) {
+      if (role === 'riskAnalyst') {
+        finalData = allClientList.riskAnalystList;
+      }
+      if (role === 'serviceManager') {
+        finalData = allClientList.serviceManagerList;
+      }
+    }
+
+    return finalData.map(e => ({
+      label: e.name,
+      value: e._id,
+    }));
+  }, [allClientList]);
+
   const { client, setClient } = useState(null);
   const clientSelected = selectedClient => {
     setClient({ selectedClient });
