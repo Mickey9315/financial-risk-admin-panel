@@ -7,11 +7,10 @@
 .loader,
 .loader:before,
 .loader:after {
-  background: #ffffff;
-  -webkit-animation: load1 1s infinite ease-in-out;
-  animation: load1 1s infinite ease-in-out;
   width: 1em;
   height: 4em;
+  -webkit-animation: load1 1s infinite ease-in-out;
+  animation: load1 1s infinite ease-in-out;
 }
 .loader:before {
   background-color: $primary-color;
@@ -22,16 +21,16 @@
   color:$secondary-color;
 }
 .loader {
-  color: $primary-variant-color;
+  position: relative;
   text-indent: -9999em;
   margin: 88px auto;
-  position: relative;
-  font-size: 11px;
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
+  font-size: 11px;
+  color: $primary-variant-color;
   background-color: $primary-variant-color;
 }
 .loader:before,

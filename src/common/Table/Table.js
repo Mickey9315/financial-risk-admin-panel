@@ -87,9 +87,6 @@ function Row(props) {
       e.persist();
       e.stopPropagation();
       setShowActionMenu(prev => !prev);
-      /*  const posX = e.offset().left;
-      const posY = e.offset().top; */
-      console.log(`e.pageX: ${e.offsetX}, e.pageY:${e.offsetY} `);
     },
     [setShowActionMenu]
   );
