@@ -103,9 +103,13 @@ function Row(props) {
   );
 
   return (
-    <tr onClick={() => recordSelected(data.id)} className={rowClass} title={rowTitle}>
+    <tr onClick={() => recordSelected(data.id)} className={rowClass}>
       {Object.entries(data).map(([key, value]) =>
-        key !== 'id' ? <td align={align}>{value}</td> : null
+        key !== 'id' ? (
+          <td title={rowTitle} align={align}>
+            {value}
+          </td>
+        ) : null
       )}
       <td
         align="right"
