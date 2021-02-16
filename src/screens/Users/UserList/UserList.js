@@ -22,6 +22,7 @@ import { USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
+import Loader from '../../../common/Loader/Loader';
 
 const initialFilterState = {
   role: '',
@@ -259,26 +260,33 @@ const UserList = () => {
         </div>
       </div>
       <div className="common-list-container">
-        <Table
-          align="left"
-          valign="center"
-          data={tableData}
-          headers={headers}
-          recordSelected={onSelectUserRecord}
-          recordActionClick={onSelectUserRecordActionClick}
-          rowClass="cursor-pointer"
-          rowTitle="Click to View User Details"
-        />
+        {tableData ? (
+          <>
+            <Table
+              align="left"
+              valign="center"
+              data={tableData}
+              headers={headers}
+              recordSelected={onSelectUserRecord}
+              recordActionClick={onSelectUserRecordActionClick}
+              rowClass="cursor-pointer"
+              rowTitle="Click to View User Details"
+            />
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
+            />
+          </>
+        ) : (
+          <Loader />
+        )}
       </div>
-      <Pagination
-        className="common-list-pagination"
-        total={total}
-        pages={pages}
-        page={page}
-        limit={limit}
-        pageActionClick={pageActionClick}
-        onSelectLimit={onSelectLimit}
-      />
+
       {filterModal && (
         <Modal
           headerIcon="filter_list"
