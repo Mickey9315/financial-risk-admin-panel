@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,6 +22,7 @@ import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConst
 import { errorNotification } from '../../../common/Toast';
 import { EMAIL_ADDRESS_REGEX, NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
+import Modal from '../../../common/Modal/Modal';
 
 const AddUser = () => {
   const history = useHistory();
@@ -30,6 +31,8 @@ const AddUser = () => {
   const allClientList = useSelector(({ userManagementClientList }) => userManagementClientList);
   const selectedUser = useSelector(({ selectedUserData }) => selectedUserData);
   const { action, id } = useParams();
+  const [showModal, setShowModal] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
   const filteredOrganisationList = useMemo(
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) || [],
@@ -121,10 +124,32 @@ const AddUser = () => {
     history.replace(`/users/user/edit/${id}`);
   }, [history, id]);
 
+  const toggleConfirmationModal = useCallback(
+    value => setShowModal(value !== undefined ? value : e => !e),
+    [setShowModal]
+  );
+
   const deleteUserClick = useCallback(async () => {
+    toggleConfirmationModal(false);
     await dispatch(deleteUserDetails(id));
     backToUser();
   }, [id, backToUser]);
+
+  const deleteModalButtonClick = useCallback(() => {
+    setModalData({
+      title: 'Delete User',
+      description: 'Are you sure you want to delete this user?',
+      buttons: [
+        { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal(false) },
+        {
+          title: 'Delete',
+          buttonType: 'danger',
+          onClick: deleteUserClick,
+        },
+      ],
+    });
+    toggleConfirmationModal(true);
+  }, []);
 
   const clients = useMemo(() => {
     let finalData = [];
@@ -150,6 +175,11 @@ const AddUser = () => {
 
   return (
     <>
+      {showModal && (
+        <Modal header={modalData.title} buttons={modalData.buttons}>
+          <span className="confirmation-message">{modalData.description}</span>
+        </Modal>
+      )}
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
           <span onClick={backToUser}>User List</span>
@@ -160,7 +190,7 @@ const AddUser = () => {
           {action === 'view' ? (
             <>
               <Button buttonType="primary" title="Edit" onClick={editUserClick} />
-              <Button buttonType="danger" title="Delete" onClick={deleteUserClick} />
+              <Button buttonType="danger" title="Delete" onClick={deleteModalButtonClick} />
             </>
           ) : (
             <>
