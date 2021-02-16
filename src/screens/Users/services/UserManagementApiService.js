@@ -8,6 +8,7 @@ const UserManagementApiService = {
     ApiService.getData(ORGANISATION_MODULE_URLS.GET_ORGANIZATION_MODULE_LIST_URL),
   getSelectedUserData: id =>
     ApiService.getData(`${USER_MANAGEMENT_URLS.SELECTED_USER_DETAILS_URL}${id}`),
+  getClientList: () => ApiService.getData(USER_MANAGEMENT_URLS.USER_CLIENT_LIST_URL),
   addNewUser: data => ApiService.postData(USER_MANAGEMENT_URLS.SELECTED_USER_DETAILS_URL, data),
   updateUser: (id, data) =>
     ApiService.putData(`${USER_MANAGEMENT_URLS.SELECTED_USER_DETAILS_URL}${id}`, data),
