@@ -40,6 +40,10 @@
 .checkbox-container:hover input ~ .checkmark {
   background-color: $background-color;
 }
+//TODO Monika
+input[type="checkbox" i]:disabled.checkbox-container:hover input ~ .checkmark {
+  background-color: white!important;
+}
 
 /* When the checkbox is checked, add a blue background */
 .checkbox-container input:checked ~ .checkmark {

@@ -113,14 +113,6 @@
   background-color: $alert-blue-light;
 }
 
-.view-only-mode-overlay{
-  display: none;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-}
-
 .disabled-icon {
   opacity: .5;
 }

@@ -157,7 +157,6 @@ const AddUser = () => {
           )}
         </div>
       </div>
-      {action === 'view' && <div className="view-only-mode-overlay" />}
       <div className="user-detail-container">
         <div className="user-detail-grid">
           <div className="add-user-detail">
@@ -230,6 +229,7 @@ const AddUser = () => {
             <div className="module-title">{module.label}</div>
             {USER_MODULE_ACCESS.map(access => (
               <Checkbox
+                disabled={action === 'view'}
                 title={access.label}
                 name={access.value}
                 checked={module.accessTypes.includes(access.value)}
