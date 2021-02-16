@@ -213,13 +213,21 @@ const UserList = () => {
     },
     [history]
   );
-
+  const [deleteModal, setDeleteModal] = useState(false);
+  const onDeleteUserClick = useCallback(
+    value => setDeleteModal(value !== undefined ? value : e => !e),
+    [setDeleteModal]
+  );
+  const deleteUserButtons = [
+    { title: 'Close', buttonType: 'primary-1', onClick: () => onDeleteUserClick() },
+    { title: 'Delete', buttonType: 'danger', onClick: id => dispatch(deleteUserDetails(id)) },
+  ];
   const onSelectUserRecordActionClick = useCallback(
     async (type, id) => {
       if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
         history.push(`/user/edit/${id}`);
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
-        dispatch(deleteUserDetails(id));
+        onDeleteUserClick();
       }
     },
     [history]
@@ -317,6 +325,11 @@ const UserList = () => {
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={customFieldsModalButtons}
         />
+      )}
+      {deleteModal && (
+        <Modal header="Delete User" buttons={deleteUserButtons}>
+          <span className="confirmation-message">Are you sure you want to delete this user?</span>
+        </Modal>
       )}
     </>
   );
