@@ -20,10 +20,6 @@ select option:checked {
   background-color: $primary-color;
 }
 
-select option:first-child, select option:checked {
-  color: $placeholder-color!important;
-}
-
 select[multiple]:focus option:checked {
   color: #ffffff;
   background-color: $primary-color;
