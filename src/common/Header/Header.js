@@ -98,7 +98,7 @@ const Header = () => {
 
   const headerTitle = useMemo(
     () => SIDEBAR_URLS.find(item => history.location.pathname.includes(item.url)).title,
-    [history]
+    [history.location.pathname]
   );
 
   return (
