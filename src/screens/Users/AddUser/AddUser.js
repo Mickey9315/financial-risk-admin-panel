@@ -258,7 +258,7 @@ const AddUser = () => {
             values={clientIds}
             onChange={clientSelected}
             options={clients}
-            disabled={action === 'view'}
+            disabled={action === 'view' || role === 'superAdmin'}
             className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
             color="#003A78"
             placeholder={action === 'view' ? '' : 'Select Client'}
