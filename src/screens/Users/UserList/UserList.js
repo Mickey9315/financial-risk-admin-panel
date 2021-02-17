@@ -268,8 +268,8 @@ const UserList = () => {
 
     const filters = {
       role: paramRole && paramRole.trim().length > 0 ? paramRole : undefined,
-      startDate: paramStartDate || undefined,
-      endDate: paramEndDate || undefined,
+      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
+      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
     };
 
     Object.entries(filters).forEach(([name, value]) => {
@@ -289,8 +289,8 @@ const UserList = () => {
       page: page || 1,
       limit: limit || 15,
       role: role && role.trim().length > 0 ? role : undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
+      startDate: startDate ? new Date(startDate).toISOString() : undefined,
+      endDate: endDate ? new Date(endDate).toISOString() : undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
