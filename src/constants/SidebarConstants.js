@@ -45,7 +45,7 @@ export const SIDEBAR_URLS = [
     label: 'Users',
     title: 'Dashboard',
     icon: 'insert_chart',
-    url: '/user',
+    url: '/users',
   },
   {
     label: 'Claims',
