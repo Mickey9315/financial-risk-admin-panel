@@ -16,7 +16,7 @@ export const AuthenticatedRoute = ({ component, ...options }) => {
     return (
       <Route {...options}>
         {' '}
-        <Redirect to="/home" />
+        <Redirect to="/users" />
       </Route>
     );
   }
