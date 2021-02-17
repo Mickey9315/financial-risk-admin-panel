@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
@@ -83,10 +84,21 @@ const AddUser = () => {
   }, [selectedUser]);
 
   const onChangeUserData = useCallback(e => {
-    // eslint-disable-next-line no-shadow
     const { name, value } = e.target;
     dispatch(changeUserData({ name, value }));
   }, []);
+
+  const clientSelected = useCallback(value => {
+    dispatch(changeUserData({ name: 'clientIds', value }));
+  }, []);
+
+  const onChangeUserRole = useCallback(
+    e => {
+      clientSelected([]);
+      onChangeUserData(e);
+    },
+    [onChangeUserData, clientSelected]
+  );
 
   const onChangeUserAccess = useCallback((module, value) => {
     dispatch(changeUserManageAccess({ name: module, value }));
@@ -169,10 +181,6 @@ const AddUser = () => {
     }));
   }, [role, allClientList]);
 
-  const clientSelected = useCallback(value => {
-    dispatch(changeUserData({ name: 'clientIds', value }));
-  }, []);
-
   return (
     <>
       {showModal && (
@@ -233,7 +241,7 @@ const AddUser = () => {
               name="role"
               options={USER_ROLES}
               value={role}
-              onChange={onChangeUserData}
+              onChange={onChangeUserRole}
               disabled={action === 'view'}
               className={action === 'view' && 'disabled-control'}
             />
