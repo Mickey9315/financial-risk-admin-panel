@@ -7,7 +7,7 @@
 }
 
 .react-dropdown-select-option-remove {
-  display: flex!important;
+  display: flex;
   align-items: center!important;
   justify-content: center!important;
   height: 14px!important;
@@ -25,4 +25,12 @@
 
 .react-dropdown-select-option-remove:hover {
   color: red!important;
+}
+
+.select-client-list-container.disabled-control .react-dropdown-select-option-remove {
+  display: none;
+}
+
+.react-dropdown-select {
+  opacity: 1!important;
 }
