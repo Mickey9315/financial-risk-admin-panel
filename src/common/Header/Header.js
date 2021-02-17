@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import './Header.scss';
 import { useHistory } from 'react-router-dom';
 import BigInput from '../BigInput/BigInput';
@@ -9,6 +9,7 @@ import Input from '../Input/Input';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 import { errorNotification } from '../Toast';
 import { changePassword, logoutUser } from './redux/HeaderAction';
+import { SIDEBAR_URLS } from '../../constants/SidebarConstants';
 
 const Header = () => {
   const history = useHistory();
@@ -95,9 +96,14 @@ const Header = () => {
     setConfirmPassword(e.target.value);
   };
 
+  const headerTitle = useMemo(
+    () => SIDEBAR_URLS.find(item => item.url === history.location.pathname).title,
+    [history]
+  );
+
   return (
     <div className="header-container">
-      <div className="screen-title">User</div>
+      <div className="screen-title">{headerTitle}</div>
       <div className="header-right-part">
         <BigInput
           prefix="search"
