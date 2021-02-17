@@ -23,7 +23,7 @@ export const verifyOtp = async (email, verificationOtp) => {
         if (e.response.data.messageCode) {
           switch (e.response.data.messageCode) {
             case 'OTP_EXPIRED':
-              errorNotification('OTP expired please try again');
+              errorNotification('OTP expired, please try again!');
               break;
             case 'REQUIRE_FIELD_MISSING':
               errorNotification('Please enter user id');

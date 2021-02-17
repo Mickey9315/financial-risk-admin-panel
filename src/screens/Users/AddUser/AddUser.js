@@ -113,7 +113,7 @@ const AddUser = () => {
     } else if (!email || email.trim().length === 0) {
       errorNotification('Please enter email');
     } else if (!email.match(EMAIL_ADDRESS_REGEX)) {
-      errorNotification('Please enter valid email');
+      errorNotification('Please enter a valid email');
     } else if (!role || role.trim().length === 0) {
       errorNotification('Please select role');
     } else if (contactNumber && !contactNumber.match(NUMBER_REGEX)) {

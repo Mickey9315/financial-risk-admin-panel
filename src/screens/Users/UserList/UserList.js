@@ -66,9 +66,9 @@ const UserList = () => {
   const getUserManagementByFilter = useCallback(
     (params = {}, cb) => {
       if (moment(startDate).isAfter(endDate)) {
-        errorNotification('Please enter from date before to date');
+        errorNotification('From date should be greater than to date');
       } else if (moment(endDate).isBefore(startDate)) {
-        errorNotification('Please enter to date after from date');
+        errorNotification('To Date should be smaller than from date');
       } else {
         const data = {
           page: page || 1,

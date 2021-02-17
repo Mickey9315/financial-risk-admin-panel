@@ -38,7 +38,7 @@ const Header = () => {
 
   const onChangePasswordClick = async () => {
     if (currentPassword.toString().trim().length === 0) {
-      return errorNotification('Please enter current password');
+      return errorNotification('Please enter your current password');
     }
     if (newPassword.toString().trim().length === 0) {
       return errorNotification('Please enter new password');

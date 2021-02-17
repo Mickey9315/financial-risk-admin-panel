@@ -20,7 +20,7 @@ function LoginScreen() {
   const [rememberUser, setRememberUser] = useState(false);
 
   const onClickLogin = async () => {
-    if (email.toString().trim().length === 0) errorNotification('Please enter email');
+    if (email.toString().trim().length === 0) errorNotification('You forgot to enter email!');
     else if (!checkForEmail(replaceHiddenCharacters(email)))
       errorNotification('Please enter a valid email');
     else if (replaceHiddenCharacters(password.toString()).trim().length === 0)

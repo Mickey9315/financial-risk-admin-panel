@@ -30,11 +30,11 @@ function ResetPassword() {
 
   const onClickResetPassword = async () => {
     if (replaceHiddenCharacters(password.toString()).trim().length === 0) {
-      errorNotification('Password can not be empty');
+      errorNotification('Password is empty, please enter the password');
     } else if (replaceHiddenCharacters(confirmPassword.toString()).trim().length === 0) {
-      errorNotification('Re-enter password can not be empty');
+      errorNotification('Re-enter password is empty, please fill it.');
     } else if (password !== confirmPassword) {
-      errorNotification('Both passwords should match');
+      errorNotification('Password and Re-enter password does not match.');
     } else {
       try {
         await resetPassword(token, password.toString().trim());

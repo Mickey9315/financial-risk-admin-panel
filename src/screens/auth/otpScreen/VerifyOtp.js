@@ -19,7 +19,8 @@ function VerifyOtp() {
   };
 
   const onClickVerifyOTP = async () => {
-    if (otp.toString().trim().length === 0) errorNotification('Please enter otp');
+    if (otp.toString().trim().length === 0)
+      errorNotification('Please enter OTP, sent to your mail id');
     else if (otp.toString().trim().length !== 6) errorNotification('Please enter a valid otp');
     else {
       try {
