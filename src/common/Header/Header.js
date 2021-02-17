@@ -62,7 +62,7 @@ const Header = () => {
   const onLogoutClick = async () => {
     try {
       await logoutUser();
-      history.replace('login');
+      history.replace('/login');
       toggleUserSettings(false);
     } catch (e) {
       /**/
