@@ -1,7 +1,12 @@
 @import "typography";
 @import "color-palette";
 
+.react-datepicker-wrapper {
+  z-index: 2;
+}
+
 .date-picker-container {
+  position: relative;
   display: flex;
   align-items: center;
   height: 32px;
@@ -14,14 +19,17 @@
     width: 100%;
     font: $text $font-regular;
     color: $field-color;
+    background-color: transparent!important;
     border: none;
     outline: none;
   }
 
   span {
-    margin-left: 10px;
+    position: absolute;
+    right: 5px;
     font-size: 24px;
     color: $placeholder-color;
+    z-index: 1;
   }
 }
 
