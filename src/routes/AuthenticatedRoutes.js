@@ -43,7 +43,7 @@ export const AllAuthenticatedRoutes = () => {
       <AuthenticatedRoute exact path="/users" component={UserList} />
       <AuthenticatedRoute exact path="/users/user/:action/:id" component={AddUser} />
       <AuthenticatedRoute exact path="/clients" component={ClientList} />
-      <AuthenticatedRoute exact path="/viewClient" component={ViewClient} />
+      <AuthenticatedRoute exact path="/viewClient/:id" component={ViewClient} />
     </Dashboard>
   );
 };

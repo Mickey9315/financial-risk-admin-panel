@@ -7,13 +7,13 @@ import {
   userManagementColumnList,
   userManagementList,
 } from '../screens/Users/redux/UserManagementReducer';
-import { clientList } from '../screens/Clients/redux/ClientReducer';
+import { clientManagement } from '../screens/Clients/redux/ClientReducer';
 
 const rootReducer = combineReducers({
   loggedUser,
   userManagementColumnList,
   userManagementList,
-  clientList,
+  clientManagement,
   selectedUserData,
   organizationModulesList,
   userManagementClientList,

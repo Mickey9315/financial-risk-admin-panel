@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import './ViewClient.scss';
-import { useHistory } from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
@@ -15,6 +16,8 @@ import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
 import PoliciesTab from '../../../common/Tab/PoliciesTab/PoliciesTab';
 import DocumentsTab from '../../../common/Tab/DocumentsTab/DocumentsTab';
 import NotesTab from '../../../common/Tab/NotesTab/Notestab';
+import {getClientById} from "../redux/ClientAction";
+
 
 const ViewClient = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -22,6 +25,8 @@ const ViewClient = () => {
     setActiveTabIndex(index);
   };
   const history = useHistory();
+  const {  id } = useParams();
+  const dispatch = useDispatch();
   const backToClient = () => {
     history.push('/clients');
   };
@@ -36,6 +41,13 @@ const ViewClient = () => {
     'Documents',
     'Notes',
   ];
+  useEffect(()=>{
+    if(id){
+      dispatch(getClientById(id))
+    }
+  },[])
+  const viewClientData = useSelector(({clientManagement})=>clientManagement.selectedClient)
+  console.log('client data->',viewClientData);
   return (
     <>
       <div className="breadcrumb-button-row">
@@ -52,29 +64,25 @@ const ViewClient = () => {
         <span>Name</span>
         <Input type="text" placeholder="Enter Name" />
         <span>Address</span>
-        <Input type="text" placeholder="Enter Address" />
-        <span>Brokers Commission</span>
-        <Input type="text" placeholder="Enter Commission" />
+        <Input type="text" placeholder="Enter Address" value={viewClientData.address.city} />
         <span>Phone</span>
-        <Input type="text" placeholder="1234567890" />
+        <Input type="text" placeholder="1234567890" value={viewClientData.contactNumber}/>
         <span>ABN</span>
-        <Input type="number" placeholder="1234567890" />
+        <Input type="number" placeholder="1234567890" value={viewClientData.abn}/>
         <span>ACN</span>
-        <Input type="number" placeholder="1234567890" />
+        <Input type="number" placeholder="1234567890" value={viewClientData.acn}/>
         <span>Referred By</span>
-        <Input type="text" placeholder="Lorem Ipsum" />
-        <span>Referred By</span>
-        <Input type="text" placeholder="Lorem Ipsum" />
+        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.referredBy}/>
         <span>Risk Person</span>
-        <Select placeholder="Select" />
+        <Select placeholder="Select"/>
         <span>Service Person</span>
         <Select placeholder="Select" />
         <span>IBIS Sector</span>
-        <Input type="text" placeholder="Lorem Ipsum" />
+        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.sector}/>
         <span>Sales Person</span>
-        <Input type="text" placeholder="Lorem Ipsum" />
+        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.salesPerson}/>
         <span>Website</span>
-        <Input type="text" placeholder="Lorem Ipsum" />
+        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.website}/>
         <span>Trading As</span>
         <Input type="text" placeholder="Lorem Ipsum" />
         <span>Inception Date</span>

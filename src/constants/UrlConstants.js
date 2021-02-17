@@ -28,4 +28,5 @@ export const ORGANISATION_MODULE_URLS = {
 
 export const CLIENT_URLS = {
   CLIENT_LIST_URL: `${BASE_URL}rp/client`,
+  CLIENT_BY_ID_URL: `${BASE_URL}rp/client/`,
 };

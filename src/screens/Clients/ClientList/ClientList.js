@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import './ClientList.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,9 +15,11 @@ import { getClientList } from '../redux/ClientAction';
 const ClientList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const clientListWithPageData = useSelector(({ clientList }) => clientList);
+  const clientListWithPageData = useSelector(({ clientManagement }) => clientManagement.clientList);
+  console.log(clientListWithPageData);
   const clientData = useMemo(() => clientListWithPageData?.docs || [], [clientListWithPageData]);
   useEffect(() => {
+    console.log('get client list')
     dispatch(getClientList());
   }, []);
   const columnStructure = {
@@ -123,9 +125,16 @@ const ClientList = () => {
   const openAddClient = () => {
     history.push('/addClient');
   };
-  const openViewClient = () => {
+  /* const openViewClient = () => {
     history.push('/viewClient');
-  };
+  }; */
+  const openViewClient = useCallback(
+          id => {
+            history.push(`/viewClient/${id}`);
+          },
+          [history]
+  );
+  console.log('clientListWithPageData=>',clientData)
   return (
     <>
       <div className="page-header">
