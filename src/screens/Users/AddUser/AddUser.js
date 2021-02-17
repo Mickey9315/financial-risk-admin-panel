@@ -161,7 +161,7 @@ const AddUser = () => {
       ],
     });
     toggleConfirmationModal(true);
-  }, []);
+  }, [deleteUserClick, toggleConfirmationModal]);
 
   const clients = useMemo(() => {
     let finalData = [];
