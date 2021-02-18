@@ -121,12 +121,8 @@ const ClientList = () => {
   ];
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
-  const openAddClient = () => {
-    history.replace('/clients/client/add');
-  };
-  /* const openViewClient = () => {
-    history.push('/viewClient');
-  }; */
+  const onClickAddFromCRM = useCallback(() => {}, []);
+
   const openViewClient = useCallback(
     id => {
       history.replace(`/clients/client/view/${id}`);
@@ -151,7 +147,7 @@ const ClientList = () => {
             className="mr-10"
             onClick={toggleCustomField}
           />
-          <Button title="Add From CRM" buttonType="success" onClick={openAddClient} />
+          <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
         </div>
       </div>
       <div className="common-list-container">
