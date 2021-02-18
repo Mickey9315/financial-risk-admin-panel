@@ -11,62 +11,29 @@ import Modal from '../../../common/Modal/Modal';
 import Select from '../../../common/Select/Select';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import { getClientList } from '../redux/ClientAction';
+import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
 
 const ClientList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const clientListWithPageData = useSelector(({ clientManagement }) => clientManagement.clientList);
-  console.log(clientListWithPageData);
-  const clientData = useMemo(() => clientListWithPageData?.docs || [], [clientListWithPageData]);
+  const { docs, headers } = useMemo(() => clientListWithPageData, [clientListWithPageData]);
+  const tableData = useMemo(() => {
+    return docs.map(e => {
+      const finalObj = {
+        id: e._id,
+      };
+      headers.forEach(f => {
+        finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
+      });
+
+      return finalObj;
+    });
+  }, [docs]);
+
   useEffect(() => {
     dispatch(getClientList());
   }, []);
-  const columnStructure = {
-    columns: [
-      {
-        type: 'text',
-        name: 'Name',
-        value: 'name',
-      },
-      {
-        type: 'text',
-        name: 'Phone',
-        value: 'contactNumber',
-      },
-      {
-        type: 'text',
-        name: 'Service Person',
-        value: 'service_person',
-      },
-      {
-        type: 'text',
-        name: 'Risk Person',
-        value: 'risk_person',
-      },
-      {
-        type: 'text',
-        name: 'Products',
-        value: 'products',
-      },
-      {
-        type: 'text',
-        name: 'Date',
-        value: 'date',
-      },
-    ],
-    actions: [
-      {
-        type: 'edit',
-        name: 'Edit',
-        icon: 'edit-outline',
-      },
-      {
-        type: 'delete',
-        name: 'Delete',
-        icon: 'trash-outline',
-      },
-    ],
-  };
 
   const { total, pages, page, limit } = clientListWithPageData;
 
@@ -155,8 +122,8 @@ const ClientList = () => {
           align="left"
           valign="center"
           recordSelected={openViewClient}
-          data={clientData}
-          header={columnStructure}
+          data={tableData}
+          header={headers}
           rowClass="client-list-row"
         />
       </div>
