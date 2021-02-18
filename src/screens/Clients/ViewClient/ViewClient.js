@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './ViewClient.scss';
 import { useHistory, useParams } from 'react-router-dom';
@@ -19,8 +19,37 @@ import NotesTab from '../../../common/Tab/NotesTab/Notestab';
 import { getClientById } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 
+const initialAssigneeState = {
+  riskAnalystId: '',
+  serviceManagerId: '',
+};
+
+const ASSIGNEE_REDUCER_ACTIONS = {
+  UPDATE_DATA: 'UPDATE_DATA',
+  RESET_STATE: 'RESET_STATE',
+};
+
+function assigneeReducer(state, action) {
+  switch (action.type) {
+    case ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA:
+      return {
+        ...state,
+        [`${action.name}`]: action.value,
+      };
+    case ASSIGNEE_REDUCER_ACTIONS.RESET_STATE:
+      return { ...initialAssigneeState };
+    default:
+      return state;
+  }
+}
+
 const ViewClient = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [{ riskAnalystId, serviceManagerId }, dispatchAssignee] = useReducer(
+    assigneeReducer,
+    initialAssigneeState
+  );
+
   const tabActive = index => {
     setActiveTabIndex(index);
   };
@@ -41,11 +70,44 @@ const ViewClient = () => {
     'Documents',
     'Notes',
   ];
+  const viewClientData = useSelector(({ clientManagement }) => clientManagement.selectedClient);
+
+  const riskAnalysts = useMemo(
+    () =>
+      viewClientData
+        ? viewClientData.riskAnalystList.map(e => ({
+            label: e.name,
+            value: e._id,
+          }))
+        : [],
+    [viewClientData]
+  );
+
+  const serviceManagers = useMemo(
+    () =>
+      viewClientData
+        ? viewClientData.serviceManagerList.map(e => ({
+            label: e.name,
+            value: e._id,
+          }))
+        : [],
+    [viewClientData]
+  );
 
   useEffect(() => {
     dispatch(getClientById(id));
   }, []);
-  const viewClientData = useSelector(({ clientManagement }) => clientManagement.selectedClient);
+
+  const onChangeAssignee = useCallback(
+    event => {
+      dispatchAssignee({
+        type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+        name: event.target.name,
+        value: event.target.value,
+      });
+    },
+    [dispatchAssignee]
+  );
 
   if (!viewClientData) {
     return <Loader />;
@@ -81,9 +143,21 @@ const ViewClient = () => {
         <span>Referred By</span>
         <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.referredBy} />
         <span>Risk Person</span>
-        <Select placeholder="Select" />
+        <Select
+          placeholder="Select"
+          name="riskAnalystId"
+          options={riskAnalysts}
+          value={riskAnalystId}
+          onChange={onChangeAssignee}
+        />
         <span>Service Person</span>
-        <Select placeholder="Select" />
+        <Select
+          placeholder="Select"
+          name="serviceManagerId"
+          options={serviceManagers}
+          value={serviceManagerId}
+          onChange={onChangeAssignee}
+        />
         <span>IBIS Sector</span>
         <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.sector} />
         <span>Sales Person</span>
