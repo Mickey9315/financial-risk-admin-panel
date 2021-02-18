@@ -28,7 +28,7 @@ const ViewClient = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const backToClient = () => {
-    history.push('/clients');
+    history.replace('/clients');
   };
   const tabs = [
     'Contacts',
