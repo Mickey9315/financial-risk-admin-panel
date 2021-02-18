@@ -16,7 +16,7 @@ const UserManagementApiService = {
   updateUserColumnListName: data =>
     ApiService.putData(USER_MANAGEMENT_URLS.UPDATE_USER_COLUMN_NAME_LIST_URL, data),
   getAllUserListByFilter: params =>
-    ApiService.getData(USER_MANAGEMENT_URLS.USER_LIST_BY_FILTER_URL, { params }),
+    ApiService.getData(USER_MANAGEMENT_URLS.USER_LIST_URL, { params }),
 };
 
 export default UserManagementApiService;
