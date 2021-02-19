@@ -9,7 +9,7 @@ import {
 export const loginUser = ({ email, password }, rememberMe) => {
   return async dispatch => {
     try {
-      const data = { userId: email.trim(), password: password.trim() };
+      const data = { userId: email.toLowerCase().trim(), password: password.trim() };
       const response = await AuthApiService.loginUser(data);
 
       if (response.data.status === 'SUCCESS') {
