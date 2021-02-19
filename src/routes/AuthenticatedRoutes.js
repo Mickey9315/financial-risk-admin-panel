@@ -17,6 +17,13 @@ export const AuthenticatedRoute = ({ component, ...options }) => {
       </Route>
     );
   }
+  if (!component) {
+    return (
+      <Route {...options}>
+        <Redirect to="/dashboard" />
+      </Route>
+    );
+  }
 
   return <Route {...options} component={component} />;
 };
@@ -33,7 +40,6 @@ export const AllAuthenticatedRoutes = () => {
       <AuthenticatedRoute exact path="/dashboard" component={null} />
       <AuthenticatedRoute exact path="/my-work" component={null} />
       <AuthenticatedRoute exact path="/application" component={null} />
-      <AuthenticatedRoute exact path="/clients" component={null} />
       <AuthenticatedRoute exact path="/debtors" component={null} />
       <AuthenticatedRoute exact path="/claims" component={null} />
       <AuthenticatedRoute exact path="/over-dues" component={null} />
