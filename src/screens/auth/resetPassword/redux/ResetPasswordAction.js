@@ -14,6 +14,18 @@ export const resetPassword = async (token, password) => {
       errorNotification('It seems like server is down, Please try again later.');
     } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
       errorNotification('Internal server error');
+    } else if (e.response.data.status === 'ERROR') {
+      if (e.response.data.messageCode) {
+        switch (e.response.data.messageCode) {
+          case 'SAME_OLD_PASSWORD':
+            errorNotification("You can't set set last used password");
+            break;
+          default:
+            break;
+        }
+      } else {
+        errorNotification('It seems like server is down, Please try again later.');
+      }
     }
     throw Error();
   }
