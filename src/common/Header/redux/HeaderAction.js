@@ -22,6 +22,9 @@ export const changePassword = async (oldPassword, newPassword) => {
             case 'WRONG_CURRENT_PASSWORD':
               errorNotification('Please enter correct current password');
               break;
+            case 'SAME_OLD_PASSWORD':
+              errorNotification("You can't set set last used password");
+              break;
             default:
               break;
           }
