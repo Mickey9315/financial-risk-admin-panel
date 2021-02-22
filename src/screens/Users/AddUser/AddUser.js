@@ -181,6 +181,17 @@ const AddUser = () => {
     }));
   }, [role, allClientList]);
 
+  const getBreadcrumbTitle = useMemo(() => {
+    switch (action) {
+      case 'edit':
+        return 'Edit';
+      case 'add':
+        return 'Add';
+      default:
+        return 'View';
+    }
+  }, [action]);
+
   return (
     <>
       {showModal && (
@@ -192,7 +203,7 @@ const AddUser = () => {
         <div className="breadcrumb">
           <span onClick={backToUser}>User List</span>
           <span className="material-icons-round">navigate_next</span>
-          <span>View User</span>
+          <span>{getBreadcrumbTitle} User</span>
         </div>
         <div className="buttons-row">
           {action === 'view' ? (
