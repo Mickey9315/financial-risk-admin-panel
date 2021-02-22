@@ -63,12 +63,41 @@ const UserList = () => {
     userListWithPageData,
   ]);
 
+  const handleStartDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'startDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
+
+  const handleEndDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'endDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
+
+  const resetFilterDates = useCallback(() => {
+    handleStartDateChange(null);
+    handleEndDateChange(null);
+  }, [handleStartDateChange, handleEndDateChange]);
+
   const getUserManagementByFilter = useCallback(
     (params = {}, cb) => {
       if (moment(startDate).isAfter(endDate)) {
         errorNotification('From date should be greater than to date');
+        resetFilterDates();
       } else if (moment(endDate).isBefore(startDate)) {
         errorNotification('To Date should be smaller than from date');
+        resetFilterDates();
       } else {
         const data = {
           page: page || 1,
@@ -123,28 +152,6 @@ const UserList = () => {
       getUserManagementByFilter({ page: newPage, limit });
     },
     [dispatch, limit, getUserManagementByFilter]
-  );
-
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
-
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
   );
 
   const [filterModal, setFilterModal] = useState(false);
