@@ -56,7 +56,7 @@ function ResetPassword() {
         value={password}
         onChange={onChangePassword}
       />
-      <div className="login-field-name">Re-enter Password</div>
+      <div className="login-field-name">Re Enter password</div>
       <BigInput
         prefix="lock_open"
         prefixClass="login-input-icon"
