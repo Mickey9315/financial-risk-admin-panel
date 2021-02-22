@@ -227,16 +227,20 @@ const UserList = () => {
       title: 'Delete',
       buttonType: 'danger',
       onClick: async () => {
-        toggleConfirmationModal(false);
-        const data = {
-          page: page || 1,
-          limit: limit || 15,
-          role: role && role.trim().length > 0 ? role : undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
-        };
-        await dispatch(deleteUserDetails(deleteId, data));
-        setDeleteId(null);
+        try {
+          toggleConfirmationModal(false);
+          const data = {
+            page: page || 1,
+            limit: limit || 15,
+            role: role && role.trim().length > 0 ? role : undefined,
+            startDate: startDate || undefined,
+            endDate: endDate || undefined,
+          };
+          await dispatch(deleteUserDetails(deleteId, data));
+          setDeleteId(null);
+        } catch (e) {
+          /**/
+        }
       },
     },
   ];

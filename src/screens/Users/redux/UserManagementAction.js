@@ -301,7 +301,18 @@ export const deleteUserDetails = (id, params) => {
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
+          if (e.response.data.messageCode) {
+            switch (e.response.data.messageCode) {
+              case 'BAD_REQUEST':
+              case 'CAN_NOT_DELETE_SELF':
+                errorNotification("You can't delete your self.");
+                break;
+              default:
+                break;
+            }
+          } else {
+            errorNotification('It seems like server is down, Please try again later.');
+          }
         }
         throw Error();
       }

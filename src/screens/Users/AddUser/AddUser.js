@@ -142,9 +142,13 @@ const AddUser = () => {
   );
 
   const deleteUserClick = useCallback(async () => {
-    toggleConfirmationModal(false);
-    await dispatch(deleteUserDetails(id));
-    backToUser();
+    try {
+      toggleConfirmationModal(false);
+      await dispatch(deleteUserDetails(id));
+      backToUser();
+    } catch (e) {
+      /**/
+    }
   }, [id, backToUser]);
 
   const deleteModalButtonClick = useCallback(() => {
