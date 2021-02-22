@@ -274,21 +274,23 @@ const AddUser = () => {
             />
           </div>
         </div>
-        <div className="add-user-detail">
-          <span className="user-detail-title">Select Client</span>
-          <ReactSelect
-            multi
-            values={clientIds}
-            onChange={clientSelected}
-            options={clients}
-            disabled={action === 'view' || role === 'superAdmin'}
-            className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
-            color="#003A78"
-            placeholder={action === 'view' ? '' : 'Select Client'}
-            dropdownHandle={false}
-            keepSelectedInList={false}
-          />
-        </div>
+        {(role === 'riskAnalyst' || role === 'serviceManager') && (
+          <div className="add-user-detail">
+            <span className="user-detail-title">Select Client</span>
+            <ReactSelect
+              multi
+              values={clientIds}
+              onChange={clientSelected}
+              options={clients}
+              disabled={action === 'view' || role === 'superAdmin'}
+              className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
+              color="#003A78"
+              placeholder={action === 'view' ? '' : 'Select Client'}
+              dropdownHandle={false}
+              keepSelectedInList={false}
+            />
+          </div>
+        )}
       </div>
       <div className="module-container">
         {filteredOrganisationList.map(module => (
