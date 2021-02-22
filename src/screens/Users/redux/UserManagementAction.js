@@ -79,11 +79,15 @@ export const saveUserColumnListName = ({ userColumnList = {}, isReset = false })
         };
       }
 
-      const response = await UserManagementApiService.updateUserColumnListName(data);
+      if (data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await UserManagementApiService.updateUserColumnListName(data);
 
-      if (response && response.data && response.data.status === 'SUCCESS') {
-        dispatch(getUserManagementListByFilter());
-        successNotification('Columns updated successfully.');
+        if (response && response.data && response.data.status === 'SUCCESS') {
+          dispatch(getUserManagementListByFilter());
+          successNotification('Columns updated successfully.');
+        }
       }
     } catch (e) {
       if (e.response && e.response.data) {
