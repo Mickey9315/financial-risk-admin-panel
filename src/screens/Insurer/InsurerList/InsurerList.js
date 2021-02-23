@@ -1,5 +1,6 @@
+/*
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import './UserList.scss';
+import './InsurerList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
@@ -9,13 +10,7 @@ import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table, { TABLE_ROW_ACTIONS } from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
-import {
-  changeUserColumnListStatus,
-  deleteUserDetails,
-  getUserColumnListName,
-  getUserManagementListByFilter,
-  saveUserColumnListName,
-} from '../redux/UserManagementAction';
+import { getInsurerListByFilter } from '../redux/InsurerAction';
 import Modal from '../../../common/Modal/Modal';
 import Select from '../../../common/Select/Select';
 import { USER_ROLES } from '../../../constants/UserlistConstants';
@@ -31,73 +26,46 @@ const initialFilterState = {
   endDate: null,
 };
 
-const USER_FILTER_REDUCER_ACTIONS = {
+const INSURER_FILTER_REDUCER_ACTIONS = {
   UPDATE_DATA: 'UPDATE_DATA',
   RESET_STATE: 'RESET_STATE',
 };
 
 function filterReducer(state, action) {
   switch (action.type) {
-    case USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
+    case INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
       return {
         ...state,
         [`${action.name}`]: action.value,
       };
-    case USER_FILTER_REDUCER_ACTIONS.RESET_STATE:
+    case INSURER_FILTER_REDUCER_ACTIONS.RESET_STATE:
       return { ...initialFilterState };
     default:
       return state;
   }
 }
 
-const UserList = () => {
+const InsurerList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const userListWithPageData = useSelector(({ userManagementList }) => userManagementList);
-  const userColumnList = useSelector(({ userManagementColumnList }) => userManagementColumnList);
+  const insurerListWithPageData = useSelector(({ insurerManagementList }) => insurerManagementList);
+  const insurerColumnList = useSelector(
+    ({ insurerManagementColumnList }) => insurerManagementColumnList
+  );
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const [deleteId, setDeleteId] = useState(null);
+  // const [deleteId, setDeleteId] = useState(null);
   const { role, startDate, endDate } = useMemo(() => filter, [filter]);
-  const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
-    userListWithPageData,
+  const { total, pages, page, limit, docs, headers } = useMemo(() => insurerListWithPageData, [
+    insurerListWithPageData,
   ]);
 
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
-
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
-
-  const resetFilterDates = useCallback(() => {
-    handleStartDateChange(null);
-    handleEndDateChange(null);
-  }, [handleStartDateChange, handleEndDateChange]);
-
-  const getUserManagementByFilter = useCallback(
+  const getInsurerByFilter = useCallback(
     (params = {}, cb) => {
       if (moment(startDate).isAfter(endDate)) {
-        errorNotification('From date should be greater than to date');
-        resetFilterDates();
+        errorNotification('Please enter from date before to date');
       } else if (moment(endDate).isBefore(startDate)) {
-        errorNotification('To Date should be smaller than from date');
-        resetFilterDates();
+        errorNotification('Please enter to date after from date');
       } else {
         const data = {
           page: page || 1,
@@ -107,7 +75,7 @@ const UserList = () => {
           endDate: endDate || undefined,
           ...params,
         };
-        dispatch(getUserManagementListByFilter(data));
+        dispatch(getInsurerListByFilter(data));
         if (cb && typeof cb === 'function') {
           cb();
         }
@@ -119,7 +87,7 @@ const UserList = () => {
   const handleFilterChange = useCallback(
     event => {
       dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: event.target.name,
         value: event.target.value,
       });
@@ -130,7 +98,7 @@ const UserList = () => {
   const tableData = useMemo(() => {
     return docs.map(e => {
       const finalObj = {
-        id: e._id,
+        id: e.id,
       };
       headers.forEach(f => {
         finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
@@ -139,19 +107,42 @@ const UserList = () => {
       return finalObj;
     });
   }, [docs]);
+  console.log(tableData);
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getUserManagementByFilter({ page: 1, limit: newLimit });
+      getInsurerByFilter({ page: 1, limit: newLimit });
     },
-    [dispatch, getUserManagementByFilter]
+    [dispatch, getInsurerByFilter]
   );
 
   const pageActionClick = useCallback(
     newPage => {
-      getUserManagementByFilter({ page: newPage, limit });
+      getInsurerByFilter({ page: newPage, limit });
     },
-    [dispatch, limit, getUserManagementByFilter]
+    [dispatch, limit, getInsurerByFilter]
+  );
+
+  const handleStartDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'startDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
+
+  const handleEndDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'endDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
   );
 
   const [filterModal, setFilterModal] = useState(false);
@@ -161,8 +152,8 @@ const UserList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getUserManagementByFilter({ page: 1 }, toggleFilterModal);
-  }, [getUserManagementByFilter]);
+    getInsurerByFilter({ page: 1 }, toggleFilterModal);
+  }, [getInsurerByFilter]);
 
   const filterModalButtons = useMemo(
     () => [
@@ -178,13 +169,13 @@ const UserList = () => {
   );
 
   const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveUserColumnListName({ userColumnList }));
+    // await dispatch(saveInsurerColumnListName({ insurerColumnList }));
     toggleCustomField();
-  }, [dispatch, toggleCustomField, userColumnList]);
+  }, [dispatch, toggleCustomField, insurerColumnList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveUserColumnListName({ isReset: true }));
-    dispatch(getUserColumnListName());
+    // await dispatch(saveInsurerColumnListName({ isReset: true }));
+    // dispatch(getInsurerColumnListName());
     toggleCustomField();
   }, [dispatch, toggleCustomField]);
 
@@ -201,25 +192,26 @@ const UserList = () => {
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
   const { defaultFields, customFields } = useMemo(
-    () => userColumnList || { defaultFields: [], customFields: [] },
-    [userColumnList]
+    () => insurerColumnList || { defaultFields: [], customFields: [] },
+    [insurerColumnList]
   );
 
-  const openAddUser = useCallback(() => {
-    history.push('/users/user/add/new');
+  const openAddInsurer = useCallback(() => {
+    history.push('/insurer/add/new');
   }, [history]);
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
-      const data = { type, name, value };
-      dispatch(changeUserColumnListStatus(data));
+      console.log(type, name, value);
+      // const data = { type, name, value };
+      // dispatch(changeInsurerColumnListStatus(data));
     },
     [dispatch]
   );
 
-  const onSelectUserRecord = useCallback(
+  const onSelectInsurerRecord = useCallback(
     id => {
-      history.push(`/users/user/view/${id}`);
+      history.push(`/insurer/view/${id}`);
     },
     [history]
   );
@@ -228,35 +220,32 @@ const UserList = () => {
     value => setDeleteModal(value !== undefined ? value : e => !e),
     [setDeleteModal]
   );
-  const deleteUserButtons = [
+  const deleteInsurerButtons = [
     { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal(false) },
     {
       title: 'Delete',
       buttonType: 'danger',
       onClick: async () => {
-        try {
-          toggleConfirmationModal(false);
-          const data = {
-            page: page || 1,
-            limit: limit || 15,
-            role: role && role.trim().length > 0 ? role : undefined,
-            startDate: startDate || undefined,
-            endDate: endDate || undefined,
-          };
-          await dispatch(deleteUserDetails(deleteId, data));
-          setDeleteId(null);
-        } catch (e) {
-          /**/
-        }
+        toggleConfirmationModal(false);
+        const data = {
+          page: page || 1,
+          limit: limit || 15,
+          role: role && role.trim().length > 0 ? role : undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+        };
+        console.log(data);
+        // await dispatch(deleteInsurerDetails(deleteId, data));
+        // setDeleteId(null);
       },
     },
   ];
-  const onSelectUserRecordActionClick = useCallback(
+  const onSelectInsurerRecordActionClick = useCallback(
     async (type, id) => {
       if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
-        history.push(`/users/user/edit/${id}`);
+        history.push(`/insurer/edit/${id}`);
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
-        setDeleteId(id);
+        // setDeleteId(id);
         toggleConfirmationModal();
       }
     },
@@ -279,20 +268,19 @@ const UserList = () => {
 
     const filters = {
       role: paramRole && paramRole.trim().length > 0 ? paramRole : undefined,
-      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
-      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+      startDate: paramStartDate || undefined,
+      endDate: paramEndDate || undefined,
     };
 
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
     });
-
-    getUserManagementByFilter({ ...params, ...filters });
-    dispatch(getUserColumnListName());
+    dispatch(getInsurerListByFilter());
+    getInsurerByFilter({ ...params, ...filters });
   }, []);
 
   useEffect(() => {
@@ -300,8 +288,8 @@ const UserList = () => {
       page: page || 1,
       limit: limit || 15,
       role: role && role.trim().length > 0 ? role : undefined,
-      startDate: startDate ? new Date(startDate).toISOString() : undefined,
-      endDate: endDate ? new Date(endDate).toISOString() : undefined,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
@@ -314,7 +302,7 @@ const UserList = () => {
   return (
     <>
       <div className="page-header">
-        <div className="page-header-name">User List</div>
+        <div className="page-header-name">Insurer List</div>
         <div className="page-header-button-container">
           <IconButton
             buttonType="secondary"
@@ -328,7 +316,7 @@ const UserList = () => {
             className="mr-10"
             onClick={() => toggleCustomField()}
           />
-          <Button title="Add User" buttonType="success" onClick={openAddUser} />
+          <Button title="Add Insurer" buttonType="success" onClick={openAddInsurer()} />
         </div>
       </div>
       {tableData ? (
@@ -339,10 +327,10 @@ const UserList = () => {
               valign="center"
               data={tableData}
               headers={headers}
-              recordSelected={onSelectUserRecord}
-              recordActionClick={onSelectUserRecordActionClick}
+              recordSelected={onSelectInsurerRecord}
+              recordActionClick={onSelectInsurerRecordActionClick}
               rowClass="cursor-pointer"
-              rowTitle="Click to View User Details"
+              rowTitle="Click to View Insurer Details"
             />
           </div>
           <Pagination
@@ -407,12 +395,15 @@ const UserList = () => {
         />
       )}
       {deleteModal && (
-        <Modal header="Delete User" buttons={deleteUserButtons}>
-          <span className="confirmation-message">Are you sure you want to delete this user?</span>
+        <Modal header="Delete Insurer" buttons={deleteInsurerButtons}>
+          <span className="confirmation-message">
+            Are you sure you want to delete this insurer?
+          </span>
         </Modal>
       )}
     </>
   );
 };
 
-export default UserList;
+export default InsurerList;
+*/

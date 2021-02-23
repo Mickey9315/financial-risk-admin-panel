@@ -26,6 +26,14 @@ export const ORGANISATION_MODULE_URLS = {
 };
 
 export const CLIENT_URLS = {
-  CLIENT_LIST_URL: `${BASE_URL}rp/client`,
+  CLIENT_LIST_URL: `${BASE_URL}rp/client/`,
   CLIENT_BY_ID_URL: `${BASE_URL}rp/client/`,
+};
+
+export const INSURER_URLS = {
+  INSURER_LIST_URL: `${BASE_URL}rp/insurer/`,
+  SELECTED_INSURER_DETAILS_URL: `${BASE_URL}rp/insurer/`,
+  INSURER_COLUMN_NAME_LIST_URL: `${BASE_URL}rp/insurer/column-name/`,
+  UPDATE_INSURER_COLUMN_NAME_LIST_URL: `${BASE_URL}rp/user/column-name/`,
+  INSURER_LIST_BY_FILTER_URL: `${BASE_URL}rp/insurer/filter/`,
 };

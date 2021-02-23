@@ -9,6 +9,7 @@ table {
 th {
   position: sticky;
   top: 0;
+  padding: 0.313rem 1.25rem;
   font: $subtitle $font-bold;
   color: $field-color;
   background-color: $background-color;
@@ -21,10 +22,6 @@ tbody {
   border-top-left-radius: .625rem;
   border-top-right-radius: .625rem;
   overflow-y: auto;
-}
-
-th {
-  padding: 0.313rem 1.25rem;
 }
 
 tr:nth-child(odd) {
@@ -42,14 +39,14 @@ td {
   color: $field-color;
 }
 
-tr:first-child td:first-child { border-top-left-radius: 10px; }
-tr:first-child td:last-child { border-top-right-radius: 10px; }
+tr:nth-child(1) td:first-child { border-top-left-radius: 10px; }
+tr:nth-child(1) td:last-child { border-top-right-radius: 10px; }
 
-tr:not(:first-child) td:first-child {
+tr:not(:nth-child(1)) td:first-child {
   border-left: 1px solid white;
 }
 
-tr td:last-child {
+tr:not(:nth-child(1)) td:last-child {
   border-right: 1px solid white;
 }
 
@@ -61,6 +58,7 @@ tr td:last-child {
   position: absolute;
   top: 30px;
   right: 25px;
+  line-height: 1;
   background-color: $background-color;
   border: 1px solid white;
   border-radius: 10px;
@@ -74,13 +72,21 @@ tr td:last-child {
     width: 100%;
     min-width: 100px;
     padding: 5px 10px;
-    border-top: 1px solid white;
+    border-bottom: 1px solid white;
 
     span {
       font-size: 18px;
       margin-right: 5px;
     }
   }
+}
+
+.menu-name:last-child {
+  border-bottom: 0;
+}
+
+.menu-name:hover {
+  background-color: $primary-color-1;
 }
 
 .fixed-action-menu {

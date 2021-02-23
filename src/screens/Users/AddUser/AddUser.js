@@ -1,8 +1,8 @@
 /* eslint-disable no-shadow */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import './AddUser.scss';
-import { useHistory, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import {useHistory, useParams} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
@@ -19,10 +19,10 @@ import {
   setNewUserInitialStates,
   updateUserDetails,
 } from '../redux/UserManagementAction';
-import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
-import { errorNotification } from '../../../common/Toast';
-import { EMAIL_ADDRESS_REGEX, NUMBER_REGEX } from '../../../constants/RegexConstants';
-import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
+import {USER_MODULE_ACCESS, USER_ROLES} from '../../../constants/UserlistConstants';
+import {errorNotification} from '../../../common/Toast';
+import {EMAIL_ADDRESS_REGEX, NUMBER_REGEX} from '../../../constants/RegexConstants';
+import {USER_MANAGEMENT_CRUD_REDUX_CONSTANTS} from '../redux/UserManagementReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 
 const AddUser = () => {
@@ -223,13 +223,13 @@ const AddUser = () => {
           )}
         </div>
       </div>
-      <div className="user-detail-container">
-        <div className="user-detail-grid">
-          <div className="add-user-detail">
-            <span className="user-detail-title">Name</span>
+      <div className="common-detail-container">
+        <div className="common-detail-grid">
+          <div className="common-detail-field">
+            <span className="common-detail-title">Name</span>
             <Input
               type="text"
-              placeholder={action === 'view' ? '' : 'Jason Gatt"'}
+              placeholder={action === 'view' ? '' : 'Jason Gatt'}
               name="name"
               value={name}
               onChange={onChangeUserData}
@@ -237,8 +237,8 @@ const AddUser = () => {
               borderClass={action === 'view' && 'disabled-control'}
             />
           </div>
-          <div className="add-user-detail">
-            <span className="user-detail-title">Email</span>
+          <div className="common-detail-field">
+            <span className="common-detail-title">Email</span>
             <Input
               type="email"
               placeholder={action === 'view' ? '' : 'jason@trad.au'}
@@ -249,8 +249,8 @@ const AddUser = () => {
               borderClass={action === 'view' && 'disabled-control'}
             />
           </div>
-          <div className="add-user-detail">
-            <span className="user-detail-title">Role</span>
+          <div className="common-detail-field">
+            <span className="common-detail-title">Role</span>
             <Select
               placeholder={action === 'view' ? '' : 'Select'}
               name="role"
@@ -261,8 +261,8 @@ const AddUser = () => {
               className={action === 'view' && 'disabled-control'}
             />
           </div>
-          <div className="add-user-detail">
-            <span className="user-detail-title">Phone Number</span>
+          <div className="common-detail-field">
+            <span className="common-detail-title">Phone Number</span>
             <Input
               name="contactNumber"
               value={contactNumber}
@@ -275,21 +275,21 @@ const AddUser = () => {
           </div>
         </div>
         {(role === 'riskAnalyst' || role === 'serviceManager') && (
-          <div className="add-user-detail">
-            <span className="user-detail-title">Select Client</span>
-            <ReactSelect
-              multi
-              values={clientIds}
-              onChange={clientSelected}
-              options={clients}
-              disabled={action === 'view' || role === 'superAdmin'}
-              className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
-              color="#003A78"
-              placeholder={action === 'view' ? '' : 'Select Client'}
-              dropdownHandle={false}
-              keepSelectedInList={false}
-            />
-          </div>
+                <div className="common-detail-field">
+          <span className="common-detail-title">Select Client</span>
+          <ReactSelect
+            multi
+            values={clientIds}
+            onChange={clientSelected}
+            options={clients}
+            disabled={action === 'view' || role === 'superAdmin'}
+            className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
+            color="#003A78"
+            placeholder={action === 'view' ? '' : 'Select Client'}
+            dropdownHandle={false}
+            keepSelectedInList={false}
+          />
+        </div>
         )}
       </div>
       <div className="module-container">

@@ -6,6 +6,7 @@ import UserList from '../screens/Users/UserList/UserList';
 import AddUser from '../screens/Users/AddUser/AddUser';
 import ClientList from '../screens/Clients/ClientList/ClientList';
 import ViewClient from '../screens/Clients/ViewClient/ViewClient';
+import ViewInsurer from '../screens/Insurer/ViewInsurer/ViewInsurer';
 
 export const AuthenticatedRoute = ({ component, ...options }) => {
   const isLoggedIn = getAuthTokenLocalStorage();
@@ -50,6 +51,7 @@ export const AllAuthenticatedRoutes = () => {
       <AuthenticatedRoute exact path="/users/user/:action/:id" component={AddUser} />
       <AuthenticatedRoute exact path="/clients" component={ClientList} />
       <AuthenticatedRoute exact path="/clients/client/:action/:id" component={ViewClient} />
+      <AuthenticatedRoute exact path="/insurer" component={ViewInsurer} />
     </Dashboard>
   );
 };

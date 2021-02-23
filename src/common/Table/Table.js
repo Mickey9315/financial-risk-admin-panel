@@ -30,6 +30,7 @@ const Table = props => {
               {heading.label}
             </th>
           ))}
+        <th />
       </thead>
       <tbody>
         {data.map(e => (
