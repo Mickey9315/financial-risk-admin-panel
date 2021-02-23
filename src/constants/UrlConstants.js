@@ -28,6 +28,10 @@ export const ORGANISATION_MODULE_URLS = {
 export const CLIENT_URLS = {
   CLIENT_LIST_URL: `${BASE_URL}rp/client/`,
   CLIENT_BY_ID_URL: `${BASE_URL}rp/client/`,
+  CONTACT: {
+    CONTACT_LIST: `${BASE_URL}rp/client/user/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}rp/client/user/column-name/`,
+  },
 };
 
 export const INSURER_URLS = {
