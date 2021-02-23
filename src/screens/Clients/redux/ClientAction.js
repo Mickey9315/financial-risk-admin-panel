@@ -60,10 +60,10 @@ export const getClientById = id => {
  * Contact section
  * */
 
-export const getClientContactListData = () => {
+export const getClientContactListData = (id, params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      const response = await ClientContactApiService.getClientContactList();
+      const response = await ClientContactApiService.getClientContactList(id, params);
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
@@ -78,6 +78,7 @@ export const getClientContactListData = () => {
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
+          // TODO handle cases
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();

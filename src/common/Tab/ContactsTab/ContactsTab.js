@@ -1,5 +1,6 @@
 import React from 'react';
 import './ContactsTab.scss';
+import PropTypes from 'prop-types';
 import IconButton from '../../IconButton/IconButton';
 import CustomFieldModal from '../../Modal/CustomFieldModal/CustomFieldModal';
 import BigInput from '../../BigInput/BigInput';
@@ -7,71 +8,20 @@ import Button from '../../Button/Button';
 import Table from '../../Table/Table';
 import Pagination from '../../Pagination/Pagination';
 
-const ContactsTab = () => {
+const ContactsTab = props => {
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const defaultFields = [
-    'Name',
-    'Job Title',
-    'Email',
-    'Portal Access',
-    'Decision Maker',
-    'Left Company',
-  ];
-  const customFields = [
-    'Phone',
-    'Trading As',
-    'Net of brokerage',
-    'Policy Type',
-    'Expiry Date',
-    'Inception Date',
-  ];
-  const columnStructure = {
-    columns: [
-      {
-        type: 'text',
-        name: 'Name',
-        value: 'name',
-      },
-      {
-        type: 'text',
-        name: 'Job Title',
-        value: 'jobTitle',
-      },
-      {
-        type: 'email',
-        name: 'Email',
-        value: 'email',
-      },
-      {
-        type: 'checkbox',
-        name: 'Portal Access',
-        value: 'portal_access',
-      },
-      {
-        type: 'checkbox',
-        name: 'Decision Maker',
-        value: 'decision_maker',
-      },
-      {
-        type: 'checkbox',
-        name: 'Left Company',
-        value: 'left_company',
-      },
-    ],
-    actions: [
-      {
-        type: 'edit',
-        name: 'Edit',
-        icon: 'edit-outline',
-      },
-      {
-        type: 'delete',
-        name: 'Delete',
-        icon: 'trash-outline',
-      },
-    ],
-  };
+  const {
+    customFields,
+    defaultFields,
+    buttons,
+    onChangeSelectedColumn,
+    headers,
+    data,
+    recordSelected,
+    recordActionClick,
+  } = props;
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -93,18 +43,49 @@ const ContactsTab = () => {
           <Button buttonType="secondary" title="Sync With CRM" />
         </div>
       </div>
-
-      <Table header={columnStructure} headerClass="tab-table-header" />
+      <Table
+        align="left"
+        valign="center"
+        data={data}
+        headers={headers}
+        recordSelected={recordSelected}
+        recordActionClick={recordActionClick}
+        rowClass="cursor-pointer"
+        rowTitle="Click to View User Details"
+      />{' '}
       <Pagination />
       {customFieldModal && (
         <CustomFieldModal
           defaultFields={defaultFields}
           customFields={customFields}
-          toggleCustomField={toggleCustomField}
+          onChangeSelectedColumn={onChangeSelectedColumn}
+          buttons={buttons}
         />
       )}
     </>
   );
+};
+
+ContactsTab.propTypes = {
+  customFields: PropTypes.array,
+  defaultFields: PropTypes.array,
+  buttons: PropTypes.array,
+  onChangeSelectedColumn: PropTypes.func,
+  headers: PropTypes.array,
+  data: PropTypes.array,
+  recordSelected: PropTypes.func,
+  recordActionClick: PropTypes.func,
+};
+
+ContactsTab.defaultProps = {
+  customFields: [],
+  defaultFields: [],
+  buttons: [],
+  onChangeSelectedColumn: () => {},
+  headers: [],
+  data: [],
+  recordSelected: () => {},
+  recordActionClick: () => {},
 };
 
 export default ContactsTab;

@@ -7,7 +7,6 @@ import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Select from '../../../common/Select/Select';
 import Tab from '../../../common/Tab/Tab';
-import ContactsTab from '../../../common/Tab/ContactsTab/ContactsTab';
 import CreditLimitTab from '../../../common/Tab/CreditLimitTab/CreditLimitTab';
 import ApplicationTab from '../../../common/Tab/ApplicationTab/ApplicationTab';
 import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
@@ -18,6 +17,7 @@ import DocumentsTab from '../../../common/Tab/DocumentsTab/DocumentsTab';
 import NotesTab from '../../../common/Tab/NotesTab/Notestab';
 import { getClientById } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
+import ClientContactsTab from '../component/ClientContactTab';
 
 const initialAssigneeState = {
   riskAnalystId: '',
@@ -177,7 +177,7 @@ const ViewClient = () => {
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
       <div className="common-white-container">
-        {activeTabIndex === 0 && <ContactsTab />}
+        {activeTabIndex === 0 && <ClientContactsTab />}
         {activeTabIndex === 1 && <CreditLimitTab />}
         {activeTabIndex === 2 && <ApplicationTab />}
         {activeTabIndex === 3 && <OverDuesTab />}
