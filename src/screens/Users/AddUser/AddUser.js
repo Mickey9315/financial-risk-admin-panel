@@ -1,8 +1,8 @@
 /* eslint-disable no-shadow */
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './AddUser.scss';
-import {useHistory, useParams} from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
@@ -19,10 +19,10 @@ import {
   setNewUserInitialStates,
   updateUserDetails,
 } from '../redux/UserManagementAction';
-import {USER_MODULE_ACCESS, USER_ROLES} from '../../../constants/UserlistConstants';
-import {errorNotification} from '../../../common/Toast';
-import {EMAIL_ADDRESS_REGEX, NUMBER_REGEX} from '../../../constants/RegexConstants';
-import {USER_MANAGEMENT_CRUD_REDUX_CONSTANTS} from '../redux/UserManagementReduxConstants';
+import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
+import { errorNotification } from '../../../common/Toast';
+import { EMAIL_ADDRESS_REGEX, NUMBER_REGEX } from '../../../constants/RegexConstants';
+import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 
 const AddUser = () => {
@@ -275,21 +275,21 @@ const AddUser = () => {
           </div>
         </div>
         {(role === 'riskAnalyst' || role === 'serviceManager') && (
-                <div className="common-detail-field">
-          <span className="common-detail-title">Select Client</span>
-          <ReactSelect
-            multi
-            values={clientIds}
-            onChange={clientSelected}
-            options={clients}
-            disabled={action === 'view' || role === 'superAdmin'}
-            className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
-            color="#003A78"
-            placeholder={action === 'view' ? '' : 'Select Client'}
-            dropdownHandle={false}
-            keepSelectedInList={false}
-          />
-        </div>
+          <div className="common-detail-field">
+            <span className="common-detail-title">Select Client</span>
+            <ReactSelect
+              multi
+              values={clientIds}
+              onChange={clientSelected}
+              options={clients}
+              disabled={action === 'view' || role === 'superAdmin'}
+              className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
+              color="#003A78"
+              placeholder={action === 'view' ? '' : 'Select Client'}
+              dropdownHandle={false}
+              keepSelectedInList={false}
+            />
+          </div>
         )}
       </div>
       <div className="module-container">
