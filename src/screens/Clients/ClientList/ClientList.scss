@@ -27,3 +27,17 @@
     background-color: $background-color;
   }
 }
+
+.contacts-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px 10px;
+  font: $subtitle $font-medium;
+  color: $primary-color;
+  padding: 20px;
+
+  .title {
+    font-family: $font-regular;
+    color: $field-color;
+  }
+}

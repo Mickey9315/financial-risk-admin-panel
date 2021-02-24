@@ -14,6 +14,7 @@ import { processTableDataByType } from '../../../helpers/TableDataProcessHelper'
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
+import Drawer from '../../../common/Drawer/Drawer';
 
 const ClientList = () => {
   const history = useHistory();
@@ -126,10 +127,16 @@ const ClientList = () => {
     'A B Plastics Pty Ltd',
     'A B Plastics Pty Ltd',
   ];
+  const [state, setState] = React.useState(false);
+  const clientListClicked = () => {
+    setState(e => !e);
+  };
   return (
     <>
       <div className="page-header">
-        <div className="page-header-name">Client List</div>
+        <div className="page-header-name" onClick={clientListClicked}>
+          Client List
+        </div>
         <div className="page-header-button-container">
           <IconButton
             buttonType="secondary"
@@ -233,6 +240,44 @@ const ClientList = () => {
           )}
         </Modal>
       )}
+      <Drawer header="Contact Details" drawerState={state}>
+        <div className="contacts-grid">
+          <div className="title">Name</div>
+          <div>Lorem ipsum</div>
+          <div className="title">Job Title</div>
+          <div>Lorem ipsum</div>
+          <div className="title">Department</div>
+          <div>$10000</div>
+          <div className="title">Mainline</div>
+          <div>Lorem ipsum</div>
+          <div className="title">Direct</div>
+          <div>Lorem ipsum</div>
+          <div className="title">Mobile</div>
+          <div>1234567890</div>
+          <div className="title">Email</div>
+          <div>lorem@email.com</div>
+          <div className="title">Role</div>
+          <div>Lorem ipsum</div>
+          <div className="title">Decision Maker</div>
+          <div>No</div>
+          <div className="title">Hold</div>
+          <div>No</div>
+          <div className="title">Operator Code</div>
+          <div>-</div>
+          <div className="title">Password</div>
+          <div>-</div>
+          <div className="title">Link</div>
+          <div>-</div>
+          <div className="title">Left Company</div>
+          <div>Yes</div>
+          <div className="title">Local AddressLine</div>
+          <div>-</div>
+          <div className="title">Local City</div>
+          <div>-</div>
+          <div className="title">Local County/State</div>
+          <div>-</div>
+        </div>
+      </Drawer>
     </>
   );
 };

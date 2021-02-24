@@ -56,6 +56,10 @@
   color: $field-color;
   cursor: pointer;
 
+  >span:first-child {
+    opacity: 50%;
+  }
+
   > span:last-child {
     color: $primary-color;
     cursor: text;

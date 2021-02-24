@@ -1,0 +1,63 @@
+@import "../../index";
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0,0,0,.25);
+  background-blend-mode: screen;
+  z-index: 10;
+}
+
+.drawer-container {
+  position: absolute;
+  top: 15px;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: calc(100vh - 15px);
+  background-color: white;
+  border-radius: 10px 0 0 0;
+  transition: width .5s ease-in-out;
+  box-shadow: 0 0 30px #7272724D;
+  overflow: hidden;
+}
+
+.drawer-wrapper {
+  width: 100%;
+}
+
+.drawer-opened {
+  width: 550px;
+}
+
+.drawer-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  width: 100%;
+  padding: 20px 40px 20px 20px;
+  font: $h5 $font-medium;
+  color: white;
+  background-color: $primary-color;
+
+  span {
+    padding: 5px;
+    font-size: 14px;
+    color: $primary-color ;
+    background-color: white;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+}
+
+.drawer-content {
+  max-height: calc(100% - 60px);
+  overflow-y: auto;
+}
