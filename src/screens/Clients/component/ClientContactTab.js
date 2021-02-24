@@ -7,7 +7,12 @@ import Table from '../../../common/Table/Table';
 import Button from '../../../common/Button/Button';
 import IconButton from '../../../common/IconButton/IconButton';
 import BigInput from '../../../common/BigInput/BigInput';
-import { getClientContactListData } from '../redux/ClientAction';
+import {
+  changeClientContactColumnListStatus,
+  getClientContactColumnNamesList,
+  getClientContactListData,
+  saveClientContactColumnListName,
+} from '../redux/ClientAction';
 import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
 import Loader from '../../../common/Loader/Loader';
 
@@ -32,6 +37,7 @@ const ClientContactsTab = () => {
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
+      await dispatch(saveClientContactColumnListName({ clientContactColumnList }));
       dispatch(getClientContactListData(id));
     } catch (e) {
       /**/
@@ -40,6 +46,7 @@ const ClientContactsTab = () => {
   }, [dispatch, toggleCustomField, clientContactColumnList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveClientContactColumnListName({ isReset: true }));
     dispatch(getClientContactListData(id));
     toggleCustomField();
   }, [dispatch, toggleCustomField]);
@@ -47,7 +54,7 @@ const ClientContactsTab = () => {
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
-      console.log(data);
+      dispatch(changeClientContactColumnListStatus(data));
     },
     [dispatch]
   );
@@ -117,6 +124,7 @@ const ClientContactsTab = () => {
 
   useEffect(() => {
     getClientContactsList();
+    dispatch(getClientContactColumnNamesList());
   }, []);
 
   return (
