@@ -37,6 +37,10 @@
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  .react-dropdown-select {
+    width: 200px;
+    height: 32px;
+  }
 }
 
 .filter-select {

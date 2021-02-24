@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ViewInsurer.scss';
+import ReactSelect from 'react-dropdown-select';
 import Input from '../../../common/Input/Input';
-import Select from '../../../common/Select/Select';
 import { USER_ROLES } from '../../../constants/UserlistConstants';
 import Tab from '../../../common/Tab/Tab';
 import ContactsTab from '../../../common/Tab/ContactsTab/ContactsTab';
@@ -35,7 +35,7 @@ const ViewInsurer = () => {
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Contact Person</span>
-            <Select name="contact_person" options={USER_ROLES} />
+            <ReactSelect name="contact_person" options={USER_ROLES} />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Phone Number</span>

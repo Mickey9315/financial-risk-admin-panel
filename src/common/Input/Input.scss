@@ -11,12 +11,16 @@
   border-radius: 0.313rem;
 
   input {
-    font: $subtitle $font-medium;
-    color: $field-color!important;
+    font: $subtitle $font-regular;
+    color: $field-color !important;
     background-color: #ffffff;
     border: none;
     outline: none;
   }
+}
+
+.disabled-control input {
+    font: $subtitle $font-medium !important;
 }
 
 .chips-container {

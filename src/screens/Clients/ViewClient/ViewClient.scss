@@ -7,11 +7,11 @@
   padding: 25px 30px;
   gap: 15px 5px;
 
-  span {
+  > span {
     color: $primary-color;
   }
 
-  input, select, > div {
+  > input, > div {
     width: 70%;
     min-width: 170px;
   }

@@ -3,15 +3,17 @@ import './ClientList.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
+import ReactSelect from 'react-dropdown-select';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Modal from '../../../common/Modal/Modal';
-import Select from '../../../common/Select/Select';
-import Checkbox from '../../../common/Checkbox/Checkbox';
 import { getClientList } from '../redux/ClientAction';
 import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
+import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
+import BigInput from '../../../common/BigInput/BigInput';
+import Checkbox from '../../../common/Checkbox/Checkbox';
 
 const ClientList = () => {
   const history = useHistory();
@@ -88,15 +90,42 @@ const ClientList = () => {
   ];
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
-  const onClickAddFromCRM = useCallback(() => {}, []);
-
+  const [addFromCRM, setAddFromCRM] = React.useState(false);
+  const onClickAddFromCRM = useCallback(
+    value => setAddFromCRM(value !== undefined ? value : e => !e),
+    [setAddFromCRM]
+  );
+  const toggleAddFromCRM = () => setAddFromCRM(e => !e);
+  const addToCRMButtons = [
+    { title: 'Close', buttonType: 'primary-1', onClick: toggleAddFromCRM },
+    { title: 'Add', buttonType: 'primary' },
+  ];
   const openViewClient = useCallback(
     id => {
       history.replace(`/clients/client/view/${id}`);
     },
     [history]
   );
-
+  const [searchClients, setSearchClients] = React.useState(false);
+  const checkIfEnterKeyPressed = e => {
+    if (e.key === 'Enter') {
+      setSearchClients(val => !val);
+    }
+  };
+  const crmList = [
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+    'A B Plastics Pty Ltd',
+  ];
   return (
     <>
       <div className="page-header">
@@ -148,7 +177,7 @@ const ClientList = () => {
         >
           <div className="filter-modal-row">
             <div className="form-title">Role</div>
-            <Select className="filter-select" placeholder="Select" />
+            <ReactSelect className="filter-select" placeholder="Select" searchable={false} />
           </div>
           <div className="filter-modal-row">
             <div className="form-title">Date</div>
@@ -172,26 +201,34 @@ const ClientList = () => {
         </Modal>
       )}
       {customFieldModal && (
-        <Modal
+        <CustomFieldModal
           headerIcon="format_line_spacing"
           header="Custom Fields"
           buttons={customFieldsModalButtons}
           className="custom-field-modal"
-        >
-          <div className="custom-field-content">
-            <div>
-              <div className="custom-field-title">Default Fields</div>
-              {defaultFields.map(e => (
-                <Checkbox title={e} />
-              ))}
-            </div>
-            <div>
-              <div className="custom-field-title">Custom Fields</div>
-              {customFields.map(e => (
-                <Checkbox title={e} />
-              ))}
-            </div>
-          </div>
+          defaultFields={defaultFields}
+          customFields={customFields}
+        />
+      )}
+      {addFromCRM && (
+        <Modal header="Add From CRM" className="add-to-crm-modal" buttons={addToCRMButtons}>
+          <BigInput
+            prefix="search"
+            prefixClass="font-placeholder"
+            placeholder="Search clients"
+            type="text"
+            onKeyDown={checkIfEnterKeyPressed}
+          />
+          {searchClients && crmList.length > 0 && (
+            <>
+              <Checkbox title="Name" className="check-all-crmList" />
+              <div className="crm-checkbox-list-container">
+                {crmList.map(crm => (
+                  <Checkbox title={crm} className="crm-checkbox-list" />
+                ))}
+              </div>
+            </>
+          )}
         </Modal>
       )}
     </>

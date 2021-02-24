@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import './UserList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import ReactSelect from 'react-dropdown-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
@@ -17,7 +18,6 @@ import {
   saveUserColumnListName,
 } from '../redux/UserManagementAction';
 import Modal from '../../../common/Modal/Modal';
-import Select from '../../../common/Select/Select';
 import { USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -120,8 +120,8 @@ const UserList = () => {
     event => {
       dispatchFilter({
         type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: event.target.name,
-        value: event.target.value,
+        name: 'role',
+        value: event[0].value,
       });
     },
     [dispatchFilter]
@@ -311,6 +311,13 @@ const UserList = () => {
     history.replace(`${history.location.pathname}?${url}`);
   }, [history, total, pages, page, limit, role, startDate, endDate]);
 
+  const userRoleSelectedValue = useMemo(() => {
+    const foundValue = USER_ROLES.find(e => {
+      return e.value === role;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [role]);
+
   return (
     <>
       <div className="page-header">
@@ -320,12 +327,14 @@ const UserList = () => {
             buttonType="secondary"
             title="filter_list"
             className="mr-10"
+            buttonTitle="Click to apply filters on user list"
             onClick={() => toggleFilterModal()}
           />
           <IconButton
             buttonType="primary"
             title="format_line_spacing"
             className="mr-10"
+            buttonTitle="Click to select custom fields"
             onClick={() => toggleCustomField()}
           />
           <Button title="Add User" buttonType="success" onClick={openAddUser} />
@@ -342,7 +351,7 @@ const UserList = () => {
               recordSelected={onSelectUserRecord}
               recordActionClick={onSelectUserRecordActionClick}
               rowClass="cursor-pointer"
-              rowTitle="Click to View User Details"
+              rowTitle="Click to view user details"
             />
           </div>
           <Pagination
@@ -368,12 +377,12 @@ const UserList = () => {
         >
           <div className="filter-modal-row">
             <div className="form-title">Role</div>
-            <Select
+            <ReactSelect
               className="filter-select"
               placeholder="Select"
               name="role"
               options={USER_ROLES}
-              value={role}
+              values={userRoleSelectedValue}
               onChange={handleFilterChange}
             />
           </div>

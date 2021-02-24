@@ -330,7 +330,7 @@ const InsurerList = () => {
               recordSelected={onSelectInsurerRecord}
               recordActionClick={onSelectInsurerRecordActionClick}
               rowClass="cursor-pointer"
-              rowTitle="Click to View Insurer Details"
+              rowTitle="Click to view insurer details"
             />
           </div>
           <Pagination

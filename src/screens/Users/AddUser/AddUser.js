@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
-import Select from '../../../common/Select/Select';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import {
   addNewUser,
@@ -72,6 +71,7 @@ const AddUser = () => {
     if (selectedUser) {
       // eslint-disable-next-line no-shadow
       const { name, role, email, contactNumber, clientIds } = selectedUser;
+      console.log({ role });
       return {
         name: name || '',
         role: role || '',
@@ -95,7 +95,15 @@ const AddUser = () => {
   const onChangeUserRole = useCallback(
     e => {
       clientSelected([]);
-      onChangeUserData(e);
+
+      const data = {
+        target: {
+          name: 'role',
+          value: e[0].value,
+        },
+      };
+
+      onChangeUserData(data);
     },
     [onChangeUserData, clientSelected]
   );
@@ -196,6 +204,12 @@ const AddUser = () => {
     }
   }, [action]);
 
+  const userRoleSelectedValue = useMemo(() => {
+    const foundValue = USER_ROLES.find(e => {
+      return e.value === role;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [role]);
   return (
     <>
       {showModal && (
@@ -251,14 +265,15 @@ const AddUser = () => {
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Role</span>
-            <Select
+            <ReactSelect
               placeholder={action === 'view' ? '' : 'Select'}
               name="role"
               options={USER_ROLES}
-              value={role}
+              values={userRoleSelectedValue}
               onChange={onChangeUserRole}
               disabled={action === 'view'}
               className={action === 'view' && 'disabled-control'}
+              dropdownHandle={action !== 'view'}
             />
           </div>
           <div className="common-detail-field">
@@ -285,7 +300,7 @@ const AddUser = () => {
               disabled={action === 'view' || role === 'superAdmin'}
               className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
               color="#003A78"
-              placeholder={action === 'view' ? '' : 'Select Client'}
+              placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
               dropdownHandle={false}
               keepSelectedInList={false}
             />

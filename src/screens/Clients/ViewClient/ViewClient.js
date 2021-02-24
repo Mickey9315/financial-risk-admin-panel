@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import './ViewClient.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
+import ReactSelect from 'react-dropdown-select';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
-import Select from '../../../common/Select/Select';
 import Tab from '../../../common/Tab/Tab';
 import CreditLimitTab from '../../../common/Tab/CreditLimitTab/CreditLimitTab';
 import ApplicationTab from '../../../common/Tab/ApplicationTab/ApplicationTab';
@@ -102,8 +102,8 @@ const ViewClient = () => {
     event => {
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-        name: event.target.name,
-        value: event.target.value,
+        name: event[0].label,
+        value: event[0].value,
       });
     },
     [dispatchAssignee]
@@ -143,20 +143,22 @@ const ViewClient = () => {
         <span>Referred By</span>
         <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.referredBy} />
         <span>Risk Person</span>
-        <Select
+        <ReactSelect
           placeholder="Select"
           name="riskAnalystId"
           options={riskAnalysts}
           value={riskAnalystId}
           onChange={onChangeAssignee}
+          searchable={false}
         />
         <span>Service Person</span>
-        <Select
+        <ReactSelect
           placeholder="Select"
           name="serviceManagerId"
           options={serviceManagers}
           value={serviceManagerId}
           onChange={onChangeAssignee}
+          searchable={false}
         />
         <span>IBIS Sector</span>
         <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.sector} />

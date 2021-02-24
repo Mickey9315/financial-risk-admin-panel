@@ -3,3 +3,27 @@
 .client-list-row {
   cursor: pointer;
 }
+
+.add-to-crm-modal {
+  width: 60vw;
+}
+
+.crm-checkbox-list-container {
+  max-height: 250px;
+  margin-top: 10px;
+  overflow-y: auto;
+}
+
+.check-all-crmList {
+  margin-top: 10px;
+  padding-left: 5px;
+}
+
+.crm-checkbox-list {
+  margin-bottom: 5px;
+  padding: 5px;
+
+  &:nth-child(even) {
+    background-color: $background-color;
+  }
+}

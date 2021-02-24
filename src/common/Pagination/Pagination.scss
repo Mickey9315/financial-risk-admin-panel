@@ -7,10 +7,14 @@
   width: 100%;
   padding: 1.25rem;
   background-color: #ffffff;
+  .react-dropdown-select {
+    height: 35px!important;
+  }
 }
 
 .no-per-page-select {
-  height: 36px;
+  height: 35px;
+  width: 80px!important;
 }
 
 .records-per-page-container {
@@ -45,6 +49,14 @@
     font-size: $title;
     color: $field-color;
   }
+
+  :disabled {
+    cursor: not-allowed!important;
+  }
+}
+
+.pagination-button-disabled {
+  cursor: not-allowed;
 }
 
 .first-page span, .last-page span {

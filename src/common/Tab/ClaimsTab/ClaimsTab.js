@@ -97,6 +97,7 @@ const ClaimsTab = () => {
           />
           <IconButton
             buttonType="primary"
+            buttonTitle="Click to select custom fields"
             title="format_line_spacing"
             onClick={toggleCustomField}
           />

@@ -10,18 +10,19 @@
   display: flex;
   align-items: center;
   height: 32px;
-  padding-left: 10px;
+  padding-left: 6px;
   background-color: #ffffff;
   border: 0.063rem solid $border-color;
   border-radius: 0.313rem;
 
   input {
     width: 100%;
-    font: $text $font-regular;
+    font: $subtitle $font-regular;
     color: $field-color;
     background-color: transparent!important;
     border: none;
     outline: none;
+    cursor: pointer;
   }
 
   span {
@@ -136,10 +137,8 @@
   -webkit-appearance: none;
 }
 
-.disabled-control.select::-ms-expand {
-  -moz-appearance: window;
-  -webkit-appearance: none;
-  display: none;
+.react-dropdown-select.disabled-control .react-dropdown-select-content {
+  font-family: $font-medium!important;
 }
 
 .confirmation-message {

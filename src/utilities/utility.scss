@@ -69,8 +69,20 @@
   margin-top: 0.938rem;
 }
 
+.mb-5 {
+  margin-bottom: .313rem;
+}
+
+.mb-10 {
+  margin-bottom: 0.625rem;
+}
+
+.mb-15 {
+  margin-bottom: .938rem;
+}
+
 .form-title {
-  margin-right: 25px;
+  width: 50px;
   font: $subtitle $font-medium;
   color: $primary-color;
 }

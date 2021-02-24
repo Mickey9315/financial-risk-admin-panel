@@ -1,22 +1,22 @@
 import React, { useMemo, useState } from 'react';
 import './Pagination.scss';
 import PropTypes from 'prop-types';
-import Select from '../Select/Select';
+import ReactSelect from 'react-dropdown-select';
 
+const noPerPage = [
+  { label: '5', value: 5 },
+  { label: '10', value: 10 },
+  { label: '15', value: 15 },
+  { label: '20', value: 20 },
+  { label: '25', value: 25 },
+  { label: '30', value: 30 },
+];
 const Pagination = props => {
   const { total, limit, pages, page, className, pageActionClick, onSelectLimit } = props;
-  const noPerPage = [
-    { label: '5', value: 5 },
-    { label: '10', value: 10 },
-    { label: '15', value: 15 },
-    { label: '20', value: 20 },
-    { label: '25', value: 25 },
-    { label: '30', value: 30 },
-  ];
 
   const paginationClass = `pagination-container ${className}`;
 
-  const [recordLimit, setRecordLimit] = useState(15);
+  const [recordLimit, setRecordLimit] = useState([{ label: '5', value: 5 }]);
 
   const fromRecordCount = useMemo(() => (page - 1) * limit + 1, [page, limit, total]);
   const toRecordCount = useMemo(() => (total < page * limit ? total : page * limit), [
@@ -30,19 +30,22 @@ const Pagination = props => {
   const onFirstClick = () => pageActionClick(1);
   const onLastClick = () => pageActionClick(pages);
   const onChangeLimit = e => {
-    setRecordLimit(e.target.value);
-    onSelectLimit(e.target.value);
+    setRecordLimit(e);
+    onSelectLimit(e[0].value);
   };
 
   return (
     <div className={paginationClass}>
       <div className="records-per-page-container">
         <span className="font-field mr-10">Show</span>
-        <Select
-          className="no-per-page-select"
+        <ReactSelect
           options={noPerPage}
           onChange={onChangeLimit}
-          value={recordLimit}
+          values={recordLimit}
+          placeholder="Select"
+          className="no-per-page-select"
+          dropdownPosition="auto"
+          searchable={false}
         />
         <span className="ml-10">
           {' '}
