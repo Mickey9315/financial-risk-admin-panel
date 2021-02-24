@@ -101,24 +101,22 @@ const ViewClient = () => {
   }, []);
 
   useEffect(() => {
-    if (viewClientData) {
-      dispatchAssignee({
-        type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'riskAnalystId',
-        value: {
-          label: viewClientData.riskAnalystId.name,
-          value: viewClientData.riskAnalystId._id,
-        },
-      });
-      dispatchAssignee({
-        type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'serviceManagerId',
-        value: {
-          label: viewClientData.serviceManagerId.name,
-          value: viewClientData.serviceManagerId._id,
-        },
-      });
-    }
+    dispatchAssignee({
+      type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'riskAnalystId',
+      value: {
+        label: viewClientData?.riskAnalystId?.name ?? null,
+        value: viewClientData?.riskAnalystId?._id ?? null,
+      },
+    });
+    dispatchAssignee({
+      type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'serviceManagerId',
+      value: {
+        label: viewClientData?.serviceManagerId?.name ?? null,
+        value: viewClientData?.serviceManagerId?._id ?? null,
+      },
+    });
   }, [viewClientData]);
 
   const onChangeAssignee = useCallback(
