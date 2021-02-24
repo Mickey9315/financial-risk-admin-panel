@@ -1,4 +1,4 @@
-import { errorNotification } from '../../../common/Toast';
+import { errorNotification, successNotification } from '../../../common/Toast';
 import ClientApiService from '../services/ClientApiService';
 import { CLIENT_REDUX_CONSTANTS } from './ClientReduxConstants';
 import ClientContactApiService from '../services/ClientContactApiService';
@@ -21,7 +21,6 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
-          // TODO handle cases
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();
@@ -47,7 +46,29 @@ export const getClientById = id => {
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
-          // TODO handle cases
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const updateSelectedClientData = (id, data) => {
+  return async () => {
+    try {
+      const response = await ClientApiService.updateSelectedClientData(id, data);
+
+      if (response.data.status === 'SUCCESS') {
+        successNotification('Client details updated successfully');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();
@@ -78,7 +99,6 @@ export const getClientContactListData = (id, params = { page: 1, limit: 15 }) =>
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
-          // TODO handle cases
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();
