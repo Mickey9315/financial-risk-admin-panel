@@ -100,12 +100,33 @@ const ViewClient = () => {
     dispatch(getClientById(id));
   }, []);
 
-  const onChangeAssignee = useCallback(
-    event => {
-      const { name, label, value } = event[0];
+  useEffect(() => {
+    if (viewClientData) {
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-        name: label,
+        name: 'riskAnalystId',
+        value: {
+          label: viewClientData.riskAnalystId.name,
+          value: viewClientData.riskAnalystId._id,
+        },
+      });
+      dispatchAssignee({
+        type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'serviceManagerId',
+        value: {
+          label: viewClientData.serviceManagerId.name,
+          value: viewClientData.serviceManagerId._id,
+        },
+      });
+    }
+  }, [viewClientData]);
+
+  const onChangeAssignee = useCallback(
+    event => {
+      const { name, value } = event[0];
+      dispatchAssignee({
+        type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+        name,
         value,
       });
 
@@ -154,7 +175,7 @@ const ViewClient = () => {
           placeholder="Select"
           name="riskAnalystId"
           options={riskAnalysts}
-          value={riskAnalystId}
+          values={[riskAnalystId]}
           onChange={onChangeAssignee}
           searchable={false}
         />
@@ -163,7 +184,7 @@ const ViewClient = () => {
           placeholder="Select"
           name="serviceManagerId"
           options={serviceManagers}
-          value={serviceManagerId}
+          values={[serviceManagerId]}
           onChange={onChangeAssignee}
           searchable={false}
         />
