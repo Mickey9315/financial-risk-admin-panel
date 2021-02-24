@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import { CLIENT_REDUX_CONSTANTS } from './ClientReduxConstants';
 
@@ -39,6 +40,29 @@ export const clientManagement = (state = initialClientListState, action) => {
         contact: {
           ...state.contact,
           columnList: action.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.CONTACT.UPDATE_CLIENT_CONTACT_COLUMN_LIST_ACTION:
+      const columnList = {
+        ...state.contact.columnList,
+      };
+
+      const { type, name, value } = action.data;
+
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name
+          ? {
+              ...e,
+              isChecked: value,
+            }
+          : e
+      );
+      return {
+        ...state,
+        contact: {
+          ...state.contact,
+          columnList,
         },
       };
 

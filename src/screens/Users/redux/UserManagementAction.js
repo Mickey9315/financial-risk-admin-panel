@@ -79,7 +79,7 @@ export const saveUserColumnListName = ({ userColumnList = {}, isReset = false })
         };
       }
 
-      if (data.columns.length < 1) {
+      if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
       } else {
         const response = await UserManagementApiService.updateUserColumnListName(data);
