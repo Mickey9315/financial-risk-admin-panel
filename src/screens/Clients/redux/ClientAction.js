@@ -18,12 +18,9 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
       if (e.response && e.response.data) {
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        } else {
           errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
     }
   };
@@ -43,12 +40,9 @@ export const getClientById = id => {
       if (e.response && e.response.data) {
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        } else {
           errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
     }
   };
@@ -66,12 +60,9 @@ export const updateSelectedClientData = (id, data) => {
       if (e.response && e.response.data) {
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        } else {
           errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
     }
   };
@@ -96,12 +87,9 @@ export const getClientContactListData = (id, params = { page: 1, limit: 15 }) =>
       if (e.response && e.response.data) {
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        } else {
           errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
     }
   };
@@ -122,12 +110,63 @@ export const getClientContactColumnNamesList = () => {
       if (e.response && e.response.data) {
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        } else {
           errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
+      }
+    }
+  };
+};
+
+export const changeClientContactColumnListStatus = data => {
+  return async dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.CONTACT.UPDATE_CLIENT_CONTACT_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+
+export const saveClientContactColumnListName = ({
+  clientContactColumnList = {},
+  isReset = false,
+}) => {
+  return async () => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+      };
+
+      if (!isReset) {
+        const defaultColumns = clientContactColumnList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = clientContactColumnList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          isReset: false,
+          columns: [...defaultColumns, ...customFields],
+        };
+      }
+
+      if (data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await ClientContactApiService.updateClientContactColumnListName(data);
+
+        if (response && response.data && response.data.status === 'SUCCESS') {
+          successNotification('Columns updated successfully.');
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
       }
     }
   };
