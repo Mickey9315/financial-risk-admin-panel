@@ -6,6 +6,8 @@ const ClientContactApiService = {
     ApiService.getData(`${CLIENT_URLS.CONTACT.CONTACT_LIST}${id}`, { params }),
   getClientContactColumnListName: () =>
     ApiService.getData(CLIENT_URLS.CONTACT.COLUMN_NAME_LIST_URL),
+  updateClientContactColumnListName: data =>
+    ApiService.putData(CLIENT_URLS.CONTACT.COLUMN_NAME_LIST_URL, data),
 };
 
 export default ClientContactApiService;
