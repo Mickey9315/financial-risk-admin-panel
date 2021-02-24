@@ -15,7 +15,7 @@ import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
 import PoliciesTab from '../../../common/Tab/PoliciesTab/PoliciesTab';
 import DocumentsTab from '../../../common/Tab/DocumentsTab/DocumentsTab';
 import NotesTab from '../../../common/Tab/NotesTab/Notestab';
-import { getClientById } from '../redux/ClientAction';
+import { getClientById, updateSelectedClientData } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import ClientContactsTab from '../component/ClientContactTab';
 
@@ -78,6 +78,7 @@ const ViewClient = () => {
         ? viewClientData.riskAnalystList.map(e => ({
             label: e.name,
             value: e._id,
+            name: 'riskAnalystId',
           }))
         : [],
     [viewClientData]
@@ -89,6 +90,7 @@ const ViewClient = () => {
         ? viewClientData.serviceManagerList.map(e => ({
             label: e.name,
             value: e._id,
+            name: 'serviceManagerId',
           }))
         : [],
     [viewClientData]
@@ -100,11 +102,16 @@ const ViewClient = () => {
 
   const onChangeAssignee = useCallback(
     event => {
+      const { name, label, value } = event[0];
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-        name: event[0].label,
-        value: event[0].value,
+        name: label,
+        value,
       });
+
+      const data = {};
+      data[`${name}`] = value;
+      dispatch(updateSelectedClientData(id, data));
     },
     [dispatchAssignee]
   );
