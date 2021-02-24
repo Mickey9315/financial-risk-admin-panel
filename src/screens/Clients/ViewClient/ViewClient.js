@@ -177,11 +177,11 @@ const ViewClient = () => {
         <Input type="text" placeholder="Lorem Ipsum" />
         <span>Inception Date</span>
         <div className="date-picker-container">
-          <DatePicker />
+          <DatePicker placeholderText="Select date" />
         </div>
         <span>Expiry Date</span>
         <div className="date-picker-container">
-          <DatePicker />
+          <DatePicker placeholderText="Select date" />
         </div>
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />

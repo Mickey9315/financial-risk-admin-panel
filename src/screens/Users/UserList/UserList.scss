@@ -17,9 +17,8 @@
 
 .common-list-container {
   position: relative;
-  height: calc(100vh - 14.751rem);
+  max-height: calc(100vh - 14.751rem);
   margin-top: 0.625rem;
-  background-color: #ffffff;
   overflow-y: auto;
 }
 

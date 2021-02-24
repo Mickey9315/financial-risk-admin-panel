@@ -393,6 +393,7 @@ const UserList = () => {
                 className="filter-date-picker"
                 selected={startDate}
                 onChange={handleStartDateChange}
+                placeholderText="From Date"
               />
               <span className="material-icons-round">event_available</span>
             </div>
@@ -401,6 +402,7 @@ const UserList = () => {
                 className="filter-date-picker"
                 selected={endDate}
                 onChange={handleEndDateChange}
+                placeholderText="To Date"
               />
               <span className="material-icons-round">event_available</span>
             </div>

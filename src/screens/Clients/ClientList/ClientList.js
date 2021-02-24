@@ -186,6 +186,7 @@ const ClientList = () => {
                 className="filter-date-picker"
                 selected={startDate}
                 onChange={date => setStartDate(date)}
+                placeholderText="From Date"
               />
               <span className="material-icons-round">event_available</span>
             </div>
@@ -194,6 +195,7 @@ const ClientList = () => {
                 className="filter-date-picker"
                 selected={endDate}
                 onChange={date => setEndDate(date)}
+                placeholderText="To Date"
               />
               <span className="material-icons-round">event_available</span>
             </div>

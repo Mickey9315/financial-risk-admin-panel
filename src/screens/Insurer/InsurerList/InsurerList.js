@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import './InsurerList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
+import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -372,6 +372,7 @@ const InsurerList = () => {
                 className="filter-date-picker"
                 selected={startDate}
                 onChange={handleStartDateChange}
+                placeholderText="Select date"
               />
               <span className="material-icons-round">event_available</span>
             </div>
@@ -380,6 +381,7 @@ const InsurerList = () => {
                 className="filter-date-picker"
                 selected={endDate}
                 onChange={handleEndDateChange}
+                placeholderText="Select date"
               />
               <span className="material-icons-round">event_available</span>
             </div>
