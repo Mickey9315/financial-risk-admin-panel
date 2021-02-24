@@ -62,6 +62,10 @@ tr:not(:nth-child(1)) td:last-child {
   position: relative;
 }
 
+td.fixed-action-menu {
+  overflow: visible;
+}
+
 .action-menu {
   position: absolute;
   top: 30px;
