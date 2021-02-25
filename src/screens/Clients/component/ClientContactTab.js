@@ -13,7 +13,6 @@ import {
   getClientContactListData,
   saveClientContactColumnListName,
 } from '../redux/ClientAction';
-import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
 import Loader from '../../../common/Loader/Loader';
 
 const ClientContactsTab = () => {
@@ -105,19 +104,6 @@ const ClientContactsTab = () => {
     [limit, getClientContactsList]
   );
 
-  const tableData = useMemo(() => {
-    return docs.map(e => {
-      const finalObj = {
-        id: e._id,
-      };
-      headers.forEach(f => {
-        finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
-      });
-
-      return finalObj;
-    });
-  }, [docs]);
-
   const onSelectUserRecordActionClick = useCallback(() => {}, []);
 
   const onSelectUserRecord = useCallback(() => {}, []);
@@ -148,13 +134,13 @@ const ClientContactsTab = () => {
           <Button buttonType="secondary" title="Sync With CRM" />
         </div>
       </div>
-      {tableData ? (
+      {docs ? (
         <>
           <div className="common-list-container">
             <Table
               align="left"
               valign="center"
-              data={tableData}
+              data={docs}
               headers={headers}
               recordSelected={onSelectUserRecord}
               recordActionClick={onSelectUserRecordActionClick}
