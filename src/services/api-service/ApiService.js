@@ -37,6 +37,9 @@ instance.interceptors.response.use(
 );
 
 const ApiService = {
+  request(config = {}) {
+    return instance.request(config);
+  },
   getData(url, config = {}) {
     return instance.get(url, config);
   },
