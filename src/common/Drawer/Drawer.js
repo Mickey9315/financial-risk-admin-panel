@@ -3,7 +3,7 @@ import './Drawer.scss';
 import PropTypes from 'prop-types';
 
 const Drawer = props => {
-  const { drawerState, header, className, children, ...restProps } = props;
+  const { drawerState, closeDrawer, header, className, children, ...restProps } = props;
   const drawerClasses = `drawer-container ${drawerState && 'drawer-opened'} ${className}`;
   return (
     <div className={drawerState && 'drawer-overlay'}>
@@ -11,7 +11,7 @@ const Drawer = props => {
         <div className="drawer-wrapper">
           <div className="drawer-header-container">
             {header}
-            <span className="material-icons-round" title="Close drawer">
+            <span className="material-icons-round" title="Close drawer" onClick={closeDrawer}>
               close
             </span>{' '}
           </div>
@@ -27,6 +27,7 @@ Drawer.propTypes = {
   className: PropTypes.string,
   children: PropTypes.element,
   drawerState: PropTypes.bool,
+  closeDrawer: PropTypes.func,
 };
 
 Drawer.defaultProps = {
@@ -34,6 +35,7 @@ Drawer.defaultProps = {
   className: '',
   drawerState: false,
   children: null,
+  closeDrawer: () => {},
 };
 
 export default Drawer;
