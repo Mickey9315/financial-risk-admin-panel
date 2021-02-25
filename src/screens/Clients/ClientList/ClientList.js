@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import './ClientList.scss';
-import {useHistory} from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-dropdown-select';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -16,7 +16,6 @@ import {
   getClientList,
   saveClientColumnListName,
 } from '../redux/ClientAction';
-import {processTableDataByType} from '../../../helpers/TableDataProcessHelper';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
@@ -33,18 +32,6 @@ const ClientList = () => {
     ({ clientManagementColumnList }) => clientManagementColumnList
   );
   const { docs, headers } = useMemo(() => clientListWithPageData, [clientListWithPageData]);
-  const tableData = useMemo(() => {
-    return docs.map(e => {
-      const finalObj = {
-        id: e._id,
-      };
-      headers.forEach(f => {
-        finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
-      });
-
-      return finalObj;
-    });
-  }, [docs]);
 
   useEffect(() => {
     dispatch(getClientList());
@@ -217,7 +204,7 @@ const ClientList = () => {
           align="left"
           valign="center"
           recordSelected={openViewClient}
-          data={tableData}
+          data={docs}
           headers={headers}
           rowClass="client-list-row"
         />
