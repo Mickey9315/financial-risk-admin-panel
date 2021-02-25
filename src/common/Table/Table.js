@@ -1,11 +1,39 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useReducer, useRef } from 'react';
 import './Table.scss';
 import PropTypes from 'prop-types';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
+import Drawer from '../Drawer/Drawer';
+import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
+import TableApiService from './TableApiService';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
   DELETE_ROW: 'DELETE_ROW',
+};
+
+export const DRAWER_ACTIONS = {
+  SHOW_DRAWER: 'SHOW_DRAWER',
+  HIDE_DRAWER: 'HIDE_DRAWER',
+};
+
+const drawerInitialState = {
+  visible: false,
+  data: [],
+};
+
+const drawerReducer = (state, action) => {
+  switch (action.type) {
+    case DRAWER_ACTIONS.SHOW_DRAWER:
+      return {
+        visible: true,
+        data: action.data,
+      };
+    case DRAWER_ACTIONS.HIDE_DRAWER:
+      return { ...drawerInitialState };
+
+    default:
+      return state;
+  }
 };
 
 const Table = props => {
@@ -21,31 +49,76 @@ const Table = props => {
     recordActionClick,
   } = props;
 
+  const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
+
+  const handleDrawerState = useCallback(async (header, currentData) => {
+    try {
+      const response = await TableApiService.getDrawerData({
+        url: header.request.url,
+        method: header.request.method,
+        id: currentData.id,
+      });
+
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.SHOW_DRAWER,
+        data: response.data.data,
+      });
+    } catch (e) {
+      /**/
+    }
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    dispatchDrawerState({
+      type: DRAWER_ACTIONS.HIDE_DRAWER,
+    });
+  }, []);
+
+  const tableData = useMemo(() => {
+    const actions = {
+      handleDrawerState,
+    };
+
+    return data.map(e => {
+      const finalObj = {
+        id: e._id,
+      };
+      headers.forEach(f => {
+        finalObj[`${f.name}`] = processTableDataByType({ header: f, row: e, actions });
+      });
+
+      return finalObj;
+    });
+  }, [data]);
+
   return (
-    <table>
-      <thead>
-        {headers.length > 0 &&
-          headers.map(heading => (
-            <th align={align} valign={valign} className={headerClass}>
-              {heading.label}
-            </th>
+    <>
+      <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
+      <table>
+        <thead>
+          {headers.length > 0 &&
+            headers.map(heading => (
+              <th align={align} valign={valign} className={headerClass}>
+                {heading.label}
+              </th>
+            ))}
+          <th />
+        </thead>
+        <tbody>
+          {tableData.map(e => (
+            <Row
+              data={e}
+              align={align}
+              valign={valign}
+              rowClass={rowClass}
+              rowTitle={rowTitle}
+              recordSelected={recordSelected}
+              recordActionClick={recordActionClick}
+            />
           ))}
-        <th />
-      </thead>
-      <tbody>
-        {data.map(e => (
-          <Row
-            data={e}
-            align={align}
-            valign={valign}
-            rowClass={rowClass}
-            rowTitle={rowTitle}
-            recordSelected={recordSelected}
-            recordActionClick={recordActionClick}
-          />
-        ))}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </>
   );
 };
 
@@ -157,3 +230,30 @@ Row.defaultProps = {
   recordSelected: () => {},
   recordActionClick: () => {},
 };
+
+function TableLinkDrawer(props) {
+  const { drawerState, closeDrawer } = props;
+
+  return (
+    <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
+      <div className="contacts-grid">
+        {drawerState.data.map(row => (
+          <>
+            <div className="title">{row.label}</div>
+            <div>{row.name}</div>
+          </>
+        ))}
+      </div>
+    </Drawer>
+  );
+}
+
+TableLinkDrawer.propTypes = {
+  drawerState: PropTypes.shape({
+    visible: PropTypes.bool.isRequired,
+    data: PropTypes.array.isRequired,
+  }).isRequired,
+  closeDrawer: PropTypes.func.isRequired,
+};
+
+TableLinkDrawer.defaultProps = {};
