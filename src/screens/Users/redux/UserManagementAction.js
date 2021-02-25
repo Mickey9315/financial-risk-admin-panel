@@ -261,6 +261,7 @@ export const updateUserDetails = (id, data) => {
         ...data,
         clientIds: data.clientIds ? data.clientIds.map(e => e.value) : [],
         _id: undefined,
+        email: undefined,
       };
 
       const response = await UserManagementApiService.updateUser(id, finalData);

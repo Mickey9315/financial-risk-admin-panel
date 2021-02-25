@@ -274,6 +274,7 @@ const AddUser = () => {
               disabled={action === 'view'}
               className={action === 'view' && 'disabled-control'}
               dropdownHandle={action !== 'view'}
+              searchable={false}
             />
           </div>
           <div className="common-detail-field">

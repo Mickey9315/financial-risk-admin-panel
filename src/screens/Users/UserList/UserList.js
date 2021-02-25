@@ -384,6 +384,7 @@ const UserList = () => {
               options={USER_ROLES}
               values={userRoleSelectedValue}
               onChange={handleFilterChange}
+              searchable={false}
             />
           </div>
           <div className="filter-modal-row">
