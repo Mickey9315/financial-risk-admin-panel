@@ -92,6 +92,7 @@
   padding: 15px;
   font: $title $font-medium;
   color: $field-color;
+  white-space: nowrap;
   border-radius: 10px;
   cursor: pointer;
 }
