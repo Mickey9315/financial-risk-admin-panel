@@ -240,7 +240,7 @@ function TableLinkDrawer(props) {
         {drawerState.data.map(row => (
           <>
             <div className="title">{row.label}</div>
-            <div>{row.name}</div>
+            <div>{row.value}</div>
           </>
         ))}
       </div>
