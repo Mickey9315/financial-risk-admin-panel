@@ -45,6 +45,9 @@ td {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  a {
+    color: $field-color;
+  }
 }
 
 tr:nth-child(1) td:first-child { border-top-left-radius: 10px; }
