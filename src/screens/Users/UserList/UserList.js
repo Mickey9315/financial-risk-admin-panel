@@ -21,7 +21,6 @@ import Modal from '../../../common/Modal/Modal';
 import { USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
-import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
 import Loader from '../../../common/Loader/Loader';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 
@@ -126,19 +125,6 @@ const UserList = () => {
     },
     [dispatchFilter]
   );
-
-  const tableData = useMemo(() => {
-    return docs.map(e => {
-      const finalObj = {
-        id: e._id,
-      };
-      headers.forEach(f => {
-        finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
-      });
-
-      return finalObj;
-    });
-  }, [docs]);
 
   const onSelectLimit = useCallback(
     newLimit => {
@@ -340,13 +326,13 @@ const UserList = () => {
           <Button title="Add User" buttonType="success" onClick={openAddUser} />
         </div>
       </div>
-      {tableData ? (
+      {docs ? (
         <>
           <div className="common-list-container">
             <Table
               align="left"
               valign="center"
-              data={tableData}
+              data={docs}
               headers={headers}
               recordSelected={onSelectUserRecord}
               recordActionClick={onSelectUserRecordActionClick}
