@@ -53,10 +53,30 @@ const Table = props => {
 
   const handleDrawerState = useCallback(async (header, currentData) => {
     try {
-      const response = await TableApiService.getDrawerData({
+      const response = await TableApiService.tableActions({
         url: header.request.url,
         method: header.request.method,
         id: currentData.id,
+      });
+
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.SHOW_DRAWER,
+        data: response.data.data,
+      });
+    } catch (e) {
+      /**/
+    }
+  }, []);
+
+  const handleCheckBoxState = useCallback(async (value, header, currentData) => {
+    try {
+      const response = await TableApiService.tableActions({
+        url: header.request.url,
+        method: header.request.method,
+        id: currentData.id,
+        data: {
+          [`${header.name}`]: value,
+        },
       });
 
       dispatchDrawerState({
@@ -77,6 +97,7 @@ const Table = props => {
   const tableData = useMemo(() => {
     const actions = {
       handleDrawerState,
+      handleCheckBoxState,
     };
 
     return data.map(e => {
@@ -89,7 +110,7 @@ const Table = props => {
 
       return finalObj;
     });
-  }, [data]);
+  }, [data, handleDrawerState, handleCheckBoxState]);
 
   return (
     <>
