@@ -1,13 +1,21 @@
 import moment from 'moment';
 
-export const processTableDataByType = (type, rawValue) => {
+export const processTableDataByType = ({ header, row, actions }) => {
+  const { type } = header;
+  const currentData = row[`${header.name}`];
+  const { handleDrawerState } = actions;
+
   switch (type) {
     case 'date':
-      return moment(rawValue).format('DD-MMM-YYYY');
+      return moment(currentData).format('DD-MMM-YYYY');
     case 'modal':
-      return <a href={`#${rawValue.value}`}>{rawValue.value}</a>;
+      return (
+        <div className="link" onClick={() => handleDrawerState(header, currentData)}>
+          {currentData.value}
+        </div>
+      );
 
     default:
-      return rawValue;
+      return currentData;
   }
 };
