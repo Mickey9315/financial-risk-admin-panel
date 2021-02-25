@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import './ClientList.scss';
-import { useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import {useHistory} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
 import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-dropdown-select';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -9,17 +9,29 @@ import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Modal from '../../../common/Modal/Modal';
-import { getClientList } from '../redux/ClientAction';
-import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
+// import Checkbox from '../../../common/Checkbox/Checkbox';
+import {
+  changeClientColumnListStatus,
+  getClientColumnListName,
+  getClientList,
+  saveClientColumnListName,
+} from '../redux/ClientAction';
+import {processTableDataByType} from '../../../helpers/TableDataProcessHelper';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import Drawer from '../../../common/Drawer/Drawer';
+import { saveUserColumnListName } from '../../Users/redux/UserManagementAction';
+
+// import { changeUserColumnListStatus } from '../../Users/redux/UserManagementAction';
 
 const ClientList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const clientListWithPageData = useSelector(({ clientManagement }) => clientManagement.clientList);
+  const clientColumnList = useSelector(
+    ({ clientManagementColumnList }) => clientManagementColumnList
+  );
   const { docs, headers } = useMemo(() => clientListWithPageData, [clientListWithPageData]);
   const tableData = useMemo(() => {
     return docs.map(e => {
@@ -40,25 +52,33 @@ const ClientList = () => {
 
   const { total, pages, page, limit } = clientListWithPageData;
 
-  const onSelectLimit = newLimit => {
-    dispatch(getClientList({ page, limit: newLimit }));
-  };
+  const getClientListByFilter = useCallback(
+    (params = {}, cb) => {
+      const data = {
+        page: page || 1,
+        limit: limit || 15,
+        ...params,
+      };
+      dispatch(getClientList(data));
+      if (cb && typeof cb === 'function') {
+        cb();
+      }
+    },
+    [page, limit]
+  );
 
-  const lastClick = newPage => {
-    dispatch(getClientList({ page: newPage, limit }));
-  };
-
-  const firstClick = newPage => {
-    dispatch(getClientList({ page: newPage, limit }));
-  };
-
-  const prevClick = newPage => {
-    dispatch(getClientList({ page: newPage, limit }));
-  };
-
-  const nextClick = newPage => {
-    dispatch(getClientList({ page: newPage, limit }));
-  };
+  const pageActionClick = useCallback(
+    newPage => {
+      getClientListByFilter({ page: newPage, limit });
+    },
+    [dispatch, limit, getClientListByFilter]
+  );
+  const onSelectLimit = useCallback(
+    newLimit => {
+      getClientListByFilter({ page: 1, limit: newLimit });
+    },
+    [dispatch, getClientListByFilter]
+  );
 
   const [filterModal, setFilterModal] = React.useState(false);
   const toggleFilterModal = () => setFilterModal(e => !e);
@@ -67,13 +87,35 @@ const ClientList = () => {
     { title: 'Apply', buttonType: 'primary' },
   ];
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
-  const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const customFieldsModalButtons = [
-    { title: 'Reset Defaults', buttonType: 'outlined-primary' },
-    { title: 'Close', buttonType: 'primary-1', onClick: toggleCustomField },
-    { title: 'Save', buttonType: 'primary' },
-  ];
-  const defaultFields = [
+  const toggleCustomField = useCallback(
+    value => setCustomFieldModal(value !== undefined ? value : e => !e),
+    [setCustomFieldModal]
+  );
+
+  const onClickSaveColumnSelection = useCallback(async () => {
+    await dispatch(saveClientColumnListName({ clientColumnList }));
+    toggleCustomField();
+  }, [dispatch, toggleCustomField, clientColumnList]);
+
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveUserColumnListName({ isReset: true }));
+    dispatch(getClientColumnListName());
+    toggleCustomField();
+  }, [dispatch, toggleCustomField]);
+
+  const customFieldsModalButtons = useMemo(
+    () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: onClickResetDefaultColumnSelection,
+      },
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+    ],
+    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+  );
+  /*  const defaultFields = [
     'Client Name',
     'Client Id',
     'Country',
@@ -88,9 +130,26 @@ const ClientList = () => {
     'Policy Type',
     'Expiry Date',
     'Inception Date',
-  ];
+  ]; */
+  useEffect(() => {
+    dispatch(getClientColumnListName());
+  }, []);
+
+  const { defaultFields, customFields } = useMemo(
+    () => clientColumnList || { defaultFields: [], customFields: [] },
+    [clientColumnList]
+  );
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
+
+  const onChangeSelectedColumn = useCallback(
+    (type, name, value) => {
+      const data = { type, name, value };
+      dispatch(changeClientColumnListStatus(data));
+    },
+    [dispatch]
+  );
+
   const [addFromCRM, setAddFromCRM] = React.useState(false);
   const onClickAddFromCRM = useCallback(
     value => setAddFromCRM(value !== undefined ? value : e => !e),
@@ -148,7 +207,7 @@ const ClientList = () => {
             buttonType="primary"
             title="format_line_spacing"
             className="mr-10"
-            onClick={toggleCustomField}
+            onClick={() => toggleCustomField()}
           />
           <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
         </div>
@@ -159,7 +218,7 @@ const ClientList = () => {
           valign="center"
           recordSelected={openViewClient}
           data={tableData}
-          header={headers}
+          headers={headers}
           rowClass="client-list-row"
         />
       </div>
@@ -169,10 +228,7 @@ const ClientList = () => {
         pages={pages}
         page={page}
         limit={limit}
-        nextClick={nextClick}
-        prevClick={prevClick}
-        firstClick={firstClick}
-        lastClick={lastClick}
+        pageActionClick={pageActionClick}
         onSelectLimit={onSelectLimit}
       />
       {filterModal && (
@@ -211,12 +267,10 @@ const ClientList = () => {
       )}
       {customFieldModal && (
         <CustomFieldModal
-          headerIcon="format_line_spacing"
-          header="Custom Fields"
-          buttons={customFieldsModalButtons}
-          className="custom-field-modal"
           defaultFields={defaultFields}
           customFields={customFields}
+          onChangeSelectedColumn={onChangeSelectedColumn}
+          buttons={customFieldsModalButtons}
         />
       )}
       {addFromCRM && (

@@ -1,6 +1,6 @@
-import { errorNotification, successNotification } from '../../../common/Toast';
+import {errorNotification, successNotification} from '../../../common/Toast';
 import ClientApiService from '../services/ClientApiService';
-import { CLIENT_REDUX_CONSTANTS } from './ClientReduxConstants';
+import {CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS, CLIENT_REDUX_CONSTANTS} from './ClientReduxConstants';
 import ClientContactApiService from '../services/ClientContactApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
@@ -67,6 +67,86 @@ export const updateSelectedClientData = (id, data) => {
     }
   };
 };
+
+export const getClientColumnListName = () => {
+  return async dispatch => {
+    try {
+      const response = await ClientApiService.getClientColumnListName();
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+export const changeClientColumnListStatus = data => {
+  return async dispatch => {
+    dispatch({
+      type:
+        CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_CLIENT_MANAGEMENT_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+export const saveClientColumnListName = ({ clientColumnList = {}, isReset = false }) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+      };
+
+      if (!isReset) {
+        const defaultColumns = clientColumnList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = clientColumnList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          isReset: false,
+          columns: [...defaultColumns, ...customFields],
+        };
+      }
+
+      if (data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await ClientApiService.updateClientColumnListName(data);
+        if (response && response.data && response.data.status === 'SUCCESS') {
+          dispatch(getClientList());
+          successNotification('Columns updated successfully.');
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
 
 /*
  * Contact section

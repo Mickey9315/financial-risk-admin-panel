@@ -1,6 +1,9 @@
 /* eslint-disable no-case-declarations */
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
-import { CLIENT_REDUX_CONSTANTS } from './ClientReduxConstants';
+import {
+  CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  CLIENT_REDUX_CONSTANTS,
+} from './ClientReduxConstants';
 
 const initialClientListState = {
   clientList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
@@ -65,6 +68,38 @@ export const clientManagement = (state = initialClientListState, action) => {
           columnList,
         },
       };
+
+    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
+      return null;
+
+    default:
+      return state;
+  }
+};
+
+export const clientManagementColumnList = (state = [], action) => {
+  switch (action.type) {
+    case CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_COLUMN_LIST_ACTION:
+      return action.data;
+    case CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_CLIENT_MANAGEMENT_COLUMN_LIST_ACTION:
+      // eslint-disable-next-line no-case-declarations
+      const temp = {
+        ...state,
+      };
+
+      // eslint-disable-next-line no-case-declarations
+      const { type, name, value } = action.data;
+
+      temp[`${type}`] = temp[`${type}`].map(e =>
+        e.name === name
+          ? {
+              ...e,
+              isChecked: value,
+            }
+          : e
+      );
+
+      return temp;
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
