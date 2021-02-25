@@ -158,7 +158,6 @@ const ClientContactsTab = () => {
               headers={headers}
               recordSelected={onSelectUserRecord}
               recordActionClick={onSelectUserRecordActionClick}
-              rowClass="cursor-pointer"
             />
           </div>
           <Pagination
