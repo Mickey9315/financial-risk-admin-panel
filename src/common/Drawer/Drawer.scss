@@ -29,7 +29,7 @@
 }
 
 .drawer-wrapper {
-  width: 100%;
+  min-width: 550px;
 }
 
 .drawer-opened {
@@ -41,15 +41,22 @@
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  width: 100%;
+  min-width: 100%;
   padding: 20px 40px 20px 20px;
   font: $h5 $font-medium;
   color: white;
   background-color: $primary-color;
 
+  * {
+    width: fit-content!important;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
   span {
-    padding: 5px;
+    padding: 3px;
     font-size: 14px;
+    font-weight: 700;
     color: $primary-color ;
     background-color: white;
     border-radius: 50%;
@@ -58,6 +65,6 @@
 }
 
 .drawer-content {
-  max-height: calc(100% - 60px);
+  max-height: calc(100vh - 75px);
   overflow-y: auto;
 }
