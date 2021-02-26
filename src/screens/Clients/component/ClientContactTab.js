@@ -12,6 +12,7 @@ import {
   getClientContactColumnNamesList,
   getClientContactListData,
   saveClientContactColumnListName,
+  syncClientContactListData,
 } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 
@@ -104,9 +105,9 @@ const ClientContactsTab = () => {
     [limit, getClientContactsList]
   );
 
-  const onSelectUserRecordActionClick = useCallback(() => {}, []);
-
-  const onSelectUserRecord = useCallback(() => {}, []);
+  const syncClientContactData = useCallback(() => {
+    dispatch(syncClientContactListData(id));
+  }, [id]);
 
   useEffect(() => {
     getClientContactsList();
@@ -131,7 +132,7 @@ const ClientContactsTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Sync With CRM" />
+          <Button buttonType="secondary" title="Sync With CRM" onClick={syncClientContactData} />
         </div>
       </div>
       {docs ? (
@@ -142,8 +143,6 @@ const ClientContactsTab = () => {
               valign="center"
               data={docs}
               headers={headers}
-              recordSelected={onSelectUserRecord}
-              recordActionClick={onSelectUserRecordActionClick}
               refreshData={getClientContactsList}
             />
           </div>
