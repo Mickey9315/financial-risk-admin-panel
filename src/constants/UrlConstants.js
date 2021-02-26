@@ -35,10 +35,12 @@ export const CLIENT_URLS = {
   CONTACT: {
     CONTACT_LIST: `${BASE_URL}rp/client/user/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}rp/client/user/column-name/`,
+    SYNC_CLIENT_CONTACT_DATA_URL: `${BASE_URL}rp/client/user/sync-from-crm/`,
   },
   POLICIES: {
     POLICIES_LIST: `${BASE_URL}rp/policy/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}rp/policy/column-name/`,
+    SYNC_CLIENT_POLICIES_DATA_URL: `${BASE_URL}rp/policy/client/sync-from-crm/`,
   },
 };
 
