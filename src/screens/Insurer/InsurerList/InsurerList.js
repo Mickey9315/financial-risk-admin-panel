@@ -107,7 +107,6 @@ const InsurerList = () => {
       return finalObj;
     });
   }, [docs]);
-  console.log(tableData);
 
   const onSelectLimit = useCallback(
     newLimit => {
@@ -202,7 +201,6 @@ const InsurerList = () => {
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
-      console.log(type, name, value);
       // const data = { type, name, value };
       // dispatch(changeInsurerColumnListStatus(data));
     },
@@ -234,7 +232,6 @@ const InsurerList = () => {
           startDate: startDate || undefined,
           endDate: endDate || undefined,
         };
-        console.log(data);
         // await dispatch(deleteInsurerDetails(deleteId, data));
         // setDeleteId(null);
       },

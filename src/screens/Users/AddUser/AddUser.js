@@ -71,7 +71,7 @@ const AddUser = () => {
     if (selectedUser) {
       // eslint-disable-next-line no-shadow
       const { name, role, email, contactNumber, clientIds } = selectedUser;
-      console.log({ role });
+
       return {
         name: name || '',
         role: role || '',

@@ -253,7 +253,7 @@ Row.defaultProps = {
 
 function TableLinkDrawer(props) {
   const { drawerState, closeDrawer } = props;
-  console.log({ drawerState });
+
   return (
     <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
       <div className="contacts-grid">
