@@ -12,6 +12,7 @@ import {
   getClientPoliciesColumnNamesList,
   getClientPoliciesListData,
   saveClientPoliciesColumnListName,
+  syncClientPolicyListData,
 } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 
@@ -104,9 +105,9 @@ const ClientPoliciesTab = () => {
     [limit, getClientPoliciesList]
   );
 
-  const onSelectUserRecordActionClick = useCallback(() => {}, []);
-
-  const onSelectUserRecord = useCallback(() => {}, []);
+  const syncClientPoliciesData = useCallback(() => {
+    dispatch(syncClientPolicyListData(id));
+  }, [id]);
 
   useEffect(() => {
     getClientPoliciesList();
@@ -131,7 +132,7 @@ const ClientPoliciesTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Sync With CRM" />
+          <Button buttonType="secondary" title="Sync With CRM" onClick={syncClientPoliciesData} />
         </div>
       </div>
       {docs ? (
@@ -142,8 +143,6 @@ const ClientPoliciesTab = () => {
               valign="center"
               data={docs}
               headers={headers}
-              recordSelected={onSelectUserRecord}
-              recordActionClick={onSelectUserRecordActionClick}
               refreshData={getClientPoliciesList}
             />
           </div>
