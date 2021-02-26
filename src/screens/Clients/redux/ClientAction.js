@@ -240,7 +240,7 @@ export const saveClientContactColumnListName = ({
   clientContactColumnList = {},
   isReset = false,
 }) => {
-  return async () => {
+  return async dispatch => {
     try {
       let data = {
         isReset: true,
@@ -264,6 +264,8 @@ export const saveClientContactColumnListName = ({
         errorNotification('Please select at least one column to continue.');
       } else {
         const response = await ClientContactApiService.updateClientContactColumnListName(data);
+
+        dispatch(getClientContactColumnNamesList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
           successNotification('Columns updated successfully.');
