@@ -6,6 +6,7 @@ import {
   CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS,
   CLIENT_REDUX_CONSTANTS,
 } from './ClientReduxConstants';
+import ClientPoliciesApiService from '../services/ClientPoliciesApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -263,6 +264,118 @@ export const saveClientContactColumnListName = ({
         errorNotification('Please select at least one column to continue.');
       } else {
         const response = await ClientContactApiService.updateClientContactColumnListName(data);
+
+        if (response && response.data && response.data.status === 'SUCCESS') {
+          successNotification('Columns updated successfully.');
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+/*
+ * Policies section
+ * */
+
+export const getClientPoliciesListData = (id, params = { page: 1, limit: 15 }) => {
+  return async dispatch => {
+    try {
+      const updatedParams = {
+        ...params,
+        listFor: 'client-policy',
+      };
+
+      const response = await ClientPoliciesApiService.getClientPoliciesList(id, updatedParams);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_LIST_USER_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getClientPoliciesColumnNamesList = () => {
+  return async dispatch => {
+    try {
+      const response = await ClientPoliciesApiService.getClientPoliciesColumnListName();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_LIST_USER_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const changeClientPoliciesColumnListStatus = data => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.POLICIES.UPDATE_CLIENT_POLICIES_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+
+export const saveClientPoliciesColumnListName = ({
+  clientPoliciesColumnList = {},
+  isReset = false,
+}) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+        columnFor: 'client-policy',
+      };
+
+      if (!isReset) {
+        const defaultColumns = clientPoliciesColumnList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = clientPoliciesColumnList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          ...data,
+          isReset: false,
+          columns: [...defaultColumns, ...customFields],
+        };
+      }
+
+      if (!isReset && data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await ClientPoliciesApiService.updateClientPoliciesColumnListName(data);
+
+        dispatch(getClientPoliciesColumnNamesList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
           successNotification('Columns updated successfully.');
