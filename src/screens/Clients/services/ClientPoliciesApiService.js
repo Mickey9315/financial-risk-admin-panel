@@ -8,6 +8,8 @@ const ClientPoliciesApiService = {
     ApiService.getData(`${CLIENT_URLS.POLICIES.COLUMN_NAME_LIST_URL}?columnFor=client-policy`),
   updateClientPoliciesColumnListName: data =>
     ApiService.putData(CLIENT_URLS.POLICIES.COLUMN_NAME_LIST_URL, data),
+  syncClientContactData: id =>
+    ApiService.putData(`${CLIENT_URLS.POLICIES.SYNC_CLIENT_POLICIES_DATA_URL}${id}`),
 };
 
 export default ClientPoliciesApiService;
