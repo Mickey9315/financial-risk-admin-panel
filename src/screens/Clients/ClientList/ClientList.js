@@ -1,18 +1,20 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import './ClientList.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-dropdown-select';
+import moment from 'moment';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Modal from '../../../common/Modal/Modal';
-// import Checkbox from '../../../common/Checkbox/Checkbox';
+
 import {
   changeClientColumnListStatus,
   getClientColumnListName,
+  getClientFilter,
   getClientList,
   saveClientColumnListName,
 } from '../redux/ClientAction';
@@ -21,9 +23,33 @@ import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import Drawer from '../../../common/Drawer/Drawer';
 import { saveUserColumnListName } from '../../Users/redux/UserManagementAction';
+import { errorNotification } from '../../../common/Toast';
 
-// import { changeUserColumnListStatus } from '../../Users/redux/UserManagementAction';
+const initialFilterState = {
+  riskAnalystId: '',
+  serviceManagerId: '',
+  startDate: null,
+  endDate: null,
+};
 
+const CLIENT_FILTER_REDUCER_ACTIONS = {
+  UPDATE_DATA: 'UPDATE_DATA',
+  RESET_STATE: 'RESET_STATE',
+};
+
+function filterReducer(state, action) {
+  switch (action.type) {
+    case CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
+      return {
+        ...state,
+        [`${action.name}`]: action.value,
+      };
+    case CLIENT_FILTER_REDUCER_ACTIONS.RESET_STATE:
+      return { ...initialFilterState };
+    default:
+      return state;
+  }
+}
 const ClientList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -31,27 +57,92 @@ const ClientList = () => {
   const clientColumnList = useSelector(
     ({ clientManagementColumnList }) => clientManagementColumnList
   );
+  const filterList = useSelector(({ clientManagementFilterList }) => clientManagementFilterList);
+
+  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
+  const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
+
   const { docs, headers } = useMemo(() => clientListWithPageData, [clientListWithPageData]);
 
   useEffect(() => {
     dispatch(getClientList());
+    dispatch(getClientFilter());
   }, []);
+
+  const riskAnalystFilterListData = useMemo(() => {
+    let finalData = [];
+    finalData = filterList.riskAnalystList;
+    return finalData.map(e => ({
+      label: e.name,
+      value: e.name,
+    }));
+  }, [filterList]);
+
+  const serviceManagerFilterListData = useMemo(() => {
+    let finalData = [];
+    finalData = filterList.serviceManagerList;
+
+    return finalData.map(e => ({
+      label: e.name,
+      value: e.name,
+    }));
+  }, [filterList]);
 
   const { total, pages, page, limit } = clientListWithPageData;
 
+  const handleStartDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'startDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
+
+  const handleEndDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'endDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
+  const resetFilterDates = useCallback(() => {
+    handleStartDateChange(null);
+    handleEndDateChange(null);
+  }, [handleStartDateChange, handleEndDateChange]);
+
   const getClientListByFilter = useCallback(
     (params = {}, cb) => {
-      const data = {
-        page: page || 1,
-        limit: limit || 15,
-        ...params,
-      };
-      dispatch(getClientList(data));
-      if (cb && typeof cb === 'function') {
-        cb();
+      if (moment(startDate).isAfter(endDate)) {
+        errorNotification('From date should be greater than to date');
+        resetFilterDates();
+      } else if (moment(endDate).isBefore(startDate)) {
+        errorNotification('To Date should be smaller than from date');
+        resetFilterDates();
+      } else {
+        const data = {
+          page: page || 1,
+          limit: limit || 15,
+          riskAnalystId:
+            riskAnalystId && riskAnalystId.trim().length > 0 ? riskAnalystId : undefined,
+          serviceManagerId:
+            serviceManagerId && serviceManagerId.trim().length > 0 ? serviceManagerId : undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          ...params,
+        };
+        dispatch(getClientList(data));
+        if (cb && typeof cb === 'function') {
+          cb();
+        }
       }
     },
-    [page, limit]
+    [page, limit, riskAnalystId, serviceManagerId, startDate, endDate, filter]
   );
 
   const pageActionClick = useCallback(
@@ -66,13 +157,23 @@ const ClientList = () => {
     },
     [dispatch, getClientListByFilter]
   );
-
   const [filterModal, setFilterModal] = React.useState(false);
-  const toggleFilterModal = () => setFilterModal(e => !e);
-  const filterModalButtons = [
-    { title: 'Close', buttonType: 'primary-1', onClick: toggleFilterModal },
-    { title: 'Apply', buttonType: 'primary' },
-  ];
+  const toggleFilterModal = useCallback(
+    value => setFilterModal(value !== undefined ? value : e => !e),
+    [setFilterModal]
+  );
+
+  const onClickApplyFilter = useCallback(() => {
+    getClientListByFilter({ page: 1 }, toggleFilterModal);
+  }, [getClientListByFilter]);
+
+  const filterModalButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
+    ],
+    [toggleFilterModal, onClickApplyFilter]
+  );
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
@@ -102,22 +203,6 @@ const ClientList = () => {
     ],
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
-  /*  const defaultFields = [
-    'Client Name',
-    'Client Id',
-    'Country',
-    'Address',
-    'Created Date',
-    'Modified Date',
-  ];
-  const customFields = [
-    'Phone',
-    'Trading As',
-    'Net of brokerage',
-    'Policy Type',
-    'Expiry Date',
-    'Inception Date',
-  ]; */
   useEffect(() => {
     dispatch(getClientColumnListName());
   }, []);
@@ -126,8 +211,6 @@ const ClientList = () => {
     () => clientColumnList || { defaultFields: [], customFields: [] },
     [clientColumnList]
   );
-  const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
@@ -177,6 +260,41 @@ const ClientList = () => {
   const clientListClicked = () => {
     setState(e => !e);
   };
+  const handleRiskAanalystFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'riskAnalystId',
+        value: event[0].value,
+      });
+    },
+    [dispatchFilter]
+  );
+  const handleServiceManagerFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'serviceManagerId',
+        value: event[0].value,
+      });
+    },
+    [dispatchFilter]
+  );
+
+  const clientRiskAnalystSelectedValue = useMemo(() => {
+    const foundValue = docs.find(e => {
+      return e.riskAnalystId === riskAnalystId;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [riskAnalystId]);
+
+  const clientServiceManagerSelectedValue = useMemo(() => {
+    const foundValue = docs.find(e => {
+      return e.serviceManagerId === serviceManagerId;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [serviceManagerId]);
+
   return (
     <>
       <div className="page-header">
@@ -226,8 +344,28 @@ const ClientList = () => {
           className="filter-modal"
         >
           <div className="filter-modal-row">
-            <div className="form-title">Role</div>
-            <ReactSelect className="filter-select" placeholder="Select" searchable={false} />
+            <div className="form-title">Service Manager Name</div>
+            <ReactSelect
+              className="filter-select"
+              placeholder="Select"
+              name="servicePerson"
+              options={serviceManagerFilterListData}
+              values={clientServiceManagerSelectedValue}
+              onChange={handleServiceManagerFilterChange}
+              searchable={false}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title">RiskAnalyst Name</div>
+            <ReactSelect
+              className="filter-select"
+              placeholder="Select"
+              name="riskAnalystName"
+              options={riskAnalystFilterListData}
+              values={clientRiskAnalystSelectedValue}
+              onChange={handleRiskAanalystFilterChange}
+              searchable={false}
+            />
           </div>
           <div className="filter-modal-row">
             <div className="form-title">Date</div>
@@ -235,7 +373,7 @@ const ClientList = () => {
               <DatePicker
                 className="filter-date-picker"
                 selected={startDate}
-                onChange={date => setStartDate(date)}
+                onChange={handleStartDateChange}
                 placeholderText="From Date"
               />
               <span className="material-icons-round">event_available</span>
@@ -244,7 +382,7 @@ const ClientList = () => {
               <DatePicker
                 className="filter-date-picker"
                 selected={endDate}
-                onChange={date => setEndDate(date)}
+                onChange={handleEndDateChange}
                 placeholderText="To Date"
               />
               <span className="material-icons-round">event_available</span>

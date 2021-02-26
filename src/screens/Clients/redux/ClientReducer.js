@@ -2,6 +2,7 @@
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import {
   CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS,
   CLIENT_REDUX_CONSTANTS,
 } from './ClientReduxConstants';
 
@@ -12,6 +13,10 @@ const initialClientListState = {
     contactList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
+};
+const initialClientManagementClientListState = {
+  riskAnalystList: [],
+  serviceManagerList: [],
 };
 
 export const clientManagement = (state = initialClientListState, action) => {
@@ -104,6 +109,17 @@ export const clientManagementColumnList = (state = [], action) => {
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
 
+    default:
+      return state;
+  }
+};
+export const clientManagementFilterList = (
+  state = initialClientManagementClientListState,
+  action
+) => {
+  switch (action.type) {
+    case CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_FILTER_LIST_ACTION:
+      return action.data;
     default:
       return state;
   }

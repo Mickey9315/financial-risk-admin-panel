@@ -1,13 +1,17 @@
-import {errorNotification, successNotification} from '../../../common/Toast';
+import { errorNotification, successNotification } from '../../../common/Toast';
 import ClientApiService from '../services/ClientApiService';
-import {CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS, CLIENT_REDUX_CONSTANTS} from './ClientReduxConstants';
 import ClientContactApiService from '../services/ClientContactApiService';
+import {
+  CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS,
+  CLIENT_REDUX_CONSTANTS,
+} from './ClientReduxConstants';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
       const response = await ClientApiService.getAllClientList(params);
-
+      console.log('response of getClientList', response);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CLIENT_LIST_USER_ACTION,
@@ -93,6 +97,32 @@ export const getClientColumnListName = () => {
     }
   };
 };
+// for filter of client list
+export const getClientFilter = () => {
+  return async dispatch => {
+    try {
+      const response = await ClientApiService.getClientFilter();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_FILTER_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
 export const changeClientColumnListStatus = data => {
   return async dispatch => {
     dispatch({
@@ -146,7 +176,6 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
     }
   };
 };
-
 
 /*
  * Contact section

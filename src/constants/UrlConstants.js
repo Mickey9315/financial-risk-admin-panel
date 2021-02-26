@@ -1,4 +1,5 @@
 export const BASE_URL = 'https://client.trad.dev.gradlesol.com/app/';
+// export const BASE_URL = 'https://69f29e402623.ngrok.io/';
 
 export const AUTH_URLS = {
   LOGIN_URL: `${BASE_URL}rp/auth/login/`,
@@ -30,6 +31,7 @@ export const CLIENT_URLS = {
   CLIENT_BY_ID_URL: `${BASE_URL}rp/client/`,
   CLIENT_COLUMN_NAME_LIST_URL: `${BASE_URL}rp/client/column-name`,
   UPDATE_CLIENT_COLUMN_NAME_LIST_URL: `${BASE_URL}rp/client/column-name`,
+  CLIENT_FILTER_LIST_URL: `${BASE_URL}rp/client/user-list`,
   CONTACT: {
     CONTACT_LIST: `${BASE_URL}rp/client/user/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}rp/client/user/column-name/`,

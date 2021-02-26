@@ -1,5 +1,5 @@
-import {combineReducers} from 'redux';
-import {loggedUser} from '../screens/auth/login/redux/LoginReducer';
+import { combineReducers } from 'redux';
+import { loggedUser } from '../screens/auth/login/redux/LoginReducer';
 import {
   organizationModulesList,
   selectedUserData,
@@ -7,7 +7,11 @@ import {
   userManagementColumnList,
   userManagementList,
 } from '../screens/Users/redux/UserManagementReducer';
-import {clientManagement, clientManagementColumnList,} from '../screens/Clients/redux/ClientReducer';
+import {
+  clientManagement,
+  clientManagementColumnList,
+  clientManagementFilterList,
+} from '../screens/Clients/redux/ClientReducer';
 
 const rootReducer = combineReducers({
   loggedUser,
@@ -18,5 +22,6 @@ const rootReducer = combineReducers({
   organizationModulesList,
   userManagementClientList,
   clientManagementColumnList,
+  clientManagementFilterList,
 });
 export default rootReducer;

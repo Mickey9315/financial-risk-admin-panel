@@ -1,5 +1,5 @@
 import ApiService from '../../../services/api-service/ApiService';
-import {CLIENT_URLS} from '../../../constants/UrlConstants';
+import { CLIENT_URLS } from '../../../constants/UrlConstants';
 
 const ClientApiService = {
   getAllClientList: params => ApiService.getData(CLIENT_URLS.CLIENT_LIST_URL, { params }),
@@ -9,6 +9,7 @@ const ClientApiService = {
     ApiService.putData(CLIENT_URLS.UPDATE_CLIENT_COLUMN_NAME_LIST_URL, data),
   updateSelectedClientData: (id, data) =>
     ApiService.putData(CLIENT_URLS.CLIENT_BY_ID_URL + id, data),
+  getClientFilter: () => ApiService.getData(CLIENT_URLS.CLIENT_FILTER_LIST_URL),
 };
 
 export default ClientApiService;
