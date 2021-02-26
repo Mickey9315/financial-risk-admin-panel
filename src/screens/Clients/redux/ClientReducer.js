@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import {
   CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
@@ -11,6 +10,10 @@ const initialClientListState = {
   selectedClient: null,
   contact: {
     contactList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+  },
+  policies: {
+    policiesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
 };
@@ -33,6 +36,10 @@ export const clientManagement = (state = initialClientListState, action) => {
         selectedClient: action.data,
       };
 
+    /*
+     *  Contact section
+     * */
+
     case CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_LIST_USER_ACTION:
       return {
         ...state,
@@ -51,7 +58,7 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
 
-    case CLIENT_REDUX_CONSTANTS.CONTACT.UPDATE_CLIENT_CONTACT_COLUMN_LIST_ACTION:
+    case CLIENT_REDUX_CONSTANTS.CONTACT.UPDATE_CLIENT_CONTACT_COLUMN_LIST_ACTION: {
       const columnList = {
         ...state.contact.columnList,
       };
@@ -73,6 +80,53 @@ export const clientManagement = (state = initialClientListState, action) => {
           columnList,
         },
       };
+    }
+
+    /*
+     *  Policies section
+     * */
+
+    case CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_LIST_USER_ACTION:
+      return {
+        ...state,
+        policies: {
+          ...state.policies,
+          policiesList: action.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_LIST_USER_ACTION:
+      return {
+        ...state,
+        policies: {
+          ...state.policies,
+          columnList: action.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.POLICIES.UPDATE_CLIENT_POLICIES_COLUMN_LIST_ACTION: {
+      const columnList = {
+        ...state.policies.columnList,
+      };
+
+      const { type, name, value } = action.data;
+
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name
+          ? {
+              ...e,
+              isChecked: value,
+            }
+          : e
+      );
+      return {
+        ...state,
+        policies: {
+          ...state.policies,
+          columnList,
+        },
+      };
+    }
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
