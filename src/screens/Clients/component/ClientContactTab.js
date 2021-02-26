@@ -144,6 +144,7 @@ const ClientContactsTab = () => {
               headers={headers}
               recordSelected={onSelectUserRecord}
               recordActionClick={onSelectUserRecordActionClick}
+              refreshData={getClientContactsList}
             />
           </div>
           <Pagination
