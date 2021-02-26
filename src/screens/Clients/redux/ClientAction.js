@@ -205,6 +205,27 @@ export const getClientContactListData = (id, params = { page: 1, limit: 15 }) =>
   };
 };
 
+export const syncClientContactListData = id => {
+  return async dispatch => {
+    try {
+      const response = await ClientContactApiService.syncClientContactData(id);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch(getClientContactListData(id));
+        successNotification('Client contact updated successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
 export const getClientContactColumnNamesList = () => {
   return async dispatch => {
     try {
@@ -382,6 +403,27 @@ export const saveClientPoliciesColumnListName = ({
         if (response && response.data && response.data.status === 'SUCCESS') {
           successNotification('Columns updated successfully.');
         }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const syncClientPolicyListData = id => {
+  return async dispatch => {
+    try {
+      const response = await ClientPoliciesApiService.syncClientContactData(id);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch(getClientContactListData(id));
+        successNotification('Client policies updated successfully.');
       }
     } catch (e) {
       if (e.response && e.response.data) {
