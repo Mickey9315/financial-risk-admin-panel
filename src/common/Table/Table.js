@@ -47,6 +47,7 @@ const Table = props => {
     rowTitle,
     recordSelected,
     recordActionClick,
+    refreshData,
   } = props;
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -78,6 +79,7 @@ const Table = props => {
           [`${header.name}`]: value,
         },
       });
+      refreshData();
     } catch (e) {
       /**/
     }
@@ -148,6 +150,7 @@ Table.propTypes = {
   rowTitle: PropTypes.string,
   recordSelected: PropTypes.func,
   recordActionClick: PropTypes.func,
+  refreshData: PropTypes.func,
 };
 
 Table.defaultProps = {
@@ -160,6 +163,7 @@ Table.defaultProps = {
   rowTitle: '',
   recordSelected: () => {},
   recordActionClick: () => {},
+  refreshData: () => {},
 };
 
 export default Table;
