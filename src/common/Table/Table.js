@@ -70,18 +70,13 @@ const Table = props => {
 
   const handleCheckBoxState = useCallback(async (value, header, currentData) => {
     try {
-      const response = await TableApiService.tableActions({
+      await TableApiService.tableActions({
         url: header.request.url,
         method: header.request.method,
         id: currentData.id,
         data: {
           [`${header.name}`]: value,
         },
-      });
-
-      dispatchDrawerState({
-        type: DRAWER_ACTIONS.SHOW_DRAWER,
-        data: response.data.data,
       });
     } catch (e) {
       /**/
@@ -254,7 +249,7 @@ Row.defaultProps = {
 
 function TableLinkDrawer(props) {
   const { drawerState, closeDrawer } = props;
-
+  console.log({ drawerState });
   return (
     <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
       <div className="contacts-grid">
