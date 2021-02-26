@@ -36,6 +36,10 @@ export const CLIENT_URLS = {
     CONTACT_LIST: `${BASE_URL}rp/client/user/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}rp/client/user/column-name/`,
   },
+  POLICIES: {
+    POLICIES_LIST: `${BASE_URL}rp/policy/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}rp/policy/column-name/`,
+  },
 };
 
 export const INSURER_URLS = {
