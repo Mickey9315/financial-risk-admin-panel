@@ -6,7 +6,8 @@ const Drawer = props => {
   const { drawerState, closeDrawer, header, className, children, ...restProps } = props;
   const drawerClasses = `drawer-container ${drawerState && 'drawer-opened'} ${className}`;
   return (
-    <div className={drawerState && 'drawer-overlay'}>
+    <>
+      <div className={drawerState && 'drawer-overlay'} />
       <div className={drawerClasses} {...restProps}>
         <div className="drawer-wrapper">
           <div className="drawer-header-container">
@@ -18,7 +19,7 @@ const Drawer = props => {
           <div className="drawer-content">{children}</div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
