@@ -16,6 +16,7 @@ export const HEADER_URLS = {
 
 export const USER_MANAGEMENT_URLS = {
   USER_LIST_URL: `${BASE_URL}rp/user/`,
+  USER_PRIVILEGES_URL: `${BASE_URL}rp/privilege/`,
   SELECTED_USER_DETAILS_URL: `${BASE_URL}rp/user/`,
   USER_COLUMN_NAME_LIST_URL: `${BASE_URL}rp/user/column-name/`,
   USER_CLIENT_LIST_URL: `${BASE_URL}rp/user/client-name/`,
