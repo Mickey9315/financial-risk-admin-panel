@@ -1,0 +1,42 @@
+@import "../../index";
+
+input[type=checkbox]{
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+label {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 24px;
+  background: $border-color;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+label:after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+input:checked + label {
+  background: $primary-color;
+}
+
+input:checked + label:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+
+label:active:after {
+  width: 48px;
+}
