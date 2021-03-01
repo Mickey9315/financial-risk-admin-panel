@@ -2,7 +2,8 @@ import ApiService from '../../../services/api-service/ApiService';
 import { ORGANISATION_MODULE_URLS, USER_MANAGEMENT_URLS } from '../../../constants/UrlConstants';
 
 const UserManagementApiService = {
-  getAllUserList: params => ApiService.getData(USER_MANAGEMENT_URLS.USER_LIST_URL, { params }),
+  getAllUserPrivileges: params =>
+    ApiService.getData(USER_MANAGEMENT_URLS.USER_PRIVILEGES_URL, { params }),
   getUserColumnListName: () => ApiService.getData(USER_MANAGEMENT_URLS.USER_COLUMN_NAME_LIST_URL),
   getAllOrganisationModuleList: () =>
     ApiService.getData(ORGANISATION_MODULE_URLS.GET_ORGANIZATION_MODULE_LIST_URL),
