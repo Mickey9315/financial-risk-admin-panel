@@ -23,6 +23,19 @@ export const userManagementList = (state = initialUserManagementListState, actio
   }
 };
 
+export const userPrivileges = (state = [], action) => {
+  switch (action.type) {
+    case USER_MANAGEMENT_REDUX_CONSTANTS.PRIVILEGES.GET_ALL_USER_PRIVILEGES:
+      return action.data;
+
+    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
+      return [];
+
+    default:
+      return state;
+  }
+};
+
 export const userManagementColumnList = (state = [], action) => {
   switch (action.type) {
     case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION:
