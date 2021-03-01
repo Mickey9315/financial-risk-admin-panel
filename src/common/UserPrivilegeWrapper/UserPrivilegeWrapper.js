@@ -1,4 +1,3 @@
-import './SideMenu.scss';
 import PropTypes from 'prop-types';
 import { useModulePrivileges } from '../../hooks/userPrivileges/useModulePrivilegesHook';
 
