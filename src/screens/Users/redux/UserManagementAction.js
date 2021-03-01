@@ -34,6 +34,32 @@ export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) =
   };
 };
 
+export const getAllUserPrivileges = () => {
+  return async dispatch => {
+    try {
+      const response = await UserManagementApiService.getAllUserPrivileges();
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: USER_MANAGEMENT_REDUX_CONSTANTS.PRIVILEGES.GET_ALL_USER_PRIVILEGES,
+          data: response?.data?.data?.moduleAccess ?? [],
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
 export const getUserColumnListName = () => {
   return async dispatch => {
     try {
