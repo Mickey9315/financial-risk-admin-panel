@@ -6,6 +6,7 @@ import {
   userManagementClientList,
   userManagementColumnList,
   userManagementList,
+  userPrivileges,
 } from '../screens/Users/redux/UserManagementReducer';
 import {
   clientManagement,
@@ -15,6 +16,7 @@ import {
 
 const rootReducer = combineReducers({
   loggedUser,
+  userPrivileges,
   userManagementColumnList,
   userManagementList,
   clientManagement,
