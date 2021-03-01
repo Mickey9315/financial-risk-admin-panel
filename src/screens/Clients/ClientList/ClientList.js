@@ -24,6 +24,7 @@ import Checkbox from '../../../common/Checkbox/Checkbox';
 import Drawer from '../../../common/Drawer/Drawer';
 import { saveUserColumnListName } from '../../Users/redux/UserManagementAction';
 import { errorNotification } from '../../../common/Toast';
+import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 
 const initialFilterState = {
   riskAnalystId: '',
@@ -68,6 +69,15 @@ const ClientList = () => {
     dispatch(getClientList());
     dispatch(getClientFilter());
   }, []);
+
+  const {
+    page: paramPage,
+    limit: paramLimit,
+    riskAnalystId: paramRiskAnalyst,
+    serviceManagerId: paramServiceManager,
+    startDate: paramStartDate,
+    endDate: paramEndDate,
+  } = useQueryParams();
 
   const riskAnalystFilterListData = useMemo(() => {
     let finalData = [];
@@ -144,6 +154,53 @@ const ClientList = () => {
     },
     [page, limit, riskAnalystId, serviceManagerId, startDate, endDate, filter]
   );
+
+  useEffect(() => {
+    const params = {
+      page: paramPage || 1,
+      limit: paramLimit || 15,
+    };
+
+    const filters = {
+      riskAnalystId:
+        paramRiskAnalyst && paramRiskAnalyst.trim().length > 0 ? paramRiskAnalyst : undefined,
+      serviceManagerId:
+        paramServiceManager && paramServiceManager.trim().length > 0
+          ? paramServiceManager
+          : undefined,
+      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
+      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+    };
+
+    Object.entries(filters).forEach(([name, value]) => {
+      dispatchFilter({
+        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name,
+        value,
+      });
+    });
+
+    getClientListByFilter({ ...params, ...filters });
+    dispatch(getClientColumnListName());
+  }, []);
+
+  useEffect(() => {
+    const params = {
+      page: page || 1,
+      limit: limit || 15,
+      riskAnalystId: riskAnalystId && riskAnalystId.trim().length > 0 ? riskAnalystId : undefined,
+      serviceManagerId:
+        serviceManagerId && serviceManagerId.trim().length > 0 ? serviceManagerId : undefined,
+      startDate: startDate ? new Date(startDate).toISOString() : undefined,
+      endDate: endDate ? new Date(endDate).toISOString() : undefined,
+    };
+    const url = Object.entries(params)
+      .filter(arr => arr[1] !== undefined)
+      .map(([k, v]) => `${k}=${v}`)
+      .join('&');
+
+    history.replace(`${history.location.pathname}?${url}`);
+  }, [history, total, pages, page, limit, riskAnalystId, serviceManagerId, startDate, endDate]);
 
   const pageActionClick = useCallback(
     newPage => {
