@@ -23,6 +23,8 @@ import { errorNotification } from '../../../common/Toast';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Loader from '../../../common/Loader/Loader';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialFilterState = {
   role: '',
@@ -323,7 +325,9 @@ const UserList = () => {
             buttonTitle="Click to select custom fields"
             onClick={() => toggleCustomField()}
           />
-          <Button title="Add User" buttonType="success" onClick={openAddUser} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+            <Button title="Add User" buttonType="success" onClick={openAddUser} />
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {docs ? (

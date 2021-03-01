@@ -23,6 +23,8 @@ import { errorNotification } from '../../../common/Toast';
 import { EMAIL_ADDRESS_REGEX, NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 import Modal from '../../../common/Modal/Modal';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const AddUser = () => {
   const history = useHistory();
@@ -225,14 +227,16 @@ const AddUser = () => {
         </div>
         <div className="buttons-row">
           {action === 'view' ? (
-            <>
+            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
               <Button buttonType="primary" title="Edit" onClick={editUserClick} />
               <Button buttonType="danger" title="Delete" onClick={deleteModalButtonClick} />
-            </>
+            </UserPrivilegeWrapper>
           ) : (
             <>
               <Button buttonType="primary-1" title="Close" onClick={backToUser} />
-              <Button buttonType="primary" title="Save" onClick={onClickAddUser} />
+              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                <Button buttonType="primary" title="Save" onClick={onClickAddUser} />
+              </UserPrivilegeWrapper>
             </>
           )}
         </div>
