@@ -1,12 +1,12 @@
 @import "../../index";
 
-input[type=checkbox]{
+.common-switch {
   height: 0;
   width: 0;
   visibility: hidden;
 }
 
-label {
+.common-switch + label {
   position: relative;
   display: block;
   width: 48px;
@@ -16,7 +16,7 @@ label {
   cursor: pointer;
 }
 
-label:after {
+.common-switch + label:after {
   content: '';
   position: absolute;
   top: 2px;
@@ -28,15 +28,15 @@ label:after {
   transition: 0.2s;
 }
 
-input:checked + label {
+.common-switch:checked + label {
   background: $primary-color;
 }
 
-input:checked + label:after {
+.common-switch:checked + label:after {
   left: calc(100% - 2px);
   transform: translateX(-100%);
 }
 
-label:active:after {
+.common-switch + label:active:after {
   width: 48px;
 }

@@ -6,8 +6,8 @@ const Switch = props => {
   const { status } = props;
   return (
     <>
-      <input type="checkbox" id="switch" onClick={status} />
-      <label htmlFor="switch" status />
+      <input type="checkbox" id="common-switch" className="common-switch" onClick={status} />
+      <label htmlFor="common-switch" />
     </>
   );
 };
