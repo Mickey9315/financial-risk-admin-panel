@@ -14,7 +14,7 @@ import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
 import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
 import DocumentsTab from '../../../common/Tab/DocumentsTab/DocumentsTab';
 import NotesTab from '../../../common/Tab/NotesTab/Notestab';
-import { getClientById, updateSelectedClientData } from '../redux/ClientAction';
+import { getClientById, syncClientData, updateSelectedClientData } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import ClientContactsTab from '../component/ClientContactTab';
 import ClientPoliciesTab from '../component/ClientPoliciesTab';
@@ -135,6 +135,10 @@ const ViewClient = () => {
     [dispatchAssignee]
   );
 
+  const syncClientDataClick = useCallback(() => {
+    dispatch(syncClientData(id));
+  }, [id]);
+
   if (!viewClientData) {
     return <Loader />;
   }
@@ -148,7 +152,7 @@ const ViewClient = () => {
           <span>View Client</span>
         </div>
         <div className="buttons-row">
-          <Button buttonType="secondary" title="Sync With CRM" />
+          <Button buttonType="secondary" title="Sync With CRM" onClick={syncClientDataClick} />
         </div>
       </div>
       <div className="common-white-container client-details-container">
