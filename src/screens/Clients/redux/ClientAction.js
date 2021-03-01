@@ -178,6 +178,27 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
   };
 };
 
+export const syncClientData = id => {
+  return async dispatch => {
+    try {
+      const response = await ClientApiService.syncClientData(id);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch(getClientById(id));
+        successNotification('Client data updated successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
 /*
  * Contact section
  * */
