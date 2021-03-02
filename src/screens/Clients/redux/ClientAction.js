@@ -7,6 +7,7 @@ import {
   CLIENT_REDUX_CONSTANTS,
 } from './ClientReduxConstants';
 import ClientPoliciesApiService from '../services/ClientPoliciesApiService';
+import ClientNotesApiService from '../services/ClientNotesApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -445,6 +446,38 @@ export const syncClientPolicyListData = id => {
       if (response.data.status === 'SUCCESS') {
         dispatch(getClientContactListData(id));
         successNotification('Client policies updated successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+/*
+ * Notes section
+ * */
+
+export const getClientNotesListDataAction = (id, params = { page: 1, limit: 15 }) => {
+  return async dispatch => {
+    try {
+      const updatedParams = {
+        ...params,
+        noteFor: 'client',
+      };
+
+      const response = await ClientNotesApiService.getClientNotesList(id, updatedParams);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.NOTES.CLIENT_NOTES_LIST_USER_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       if (e.response && e.response.data) {
