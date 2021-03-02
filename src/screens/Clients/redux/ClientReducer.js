@@ -16,6 +16,9 @@ const initialClientListState = {
     policiesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
+  notes: {
+    notesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+  },
 };
 const initialClientManagementClientListState = {
   riskAnalystList: [],
@@ -127,6 +130,19 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
     }
+
+    /*
+     *  Notes section
+     * */
+
+    case CLIENT_REDUX_CONSTANTS.NOTES.CLIENT_NOTES_LIST_USER_ACTION:
+      return {
+        ...state,
+        notes: {
+          ...state.notes,
+          notesList: action.data,
+        },
+      };
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
