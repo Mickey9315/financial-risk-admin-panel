@@ -548,3 +548,26 @@ export const updateClientNoteAction = (entityId, noteData) => {
     }
   };
 };
+
+export const deleteClientNoteAction = noteData => {
+  return async dispatch => {
+    try {
+      const { noteId } = noteData;
+
+      const response = await ClientNotesApiService.deleteClientNote(noteId);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch(getClientNotesListDataAction());
+        successNotification('Note deleted successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
