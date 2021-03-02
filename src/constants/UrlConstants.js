@@ -46,6 +46,10 @@ export const CLIENT_URLS = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}rp/policy/column-name/`,
     SYNC_CLIENT_POLICIES_DATA_URL: `${BASE_URL}rp/policy/client/sync-from-crm/`,
   },
+
+  NOTES: {
+    NOTES_LIST: `${BASE_URL}rp/note/`,
+  },
 };
 
 export const INSURER_URLS = {
