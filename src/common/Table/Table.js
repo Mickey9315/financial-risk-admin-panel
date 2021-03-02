@@ -188,7 +188,7 @@ function Row(props) {
   const onClickAction = useCallback(
     (e, type) => {
       e.stopPropagation();
-      recordActionClick(type, data.id);
+      recordActionClick(type, data.id, data);
     },
     [recordActionClick, data]
   );
