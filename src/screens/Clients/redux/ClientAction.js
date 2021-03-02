@@ -490,3 +490,32 @@ export const getClientNotesListDataAction = (id, params = { page: 1, limit: 15 }
     }
   };
 };
+
+export const addClientNoteAction = (entityId, noteData) => {
+  return async dispatch => {
+    try {
+      const { description, isPublic } = noteData;
+      const data = {
+        noteFor: 'client',
+        entityId,
+        isPublic,
+        description,
+      };
+
+      const response = await ClientNotesApiService.addClientNote(data);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch(getClientNotesListDataAction());
+        successNotification('Note added successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
