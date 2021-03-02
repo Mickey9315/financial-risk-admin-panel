@@ -519,3 +519,32 @@ export const addClientNoteAction = (entityId, noteData) => {
     }
   };
 };
+
+export const updateClientNoteAction = (entityId, noteData) => {
+  return async dispatch => {
+    try {
+      const { noteId, description, isPublic } = noteData;
+      const data = {
+        noteFor: 'client',
+        entityId,
+        isPublic,
+        description,
+      };
+
+      const response = await ClientNotesApiService.updateClientNote(noteId, data);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch(getClientNotesListDataAction());
+        successNotification('Note updated successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
