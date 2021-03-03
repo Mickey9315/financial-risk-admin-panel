@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import './ClientList.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,8 +24,10 @@ import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import Drawer from '../../../common/Drawer/Drawer';
 import { saveUserColumnListName } from '../../Users/redux/UserManagementAction';
-import { errorNotification } from '../../../common/Toast';
+import { errorNotification, successNotification } from '../../../common/Toast';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
+import ClientApiService from '../services/ClientApiService';
+import { CLIENT_ADD_FROM_CRM_REDUX_CONSTANT } from '../redux/ClientReduxConstants';
 
 const initialFilterState = {
   riskAnalystId: '',
@@ -60,12 +62,13 @@ const ClientList = () => {
     ({ clientManagementColumnList }) => clientManagementColumnList
   );
   const filterList = useSelector(({ clientManagementFilterList }) => clientManagementFilterList);
+  const syncListFromCrm = useSelector(({ syncClientWithCrm }) => syncClientWithCrm);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
   const { docs, headers } = useMemo(() => clientListWithPageData, [clientListWithPageData]);
-
+  const [crmIds, setCrmIds] = useState([]);
   useEffect(() => {
     dispatch(getClientList());
     dispatch(getClientFilter());
@@ -261,6 +264,7 @@ const ClientList = () => {
     ],
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
+
   useEffect(() => {
     dispatch(getClientColumnListName());
   }, []);
@@ -279,15 +283,48 @@ const ClientList = () => {
   );
 
   const [addFromCRM, setAddFromCRM] = React.useState(false);
+
   const onClickAddFromCRM = useCallback(
     value => setAddFromCRM(value !== undefined ? value : e => !e),
     [setAddFromCRM]
   );
-  const toggleAddFromCRM = () => setAddFromCRM(e => !e);
-  const addToCRMButtons = [
-    { title: 'Close', buttonType: 'primary-1', onClick: toggleAddFromCRM },
-    { title: 'Add', buttonType: 'primary' },
-  ];
+
+  const addDataFromCrm = () => {
+    dispatch({
+      type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
+      data: [],
+    });
+    const data = {
+      crmIds,
+    };
+    ClientApiService.updateClientListFromCrm(data)
+      .then(res => {
+        console.log(res.data);
+        if (res.data.status === 'SUCCESS') {
+          successNotification('Client data successfully synced');
+          setAddFromCRM(e => !e);
+          dispatch(getClientList());
+        }
+      })
+      .catch(e => console.log(e));
+  };
+
+  const toggleAddFromCRM = useCallback(() => {
+    setCrmIds([]);
+    dispatch({
+      type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
+      data: [],
+    });
+    setAddFromCRM(e => !e);
+  }, [setAddFromCRM, setCrmIds]);
+
+  const addToCRMButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: toggleAddFromCRM },
+      { title: 'Add', buttonType: 'primary', onClick: addDataFromCrm },
+    ],
+    [toggleAddFromCRM, addDataFromCrm]
+  );
   const openViewClient = useCallback(
     id => {
       history.replace(`/clients/client/view/${id}`);
@@ -302,25 +339,16 @@ const ClientList = () => {
     if (e.key === 'Enter') {
       console.log('searchInputRef', searchInputRef.current.value);
       const searchKeyword = searchInputRef.current.value;
-      dispatch(getListFromCrm(searchKeyword));
-      setSearchClients(val => !val);
+      if (searchKeyword.trim().toString().length !== 0) {
+        dispatch(getListFromCrm(searchKeyword.trim().toString()));
+        setSearchClients(val => !val);
+      } else {
+        errorNotification('Please enter any value than press enter');
+      }
     }
   };
+  console.log('searchClient=>', searchClients);
 
-  const crmList = [
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-    'A B Plastics Pty Ltd',
-  ];
   const [state, setState] = React.useState(false);
   const clientListClicked = () => {
     setState(e => !e);
@@ -359,7 +387,16 @@ const ClientList = () => {
     });
     return foundValue ? [foundValue] : [];
   }, [serviceManagerId]);
-
+  const selectClientFromCrm = crmId => {
+    let arr = [...crmIds];
+    if (arr.includes(crmId)) {
+      arr = arr.filter(e => e !== crmId);
+    } else {
+      arr = [...arr, crmId];
+    }
+    setCrmIds(arr);
+  };
+  console.log('crmIds->', crmIds);
   return (
     <>
       <div className="page-header">
@@ -473,12 +510,17 @@ const ClientList = () => {
             type="text"
             onKeyDown={checkIfEnterKeyPressed}
           />
-          {searchClients && crmList.length > 0 && (
+          {searchClients && syncListFromCrm.length > 0 && (
             <>
-              <Checkbox title="Name" className="check-all-crmList" />
+              {/* <Checkbox title="Name" className="check-all-crmList" /> */}
               <div className="crm-checkbox-list-container">
-                {crmList.map(crm => (
-                  <Checkbox title={crm} className="crm-checkbox-list" />
+                {syncListFromCrm.map(crm => (
+                  <Checkbox
+                    title={crm.name}
+                    className="crm-checkbox-list"
+                    checked={crmIds.includes(crm.crmId.toString())}
+                    onChange={() => selectClientFromCrm(crm.crmId.toString())}
+                  />
                 ))}
               </div>
             </>

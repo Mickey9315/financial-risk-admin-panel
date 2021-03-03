@@ -14,7 +14,6 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
       const response = await ClientApiService.getAllClientList(params);
-      console.log('response of getClientList', response);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CLIENT_LIST_USER_ACTION,

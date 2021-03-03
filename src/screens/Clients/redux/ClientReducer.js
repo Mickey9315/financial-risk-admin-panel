@@ -195,7 +195,7 @@ export const clientManagementFilterList = (
       return state;
   }
 };
-export const syncClientWithCrm = (state = null, action) => {
+export const syncClientWithCrm = (state = [], action) => {
   switch (action.type) {
     case CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION:
       return action.data;
