@@ -31,7 +31,7 @@ export const SIDEBAR_URLS = [
     label: 'Application',
     title: 'Application',
     icon: 'business_center',
-    url: '/application',
+    url: '/applications',
     name: SIDEBAR_NAMES.APPLICATION,
   },
   {
