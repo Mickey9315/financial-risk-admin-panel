@@ -11,6 +11,8 @@ const ClientApiService = {
     ApiService.putData(CLIENT_URLS.CLIENT_BY_ID_URL + id, data),
   getClientFilter: () => ApiService.getData(CLIENT_URLS.CLIENT_FILTER_LIST_URL),
   syncClientData: id => ApiService.putData(`${CLIENT_URLS.SYNC_CLIENT_DATA_URL}${id}`),
+  getListFromCrm: data =>
+    ApiService.getData(`${CLIENT_URLS.GET_DATA_FROM_CRM_URL}?searchKeyword=${data}`),
 };
 
 export default ClientApiService;

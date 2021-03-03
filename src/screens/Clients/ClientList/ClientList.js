@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import './ClientList.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +16,7 @@ import {
   getClientColumnListName,
   getClientFilter,
   getClientList,
+  getListFromCrm,
   saveClientColumnListName,
 } from '../redux/ClientAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -294,11 +295,18 @@ const ClientList = () => {
     [history]
   );
   const [searchClients, setSearchClients] = React.useState(false);
+
+  const searchInputRef = useRef();
+
   const checkIfEnterKeyPressed = e => {
     if (e.key === 'Enter') {
+      console.log('searchInputRef', searchInputRef.current.value);
+      const searchKeyword = searchInputRef.current.value;
+      dispatch(getListFromCrm(searchKeyword));
       setSearchClients(val => !val);
     }
   };
+
   const crmList = [
     'A B Plastics Pty Ltd',
     'A B Plastics Pty Ltd',
@@ -458,6 +466,7 @@ const ClientList = () => {
       {addFromCRM && (
         <Modal header="Add From CRM" className="add-to-crm-modal" buttons={addToCRMButtons}>
           <BigInput
+            ref={searchInputRef}
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search clients"

@@ -37,6 +37,7 @@ export const CLIENT_URLS = {
   UPDATE_CLIENT_COLUMN_NAME_LIST_URL: `${BASE_URL}client/column-name`,
   CLIENT_FILTER_LIST_URL: `${BASE_URL}client/user-list`,
   SYNC_CLIENT_DATA_URL: `${BASE_URL}client/sync-from-crm`,
+  GET_DATA_FROM_CRM_URL: `${BASE_URL}client/search-from-crm`,
 
   CONTACT: {
     CONTACT_LIST: `${BASE_URL}client/user/`,

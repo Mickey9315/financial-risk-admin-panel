@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './BigInput.scss';
 
-const BigInput = props => {
+const BigInput = React.forwardRef((props, ref) => {
   const {
     prefix,
     prefixClass,
@@ -22,6 +22,7 @@ const BigInput = props => {
     <div className={inputBorderClass}>
       {prefix && <span className={prefixClassName}>{prefix}</span>}
       <input
+        ref={ref}
         autoComplete="off"
         type={type}
         placeholder={placeholder}
@@ -31,7 +32,7 @@ const BigInput = props => {
       {suffix && <span className={suffixClassName}>{suffix}</span>}
     </div>
   );
-};
+});
 
 BigInput.propTypes = {
   prefix: PropTypes.string,

@@ -1,5 +1,6 @@
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import {
+  CLIENT_ADD_FROM_CRM_REDUX_CONSTANT,
   CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
   CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS,
   CLIENT_REDUX_CONSTANTS,
@@ -189,6 +190,14 @@ export const clientManagementFilterList = (
 ) => {
   switch (action.type) {
     case CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_FILTER_LIST_ACTION:
+      return action.data;
+    default:
+      return state;
+  }
+};
+export const syncClientWithCrm = (state = null, action) => {
+  switch (action.type) {
+    case CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION:
       return action.data;
     default:
       return state;

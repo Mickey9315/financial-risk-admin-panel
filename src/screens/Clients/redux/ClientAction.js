@@ -2,6 +2,7 @@ import { errorNotification, successNotification } from '../../../common/Toast';
 import ClientApiService from '../services/ClientApiService';
 import ClientContactApiService from '../services/ClientContactApiService';
 import {
+  CLIENT_ADD_FROM_CRM_REDUX_CONSTANT,
   CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
   CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS,
   CLIENT_REDUX_CONSTANTS,
@@ -107,6 +108,31 @@ export const getClientFilter = () => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_FILTER_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+export const getListFromCrm = data => {
+  return async dispatch => {
+    try {
+      const response = await ClientApiService.getListFromCrm(data);
+      console.log('get list from crm', response);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
           data: response.data.data,
         });
       }
