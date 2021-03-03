@@ -41,7 +41,12 @@ export const AllAuthenticatedRoutes = () => {
     <Dashboard>
       <AuthenticatedRoute exact path="/dashboard" component={null} />
       <AuthenticatedRoute exact path="/my-work" component={null} />
-      <AuthenticatedRoute exact path="/application" component={ApplicationList} />
+      <AuthenticatedRoute exact path="/applications" component={ApplicationList} />
+      <AuthenticatedRoute
+        exact
+        path="/applications/application/:action/"
+        component={ApplicationList}
+      />
       <AuthenticatedRoute exact path="/debtors" component={null} />
       <AuthenticatedRoute exact path="/claims" component={null} />
       <AuthenticatedRoute exact path="/over-dues" component={null} />
