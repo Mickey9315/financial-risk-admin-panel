@@ -31,34 +31,39 @@ const ApplicationList = () => {
         cb();
       }
     },
-    [page, limit],
+    [page, limit]
   );
   // on record limit changed
   const onSelectLimit = useCallback(
     newLimit => {
       getApplicationsByFilter({ page: 1, limit: newLimit });
     },
-    [dispatch, getApplicationsByFilter],
+    [dispatch, getApplicationsByFilter]
   );
   // on pagination changed
   const pageActionClick = useCallback(
     newPage => {
       getApplicationsByFilter({ page: newPage, limit });
     },
-    [dispatch, getApplicationsByFilter, limit],
+    [dispatch, getApplicationsByFilter, limit]
   );
 
   const [customFieldModal, setCustomFieldModal] = useState(false);
-  const toggleCustomField = useCallback(value => setCustomFieldModal(value !== undefined ? value : e => !e), [
-    setCustomFieldModal,
-  ]);
+  const toggleCustomField = useCallback(
+    value => setCustomFieldModal(value !== undefined ? value : e => !e),
+    [setCustomFieldModal]
+  );
   const customFieldsModalButtons = useMemo(
     () => [
-      { title: 'Reset Defaults', buttonType: 'outlined-primary', onClick: () => console.log('Reset default clicked') },
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: () => console.log('Reset default clicked'),
+      },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
       { title: 'Save', buttonType: 'primary', onClick: () => console.log('Save clicked') },
     ],
-    [toggleCustomField],
+    [toggleCustomField]
   );
 
   const { page: paramPage, limit: paramLimit } = useQueryParams();
@@ -103,7 +108,11 @@ const ApplicationList = () => {
             buttonTitle="Click to select custom fields"
             onClick={() => toggleCustomField()}
           />
-          <Button title="Generate" buttonType="success" onClick={() => console.log('Add Application Clicked')} />
+          <Button
+            title="Generate"
+            buttonType="success"
+            onClick={() => console.log('Add Application Clicked')}
+          />
         </div>
       </div>
       {docs ? (
