@@ -1,0 +1,57 @@
+@import "../../index";
+
+.stepper-container {
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+  background-color: $primary-color-1;
+  border-radius: 10px;
+  .arrow {
+    color: $placeholder-color;
+  }
+
+}
+.step-container:last-child .arrow {
+ display: none;
+}
+
+.step-container {
+  display: flex;
+  align-items: center;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  padding: 15px;
+  font: $title $font-medium;
+  color: $placeholder-color;
+  border-radius: 10px;
+  overflow: hidden;
+
+  span {
+    font-weight: 600;
+    margin-right: 10px;
+    color: $placeholder-color;
+  }
+}
+
+.selected-step {
+  color: white;
+  background-color: $primary-color;
+}
+
+.step-container.active-step {
+  .step {
+    color: white;
+    background-color: $primary-color;
+    span {
+      color: white;
+    }
+  }
+
+  .arrow {
+    color: $primary-color;
+  }
+}
