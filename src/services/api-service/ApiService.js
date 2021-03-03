@@ -32,6 +32,10 @@ instance.interceptors.response.use(
       window.location.href = '/login';
       return false;
     }
+    if (error.response.status === 403) {
+      window.location.href = '/forbidden-access';
+      return false;
+    }
     return Promise.reject(error);
   }
 );
