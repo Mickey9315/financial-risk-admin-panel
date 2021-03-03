@@ -1,0 +1,16 @@
+@import '../../../index';
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-header-name, .tab-content-header {
+  font: $h5 $font-medium;
+  color: $primary-color;
+}
+
+.page-header-button-container{
+  display: flex;
+}

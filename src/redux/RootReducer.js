@@ -13,6 +13,7 @@ import {
   clientManagementColumnList,
   clientManagementFilterList,
 } from '../screens/Clients/redux/ClientReducer';
+import { applicationList } from '../screens/Application/redux/ApplicationReducer';
 
 const rootReducer = combineReducers({
   loggedUser,
@@ -25,5 +26,6 @@ const rootReducer = combineReducers({
   userManagementClientList,
   clientManagementColumnList,
   clientManagementFilterList,
+  applicationList,
 });
 export default rootReducer;

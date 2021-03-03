@@ -22,6 +22,10 @@ export const USER_MANAGEMENT_URLS = {
   UPDATE_USER_COLUMN_NAME_LIST_URL: `${BASE_URL}user/column-name/`,
 };
 
+export const APPLICATION_URLS = {
+  APPLICATION_LIST_URL: `${BASE_URL}application/`,
+};
+
 export const ORGANISATION_MODULE_URLS = {
   GET_ORGANIZATION_MODULE_LIST_URL: `${BASE_URL}organization/module`,
 };
