@@ -76,6 +76,10 @@ const ApplicationList = () => {
     getApplicationsByFilter({ ...params });
   }, []);
 
+  const generateApplicationClick = useCallback(() => {
+    history.push(`/applications/application/generate/`);
+  }, []);
+
   // for params in url
   useEffect(() => {
     const params = {
@@ -111,7 +115,7 @@ const ApplicationList = () => {
           <Button
             title="Generate"
             buttonType="success"
-            onClick={() => console.log('Add Application Clicked')}
+            onClick={generateApplicationClick}
           />
         </div>
       </div>
