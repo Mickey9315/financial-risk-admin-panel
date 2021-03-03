@@ -7,7 +7,7 @@ const ForbiddenAccessPage = () => {
   const history = useHistory();
 
   const goBack = useCallback(() => {
-    history.goBack();
+    history.replace('/dashboard');
   }, [history]);
 
   return (
