@@ -6,7 +6,7 @@ import Table, { TABLE_ROW_ACTIONS } from '../../../common/Table/Table';
 import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
 import Loader from '../../../common/Loader/Loader';
-import { getClientNotesListDataAction } from '../redux/ClientAction';
+import { addClientNoteAction, getClientNotesListDataAction } from '../redux/ClientAction';
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
 
@@ -92,9 +92,17 @@ const ClientNotesTab = () => {
     [getClientNotesList]
   );
 
-  const addOrUpdateNote = useCallback(() => {
+  const addOrUpdateNote = useCallback(async () => {
+    const noteData = {
+      description: selectedClientNote.description,
+      isPublic: selectedClientNote.isPublic,
+    };
+    await dispatch(addClientNoteAction(id, noteData));
+    dispatchSelectedClientNote({
+      type: CLIENT_NOTE_REDUCER_ACTIONS.RESET_STATE,
+    });
     toggleModifyNotes();
-  }, []);
+  }, [selectedClientNote, toggleModifyNotes]);
 
   const addToCRMButtons = useMemo(
     () => [
@@ -182,7 +190,6 @@ const ClientNotesTab = () => {
           <div className="common-white-container client-details-container">
             <span>Description</span>
             <BigInput
-              prefix="search"
               prefixClass="font-placeholder"
               placeholder="Note description"
               name="description"
@@ -228,6 +235,7 @@ const ClientNotesTab = () => {
               headers={headers}
               recordActionClick={onSelectUserRecordActionClick}
               refreshData={getClientNotesList}
+              haveActions
             />
           </div>
           <Pagination
