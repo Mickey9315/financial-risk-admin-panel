@@ -9,6 +9,7 @@ import {
 } from './ClientReduxConstants';
 import ClientPoliciesApiService from '../services/ClientPoliciesApiService';
 import ClientNotesApiService from '../services/ClientNotesApiService';
+import ClientDocumentsApiService from "../services/ClientDocumentsApiService";
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -582,6 +583,31 @@ export const deleteClientNoteAction = noteId => {
       if (response.data.status === 'SUCCESS') {
         dispatch(getClientNotesListDataAction());
         successNotification('Note deleted successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+/* documents action */
+
+export const getClientDocumentsListData = (id, params = { page: 1, limit: 15 }) => {
+  return async dispatch => {
+    try {
+      const response = await ClientDocumentsApiService.getClientDocumentsList(id, params);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_LIST_USER_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       if (e.response && e.response.data) {
