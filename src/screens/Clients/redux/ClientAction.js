@@ -517,7 +517,6 @@ export const getClientNotesListDataAction = (id, params = { page: 1, limit: 15 }
 };
 
 export const addClientNoteAction = (entityId, noteData) => {
-  console.log('add client note action');
   return async dispatch => {
     try {
       const { description, isPublic } = noteData;
@@ -560,7 +559,7 @@ export const updateClientNoteAction = (entityId, noteData) => {
       const response = await ClientNotesApiService.updateClientNote(noteId, data);
 
       if (response.data.status === 'SUCCESS') {
-        dispatch(getClientNotesListDataAction());
+        await dispatch(getClientNotesListDataAction(entityId));
         successNotification('Note updated successfully.');
       }
     } catch (e) {

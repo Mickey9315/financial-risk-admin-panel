@@ -6,7 +6,11 @@ import Table, { TABLE_ROW_ACTIONS } from '../../../common/Table/Table';
 import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
 import Loader from '../../../common/Loader/Loader';
-import { addClientNoteAction, getClientNotesListDataAction } from '../redux/ClientAction';
+import {
+  addClientNoteAction,
+  getClientNotesListDataAction,
+  updateClientNoteAction,
+} from '../redux/ClientAction';
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
 
@@ -97,7 +101,12 @@ const ClientNotesTab = () => {
       description: selectedClientNote.description,
       isPublic: selectedClientNote.isPublic,
     };
-    await dispatch(addClientNoteAction(id, noteData));
+    if (selectedClientNote.type === NOTE_ACTIONS.ADD) {
+      await dispatch(addClientNoteAction(id, noteData));
+    } else {
+      noteData.noteId = selectedClientNote.noteId;
+      await dispatch(updateClientNoteAction(id, noteData));
+    }
     dispatchSelectedClientNote({
       type: CLIENT_NOTE_REDUCER_ACTIONS.RESET_STATE,
     });
@@ -134,12 +143,11 @@ const ClientNotesTab = () => {
           isPublic,
           type: NOTE_ACTIONS.EDIT,
         };
-
+        console.log('note edit', data);
         dispatchSelectedClientNote({
           type: CLIENT_NOTE_REDUCER_ACTIONS.UPDATE_DATA,
           data,
         });
-
         toggleModifyNotes();
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
         toggleConfirmationModal();
