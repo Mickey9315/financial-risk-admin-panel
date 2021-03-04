@@ -151,7 +151,6 @@ const ClientNotesTab = () => {
         });
         toggleModifyNotes();
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
-        console.log('delete', noteId);
         setDeleteId(noteId);
         toggleConfirmationModal();
       }
@@ -166,7 +165,6 @@ const ClientNotesTab = () => {
       buttonType: 'danger',
       onClick: () => {
         try {
-          console.log('delete note id', deleteId);
           dispatch(deleteClientNoteAction(deleteId));
           setDeleteId(null);
           toggleConfirmationModal();

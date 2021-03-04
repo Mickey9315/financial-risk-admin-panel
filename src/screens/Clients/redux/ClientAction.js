@@ -577,7 +577,6 @@ export const updateClientNoteAction = (entityId, noteData) => {
 export const deleteClientNoteAction = noteId => {
   return async dispatch => {
     try {
-      console.log('deleteClientNoteAction', noteId);
       const response = await ClientNotesApiService.deleteClientNote(noteId);
 
       if (response.data.status === 'SUCCESS') {
