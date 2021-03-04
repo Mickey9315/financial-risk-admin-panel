@@ -48,6 +48,7 @@ const Table = props => {
     recordSelected,
     recordActionClick,
     refreshData,
+    haveActions,
   } = props;
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -132,6 +133,7 @@ const Table = props => {
               rowTitle={rowTitle}
               recordSelected={recordSelected}
               recordActionClick={recordActionClick}
+              haveActions={haveActions}
             />
           ))}
         </tbody>
@@ -151,6 +153,7 @@ Table.propTypes = {
   recordSelected: PropTypes.func,
   recordActionClick: PropTypes.func,
   refreshData: PropTypes.func,
+  haveActions: PropTypes.bool,
 };
 
 Table.defaultProps = {
@@ -161,6 +164,7 @@ Table.defaultProps = {
   data: [],
   rowClass: '',
   rowTitle: '',
+  haveActions: false,
   recordSelected: () => {},
   recordActionClick: () => {},
   refreshData: () => {},
@@ -169,7 +173,16 @@ Table.defaultProps = {
 export default Table;
 
 function Row(props) {
-  const { align, valign, data, rowClass, rowTitle, recordSelected, recordActionClick } = props;
+  const {
+    align,
+    valign,
+    data,
+    rowClass,
+    rowTitle,
+    recordSelected,
+    haveActions,
+    recordActionClick,
+  } = props;
 
   const [showActionMenu, setShowActionMenu] = React.useState(false);
   const actionMenuRef = useRef();
@@ -202,31 +215,36 @@ function Row(props) {
           </td>
         ) : null
       )}
-      <td
-        align="right"
-        valign={valign}
-        className={`fixed-action-menu ${showActionMenu && 'fixed-action-menu-clicked'}`}
-      >
-        <span
-          className="material-icons-round cursor-pointer table-action"
-          onClick={onClickActionToggleButton}
+      {haveActions && (
+        <td
+          align="right"
+          valign={valign}
+          className={`fixed-action-menu ${showActionMenu && 'fixed-action-menu-clicked'}`}
         >
-          more_vert
-        </span>
-        {showActionMenu && (
-          <div className="action-menu" ref={actionMenuRef}>
-            <div className="menu-name" onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.EDIT_ROW)}>
-              <span className="material-icons-round">edit</span> Edit
+          <span
+            className="material-icons-round cursor-pointer table-action"
+            onClick={onClickActionToggleButton}
+          >
+            more_vert
+          </span>
+          {showActionMenu && (
+            <div className="action-menu" ref={actionMenuRef}>
+              <div
+                className="menu-name"
+                onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.EDIT_ROW)}
+              >
+                <span className="material-icons-round">edit</span> Edit
+              </div>
+              <div
+                className="menu-name"
+                onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.DELETE_ROW)}
+              >
+                <span className="material-icons-round">delete</span> Delete
+              </div>
             </div>
-            <div
-              className="menu-name"
-              onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.DELETE_ROW)}
-            >
-              <span className="material-icons-round">delete</span> Delete
-            </div>
-          </div>
-        )}
-      </td>
+          )}
+        </td>
+      )}
     </tr>
   );
 }
@@ -238,6 +256,7 @@ Row.propTypes = {
   rowClass: PropTypes.string,
   rowTitle: PropTypes.string,
   recordSelected: PropTypes.func,
+  haveActions: PropTypes.bool,
   recordActionClick: PropTypes.func,
 };
 
@@ -248,6 +267,7 @@ Row.defaultProps = {
   rowClass: '',
   rowTitle: '',
   recordSelected: () => {},
+  haveActions: false,
   recordActionClick: () => {},
 };
 
