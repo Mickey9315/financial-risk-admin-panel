@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -14,6 +14,7 @@ import {
 } from '../redux/ClientAction';
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
+import { errorNotification } from '../../../common/Toast';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -59,6 +60,7 @@ const ClientNotesTab = () => {
   const [modifyNoteModal, setModifyNoteModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const searchInputRef = useRef();
 
   const [selectedClientNote, dispatchSelectedClientNote] = useReducer(
     clientNoteReducer,
@@ -134,6 +136,19 @@ const ClientNotesTab = () => {
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
     [setShowConfirmModal]
   );
+  const checkIfEnterKeyPressed = e => {
+    const searchKeyword = searchInputRef.current.value;
+    if (e.target.value.trim().toString().length <= 1) {
+      getClientNotesList();
+    } else if (e.key === 'Enter') {
+      if (searchKeyword.trim().toString().length !== 0) {
+        getClientNotesList({ search: searchKeyword.trim().toString() });
+      } else {
+        getClientNotesList();
+        errorNotification('Please enter any value than press enter');
+      }
+    }
+  };
 
   const onSelectUserRecordActionClick = useCallback(
     async (type, noteId, noteData) => {
@@ -227,12 +242,14 @@ const ClientNotesTab = () => {
         <div className="tab-content-header">Notes</div>
         <div className="buttons-row">
           <BigInput
+            ref={searchInputRef}
             type="text"
             className="search"
             borderClass="tab-search"
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search here"
+            onKeyDown={checkIfEnterKeyPressed}
           />
           <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
         </div>
