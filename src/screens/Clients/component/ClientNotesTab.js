@@ -8,6 +8,7 @@ import BigInput from '../../../common/BigInput/BigInput';
 import Loader from '../../../common/Loader/Loader';
 import {
   addClientNoteAction,
+  deleteClientNoteAction,
   getClientNotesListDataAction,
   updateClientNoteAction,
 } from '../redux/ClientAction';
@@ -57,6 +58,7 @@ const ClientNotesTab = () => {
 
   const [modifyNoteModal, setModifyNoteModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [selectedClientNote, dispatchSelectedClientNote] = useReducer(
     clientNoteReducer,
@@ -143,13 +145,14 @@ const ClientNotesTab = () => {
           isPublic,
           type: NOTE_ACTIONS.EDIT,
         };
-        console.log('note edit', data);
         dispatchSelectedClientNote({
           type: CLIENT_NOTE_REDUCER_ACTIONS.UPDATE_DATA,
           data,
         });
         toggleModifyNotes();
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
+        console.log('delete', noteId);
+        setDeleteId(noteId);
         toggleConfirmationModal();
       }
     },
@@ -161,8 +164,11 @@ const ClientNotesTab = () => {
     {
       title: 'Delete',
       buttonType: 'danger',
-      onClick: async () => {
+      onClick: () => {
         try {
+          console.log('delete note id', deleteId);
+          dispatch(deleteClientNoteAction(deleteId));
+          setDeleteId(null);
           toggleConfirmationModal();
         } catch (e) {
           /**/
