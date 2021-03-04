@@ -61,6 +61,9 @@ export const CLIENT_URLS = {
   NOTES: {
     NOTES_LIST: `${BASE_URL}note/`,
   },
+  DOCUMENTS: {
+    DOCUMENTS_LIST: `${BASE_URL}document/`,
+  },
 };
 
 export const INSURER_URLS = {
