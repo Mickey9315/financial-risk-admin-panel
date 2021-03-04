@@ -9,7 +9,7 @@ import {
 } from './ClientReduxConstants';
 import ClientPoliciesApiService from '../services/ClientPoliciesApiService';
 import ClientNotesApiService from '../services/ClientNotesApiService';
-import ClientDocumentsApiService from "../services/ClientDocumentsApiService";
+import ClientDocumentsApiService from '../services/ClientDocumentsApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
