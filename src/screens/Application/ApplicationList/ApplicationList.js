@@ -1,19 +1,27 @@
-import React, { useMemo, useEffect, useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
 import Loader from '../../../common/Loader/Loader';
 import Pagination from '../../../common/Pagination/Pagination';
-import { getApplicationsListByFilter } from '../redux/ApplicationAction';
+import {
+  changeApplicationColumnNameList,
+  getApplicationColumnNameList,
+  getApplicationsListByFilter,
+} from '../redux/ApplicationAction';
+
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 
 const ApplicationList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const applicationListWithPageData = useSelector(({ applicationList }) => applicationList);
+  const applicationListWithPageData = useSelector(({ application }) => application.applicationList);
+  const applicationColumnNameList = useSelector(
+    ({ application }) => application.applicationColumnNameList
+  );
   const { total, pages, page, limit, docs, headers } = useMemo(() => applicationListWithPageData, [
     applicationListWithPageData,
   ]);
@@ -66,6 +74,19 @@ const ApplicationList = () => {
     [toggleCustomField]
   );
 
+  const { defaultFields, customFields } = useMemo(
+    () => applicationColumnNameList || { defaultFields: [], customFields: [] },
+    [applicationColumnNameList]
+  );
+  const onChangeSelectedColumn = useCallback(
+    (type, name, value) => {
+      const data = { type, name, value };
+      // console.log(data);
+      dispatch(changeApplicationColumnNameList(data));
+    },
+    [dispatch]
+  );
+
   const { page: paramPage, limit: paramLimit } = useQueryParams();
 
   useEffect(() => {
@@ -74,6 +95,7 @@ const ApplicationList = () => {
       limit: paramLimit || 15,
     };
     getApplicationsByFilter({ ...params });
+    dispatch(getApplicationColumnNameList());
   }, []);
 
   const generateApplicationClick = useCallback(() => {
@@ -112,11 +134,7 @@ const ApplicationList = () => {
             buttonTitle="Click to select custom fields"
             onClick={() => toggleCustomField()}
           />
-          <Button
-            title="Generate"
-            buttonType="success"
-            onClick={generateApplicationClick}
-          />
+          <Button title="Generate" buttonType="success" onClick={generateApplicationClick} />
         </div>
       </div>
       {docs ? (
@@ -148,9 +166,9 @@ const ApplicationList = () => {
       )}
       {customFieldModal && (
         <CustomFieldModal
-          // defaultFields={defaultFields}
-          // customFields={customFields}
-          // onChangeSelectedColumn={onChangeSelectedColumn}
+          defaultFields={defaultFields}
+          customFields={customFields}
+          onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={customFieldsModalButtons}
         />
       )}

@@ -12,10 +12,9 @@ import {
   clientManagement,
   clientManagementColumnList,
   clientManagementFilterList,
-  // eslint-disable-next-line import/named
   syncClientWithCrm,
 } from '../screens/Clients/redux/ClientReducer';
-import { applicationList } from '../screens/Application/redux/ApplicationReducer';
+import { application } from '../screens/Application/redux/ApplicationReducer';
 
 const rootReducer = combineReducers({
   loggedUser,
@@ -29,6 +28,6 @@ const rootReducer = combineReducers({
   clientManagementColumnList,
   clientManagementFilterList,
   syncClientWithCrm,
-  applicationList,
+  application,
 });
 export default rootReducer;
