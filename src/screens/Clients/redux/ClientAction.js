@@ -688,7 +688,7 @@ export const saveClientDocumentsColumnListName = ({
       } else {
         const response = await ClientDocumentsApiService.updateClientDocumentColumnListName(data);
 
-        dispatch(getClientPoliciesColumnNamesList());
+        dispatch(getClientDocumentsListData());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
           successNotification('Columns updated successfully.');
