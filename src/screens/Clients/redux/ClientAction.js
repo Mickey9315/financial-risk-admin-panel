@@ -625,3 +625,74 @@ export const getClientDocumentsListData = (id, params = { page: 1, limit: 15 }) 
     }
   };
 };
+
+export const getClientDocumentsColumnNamesList = () => {
+  return async dispatch => {
+    try {
+      const response = await ClientDocumentsApiService.getClientDocumentsColumnNamesList();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const saveClientDocumentsColumnListName = ({
+  clientDocumentsColumnList = {},
+  isReset = false,
+}) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+        columnFor: 'client-policy',
+      };
+
+      if (!isReset) {
+        const defaultColumns = clientDocumentsColumnList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = clientDocumentsColumnList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          ...data,
+          isReset: false,
+          columns: [...defaultColumns, ...customFields],
+        };
+      }
+
+      if (!isReset && data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await ClientPoliciesApiService.updateClientPoliciesColumnListName(data);
+
+        dispatch(getClientPoliciesColumnNamesList());
+
+        if (response && response.data && response.data.status === 'SUCCESS') {
+          successNotification('Columns updated successfully.');
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
