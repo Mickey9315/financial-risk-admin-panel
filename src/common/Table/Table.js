@@ -54,6 +54,7 @@ const Table = props => {
   } = props;
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
+  const [selectedRowData, setSelectedRowData] = React.useState([]);
 
   const handleDrawerState = useCallback(async (header, currentData) => {
     try {
@@ -112,6 +113,32 @@ const Table = props => {
     });
   }, [data, handleDrawerState, handleCheckBoxState]);
 
+  const onRowSelectedDataChange = useCallback(
+    current => {
+      setSelectedRowData(prev => {
+        const finalData = [...prev];
+        const find = finalData.findIndex(e => e.id === current.id);
+
+        if (find > -1) {
+          finalData.splice(find, 1);
+        } else {
+          finalData.push(current);
+        }
+
+        return finalData;
+      });
+    },
+    [setSelectedRowData, selectedRowData]
+  );
+
+  const onSelectAllRow = useCallback(() => {
+    if (selectedRowData.length === tableData.length) {
+      setSelectedRowData([]);
+    } else {
+      setSelectedRowData(tableData);
+    }
+  }, [setSelectedRowData, selectedRowData, tableData]);
+
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
@@ -122,8 +149,8 @@ const Table = props => {
               <Checkbox
                 title="name"
                 className="crm-checkbox-list"
-                checked={false}
-                onChange={() => {}}
+                checked={selectedRowData.length === tableData.length}
+                onChange={onSelectAllRow}
               />
             </th>
           )}
@@ -146,6 +173,9 @@ const Table = props => {
               recordSelected={recordSelected}
               recordActionClick={recordActionClick}
               haveActions={haveActions}
+              showCheckbox={showCheckbox}
+              isSelected={selectedRowData.some(f => f.id === e.id)}
+              onRowSelectedDataChange={onRowSelectedDataChange}
             />
           ))}
         </tbody>
@@ -197,6 +227,8 @@ function Row(props) {
     haveActions,
     recordActionClick,
     showCheckbox,
+    isSelected,
+    onRowSelectedDataChange,
   } = props;
 
   const [showActionMenu, setShowActionMenu] = React.useState(false);
@@ -221,6 +253,10 @@ function Row(props) {
     [recordActionClick, data]
   );
 
+  const onRowSelected = useCallback(() => {
+    onRowSelectedDataChange(data);
+  }, [onRowSelectedDataChange]);
+
   return (
     <tr onClick={() => recordSelected(data.id)} className={rowClass}>
       {showCheckbox && (
@@ -228,8 +264,8 @@ function Row(props) {
           <Checkbox
             title="name"
             className="crm-checkbox-list"
-            checked={false}
-            onChange={() => {}}
+            checked={isSelected}
+            onChange={onRowSelected}
           />
         </td>
       )}
@@ -282,7 +318,9 @@ Row.propTypes = {
   rowTitle: PropTypes.string,
   recordSelected: PropTypes.func,
   haveActions: PropTypes.bool,
+  isSelected: PropTypes.bool,
   recordActionClick: PropTypes.func,
+  onRowSelectedDataChange: PropTypes.func,
   showCheckbox: PropTypes.bool,
 };
 
@@ -295,7 +333,9 @@ Row.defaultProps = {
   recordSelected: () => {},
   haveActions: false,
   showCheckbox: false,
+  isSelected: false,
   recordActionClick: () => {},
+  onRowSelectedDataChange: () => {},
 };
 
 function TableLinkDrawer(props) {
