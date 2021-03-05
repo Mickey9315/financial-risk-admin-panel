@@ -162,6 +162,7 @@ const ClientDocumentsTab = () => {
               // recordActionClick={onSelectUserRecordActionClick}
               refreshData={getClientDocumentsList}
               haveActions
+              showCheckbox
             />
           </div>
           <Pagination

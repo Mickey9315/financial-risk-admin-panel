@@ -5,6 +5,7 @@ import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 import Drawer from '../Drawer/Drawer';
 import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
+import Checkbox from '../Checkbox/Checkbox';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -49,6 +50,7 @@ const Table = props => {
     recordActionClick,
     refreshData,
     haveActions,
+    showCheckbox,
   } = props;
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -115,6 +117,16 @@ const Table = props => {
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
       <table>
         <thead>
+          {showCheckbox && (
+            <th align={align} valign={valign} className={headerClass}>
+              <Checkbox
+                title="name"
+                className="crm-checkbox-list"
+                checked={false}
+                onChange={() => {}}
+              />
+            </th>
+          )}
           {headers.length > 0 &&
             headers.map(heading => (
               <th align={align} valign={valign} className={headerClass}>
@@ -154,6 +166,7 @@ Table.propTypes = {
   recordActionClick: PropTypes.func,
   refreshData: PropTypes.func,
   haveActions: PropTypes.bool,
+  showCheckbox: PropTypes.bool,
 };
 
 Table.defaultProps = {
@@ -165,6 +178,7 @@ Table.defaultProps = {
   rowClass: '',
   rowTitle: '',
   haveActions: false,
+  showCheckbox: false,
   recordSelected: () => {},
   recordActionClick: () => {},
   refreshData: () => {},
@@ -182,6 +196,7 @@ function Row(props) {
     recordSelected,
     haveActions,
     recordActionClick,
+    showCheckbox,
   } = props;
 
   const [showActionMenu, setShowActionMenu] = React.useState(false);
@@ -208,6 +223,16 @@ function Row(props) {
 
   return (
     <tr onClick={() => recordSelected(data.id)} className={rowClass}>
+      {showCheckbox && (
+        <td align={align} valign={valign} className={rowClass}>
+          <Checkbox
+            title="name"
+            className="crm-checkbox-list"
+            checked={false}
+            onChange={() => {}}
+          />
+        </td>
+      )}
       {Object.entries(data).map(([key, value]) =>
         key !== 'id' ? (
           <td title={rowTitle} align={align}>
@@ -258,6 +283,7 @@ Row.propTypes = {
   recordSelected: PropTypes.func,
   haveActions: PropTypes.bool,
   recordActionClick: PropTypes.func,
+  showCheckbox: PropTypes.bool,
 };
 
 Row.defaultProps = {
@@ -268,6 +294,7 @@ Row.defaultProps = {
   rowTitle: '',
   recordSelected: () => {},
   haveActions: false,
+  showCheckbox: false,
   recordActionClick: () => {},
 };
 
