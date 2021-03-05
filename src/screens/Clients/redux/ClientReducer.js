@@ -168,6 +168,30 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
     }
+
+    case CLIENT_REDUX_CONSTANTS.DOCUMENTS.UPDATE_CLIENT_DOCUMENTS_COLUMN_LIST_ACTION: {
+      const columnList = {
+        ...state.documents.columnList,
+      };
+
+      const { type, name, value } = action.data;
+
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name
+          ? {
+              ...e,
+              isChecked: value,
+            }
+          : e
+      );
+      return {
+        ...state,
+        documents: {
+          ...state.documents,
+          columnList,
+        },
+      };
+    }
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
 
