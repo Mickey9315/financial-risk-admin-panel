@@ -8,95 +8,70 @@ import Pagination from '../../../common/Pagination/Pagination';
 import Table from '../../../common/Table/Table';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Loader from '../../../common/Loader/Loader';
-import { getClientDocumentsListData } from '../redux/ClientAction';
+import {
+  changeClientDocumentsColumnListStatus,
+  getClientDocumentsColumnNamesList,
+  getClientDocumentsListData,
+  saveClientDocumentsColumnListName,
+} from '../redux/ClientAction';
 import { errorNotification } from '../../../common/Toast';
 
 const ClientDocumentsTab = () => {
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
-  const toggleCustomField = () => setCustomFieldModal(e => !e);
+  const toggleCustomField = useCallback(
+    value => setCustomFieldModal(value !== undefined ? value : e => !e),
+    [setCustomFieldModal]
+  );
+
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
 
-  const defaultFields = [
-    'Name',
-    'Job Title',
-    'Email',
-    'Portal Access',
-    'Decision Maker',
-    'Left Company',
-  ];
-  const customFields = [
-    'Phone',
-    'Trading As',
-    'Net of brokerage',
-    'Policy Type',
-    'Expiry Date',
-    'Inception Date',
-  ];
-  /* const columnStructure = {
-    columns: [
-      {
-        type: 'checkbox',
-        name: 'checkbox',
-        value: 'checked',
-      },
-      {
-        type: 'link',
-        name: 'Claim',
-        value: 'claim',
-      },
-      {
-        type: 'date',
-        name: 'Date Submitted',
-        value: 'date_submitted',
-      },
-      {
-        type: 'link',
-        name: 'Debtor Name',
-        value: 'debtor_name',
-      },
-      {
-        type: 'text',
-        name: 'Gross Debt Amount',
-        value: 'gross_debt_amount',
-      },
-      {
-        type: 'text',
-        name: 'Amount Paid',
-        value: 'amount_paid',
-      },
-      {
-        type: 'text',
-        name: 'Underwriter',
-        value: 'underwriter',
-      },
-      {
-        type: 'text',
-        name: 'Stage',
-        value: 'stage',
-      },
-    ],
-    actions: [
-      {
-        type: 'edit',
-        name: 'Edit',
-        icon: 'edit-outline',
-      },
-      {
-        type: 'delete',
-        name: 'Delete',
-        icon: 'trash-outline',
-      },
-    ],
-  }; */
-
   const clientDocumentsList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentsList
   );
+
+  const clientDocumentsColumnList = useSelector(
+    ({ clientManagement }) => clientManagement.documents.columnList
+  );
+
   const { total, pages, page, limit, docs, headers } = useMemo(() => clientDocumentsList, [
     clientDocumentsList,
   ]);
+
+  const { defaultFields, customFields } = useMemo(
+    () => clientDocumentsColumnList || { defaultFields: [], customFields: [] },
+    [clientDocumentsColumnList]
+  );
+
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveClientDocumentsColumnListName({ isReset: true }));
+    dispatch(getClientDocumentsListData(id));
+    toggleCustomField();
+  }, [dispatch, toggleCustomField]);
+
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      await dispatch(saveClientDocumentsColumnListName({ clientDocumentsColumnList }));
+      dispatch(getClientDocumentsListData(id));
+    } catch (e) {
+      /**/
+    }
+    toggleCustomField();
+  }, [dispatch, toggleCustomField, clientDocumentsColumnList]);
+
+  const buttons = useMemo(
+    () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: onClickResetDefaultColumnSelection,
+      },
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+    ],
+    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+  );
   const getClientDocumentsList = useCallback(
     (params = {}, cb) => {
       const data = {
@@ -110,6 +85,14 @@ const ClientDocumentsTab = () => {
       }
     },
     [page, limit]
+  );
+
+  const onChangeSelectedColumn = useCallback(
+    (type, name, value) => {
+      const data = { type, name, value };
+      dispatch(changeClientDocumentsColumnListStatus(data));
+    },
+    [dispatch]
   );
 
   const checkIfEnterKeyPressed = e => {
@@ -140,8 +123,9 @@ const ClientDocumentsTab = () => {
   );
   useEffect(() => {
     getClientDocumentsList();
+    dispatch(getClientDocumentsColumnNamesList());
   }, []);
-  console.log('document list', clientDocumentsList);
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -160,7 +144,7 @@ const ClientDocumentsTab = () => {
           <IconButton
             buttonType="primary"
             title="format_line_spacing"
-            onClick={toggleCustomField}
+            onClick={() => toggleCustomField()}
           />
           <IconButton buttonType="primary" title="cloud_upload" />
           <IconButton buttonType="primary-1" title="cloud_download" />
@@ -197,7 +181,8 @@ const ClientDocumentsTab = () => {
         <CustomFieldModal
           defaultFields={defaultFields}
           customFields={customFields}
-          toggleCustomField={toggleCustomField}
+          onChangeSelectedColumn={onChangeSelectedColumn}
+          buttons={buttons}
         />
       )}
     </>
