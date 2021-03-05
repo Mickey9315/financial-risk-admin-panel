@@ -63,6 +63,7 @@ export const CLIENT_URLS = {
   },
   DOCUMENTS: {
     DOCUMENTS_LIST: `${BASE_URL}document/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}document/column-name/`,
   },
 };
 
