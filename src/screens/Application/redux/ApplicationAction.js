@@ -96,3 +96,19 @@ export const getApplicationCompanyDropDownData = () => {
     }
   };
 };
+
+export const getApplicationCompanyDataFromDebtor = async id => {
+  try {
+    const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromDebtor(
+      id
+    );
+
+    if (response.data.status === 'SUCCESS') {
+      return response.data.data;
+    }
+    return null;
+  } catch (e) {
+    errorNotification('Internal server error');
+    throw Error();
+  }
+};
