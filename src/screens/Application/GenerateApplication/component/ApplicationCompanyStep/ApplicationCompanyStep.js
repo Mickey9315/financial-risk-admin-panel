@@ -1,129 +1,12 @@
-import React, { useCallback, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
 import Button from '../../../../../common/Button/Button';
-
-const INPUTS = [
-  {
-    label: 'Debtor',
-    placeholder: '',
-    type: 'select',
-    name: 'debtor',
-    data: [],
-  },
-  {
-    label: 'Trading Name',
-    placeholder: '',
-    type: 'text',
-    name: 'tradingName',
-    data: [],
-  },
-  {
-    label: 'ABN*',
-    placeholder: '01234',
-    type: 'search',
-    name: 'abn',
-    data: [],
-  },
-  {
-    label: 'ACN',
-    placeholder: '01234',
-    type: 'select',
-    name: 'acn',
-    data: [],
-  },
-  {
-    label: 'Entity Name*',
-    placeholder: 'Enter Entity',
-    type: 'search',
-    name: 'entityName',
-    data: [],
-  },
-  {
-    label: 'Phone Number',
-    placeholder: '1234567890',
-    type: 'select',
-    name: 'phoneNumber',
-    data: [],
-  },
-  {
-    label: 'Entity Type*',
-    placeholder: '',
-    type: 'select',
-    name: 'entityType',
-    data: [],
-  },
-  {
-    label: 'Outstanding Amount',
-    placeholder: '$0000',
-    type: 'text',
-    name: 'outstandingAmount',
-    data: [],
-  },
-  {
-    label: 'Address*',
-    placeholder: 'Enter a location',
-    type: 'text',
-    name: 'address',
-    data: [],
-  },
-  {
-    label: 'Property',
-    placeholder: '',
-    type: 'text',
-    name: 'property',
-    data: [],
-  },
-  {
-    label: 'Unit Number',
-    placeholder: 'Unit Number',
-    type: 'text',
-    name: 'unitNumber',
-    data: [],
-  },
-  {
-    label: 'Street Number',
-    placeholder: 'Street Number',
-    type: 'text',
-    name: 'streetNumber',
-    data: [],
-  },
-  {
-    label: 'Street Name',
-    placeholder: 'Street Name',
-    type: 'text',
-    name: 'streetName',
-    data: [],
-  },
-  {
-    label: 'Street Type',
-    placeholder: '',
-    type: 'select',
-    name: 'streetType',
-    data: [],
-  },
-  {
-    label: 'Suburb',
-    placeholder: 'Suburb',
-    type: 'text',
-    name: 'suburb',
-    data: [],
-  },
-  {
-    label: 'State',
-    placeholder: '',
-    type: 'select',
-    name: 'state',
-    data: [],
-  },
-  {
-    label: 'Postcode',
-    placeholder: 'Postcode',
-    type: 'text',
-    name: 'postcode',
-    data: [],
-  },
-];
+import {
+  getApplicationCompanyDataFromDebtor,
+  getApplicationCompanyDropDownData,
+} from '../../../redux/ApplicationAction';
 
 const initialCompanyState = {
   client: '',
@@ -147,16 +30,22 @@ const initialCompanyState = {
 };
 
 const COMPANY_STATE_REDUCER_ACTIONS = {
+  UPDATE_FIELD_DATA: 'UPDATE_FIELD_DATA',
   UPDATE_DATA: 'UPDATE_DATA',
   RESET_STATE: 'RESET_STATE',
 };
 
 function companyStateReducer(state, action) {
   switch (action.type) {
-    case COMPANY_STATE_REDUCER_ACTIONS.UPDATE_DATA:
+    case COMPANY_STATE_REDUCER_ACTIONS.UPDATE_FIELD_DATA:
       return {
         ...state,
         [action.name]: action.value,
+      };
+    case COMPANY_STATE_REDUCER_ACTIONS.UPDATE_DATA:
+      return {
+        ...state,
+        ...action.data,
       };
     case COMPANY_STATE_REDUCER_ACTIONS.RESET_STATE:
       return { ...initialCompanyState };
@@ -166,14 +55,154 @@ function companyStateReducer(state, action) {
 }
 
 const ApplicationCompanyStep = () => {
-  const [companyState, dispatchCompanyState] = useReducer(companyStateReducer, initialCompanyState);
+  const dispatch = useDispatch();
 
-  const updateCompanyState = useCallback(
+  const [companyState, dispatchCompanyState] = useReducer(companyStateReducer, initialCompanyState);
+  const { clients, debtors, streetType, australianStates, entityType } = useSelector(
+    ({ application }) => application.company.dropdownData
+  );
+
+  const INPUTS = useMemo(
+    () => [
+      {
+        label: 'Debtor',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'debtor',
+        data: debtors,
+      },
+      {
+        label: 'Trading Name',
+        placeholder: 'Trading Name',
+        type: 'text',
+        name: 'tradingName',
+        data: [],
+      },
+      {
+        label: 'ABN*',
+        placeholder: '01234',
+        type: 'search',
+        name: 'abn',
+        data: [],
+      },
+      {
+        label: 'ACN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
+        data: [],
+      },
+      {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'search',
+        name: 'entityName',
+        data: [],
+      },
+      {
+        label: 'Phone Number',
+        placeholder: '1234567890',
+        type: 'text',
+        name: 'phoneNumber',
+        data: [],
+      },
+      {
+        label: 'Entity Type*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'entityType',
+        data: entityType,
+      },
+      {
+        label: 'Outstanding Amount',
+        placeholder: '$0000',
+        type: 'text',
+        name: 'outstandingAmount',
+        data: [],
+      },
+      {
+        label: 'Address*',
+        placeholder: 'Enter a location',
+        type: 'text',
+        name: 'address',
+        data: [],
+      },
+      {
+        label: 'Property',
+        placeholder: 'Property',
+        type: 'text',
+        name: 'property',
+        data: [],
+      },
+      {
+        label: 'Unit Number',
+        placeholder: 'Unit Number',
+        type: 'text',
+        name: 'unitNumber',
+        data: [],
+      },
+      {
+        label: 'Street Number',
+        placeholder: 'Street Number',
+        type: 'text',
+        name: 'streetNumber',
+        data: [],
+      },
+      {
+        label: 'Street Name',
+        placeholder: 'Street Name',
+        type: 'text',
+        name: 'streetName',
+        data: [],
+      },
+      {
+        label: 'Street Type',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'streetType',
+        data: streetType,
+      },
+      {
+        label: 'Suburb',
+        placeholder: 'Suburb',
+        type: 'text',
+        name: 'suburb',
+        data: [],
+      },
+      {
+        label: 'State',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'state',
+        data: australianStates,
+      },
+      {
+        label: 'Postcode',
+        placeholder: 'Postcode',
+        type: 'text',
+        name: 'postcode',
+        data: [],
+      },
+    ],
+    [debtors, streetType, australianStates, entityType]
+  );
+
+  const updateSingleCompanyState = useCallback(
     (name, value) => {
       dispatchCompanyState({
-        type: COMPANY_STATE_REDUCER_ACTIONS.UPDATE_DATA,
+        type: COMPANY_STATE_REDUCER_ACTIONS.UPDATE_FIELD_DATA,
         name,
         value,
+      });
+    },
+    [dispatchCompanyState]
+  );
+
+  const updateCompanyState = useCallback(
+    data => {
+      dispatchCompanyState({
+        type: COMPANY_STATE_REDUCER_ACTIONS.UPDATE_DATA,
+        data,
       });
     },
     [dispatchCompanyState]
@@ -182,50 +211,90 @@ const ApplicationCompanyStep = () => {
   const handleTextInputChange = useCallback(
     e => {
       const { name, value } = e.target;
-      updateCompanyState(name, value);
+      updateSingleCompanyState(name, value);
     },
-    [updateCompanyState]
+    [updateSingleCompanyState]
   );
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateCompanyState(data[0].name, data[0]._id);
+      updateSingleCompanyState(data[0].label, data[0].value);
     },
-    [updateCompanyState]
+    [updateSingleCompanyState]
   );
 
-  const getComponentFromType = useCallback(input => {
-    switch (input.type) {
-      case 'text':
-        return (
-          <>
-            <span>{input.label}</span>
-            <Input type="text" placeholder={input.placeholder} onChange={handleTextInputChange} />
-          </>
-        );
-      case 'search':
-        return (
-          <>
-            <span>{input.label}</span>
-            <Input type="text" placeholder={input.placeholder} onChane={handleTextInputChange} />
-          </>
-        );
-      case 'select':
-        return (
-          <>
-            <span>{input.label}</span>
-            <ReactSelect
-              placeholder={input.placeholder}
-              name={input.name}
-              options={input.data}
-              searchable={false}
-              onChange={handleSelectInputChange}
-            />
-          </>
-        );
-      default:
-        return null;
-    }
+  const handleDebtorSelectChange = useCallback(
+    async data => {
+      try {
+        handleSelectInputChange(data);
+        const response = await getApplicationCompanyDataFromDebtor(data[0].value);
+        if (response) {
+          updateCompanyState(response);
+        }
+      } catch (e) {
+        /**/
+      }
+    },
+    [handleSelectInputChange, updateCompanyState]
+  );
+
+  const getComponentFromType = useCallback(
+    input => {
+      switch (input.type) {
+        case 'text':
+          return (
+            <>
+              <span>{input.label}</span>
+              <Input
+                type="text"
+                name={input.name}
+                placeholder={input.placeholder}
+                value={companyState[input.name]}
+                onChange={handleTextInputChange}
+              />
+            </>
+          );
+        case 'search':
+          return (
+            <>
+              <span>{input.label}</span>
+              <Input
+                type="text"
+                name={input.name}
+                placeholder={input.placeholder}
+                value={companyState[input.name]}
+                onChange={handleTextInputChange}
+              />
+            </>
+          );
+        case 'select': {
+          let handleOnChange = handleSelectInputChange;
+          if (input.name === 'debtor') {
+            handleOnChange = handleDebtorSelectChange;
+          }
+          return (
+            <>
+              <span>{input.label}</span>
+              <ReactSelect
+                placeholder={input.placeholder}
+                name={input.name}
+                options={input.data}
+                searchable={false}
+                value={companyState[input.name]}
+                onChange={handleOnChange}
+              />
+            </>
+          );
+        }
+        default:
+          return null;
+      }
+    },
+    [companyState, handleDebtorSelectChange, handleSelectInputChange, handleTextInputChange]
+  );
+
+  useEffect(() => {
+    dispatch(getApplicationCompanyDropDownData());
   }, []);
 
   return (
@@ -234,7 +303,7 @@ const ApplicationCompanyStep = () => {
       <ReactSelect
         placeholder="Select"
         name="client"
-        options={[]}
+        options={clients}
         searchable={false}
         value={companyState.client}
       />
