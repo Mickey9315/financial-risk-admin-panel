@@ -37,7 +37,7 @@ export const application = (state = initialApplicationList, action) => {
       columnList[`${type}`] = columnList[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
-      console.log(columnList);
+
       return {
         ...state,
         applicationColumnNameList: columnList,

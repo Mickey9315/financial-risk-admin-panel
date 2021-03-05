@@ -81,7 +81,7 @@ const ApplicationList = () => {
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
-      // console.log(data);
+
       dispatch(changeApplicationColumnNameList(data));
     },
     [dispatch]

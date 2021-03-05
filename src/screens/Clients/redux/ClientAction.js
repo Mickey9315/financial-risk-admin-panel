@@ -128,7 +128,7 @@ export const getListFromCrm = data => {
   return async dispatch => {
     try {
       const response = await ClientApiService.getListFromCrm(data);
-      console.log('get list from crm', response);
+
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,

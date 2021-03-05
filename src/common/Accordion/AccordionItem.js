@@ -22,14 +22,11 @@ const AccordionItem = props => {
   const suffixClassName = `material-icons-round ${suffixClass}`;
   const accordionBodyClassName = `accordion-body-container ${accordionBodyClass}`;
   const [activeAccordion, setActiveAccordion] = useState(false);
-  const [height, setHeight] = useState('0px');
-  console.log(activeAccordion, height);
+
   const content = useRef(null);
 
   const onClickAccordionItem = () => {
     setActiveAccordion(e => !e);
-    setHeight(activeAccordion ? `${content.current.scrollHeight}px` : '0px');
-    console.log(content.current.scrollHeight, 'px');
   };
   return (
     <div className={accordionClass}>

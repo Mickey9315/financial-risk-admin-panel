@@ -168,8 +168,6 @@ function companyStateReducer(state, action) {
 const ApplicationCompanyStep = () => {
   const [companyState, dispatchCompanyState] = useReducer(companyStateReducer, initialCompanyState);
 
-  console.log(companyState);
-
   const updateCompanyState = useCallback(
     (name, value) => {
       dispatchCompanyState({
@@ -233,7 +231,13 @@ const ApplicationCompanyStep = () => {
   return (
     <div className="common-white-container client-details-container">
       <span>Client</span>
-      <ReactSelect placeholder="Select" name="client" options={[]} searchable={false} />
+      <ReactSelect
+        placeholder="Select"
+        name="client"
+        options={[]}
+        searchable={false}
+        value={companyState.client}
+      />
       <span />
       <span />
       {INPUTS.map(getComponentFromType)}

@@ -9,7 +9,7 @@ export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => 
   return async dispatch => {
     try {
       const responce = await ApplicationApiServices.getApplicationListByFilter(params);
-      console.log('RESPONCE OF GET APPLICATION LIST ', responce);
+
       if (responce.data.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST,
@@ -35,7 +35,7 @@ export const getApplicationColumnNameList = () => {
   return async dispatch => {
     try {
       const response = await ApplicationApiServices.getApplicationColumnNameList();
-      console.log('Response of application column name list', response);
+
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_COLUMN_LIST_ACTION,

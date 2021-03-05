@@ -84,8 +84,8 @@ const ClientList = () => {
   } = useQueryParams();
 
   const riskAnalystFilterListData = useMemo(() => {
-    let finalData = [];
-    finalData = filterList.riskAnalystList;
+    const finalData = filterList.riskAnalystList;
+
     return finalData.map(e => ({
       label: e.name,
       value: e.name,
@@ -93,8 +93,7 @@ const ClientList = () => {
   }, [filterList]);
 
   const serviceManagerFilterListData = useMemo(() => {
-    let finalData = [];
-    finalData = filterList.serviceManagerList;
+    const finalData = filterList.serviceManagerList;
 
     return finalData.map(e => ({
       label: e.name,
@@ -299,14 +298,15 @@ const ClientList = () => {
     };
     ClientApiService.updateClientListFromCrm(data)
       .then(res => {
-        console.log(res.data);
         if (res.data.status === 'SUCCESS') {
           successNotification('Client data successfully synced');
           setAddFromCRM(e => !e);
           dispatch(getClientList());
         }
       })
-      .catch(e => console.log(e));
+      .catch(() => {
+        /**/
+      });
   };
 
   const toggleAddFromCRM = useCallback(() => {
@@ -337,7 +337,6 @@ const ClientList = () => {
 
   const checkIfEnterKeyPressed = e => {
     if (e.key === 'Enter') {
-      console.log('searchInputRef', searchInputRef.current.value);
       const searchKeyword = searchInputRef.current.value;
       if (searchKeyword.trim().toString().length !== 0) {
         dispatch(getListFromCrm(searchKeyword.trim().toString()));
@@ -347,7 +346,6 @@ const ClientList = () => {
       }
     }
   };
-  console.log('searchClient=>', searchClients);
 
   const [state, setState] = React.useState(false);
   const clientListClicked = () => {
@@ -396,7 +394,7 @@ const ClientList = () => {
     }
     setCrmIds(arr);
   };
-  console.log('crmIds->', crmIds);
+
   return (
     <>
       <div className="page-header">
