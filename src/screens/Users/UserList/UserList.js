@@ -25,6 +25,9 @@ import Loader from '../../../common/Loader/Loader';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import Stepper from '../../../common/Stepper/Stepper';
+import Accordion from '../../../common/Accordion/Accordion';
+import AccordionItem from '../../../common/Accordion/AccordionItem';
 
 const initialFilterState = {
   role: '',
@@ -305,7 +308,28 @@ const UserList = () => {
     });
     return foundValue ? [foundValue] : [];
   }, [role]);
-
+  const step = [
+    {
+      icon: 'local_police',
+      text: 'Company',
+    },
+    {
+      icon: 'admin_panel_settings',
+      text: 'Person',
+    },
+    {
+      icon: 'request_quote',
+      text: 'Credit Limit',
+    },
+    {
+      icon: 'description',
+      text: 'Documents',
+    },
+    {
+      icon: 'list_alt',
+      text: 'Confirmation',
+    },
+  ];
   return (
     <>
       <div className="page-header">
@@ -332,6 +356,16 @@ const UserList = () => {
       </div>
       {docs ? (
         <>
+          <Stepper className="mt-10" steps={step}>
+            <Accordion>
+              <AccordionItem prefix="expand_more" header="Direction Details">
+                aaa
+              </AccordionItem>
+              <AccordionItem prefix="expand_more" header="Custom Details">
+                aaa
+              </AccordionItem>
+            </Accordion>
+          </Stepper>
           <div className="common-list-container">
             <Table
               align="left"

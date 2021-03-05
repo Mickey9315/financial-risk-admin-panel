@@ -29,13 +29,16 @@
   color: $placeholder-color;
   border-radius: 10px;
   overflow: hidden;
+  cursor: pointer;
 
   span {
-    font-weight: 600;
+    font-weight: 400;
     margin-right: 10px;
     color: $placeholder-color;
   }
 }
+
+.step:hover {background-color: $alert-blue-light}
 
 .selected-step {
   color: white;
@@ -54,4 +57,11 @@
   .arrow {
     color: $primary-color;
   }
+}
+.step-content {
+  width: 100%;
+  margin-top: 10px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
 }

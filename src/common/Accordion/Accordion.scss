@@ -1,0 +1,48 @@
+@import "../../index";
+
+.accordion-container {
+  background-color: $background-color;
+  border-radius: 5px;
+}
+
+.accordion-item {
+  margin-bottom: 10px;
+  background-color: $background-color;
+  border-radius: 5px;
+}
+
+.accordion-item-header-container {
+  display: flex;
+  align-items: center;
+  color: $primary-color;
+  padding: 5px 10px;
+  background-color: $background-color;
+  border-radius: 5px;
+  cursor: pointer;
+
+  span {
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  label {
+    margin-left: 10px;
+    font: $subtitle $font-medium
+  }
+}
+
+.accordion-item-header-container:hover {
+  background-color: #DBE3EC;
+}
+
+.accordion-body-container {
+  padding: 10px 40px;
+  background-color: $background-color;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: height .5s ease-in-out;
+}
+
+.rotate-icon {
+  transform: rotate(180deg);
+}
