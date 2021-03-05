@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -9,12 +9,14 @@ import Table from '../../../common/Table/Table';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Loader from '../../../common/Loader/Loader';
 import { getClientDocumentsListData } from '../redux/ClientAction';
+import { errorNotification } from '../../../common/Toast';
 
 const ClientDocumentsTab = () => {
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
   const dispatch = useDispatch();
   const { id } = useParams();
+  const searchInputRef = useRef();
 
   const defaultFields = [
     'Name',
@@ -88,6 +90,7 @@ const ClientDocumentsTab = () => {
       },
     ],
   }; */
+
   const clientDocumentsList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentsList
   );
@@ -108,6 +111,21 @@ const ClientDocumentsTab = () => {
     },
     [page, limit]
   );
+
+  const checkIfEnterKeyPressed = e => {
+    const searchKeyword = searchInputRef.current.value;
+    if (e.target.value.trim().toString().length <= 1) {
+      getClientDocumentsList();
+    } else if (e.key === 'Enter') {
+      if (searchKeyword.trim().toString().length !== 0) {
+        getClientDocumentsList({ search: searchKeyword.trim().toString() });
+      } else {
+        getClientDocumentsList();
+        errorNotification('Please enter any value than press enter');
+      }
+    }
+  };
+
   const pageActionClick = useCallback(
     newPage => {
       getClientDocumentsList({ page: newPage, limit });
@@ -130,12 +148,14 @@ const ClientDocumentsTab = () => {
         <div className="tab-content-header">Documents</div>
         <div className="buttons-row">
           <BigInput
+            ref={searchInputRef}
             type="text"
             className="search"
             borderClass="tab-search"
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search here"
+            onKeyDown={checkIfEnterKeyPressed}
           />
           <IconButton
             buttonType="primary"
