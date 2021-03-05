@@ -22,6 +22,7 @@ const initialClientListState = {
   },
   documents: {
     documentsList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
 };
 const initialClientManagementClientListState = {
@@ -158,6 +159,15 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
 
+    case CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION: {
+      return {
+        ...state,
+        documents: {
+          ...state.documents,
+          columnList: action.data,
+        },
+      };
+    }
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
 
