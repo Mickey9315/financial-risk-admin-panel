@@ -13,6 +13,16 @@ const initialApplicationList = {
     headers: [],
   },
   applicationColumnNameList: [],
+
+  company: {
+    dropdownData: {
+      clients: [],
+      debtors: [],
+      streetType: [],
+      australianStates: [],
+      entityType: [],
+    },
+  },
 };
 
 export const application = (state = initialApplicationList, action) => {
@@ -27,12 +37,10 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         applicationColumnNameList: action.data,
       };
-    case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_APPLICATION_COLUMN_LIST_ACTION: // updates column list checked
-      // eslint-disable-next-line no-case-declarations
+    case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_APPLICATION_COLUMN_LIST_ACTION: {
       const columnList = {
         ...state.applicationColumnNameList,
       };
-      // eslint-disable-next-line no-case-declarations
       const { type, name, value } = action.data;
       columnList[`${type}`] = columnList[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
@@ -42,6 +50,24 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         applicationColumnNameList: columnList,
       };
+    }
+
+    // Company step
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_DROP_DOWN_DATA: {
+      const dropdownData = { ...state.company.dropdownData };
+      Object.entries(action.data).forEach(([key, value]) => {
+        dropdownData[key] = value.map(entity => ({ label: entity.name, value: entity._id }));
+      });
+      const company = {
+        ...state.company,
+        dropdownData,
+      };
+
+      return {
+        ...state,
+        company,
+      };
+    }
 
     default:
       return state;
