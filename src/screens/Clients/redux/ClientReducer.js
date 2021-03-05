@@ -154,9 +154,9 @@ export const clientManagement = (state = initialClientListState, action) => {
         ...state,
         documents: {
           ...state.documents,
-          documentsList: action.data
-        }
-      }
+          documentsList: action.data,
+        },
+      };
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;

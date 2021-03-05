@@ -12,12 +12,12 @@ import ApplicationTab from '../../../common/Tab/ApplicationTab/ApplicationTab';
 import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
 import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
 import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
-import DocumentsTab from '../../../common/Tab/DocumentsTab/DocumentsTab';
 import { getClientById, syncClientData, updateSelectedClientData } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import ClientContactsTab from '../component/ClientContactTab';
 import ClientPoliciesTab from '../component/ClientPoliciesTab';
 import ClientNotesTab from '../component/ClientNotesTab';
+import ClientDocumentsTab from '../component/ClientDocumentsTab';
 
 const initialAssigneeState = {
   riskAnalystId: '',
@@ -216,7 +216,7 @@ const ViewClient = () => {
         {activeTabIndex === 4 && <ClaimsTab />}
         {activeTabIndex === 5 && <TasksTab />}
         {activeTabIndex === 6 && <ClientPoliciesTab />}
-        {activeTabIndex === 7 && <DocumentsTab />}
+        {activeTabIndex === 7 && <ClientDocumentsTab />}
         {activeTabIndex === 8 && <ClientNotesTab />}
       </div>
     </>

@@ -601,7 +601,12 @@ export const deleteClientNoteAction = noteId => {
 export const getClientDocumentsListData = (id, params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      const response = await ClientDocumentsApiService.getClientDocumentsList(id, params);
+      const updatedParams = {
+        ...params,
+        documentFor: 'client',
+      };
+
+      const response = await ClientDocumentsApiService.getClientDocumentsList(id, updatedParams);
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
