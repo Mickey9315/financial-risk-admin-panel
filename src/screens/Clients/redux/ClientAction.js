@@ -648,6 +648,15 @@ export const getClientDocumentsColumnNamesList = () => {
   };
 };
 
+export const changeClientDocumentsColumnListStatus = data => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.UPDATE_CLIENT_DOCUMENTS_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+
 export const saveClientDocumentsColumnListName = ({
   clientDocumentsColumnList = {},
   isReset = false,
@@ -657,7 +666,7 @@ export const saveClientDocumentsColumnListName = ({
       let data = {
         isReset: true,
         columns: [],
-        columnFor: 'client-policy',
+        columnFor: 'client-document',
       };
 
       if (!isReset) {
@@ -677,7 +686,7 @@ export const saveClientDocumentsColumnListName = ({
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
       } else {
-        const response = await ClientPoliciesApiService.updateClientPoliciesColumnListName(data);
+        const response = await ClientDocumentsApiService.updateClientDocumentColumnListName(data);
 
         dispatch(getClientPoliciesColumnNamesList());
 
