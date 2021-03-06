@@ -82,3 +82,18 @@
     min-width: 200px;
   }
 }
+.edit-profile-grid{
+  display: grid;
+  align-items: center;
+  grid-template-columns: 30% 70%;
+  gap: 10px;
+  width: 100%;
+  .user-fields{
+    color: $secondary-color;
+    min-width: 200px;
+  }
+  input{
+    color:$secondary-color;
+    min-width: 200px;
+  }
+}

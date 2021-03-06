@@ -1,6 +1,7 @@
 import HeaderApiService from '../services/HeaderApiService';
 import { errorNotification, successNotification } from '../../Toast';
 import { clearAuthToken } from '../../../helpers/LocalStorageHelper';
+import { EDIT_PROFILE_CONSTANT } from './HeaderConstants';
 
 export const changePassword = async (oldPassword, newPassword) => {
   try {
@@ -37,6 +38,89 @@ export const changePassword = async (oldPassword, newPassword) => {
   }
 };
 
+export const getLoggedUserDetails = () => {
+  return async dispatch => {
+    try {
+      const response = await HeaderApiService.loggedUserDetails();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: EDIT_PROFILE_CONSTANT.GET_LOGGED_USER_DETAILS,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const changeEditProfileData = data => {
+  return async dispatch => {
+    dispatch({
+      type: EDIT_PROFILE_CONSTANT.USER_EDIT_PROFILE_DATA_CHANGE,
+      data,
+    });
+  };
+};
+
+export const updateUserProfile = (name, email, contactNumber) => {
+  return async dispatch => {
+    try {
+      const data = {
+        name,
+        email,
+        contactNumber,
+      };
+      const response = await HeaderApiService.updateUserProfile(data);
+      if (response.data.status === 'SUCCESS') {
+        successNotification('Profile Changed Successfully');
+        dispatch(getLoggedUserDetails());
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+export const uploadProfilePicture = (data, config) => {
+  return async dispatch => {
+    try {
+      const response = await HeaderApiService.uploadUserProfilePicture(data, config);
+      if (response.data.status === 'success') {
+        successNotification('Picture Uploaded Successfully');
+        dispatch(getLoggedUserDetails());
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
 export const logoutUser = async () => {
   try {
     const response = await HeaderApiService.logoutUser();

@@ -9,6 +9,8 @@ export const AUTH_URLS = {
 };
 
 export const HEADER_URLS = {
+  LOGGED_USER_DETAILS_URL: `${BASE_URL}user/profile`,
+  UPLOAD_PROFILE_PICTURE: `${BASE_URL}user/upload/profile-picture/`,
   CHANGE_PASSWORD_URL: `${BASE_URL}auth/change-password/`,
   LOGOUT_URL: `${BASE_URL}auth/logout/`,
 };

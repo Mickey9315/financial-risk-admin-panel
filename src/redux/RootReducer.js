@@ -15,6 +15,8 @@ import {
   syncClientWithCrm,
 } from '../screens/Clients/redux/ClientReducer';
 import { application } from '../screens/Application/redux/ApplicationReducer';
+import { editProfile } from '../common/Header/redux/HeaderReducer';
+import { loggedUserProfile, profilePictureReducer } from '../common/Header/redux/HeaderReducer';
 
 const rootReducer = combineReducers({
   loggedUser,
@@ -27,7 +29,10 @@ const rootReducer = combineReducers({
   userManagementClientList,
   clientManagementColumnList,
   clientManagementFilterList,
+  loggedUserProfile,
   syncClientWithCrm,
   application,
+  editProfile,
+  profilePictureReducer,
 });
 export default rootReducer;

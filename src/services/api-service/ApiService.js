@@ -47,8 +47,8 @@ const ApiService = {
   getData(url, config = {}) {
     return instance.get(url, config);
   },
-  postData(url, data) {
-    return instance.post(url, data);
+  postData(url, data, config) {
+    return instance.post(url, data, config);
   },
   putData(url, data) {
     return instance.put(url, data);
