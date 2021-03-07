@@ -8,6 +8,7 @@ import {
   getLoggedUserDetails,
   updateUserProfile,
   changeEditProfileData,
+  uploadProfilePicture,
 } from './redux/HeaderAction';
 import BigInput from '../BigInput/BigInput';
 import dummy from '../../assets/images/dummy.svg';
@@ -38,6 +39,7 @@ const Header = () => {
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [isEditProfileButton, setIsEditProfileButton] = useState(false);
+  const [fileName, setFileName] = useState('Browse...');
   const toggleEditProfileModal = value =>
     setShowEditProfileModal(value !== undefined ? value : e => !e);
 
@@ -200,6 +202,28 @@ const Header = () => {
   useEffect(() => {
     dispatch(getLoggedUserDetails());
   }, []);
+  const handleChange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      setFileName(file.name ? file.name : 'Browse...');
+      if (file.size > 2097152) {
+        errorNotification('Maximum upload file size < 2 MB');
+        setFileName('Browse...');
+      } else if (file.type !== 'image/png') {
+        errorNotification('File must be image file');
+        setFileName('Browse...');
+      } else {
+        const formData = new FormData();
+        formData.append('profile-picture', file);
+        const config = {
+          headers: {
+            'content-type': 'multipart/form-data',
+          },
+        };
+        dispatch(uploadProfilePicture(formData, config));
+      }
+    }
+  };
 
   return (
     <div className="header-container">
@@ -245,7 +269,12 @@ const Header = () => {
               {!isEditProfileButton ? (
                 <img className="user-dp" src={profilePictureUrl || dummy} />
               ) : (
-                <FileUpload profilePictureUrl={profilePictureUrl} />
+                <FileUpload
+                  profilePictureUrl={profilePictureUrl}
+                  isProfile
+                  handleChange={handleChange}
+                  fileName={fileName}
+                />
               )}
               <div className="form-title">Name</div>
               {!isEditProfileButton ? (

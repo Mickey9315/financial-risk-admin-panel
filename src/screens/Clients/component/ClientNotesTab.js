@@ -15,6 +15,7 @@ import {
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
 import { errorNotification } from '../../../common/Toast';
+import Input from '../../../common/Input/Input';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -214,9 +215,9 @@ const ClientNotesTab = () => {
     <>
       {modifyNoteModal && (
         <Modal header="Add Note" className="add-to-crm-modal" buttons={addToCRMButtons}>
-          <div className="common-white-container client-details-container">
+          <div className="add-notes-popup-container">
             <span>Description</span>
-            <BigInput
+            <Input
               prefixClass="font-placeholder"
               placeholder="Note description"
               name="description"
@@ -226,6 +227,7 @@ const ClientNotesTab = () => {
             />
             <span>Private/Public</span>
             <Switch
+              id="selected-note"
               name="isPublic"
               checked={selectedClientNote.isPublic}
               onChange={onChangeSelectedNoteSwitch}

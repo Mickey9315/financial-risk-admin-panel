@@ -1,44 +1,22 @@
-import { useRef, useState, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
-import { uploadProfilePicture } from '../redux/HeaderAction';
+import { useRef } from 'react';
+/* import { uploadProfilePicture } from '../redux/HeaderAction'; */
+import PropTypes from 'prop-types';
 import IconButton from '../../IconButton/IconButton';
 import dummy from '../../../assets/images/dummy.svg';
 import './FileUpload.scss';
-import { errorNotification } from '../../Toast';
 
 const FileUpload = props => {
-  const dispatch = useDispatch();
-  const { profilePictureUrl } = useMemo(() => props, [props]);
+  const { isProfile, handleChange, profilePictureUrl, fileName, className } = props;
+
   const hiddenFileInput = useRef(null);
-  const [fileName, setFileName] = useState('Browse...');
+
   const handleClick = () => {
     hiddenFileInput.current.click();
   };
-  const handleChange = e => {
-    const file = e.target.files[0];
-    if (file) {
-      setFileName(file.name ? file.name : 'Browse...');
-      if (file.size > 2097152) {
-        errorNotification('Maximum upload file size < 2 MB');
-        setFileName('Browse...');
-      } else if (file.type !== 'image/png') {
-        errorNotification('File must be image file');
-        setFileName('Browse...');
-      } else {
-        const formData = new FormData();
-        formData.append('profile-picture', file);
-        const config = {
-          headers: {
-            'content-type': 'multipart/form-data',
-          },
-        };
-        dispatch(uploadProfilePicture(formData, config));
-      }
-    }
-  };
+
   return (
-    <div className="user-dp-upload">
-      <img className="user-dp" src={profilePictureUrl || dummy} />
+    <div className={className || 'user-dp-upload'}>
+      {isProfile ? <img className="user-dp" src={profilePictureUrl || dummy} /> : ''}
       <IconButton title="cloud_upload" className="user-dp-upload" onClick={handleClick} />
       <input
         type="file"
@@ -46,8 +24,21 @@ const FileUpload = props => {
         ref={hiddenFileInput}
         onChange={handleChange}
       />
-      <p>{fileName}</p>
+      <p onClick={handleClick}>{fileName}</p>
     </div>
   );
 };
+FileUpload.propTypes = {
+  fileName: PropTypes.string.isRequired,
+  isProfile: PropTypes.bool,
+  handleChange: PropTypes.func,
+  profilePictureUrl: PropTypes.string.isRequired,
+  className: PropTypes.object.isRequired,
+};
+
+FileUpload.defaultProps = {
+  isProfile: false,
+  handleChange: () => {},
+};
+
 export default FileUpload;

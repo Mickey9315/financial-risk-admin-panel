@@ -45,7 +45,7 @@ export const CLIENT_URLS = {
   CLIENT_COLUMN_NAME_LIST_URL: `${BASE_URL}client/column-name`,
   UPDATE_CLIENT_COLUMN_NAME_LIST_URL: `${BASE_URL}client/column-name`,
   CLIENT_FILTER_LIST_URL: `${BASE_URL}client/user-list`,
-  SYNC_CLIENT_DATA_URL: `${BASE_URL}client/sync-from-crm`,
+  SYNC_CLIENT_DATA_URL: `${BASE_URL}client/sync-from-crm/`,
   GET_DATA_FROM_CRM_URL: `${BASE_URL}client/search-from-crm`,
 
   CONTACT: {
@@ -66,6 +66,7 @@ export const CLIENT_URLS = {
   DOCUMENTS: {
     DOCUMENTS_LIST: `${BASE_URL}document/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}document/column-name/`,
+    GET_DOCUMENT_TYPE_URL: `${BASE_URL}settings/document-type/`,
   },
 };
 

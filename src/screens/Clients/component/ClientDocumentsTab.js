@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, useReducer, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import ReactSelect from 'react-dropdown-select';
+import './clientTabs.scss';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
-import Button from '../../../common/Button/Button';
 import Pagination from '../../../common/Pagination/Pagination';
 import Table from '../../../common/Table/Table';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -12,16 +13,77 @@ import {
   changeClientDocumentsColumnListStatus,
   getClientDocumentsColumnNamesList,
   getClientDocumentsListData,
+  getDocumentTypeList,
   saveClientDocumentsColumnListName,
 } from '../redux/ClientAction';
 import { errorNotification } from '../../../common/Toast';
+import Modal from '../../../common/Modal/Modal';
+import Switch from '../../../common/Switch/Switch';
+import Input from '../../../common/Input/Input';
+import FileUpload from '../../../common/Header/component/FileUpload';
 
+const initialClientDocumentState = {
+  description: '',
+  isPublic: false,
+};
+
+const CLIENT_DOCUMENT_REDUCER_ACTIONS = {
+  UPDATE_DATA: 'UPDATE_DATA',
+  UPDATE_SINGLE_DATA: 'UPDATE_SINGLE_DATA',
+  RESET_STATE: 'RESET_STATE',
+};
+
+function clientDocumentReducer(state, action) {
+  switch (action.type) {
+    case CLIENT_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA:
+      return {
+        ...state,
+        [`${action.name}`]: action.value,
+      };
+    case CLIENT_DOCUMENT_REDUCER_ACTIONS.UPDATE_DATA:
+      return {
+        ...state,
+        ...action.data,
+      };
+    case CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE:
+      return { ...initialClientDocumentState };
+    default:
+      return state;
+  }
+}
 const ClientDocumentsTab = () => {
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
     [setCustomFieldModal]
   );
+  const [selectedClientDocument, dispatchSelectedClientDocument] = useReducer(
+    clientDocumentReducer,
+    initialClientDocumentState
+  );
+
+  const [uploadModel, setUploadModel] = useState(false);
+  const toggleUploadModel = useCallback(
+    value => setUploadModel(value !== undefined ? value : e => !e),
+    [setUploadModel]
+  );
+  const [fileName, setFileName] = useState('');
+
+  const onchangeDocumentDescription = useCallback(e => {
+    dispatchSelectedClientDocument({
+      type: CLIENT_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
+      name: e.target.name,
+      value: e.target.value,
+    });
+  }, []);
+
+  const onChangeDocumentSwitch = useCallback(e => {
+    dispatchSelectedClientDocument({
+      type: CLIENT_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
+      name: e.target.name,
+      value: e.target.checked,
+    });
+  }, []);
 
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -30,6 +92,10 @@ const ClientDocumentsTab = () => {
   const clientDocumentsList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentsList
   );
+
+  // const documentTypeList = useSelector(
+  //   ({ clientManagement }) => clientManagement.documents.documentTypeList
+  // );
 
   const clientDocumentsColumnList = useSelector(
     ({ clientManagement }) => clientManagement.documents.columnList
@@ -72,6 +138,29 @@ const ClientDocumentsTab = () => {
     ],
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
+  const uploadDocument = useCallback(() => {
+    // const documentData = {
+    //   description: selectedClientDocument.description,
+    //   isPublic: selectedClientDocument.isPublic,
+    // };
+    dispatchSelectedClientDocument({
+      type: CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+    });
+  }, []);
+
+  const onUploadClick = e => {
+    const file = e.target.files[0];
+    setFileName(file.name);
+  };
+
+  const addToCRMButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleUploadModel() },
+      { title: 'Upload', buttonType: 'primary', onClick: uploadDocument },
+    ],
+    [toggleUploadModel, uploadDocument]
+  );
+
   const getClientDocumentsList = useCallback(
     (params = {}, cb) => {
       const data = {
@@ -124,6 +213,7 @@ const ClientDocumentsTab = () => {
   useEffect(() => {
     getClientDocumentsList();
     dispatch(getClientDocumentsColumnNamesList());
+    dispatch(getDocumentTypeList());
   }, []);
 
   return (
@@ -146,9 +236,12 @@ const ClientDocumentsTab = () => {
             title="format_line_spacing"
             onClick={() => toggleCustomField()}
           />
-          <IconButton buttonType="primary" title="cloud_upload" />
+          <IconButton
+            buttonType="primary"
+            title="cloud_upload"
+            onClick={() => toggleUploadModel()}
+          />
           <IconButton buttonType="primary-1" title="cloud_download" />
-          <Button buttonType="secondary" title="Sync With CRM" />
         </div>
       </div>
       {docs ? (
@@ -185,6 +278,48 @@ const ClientDocumentsTab = () => {
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={buttons}
         />
+      )}
+      {uploadModel && (
+        <Modal
+          header="Upload Documents"
+          className="upload-document-modal"
+          buttons={addToCRMButtons}
+        >
+          <div className="document-upload-popup-container">
+            <span>Document Type</span>
+            <ReactSelect
+              placeholder="Select"
+              name="riskAnalystId"
+              options={['hi', 'hello']}
+              searchable={false}
+            />
+            <span>Please upload your documents here</span>
+            <FileUpload
+              isProfile={false}
+              fileName={fileName || 'Browse'}
+              className="document-upload-input"
+              handleChange={onUploadClick}
+            />
+            <span>Description</span>
+            <Input
+              prefixClass="font-placeholder"
+              placeholder="Document description"
+              name="description"
+              type="text"
+              value={selectedClientDocument.description}
+              onChange={() => {
+                onchangeDocumentDescription();
+              }}
+            />
+            <span>Private/Public</span>
+            <Switch
+              id="document-type"
+              name="isPublic"
+              checked={selectedClientDocument.isPublic}
+              onChange={onChangeDocumentSwitch}
+            />
+          </div>
+        </Modal>
       )}
     </>
   );

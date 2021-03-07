@@ -629,7 +629,11 @@ export const getClientDocumentsListData = (id, params = { page: 1, limit: 15 }) 
 export const getClientDocumentsColumnNamesList = () => {
   return async dispatch => {
     try {
-      const response = await ClientDocumentsApiService.getClientDocumentsColumnNamesList();
+      const params = {
+        columnFor: 'client-document',
+      };
+
+      const response = await ClientDocumentsApiService.getClientDocumentsColumnNamesList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
@@ -693,6 +697,32 @@ export const saveClientDocumentsColumnListName = ({
         if (response && response.data && response.data.status === 'SUCCESS') {
           successNotification('Columns updated successfully.');
         }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getDocumentTypeList = () => {
+  return async dispatch => {
+    try {
+      const params = {
+        listFor: 'client',
+      };
+
+      const response = await ClientDocumentsApiService.getDocumentTypeList(params);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENT_TYPE_LIST_USER_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       if (e.response && e.response.data) {
