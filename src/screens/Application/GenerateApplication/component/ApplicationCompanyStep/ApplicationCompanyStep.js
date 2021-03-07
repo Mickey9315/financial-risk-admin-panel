@@ -310,7 +310,6 @@ const ApplicationCompanyStep = () => {
       <span />
       <span />
       {INPUTS.map(getComponentFromType)}
-      <Button buttonType="primary" title="Save and Next" />
     </div>
   );
 };
