@@ -1,0 +1,51 @@
+@import "../../index";
+
+/* completely hiding radio button */
+input[type="radio"] {
+  display: none;
+}
+
+/* simulate radiobutton appearance using pseudo selector */
+input[type="radio"] + label:before {
+  content: "";
+  /* create custom radiobutton appearance */
+  display: inline-block;
+  height: 19px;
+  width: 19px;
+  min-height: 19px;
+  min-width: 19px;
+  padding: 4px;
+  margin-right: 5px;
+  /* background-color only for content */
+  background-clip: content-box;
+  border: 1px solid $border-color;
+  background-color: #e7e6e7;
+  border-radius: 50%;
+}
+
+/* appearance of checked radiobutton */
+input[type="radio"]:checked + label:before {
+  background-color: $primary-color;
+  border-color: $primary-color;
+}
+
+/* resetting default box-sizing */
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+/* optional styles for centering radio buttons */
+.radio-button {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 400;
+  color: $field-color;
+  cursor: pointer;
+}
+
+.radio-button:hover:before {
+  background-color: $field-color;
+  border-color: $field-color;
+}

@@ -35,7 +35,7 @@ const AccordionItem = props => {
           <span
             className={`${prefixClassName} ${
               activeAccordion && prefix === 'expand_more' && 'rotate-icon'
-            }`}
+            } ${prefix === 'expand_more' && 'spin-arrow'}`}
           >
             {prefix}
           </span>
@@ -47,13 +47,18 @@ const AccordionItem = props => {
       <div
         ref={content}
         style={{
-          height: activeAccordion ? content.current.scrollheight : '0px',
-          padding: activeAccordion ? '10px 40px' : '0',
-          transition: 'height .5s ease-in-out',
+          maxHeight: activeAccordion ? '2000px' : '0px',
         }}
         className={accordionBodyClassName}
       >
-        {children}
+        <div className="accordion-body">
+          {' '}
+          {children !== null ? (
+            children
+          ) : (
+            <div className="no-data-available">No data available</div>
+          )}
+        </div>
       </div>
     </div>
   );

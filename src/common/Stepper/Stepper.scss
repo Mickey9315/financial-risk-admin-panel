@@ -6,18 +6,19 @@
   padding: 5px 15px;
   background-color: $primary-color-1;
   border-radius: 10px;
+
   .arrow {
     color: $placeholder-color;
   }
-
-}
-.step-container:last-child .arrow {
- display: none;
 }
 
 .step-container {
   display: flex;
   align-items: center;
+}
+
+.step-container:first-child .arrow {
+  display: none;
 }
 
 .step {
@@ -29,7 +30,6 @@
   color: $placeholder-color;
   border-radius: 10px;
   overflow: hidden;
-  cursor: pointer;
 
   span {
     font-weight: 400;
@@ -38,11 +38,22 @@
   }
 }
 
-.step:hover {background-color: $alert-blue-light}
-
 .selected-step {
   color: white;
   background-color: $primary-color;
+}
+
+.done-step {
+  .step {
+    background-color: $success-color;
+    color: white;
+  }
+  span {
+    color: white;
+  }
+  .arrow {
+    color: $primary-color;
+  }
 }
 
 .step-container.active-step {
@@ -64,4 +75,10 @@
   padding: 20px;
   background-color: white;
   border-radius: 10px;
+}
+
+.stepper-buttons-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }

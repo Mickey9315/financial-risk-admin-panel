@@ -39,6 +39,7 @@ const drawerReducer = (state, action) => {
 
 const Table = props => {
   const {
+    tableClass,
     align,
     valign,
     headers,
@@ -142,7 +143,7 @@ const Table = props => {
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
-      <table>
+      <table className={tableClass}>
         <thead>
           {showCheckbox && (
             <th align={align} valign={valign} className={headerClass}>
@@ -185,6 +186,7 @@ const Table = props => {
 };
 
 Table.propTypes = {
+  tableClass: PropTypes.string,
   align: PropTypes.oneOf(['left', 'center', 'right']),
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   headers: PropTypes.array,
@@ -200,6 +202,7 @@ Table.propTypes = {
 };
 
 Table.defaultProps = {
+  tableClass: '',
   align: 'left',
   valign: 'left',
   headers: [],

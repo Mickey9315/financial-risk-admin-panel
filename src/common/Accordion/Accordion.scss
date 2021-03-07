@@ -1,7 +1,6 @@
 @import "../../index";
 
 .accordion-container {
-  background-color: $background-color;
   border-radius: 5px;
 }
 
@@ -15,7 +14,7 @@
   display: flex;
   align-items: center;
   color: $primary-color;
-  padding: 5px 10px;
+  padding: 8px 10px;
   background-color: $background-color;
   border-radius: 5px;
   cursor: pointer;
@@ -36,13 +35,21 @@
 }
 
 .accordion-body-container {
-  padding: 10px 40px;
   background-color: $background-color;
   border-radius: 5px;
   overflow: hidden;
-  transition: height .5s ease-in-out;
+  transition: max-height .5s ease-in-out;
+}
+
+.accordion-body {
+  padding: 20px 40px;
 }
 
 .rotate-icon {
-  transform: rotate(180deg);
+  transform: rotate(-180deg);
+  transition: transform .3s ease-in-out;
+}
+
+.spin-arrow {
+  transition: transform .3s ease-in-out;
 }

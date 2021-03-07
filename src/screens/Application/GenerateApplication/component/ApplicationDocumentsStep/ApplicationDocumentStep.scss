@@ -1,0 +1,13 @@
+@import "../../../../../index";
+
+.documents-table {
+  width: 100%;
+}
+
+.documents-table tr:nth-child(even) {
+background-color: $background-color;
+}
+
+.documents-table tr:nth-child(odd) {
+background-color: #ffffff;
+}

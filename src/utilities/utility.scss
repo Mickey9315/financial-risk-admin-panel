@@ -5,8 +5,16 @@
   cursor: pointer;
 }
 
+.f-14 {
+  font-size: $subtitle;
+}
+
 .font-primary {
   color: $primary-color;
+}
+
+.font-secondary {
+  color: $secondary-color;
 }
 
 .font-placeholder {
@@ -15,6 +23,10 @@
 
 .font-field {
   color: $field-color;
+}
+
+.font-danger {
+  color: $error-color;
 }
 
 .d-flex {
@@ -84,6 +96,16 @@
 .form-title {
   width: 80px;
   font: $subtitle $font-medium;
+  color: $primary-color;
+}
+
+.no-data-available {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+  font: $subtitle $font-regular;
   color: $primary-color;
 }
 

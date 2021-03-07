@@ -1,0 +1,30 @@
+@import "../../../../../index";
+
+.if-yes-row, .upload-document-row {
+  display: flex;
+  align-items: center;
+  margin: 10px 0 20px 0;
+
+  span {
+    font-size: $subtitle;
+  }
+
+  .input-container {
+    flex: 1;
+  }
+}
+
+.credit-limit-amount {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0 20px 0;
+
+  span {
+    font-size: $subtitle;
+  }
+
+  .input-container {
+    width: 60%;
+  }
+}

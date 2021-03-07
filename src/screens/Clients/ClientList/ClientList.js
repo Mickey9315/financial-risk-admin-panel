@@ -63,7 +63,7 @@ const ClientList = () => {
   );
   const filterList = useSelector(({ clientManagementFilterList }) => clientManagementFilterList);
   const syncListFromCrm = useSelector(({ syncClientWithCrm }) => syncClientWithCrm);
-
+  console.log('syncListFromCrm', syncListFromCrm);
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
@@ -340,7 +340,7 @@ const ClientList = () => {
       const searchKeyword = searchInputRef.current.value;
       if (searchKeyword.trim().toString().length !== 0) {
         dispatch(getListFromCrm(searchKeyword.trim().toString()));
-        setSearchClients(val => !val);
+        setSearchClients(true);
       } else {
         errorNotification('Please enter any value than press enter');
       }
@@ -508,18 +508,23 @@ const ClientList = () => {
             type="text"
             onKeyDown={checkIfEnterKeyPressed}
           />
-          {searchClients && syncListFromCrm.length > 0 && (
+          {searchClients && (
             <>
               {/* <Checkbox title="Name" className="check-all-crmList" /> */}
               <div className="crm-checkbox-list-container">
-                {syncListFromCrm.map(crm => (
-                  <Checkbox
-                    title={crm.name}
-                    className="crm-checkbox-list"
-                    checked={crmIds.includes(crm.crmId.toString())}
-                    onChange={() => selectClientFromCrm(crm.crmId.toString())}
-                  />
-                ))}
+                {console.log(syncListFromCrm)}
+                {syncListFromCrm && syncListFromCrm.length > 0 ? (
+                  syncListFromCrm.map(crm => (
+                    <Checkbox
+                      title={crm.name}
+                      className="crm-checkbox-list"
+                      checked={crmIds.includes(crm.crmId.toString())}
+                      onChange={() => selectClientFromCrm(crm.crmId.toString())}
+                    />
+                  ))
+                ) : (
+                  <div className="no-data-available">No data available</div>
+                )}
               </div>
             </>
           )}
