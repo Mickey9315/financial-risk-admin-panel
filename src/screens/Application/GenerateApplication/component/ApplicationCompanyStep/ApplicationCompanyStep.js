@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
@@ -6,58 +6,14 @@ import Input from '../../../../../common/Input/Input';
 import {
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
+  updateEditApplicationData,
+  updateEditApplicationField,
 } from '../../../redux/ApplicationAction';
-
-const initialCompanyState = {
-  client: '',
-  postcode: '',
-  state: '',
-  suburb: '',
-  streetType: '',
-  streetName: '',
-  streetNumber: '',
-  unitNumber: '',
-  property: '',
-  address: '',
-  outstandingAmount: '',
-  entityType: '',
-  phoneNumber: '',
-  entityName: '',
-  acn: '',
-  abn: '',
-  tradingName: '',
-  debtor: '',
-};
-
-const COMPANY_STATE_REDUCER_ACTIONS = {
-  UPDATE_FIELD_DATA: 'UPDATE_FIELD_DATA',
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function companyStateReducer(state, action) {
-  switch (action.type) {
-    case COMPANY_STATE_REDUCER_ACTIONS.UPDATE_FIELD_DATA:
-      return {
-        ...state,
-        [action.name]: action.value,
-      };
-    case COMPANY_STATE_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        ...state,
-        ...action.data,
-      };
-    case COMPANY_STATE_REDUCER_ACTIONS.RESET_STATE:
-      return { ...initialCompanyState };
-    default:
-      return state;
-  }
-}
 
 const ApplicationCompanyStep = () => {
   const dispatch = useDispatch();
 
-  const [companyState, dispatchCompanyState] = useReducer(companyStateReducer, initialCompanyState);
+  const companyState = useSelector(({ application }) => application.editApplication.companyStep);
   const { clients, debtors, streetType, australianStates, entityType } = useSelector(
     ({ application }) => application.company.dropdownData
   );
@@ -187,26 +143,13 @@ const ApplicationCompanyStep = () => {
     [debtors, streetType, australianStates, entityType]
   );
 
-  const updateSingleCompanyState = useCallback(
-    (name, value) => {
-      dispatchCompanyState({
-        type: COMPANY_STATE_REDUCER_ACTIONS.UPDATE_FIELD_DATA,
-        name,
-        value,
-      });
-    },
-    [dispatchCompanyState]
-  );
+  const updateSingleCompanyState = useCallback((name, value) => {
+    dispatch(updateEditApplicationField('companyStep', name, value));
+  }, []);
 
-  const updateCompanyState = useCallback(
-    data => {
-      dispatchCompanyState({
-        type: COMPANY_STATE_REDUCER_ACTIONS.UPDATE_DATA,
-        data,
-      });
-    },
-    [dispatchCompanyState]
-  );
+  const updateCompanyState = useCallback(data => {
+    dispatch(updateEditApplicationData('companyStep', data));
+  }, []);
 
   const handleTextInputChange = useCallback(
     e => {
@@ -218,7 +161,7 @@ const ApplicationCompanyStep = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSingleCompanyState(data[0].label, data[0].value);
+      updateSingleCompanyState(data[0].name, data[0].value);
     },
     [updateSingleCompanyState]
   );
@@ -227,7 +170,10 @@ const ApplicationCompanyStep = () => {
     async data => {
       try {
         handleSelectInputChange(data);
-        const response = await getApplicationCompanyDataFromDebtor(data[0].value);
+        const response = await getApplicationCompanyDataFromDebtor(
+          data[0].value,
+          companyState.client
+        );
         if (response) {
           updateCompanyState(response);
         }
@@ -235,7 +181,7 @@ const ApplicationCompanyStep = () => {
         /**/
       }
     },
-    [handleSelectInputChange, updateCompanyState]
+    [companyState, handleSelectInputChange, updateCompanyState]
   );
 
   const getComponentFromType = useCallback(
@@ -280,7 +226,7 @@ const ApplicationCompanyStep = () => {
                 name={input.name}
                 options={input.data}
                 searchable={false}
-                value={companyState[input.name]}
+                values={companyState[input.name]}
                 onChange={handleOnChange}
               />
             </>
@@ -302,10 +248,10 @@ const ApplicationCompanyStep = () => {
       <span>Client</span>
       <ReactSelect
         placeholder="Select"
-        name="client"
         options={clients}
         searchable={false}
-        value={companyState.client}
+        values={companyState.client}
+        onChange={handleSelectInputChange}
       />
       <span />
       <span />
