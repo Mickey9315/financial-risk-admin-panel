@@ -118,6 +118,18 @@ export const getApplicationCompanyDataFromDebtor = async (id, clientId) => {
   }
 };
 
+export const changeEditApplicationFieldValue = (name, value) => {
+  return dispatch => {
+    dispatch({
+      type:
+        APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+          .APPLICATION_COMPANY_EDIT_APPLICATION_CHANGE_FIELD_VALUE,
+      name,
+      value,
+    });
+  };
+};
+
 export const updateEditApplicationData = (stepName, data) => {
   return dispatch => {
     dispatch({
