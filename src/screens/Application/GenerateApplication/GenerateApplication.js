@@ -1,11 +1,13 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Stepper from '../../../common/Stepper/Stepper';
 import ApplicationCompanyStep from './component/ApplicationCompanyStep/ApplicationCompanyStep';
 import ApplicationPersonStep from './component/ApplicationPersonStep/ApplicationPersonStep';
 import ApplicationCreditLimitStep from './component/ApplicationCreditLimitStep/ApplicationCreditLimitStep';
 import ApplicationDocumentStep from './component/ApplicationDocumentsStep/ApplicationDocumentStep';
 import ApplicationConfirmationStep from './component/ApplicationConfirmationStep/ApplicationConfirmationStep';
+import { changeEditApplicationFieldValue } from '../redux/ApplicationAction';
 
 const STEP_COMPONENT = [
   <ApplicationCompanyStep />,
@@ -40,19 +42,16 @@ const steps = [
 
 const GenerateApplication = () => {
   const history = useHistory();
-  const [index, setIndex] = useState(0);
+  const dispatch = useDispatch();
+  const stepIndex = useSelector(({ application }) => application.editApplication.currentStepIndex);
 
-  const backToApplication = () => {
+  const backToApplication = useCallback(() => {
     history.replace('/applications');
-  };
-  const stepNextPermission = true;
-  const onChangeIndex = useCallback(
-    newIndex => {
-      console.log(newIndex);
-      setIndex(newIndex);
-    },
-    [setIndex]
-  );
+  }, [history]);
+
+  const onChangeIndex = useCallback(newIndex => {
+    dispatch(changeEditApplicationFieldValue('currentStepIndex', newIndex));
+  }, []);
 
   return (
     <>
@@ -63,13 +62,8 @@ const GenerateApplication = () => {
           <span>Generate Application</span>
         </div>
       </div>
-      <Stepper
-        className="mt-10"
-        steps={steps}
-        onChangeIndex={onChangeIndex}
-        canGoNext={stepNextPermission}
-      >
-        {STEP_COMPONENT[index]}
+      <Stepper className="mt-10" steps={steps} onChangeIndex={onChangeIndex} canGoNext>
+        {STEP_COMPONENT[stepIndex]}
       </Stepper>
     </>
   );
