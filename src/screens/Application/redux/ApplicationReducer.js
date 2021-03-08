@@ -14,6 +14,29 @@ const initialApplicationList = {
   },
   applicationColumnNameList: [],
 
+  editApplication: {
+    companyStep: {
+      client: [],
+      postcode: '',
+      state: [],
+      suburb: '',
+      streetType: [],
+      streetName: '',
+      streetNumber: '',
+      unitNumber: '',
+      property: '',
+      address: '',
+      outstandingAmount: '',
+      entityType: [],
+      phoneNumber: '',
+      entityName: '',
+      acn: '',
+      abn: '',
+      tradingName: '',
+      debtor: [],
+    },
+  },
+
   company: {
     dropdownData: {
       clients: [],
@@ -56,7 +79,11 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_DROP_DOWN_DATA: {
       const dropdownData = { ...state.company.dropdownData };
       Object.entries(action.data).forEach(([key, value]) => {
-        dropdownData[key] = value.map(entity => ({ label: entity.name, value: entity._id }));
+        dropdownData[key] = value.data.map(entity => ({
+          label: entity.name,
+          name: value.field,
+          value: entity._id,
+        }));
       });
       const company = {
         ...state.company,
@@ -66,6 +93,31 @@ export const application = (state = initialApplicationList, action) => {
       return {
         ...state,
         company,
+      };
+    }
+
+    // edit application
+    case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+      .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA: {
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          [action.stepName]: { ...action.data },
+        },
+      };
+    }
+    case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+      .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_FIELD: {
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          [action.stepName]: {
+            ...state.editApplication[action.stepName],
+            [action.name]: action.value,
+          },
+        },
       };
     }
 
