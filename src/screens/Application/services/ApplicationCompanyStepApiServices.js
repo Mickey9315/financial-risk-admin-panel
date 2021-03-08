@@ -4,7 +4,7 @@ import { APPLICATION_URLS } from '../../../constants/UrlConstants';
 const ApplicationCompanyStepApiServices = {
   getApplicationCompanyStepDropdownData: params =>
     ApiService.getData(APPLICATION_URLS.COMPANY.DROP_DOWN_DATA_URL, { params }),
-  getApplicationCompanyDataFromDebtor: id =>
-    ApiService.getData(`${APPLICATION_URLS.COMPANY.GET_DEBTOR_DETAILS}${id}`),
+  getApplicationCompanyDataFromDebtor: (id, params) =>
+    ApiService.getData(`${APPLICATION_URLS.COMPANY.GET_DEBTOR_DETAILS}${id}`, { params }),
 };
 export default ApplicationCompanyStepApiServices;
