@@ -15,6 +15,7 @@ const initialApplicationList = {
   applicationColumnNameList: [],
 
   editApplication: {
+    currentStepIndex: 0,
     companyStep: {
       client: [],
       postcode: '',
@@ -97,6 +98,16 @@ export const application = (state = initialApplicationList, action) => {
     }
 
     // edit application
+    case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+      .APPLICATION_COMPANY_EDIT_APPLICATION_CHANGE_FIELD_VALUE: {
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          [action.name]: action.value,
+        },
+      };
+    }
     case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
       .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA: {
       return {
