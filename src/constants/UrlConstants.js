@@ -31,7 +31,7 @@ export const APPLICATION_URLS = {
 
   COMPANY: {
     DROP_DOWN_DATA_URL: `${BASE_URL}application/entity-list/`,
-    GET_DEBTOR_DETAILS: `${BASE_URL}debtor/entity-details/`,
+    GET_DEBTOR_DETAILS: `${BASE_URL}debtor/details/`,
   },
 };
 
