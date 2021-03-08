@@ -97,10 +97,15 @@ export const getApplicationCompanyDropDownData = () => {
   };
 };
 
-export const getApplicationCompanyDataFromDebtor = async id => {
+export const getApplicationCompanyDataFromDebtor = async (id, clientId) => {
   try {
+    const params = {
+      clientId,
+    };
+
     const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromDebtor(
-      id
+      id,
+      params
     );
 
     if (response.data.status === 'SUCCESS') {
@@ -111,4 +116,29 @@ export const getApplicationCompanyDataFromDebtor = async id => {
     errorNotification('Internal server error');
     throw Error();
   }
+};
+
+export const updateEditApplicationData = (stepName, data) => {
+  return dispatch => {
+    dispatch({
+      type:
+        APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+          .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA,
+      stepName,
+      data,
+    });
+  };
+};
+
+export const updateEditApplicationField = (stepName, name, value) => {
+  return dispatch => {
+    dispatch({
+      type:
+        APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+          .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_FIELD,
+      stepName,
+      name,
+      value,
+    });
+  };
 };
