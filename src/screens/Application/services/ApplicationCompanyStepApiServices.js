@@ -5,6 +5,12 @@ const ApplicationCompanyStepApiServices = {
   getApplicationCompanyStepDropdownData: params =>
     ApiService.getData(APPLICATION_URLS.COMPANY.DROP_DOWN_DATA_URL, { params }),
   getApplicationCompanyDataFromDebtor: (id, params) =>
-    ApiService.getData(`${APPLICATION_URLS.COMPANY.GET_DEBTOR_DETAILS}${id}`, { params }),
+    ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_BY_DEBTOR_DETAILS}${id}`, {
+      params,
+    }),
+  getApplicationCompanyDataFromABNorACN: (id, params) =>
+    ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_BY_ABN_ACN_DETAILS}${id}`, {
+      params,
+    }),
 };
 export default ApplicationCompanyStepApiServices;

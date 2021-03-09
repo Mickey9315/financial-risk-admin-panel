@@ -4,6 +4,7 @@ import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
 
 import {
+  getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
   updateEditApplicationData,
@@ -166,22 +167,32 @@ const ApplicationCompanyStep = () => {
     [updateSingleCompanyState]
   );
 
-  const handleDebtorSelectChange = useCallback(
-    async data => {
-      try {
-        handleSelectInputChange(data);
-        const response = await getApplicationCompanyDataFromDebtor(
-          data[0].value,
-          companyState.client
-        );
+  const handleDebtorSelectChange = useCallback(async data => {
+    try {
+      handleSelectInputChange(data);
+      const params = { clientId: companyState.client };
+      const response = await getApplicationCompanyDataFromDebtor(data[0].value, params);
+
+      if (response) {
+        updateCompanyState(response);
+      }
+    } catch (e) {
+      /**/
+    }
+  }, [companyState, handleSelectInputChange, updateCompanyState][(companyState, handleSelectInputChange, updateCompanyState)]);
+
+  const handleSearchTextInputKeyDown = useCallback(
+    async e => {
+      if (e.key === 'Enter') {
+        const params = { clientId: companyState.client };
+        const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
+
         if (response) {
           updateCompanyState(response);
         }
-      } catch (e) {
-        /**/
       }
     },
-    [companyState, handleSelectInputChange, updateCompanyState]
+    [companyState, updateCompanyState]
   );
 
   const getComponentFromType = useCallback(
@@ -210,6 +221,7 @@ const ApplicationCompanyStep = () => {
                 placeholder={input.placeholder}
                 value={companyState[input.name]}
                 onChange={handleTextInputChange}
+                onKeyDown={handleSearchTextInputKeyDown}
               />
             </>
           );

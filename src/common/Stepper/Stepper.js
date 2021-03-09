@@ -14,11 +14,11 @@ const Stepper = props => {
   }, [activeStep, setActiveStep, backClick]);
 
   const onClickNextButton = useCallback(() => {
-    if (nextClick()) {
+    if (nextClick() && activeStep < steps.length - 1) {
       onChangeIndex(activeStep + 1);
       setActiveStep(prevState => prevState + 1);
     }
-  }, [activeStep, setActiveStep, nextClick]);
+  }, [steps, activeStep, setActiveStep, nextClick]);
 
   return (
     <div className={className} {...restProps}>

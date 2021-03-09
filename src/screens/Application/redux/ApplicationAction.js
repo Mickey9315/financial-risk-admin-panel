@@ -97,13 +97,26 @@ export const getApplicationCompanyDropDownData = () => {
   };
 };
 
-export const getApplicationCompanyDataFromDebtor = async (id, clientId) => {
+export const getApplicationCompanyDataFromDebtor = async (id, params) => {
   try {
-    const params = {
-      clientId,
-    };
-
     const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromDebtor(
+      id,
+      params
+    );
+
+    if (response.data.status === 'SUCCESS') {
+      return response.data.data;
+    }
+    return null;
+  } catch (e) {
+    errorNotification('Internal server error');
+    throw Error();
+  }
+};
+
+export const getApplicationCompanyDataFromABNOrACN = async (id, params) => {
+  try {
+    const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN(
       id,
       params
     );

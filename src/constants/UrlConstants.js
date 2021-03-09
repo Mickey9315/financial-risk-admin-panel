@@ -31,7 +31,8 @@ export const APPLICATION_URLS = {
 
   COMPANY: {
     DROP_DOWN_DATA_URL: `${BASE_URL}application/entity-list/`,
-    GET_DEBTOR_DETAILS: `${BASE_URL}debtor/details/`,
+    SEARCH_APPLICATION_BY_DEBTOR_DETAILS: `${BASE_URL}debtor/details/`,
+    SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
   },
 };
 
