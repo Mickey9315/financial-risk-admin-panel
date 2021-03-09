@@ -40,21 +40,24 @@ const Header = () => {
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [isEditProfileButton, setIsEditProfileButton] = useState(false);
   const [fileName, setFileName] = useState('Browse...');
+  const [file, setFile] = useState(null);
   const toggleEditProfileModal = value =>
     setShowEditProfileModal(value !== undefined ? value : e => !e);
 
-  const { name, email, contactNumber, profilePictureUrl } = useMemo(() => {
+  const { name, email, contactNumber, profilePictureUrl, changed } = useMemo(() => {
     if (loggedUserDetail) {
+      console.log(loggedUserDetail);
       // eslint-disable-next-line no-shadow
-      const { name, email, contactNumber, profilePictureUrl } = loggedUserDetail;
+      const { name, email, contactNumber, profilePictureUrl, changed } = loggedUserDetail;
       return {
         name: name || '',
         email: email || '',
         contactNumber: contactNumber || '',
         profilePictureUrl: profilePictureUrl || '',
+        changed: changed || false,
       };
     }
-    return { name: '', email: '', contactNumber: '', profilePictureUrl: '' };
+    return { name: '', email: '', contactNumber: '', profilePictureUrl: '', changed: false };
   }, [loggedUserDetail]);
   /** ****
    * edit profile end
@@ -107,24 +110,26 @@ const Header = () => {
 
   /** **********edit profile methods******** */
   const onCloseEditProfileClick = () => {
+    if (changed) {
+      dispatch(getLoggedUserDetails());
+    }
     setIsEditProfileButton(false);
     toggleEditProfileModal(false);
   };
   const onChangeEditProfileData = useCallback(e => {
-    console.log('onChangeEditProfile called');
     // eslint-disable-next-line no-shadow
     const { name, value } = e.target;
     dispatch(changeEditProfileData({ name, value }));
   }, []);
   const onSaveEditProfileClick = async () => {
     if (name.toString().trim().length === 0) {
-      return errorNotification('You forgot to enter Name!');
+      return errorNotification('You forgot to enter name!');
     }
     if (email.toString().trim().length === 0) {
       return errorNotification('You forgot to enter email!');
     }
     if (contactNumber.toString().trim().length === 0) {
-      return errorNotification('You forgot to enter Contact Number!');
+      return errorNotification('You forgot to enter contact number!');
     }
     if (!checkForEmail(replaceHiddenCharacters(email))) {
       return errorNotification('Please enter a valid email');
@@ -133,7 +138,21 @@ const Header = () => {
       return errorNotification('Please enter valid contact number');
     }
     try {
-      dispatch(updateUserProfile(name, email, contactNumber));
+      if (changed) {
+        dispatch(updateUserProfile(name, email, contactNumber));
+      }
+      if (file) {
+        const formData = new FormData();
+        formData.append('profile-picture', file);
+        const config = {
+          headers: {
+            'content-type': 'multipart/form-data',
+          },
+        };
+        dispatch(uploadProfilePicture(formData, config));
+        setFileName('Browse...');
+        setFile(null);
+      }
       setIsEditProfileButton(false);
       toggleEditProfileModal(false);
     } catch (e) {
@@ -202,25 +221,17 @@ const Header = () => {
   useEffect(() => {
     dispatch(getLoggedUserDetails());
   }, []);
+
   const handleChange = e => {
-    const file = e.target.files[0];
-    if (file) {
-      setFileName(file.name ? file.name : 'Browse...');
-      if (file.size > 2097152) {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.size > 2097152) {
         errorNotification('Maximum upload file size < 2 MB');
-        setFileName('Browse...');
-      } else if (file.type !== 'image/png') {
+      } else if (selectedFile.type !== 'image/png') {
         errorNotification('File must be image file');
-        setFileName('Browse...');
       } else {
-        const formData = new FormData();
-        formData.append('profile-picture', file);
-        const config = {
-          headers: {
-            'content-type': 'multipart/form-data',
-          },
-        };
-        dispatch(uploadProfilePicture(formData, config));
+        setFileName(selectedFile.name ? selectedFile.name : 'Browse...');
+        setFile(selectedFile);
       }
     }
   };

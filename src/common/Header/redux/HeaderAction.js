@@ -82,7 +82,7 @@ export const updateUserProfile = (name, email, contactNumber) => {
       };
       const response = await HeaderApiService.updateUserProfile(data);
       if (response.data.status === 'SUCCESS') {
-        successNotification('Profile Changed Successfully');
+        successNotification(response.data.message);
         dispatch(getLoggedUserDetails());
       }
     } catch (e) {
@@ -104,8 +104,11 @@ export const uploadProfilePicture = (data, config) => {
     try {
       const response = await HeaderApiService.uploadUserProfilePicture(data, config);
       if (response.data.status === 'success') {
-        successNotification('Picture Uploaded Successfully');
-        dispatch(getLoggedUserDetails());
+        dispatch({
+          type: EDIT_PROFILE_CONSTANT.UPDATE_USER_PROFILE_PICTURE,
+          data: response.data.data,
+        });
+        successNotification('Profile Picture Updated Successfully');
       }
     } catch (e) {
       if (e.response && e.response.data) {

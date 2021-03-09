@@ -88,6 +88,9 @@
   grid-template-columns: 30% 70%;
   gap: 10px;
   width: 100%;
+  .user-dp{
+    margin-left: 0;
+  }
   .user-fields{
     color: $secondary-color;
     min-width: 200px;
