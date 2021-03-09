@@ -28,6 +28,7 @@ export const APPLICATION_URLS = {
   APPLICATION_LIST_URL: `${BASE_URL}application/`,
   APPLICATION_COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name?columnFor=application`,
   APPLICATION_COLUMN_NAME_LIST_UPDATE_URL: `${BASE_URL}application/column-name/`,
+  APPLICATION_SAVE_STEP_DATA: `${BASE_URL}application/`,
 
   COMPANY: {
     DROP_DOWN_DATA_URL: `${BASE_URL}application/entity-list/`,
