@@ -16,7 +16,7 @@ const Pagination = props => {
 
   const paginationClass = `pagination-container ${className}`;
 
-  const [recordLimit, setRecordLimit] = useState([{ label: '5', value: 5 }]);
+  const [recordLimit, setRecordLimit] = useState([{ label: '15', value: 15 }]);
 
   const fromRecordCount = useMemo(() => (page - 1) * limit + 1, [page, limit, total]);
   const toRecordCount = useMemo(() => (total < page * limit ? total : page * limit), [

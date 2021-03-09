@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -15,11 +15,12 @@ import {
   syncClientContactListData,
 } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
+import { errorNotification } from '../../../common/Toast';
 
 const ClientContactsTab = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-
+  const searchInputRef = useRef();
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
   const clientContactList = useSelector(
@@ -90,6 +91,18 @@ const ClientContactsTab = () => {
     },
     [page, limit]
   );
+  const checkIfEnterKeyPressed = e => {
+    const searchKeyword = searchInputRef.current.value;
+    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+      getClientContactsList();
+    } else if (e.key === 'Enter') {
+      if (searchKeyword.trim().toString().length !== 0) {
+        getClientContactsList({ search: searchKeyword.trim().toString() });
+      } else {
+        errorNotification('Please enter any value than press enter');
+      }
+    }
+  };
 
   const onSelectLimit = useCallback(
     newLimit => {
@@ -120,12 +133,14 @@ const ClientContactsTab = () => {
         <div className="tab-content-header">Contacts</div>
         <div className="buttons-row">
           <BigInput
+            ref={searchInputRef}
             type="text"
             className="search"
             borderClass="tab-search"
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search here"
+            onKeyUp={checkIfEnterKeyPressed}
           />
           <IconButton
             buttonType="primary"

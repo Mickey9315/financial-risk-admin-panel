@@ -69,6 +69,8 @@ export const CLIENT_URLS = {
     DOCUMENTS_LIST: `${BASE_URL}document/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}document/column-name/`,
     GET_DOCUMENT_TYPE_URL: `${BASE_URL}settings/document-type/`,
+    UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
+    DOWNLOAD_DOCUMENTS_URL: `${BASE_URL}document/download`,
   },
 };
 

@@ -24,6 +24,8 @@ const initialClientListState = {
     documentsList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    uploadDocumentData: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    downloadDocumentData: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
 };
 const initialClientManagementClientListState = {
@@ -200,6 +202,25 @@ export const clientManagement = (state = initialClientListState, action) => {
         documents: {
           ...state.documents,
           documentTypeList: action.data,
+        },
+      };
+    }
+
+    case CLIENT_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_CLIENT_ACTION: {
+      return {
+        ...state,
+        documents: {
+          ...state.documents,
+          uploadDocumentData: action.data,
+        },
+      };
+    }
+    case CLIENT_REDUX_CONSTANTS.DOCUMENTS.DOWNLOAD_DOCUMENT_CLIENT_ACTION: {
+      return {
+        ...state,
+        documents: {
+          ...state.documents,
+          downloadDocumentData: action.data,
         },
       };
     }

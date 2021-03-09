@@ -118,12 +118,19 @@ const ClientNotesTab = () => {
     toggleModifyNotes();
   }, [selectedClientNote, toggleModifyNotes]);
 
+  const onCloseNotePopup = useCallback(() => {
+    dispatchSelectedClientNote({
+      type: CLIENT_NOTE_REDUCER_ACTIONS.RESET_STATE,
+    });
+    toggleModifyNotes();
+  }, [toggleModifyNotes, dispatchSelectedClientNote]);
+
   const addToCRMButtons = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleModifyNotes() },
+      { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
       { title: 'Add', buttonType: 'primary', onClick: addOrUpdateNote },
     ],
-    [toggleModifyNotes, addOrUpdateNote]
+    [onCloseNotePopup, addOrUpdateNote]
   );
 
   const pageActionClick = useCallback(
@@ -139,7 +146,7 @@ const ClientNotesTab = () => {
   );
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef.current.value;
-    if (e.target.value.trim().toString().length <= 1) {
+    if (e.target.value.trim().toString().length === 1) {
       getClientNotesList();
     } else if (e.key === 'Enter') {
       if (searchKeyword.trim().toString().length !== 0) {
@@ -251,7 +258,7 @@ const ClientNotesTab = () => {
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search here"
-            onKeyDown={checkIfEnterKeyPressed}
+            onKeyUp={checkIfEnterKeyPressed}
           />
           <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
         </div>

@@ -11,10 +11,12 @@ import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomField
 import Loader from '../../../common/Loader/Loader';
 import {
   changeClientDocumentsColumnListStatus,
+  downloadDocuments,
   getClientDocumentsColumnNamesList,
   getClientDocumentsListData,
   getDocumentTypeList,
   saveClientDocumentsColumnListName,
+  uploadDocument,
 } from '../redux/ClientAction';
 import { errorNotification } from '../../../common/Toast';
 import Modal from '../../../common/Modal/Modal';
@@ -24,7 +26,9 @@ import FileUpload from '../../../common/Header/component/FileUpload';
 
 const initialClientDocumentState = {
   description: '',
+  fileData: '',
   isPublic: false,
+  documentType: [],
 };
 
 const CLIENT_DOCUMENT_REDUCER_ACTIONS = {
@@ -61,13 +65,18 @@ const ClientDocumentsTab = () => {
     clientDocumentReducer,
     initialClientDocumentState
   );
+  const { documentType, isPublic, description } = useMemo(() => selectedClientDocument, [
+    selectedClientDocument,
+  ]);
 
   const [uploadModel, setUploadModel] = useState(false);
+  const [selectedCheckBoxData, setSelectedCheckBoxData] = useState([]);
   const toggleUploadModel = useCallback(
     value => setUploadModel(value !== undefined ? value : e => !e),
+
     [setUploadModel]
   );
-  const [fileName, setFileName] = useState('');
+  const [fileData, setFileData] = useState('');
 
   const onchangeDocumentDescription = useCallback(e => {
     dispatchSelectedClientDocument({
@@ -93,14 +102,12 @@ const ClientDocumentsTab = () => {
     ({ clientManagement }) => clientManagement.documents.documentsList
   );
 
-  // const documentTypeList = useSelector(
-  //   ({ clientManagement }) => clientManagement.documents.documentTypeList
-  // );
-
+  const documentTypeList = useSelector(
+    ({ clientManagement }) => clientManagement.documents.documentTypeList
+  );
   const clientDocumentsColumnList = useSelector(
     ({ clientManagement }) => clientManagement.documents.columnList
   );
-
   const { total, pages, page, limit, docs, headers } = useMemo(() => clientDocumentsList, [
     clientDocumentsList,
   ]);
@@ -109,6 +116,15 @@ const ClientDocumentsTab = () => {
     () => clientDocumentsColumnList || { defaultFields: [], customFields: [] },
     [clientDocumentsColumnList]
   );
+
+  const documentTypeOptions = useMemo(() => {
+    const finalData = documentTypeList.docs;
+    return finalData.map(e => ({
+      name: 'documentType',
+      label: e.documentTitle,
+      value: e._id,
+    }));
+  }, [documentTypeList.docs]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveClientDocumentsColumnListName({ isReset: true }));
@@ -138,29 +154,6 @@ const ClientDocumentsTab = () => {
     ],
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
-  const uploadDocument = useCallback(() => {
-    // const documentData = {
-    //   description: selectedClientDocument.description,
-    //   isPublic: selectedClientDocument.isPublic,
-    // };
-    dispatchSelectedClientDocument({
-      type: CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
-    });
-  }, []);
-
-  const onUploadClick = e => {
-    const file = e.target.files[0];
-    setFileName(file.name);
-  };
-
-  const addToCRMButtons = useMemo(
-    () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleUploadModel() },
-      { title: 'Upload', buttonType: 'primary', onClick: uploadDocument },
-    ],
-    [toggleUploadModel, uploadDocument]
-  );
-
   const getClientDocumentsList = useCallback(
     (params = {}, cb) => {
       const data = {
@@ -176,6 +169,57 @@ const ClientDocumentsTab = () => {
     [page, limit]
   );
 
+  const onClickUploadDocument = useCallback(async () => {
+    const formData = new FormData();
+    formData.append('description', selectedClientDocument.description);
+    formData.append('isPublic', selectedClientDocument.isPublic);
+    formData.append('documentType', selectedClientDocument.documentType);
+    formData.append('document', fileData);
+    formData.append('entityId', id);
+    formData.append('documentFor', 'client');
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data',
+      },
+    };
+    await dispatch(uploadDocument(formData, config));
+    dispatchSelectedClientDocument({
+      type: CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+    });
+    getClientDocumentsList();
+    setFileData('');
+    toggleUploadModel();
+  }, [selectedClientDocument, fileData, dispatchSelectedClientDocument, toggleUploadModel]);
+
+  const onUploadClick = e => {
+    e.persist();
+    const file = e.target.files[0];
+    setFileData(file);
+  };
+
+  const onCloseUploadDocumentButton = useCallback(() => {
+    dispatchSelectedClientDocument({
+      type: CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+    });
+    toggleUploadModel();
+  }, [toggleUploadModel, dispatchSelectedClientDocument]);
+
+  const uploadDocumentButton = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseUploadDocumentButton() },
+      { title: 'Upload', buttonType: 'primary', onClick: onClickUploadDocument },
+    ],
+    [onCloseUploadDocumentButton, onClickUploadDocument]
+  );
+
+  const onClickDownloadButton = () => {
+    if (selectedCheckBoxData.length !== 0) {
+      const docsToDownload = selectedCheckBoxData.map(e => e.id);
+      dispatch(downloadDocuments(docsToDownload));
+    } else {
+      errorNotification('Please select at least one document to download');
+    }
+  };
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
@@ -186,13 +230,12 @@ const ClientDocumentsTab = () => {
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef.current.value;
-    if (e.target.value.trim().toString().length <= 1) {
+    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
       getClientDocumentsList();
     } else if (e.key === 'Enter') {
       if (searchKeyword.trim().toString().length !== 0) {
         getClientDocumentsList({ search: searchKeyword.trim().toString() });
       } else {
-        getClientDocumentsList();
         errorNotification('Please enter any value than press enter');
       }
     }
@@ -216,6 +259,17 @@ const ClientDocumentsTab = () => {
     dispatch(getDocumentTypeList());
   }, []);
 
+  const handleDocumentChange = useCallback(
+    newValue => {
+      dispatchSelectedClientDocument({
+        type: CLIENT_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
+        name: newValue[0].name,
+        value: newValue[0].value,
+      });
+    },
+    [dispatchSelectedClientDocument]
+  );
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -229,7 +283,7 @@ const ClientDocumentsTab = () => {
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search here"
-            onKeyDown={checkIfEnterKeyPressed}
+            onKeyUp={checkIfEnterKeyPressed}
           />
           <IconButton
             buttonType="primary"
@@ -241,7 +295,11 @@ const ClientDocumentsTab = () => {
             title="cloud_upload"
             onClick={() => toggleUploadModel()}
           />
-          <IconButton buttonType="primary-1" title="cloud_download" />
+          <IconButton
+            buttonType="primary-1"
+            title="cloud_download"
+            onClick={onClickDownloadButton}
+          />
         </div>
       </div>
       {docs ? (
@@ -256,6 +314,10 @@ const ClientDocumentsTab = () => {
               refreshData={getClientDocumentsList}
               haveActions
               showCheckbox
+              onChageRowSelection={data => {
+                console.log(310, { data });
+                setSelectedCheckBoxData(data);
+              }}
             />
           </div>
           <Pagination
@@ -283,20 +345,21 @@ const ClientDocumentsTab = () => {
         <Modal
           header="Upload Documents"
           className="upload-document-modal"
-          buttons={addToCRMButtons}
+          buttons={uploadDocumentButton}
         >
           <div className="document-upload-popup-container">
             <span>Document Type</span>
             <ReactSelect
               placeholder="Select"
-              name="riskAnalystId"
-              options={['hi', 'hello']}
+              options={documentTypeOptions}
+              value={documentType}
+              onChange={handleDocumentChange}
               searchable={false}
             />
             <span>Please upload your documents here</span>
             <FileUpload
               isProfile={false}
-              fileName={fileName || 'Browse'}
+              fileName={fileData.name || 'Browse'}
               className="document-upload-input"
               handleChange={onUploadClick}
             />
@@ -306,16 +369,14 @@ const ClientDocumentsTab = () => {
               placeholder="Document description"
               name="description"
               type="text"
-              value={selectedClientDocument.description}
-              onChange={() => {
-                onchangeDocumentDescription();
-              }}
+              value={description}
+              onChange={onchangeDocumentDescription}
             />
             <span>Private/Public</span>
             <Switch
               id="document-type"
               name="isPublic"
-              checked={selectedClientDocument.isPublic}
+              checked={isPublic}
               onChange={onChangeDocumentSwitch}
             />
           </div>

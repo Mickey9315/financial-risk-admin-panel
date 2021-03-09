@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useReducer, useRef } from 'react';
+import React, { useCallback, useMemo, useReducer, useRef, useEffect } from 'react';
 import './Table.scss';
 import PropTypes from 'prop-types';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
@@ -52,6 +52,7 @@ const Table = props => {
     refreshData,
     haveActions,
     showCheckbox,
+    onChageRowSelection,
   } = props;
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -133,12 +134,18 @@ const Table = props => {
   );
 
   const onSelectAllRow = useCallback(() => {
-    if (selectedRowData.length === tableData.length) {
-      setSelectedRowData([]);
-    } else {
-      setSelectedRowData(tableData);
+    if (tableData.length !== 0) {
+      if (selectedRowData.length === tableData.length) {
+        setSelectedRowData([]);
+      } else {
+        setSelectedRowData(tableData);
+      }
     }
   }, [setSelectedRowData, selectedRowData, tableData]);
+
+  useEffect(() => {
+    onChageRowSelection(selectedRowData);
+  }, [selectedRowData]);
 
   return (
     <>
@@ -146,11 +153,10 @@ const Table = props => {
       <table className={tableClass}>
         <thead>
           {showCheckbox && (
-            <th align={align} valign={valign} className={headerClass}>
+            <th width={10} align={align} valign={valign}>
               <Checkbox
-                title="name"
                 className="crm-checkbox-list"
-                checked={selectedRowData.length === tableData.length}
+                checked={tableData.length !== 0 && selectedRowData.length === tableData.length}
                 onChange={onSelectAllRow}
               />
             </th>
@@ -199,6 +205,7 @@ Table.propTypes = {
   refreshData: PropTypes.func,
   haveActions: PropTypes.bool,
   showCheckbox: PropTypes.bool,
+  onChageRowSelection: PropTypes.func,
 };
 
 Table.defaultProps = {
@@ -215,6 +222,7 @@ Table.defaultProps = {
   recordSelected: () => {},
   recordActionClick: () => {},
   refreshData: () => {},
+  onChageRowSelection: () => {},
 };
 
 export default Table;
@@ -263,13 +271,8 @@ function Row(props) {
   return (
     <tr onClick={() => recordSelected(data.id)} className={rowClass}>
       {showCheckbox && (
-        <td align={align} valign={valign} className={rowClass}>
-          <Checkbox
-            title="name"
-            className="crm-checkbox-list"
-            checked={isSelected}
-            onChange={onRowSelected}
-          />
+        <td width={10} align={align} valign={valign} className={rowClass}>
+          <Checkbox className="crm-checkbox-list" checked={isSelected} onChange={onRowSelected} />
         </td>
       )}
       {Object.entries(data).map(([key, value]) =>
