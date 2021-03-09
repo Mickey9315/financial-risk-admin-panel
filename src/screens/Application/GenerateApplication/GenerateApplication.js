@@ -7,6 +7,7 @@ import ApplicationPersonStep from './component/ApplicationPersonStep/Application
 import ApplicationCreditLimitStep from './component/ApplicationCreditLimitStep/ApplicationCreditLimitStep';
 import ApplicationDocumentStep from './component/ApplicationDocumentsStep/ApplicationDocumentStep';
 import ApplicationConfirmationStep from './component/ApplicationConfirmationStep/ApplicationConfirmationStep';
+import { applicationCompanyStepValidations } from './component/ApplicationCompanyStep/validations/ApplicationCompanyStepValidations';
 import { changeEditApplicationFieldValue } from '../redux/ApplicationAction';
 
 const STEP_COMPONENT = [
@@ -21,29 +22,36 @@ const steps = [
   {
     icon: 'local_police',
     text: 'Company',
+    name: 'companyStep',
   },
   {
     icon: 'admin_panel_settings',
     text: 'Person',
+    name: 'personStep',
   },
   {
     icon: 'request_quote',
     text: 'Credit Limit',
+    name: 'creditLimitStep',
   },
   {
     icon: 'description',
     text: 'Documents',
+    name: 'documentStep',
   },
   {
     icon: 'list_alt',
     text: 'Confirmation',
+    name: 'confirmationStep',
   },
 ];
 
 const GenerateApplication = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const stepIndex = useSelector(({ application }) => application.editApplication.currentStepIndex);
+  const { currentStepIndex: stepIndex, ...editApplicationData } = useSelector(
+    ({ application }) => application.editApplication
+  );
 
   const backToApplication = useCallback(() => {
     history.replace('/applications');
@@ -52,6 +60,10 @@ const GenerateApplication = () => {
   const onChangeIndex = useCallback(newIndex => {
     dispatch(changeEditApplicationFieldValue('currentStepIndex', newIndex));
   }, []);
+
+  const onNextClick = useCallback(() => {
+    return applicationCompanyStepValidations(editApplicationData[steps[stepIndex].name]);
+  }, [editApplicationData, stepIndex]);
 
   return (
     <>
@@ -62,7 +74,13 @@ const GenerateApplication = () => {
           <span>Generate Application</span>
         </div>
       </div>
-      <Stepper className="mt-10" steps={steps} onChangeIndex={onChangeIndex} canGoNext>
+      <Stepper
+        className="mt-10"
+        steps={steps}
+        onChangeIndex={onChangeIndex}
+        canGoNext
+        nextClick={onNextClick}
+      >
         {STEP_COMPONENT[stepIndex]}
       </Stepper>
     </>
