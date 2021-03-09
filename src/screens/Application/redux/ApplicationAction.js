@@ -167,3 +167,17 @@ export const updateEditApplicationField = (stepName, name, value) => {
     });
   };
 };
+
+export const saveApplicationStepDataToBackend = async data => {
+  try {
+    const response = await ApplicationCompanyStepApiServices.saveApplicationStepDataToBackend(data);
+
+    if (response.data.status === 'SUCCESS') {
+      return response.data.data;
+    }
+    return null;
+  } catch (e) {
+    errorNotification('Internal server error');
+    throw Error();
+  }
+};
