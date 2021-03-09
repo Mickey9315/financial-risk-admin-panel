@@ -1,19 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import './Stepper.scss';
 import Button from '../Button/Button';
 
 const Stepper = props => {
-  const {
-    steps,
-    children,
-    className,
-    backClick,
-    nextClick,
-    onChangeIndex,
-    canGoNext,
-    ...restProps
-  } = props;
+  const { steps, children, className, backClick, nextClick, onChangeIndex, ...restProps } = props;
   const [activeStep, setActiveStep] = useState(0);
 
   const onClickBackButton = useCallback(() => {
@@ -23,12 +14,11 @@ const Stepper = props => {
   }, [activeStep, setActiveStep, backClick]);
 
   const onClickNextButton = useCallback(() => {
-    nextClick();
-    if (canGoNext) {
+    if (nextClick()) {
       onChangeIndex(activeStep + 1);
       setActiveStep(prevState => prevState + 1);
     }
-  }, [activeStep, setActiveStep, canGoNext, nextClick]);
+  }, [activeStep, setActiveStep, nextClick]);
 
   return (
     <div className={className} {...restProps}>
@@ -81,7 +71,6 @@ const Stepper = props => {
 Stepper.propTypes = {
   className: PropTypes.string,
   steps: PropTypes.array.isRequired,
-  canGoNext: PropTypes.bool,
   backClick: PropTypes.func,
   nextClick: PropTypes.func,
   onChangeIndex: PropTypes.func,
@@ -90,7 +79,6 @@ Stepper.propTypes = {
 
 Stepper.defaultProps = {
   className: '',
-  canGoNext: false,
   onChangeIndex: () => {},
   backClick: () => {},
   nextClick: () => {},
