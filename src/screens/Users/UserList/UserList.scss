@@ -30,7 +30,7 @@
 
 .filter-modal {
   width: 60vw;
-  max-width: 600px;
+  max-width: 650px;
 }
 
 .filter-modal-row {
@@ -50,6 +50,10 @@
 .filter-date-picker-container {
   width: 200px;
   margin-right: 20px;
+}
+
+.filter-date-picker-container:last-child {
+  margin-right: 0;
 }
 
 .custom-field-modal {

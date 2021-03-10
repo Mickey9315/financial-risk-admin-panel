@@ -143,12 +143,12 @@ const ApplicationList = () => {
             <Table
               align="left"
               valign="center"
+              tableClass="main-list-table"
               data={docs}
               headers={headers}
               recordSelected={() => console.log('Record Selected')}
               recordActionClick={() => console.log('Record Action Clicked')}
               rowClass="cursor-pointer"
-              rowTitle="Click to view user details"
             />
           </div>
           <Pagination

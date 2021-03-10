@@ -8,7 +8,7 @@
 
 .react-dropdown-select {
   min-height: 32px !important;
-  height: 32px !important;
+  // height: 32px !important;
   padding: 2px 5px 2px 8px !important;
   background-color: white;
 }
@@ -96,6 +96,7 @@
   overflow: hidden;
   border-color: $border-color;
   box-shadow: 0px 5px 10px #1B252F0D;
+  z-index: 10;
 }
 
 .react-datepicker__header {
@@ -149,18 +150,15 @@
   opacity: .5;
 }
 
-.react-datepicker__day--keyboard-selected,
-.react-datepicker__month-text--keyboard-selected,
-.react-datepicker__quarter-text--keyboard-selected,
-.react-datepicker__year-text--keyboard-selected {
+.react-datepicker__day--keyboard-selected {
   background-color: $background-color !important;
   color: $field-color !important;
   border-radius: .3rem !important;
 }
 
 .react-datepicker__day--today {
-  background-color: $secondary-color;
-  color: white;
+  background-color: $secondary-color!important;
+  color: white!important;
   border-radius: .3rem !important;
 
   &:hover {
@@ -190,13 +188,14 @@
 }
 
 .react-datepicker__navigation--previous {
-    top: 10px;
-    left: 20px;
-    padding: 10px;
-    color: $primary-color;
-    border: none;
-    background-color: $primary-color;
-    border-radius: 3px;
+  top: 10px;
+  left: 20px;
+  padding: 10px;
+  color: $primary-color;
+  border: none;
+  background-color: $primary-color;
+  border-radius: 3px;
+
   &:hover {
     background-color: $primary-variant-color;
   }
@@ -216,13 +215,13 @@
 }
 
 .react-datepicker__navigation--next {
-    top: 10px;
-    right: 20px;
-    padding: 10px;
-    color: $primary-color;
-    background-color: $primary-color;
-    border: none;
-    border-radius: 3px;
+  top: 10px;
+  right: 20px;
+  padding: 10px;
+  color: $primary-color;
+  background-color: $primary-color;
+  border: none;
+  border-radius: 3px;
 
   &:hover {
     background-color: $primary-variant-color;

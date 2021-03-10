@@ -1,5 +1,6 @@
 import { Provider } from 'react-redux';
 import Notifications from 'react-notify-toast';
+import ReactTooltip from 'react-tooltip';
 import { store } from './redux/store';
 import Routes from './routes/Routes';
 
@@ -8,6 +9,7 @@ function App() {
     <Provider store={store}>
       <Notifications />
       <Routes />
+      <ReactTooltip />
     </Provider>
   );
 }

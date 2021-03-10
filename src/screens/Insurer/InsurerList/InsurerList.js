@@ -327,7 +327,6 @@ const InsurerList = () => {
               recordSelected={onSelectInsurerRecord}
               recordActionClick={onSelectInsurerRecordActionClick}
               rowClass="cursor-pointer"
-              rowTitle="Click to view insurer details"
             />
           </div>
           <Pagination

@@ -11,7 +11,7 @@ const ForbiddenAccessPage = () => {
   }, [history]);
 
   return (
-    <div>
+    <div className="forbidden-access-container">
       Forbidden Access
       <Button buttonType="primary" title="Go Back" onClick={goBack} />
     </div>

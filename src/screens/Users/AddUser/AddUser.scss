@@ -3,7 +3,7 @@
 .common-detail-container {
   width: 100%;
   margin-top: 25px;
-  padding: 20px 20px 30px 20px;
+  padding: 20px;
   font: $sub-text;
   background-color: white;
   border-radius: 10px;
@@ -50,7 +50,7 @@
 .module-container {
   display: grid;
   display: -ms-grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 200px));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
   margin-top: 15px;
 }

@@ -348,7 +348,7 @@ const Header = () => {
           className="change-password-dialog"
         >
           <div className="change-password-grid">
-            <div className="form-title">Current password</div>
+            <span className="form-title">Current password</span>
             <div>
               <Input
                 type="password"
@@ -357,7 +357,7 @@ const Header = () => {
                 onChange={onChangeCurrentPassword}
               />{' '}
             </div>
-            <div className="form-title">New password</div>
+            <span className="form-title">New password</span>
             <div>
               <Input
                 type="password"
@@ -366,7 +366,7 @@ const Header = () => {
                 onChange={onChangeNewPassword}
               />{' '}
             </div>
-            <div className="form-title">Re Enter password</div>
+            <span className="form-title">Re Enter password</span>
             <div>
               <Input
                 type="password"

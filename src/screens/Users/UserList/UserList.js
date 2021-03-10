@@ -338,12 +338,12 @@ const UserList = () => {
             <Table
               align="left"
               valign="center"
+              tableClass="main-list-table"
               data={docs}
               headers={headers}
               recordSelected={onSelectUserRecord}
               recordActionClick={onSelectUserRecordActionClick}
               rowClass="cursor-pointer"
-              rowTitle="Click to view user details"
               haveActions
             />
           </div>

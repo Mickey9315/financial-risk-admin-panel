@@ -51,7 +51,6 @@ const ContactsTab = props => {
         recordSelected={recordSelected}
         recordActionClick={recordActionClick}
         rowClass="cursor-pointer"
-        rowTitle="Click to View User Details"
       />{' '}
       <Pagination />
       {customFieldModal && (

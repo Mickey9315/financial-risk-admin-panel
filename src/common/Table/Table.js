@@ -46,7 +46,6 @@ const Table = props => {
     headerClass,
     data,
     rowClass,
-    rowTitle,
     recordSelected,
     recordActionClick,
     refreshData,
@@ -54,7 +53,7 @@ const Table = props => {
     showCheckbox,
     onChageRowSelection,
   } = props;
-
+  const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const [selectedRowData, setSelectedRowData] = React.useState([]);
 
@@ -150,7 +149,7 @@ const Table = props => {
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
-      <table className={tableClass}>
+      <table className={tableClassName}>
         <thead>
           {showCheckbox && (
             <th width={10} align={align} valign={valign}>
@@ -167,7 +166,7 @@ const Table = props => {
                 {heading.label}
               </th>
             ))}
-          <th />
+          {haveActions && <th />}
         </thead>
         <tbody>
           {tableData.map(e => (
@@ -176,7 +175,6 @@ const Table = props => {
               align={align}
               valign={valign}
               rowClass={rowClass}
-              rowTitle={rowTitle}
               recordSelected={recordSelected}
               recordActionClick={recordActionClick}
               haveActions={haveActions}
@@ -199,7 +197,6 @@ Table.propTypes = {
   headerClass: PropTypes.string,
   data: PropTypes.array,
   rowClass: PropTypes.string,
-  rowTitle: PropTypes.string,
   recordSelected: PropTypes.func,
   recordActionClick: PropTypes.func,
   refreshData: PropTypes.func,
@@ -216,7 +213,6 @@ Table.defaultProps = {
   headerClass: '',
   data: [],
   rowClass: '',
-  rowTitle: '',
   haveActions: false,
   showCheckbox: false,
   recordSelected: () => {},
@@ -233,7 +229,6 @@ function Row(props) {
     valign,
     data,
     rowClass,
-    rowTitle,
     recordSelected,
     haveActions,
     recordActionClick,
@@ -277,7 +272,7 @@ function Row(props) {
       )}
       {Object.entries(data).map(([key, value]) =>
         key !== 'id' ? (
-          <td title={rowTitle} align={align}>
+          <td data-tip={value} data-delay-show="400" align={align}>
             {value}
           </td>
         ) : null
@@ -321,7 +316,6 @@ Row.propTypes = {
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   data: PropTypes.oneOf([PropTypes.object]),
   rowClass: PropTypes.string,
-  rowTitle: PropTypes.string,
   recordSelected: PropTypes.func,
   haveActions: PropTypes.bool,
   isSelected: PropTypes.bool,
@@ -335,7 +329,6 @@ Row.defaultProps = {
   valign: 'left',
   data: {},
   rowClass: '',
-  rowTitle: '',
   recordSelected: () => {},
   haveActions: false,
   showCheckbox: false,

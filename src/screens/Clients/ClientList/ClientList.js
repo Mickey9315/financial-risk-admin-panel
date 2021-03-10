@@ -433,6 +433,7 @@ const ClientList = () => {
         <Table
           align="left"
           valign="center"
+          tableClass="main-list-table"
           recordSelected={openViewClient}
           data={docs}
           headers={headers}
@@ -456,7 +457,7 @@ const ClientList = () => {
           className="filter-modal"
         >
           <div className="filter-modal-row">
-            <div className="form-title">Service Manager Name</div>
+            <div className="form-title client-filter-title">Service Manager Name</div>
             <ReactSelect
               className="filter-select"
               placeholder="Select"
@@ -468,7 +469,7 @@ const ClientList = () => {
             />
           </div>
           <div className="filter-modal-row">
-            <div className="form-title">RiskAnalyst Name</div>
+            <div className="form-title client-filter-title">RiskAnalyst Name</div>
             <ReactSelect
               className="filter-select"
               placeholder="Select"
@@ -480,7 +481,7 @@ const ClientList = () => {
             />
           </div>
           <div className="filter-modal-row">
-            <div className="form-title">Date</div>
+            <div className="form-title client-filter-title">Date</div>
             <div className="date-picker-container filter-date-picker-container mr-15">
               <DatePicker
                 className="filter-date-picker"

@@ -1,5 +1,9 @@
 @import "../../index";
 
+.table-class {
+  z-index: 1;
+}
+
 table {
   position: relative;
   width: 100%;
@@ -16,6 +20,7 @@ th {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  background-color: white;
   z-index: 2;
 }
 
@@ -108,6 +113,7 @@ td.fixed-action-menu {
 .fixed-action-menu {
   position: sticky;
   right: 0;
+  color: $placeholder-color;
 }
 
 .fixed-action-menu-clicked {
@@ -124,4 +130,16 @@ tr:first-child .fixed-action-menu {
 
 tr:nth-child(even) .fixed-action-menu {
   background-color: $background-color;
+}
+
+.main-list-table {
+  th {
+    background-color: $background-color;
+  }
+}
+
+.white-header-table {
+  th {
+    background-color: white;
+  }
 }

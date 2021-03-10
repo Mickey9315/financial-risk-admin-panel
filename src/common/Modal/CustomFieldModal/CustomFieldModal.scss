@@ -1,2 +1,6 @@
 @import "../../../index";
 
+.custom-filed-modal-body {
+  max-height: 50vh;
+  overflow-y: auto;
+}

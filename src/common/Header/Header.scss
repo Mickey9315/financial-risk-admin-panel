@@ -74,9 +74,13 @@
 .change-password-grid {
   display: grid;
   align-items: center;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 140px 1fr;
   gap: 10px;
   width: 100%;
+
+  span {
+    white-space: nowrap;
+  }
 
   input {
     min-width: 200px;

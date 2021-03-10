@@ -13,6 +13,7 @@ const CustomFieldModal = props => {
       header="Custom Fields"
       buttons={buttons}
       className="custom-field-modal"
+      bodyClassName="custom-filed-modal-body"
     >
       <div className="custom-field-content">
         <div>
