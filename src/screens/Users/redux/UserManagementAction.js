@@ -266,7 +266,9 @@ export const addNewUser = data => {
       }
     } catch (e) {
       if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
+        if (e.response.data.messageCode === 'USER_EXISTS') {
+          errorNotification('User already exist with this email');
+        } else if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');

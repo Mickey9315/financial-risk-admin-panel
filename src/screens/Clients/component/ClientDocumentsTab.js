@@ -101,7 +101,9 @@ const ClientDocumentsTab = () => {
   const clientDocumentsList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentsList
   );
-
+  /*  const downloadDocumentUrls = useSelector(
+    ({ clientManagement }) => clientManagement.documents.uploadDocumentData
+  ); */
   const documentTypeList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentTypeList
   );
@@ -213,11 +215,15 @@ const ClientDocumentsTab = () => {
   );
 
   const onClickDownloadButton = () => {
-    if (selectedCheckBoxData.length !== 0) {
-      const docsToDownload = selectedCheckBoxData.map(e => e.id);
-      dispatch(downloadDocuments(docsToDownload));
+    if (clientDocumentsList.docs.length !== 0) {
+      if (selectedCheckBoxData.length !== 0) {
+        const docsToDownload = selectedCheckBoxData.map(e => e.id);
+        dispatch(downloadDocuments(docsToDownload));
+      } else {
+        errorNotification('Please select at least one document to download');
+      }
     } else {
-      errorNotification('Please select at least one document to download');
+      errorNotification('You have no documents to download');
     }
   };
   const onChangeSelectedColumn = useCallback(

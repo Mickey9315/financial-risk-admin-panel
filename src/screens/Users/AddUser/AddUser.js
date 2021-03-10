@@ -97,7 +97,7 @@ const AddUser = () => {
 
   const onChangeUserRole = useCallback(
     e => {
-      clientSelected([]);
+      // clientSelected([]);
 
       const data = {
         target: {

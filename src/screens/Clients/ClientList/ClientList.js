@@ -23,7 +23,6 @@ import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomField
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import Drawer from '../../../common/Drawer/Drawer';
-import { saveUserColumnListName } from '../../Users/redux/UserManagementAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import ClientApiService from '../services/ClientApiService';
@@ -63,7 +62,6 @@ const ClientList = () => {
   );
   const filterList = useSelector(({ clientManagementFilterList }) => clientManagementFilterList);
   const syncListFromCrm = useSelector(({ syncClientWithCrm }) => syncClientWithCrm);
-  console.log('syncListFromCrm', syncListFromCrm);
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
@@ -88,7 +86,7 @@ const ClientList = () => {
 
     return finalData.map(e => ({
       label: e.name,
-      value: e.name,
+      value: e._id,
     }));
   }, [filterList]);
 
@@ -97,7 +95,7 @@ const ClientList = () => {
 
     return finalData.map(e => ({
       label: e.name,
-      value: e.name,
+      value: e._id,
     }));
   }, [filterList]);
 
@@ -246,7 +244,7 @@ const ClientList = () => {
   }, [dispatch, toggleCustomField, clientColumnList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveUserColumnListName({ isReset: true }));
+    await dispatch(saveClientColumnListName({ isReset: true }));
     dispatch(getClientColumnListName());
     toggleCustomField();
   }, [dispatch, toggleCustomField]);
@@ -373,18 +371,32 @@ const ClientList = () => {
   );
 
   const clientRiskAnalystSelectedValue = useMemo(() => {
-    const foundValue = docs.find(e => {
-      return e.riskAnalystId === riskAnalystId;
+    const foundValue = filterList.riskAnalystList.find(e => {
+      return e._id === riskAnalystId;
     });
-    return foundValue ? [foundValue] : [];
-  }, [riskAnalystId]);
+    return foundValue
+      ? [
+          {
+            label: foundValue.name,
+            value: foundValue._id,
+          },
+        ]
+      : [];
+  }, [filterList, riskAnalystId]);
 
   const clientServiceManagerSelectedValue = useMemo(() => {
-    const foundValue = docs.find(e => {
-      return e.serviceManagerId === serviceManagerId;
+    const foundValue = filterList.serviceManagerList.find(e => {
+      return e._id === serviceManagerId;
     });
-    return foundValue ? [foundValue] : [];
-  }, [serviceManagerId]);
+    return foundValue
+      ? [
+          {
+            label: foundValue.name,
+            value: foundValue._id,
+          },
+        ]
+      : [];
+  }, [filterList, serviceManagerId]);
   const selectClientFromCrm = crmId => {
     let arr = [...crmIds];
     if (arr.includes(crmId)) {
@@ -448,7 +460,7 @@ const ClientList = () => {
             <ReactSelect
               className="filter-select"
               placeholder="Select"
-              name="servicePerson"
+              name="serviceManagerId"
               options={serviceManagerFilterListData}
               values={clientServiceManagerSelectedValue}
               onChange={handleServiceManagerFilterChange}
@@ -460,7 +472,7 @@ const ClientList = () => {
             <ReactSelect
               className="filter-select"
               placeholder="Select"
-              name="riskAnalystName"
+              name="riskAnalystId"
               options={riskAnalystFilterListData}
               values={clientRiskAnalystSelectedValue}
               onChange={handleRiskAanalystFilterChange}
@@ -512,7 +524,6 @@ const ClientList = () => {
             <>
               {/* <Checkbox title="Name" className="check-all-crmList" /> */}
               <div className="crm-checkbox-list-container">
-                {console.log(syncListFromCrm)}
                 {syncListFromCrm && syncListFromCrm.length > 0 ? (
                   syncListFromCrm.map(crm => (
                     <Checkbox

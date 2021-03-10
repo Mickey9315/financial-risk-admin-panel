@@ -180,8 +180,7 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
           columns: [...defaultColumns, ...customFields],
         };
       }
-
-      if (data.columns.length < 1) {
+      if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
       } else {
         const response = await ClientApiService.updateClientColumnListName(data);

@@ -7,6 +7,7 @@ import ResetPassword from '../screens/auth/resetPassword/ResetPassword';
 import VerifyOtp from '../screens/auth/otpScreen/VerifyOtp';
 import { AllAuthenticatedRoutes, AuthenticatedRoute } from './AuthenticatedRoutes';
 import ForbiddenAccessPage from '../common/ForbiddenAccessPage/ForbiddenAccessPage';
+import SetPassword from '../screens/auth/setPassword/SetPassword';
 
 function Routes() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,6 +29,7 @@ function Routes() {
         {/*  <> */}
         <Route exact path="/login" component={LoginScreen} />
         <Route exact path="/forgot-password" component={ForgotPassword} />
+        <Route exact path="/set-password" component={SetPassword} />
         <Route exact path="/reset-password" component={ResetPassword} />
         <Route exact path="/verify-otp" component={VerifyOtp} />
         <Route exact path="/verify-otp" component={VerifyOtp} />

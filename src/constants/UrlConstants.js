@@ -6,6 +6,7 @@ export const AUTH_URLS = {
   VERIFY_OTP_URL: `${BASE_URL}auth/verify-otp/`,
   RESEND_OTP_URL: `${BASE_URL}auth/resend-otp/`,
   RESET_PASSWORD_URL: `${BASE_URL}auth/reset-password`,
+  SET_PASSWORD_URL: `${BASE_URL}auth/set-password`,
 };
 
 export const HEADER_URLS = {

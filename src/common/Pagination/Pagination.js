@@ -44,6 +44,10 @@ const Pagination = props => {
     setRecordLimit([value]);
   }, [limit]);
 
+  if (total === 0) {
+    return null;
+  }
+
   return (
     <div className={paginationClass}>
       <div className="records-per-page-container">

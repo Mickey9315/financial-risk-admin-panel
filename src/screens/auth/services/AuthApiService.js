@@ -7,6 +7,7 @@ const AuthApiService = {
   verifyOtp: data => ApiService.postData(AUTH_URLS.VERIFY_OTP_URL, data),
   resentOtp: data => ApiService.postData(AUTH_URLS.RESEND_OTP_URL, data),
   resetPassword: data => ApiService.postData(AUTH_URLS.RESET_PASSWORD_URL, data),
+  setPassword: data => ApiService.postData(AUTH_URLS.SET_PASSWORD_URL, data),
 };
 
 export default AuthApiService;
