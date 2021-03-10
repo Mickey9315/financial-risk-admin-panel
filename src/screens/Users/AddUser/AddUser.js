@@ -46,12 +46,13 @@ const AddUser = () => {
     dispatch(getAllClientList());
     if (action !== 'add' && id) {
       dispatch(getSelectedUserData(id));
-    } else {
+    }
+    return () => {
       dispatch({
         type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
         data: null,
       });
-    }
+    };
   }, []);
 
   useEffect(() => {
