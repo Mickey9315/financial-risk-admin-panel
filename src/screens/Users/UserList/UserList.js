@@ -167,11 +167,13 @@ const UserList = () => {
 
   const onClickSaveColumnSelection = useCallback(async () => {
     await dispatch(saveUserColumnListName({ userColumnList }));
+    getUserManagementByFilter();
     toggleCustomField();
   }, [dispatch, toggleCustomField, userColumnList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveUserColumnListName({ isReset: true }));
+    getUserManagementByFilter();
     dispatch(getUserColumnListName());
     toggleCustomField();
   }, [dispatch, toggleCustomField]);
