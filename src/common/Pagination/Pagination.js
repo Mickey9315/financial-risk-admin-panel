@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './Pagination.scss';
 import PropTypes from 'prop-types';
 import ReactSelect from 'react-dropdown-select';
@@ -33,6 +33,16 @@ const Pagination = props => {
     setRecordLimit(e);
     onSelectLimit(e[0].value);
   };
+
+  useEffect(() => {
+    const found = noPerPage.find(e => e.value === limit);
+    let value = { label: '15', value: 15 };
+
+    if (found) {
+      value = found;
+    }
+    setRecordLimit([value]);
+  }, [limit]);
 
   return (
     <div className={paginationClass}>
