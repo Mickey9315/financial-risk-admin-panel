@@ -171,7 +171,7 @@ const ViewClient = () => {
         <span>ACN</span>
         <Input type="number" placeholder="1234567890" value={viewClientData.acn} />
         <span>Referred By</span>
-        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.referredBy} />
+        <Input type="text" placeholder="Referred By" value={viewClientData.referredBy} />
         <span>Risk Person</span>
         <ReactSelect
           placeholder="Select"
@@ -191,20 +191,28 @@ const ViewClient = () => {
           searchable={false}
         />
         <span>IBIS Sector</span>
-        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.sector} />
+        <Input type="text" placeholder="IBIS Secto" value={viewClientData.sector} />
         <span>Sales Person</span>
-        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.salesPerson} />
+        <Input type="text" placeholder="Sales Person" value={viewClientData.salesPerson} />
         <span>Website</span>
-        <Input type="text" placeholder="Lorem Ipsum" value={viewClientData.website} />
+        <Input type="text" placeholder="Website" value={viewClientData.website} />
         <span>Trading As</span>
-        <Input type="text" placeholder="Lorem Ipsum" />
+        <Input type="text" placeholder="Trading As" />
         <span>Inception Date</span>
         <div className="date-picker-container">
-          <DatePicker placeholderText="Select date" />
+          <DatePicker
+            placeholderText="Select date"
+            selected={new Date(viewClientData.inceptionDate)}
+            disabled
+          />
         </div>
         <span>Expiry Date</span>
         <div className="date-picker-container">
-          <DatePicker placeholderText="Select date" />
+          <DatePicker
+            placeholderText="Select date"
+            selected={new Date(viewClientData.expiryDate)}
+            disabled
+          />
         </div>
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
