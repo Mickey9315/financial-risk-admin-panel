@@ -87,7 +87,7 @@ export const getUserColumnListName = () => {
 };
 
 export const saveUserColumnListName = ({ userColumnList = {}, isReset = false }) => {
-  return async dispatch => {
+  return async () => {
     try {
       let data = {
         isReset: true,
@@ -111,7 +111,6 @@ export const saveUserColumnListName = ({ userColumnList = {}, isReset = false })
         const response = await UserManagementApiService.updateUserColumnListName(data);
 
         if (response && response.data && response.data.status === 'SUCCESS') {
-          dispatch(getUserManagementListByFilter());
           successNotification('Columns updated successfully.');
         }
       }
