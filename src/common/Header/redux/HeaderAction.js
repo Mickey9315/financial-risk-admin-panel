@@ -108,7 +108,7 @@ export const uploadProfilePicture = (data, config) => {
           type: EDIT_PROFILE_CONSTANT.UPDATE_USER_PROFILE_PICTURE,
           data: response.data.data,
         });
-        successNotification('Profile Picture Updated Successfully');
+        successNotification('Profile picture updated successfully');
       }
     } catch (e) {
       if (e.response && e.response.data) {

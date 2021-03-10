@@ -82,21 +82,40 @@
     min-width: 200px;
   }
 }
+
+.edit-profile-dialog{
+  max-width: 450px;
+}
 .edit-profile-grid{
   display: grid;
   align-items: center;
-  grid-template-columns: 30% 70%;
+  grid-template-columns: 40% 60%;
   gap: 10px;
   width: 100%;
+  .form-title{
+    font-size: 14px;
+    min-width: 100px;
+    font-family: 'GoogleSans-Regular', serif;
+    font-weight: normal;
+  }
   .user-dp{
+    height: 40px;
+    width: 40px;
     margin-left: 0;
   }
   .user-fields{
     color: $secondary-color;
-    min-width: 200px;
+    max-width: 200px;
+    font-size: 14px;
+    word-break: break-all;
+    overflow: hidden;
+    line-height: 32px;
   }
-  input{
-    color:$secondary-color;
-    min-width: 200px;
+  .input-container{
+    max-width: 200px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: normal;
+    border-radius: 5px;
   }
 }

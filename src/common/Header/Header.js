@@ -46,7 +46,6 @@ const Header = () => {
 
   const { name, email, contactNumber, profilePictureUrl, changed } = useMemo(() => {
     if (loggedUserDetail) {
-      console.log(loggedUserDetail);
       // eslint-disable-next-line no-shadow
       const { name, email, contactNumber, profilePictureUrl, changed } = loggedUserDetail;
       return {
@@ -113,6 +112,8 @@ const Header = () => {
     if (changed) {
       dispatch(getLoggedUserDetails());
     }
+    setFileName('Browse...');
+    setFile(null);
     setIsEditProfileButton(false);
     toggleEditProfileModal(false);
   };
@@ -123,16 +124,19 @@ const Header = () => {
   }, []);
   const onSaveEditProfileClick = async () => {
     if (name.toString().trim().length === 0) {
-      return errorNotification('You forgot to enter name!');
+      return errorNotification('Please enter your name');
+    }
+    if (name.toString().trim().length > 150) {
+      return errorNotification('Name can be upto 150 char only');
     }
     if (email.toString().trim().length === 0) {
-      return errorNotification('You forgot to enter email!');
+      return errorNotification('Please enter your email address');
     }
     if (contactNumber.toString().trim().length === 0) {
-      return errorNotification('You forgot to enter contact number!');
+      return errorNotification('Please enter your contact number');
     }
     if (!checkForEmail(replaceHiddenCharacters(email))) {
-      return errorNotification('Please enter a valid email');
+      return errorNotification('Please enter valid email address');
     }
     if (contactNumber && !contactNumber.match(MOBILE_NUMBER_REGEX)) {
       return errorNotification('Please enter valid contact number');
@@ -274,6 +278,7 @@ const Header = () => {
           <Modal
             header="Edit Profile"
             buttons={!isEditProfileButton ? editProfileButtons : onEditProfileButtons}
+            className="edit-profile-dialog"
           >
             <div className="edit-profile-grid">
               <div className="form-title">Profile Avatar</div>
