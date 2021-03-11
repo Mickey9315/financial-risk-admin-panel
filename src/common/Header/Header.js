@@ -18,8 +18,6 @@ import Input from '../Input/Input';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 import { errorNotification } from '../Toast';
 import { SIDEBAR_URLS } from '../../constants/SidebarConstants';
-import { checkForEmail, replaceHiddenCharacters } from '../../helpers/ValidationHelper';
-import { MOBILE_NUMBER_REGEX } from '../../constants/RegexConstants';
 import FileUpload from './component/FileUpload';
 
 const Header = () => {
@@ -122,48 +120,39 @@ const Header = () => {
     const { name, value } = e.target;
     dispatch(changeEditProfileData({ name, value }));
   }, []);
-  const onSaveEditProfileClick = async () => {
+  const onSaveEditProfileClick = useCallback(async () => {
     if (name.toString().trim().length === 0) {
-      return errorNotification('Please enter your name');
-    }
-    if (name.toString().trim().length > 150) {
-      return errorNotification('Name can be upto 150 char only');
-    }
-    if (email.toString().trim().length === 0) {
-      return errorNotification('Please enter your email address');
-    }
-    if (contactNumber.toString().trim().length === 0) {
-      return errorNotification('Please enter your contact number');
-    }
-    if (!checkForEmail(replaceHiddenCharacters(email))) {
-      return errorNotification('Please enter valid email address');
-    }
-    if (contactNumber && !contactNumber.match(MOBILE_NUMBER_REGEX)) {
-      return errorNotification('Please enter valid contact number');
-    }
-    try {
-      if (changed) {
-        dispatch(updateUserProfile(name, email, contactNumber));
+      errorNotification('Please enter your name');
+    } else if (name.toString().trim().length > 150) {
+      errorNotification('Name can be upto 150 char only');
+    } else if (contactNumber.toString().trim().length === 0) {
+      errorNotification('Please enter your contact number');
+    } else if (contactNumber && !contactNumber.match(/^\+?(\d+$)/)) {
+      errorNotification('Please enter valid contact number');
+    } else {
+      try {
+        if (file) {
+          const formData = new FormData();
+          formData.append('profile-picture', file);
+          const config = {
+            headers: {
+              'content-type': 'multipart/form-data',
+            },
+          };
+          dispatch(uploadProfilePicture(formData, config));
+          setFileName('Browse...');
+          setFile(null);
+        }
+        if (changed) {
+          dispatch(updateUserProfile(name, contactNumber));
+        }
+        setIsEditProfileButton(false);
+        toggleEditProfileModal(false);
+      } catch (err) {
+        /**/
       }
-      if (file) {
-        const formData = new FormData();
-        formData.append('profile-picture', file);
-        const config = {
-          headers: {
-            'content-type': 'multipart/form-data',
-          },
-        };
-        dispatch(uploadProfilePicture(formData, config));
-        setFileName('Browse...');
-        setFile(null);
-      }
-      setIsEditProfileButton(false);
-      toggleEditProfileModal(false);
-    } catch (e) {
-      errorNotification('Something went wrong');
     }
-    return true;
-  };
+  }, [name, contactNumber, file, changed, fileName]);
   const editProfileButtons = [
     {
       title: 'Close',
@@ -227,15 +216,24 @@ const Header = () => {
   }, []);
 
   const handleChange = e => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      if (selectedFile.size > 2097152) {
-        errorNotification('Maximum upload file size < 2 MB');
-      } else if (selectedFile.type !== 'image/png') {
-        errorNotification('File must be image file');
+    e.persist();
+    if (e.target.files && e.target.files.length > 0) {
+      const fileExtension = ['jpeg', 'jpg', 'png'];
+      const mimeType = ['image/jpeg', 'image/jpg', 'image/png'];
+
+      const checkExtension =
+        fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+      const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+
+      if (!(checkExtension || checkMimeTypes)) {
+        errorNotification('Only image file allowed');
+      }
+      const checkFileSize = e.target.files[0].size > 4194304;
+      if (checkFileSize) {
+        errorNotification('File size should be less than 4 mb');
       } else {
-        setFileName(selectedFile.name ? selectedFile.name : 'Browse...');
-        setFile(selectedFile);
+        setFileName(e.target.files[0].name ? e.target.files[0].name : 'Browse...');
+        setFile(e.target.files[0]);
       }
     }
   };
@@ -315,6 +313,7 @@ const Header = () => {
                   <Input
                     type="email"
                     name="email"
+                    disabled
                     value={email}
                     onChange={onChangeEditProfileData}
                     placeholder={email}
@@ -327,10 +326,9 @@ const Header = () => {
               ) : (
                 <div>
                   <Input
-                    type="tel"
+                    type="text"
                     name="contactNumber"
                     value={contactNumber}
-                    maxlength="10"
                     onChange={onChangeEditProfileData}
                     placeholder={contactNumber}
                   />

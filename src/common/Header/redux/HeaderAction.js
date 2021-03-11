@@ -72,12 +72,11 @@ export const changeEditProfileData = data => {
   };
 };
 
-export const updateUserProfile = (name, email, contactNumber) => {
+export const updateUserProfile = (name, contactNumber) => {
   return async dispatch => {
     try {
       const data = {
         name,
-        email,
         contactNumber,
       };
       const response = await HeaderApiService.updateUserProfile(data);
