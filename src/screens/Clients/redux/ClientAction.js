@@ -757,29 +757,26 @@ export const uploadDocument = (data, config) => {
   };
 };
 
-export const downloadDocuments = data => {
-  return async dispatch => {
-    const str = data.toString();
-    try {
-      const config = {
-        documentIds: str,
-      };
+export const downloadDocuments = async data => {
+  const str = data.toString();
 
-      const response = await ClientDocumentsApiService.downloadDocuments(config);
-      if (response.data.status === 'SUCCESS') {
-        dispatch({
-          type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.DOWNLOAD_DOCUMENT_CLIENT_ACTION,
-          data: response.data.data,
-        });
-      }
-    } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
+  try {
+    const config = {
+      documentIds: str,
+    };
+
+    const response = await ClientDocumentsApiService.downloadDocuments(config);
+    if (response.data.status === 'SUCCESS') {
+      return response.data.data;
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else {
+        errorNotification('Internal server error');
       }
     }
-  };
+  }
+  return false;
 };

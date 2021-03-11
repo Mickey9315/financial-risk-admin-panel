@@ -1,4 +1,5 @@
-export const BASE_URL = 'https://client.trad.dev.gradlesol.com/app/rp/';
+ export const BASE_URL = 'https://client.trad.dev.gradlesol.com/app/rp/';
+// export const BASE_URL = 'https://921ee85c54c1.ngrok.io/rp/';
 
 export const AUTH_URLS = {
   LOGIN_URL: `${BASE_URL}auth/login/`,

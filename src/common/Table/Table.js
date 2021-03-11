@@ -273,7 +273,7 @@ function Row(props) {
       {Object.entries(data).map(([key, value]) =>
         key !== 'id' ? (
           <td data-tip={value} data-delay-show="400" align={align}>
-            {value}
+            {value || '-'}
           </td>
         ) : null
       )}

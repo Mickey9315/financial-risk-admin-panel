@@ -128,7 +128,11 @@ const ClientNotesTab = () => {
   const addToCRMButtons = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
-      { title: 'Add', buttonType: 'primary', onClick: addOrUpdateNote },
+      {
+        title: `${selectedClientNote.type === 'EDIT' ? 'Edit' : 'Add'} `,
+        buttonType: 'primary',
+        onClick: addOrUpdateNote,
+      },
     ],
     [onCloseNotePopup, addOrUpdateNote]
   );
@@ -222,7 +226,7 @@ const ClientNotesTab = () => {
     <>
       {modifyNoteModal && (
         <Modal
-          header="Add Note"
+          header={`${selectedClientNote.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
           className="add-to-crm-modal"
           buttons={addToCRMButtons}
           hideModal={toggleConfirmationModal}

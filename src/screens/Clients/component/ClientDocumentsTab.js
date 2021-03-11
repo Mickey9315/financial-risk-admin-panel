@@ -23,6 +23,7 @@ import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
 import Input from '../../../common/Input/Input';
 import FileUpload from '../../../common/Header/component/FileUpload';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const initialClientDocumentState = {
   description: '',
@@ -71,6 +72,7 @@ const ClientDocumentsTab = () => {
 
   const [uploadModel, setUploadModel] = useState(false);
   const [selectedCheckBoxData, setSelectedCheckBoxData] = useState([]);
+  const [pageLimit, setPageLimit] = useState('');
   const toggleUploadModel = useCallback(
     value => setUploadModel(value !== undefined ? value : e => !e),
 
@@ -101,9 +103,6 @@ const ClientDocumentsTab = () => {
   const clientDocumentsList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentsList
   );
-  /*  const downloadDocumentUrls = useSelector(
-    ({ clientManagement }) => clientManagement.documents.uploadDocumentData
-  ); */
   const documentTypeList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentTypeList
   );
@@ -137,7 +136,7 @@ const ClientDocumentsTab = () => {
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
       await dispatch(saveClientDocumentsColumnListName({ clientDocumentsColumnList }));
-      dispatch(getClientDocumentsListData(id));
+      dispatch(getClientDocumentsListData(id, { limit: pageLimit }));
     } catch (e) {
       /**/
     }
@@ -214,18 +213,19 @@ const ClientDocumentsTab = () => {
     [onCloseUploadDocumentButton, onClickUploadDocument]
   );
 
-  const onClickDownloadButton = () => {
+  const onClickDownloadButton = useCallback(async () => {
     if (clientDocumentsList.docs.length !== 0) {
       if (selectedCheckBoxData.length !== 0) {
         const docsToDownload = selectedCheckBoxData.map(e => e.id);
-        dispatch(downloadDocuments(docsToDownload));
+        const docUrls = await downloadDocuments(docsToDownload);
+        downloadAll(docUrls);
       } else {
         errorNotification('Please select at least one document to download');
       }
     } else {
       errorNotification('You have no documents to download');
     }
-  };
+  }, [clientDocumentsList, selectedCheckBoxData]);
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
@@ -255,6 +255,7 @@ const ClientDocumentsTab = () => {
   );
   const onSelectLimit = useCallback(
     newLimit => {
+      setPageLimit(newLimit);
       getClientDocumentsList({ page: 1, limit: newLimit });
     },
     [getClientDocumentsList]
@@ -321,10 +322,7 @@ const ClientDocumentsTab = () => {
               refreshData={getClientDocumentsList}
               haveActions
               showCheckbox
-              onChageRowSelection={data => {
-                console.log(310, { data });
-                setSelectedCheckBoxData(data);
-              }}
+              onChageRowSelection={data => setSelectedCheckBoxData(data)}
             />
           </div>
           <Pagination

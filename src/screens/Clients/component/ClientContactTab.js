@@ -35,11 +35,11 @@ const ClientContactsTab = () => {
     () => clientContactColumnList || { defaultFields: [], customFields: [] },
     [clientContactColumnList]
   );
-
+  const [pageLimit, setPageLimit] = useState('');
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
       await dispatch(saveClientContactColumnListName({ clientContactColumnList }));
-      dispatch(getClientContactListData(id));
+      dispatch(getClientContactListData(id, { limit: pageLimit }));
     } catch (e) {
       /**/
     }
@@ -48,7 +48,7 @@ const ClientContactsTab = () => {
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveClientContactColumnListName({ isReset: true }));
-    dispatch(getClientContactListData(id));
+    dispatch(getClientContactListData(id, { limit: pageLimit }));
     toggleCustomField();
   }, [dispatch, toggleCustomField]);
 
@@ -106,6 +106,7 @@ const ClientContactsTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
+      setPageLimit(newLimit);
       getClientContactsList({ page: 1, limit: newLimit });
     },
     [getClientContactsList]

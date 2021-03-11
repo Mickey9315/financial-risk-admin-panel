@@ -15,7 +15,7 @@ function SetPassword() {
 
   const history = useHistory();
   const { token } = useQueryParams();
-
+  console.log('token->', token);
   const onChangePassword = e => {
     const changedPassword = e.target.value;
     setMakePassword(changedPassword);
@@ -35,8 +35,7 @@ function SetPassword() {
       errorNotification('Password and Re-enter password does not match.');
     } else {
       try {
-        await setPassword(token, makePassword.toString().trim());
-        history.replace('/login');
+        await setPassword(token, makePassword.toString().trim(), () => history.replace('/login'));
       } catch (e) {
         /**/
       }

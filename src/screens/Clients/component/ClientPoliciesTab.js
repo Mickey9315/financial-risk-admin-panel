@@ -24,6 +24,7 @@ const ClientPoliciesTab = () => {
 
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
+  const [pageLimit, setPageLimit] = useState('');
   const clientPoliciesList = useSelector(
     ({ clientManagement }) => clientManagement.policies.policiesList
   );
@@ -40,7 +41,7 @@ const ClientPoliciesTab = () => {
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
       await dispatch(saveClientPoliciesColumnListName({ clientPoliciesColumnList }));
-      dispatch(getClientPoliciesListData(id));
+      dispatch(getClientPoliciesListData(id, { limit: pageLimit }));
     } catch (e) {
       /**/
     }
@@ -49,7 +50,7 @@ const ClientPoliciesTab = () => {
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveClientPoliciesColumnListName({ isReset: true }));
-    dispatch(getClientPoliciesListData(id));
+    dispatch(getClientPoliciesListData(id, { limit: pageLimit }));
     toggleCustomField();
   }, [dispatch, toggleCustomField]);
 
@@ -107,6 +108,7 @@ const ClientPoliciesTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
+      setPageLimit(newLimit);
       getClientPoliciesList({ page: 1, limit: newLimit });
     },
     [getClientPoliciesList]

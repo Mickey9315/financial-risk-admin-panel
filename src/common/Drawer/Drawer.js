@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './Drawer.scss';
 import PropTypes from 'prop-types';
+import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 
 const Drawer = props => {
   const { drawerState, closeDrawer, header, className, children, ...restProps } = props;
+  const drawerMenuRef = useRef();
+  useOnClickOutside(drawerMenuRef, () => closeDrawer());
+
   const drawerClasses = `drawer-container ${drawerState && 'drawer-opened'} ${className}`;
   return (
     <>
       <div className={drawerState && 'drawer-overlay'} />
-      <div className={drawerClasses} {...restProps}>
+      <div className={drawerClasses} {...restProps} ref={drawerMenuRef}>
         <div className="drawer-wrapper">
           <div className="drawer-header-container">
             {header}
