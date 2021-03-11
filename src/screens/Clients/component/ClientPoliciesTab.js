@@ -181,6 +181,7 @@ const ClientPoliciesTab = () => {
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={buttons}
+          toggleCustomField={toggleCustomField}
         />
       )}
     </>

@@ -345,6 +345,7 @@ const ClientDocumentsTab = () => {
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={buttons}
+          toggleCustomField={toggleCustomField}
         />
       )}
       {uploadModel && (
@@ -352,6 +353,7 @@ const ClientDocumentsTab = () => {
           header="Upload Documents"
           className="upload-document-modal"
           buttons={uploadDocumentButton}
+          hideModal={toggleUploadModel}
         >
           <div className="document-upload-popup-container">
             <span>Document Type</span>

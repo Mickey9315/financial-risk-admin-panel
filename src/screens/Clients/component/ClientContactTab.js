@@ -180,6 +180,7 @@ const ClientContactsTab = () => {
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={buttons}
+          toggleCustomField={toggleCustomField}
         />
       )}
     </>

@@ -279,6 +279,7 @@ const Header = () => {
             header="Edit Profile"
             buttons={!isEditProfileButton ? editProfileButtons : onEditProfileButtons}
             className="edit-profile-dialog"
+            hideModal={toggleEditProfileModal}
           >
             <div className="edit-profile-grid">
               <div className="form-title">Profile Avatar</div>
@@ -346,6 +347,7 @@ const Header = () => {
           header="Change Password"
           buttons={changePasswordBtns}
           className="change-password-dialog"
+          hideModal={toggleChangePasswordModal}
         >
           <div className="change-password-grid">
             <span className="form-title">Current password</span>

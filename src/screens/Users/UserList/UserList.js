@@ -367,6 +367,7 @@ const UserList = () => {
           header="Filter"
           buttons={filterModalButtons}
           className="filter-modal"
+          hideModal={toggleFilterModal}
         >
           <div className="filter-modal-row">
             <div className="form-title">Role</div>
@@ -409,10 +410,11 @@ const UserList = () => {
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={customFieldsModalButtons}
+          toggleCustomField={toggleCustomField}
         />
       )}
       {deleteModal && (
-        <Modal header="Delete User" buttons={deleteUserButtons}>
+        <Modal header="Delete User" buttons={deleteUserButtons} hideModal={toggleConfirmationModal}>
           <span className="confirmation-message">Are you sure you want to delete this user?</span>
         </Modal>
       )}

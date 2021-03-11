@@ -170,6 +170,7 @@ const ApplicationList = () => {
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={customFieldsModalButtons}
+          toggleCustomField={toggleCustomField}
         />
       )}
     </>

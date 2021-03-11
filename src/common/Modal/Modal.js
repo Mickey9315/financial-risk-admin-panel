@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './Modal.scss';
 import PropTypes from 'prop-types';
 import Button from '../Button/Button';
+import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 
 const Modal = props => {
   const {
@@ -12,14 +13,19 @@ const Modal = props => {
     headerClassName,
     bodyClassName,
     className,
+    hideModal,
     ...restProps
   } = props;
   const dialogContentClass = `modal-content ${className}`;
   const dialogHeaderClass = `modal-header ${headerClassName}`;
   const dialogBodyClass = `modal-body ${bodyClassName}`;
+
+  const modalRef = useRef();
+  useOnClickOutside(modalRef, () => hideModal(false));
+
   return (
     <div className="modal">
-      <div className={dialogContentClass} {...restProps}>
+      <div className={dialogContentClass} ref={modalRef} {...restProps}>
         <div className={dialogHeaderClass}>
           {headerIcon && (
             <div className="d-flex just-center">
@@ -52,6 +58,7 @@ Modal.propTypes = {
   headerIcon: PropTypes.string,
   headerClassName: PropTypes.string,
   bodyClassName: PropTypes.string,
+  hideModal: PropTypes.func,
   children: PropTypes.element,
 };
 
@@ -63,6 +70,7 @@ Modal.defaultProps = {
   headerClassName: 'modal-header ',
   bodyClassName: 'modal-body ',
   children: null,
+  hideModal: () => {},
 };
 
 export default Modal;

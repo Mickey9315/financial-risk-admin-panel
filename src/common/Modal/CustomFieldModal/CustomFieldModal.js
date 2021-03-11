@@ -5,7 +5,7 @@ import Modal from '../Modal';
 import Checkbox from '../../Checkbox/Checkbox';
 
 const CustomFieldModal = props => {
-  const { defaultFields, customFields, buttons, onChangeSelectedColumn } = props;
+  const { defaultFields, customFields, buttons, onChangeSelectedColumn, toggleCustomField } = props;
 
   return (
     <Modal
@@ -14,6 +14,7 @@ const CustomFieldModal = props => {
       buttons={buttons}
       className="custom-field-modal"
       bodyClassName="custom-filed-modal-body"
+      hideModal={toggleCustomField}
     >
       <div className="custom-field-content">
         <div>
@@ -47,6 +48,7 @@ CustomFieldModal.propTypes = {
   defaultFields: PropTypes.array,
   buttons: PropTypes.array,
   onChangeSelectedColumn: PropTypes.func,
+  toggleCustomField: PropTypes.func,
 };
 
 CustomFieldModal.defaultProps = {
@@ -54,6 +56,7 @@ CustomFieldModal.defaultProps = {
   defaultFields: [],
   buttons: [],
   onChangeSelectedColumn: () => {},
+  toggleCustomField: () => {},
 };
 
 export default CustomFieldModal;

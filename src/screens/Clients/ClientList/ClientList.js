@@ -455,6 +455,7 @@ const ClientList = () => {
           header="Filter"
           buttons={filterModalButtons}
           className="filter-modal"
+          hideModal={toggleFilterModal}
         >
           <div className="filter-modal-row">
             <div className="form-title client-filter-title">Service Manager Name</div>
@@ -509,10 +510,16 @@ const ClientList = () => {
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
           buttons={customFieldsModalButtons}
+          toggleCustomField={toggleCustomField}
         />
       )}
       {addFromCRM && (
-        <Modal header="Add From CRM" className="add-to-crm-modal" buttons={addToCRMButtons}>
+        <Modal
+          header="Add From CRM"
+          className="add-to-crm-modal"
+          buttons={addToCRMButtons}
+          hideModal={onClickAddFromCRM}
+        >
           <BigInput
             ref={searchInputRef}
             prefix="search"

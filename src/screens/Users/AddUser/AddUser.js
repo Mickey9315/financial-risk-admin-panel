@@ -216,7 +216,11 @@ const AddUser = () => {
   return (
     <>
       {showModal && (
-        <Modal header={modalData.title} buttons={modalData.buttons}>
+        <Modal
+          header={modalData.title}
+          buttons={modalData.buttons}
+          hideModal={toggleConfirmationModal}
+        >
           <span className="confirmation-message">{modalData.description}</span>
         </Modal>
       )}

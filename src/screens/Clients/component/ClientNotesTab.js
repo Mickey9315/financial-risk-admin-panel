@@ -221,7 +221,12 @@ const ClientNotesTab = () => {
   return (
     <>
       {modifyNoteModal && (
-        <Modal header="Add Note" className="add-to-crm-modal" buttons={addToCRMButtons}>
+        <Modal
+          header="Add Note"
+          className="add-to-crm-modal"
+          buttons={addToCRMButtons}
+          hideModal={toggleConfirmationModal}
+        >
           <div className="add-notes-popup-container">
             <span>Description</span>
             <Input
@@ -243,7 +248,7 @@ const ClientNotesTab = () => {
         </Modal>
       )}
       {showConfirmModal && (
-        <Modal header="Delete User" buttons={deleteUserButtons}>
+        <Modal header="Delete User" buttons={deleteUserButtons} hideModal={toggleConfirmationModal}>
           <span className="confirmation-message">Are you sure you want to delete this user?</span>
         </Modal>
       )}
