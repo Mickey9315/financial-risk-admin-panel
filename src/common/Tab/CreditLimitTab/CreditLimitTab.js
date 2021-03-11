@@ -86,7 +86,13 @@ const CreditLimitTab = () => {
           />
         </div>
       </div>
-      <Table headerClass="tab-table-header" header={columnStructure} />
+      <div className="tab-table-container">
+        <Table
+          headerClass="tab-table-header"
+          tableClass="white-header-table"
+          header={columnStructure}
+        />
+      </div>
       <Pagination />
       {customFieldModal && (
         <CustomFieldModal

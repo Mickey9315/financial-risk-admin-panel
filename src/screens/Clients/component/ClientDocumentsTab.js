@@ -310,12 +310,13 @@ const ClientDocumentsTab = () => {
       </div>
       {docs ? (
         <>
-          <div className="common-list-container">
+          <div className="tab-table-container">
             <Table
               align="left"
               valign="center"
               data={docs}
               headers={headers}
+              tableClass="white-header-table"
               // recordActionClick={onSelectUserRecordActionClick}
               refreshData={getClientDocumentsList}
               haveActions

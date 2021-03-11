@@ -43,15 +43,17 @@ const ContactsTab = props => {
           <Button buttonType="secondary" title="Sync With CRM" />
         </div>
       </div>
-      <Table
-        align="left"
-        valign="center"
-        data={data}
-        headers={headers}
-        recordSelected={recordSelected}
-        recordActionClick={recordActionClick}
-        rowClass="cursor-pointer"
-      />{' '}
+      <div className="tab-table-container">
+        <Table
+          align="left"
+          valign="center"
+          data={data}
+          headers={headers}
+          recordSelected={recordSelected}
+          recordActionClick={recordActionClick}
+          rowClass="cursor-pointer"
+        />
+      </div>
       <Pagination />
       {customFieldModal && (
         <CustomFieldModal

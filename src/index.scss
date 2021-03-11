@@ -39,6 +39,10 @@ input:-webkit-autofill:active  {
 }
 
 /* scrollbar starts here */
+* {
+  scrollbar-color: $primary-color white;
+  scrollbar-width: thin;
+}
 /* width */
 ::-webkit-scrollbar {
   height: 5px;

@@ -152,10 +152,11 @@ const ClientContactsTab = () => {
       </div>
       {docs ? (
         <>
-          <div className="common-list-container">
+          <div className="tab-table-container">
             <Table
               align="left"
               valign="center"
+              tableClass="white-header-table"
               data={docs}
               headers={headers}
               refreshData={getClientContactsList}

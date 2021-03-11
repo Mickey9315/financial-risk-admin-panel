@@ -11,8 +11,12 @@
     color: $primary-color;
   }
 
-  > input, > div {
+  > div {
     width: 70%;
     min-width: 170px;
+  }
+
+   input {
+    cursor: default!important;
   }
 }

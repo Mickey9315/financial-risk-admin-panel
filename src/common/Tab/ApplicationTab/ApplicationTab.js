@@ -96,7 +96,13 @@ const ApplicationTab = () => {
           />
         </div>
       </div>
-      <Table header={columnStructure} headerClass="tab-table-header" />
+      <div className="tab-table-container">
+        <Table
+          header={columnStructure}
+          tableClass="white-header-table"
+          headerClass="tab-table-header"
+        />
+      </div>
       <Pagination />
       {customFieldModal && (
         <CustomFieldModal

@@ -50,7 +50,7 @@
 .module-container {
   display: grid;
   display: -ms-grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
   gap: 15px;
   margin-top: 15px;
 }

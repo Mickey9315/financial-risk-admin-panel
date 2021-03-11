@@ -153,9 +153,10 @@ const ClientPoliciesTab = () => {
       </div>
       {docs ? (
         <>
-          <div className="common-list-container">
+          <div className="tab-table-container">
             <Table
               align="left"
+              tableClass="white-header-table"
               valign="center"
               data={docs}
               headers={headers}

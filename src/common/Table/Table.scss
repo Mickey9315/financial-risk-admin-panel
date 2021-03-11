@@ -20,7 +20,6 @@ th {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  background-color: white;
   z-index: 2;
 }
 
@@ -139,6 +138,7 @@ tr:nth-child(even) .fixed-action-menu {
 }
 
 .white-header-table {
+  overflow-x: auto;
   th {
     background-color: white;
   }

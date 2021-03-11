@@ -159,19 +159,25 @@ const ViewClient = () => {
         <span>Name</span>
         <Input
           type="text"
+          readOnly
           placeholder="Enter Name"
           value={viewClientData.name ? viewClientData.name : ''}
         />
         <span>Address</span>
-        <Input type="text" placeholder="Enter Address" value={viewClientData.address.city} />
+        <Input
+          type="text"
+          readOnly
+          placeholder="Enter Address"
+          value={viewClientData.address.city}
+        />
         <span>Phone</span>
-        <Input type="text" placeholder="1234567890" value={viewClientData.contactNumber} />
+        <Input type="text" readOnly placeholder="1234567890" value={viewClientData.contactNumber} />
         <span>ABN</span>
-        <Input type="number" placeholder="1234567890" value={viewClientData.abn} />
+        <Input type="number" readOnly placeholder="1234567890" value={viewClientData.abn} />
         <span>ACN</span>
-        <Input type="number" placeholder="1234567890" value={viewClientData.acn} />
+        <Input type="number" readOnly placeholder="1234567890" value={viewClientData.acn} />
         <span>Referred By</span>
-        <Input type="text" placeholder="Referred By" value={viewClientData.referredBy} />
+        <Input type="text" readOnly placeholder="Referred By" value={viewClientData.referredBy} />
         <span>Risk Person</span>
         <ReactSelect
           placeholder="Select"
@@ -191,13 +197,13 @@ const ViewClient = () => {
           searchable={false}
         />
         <span>IBIS Sector</span>
-        <Input type="text" placeholder="IBIS Secto" value={viewClientData.sector} />
+        <Input type="text" readOnly placeholder="IBIS Secto" value={viewClientData.sector} />
         <span>Sales Person</span>
-        <Input type="text" placeholder="Sales Person" value={viewClientData.salesPerson} />
+        <Input type="text" readOnly placeholder="Sales Person" value={viewClientData.salesPerson} />
         <span>Website</span>
-        <Input type="text" placeholder="Website" value={viewClientData.website} />
+        <Input type="text" readOnly placeholder="Website" value={viewClientData.website} />
         <span>Trading As</span>
-        <Input type="text" placeholder="Trading As" />
+        <Input type="text" readOnly placeholder="Trading As" />
         <span>Inception Date</span>
         <div className="date-picker-container">
           <DatePicker
@@ -216,15 +222,17 @@ const ViewClient = () => {
         </div>
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
-      {activeTabIndex === 0 && <ClientContactsTab />}
-      {activeTabIndex === 1 && <CreditLimitTab />}
-      {activeTabIndex === 2 && <ApplicationTab />}
-      {activeTabIndex === 3 && <OverDuesTab />}
-      {activeTabIndex === 4 && <ClaimsTab />}
-      {activeTabIndex === 5 && <TasksTab />}
-      {activeTabIndex === 6 && <ClientPoliciesTab />}
-      {activeTabIndex === 7 && <ClientDocumentsTab />}
-      {activeTabIndex === 8 && <ClientNotesTab />}
+      <div className="common-white-container">
+        {activeTabIndex === 0 && <ClientContactsTab />}
+        {activeTabIndex === 1 && <CreditLimitTab />}
+        {activeTabIndex === 2 && <ApplicationTab />}
+        {activeTabIndex === 3 && <OverDuesTab />}
+        {activeTabIndex === 4 && <ClaimsTab />}
+        {activeTabIndex === 5 && <TasksTab />}
+        {activeTabIndex === 6 && <ClientPoliciesTab />}
+        {activeTabIndex === 7 && <ClientDocumentsTab />}
+        {activeTabIndex === 8 && <ClientNotesTab />}
+      </div>
     </>
   );
 };
