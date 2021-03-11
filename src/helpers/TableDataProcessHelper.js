@@ -24,6 +24,8 @@ export const processTableDataByType = ({ header, row, actions }) => {
           onChange={e => handleCheckBoxState(e.target.checked, header, currentData)}
         />
       );
+    case 'booleanString':
+      return currentData ? 'Yes' : 'No';
 
     default:
       return currentData;

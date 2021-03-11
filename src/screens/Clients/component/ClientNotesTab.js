@@ -165,7 +165,7 @@ const ClientNotesTab = () => {
         const data = {
           noteId,
           description,
-          isPublic,
+          isPublic: isPublic === 'Yes',
           type: NOTE_ACTIONS.EDIT,
         };
         dispatchSelectedClientNote({
