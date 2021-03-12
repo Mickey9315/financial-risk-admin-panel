@@ -8,5 +8,6 @@ const ApplicationApiServices = {
     ApiService.getData(APPLICATION_URLS.APPLICATION_COLUMN_NAME_LIST_URL),
   updateApplicationColumnNameList: data =>
     ApiService.putData(APPLICATION_URLS.APPLICATION_COLUMN_NAME_LIST_UPDATE_URL, data),
+  getApplicationFilter: () => ApiService.getData(APPLICATION_URLS.APPLICATION_FILTER_LIST_URL),
 };
 export default ApplicationApiServices;

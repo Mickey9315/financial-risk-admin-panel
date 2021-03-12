@@ -1,5 +1,6 @@
 import {
   APPLICATION_COLUMN_LIST_REDUX_CONSTANTS,
+  APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
   APPLICATION_REDUX_CONSTANTS,
 } from './ApplicationReduxConstants';
 
@@ -12,7 +13,18 @@ const initialApplicationList = {
     pages: 1,
     headers: [],
   },
-  applicationColumnNameList: [],
+  applicationColumnNameList: {},
+
+  applicationFilterList: {
+    dropdownData: {
+      clients: [],
+      debtors: [],
+      streetType: [],
+      australianStates: [],
+      entityType: [],
+      applicationStatus: [],
+    },
+  },
 
   editApplication: {
     currentStepIndex: 0,
@@ -69,10 +81,28 @@ export const application = (state = initialApplicationList, action) => {
       columnList[`${type}`] = columnList[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
-
       return {
         ...state,
         applicationColumnNameList: columnList,
+      };
+    }
+    case APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_ACTION: {
+      const dropdownData = { ...state.applicationFilterList.dropdownData };
+      Object.entries(action.data).forEach(([key, value]) => {
+        dropdownData[key] = value.data.map(entity => ({
+          label: entity.name,
+          name: value.field,
+          value: entity._id,
+        }));
+      });
+      const applicationFilterList = {
+        ...state.applicationFilterList,
+        dropdownData,
+      };
+
+      return {
+        ...state,
+        applicationFilterList,
       };
     }
 

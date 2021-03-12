@@ -1,7 +1,8 @@
 import ApplicationApiServices from '../services/ApplicationApiServices';
-import { errorNotification } from '../../../common/Toast';
+import { errorNotification, successNotification } from '../../../common/Toast';
 import {
   APPLICATION_COLUMN_LIST_REDUX_CONSTANTS,
+  APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
   APPLICATION_REDUX_CONSTANTS,
 } from './ApplicationReduxConstants';
 import ApplicationCompanyStepApiServices from '../services/ApplicationCompanyStepApiServices';
@@ -9,12 +10,12 @@ import ApplicationCompanyStepApiServices from '../services/ApplicationCompanySte
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      const responce = await ApplicationApiServices.getApplicationListByFilter(params);
+      const response = await ApplicationApiServices.getApplicationListByFilter(params);
 
-      if (responce.data.status === 'SUCCESS') {
+      if (response.data.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST,
-          data: responce.data.data,
+          data: response.data.data,
         });
       }
     } catch (e) {
@@ -64,6 +65,81 @@ export const changeApplicationColumnNameList = data => {
       type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_APPLICATION_COLUMN_LIST_ACTION,
       data,
     });
+  };
+};
+
+export const saveApplicationColumnNameList = ({
+  applicationColumnNameList = {},
+  isReset = false,
+}) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+        columnFor: 'application',
+      };
+      if (!isReset) {
+        const defaultFields = applicationColumnNameList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = applicationColumnNameList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          isReset: false,
+          columns: [...defaultFields, ...customFields],
+          columnFor: 'application',
+        };
+      }
+      if (!isReset && data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        console.log(data);
+        const response = await ApplicationApiServices.updateApplicationColumnNameList(data);
+        if (response.data.status === 'SUCCESS') {
+          dispatch(getApplicationsListByFilter());
+          successNotification('Columns updated successfully');
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+// for filter of Application list
+export const getApplicationFilter = () => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationApiServices.getApplicationFilter();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
   };
 };
 

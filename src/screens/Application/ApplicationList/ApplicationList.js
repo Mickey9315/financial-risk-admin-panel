@@ -1,6 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import ReactSelect from 'react-dropdown-select';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
@@ -10,10 +13,44 @@ import {
   changeApplicationColumnNameList,
   getApplicationColumnNameList,
   getApplicationsListByFilter,
+  saveApplicationColumnNameList,
+  getApplicationFilter,
 } from '../redux/ApplicationAction';
-
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
+import Modal from '../../../common/Modal/Modal';
+import Input from '../../../common/Input/Input';
+import { errorNotification } from '../../../common/Toast';
+
+const initialFilterState = {
+  entity: '',
+  clientId: '',
+  debtorId: '',
+  applicationStatus: '',
+  minCreditLimit: '',
+  maxCreditLimit: '',
+  startDate: null,
+  endDate: null,
+};
+
+const APPLICATION_FILTER_REDUCER_ACTIONS = {
+  UPDATE_DATA: 'UPDATE_DATA',
+  RESET_STATE: 'RESET_STATE',
+};
+
+function filterReducer(state, action) {
+  switch (action.type) {
+    case APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
+      return {
+        ...state,
+        [`${action.name}`]: action.value,
+      };
+    case APPLICATION_FILTER_REDUCER_ACTIONS.RESET_STATE:
+      return { ...initialFilterState };
+    default:
+      return state;
+  }
+}
 
 const ApplicationList = () => {
   const history = useHistory();
@@ -26,21 +63,159 @@ const ApplicationList = () => {
     applicationListWithPageData,
   ]);
 
-  // for pagination and limit of records
+  const { dropdownData } = useSelector(({ application }) => application.applicationFilterList);
+  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
+  const {
+    entity,
+    clientId,
+    debtorId,
+    applicationStatus,
+    minCreditLimit,
+    maxCreditLimit,
+    startDate,
+    endDate,
+  } = useMemo(() => filter, [filter]);
+
+  useEffect(() => {
+    dispatch(getApplicationsListByFilter());
+    dispatch(getApplicationFilter());
+  }, []);
+  const handleStartDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'startDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
+
+  const handleEndDateChange = useCallback(
+    date => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'endDate',
+        value: date,
+      });
+    },
+    [dispatchFilter]
+  );
+
+  const resetFilterDates = useCallback(() => {
+    handleStartDateChange(null);
+    handleEndDateChange(null);
+  }, [handleStartDateChange, handleEndDateChange]);
+
+  const handleEntityTypeFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'entity',
+        value: event[0].value,
+      });
+    },
+    [dispatchFilter]
+  );
+  const handleClientIdFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'clientId',
+        value: event[0].value,
+      });
+    },
+    [dispatchFilter]
+  );
+  const handleDebtorIdFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'debtorId',
+        value: event[0].value,
+      });
+    },
+    [dispatchFilter]
+  );
+  const handleApplicationStatusFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'applicationStatus',
+        value: event[0].value,
+      });
+    },
+    [dispatchFilter]
+  );
+  const handleMinLimitChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'minCreditLimit',
+        value: event.target.value,
+      });
+    },
+    [dispatchFilter]
+  );
+  const handleMaxLimitChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'maxCreditLimit',
+        value: event.target.value,
+      });
+    },
+    [dispatchFilter]
+  );
+
   const getApplicationsByFilter = useCallback(
     (params = {}, cb) => {
-      const data = {
-        page: page || 1,
-        limit: limit || 10,
-        ...params,
-      };
-      dispatch(getApplicationsListByFilter(data));
-      if (cb && typeof cb === 'function') {
-        cb();
+      if (moment(startDate).isAfter(endDate)) {
+        errorNotification('From date should be greater than to date');
+        resetFilterDates();
+      } else if (moment(endDate).isBefore(startDate)) {
+        errorNotification('To Date should be smaller than from date');
+        resetFilterDates();
+      } else {
+        const data = {
+          page: page || 1,
+          limit: limit || 10,
+          entityType: entity && entity.trim().length > 0 ? entity : undefined,
+          clientId: clientId && clientId.trim().length > 0 ? clientId : undefined,
+          debtorId: debtorId && debtorId.trim().length > 0 ? debtorId : undefined,
+          applicationStatus:
+            applicationStatus && applicationStatus.trim().length > 0
+              ? applicationStatus
+              : undefined,
+          minCreditLimit:
+            minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
+          maxCreditLimit:
+            maxCreditLimit && maxCreditLimit.trim().length > 0 ? maxCreditLimit : undefined,
+          ...params,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+        };
+        dispatch(getApplicationsListByFilter(data));
+        if (cb && typeof cb === 'function') {
+          cb();
+        }
       }
     },
-    [page, limit]
+    [
+      page,
+      limit,
+      entity,
+      clientId,
+      debtorId,
+      applicationStatus,
+      minCreditLimit,
+      maxCreditLimit,
+      startDate,
+      endDate,
+      filter,
+    ]
   );
+
   // on record limit changed
   const onSelectLimit = useCallback(
     newLimit => {
@@ -56,45 +231,109 @@ const ApplicationList = () => {
     [dispatch, getApplicationsByFilter, limit]
   );
 
+  const [filterModal, setFilterModal] = React.useState(false);
+  const toggleFilterModal = useCallback(
+    value => setFilterModal(value !== undefined ? value : e => !e),
+    [setFilterModal]
+  );
+  const onClickApplyFilter = useCallback(() => {
+    getApplicationsByFilter({ page: 1 }, toggleFilterModal);
+  }, [getApplicationsByFilter]);
+
+  const filterModalButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
+    ],
+    [toggleFilterModal, onClickApplyFilter]
+  );
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
     [setCustomFieldModal]
   );
+  const onClickSaveColumnSelection = useCallback(async () => {
+    await dispatch(saveApplicationColumnNameList({ applicationColumnNameList }));
+    toggleCustomField();
+  }, [dispatch, toggleCustomField, applicationColumnNameList]);
+
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveApplicationColumnNameList({ isReset: true }));
+    dispatch(getApplicationColumnNameList());
+    toggleCustomField();
+  }, [dispatch, toggleCustomField]);
+
   const customFieldsModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
-        onClick: () => console.log('Reset default clicked'),
+        onClick: onClickResetDefaultColumnSelection,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
-      { title: 'Save', buttonType: 'primary', onClick: () => console.log('Save clicked') },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [toggleCustomField]
+    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
 
   const { defaultFields, customFields } = useMemo(
     () => applicationColumnNameList || { defaultFields: [], customFields: [] },
     [applicationColumnNameList]
   );
+
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
-
       dispatch(changeApplicationColumnNameList(data));
     },
     [dispatch]
   );
 
-  const { page: paramPage, limit: paramLimit } = useQueryParams();
+  const {
+    page: paramPage,
+    limit: paramLimit,
+    entityType: paramEntity,
+    clientId: paramClientId,
+    debtorId: paramDebtorId,
+    applicationStatus: paramApplicationStatus,
+    minCreditLimit: paramMinCreditLimit,
+    maxCreditLimit: paramMaxCreditLimit,
+    startDate: paramStartDate,
+    endDate: paramEndDate,
+  } = useQueryParams();
 
   useEffect(() => {
     const params = {
       page: paramPage || 1,
       limit: paramLimit || 15,
     };
-    getApplicationsByFilter({ ...params });
+    const filters = {
+      entityType: paramEntity && paramEntity.trim().length > 0 ? paramEntity : undefined,
+      clientId: paramClientId && paramClientId.trim().length > 0 ? paramClientId : undefined,
+      debtorId: paramDebtorId && paramDebtorId.trim().length > 0 ? paramDebtorId : undefined,
+      applicationStatus:
+        paramApplicationStatus && paramApplicationStatus.trim().length > 0
+          ? paramApplicationStatus
+          : undefined,
+      minCreditLimit:
+        paramMinCreditLimit && paramMinCreditLimit.trim().length > 0
+          ? paramMinCreditLimit
+          : undefined,
+      maxCreditLimit:
+        paramMaxCreditLimit && paramMaxCreditLimit.trim().length > 0
+          ? paramMaxCreditLimit
+          : undefined,
+      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
+      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+    };
+    Object.entries(filters).forEach(([name, value]) => {
+      dispatchFilter({
+        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name,
+        value,
+      });
+    });
+    getApplicationsByFilter({ ...params, ...filters });
     dispatch(getApplicationColumnNameList());
   }, []);
 
@@ -107,13 +346,63 @@ const ApplicationList = () => {
     const params = {
       page: page || 1,
       limit: limit || 15,
+      entityType: entity && entity.trim().length > 0 ? entity : undefined,
+      clientId: clientId && clientId.trim().length > 0 ? clientId : undefined,
+      debtorId: debtorId && debtorId.trim().length > 0 ? debtorId : undefined,
+      applicationStatus:
+        applicationStatus && applicationStatus.trim().length > 0 ? applicationStatus : undefined,
+      minCreditLimit:
+        minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
+      maxCreditLimit:
+        maxCreditLimit && maxCreditLimit.trim().length > 0 ? maxCreditLimit : undefined,
+      startDate: startDate ? new Date(startDate).toISOString() : undefined,
+      endDate: endDate ? new Date(endDate).toISOString() : undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
     history.replace(`${history.location.pathname}?${url}`);
-  }, [history, total, pages, page, limit]);
+  }, [
+    history,
+    total,
+    pages,
+    page,
+    limit,
+    entity,
+    clientId,
+    debtorId,
+    applicationStatus,
+    minCreditLimit,
+    maxCreditLimit,
+    startDate,
+    endDate,
+  ]);
+
+  const entityTypeSelectedValue = useMemo(() => {
+    const foundValue = dropdownData.entityType.find(e => {
+      return e._id === entity;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [entity]);
+  const clientIdSelectedValue = useMemo(() => {
+    const foundValue = dropdownData.clients.find(e => {
+      return e._id === clientId;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [clientId]);
+  const debtorIdSelectedValue = useMemo(() => {
+    const foundValue = dropdownData.debtors.find(e => {
+      return e._id === debtorId;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [debtorId]);
+  const applicationStatusSelectedValue = useMemo(() => {
+    const foundValue = dropdownData.applicationStatus.find(e => {
+      return e._id === applicationStatus;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [applicationStatus]);
 
   return (
     <>
@@ -125,7 +414,7 @@ const ApplicationList = () => {
             title="filter_list"
             className="mr-10"
             buttonTitle="Click to apply filters on application list"
-            onClick={() => console.log('Filter Clicked')}
+            onClick={() => toggleFilterModal()}
           />
           <IconButton
             buttonType="primary"
@@ -146,9 +435,10 @@ const ApplicationList = () => {
               tableClass="main-list-table"
               data={docs}
               headers={headers}
-              recordSelected={() => console.log('Record Selected')}
-              recordActionClick={() => console.log('Record Action Clicked')}
+              recordSelected={() => console.log('Record selected')}
+              recordActionClick={() => console.log('Record action clicked')}
               rowClass="cursor-pointer"
+              haveActions
             />
           </div>
           <Pagination
@@ -163,6 +453,104 @@ const ApplicationList = () => {
         </>
       ) : (
         <Loader />
+      )}
+      {filterModal && (
+        <Modal
+          headerIcon="filter_list"
+          header="filter"
+          buttons={filterModalButtons}
+          className="filter-modal"
+        >
+          <div className="filter-modal-row">
+            <div className="form-title">Entity Type</div>
+            <ReactSelect
+              className="filter-select"
+              placeholder="Select"
+              name="role"
+              options={dropdownData.entityType}
+              values={entityTypeSelectedValue}
+              onChange={handleEntityTypeFilterChange}
+              searchable={false}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title">Client Name</div>
+            <ReactSelect
+              className="filter-select"
+              placeholder="Select"
+              name="role"
+              options={dropdownData.clients}
+              values={clientIdSelectedValue}
+              onChange={handleClientIdFilterChange}
+              searchable={false}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title">Debtor Name</div>
+            <ReactSelect
+              className="filter-select"
+              placeholder="Select"
+              name="role"
+              options={dropdownData.debtors}
+              values={debtorIdSelectedValue}
+              onChange={handleDebtorIdFilterChange}
+              searchable={false}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title">Application Status</div>
+            <ReactSelect
+              className="filter-select"
+              placeholder="Select"
+              name="role"
+              options={dropdownData.applicationStatus}
+              values={applicationStatusSelectedValue}
+              onChange={handleApplicationStatusFilterChange}
+              searchable={false}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title"> Minimum Credit Limit</div>
+            <Input
+              type="text"
+              name="min-limit"
+              value={minCreditLimit}
+              placeholder="3000"
+              onChange={handleMinLimitChange}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title">Maximum Credit Limit</div>
+            <Input
+              type="text"
+              name="max-limit"
+              value={maxCreditLimit}
+              placeholder="100000"
+              onChange={handleMaxLimitChange}
+            />
+          </div>
+          <div className="filter-modal-row">
+            <div className="form-title">Date</div>
+            <div className="date-picker-container filter-date-picker-container mr-15">
+              <DatePicker
+                className="filter-date-picker"
+                selected={startDate}
+                onChange={handleStartDateChange}
+                placeholderText="From Date"
+              />
+              <span className="material-icons-round">event_available</span>
+            </div>
+            <div className="date-picker-container filter-date-picker-container">
+              <DatePicker
+                className="filter-date-picker"
+                selected={endDate}
+                onChange={handleEndDateChange}
+                placeholderText="To Date"
+              />
+              <span className="material-icons-round">event_available</span>
+            </div>
+          </div>
+        </Modal>
       )}
       {customFieldModal && (
         <CustomFieldModal
