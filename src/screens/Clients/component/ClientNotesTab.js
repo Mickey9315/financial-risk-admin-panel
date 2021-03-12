@@ -229,7 +229,7 @@ const ClientNotesTab = () => {
           header={`${selectedClientNote.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
           className="add-to-crm-modal"
           buttons={addToCRMButtons}
-          hideModal={toggleConfirmationModal}
+          hideModal={toggleModifyNotes}
         >
           <div className="add-notes-popup-container">
             <span>Description</span>
