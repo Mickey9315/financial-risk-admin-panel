@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
@@ -7,9 +7,11 @@ import {
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
+  searchApplicationCompanyEntityType,
   updateEditApplicationData,
   updateEditApplicationField,
 } from '../../../redux/ApplicationAction';
+import { errorNotification } from '../../../../../common/Toast';
 
 const ApplicationCompanyStep = () => {
   const dispatch = useDispatch();
@@ -18,6 +20,10 @@ const ApplicationCompanyStep = () => {
   const { clients, debtors, streetType, australianStates, entityType } = useSelector(
     ({ application }) => application.company.dropdownData
   );
+  const entityTypeSearchDropDownData = useSelector(
+    ({ application }) => application.company.entityTypeSearch
+  );
+  const entityTypeSearchRef = useRef(0);
 
   const INPUTS = useMemo(
     () => [
@@ -66,9 +72,9 @@ const ApplicationCompanyStep = () => {
       {
         label: 'Entity Type*',
         placeholder: 'Select',
-        type: 'select',
+        type: 'entityType',
         name: 'entityType',
-        data: entityType,
+        data: [],
       },
       {
         label: 'Outstanding Amount',
@@ -169,6 +175,10 @@ const ApplicationCompanyStep = () => {
 
   const handleDebtorSelectChange = useCallback(async data => {
     try {
+      if (!companyState.client || companyState.client.length === 0) {
+        errorNotification('Please select client before continue');
+        return;
+      }
       handleSelectInputChange(data);
       const params = { clientId: companyState.client };
       const response = await getApplicationCompanyDataFromDebtor(data[0].value, params);
@@ -184,12 +194,54 @@ const ApplicationCompanyStep = () => {
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
       if (e.key === 'Enter') {
+        if (!companyState.client || companyState.client.length === 0) {
+          errorNotification('Please select client before continue');
+          return;
+        }
         const params = { clientId: companyState.client };
         const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
 
         if (response) {
           updateCompanyState(response);
         }
+      }
+    },
+    [companyState, updateCompanyState]
+  );
+
+  const handleEntityTypeSearch = useCallback(
+    data => {
+      try {
+        if (!companyState.client || companyState.client.length === 0) {
+          errorNotification('Please select client before continue');
+          return;
+        }
+        if (entityTypeSearchRef.current !== 0) {
+          clearInterval(entityTypeSearchRef.current);
+        }
+        entityTypeSearchRef.current = setTimeout(() => {
+          const params = { clientId: companyState.client };
+
+          dispatch(searchApplicationCompanyEntityType(data.state.search, params));
+        }, 1500);
+      } catch (err) {
+        /**/
+      }
+    },
+    [companyState.client, entityTypeSearchRef]
+  );
+
+  const handleEntityTypeSelect = useCallback(
+    async e => {
+      try {
+        const params = { clientId: companyState.client };
+        const response = await getApplicationCompanyDataFromABNOrACN(e[0].abn, params);
+
+        if (response) {
+          updateCompanyState(response);
+        }
+      } catch (err) {
+        /**/
       }
     },
     [companyState, updateCompanyState]
@@ -222,6 +274,21 @@ const ApplicationCompanyStep = () => {
                 value={companyState[input.name]}
                 onChange={handleTextInputChange}
                 onKeyDown={handleSearchTextInputKeyDown}
+              />
+            </>
+          );
+        case 'entityType':
+          return (
+            <>
+              <span>{input.label}</span>
+              <ReactSelect
+                placeholder={input.placeholder}
+                name={input.name}
+                options={entityTypeSearchDropDownData}
+                searchable
+                values={companyState[input.name]}
+                onChange={handleEntityTypeSelect}
+                searchFn={handleEntityTypeSearch}
               />
             </>
           );
