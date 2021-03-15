@@ -166,7 +166,7 @@ const Table = props => {
                 {heading.label}
               </th>
             ))}
-          {haveActions && <th />}
+          {haveActions && <th style={{ position: 'sticky', right: 0 }} />}
         </thead>
         <tbody>
           {tableData.map(e => (
