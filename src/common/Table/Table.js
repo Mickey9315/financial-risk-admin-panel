@@ -239,7 +239,6 @@ function Row(props) {
 
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
-  const [actionIndex, setActionIndex] = useState(0);
 
   const onClickActionToggleButton = useCallback(
     e => {
@@ -249,7 +248,6 @@ function Row(props) {
       const menuLeft = e.clientX - 90;
       setShowActionMenu(prev => !prev);
       setMenuPosition({ top: menuTop, left: menuLeft });
-      setActionIndex(2);
       //    const remainingBottomDistance = window.outerHeight - e.screenY;
       //    const remainingRightDistance = window.outerWidth - e.screenX;
     },
