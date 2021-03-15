@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo, useReducer, useRef, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import './Table.scss';
 import PropTypes from 'prop-types';
-import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 import Drawer from '../Drawer/Drawer';
 import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
 import Checkbox from '../Checkbox/Checkbox';
+import DropdownMenu from '../DropdownMenu/DropdownMenu';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -51,7 +51,7 @@ const Table = props => {
     refreshData,
     haveActions,
     showCheckbox,
-    onChageRowSelection,
+    onChangeRowSelection,
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -143,7 +143,7 @@ const Table = props => {
   }, [setSelectedRowData, selectedRowData, tableData]);
 
   useEffect(() => {
-    onChageRowSelection(selectedRowData);
+    onChangeRowSelection(selectedRowData);
   }, [selectedRowData]);
 
   return (
@@ -202,7 +202,7 @@ Table.propTypes = {
   refreshData: PropTypes.func,
   haveActions: PropTypes.bool,
   showCheckbox: PropTypes.bool,
-  onChageRowSelection: PropTypes.func,
+  onChangeRowSelection: PropTypes.func,
 };
 
 Table.defaultProps = {
@@ -218,7 +218,7 @@ Table.defaultProps = {
   recordSelected: () => {},
   recordActionClick: () => {},
   refreshData: () => {},
-  onChageRowSelection: () => {},
+  onChangeRowSelection: () => {},
 };
 
 export default Table;
@@ -237,26 +237,35 @@ function Row(props) {
     onRowSelectedDataChange,
   } = props;
 
-  const [showActionMenu, setShowActionMenu] = React.useState(false);
-  const actionMenuRef = useRef();
-
-  useOnClickOutside(actionMenuRef, () => setShowActionMenu(false));
+  const [showActionMenu, setShowActionMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [actionIndex, setActionIndex] = useState(0);
 
   const onClickActionToggleButton = useCallback(
     e => {
       e.persist();
       e.stopPropagation();
+      const menuTop = e.clientY + 10;
+      const menuLeft = e.clientX - 90;
       setShowActionMenu(prev => !prev);
+      setMenuPosition({ top: menuTop, left: menuLeft });
+      setActionIndex(2);
+      console.log(actionIndex);
+      //    const remainingBottomDistance = window.outerHeight - e.screenY;
+      //    const remainingRightDistance = window.outerWidth - e.screenX;
+      console.log(menuPosition);
+      console.log('clientX', e.clientX);
+      console.log('screenX', e.screenX);
     },
-    [setShowActionMenu]
+    [setShowActionMenu, setMenuPosition]
   );
-
   const onClickAction = useCallback(
     (e, type) => {
       e.stopPropagation();
       recordActionClick(type, data.id, data);
+      setShowActionMenu(false);
     },
-    [recordActionClick, data]
+    [recordActionClick, data, showActionMenu]
   );
 
   const onRowSelected = useCallback(() => {
@@ -264,50 +273,46 @@ function Row(props) {
   }, [onRowSelectedDataChange]);
 
   return (
-    <tr onClick={() => recordSelected(data.id)} className={rowClass}>
-      {showCheckbox && (
-        <td width={10} align={align} valign={valign} className={rowClass}>
-          <Checkbox className="crm-checkbox-list" checked={isSelected} onChange={onRowSelected} />
-        </td>
-      )}
-      {Object.entries(data).map(([key, value]) =>
-        key !== 'id' ? (
-          <td data-tip={value} data-delay-show="400" align={align}>
-            {value || '-'}
+    <>
+      <tr onClick={() => recordSelected(data.id)} className={rowClass}>
+        {showCheckbox && (
+          <td width={10} align={align} valign={valign} className={rowClass}>
+            <Checkbox className="crm-checkbox-list" checked={isSelected} onChange={onRowSelected} />
           </td>
-        ) : null
-      )}
-      {haveActions && (
-        <td
-          align="right"
-          valign={valign}
-          className={`fixed-action-menu ${showActionMenu && 'fixed-action-menu-clicked'}`}
-        >
-          <span
-            className="material-icons-round cursor-pointer table-action"
-            onClick={onClickActionToggleButton}
+        )}
+        {Object.entries(data).map(([key, value]) =>
+          key !== 'id' ? (
+            <td data-tip={value} data-delay-show="400" align={align}>
+              {value || '-'}
+            </td>
+          ) : null
+        )}
+        {haveActions && (
+          <td
+            align="right"
+            valign={valign}
+            className={`fixed-action-menu ${showActionMenu && 'fixed-action-menu-clicked'}`}
           >
-            more_vert
-          </span>
-          {showActionMenu && (
-            <div className="action-menu" ref={actionMenuRef}>
-              <div
-                className="menu-name"
-                onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.EDIT_ROW)}
-              >
-                <span className="material-icons-round">edit</span> Edit
-              </div>
-              <div
-                className="menu-name"
-                onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.DELETE_ROW)}
-              >
-                <span className="material-icons-round">delete</span> Delete
-              </div>
-            </div>
-          )}
-        </td>
+            <span
+              className="material-icons-round cursor-pointer table-action"
+              onClick={onClickActionToggleButton}
+            >
+              more_vert
+            </span>
+          </td>
+        )}
+      </tr>
+      {showActionMenu && (
+        <DropdownMenu style={menuPosition} toggleMenu={setShowActionMenu}>
+          <div className="menu-name" onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.EDIT_ROW)}>
+            <span className="material-icons-round">edit</span> Edit
+          </div>
+          <div className="menu-name" onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.DELETE_ROW)}>
+            <span className="material-icons-round">delete</span> Delete
+          </div>
+        </DropdownMenu>
       )}
-    </tr>
+    </>
   );
 }
 

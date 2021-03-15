@@ -66,47 +66,8 @@ tr:not(:nth-child(1)) td:last-child {
   border-right: 1px solid white;
 }
 
-.table-action {
-  position: relative;
-}
-
 td.fixed-action-menu {
   overflow: visible;
-}
-
-.action-menu {
-  position: absolute;
-  top: 30px;
-  right: 25px;
-  line-height: 1;
-  background-color: $background-color;
-  border: 1px solid white;
-  border-radius: 10px;
-  box-shadow: 0px 0px 1.875rem #82828229;
-  overflow: hidden;
-
-  .menu-name {
-    display: flex;
-    align-items: center;
-    height: 32px;
-    width: 100%;
-    min-width: 100px;
-    padding: 5px 10px;
-    border-bottom: 1px solid white;
-
-    span {
-      font-size: 18px;
-      margin-right: 5px;
-    }
-  }
-}
-
-.menu-name:last-child {
-  border-bottom: 0;
-}
-
-.menu-name:hover {
-  background-color: $primary-color-1;
 }
 
 .fixed-action-menu {

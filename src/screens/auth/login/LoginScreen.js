@@ -74,7 +74,7 @@ function LoginScreen() {
       />
       <div className="login-action-row">
         <Checkbox title="Remember me" checked={rememberUser} onChange={onChangeRememberUser} />
-        <Link to="/forgot-password" className="font-primary">
+        <Link to="/forgot-password" className="login-module-link">
           Forgot Password?
         </Link>
       </div>

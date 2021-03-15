@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo, useReducer, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
@@ -322,7 +322,7 @@ const ClientDocumentsTab = () => {
               refreshData={getClientDocumentsList}
               haveActions
               showCheckbox
-              onChageRowSelection={data => setSelectedCheckBoxData(data)}
+              onChangeRowSelection={data => setSelectedCheckBoxData(data)}
             />
           </div>
           <Pagination

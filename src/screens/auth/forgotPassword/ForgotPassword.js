@@ -47,7 +47,9 @@ function ForgotPassword() {
       />
       <div className="login-action-row">
         <div />
-        <Link to="/login">Back To Login</Link>
+        <Link to="/login" className="login-module-link">
+          Back To Login
+        </Link>
       </div>
       <Button title="Send OTP" buttonType="secondary" onClick={onClickForgotPassword} />
     </AuthScreenContainer>

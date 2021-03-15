@@ -146,13 +146,18 @@
   font-family: $font-medium!important;
 }
 
-.react-dropdown-select-type-single {
-  display: flex!important;
-  align-items: center!important;
-  height: 18px!important;
-  white-space: nowrap!important;
-  text-overflow: ellipsis!important;
-  overflow: hidden!important;
+.react-dropdown-select-type-single{
+  display: flex;
+  align-items: center;
+  height: 18px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .confirmation-message {

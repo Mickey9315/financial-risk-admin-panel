@@ -17,6 +17,9 @@
     background-color: #ffffff;
     border: none;
     outline: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

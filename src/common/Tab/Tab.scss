@@ -8,3 +8,6 @@
   margin-bottom: 20px;
 }
 
+.tab:hover:not(.active-tab) {
+  background-color: $placeholder-color;
+}
