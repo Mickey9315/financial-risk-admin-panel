@@ -250,12 +250,8 @@ function Row(props) {
       setShowActionMenu(prev => !prev);
       setMenuPosition({ top: menuTop, left: menuLeft });
       setActionIndex(2);
-      console.log(actionIndex);
       //    const remainingBottomDistance = window.outerHeight - e.screenY;
       //    const remainingRightDistance = window.outerWidth - e.screenX;
-      console.log(menuPosition);
-      console.log('clientX', e.clientX);
-      console.log('screenX', e.screenX);
     },
     [setShowActionMenu, setMenuPosition]
   );
