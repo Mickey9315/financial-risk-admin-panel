@@ -207,6 +207,34 @@ export const getApplicationCompanyDataFromABNOrACN = async (id, params) => {
   }
 };
 
+export const searchApplicationCompanyEntityType = (searchText, params) => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationCompanyStepApiServices.searchApplicationCompanyEntityType(
+        searchText,
+        params
+      );
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+      }
+    }
+  };
+};
+
 export const changeEditApplicationFieldValue = (name, value) => {
   return dispatch => {
     dispatch({
