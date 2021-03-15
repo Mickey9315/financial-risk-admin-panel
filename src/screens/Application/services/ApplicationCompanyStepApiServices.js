@@ -12,6 +12,10 @@ const ApplicationCompanyStepApiServices = {
     ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_BY_ABN_ACN_DETAILS}${id}`, {
       params,
     }),
+  searchApplicationCompanyEntityType: (searchText, params) =>
+    ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_ENTITY_TYPE}${searchText}`, {
+      params,
+    }),
   saveApplicationStepDataToBackend: data =>
     ApiService.putData(`${APPLICATION_URLS.APPLICATION_SAVE_STEP_DATA}`, data),
 };
