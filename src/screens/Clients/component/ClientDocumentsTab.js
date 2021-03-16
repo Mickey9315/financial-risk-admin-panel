@@ -11,6 +11,7 @@ import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomField
 import Loader from '../../../common/Loader/Loader';
 import {
   changeClientDocumentsColumnListStatus,
+  deleteClientDocumentAction,
   downloadDocuments,
   getClientDocumentsColumnNamesList,
   getClientDocumentsListData,
@@ -69,6 +70,9 @@ const ClientDocumentsTab = () => {
   const { documentType, isPublic, description } = useMemo(() => selectedClientDocument, [
     selectedClientDocument,
   ]);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const searchInputRef = useRef();
 
   const [uploadModel, setUploadModel] = useState(false);
   const [selectedCheckBoxData, setSelectedCheckBoxData] = useState([]);
@@ -79,6 +83,12 @@ const ClientDocumentsTab = () => {
     [setUploadModel]
   );
   const [fileData, setFileData] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const toggleConfirmationModal = useCallback(
+    value => setShowConfirmModal(value !== undefined ? value : e => !e),
+    [setShowConfirmModal]
+  );
+  const [deleteDocumentData, setDeleteDocumentData] = useState('');
 
   const onchangeDocumentDescription = useCallback(e => {
     dispatchSelectedClientDocument({
@@ -95,10 +105,6 @@ const ClientDocumentsTab = () => {
       value: e.target.checked,
     });
   }, []);
-
-  const dispatch = useDispatch();
-  const { id } = useParams();
-  const searchInputRef = useRef();
 
   const clientDocumentsList = useSelector(
     ({ clientManagement }) => clientManagement.documents.documentsList
@@ -171,31 +177,62 @@ const ClientDocumentsTab = () => {
   );
 
   const onClickUploadDocument = useCallback(async () => {
-    const formData = new FormData();
-    formData.append('description', selectedClientDocument.description);
-    formData.append('isPublic', selectedClientDocument.isPublic);
-    formData.append('documentType', selectedClientDocument.documentType);
-    formData.append('document', fileData);
-    formData.append('entityId', id);
-    formData.append('documentFor', 'client');
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data',
-      },
-    };
-    await dispatch(uploadDocument(formData, config));
-    dispatchSelectedClientDocument({
-      type: CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
-    });
-    getClientDocumentsList();
-    setFileData('');
-    toggleUploadModel();
+    if (selectedClientDocument.documentType.length === 0) {
+      errorNotification('Please select document type');
+    } else if (!selectedClientDocument.fileData) {
+      errorNotification('Please select any document');
+    } else if (!selectedClientDocument.description) {
+      errorNotification('Description is required');
+    } else {
+      const formData = new FormData();
+      formData.append('description', selectedClientDocument.description);
+      formData.append('isPublic', selectedClientDocument.isPublic);
+      formData.append('documentType', selectedClientDocument.documentType);
+      formData.append('document', fileData);
+      formData.append('entityId', id);
+      formData.append('documentFor', 'client');
+      const config = {
+        headers: {
+          'content-type': 'multipart/form-data',
+        },
+      };
+      await dispatch(uploadDocument(formData, config));
+      dispatchSelectedClientDocument({
+        type: CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+      });
+      getClientDocumentsList();
+      setFileData('');
+      toggleUploadModel();
+    }
   }, [selectedClientDocument, fileData, dispatchSelectedClientDocument, toggleUploadModel]);
 
   const onUploadClick = e => {
     e.persist();
-    const file = e.target.files[0];
-    setFileData(file);
+    if (e.target.files && e.target.files.length > 0) {
+      const fileExtension = ['jpeg', 'jpg', 'png'];
+      const mimeType = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'application/msword',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel.sheet.macroEnabled.12',
+      ];
+      const checkExtension =
+        fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+      const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+      if (!(checkExtension || checkMimeTypes)) {
+        errorNotification('Only image and document types file allowed');
+      }
+      const checkFileSize = e.target.files[0].size > 4194304;
+      if (checkFileSize) {
+        errorNotification('File size should be less than 4 mb');
+      } else {
+        setFileData(e.target.files[0]);
+      }
+    }
   };
 
   const onCloseUploadDocumentButton = useCallback(() => {
@@ -211,6 +248,46 @@ const ClientDocumentsTab = () => {
       { title: 'Upload', buttonType: 'primary', onClick: onClickUploadDocument },
     ],
     [onCloseUploadDocumentButton, onClickUploadDocument]
+  );
+  const deleteDocument = useCallback(
+    data => {
+      // console.log(data);
+      setDeleteDocumentData(data);
+      setShowConfirmModal(true);
+    },
+    [showConfirmModal]
+  );
+  const deleteDocumentAction = useMemo(
+    () => [
+      data => (
+        <span className="material-icons-round font-danger" onClick={() => deleteDocument(data)}>
+          delete_outline
+        </span>
+      ),
+    ],
+    [deleteDocument]
+  );
+  const callBack = () => {
+    toggleConfirmationModal();
+    getClientDocumentsList();
+  };
+
+  const deleteDocumentButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Delete',
+        buttonType: 'danger',
+        onClick: async () => {
+          try {
+            await dispatch(deleteClientDocumentAction(deleteDocumentData.id, () => callBack()));
+          } catch (e) {
+            /**/
+          }
+        },
+      },
+    ],
+    [toggleConfirmationModal, deleteDocumentData]
   );
 
   const onClickDownloadButton = useCallback(async () => {
@@ -279,6 +356,17 @@ const ClientDocumentsTab = () => {
 
   return (
     <>
+      {showConfirmModal && (
+        <Modal
+          header="Delete User"
+          buttons={deleteDocumentButtons}
+          hideModal={toggleConfirmationModal}
+        >
+          <span className="confirmation-message">
+            Are you sure you want to delete this document?
+          </span>
+        </Modal>
+      )}
       <div className="tab-content-header-row">
         <div className="tab-content-header">Documents</div>
         <div className="buttons-row">
@@ -318,9 +406,8 @@ const ClientDocumentsTab = () => {
               data={docs}
               headers={headers}
               tableClass="white-header-table"
-              // recordActionClick={onSelectUserRecordActionClick}
+              extraColumns={deleteDocumentAction}
               refreshData={getClientDocumentsList}
-              haveActions
               showCheckbox
               onChangeRowSelection={data => setSelectedCheckBoxData(data)}
             />

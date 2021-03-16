@@ -43,6 +43,7 @@ const Table = props => {
     align,
     valign,
     headers,
+    extraColumns,
     headerClass,
     data,
     rowClass,
@@ -174,6 +175,7 @@ const Table = props => {
               data={e}
               align={align}
               valign={valign}
+              extraColumns={extraColumns}
               rowClass={rowClass}
               recordSelected={recordSelected}
               recordActionClick={recordActionClick}
@@ -194,6 +196,7 @@ Table.propTypes = {
   align: PropTypes.oneOf(['left', 'center', 'right']),
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   headers: PropTypes.array,
+  extraColumns: PropTypes.arrayOf(PropTypes.element),
   headerClass: PropTypes.string,
   data: PropTypes.array,
   rowClass: PropTypes.string,
@@ -212,6 +215,7 @@ Table.defaultProps = {
   headers: [],
   headerClass: '',
   data: [],
+  extraColumns: [],
   rowClass: '',
   haveActions: false,
   showCheckbox: false,
@@ -231,6 +235,7 @@ function Row(props) {
     rowClass,
     recordSelected,
     haveActions,
+    extraColumns,
     recordActionClick,
     showCheckbox,
     isSelected,
@@ -295,6 +300,11 @@ function Row(props) {
             </span>
           </td>
         )}
+        {extraColumns.map(element => (
+          <td width={10} align={align} valign={valign} className={rowClass}>
+            {element(data)}
+          </td>
+        ))}
       </tr>
       {showActionMenu && (
         <DropdownMenu style={menuPosition} toggleMenu={setShowActionMenu}>
@@ -314,6 +324,7 @@ Row.propTypes = {
   align: PropTypes.oneOf(['left', 'center', 'right']),
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   data: PropTypes.oneOf([PropTypes.object]),
+  extraColumns: PropTypes.arrayOf(PropTypes.element),
   rowClass: PropTypes.string,
   recordSelected: PropTypes.func,
   haveActions: PropTypes.bool,
@@ -327,6 +338,7 @@ Row.defaultProps = {
   align: 'left',
   valign: 'left',
   data: {},
+  extraColumns: [],
   rowClass: '',
   recordSelected: () => {},
   haveActions: false,

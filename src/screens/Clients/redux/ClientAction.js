@@ -574,25 +574,27 @@ export const updateClientNoteAction = (entityId, noteData) => {
   };
 };
 
-export const deleteClientNoteAction = noteId => {
-  return async dispatch => {
-    try {
-      const response = await ClientNotesApiService.deleteClientNote(noteId);
+export const deleteClientNoteAction = async (noteId, cb) => {
+  try {
+    const response = await ClientNotesApiService.deleteClientNote(noteId);
 
-      if (response.data.status === 'SUCCESS') {
-        dispatch(getClientNotesListDataAction());
-        successNotification('Note deleted successfully.');
-      }
-    } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
+    if (response.data.status === 'SUCCESS') {
+      successNotification('Note deleted successfully.');
+      console.log('delete note action');
+      if (cb) {
+        console.log('note callback');
+        cb();
       }
     }
-  };
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else {
+        errorNotification('Internal server error');
+      }
+    }
+  }
 };
 
 /* documents action */
@@ -779,4 +781,24 @@ export const downloadDocuments = async data => {
     }
   }
   return false;
+};
+
+export const deleteClientDocumentAction = async (docId, cb) => {
+  try {
+    const response = await ClientDocumentsApiService.deleteClientDocument(docId);
+    if (response.data.status === 'SUCCESS') {
+      successNotification('Document deleted successfully.');
+      if (cb) {
+        cb();
+      }
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else {
+        errorNotification('Internal server error');
+      }
+    }
+  }
 };

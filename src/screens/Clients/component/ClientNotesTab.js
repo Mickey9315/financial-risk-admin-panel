@@ -185,22 +185,29 @@ const ClientNotesTab = () => {
     [toggleModifyNotes]
   );
 
-  const deleteUserButtons = [
-    { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
-    {
-      title: 'Delete',
-      buttonType: 'danger',
-      onClick: () => {
-        try {
-          dispatch(deleteClientNoteAction(deleteId));
-          setDeleteId(null);
-          toggleConfirmationModal();
-        } catch (e) {
-          /**/
-        }
+  const callBack = () => {
+    setDeleteId(null);
+    toggleConfirmationModal();
+    getClientNotesList();
+  };
+
+  const deleteNoteButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Delete',
+        buttonType: 'danger',
+        onClick: () => {
+          try {
+            dispatch(deleteClientNoteAction(deleteId, () => callBack()));
+          } catch (e) {
+            /**/
+          }
+        },
       },
-    },
-  ];
+    ],
+    [toggleConfirmationModal, getClientNotesList, deleteId]
+  );
 
   const onChangeSelectedNoteInput = useCallback(e => {
     dispatchSelectedClientNote({
@@ -252,8 +259,8 @@ const ClientNotesTab = () => {
         </Modal>
       )}
       {showConfirmModal && (
-        <Modal header="Delete User" buttons={deleteUserButtons} hideModal={toggleConfirmationModal}>
-          <span className="confirmation-message">Are you sure you want to delete this user?</span>
+        <Modal header="Delete Note" buttons={deleteNoteButtons} hideModal={toggleConfirmationModal}>
+          <span className="confirmation-message">Are you sure you want to delete this note?</span>
         </Modal>
       )}
       <div className="tab-content-header-row">

@@ -14,5 +14,6 @@ const ClientDocumentsApiService = {
     ApiService.postData(CLIENT_URLS.DOCUMENTS.UPLOAD_DOCUMENT_URL, data, config),
   downloadDocuments: params =>
     ApiService.getData(`${CLIENT_URLS.DOCUMENTS.DOWNLOAD_DOCUMENTS_URL}`, { params }),
+  deleteClientDocument: id => ApiService.deleteData(`${CLIENT_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`),
 };
 export default ClientDocumentsApiService;
