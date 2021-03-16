@@ -58,7 +58,10 @@ const initialApplicationList = {
       australianStates: [],
       entityType: [],
     },
-    entityNameSearch: [],
+    entityNameSearch: {
+      isLoading: false,
+      data: [],
+    },
   },
 };
 
@@ -128,7 +131,7 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA: {
-      const entityNameSearch = [...action.data];
+      const entityNameSearch = { ...action.data };
       const company = {
         ...state.company,
         entityNameSearch,
