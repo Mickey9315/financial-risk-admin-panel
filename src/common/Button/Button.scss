@@ -48,6 +48,10 @@
   border-color: $error-color;
 }
 
+.outlined-primary-button:hover, .outlined-secondary-button:hover, .outlined-red-button:hover {
+  background-color: $border-color;
+}
+
 .icon-button {
   padding: 18px;
 }

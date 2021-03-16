@@ -9,8 +9,8 @@ const ApplicationCreditLimitStep = () => {
       <div className="f-14 font-primary mb-10">
         Any extended payment terms outside your policy standard terms? *
       </div>
-      <RadioButton id="any-extended-pay-yes" label="Yes" />
-      <RadioButton id="any-extended-pay-no" label="No" />
+      <RadioButton id="any-extended-pay-yes" name="extended_payment" value="yes" label="Yes" />
+      <RadioButton id="any-extended-pay-no" name="extended_payment" value="no" label="No" />
 
       <div className="if-yes-row">
         <span className="font-primary mr-15">If yes, please provide details</span>
@@ -20,8 +20,8 @@ const ApplicationCreditLimitStep = () => {
       <div className="f-14 font-primary mb-10">
         Any overdue amounts passed your maximum extension period / Credit period? *
       </div>
-      <RadioButton id="passed-max-period-yes" label="Yes" />
-      <RadioButton id="passed-max-period-no" label="No" />
+      <RadioButton id="passed-max-period-yes" name="overdue_amounts" label="Yes" value="yes" />
+      <RadioButton id="passed-max-period-no" name="overdue_amounts" label="No" value="no" />
 
       <div className="if-yes-row">
         <span className="font-primary mr-15">If yes, please provide details</span>

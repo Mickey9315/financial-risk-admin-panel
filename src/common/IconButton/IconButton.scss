@@ -5,6 +5,10 @@
   border: 1px solid white;
 }
 
+.outlined-bg-button:hover {
+  background-color: $border-color;
+}
+
 .icon-button {
   display: flex;
   align-items: center;

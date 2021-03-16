@@ -51,9 +51,10 @@
   margin-bottom: 0;
 }
 
-.date-owner-row {
+.date-owner-row, .date-time-row {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 2fr;
+  grid-template-columns: 30px 1fr 40px 1fr;
+  gap: 0 5px;
   align-items: center;
   justify-content: space-between;
   margin: 5px 0;
@@ -71,10 +72,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .accordion-date {
-    width: 75px;
   }
 }
 
@@ -136,6 +133,7 @@
   display: -ms-grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
+  width: 100%;
   margin: 20px 0;
 
   .detail {
@@ -153,7 +151,7 @@
 }
 
 .guidelines-title {
-  margin-bottom: 5px;
+  margin-bottom: 7px;
   font: $subtitle $font-medium;
   color: $primary-color;
 }
@@ -179,11 +177,6 @@
   color: $field-color;
   background-color: $border-color;
   border-radius: 10px;
-
-  span {
-    color: $success-color;
-    margin-right: 15px;
-  }
 }
 
 .guideline:last-child {

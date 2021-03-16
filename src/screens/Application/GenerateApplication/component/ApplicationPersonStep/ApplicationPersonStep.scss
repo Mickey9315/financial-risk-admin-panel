@@ -2,7 +2,7 @@
 
 .application-person-step-accordion-item, .application-confirmation-step {
   display: grid;
-  grid-template-columns: 15% calc(35% - 7px) 15% calc(35% - 7px);
+  grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
   align-items: center;
   padding: 0!important;
   gap: 10px;
@@ -34,6 +34,7 @@
 
   .horizontal-line {
     height: 1px;
+    margin: 0 -20px;
     background-color: $border-color;
   }
 
@@ -46,7 +47,16 @@
     border-radius: 5px;
   }
 
-  .long-text {
+  .radio-buttons {
+    grid-column: 1/ span 4;
+  }
 
+  .long-text {
+    grid-column: 2/ span 3;
+    width: 100%;
+    padding: 5px 10px;
+    color: $field-color;
+    background-color: $border-color;
+    border-radius: 5px;
   }
 }

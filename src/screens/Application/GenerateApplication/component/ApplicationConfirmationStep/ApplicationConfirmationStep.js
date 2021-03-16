@@ -139,7 +139,7 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Amount *',
-      value: 'Details',
+      value: '$0000',
       label: 'isPassedMaxPeriodDetails',
       type: 'text',
     },
@@ -188,15 +188,11 @@ const ApplicationConfirmationStep = () => {
       type: 'text',
     },
     {
-      title: 'Last Name',
-      value: 'Enter last name',
-      label: 'directorLastName',
-      type: 'checkbox',
-    },
-    {
       title:
         'Do you give your consent for us to check your credit history with external credit agencies?',
       value: 'true',
+      label: 'directorLastName',
+      type: 'checkbox',
     },
     {
       title: 'Identification Details',
@@ -207,9 +203,6 @@ const ApplicationConfirmationStep = () => {
       value: 'Enter driver license number',
       label: 'directorLicenseNumber',
       type: 'text',
-    },
-    {
-      type: 'blank',
     },
     {
       title: 'Identification Details',
@@ -244,9 +237,6 @@ const ApplicationConfirmationStep = () => {
       value: 'Enter',
       label: 'directorPostCode',
       type: 'text',
-    },
-    {
-      type: 'blank',
     },
     {
       title: 'Contact Details',
@@ -297,12 +287,10 @@ const ApplicationConfirmationStep = () => {
         return (
           <>
             <span className="radio-title">{detail.title}</span>
-            <span>
+            <span className="radio-buttons">
               <RadioButton disabled id="any-extended-pay-yes" label="Yes" />
               <RadioButton disabled id="any-extended-pay-no" label="No" />
             </span>
-            <span />
-            <span />
           </>
         );
       case 'checkbox':
@@ -320,7 +308,12 @@ const ApplicationConfirmationStep = () => {
       case 'line':
         return <div className="horizontal-line" />;
       case 'blank':
-        return <></>;
+        return (
+          <>
+            <div />
+            <div />
+          </>
+        );
       default:
         return null;
     }

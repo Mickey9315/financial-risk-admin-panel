@@ -46,9 +46,9 @@
 }
 
 .menu:hover:not(.active) {
-  color: #444;
+  color: $primary-color;
   span {
-    color: #444;
+    color: $primary-color;
   }
 }
 
