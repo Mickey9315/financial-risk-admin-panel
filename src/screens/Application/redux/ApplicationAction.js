@@ -95,7 +95,6 @@ export const saveApplicationColumnNameList = ({
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
       } else {
-        console.log(data);
         const response = await ApplicationApiServices.updateApplicationColumnNameList(data);
         if (response.data.status === 'SUCCESS') {
           dispatch(getApplicationsListByFilter());
@@ -207,10 +206,10 @@ export const getApplicationCompanyDataFromABNOrACN = async (id, params) => {
   }
 };
 
-export const searchApplicationCompanyEntityType = (searchText, params) => {
+export const searchApplicationCompanyEntityName = (searchText, params) => {
   return async dispatch => {
     try {
-      const response = await ApplicationCompanyStepApiServices.searchApplicationCompanyEntityType(
+      const response = await ApplicationCompanyStepApiServices.searchApplicationCompanyEntityName(
         searchText,
         params
       );

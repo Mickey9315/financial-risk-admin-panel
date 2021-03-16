@@ -7,7 +7,7 @@ import {
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
-  searchApplicationCompanyEntityType,
+  searchApplicationCompanyEntityName,
   updateEditApplicationData,
   updateEditApplicationField,
 } from '../../../redux/ApplicationAction';
@@ -20,10 +20,10 @@ const ApplicationCompanyStep = () => {
   const { clients, debtors, streetType, australianStates, entityType } = useSelector(
     ({ application }) => application.company.dropdownData
   );
-  const entityTypeSearchDropDownData = useSelector(
-    ({ application }) => application.company.entityTypeSearch
+  const entityNameSearchDropDownData = useSelector(
+    ({ application }) => application.company.entityNameSearch
   );
-  const entityTypeSearchRef = useRef(0);
+  const entityNameSearchRef = useRef(0);
 
   const INPUTS = useMemo(
     () => [
@@ -58,7 +58,7 @@ const ApplicationCompanyStep = () => {
       {
         label: 'Entity Name*',
         placeholder: 'Enter Entity',
-        type: 'search',
+        type: 'entityName',
         name: 'entityName',
         data: [],
       },
@@ -72,9 +72,9 @@ const ApplicationCompanyStep = () => {
       {
         label: 'Entity Type*',
         placeholder: 'Select',
-        type: 'entityType',
+        type: 'select',
         name: 'entityType',
-        data: [],
+        data: entityType,
       },
       {
         label: 'Outstanding Amount',
@@ -168,28 +168,31 @@ const ApplicationCompanyStep = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSingleCompanyState(data[0].name, data[0].value);
+      updateSingleCompanyState(data[0]?.name, data);
     },
     [updateSingleCompanyState]
   );
 
-  const handleDebtorSelectChange = useCallback(async data => {
-    try {
-      if (!companyState.client || companyState.client.length === 0) {
-        errorNotification('Please select client before continue');
-        return;
-      }
-      handleSelectInputChange(data);
-      const params = { clientId: companyState.client };
-      const response = await getApplicationCompanyDataFromDebtor(data[0].value, params);
+  const handleDebtorSelectChange = useCallback(
+    async data => {
+      try {
+        if (!companyState.client || companyState.client.length === 0) {
+          errorNotification('Please select client before continue');
+          return;
+        }
+        handleSelectInputChange(data);
+        const params = { clientId: companyState.client[0].value };
+        const response = await getApplicationCompanyDataFromDebtor(data[0].value, params);
 
-      if (response) {
-        updateCompanyState(response);
+        if (response) {
+          updateCompanyState(response);
+        }
+      } catch (e) {
+        /**/
       }
-    } catch (e) {
-      /**/
-    }
-  }, [companyState, handleSelectInputChange, updateCompanyState][(companyState, handleSelectInputChange, updateCompanyState)]);
+    },
+    [companyState, handleSelectInputChange, updateCompanyState]
+  );
 
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
@@ -198,7 +201,7 @@ const ApplicationCompanyStep = () => {
           errorNotification('Please select client before continue');
           return;
         }
-        const params = { clientId: companyState.client };
+        const params = { clientId: companyState.client[0].value };
         const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
 
         if (response) {
@@ -209,32 +212,32 @@ const ApplicationCompanyStep = () => {
     [companyState, updateCompanyState]
   );
 
-  const handleEntityTypeSearch = useCallback(
+  const handleEntityNameSearch = useCallback(
     data => {
       try {
         if (!companyState.client || companyState.client.length === 0) {
           errorNotification('Please select client before continue');
           return;
         }
-        if (entityTypeSearchRef.current !== 0) {
-          clearInterval(entityTypeSearchRef.current);
+        if (entityNameSearchRef.current !== 0) {
+          clearInterval(entityNameSearchRef.current);
         }
-        entityTypeSearchRef.current = setTimeout(() => {
-          const params = { clientId: companyState.client };
+        entityNameSearchRef.current = setTimeout(() => {
+          const params = { clientId: companyState.client[0].value };
 
-          dispatch(searchApplicationCompanyEntityType(data.state.search, params));
+          dispatch(searchApplicationCompanyEntityName(data.state.search, params));
         }, 1500);
       } catch (err) {
         /**/
       }
     },
-    [companyState.client, entityTypeSearchRef]
+    [companyState, entityNameSearchRef]
   );
 
-  const handleEntityTypeSelect = useCallback(
+  const handleEntityNameSelect = useCallback(
     async e => {
       try {
-        const params = { clientId: companyState.client };
+        const params = { clientId: companyState.client[0].value };
         const response = await getApplicationCompanyDataFromABNOrACN(e[0].abn, params);
 
         if (response) {
@@ -277,18 +280,18 @@ const ApplicationCompanyStep = () => {
               />
             </>
           );
-        case 'entityType':
+        case 'entityName':
           return (
             <>
               <span>{input.label}</span>
               <ReactSelect
                 placeholder={input.placeholder}
                 name={input.name}
-                options={entityTypeSearchDropDownData}
+                options={entityNameSearchDropDownData}
                 searchable
-                values={companyState[input.name]}
-                onChange={handleEntityTypeSelect}
-                searchFn={handleEntityTypeSearch}
+                // values={companyState[input.name]}
+                onChange={handleEntityNameSelect}
+                searchFn={handleEntityNameSearch}
               />
             </>
           );

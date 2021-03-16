@@ -29,7 +29,7 @@ const initialApplicationList = {
   editApplication: {
     currentStepIndex: 0,
     companyStep: {
-      client: [],
+      clientId: [],
       postcode: '',
       state: [],
       suburb: '',
@@ -42,7 +42,7 @@ const initialApplicationList = {
       outstandingAmount: '',
       entityType: [],
       phoneNumber: '',
-      entityName: '',
+      entityName: [],
       acn: '',
       abn: '',
       tradingName: '',
@@ -58,7 +58,7 @@ const initialApplicationList = {
       australianStates: [],
       entityType: [],
     },
-    entityTypeSearch: [],
+    entityNameSearch: [],
   },
 };
 
@@ -128,10 +128,10 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA: {
-      const entityTypeSearch = [...action.data];
+      const entityNameSearch = [...action.data];
       const company = {
         ...state.company,
-        entityTypeSearch,
+        entityNameSearch,
       };
 
       return {
@@ -157,7 +157,7 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         editApplication: {
           ...state.editApplication,
-          [action.stepName]: { ...action.data },
+          [action.stepName]: { ...state.editApplication[action.stepName], ...action.data },
         },
       };
     }
