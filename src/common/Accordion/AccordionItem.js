@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import './Accordion.scss';
-import Button from '../Button/Button';
 
 const AccordionItem = props => {
   const {
@@ -31,34 +30,34 @@ const AccordionItem = props => {
   return (
     <div className={accordionClass}>
       <div className={headerClassName} onClick={onClickAccordionItem}>
-        {prefix && (
+        <div className="d-flex align-center">
+          {prefix && (
+            <span
+              className={`${prefixClassName} ${
+                activeAccordion && prefix === 'expand_more' && 'rotate-icon'
+              }`}
+            >
+              {prefix}
+            </span>
+          )}
+          <label>{header}</label>
+          {count && <span className="accordion-item-count">{count}</span>}
+        </div>
+        {suffix && (
           <span
-            className={`${prefixClassName} ${
-              activeAccordion && prefix === 'expand_more' && 'rotate-icon'
-            } ${prefix === 'expand_more' && 'spin-arrow'}`}
+            className={`${suffixClassName} ${
+              activeAccordion && suffix === 'expand_more' && 'rotate-icon'
+            }`}
           >
-            {prefix}
+            {suffix}
           </span>
         )}
-        <label>{header}</label>
-        {count && <Button buttonType="primary" title={count} />}
-        {suffix && <span className={suffixClassName}>{suffix}</span>}
       </div>
       <div
         ref={content}
-        style={{
-          maxHeight: activeAccordion ? '2000px' : '0px',
-        }}
-        className={accordionBodyClassName}
+        className={`${accordionBodyClassName} ${activeAccordion && 'active-accordion'}`}
       >
-        <div className="accordion-body">
-          {' '}
-          {children !== null ? (
-            children
-          ) : (
-            <div className="no-data-available">No data available</div>
-          )}
-        </div>
+        {children !== null ? children : <div className="no-data-available">No data available</div>}
       </div>
     </div>
   );

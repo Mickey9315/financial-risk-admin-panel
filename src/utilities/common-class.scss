@@ -69,7 +69,6 @@
 .common-white-container {
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
   margin-top: 15px;
   padding: 10px 20px;
   font: $sub-text;
@@ -113,8 +112,8 @@
 }
 
 .primary-tag {
-  color: $primary-color-1;
-  background-color: $primary-color;
+  color: $primary-color;
+  background-color: $primary-color-1;
 }
 
 .secondary-tag {

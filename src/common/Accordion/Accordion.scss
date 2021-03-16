@@ -6,13 +6,18 @@
 
 .accordion-item {
   margin-bottom: 10px;
-  background-color: $background-color;
+ // background-color: $background-color;
   border-radius: 5px;
+}
+
+.accordion-item:last-child {
+  margin-bottom: 0;
 }
 
 .accordion-item-header-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   color: $primary-color;
   padding: 8px 10px;
   background-color: $background-color;
@@ -35,14 +40,16 @@
 }
 
 .accordion-body-container {
+  max-height: 0;
   background-color: $background-color;
   border-radius: 5px;
   overflow: hidden;
   transition: max-height .5s ease-in-out;
 }
 
-.accordion-body {
-  padding: 20px 40px;
+.active-accordion {
+  max-height: 2000px;
+  margin-top: 10px;
 }
 
 .rotate-icon {
@@ -50,6 +57,11 @@
   transition: transform .3s ease-in-out;
 }
 
-.spin-arrow {
-  transition: transform .3s ease-in-out;
+.accordion-item-count {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: $subtitle!important;
+  color: white;
+  background-color: $primary-color;
+  border-radius: 5px;
 }

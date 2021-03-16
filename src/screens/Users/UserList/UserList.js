@@ -154,6 +154,10 @@ const UserList = () => {
 
   const filterModalButtons = useMemo(
     () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+      },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],

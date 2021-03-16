@@ -21,6 +21,7 @@ import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomField
 import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
+import '../ViewApplication/ViewApplication.scss';
 
 const initialFilterState = {
   entity: '',
@@ -242,6 +243,10 @@ const ApplicationList = () => {
 
   const filterModalButtons = useMemo(
     () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+      },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
@@ -459,7 +464,7 @@ const ApplicationList = () => {
           headerIcon="filter_list"
           header="filter"
           buttons={filterModalButtons}
-          className="filter-modal"
+          className="filter-modal application-filter-modal"
         >
           <div className="filter-modal-row">
             <div className="form-title">Entity Type</div>

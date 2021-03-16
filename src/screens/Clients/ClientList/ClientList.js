@@ -226,6 +226,10 @@ const ClientList = () => {
 
   const filterModalButtons = useMemo(
     () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+      },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
@@ -463,7 +467,7 @@ const ClientList = () => {
             />
           </div>
           <div className="filter-modal-row">
-            <div className="form-title client-filter-title">RiskAnalyst Name</div>
+            <div className="form-title client-filter-title">Risk Analyst Name</div>
             <ReactSelect
               className="filter-select"
               placeholder="Select"

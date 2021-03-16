@@ -348,7 +348,7 @@ const Header = () => {
           hideModal={toggleChangePasswordModal}
         >
           <div className="change-password-grid">
-            <span className="form-title">Current password</span>
+            <span className="form-title">Current Password</span>
             <div>
               <Input
                 type="password"
@@ -357,7 +357,7 @@ const Header = () => {
                 onChange={onChangeCurrentPassword}
               />{' '}
             </div>
-            <span className="form-title">New password</span>
+            <span className="form-title">New Password</span>
             <div>
               <Input
                 type="password"
@@ -366,7 +366,7 @@ const Header = () => {
                 onChange={onChangeNewPassword}
               />{' '}
             </div>
-            <span className="form-title">Re Enter password</span>
+            <span className="form-title">Re Enter Password</span>
             <div>
               <Input
                 type="password"
