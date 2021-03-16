@@ -1,0 +1,8 @@
+@import "../../../../../../common/Modal/Modal.scss";
+
+.application-entity-name-modal-body{
+  min-height: 30vh;
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: 1rem;
+}
