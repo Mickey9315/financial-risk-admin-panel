@@ -209,6 +209,13 @@ export const getApplicationCompanyDataFromABNOrACN = async (id, params) => {
 export const searchApplicationCompanyEntityName = (searchText, params) => {
   return async dispatch => {
     try {
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
+        data: {
+          isLoading: true,
+          data: [],
+        },
+      });
       const response = await ApplicationCompanyStepApiServices.searchApplicationCompanyEntityName(
         searchText,
         params
@@ -217,7 +224,10 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
-          data: response.data.data,
+          data: {
+            isLoading: false,
+            data: response.data.data,
+          },
         });
       }
     } catch (e) {
