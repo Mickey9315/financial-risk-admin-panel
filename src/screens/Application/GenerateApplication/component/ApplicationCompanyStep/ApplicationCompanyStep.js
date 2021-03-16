@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
@@ -12,6 +12,41 @@ import {
   updateEditApplicationField,
 } from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
+import Loader from '../../../../../common/Loader/Loader';
+import ApplicationEntityNameModal from '../components/ApplicationEntityNameModal/ApplicationEntityNameModal';
+import ApplicationEntityNameTable from '../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
+
+export const DRAWER_ACTIONS = {
+  SHOW_DRAWER: 'SHOW_DRAWER',
+  UPDATE_DATA: 'UPDATE_DATA',
+  HIDE_DRAWER: 'HIDE_DRAWER',
+};
+
+const drawerInitialState = {
+  visible: false,
+  data: null,
+};
+
+const drawerReducer = (state, action) => {
+  console.log({ state, action });
+  switch (action.type) {
+    case DRAWER_ACTIONS.SHOW_DRAWER:
+      return {
+        visible: true,
+        data: action.data,
+      };
+    case DRAWER_ACTIONS.HIDE_DRAWER:
+      return { ...drawerInitialState };
+    case DRAWER_ACTIONS.UPDATE_DATA:
+      return {
+        ...state,
+        ...action.data,
+      };
+
+    default:
+      return state;
+  }
+};
 
 const ApplicationCompanyStep = () => {
   const dispatch = useDispatch();
@@ -23,7 +58,8 @@ const ApplicationCompanyStep = () => {
   const entityNameSearchDropDownData = useSelector(
     ({ application }) => application.company.entityNameSearch
   );
-  const entityNameSearchRef = useRef(0);
+
+  const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
 
   const INPUTS = useMemo(
     () => [
@@ -213,32 +249,28 @@ const ApplicationCompanyStep = () => {
   );
 
   const handleEntityNameSearch = useCallback(
-    data => {
-      try {
+    async e => {
+      if (e.key === 'Enter') {
         if (!companyState.client || companyState.client.length === 0) {
           errorNotification('Please select client before continue');
           return;
         }
-        if (entityNameSearchRef.current !== 0) {
-          clearInterval(entityNameSearchRef.current);
-        }
-        entityNameSearchRef.current = setTimeout(() => {
-          const params = { clientId: companyState.client[0].value };
-
-          dispatch(searchApplicationCompanyEntityName(data.state.search, params));
-        }, 1500);
-      } catch (err) {
-        /**/
+        dispatchDrawerState({
+          type: DRAWER_ACTIONS.SHOW_DRAWER,
+          data: null,
+        });
+        const params = { clientId: companyState.client[0].value };
+        dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
-    [companyState, entityNameSearchRef]
+    [companyState, updateCompanyState, dispatchDrawerState]
   );
 
   const handleEntityNameSelect = useCallback(
-    async e => {
+    async data => {
       try {
         const params = { clientId: companyState.client[0].value };
-        const response = await getApplicationCompanyDataFromABNOrACN(e[0].abn, params);
+        const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
 
         if (response) {
           updateCompanyState(response);
@@ -248,6 +280,17 @@ const ApplicationCompanyStep = () => {
       }
     },
     [companyState, updateCompanyState]
+  );
+
+  const handleToggleDropdown = useCallback(
+    value =>
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.UPDATE_DATA,
+        data: {
+          visible: value !== undefined ? value : e => !e,
+        },
+      }),
+    [dispatchDrawerState]
   );
 
   const getComponentFromType = useCallback(
@@ -284,14 +327,10 @@ const ApplicationCompanyStep = () => {
           return (
             <>
               <span>{input.label}</span>
-              <ReactSelect
+              <Input
+                type="text"
                 placeholder={input.placeholder}
-                name={input.name}
-                options={entityNameSearchDropDownData}
-                searchable
-                // values={companyState[input.name]}
-                onChange={handleEntityNameSelect}
-                searchFn={handleEntityNameSearch}
+                onKeyDown={handleEntityNameSearch}
               />
             </>
           );
@@ -326,19 +365,33 @@ const ApplicationCompanyStep = () => {
   }, []);
 
   return (
-    <div className="common-white-container client-details-container">
-      <span>Client</span>
-      <ReactSelect
-        placeholder="Select"
-        options={clients}
-        searchable={false}
-        values={companyState.client}
-        onChange={handleSelectInputChange}
-      />
-      <span />
-      <span />
-      {INPUTS.map(getComponentFromType)}
-    </div>
+    <>
+      {drawerState.visible && (
+        <ApplicationEntityNameModal hideModal={handleToggleDropdown}>
+          {entityNameSearchDropDownData.isLoading ? (
+            <Loader />
+          ) : (
+            <ApplicationEntityNameTable
+              data={entityNameSearchDropDownData.data}
+              handleEntityNameSelect={handleEntityNameSelect}
+            />
+          )}
+        </ApplicationEntityNameModal>
+      )}
+      <div className="common-white-container client-details-container">
+        <span>Client</span>
+        <ReactSelect
+          placeholder="Select"
+          options={clients}
+          searchable={false}
+          values={companyState.client}
+          onChange={handleSelectInputChange}
+        />
+        <span />
+        <span />
+        {INPUTS.map(getComponentFromType)}
+      </div>
+    </>
   );
 };
 
