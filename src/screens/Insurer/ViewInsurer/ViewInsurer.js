@@ -1,25 +1,51 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './ViewInsurer.scss';
 import ReactSelect from 'react-dropdown-select';
+import { useHistory, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../../common/Input/Input';
-import { USER_ROLES } from '../../../constants/UserlistConstants';
 import Tab from '../../../common/Tab/Tab';
 import ContactsTab from '../../../common/Tab/ContactsTab/ContactsTab';
-import PoliciesTab from '../../../common/Tab/PoliciesTab/PoliciesTab';
+import { getInsurerById, syncInsurerData } from '../redux/InsurerAction';
+import InsurerContactTab from '../Components/InsurerContactTab';
+import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
+import Button from '../../../common/Button/Button';
 
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const tabActive = index => {
     setActiveTabIndex(index);
   };
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const backToInsurer = () => {
+    history.replace('/insurer');
+  };
+
   const tabs = ['Policies', 'Contacts', 'Matrix'];
+  const insurerData = useSelector(({ insurer }) => insurer.insurerViewData);
+  const { name, address, contactNumber, website, contactPerson, email } = useMemo(
+    () => insurerData,
+    [insurerData]
+  );
+  useEffect(() => {
+    dispatch(getInsurerById(id));
+  }, []);
+
+  const syncInsurersDataOnClick = useCallback(() => {
+    dispatch(syncInsurerData(id));
+  }, [id]);
   return (
     <>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
-          <span>Insurer List</span>
+          <span onClick={backToInsurer}>Insurer List</span>
           <span className="material-icons-round">navigate_next</span>
-          <span>Add Insurer</span>
+          <span>View Insurer</span>
+        </div>
+        <div className="buttons-row">
+          <Button buttonType="secondary" title="Sync With CRM" onClick={syncInsurersDataOnClick} />
         </div>
       </div>
 
@@ -27,34 +53,69 @@ const ViewInsurer = () => {
         <div className="common-detail-grid">
           <div className="common-detail-field">
             <span className="common-detail-title">Name</span>
-            <Input type="text" name="name" placeholder="Jason Gatt" />
+            <Input
+              type="text"
+              value={name}
+              name="name"
+              placeholder="Jason Gatt"
+              disabled
+              borderClass="disabled-control"
+            />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Address</span>
-            <Input type="text" name="address" placeholder="Enter Address" />
+            <Input
+              type="text"
+              name="address"
+              value={`${address?.addressLine} ${address?.city}, ${address?.country}`}
+              placeholder="Enter Address"
+              disabled
+              borderClass="disabled-control"
+            />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Contact Person</span>
-            <ReactSelect name="contact_person" options={USER_ROLES} />
+            <ReactSelect name="contact_person" options={contactPerson} />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Phone Number</span>
-            <Input name="contactNumber" type="text" placeholder="1234567890" />
+            <Input
+              type="text"
+              name="contactNumber"
+              value={contactNumber}
+              placeholder="1234567890"
+              disabled
+              borderClass="disabled-control"
+            />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Email</span>
-            <Input type="email" name="email" placeholder="jason@trad.com" />
+            <Input
+              type="email"
+              name="email"
+              value={email}
+              placeholder="jason@trad.com"
+              disabled
+              borderClass="disabled-control"
+            />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Website</span>
-            <Input name="website" type="text" placeholder="www.trad.com" />
+            <Input
+              name="website"
+              type="text"
+              value={website}
+              placeholder="www.trad.com"
+              disabled
+              borderClass="disabled-control"
+            />
           </div>
         </div>
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
       <div className="common-white-container">
-        {activeTabIndex === 0 && <PoliciesTab />}
-        {activeTabIndex === 1 && <ContactsTab />}
+        {activeTabIndex === 0 && <InsurerPoliciesTab />}
+        {activeTabIndex === 1 && <InsurerContactTab />}
         {activeTabIndex === 2 && <ContactsTab />}
       </div>
     </>

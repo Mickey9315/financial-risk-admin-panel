@@ -81,7 +81,22 @@ export const CLIENT_URLS = {
 export const INSURER_URLS = {
   INSURER_LIST_URL: `${BASE_URL}insurer/`,
   SELECTED_INSURER_DETAILS_URL: `${BASE_URL}insurer/`,
-  INSURER_COLUMN_NAME_LIST_URL: `${BASE_URL}insurer/column-name/`,
-  UPDATE_INSURER_COLUMN_NAME_LIST_URL: `${BASE_URL}user/column-name/`,
+  INSURER_COLUMN_NAME_LIST_URL: `${BASE_URL}insurer/column-name`,
+  UPDATE_INSURER_COLUMN_NAME_LIST_URL: `${BASE_URL}insurer/column-name`,
   INSURER_LIST_BY_FILTER_URL: `${BASE_URL}insurer/filter/`,
+  GET_DATA_FROM_CRM_URL: `${BASE_URL}insurer/search-from-crm`,
+  ADD_DATA_FROM_CRM_URL: `${BASE_URL}insurer`,
+  SYNC_DATA_WITH_CRM_URL: `${BASE_URL}insurer/sync-from-crm/`,
+
+  CONTACT: {
+    CONTACT_LIST: `${BASE_URL}insurer/user/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}insurer/user/column-name`,
+    UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}insurer/user/column-name`,
+    SYNC_CONTACT_LIST_URL: `${BASE_URL}insurer/user/sync-from-crm/`,
+  },
+  POLICIES: {
+    POLICIES_LIST: `${BASE_URL}policy/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}policy/column-name/`,
+    SYNC_CLIENT_POLICIES_DATA_URL: `${BASE_URL}policy/sync-from-crm/`,
+  },
 };

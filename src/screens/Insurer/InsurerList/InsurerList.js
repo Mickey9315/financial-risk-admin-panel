@@ -1,166 +1,69 @@
-/*
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './InsurerList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
-import moment from 'moment';
 import IconButton from '../../../common/IconButton/IconButton';
-import Button from '../../../common/Button/Button';
-import Table, { TABLE_ROW_ACTIONS } from '../../../common/Table/Table';
+import Table /* TABLE_ROW_ACTIONS */ from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
-import { getInsurerListByFilter } from '../redux/InsurerAction';
-import Modal from '../../../common/Modal/Modal';
-import Select from '../../../common/Select/Select';
-import { USER_ROLES } from '../../../constants/UserlistConstants';
-import { errorNotification } from '../../../common/Toast';
+import {
+  changeInsurerColumnListStatus,
+  getInsurerColumnNameList,
+  getInsurerListByFilter,
+  getListFromCrm,
+  saveInsurerColumnListName,
+} from '../redux/InsurerAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
-import { processTableDataByType } from '../../../helpers/TableDataProcessHelper';
 import Loader from '../../../common/Loader/Loader';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
-
-const initialFilterState = {
-  role: '',
-  startDate: null,
-  endDate: null,
-};
-
-const INSURER_FILTER_REDUCER_ACTIONS = {
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function filterReducer(state, action) {
-  switch (action.type) {
-    case INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        ...state,
-        [`${action.name}`]: action.value,
-      };
-    case INSURER_FILTER_REDUCER_ACTIONS.RESET_STATE:
-      return { ...initialFilterState };
-    default:
-      return state;
-  }
-}
+import Button from '../../../common/Button/Button';
+import Modal from '../../../common/Modal/Modal';
+import BigInput from '../../../common/BigInput/BigInput';
+import Checkbox from '../../../common/Checkbox/Checkbox';
+import { errorNotification, successNotification } from '../../../common/Toast';
+import { INSURER_CRM_REDUX_CONSTANTS } from '../redux/InsurerReduxConstants';
+import InsurerApiService from '../services/InsurerApiService';
+// import InsurerApiService from '../services/InsurerApiService';
 
 const InsurerList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const insurerListWithPageData = useSelector(({ insurerManagementList }) => insurerManagementList);
-  const insurerColumnList = useSelector(
-    ({ insurerManagementColumnList }) => insurerManagementColumnList
-  );
-
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  // const [deleteId, setDeleteId] = useState(null);
-  const { role, startDate, endDate } = useMemo(() => filter, [filter]);
+  const searchInputRef = useRef();
+  const insurerListWithPageData = useSelector(({ insurer }) => insurer.insurerList);
+  const insurerColumnList = useSelector(({ insurer }) => insurer.insurerColumnNameList);
   const { total, pages, page, limit, docs, headers } = useMemo(() => insurerListWithPageData, [
     insurerListWithPageData,
   ]);
 
-  const getInsurerByFilter = useCallback(
+  const getInsurerList = useCallback(
     (params = {}, cb) => {
-      if (moment(startDate).isAfter(endDate)) {
-        errorNotification('Please enter from date before to date');
-      } else if (moment(endDate).isBefore(startDate)) {
-        errorNotification('Please enter to date after from date');
-      } else {
-        const data = {
-          page: page || 1,
-          limit: limit || 15,
-          role: role && role.trim().length > 0 ? role : undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
-          ...params,
-        };
-        dispatch(getInsurerListByFilter(data));
-        if (cb && typeof cb === 'function') {
-          cb();
-        }
+      const data = {
+        page: page || 1,
+        limit: limit || 15,
+        ...params,
+      };
+      dispatch(getInsurerListByFilter(data));
+      if (cb && typeof cb === 'function') {
+        cb();
       }
     },
-    [page, limit, role, startDate, endDate, filter]
+    [page, limit]
   );
-
-  const handleFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: event.target.name,
-        value: event.target.value,
-      });
-    },
-    [dispatchFilter]
-  );
-
-  const tableData = useMemo(() => {
-    return docs.map(e => {
-      const finalObj = {
-        id: e.id,
-      };
-      headers.forEach(f => {
-        finalObj[`${f.name}`] = processTableDataByType(f.type, e[`${f.name}`]);
-      });
-
-      return finalObj;
-    });
-  }, [docs]);
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getInsurerByFilter({ page: 1, limit: newLimit });
+      getInsurerList({ page: 1, limit: newLimit });
     },
-    [dispatch, getInsurerByFilter]
+    [dispatch, getInsurerList]
   );
 
   const pageActionClick = useCallback(
     newPage => {
-      getInsurerByFilter({ page: newPage, limit });
+      getInsurerList({ page: newPage, limit });
     },
-    [dispatch, limit, getInsurerByFilter]
+    [dispatch, limit, getInsurerList]
   );
 
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
-
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
-
-  const [filterModal, setFilterModal] = useState(false);
-  const toggleFilterModal = useCallback(
-    value => setFilterModal(value !== undefined ? value : e => !e),
-    [setFilterModal]
-  );
-
-  const onClickApplyFilter = useCallback(() => {
-    getInsurerByFilter({ page: 1 }, toggleFilterModal);
-  }, [getInsurerByFilter]);
-
-  const filterModalButtons = useMemo(
-    () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
-      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
-    ],
-    [toggleFilterModal, onClickApplyFilter]
-  );
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
@@ -168,13 +71,13 @@ const InsurerList = () => {
   );
 
   const onClickSaveColumnSelection = useCallback(async () => {
-    // await dispatch(saveInsurerColumnListName({ insurerColumnList }));
+    await dispatch(saveInsurerColumnListName({ insurerColumnList }));
     toggleCustomField();
   }, [dispatch, toggleCustomField, insurerColumnList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    // await dispatch(saveInsurerColumnListName({ isReset: true }));
-    // dispatch(getInsurerColumnListName());
+    await dispatch(saveInsurerColumnListName({ isReset: true }));
+    dispatch(getInsurerColumnNameList());
     toggleCustomField();
   }, [dispatch, toggleCustomField]);
 
@@ -195,14 +98,10 @@ const InsurerList = () => {
     [insurerColumnList]
   );
 
-  const openAddInsurer = useCallback(() => {
-    history.push('/insurer/add/new');
-  }, [history]);
-
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
-      // const data = { type, name, value };
-      // dispatch(changeInsurerColumnListStatus(data));
+      const data = { type, name, value };
+      dispatch(changeInsurerColumnListStatus(data));
     },
     [dispatch]
   );
@@ -213,49 +112,8 @@ const InsurerList = () => {
     },
     [history]
   );
-  const [deleteModal, setDeleteModal] = useState(false);
-  const toggleConfirmationModal = useCallback(
-    value => setDeleteModal(value !== undefined ? value : e => !e),
-    [setDeleteModal]
-  );
-  const deleteInsurerButtons = [
-    { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal(false) },
-    {
-      title: 'Delete',
-      buttonType: 'danger',
-      onClick: async () => {
-        toggleConfirmationModal(false);
-        const data = {
-          page: page || 1,
-          limit: limit || 15,
-          role: role && role.trim().length > 0 ? role : undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
-        };
-        // await dispatch(deleteInsurerDetails(deleteId, data));
-        // setDeleteId(null);
-      },
-    },
-  ];
-  const onSelectInsurerRecordActionClick = useCallback(
-    async (type, id) => {
-      if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
-        history.push(`/insurer/edit/${id}`);
-      } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
-        // setDeleteId(id);
-        toggleConfirmationModal();
-      }
-    },
-    [history]
-  );
 
-  const {
-    page: paramPage,
-    limit: paramLimit,
-    role: paramRole,
-    startDate: paramStartDate,
-    endDate: paramEndDate,
-  } = useQueryParams();
+  const { page: paramPage, limit: paramLimit } = useQueryParams();
 
   useEffect(() => {
     const params = {
@@ -263,30 +121,14 @@ const InsurerList = () => {
       limit: paramLimit || 15,
     };
 
-    const filters = {
-      role: paramRole && paramRole.trim().length > 0 ? paramRole : undefined,
-      startDate: paramStartDate || undefined,
-      endDate: paramEndDate || undefined,
-    };
-
-    Object.entries(filters).forEach(([name, value]) => {
-      dispatchFilter({
-        type: INSURER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name,
-        value,
-      });
-    });
-    dispatch(getInsurerListByFilter());
-    getInsurerByFilter({ ...params, ...filters });
+    getInsurerList({ ...params });
+    dispatch(getInsurerColumnNameList());
   }, []);
 
   useEffect(() => {
     const params = {
       page: page || 1,
       limit: limit || 15,
-      role: role && role.trim().length > 0 ? role : undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
@@ -294,7 +136,80 @@ const InsurerList = () => {
       .join('&');
 
     history.replace(`${history.location.pathname}?${url}`);
-  }, [history, total, pages, page, limit, role, startDate, endDate]);
+  }, [history, total, pages, page, limit]);
+
+  /** *
+   * CRM Feature
+   * * */
+
+  const syncListFromCrm = useSelector(({ insurer }) => insurer.syncInsurerWithCRM);
+  const [addFromCRM, setAddFromCRM] = useState(false);
+  const [crmIds, setCrmIds] = useState([]);
+  const [searchInsurers, setSearchInsurers] = useState(false);
+  const onClickAddFromCRM = useCallback(
+    value => setAddFromCRM(value !== undefined ? value : e => !e),
+    [addFromCRM]
+  );
+
+  const addDataFromCrm = () => {
+    dispatch({
+      type: INSURER_CRM_REDUX_CONSTANTS.INSURER_GET_LIST_FROM_CRM_ACTION,
+      data: [],
+    });
+    const data = {
+      crmIds,
+    };
+    InsurerApiService.addInsurerListFromCrm(data)
+      .then(res => {
+        if (res.data.status === 'SUCCESS') {
+          successNotification('Insurer data successfully synced');
+          setAddFromCRM(e => !e);
+          dispatch(getInsurerListByFilter());
+        }
+      })
+      .catch(() => {
+        /**/
+      });
+  };
+
+  const toggleAddFromCRM = useCallback(() => {
+    setCrmIds([]);
+    dispatch({
+      type: INSURER_CRM_REDUX_CONSTANTS.INSURER_GET_LIST_FROM_CRM_ACTION,
+      data: [],
+    });
+    setAddFromCRM(e => !e);
+  }, [setAddFromCRM, setCrmIds]);
+
+  const addToCRMButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: toggleAddFromCRM },
+      { title: 'Add', buttonType: 'primary', onClick: addDataFromCrm },
+    ],
+    [toggleAddFromCRM, addDataFromCrm]
+  );
+
+  const checkIfEnterKeyPressed = e => {
+    if (e.key === 'Enter') {
+      const searchKeyword = searchInputRef.current.value;
+      if (searchKeyword.trim().toString().length !== 0) {
+        dispatch(getListFromCrm(searchKeyword.trim().toString()));
+        setSearchInsurers(true);
+      } else {
+        errorNotification('Please enter any value than press enter');
+      }
+    }
+  };
+
+  const selectInsurerFromCrm = crmId => {
+    let arr = [...crmIds];
+    if (arr.includes(crmId)) {
+      arr = arr.filter(e => e !== crmId);
+    } else {
+      arr = [...arr, crmId];
+    }
+    setCrmIds(arr);
+  };
 
   return (
     <>
@@ -302,31 +217,28 @@ const InsurerList = () => {
         <div className="page-header-name">Insurer List</div>
         <div className="page-header-button-container">
           <IconButton
-            buttonType="secondary"
-            title="filter_list"
-            className="mr-10"
-            onClick={() => toggleFilterModal()}
-          />
-          <IconButton
             buttonType="primary"
             title="format_line_spacing"
             className="mr-10"
+            buttonTitle="Click to select custom fields"
             onClick={() => toggleCustomField()}
           />
-          <Button title="Add Insurer" buttonType="success" onClick={openAddInsurer()} />
+          <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
         </div>
       </div>
-      {tableData ? (
+      {docs ? (
         <>
           <div className="common-list-container">
             <Table
               align="left"
               valign="center"
-              data={tableData}
+              tableClass="main-list-table"
+              data={docs}
               headers={headers}
               recordSelected={onSelectInsurerRecord}
-              recordActionClick={onSelectInsurerRecordActionClick}
+              recordActionClick={() => {}}
               rowClass="cursor-pointer"
+              haveActions
             />
           </div>
           <Pagination
@@ -342,48 +254,6 @@ const InsurerList = () => {
       ) : (
         <Loader />
       )}
-
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal"
-        >
-          <div className="filter-modal-row">
-            <div className="form-title">Role</div>
-            <Select
-              className="filter-select"
-              placeholder="Select"
-              name="role"
-              options={USER_ROLES}
-              value={role}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title">Date</div>
-            <div className="date-picker-container filter-date-picker-container mr-15">
-              <DatePicker
-                className="filter-date-picker"
-                selected={startDate}
-                onChange={handleStartDateChange}
-                placeholderText="Select date"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-            <div className="date-picker-container filter-date-picker-container">
-              <DatePicker
-                className="filter-date-picker"
-                selected={endDate}
-                onChange={handleEndDateChange}
-                placeholderText="Select date"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-          </div>
-        </Modal>
-      )}
       {customFieldModal && (
         <CustomFieldModal
           defaultFields={defaultFields}
@@ -392,11 +262,40 @@ const InsurerList = () => {
           buttons={customFieldsModalButtons}
         />
       )}
-      {deleteModal && (
-        <Modal header="Delete Insurer" buttons={deleteInsurerButtons}>
-          <span className="confirmation-message">
-            Are you sure you want to delete this insurer?
-          </span>
+      {addFromCRM && (
+        <Modal
+          header="Add From CRM"
+          className="add-to-crm-modal"
+          buttons={addToCRMButtons}
+          hideModal={onClickAddFromCRM}
+        >
+          <BigInput
+            ref={searchInputRef}
+            prefix="search"
+            prefixClass="font-placeholder"
+            placeholder="Search clients"
+            type="text"
+            onKeyDown={checkIfEnterKeyPressed}
+          />
+          {searchInsurers && (
+            <>
+              {/* <Checkbox title="Name" className="check-all-crmList" /> */}
+              <div className="crm-checkbox-list-container">
+                {syncListFromCrm && syncListFromCrm.length > 0 ? (
+                  syncListFromCrm.map(crm => (
+                    <Checkbox
+                      title={crm.name}
+                      className="crm-checkbox-list"
+                      checked={crmIds.includes(crm.crmId.toString())}
+                      onChange={() => selectInsurerFromCrm(crm.crmId.toString())}
+                    />
+                  ))
+                ) : (
+                  <div className="no-data-available">No data available</div>
+                )}
+              </div>
+            </>
+          )}
         </Modal>
       )}
     </>
@@ -404,4 +303,3 @@ const InsurerList = () => {
 };
 
 export default InsurerList;
-*/

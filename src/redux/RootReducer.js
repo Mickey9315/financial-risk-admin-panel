@@ -15,6 +15,7 @@ import {
   syncClientWithCrm,
 } from '../screens/Clients/redux/ClientReducer';
 import { application } from '../screens/Application/redux/ApplicationReducer';
+import { insurer } from '../screens/Insurer/redux/InsurerReducer';
 import { loggedUserProfile } from '../common/Header/redux/HeaderReducer';
 
 const rootReducer = combineReducers({
@@ -31,5 +32,6 @@ const rootReducer = combineReducers({
   loggedUserProfile,
   syncClientWithCrm,
   application,
+  insurer,
 });
 export default rootReducer;

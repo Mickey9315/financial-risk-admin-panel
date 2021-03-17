@@ -6,9 +6,11 @@ import UserList from '../screens/Users/UserList/UserList';
 import AddUser from '../screens/Users/AddUser/AddUser';
 import ClientList from '../screens/Clients/ClientList/ClientList';
 import ViewClient from '../screens/Clients/ViewClient/ViewClient';
-import ViewInsurer from '../screens/Insurer/ViewInsurer/ViewInsurer';
+// import ViewInsurer from '../screens/Insurer/ViewInsurer/ViewInsurer';
 import ApplicationList from '../screens/Application/ApplicationList/ApplicationList';
+import InsurerList from '../screens/Insurer/InsurerList/InsurerList';
 import GenerateApplication from '../screens/Application/GenerateApplication/GenerateApplication';
+import ViewInsurer from '../screens/Insurer/ViewInsurer/ViewInsurer';
 
 export const AuthenticatedRoute = ({ component, ...options }) => {
   const isLoggedIn = getAuthTokenLocalStorage();
@@ -51,14 +53,15 @@ export const AllAuthenticatedRoutes = () => {
       <AuthenticatedRoute exact path="/debtors" component={null} />
       <AuthenticatedRoute exact path="/claims" component={null} />
       <AuthenticatedRoute exact path="/over-dues" component={null} />
-      <AuthenticatedRoute exact path="/insurer" component={null} />
       <AuthenticatedRoute exact path="/reports" component={null} />
       <AuthenticatedRoute exact path="/settings" component={null} />
       <AuthenticatedRoute exact path="/users" component={UserList} />
       <AuthenticatedRoute exact path="/users/user/:action/:id" component={AddUser} />
       <AuthenticatedRoute exact path="/clients" component={ClientList} />
       <AuthenticatedRoute exact path="/clients/client/:action/:id" component={ViewClient} />
-      <AuthenticatedRoute exact path="/insurer" component={ViewInsurer} />
+      <AuthenticatedRoute exact path="/insurer" component={InsurerList} />
+      <AuthenticatedRoute exact path="/insurer/:action/:id" component={ViewInsurer} />
+      {/* <AuthenticatedRoute exact path="/insurer" component={ViewInsurer} /> */}
     </Dashboard>
   );
 };
