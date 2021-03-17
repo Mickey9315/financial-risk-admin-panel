@@ -1,10 +1,14 @@
 @import "../../../../../index";
 
+.application-person-step-accordion > div{
+  background-color: $background-color;
+}
+
 .application-person-step-accordion-item, .application-confirmation-step {
   display: grid;
   grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
   align-items: center;
-  padding: 0!important;
+  padding: 5px 30px;
   gap: 10px;
   font: $subtitle $font-regular!important;
   > span {

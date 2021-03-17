@@ -6,9 +6,26 @@ import Accordion from '../../../../../common/Accordion/Accordion';
 import AccordionItem from '../../../../../common/Accordion/AccordionItem';
 import Input from '../../../../../common/Input/Input';
 import Checkbox from '../../../../../common/Checkbox/Checkbox';
+import RadioButton from '../../../../../common/RadioButton/RadioButton';
 
 const ApplicationPersonStep = () => {
   const INPUTS = [
+    {
+      type: 'radio',
+      name: 'partnershipType',
+      data: [
+        {
+          id: 'individual',
+          label: 'Individual',
+          value: 'individual',
+        },
+        {
+          id: 'company',
+          label: 'Company',
+          value: 'company',
+        },
+      ],
+    },
     {
       label: 'Individual Details',
       placeholder: '',
@@ -184,6 +201,20 @@ const ApplicationPersonStep = () => {
             <Checkbox className="grid-checkbox" title={input.label} />
           </>
         );
+      case 'radio':
+        return (
+          <>
+            {input.data.map(radio => (
+              <RadioButton
+                className="mb-5"
+                id={radio.id}
+                name={input.name}
+                value={radio.value}
+                label={radio.label}
+              />
+            ))}
+          </>
+        );
       case 'main-title':
         return (
           <>
@@ -213,7 +244,7 @@ const ApplicationPersonStep = () => {
   }, []);
   return (
     <>
-      <Accordion>
+      <Accordion className="application-person-step-accordion">
         <AccordionItem header="Director Details" prefix="expand_more">
           <div className="application-person-step-accordion-item">
             {INPUTS.map(getComponentFromType)}
