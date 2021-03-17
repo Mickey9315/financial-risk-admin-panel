@@ -62,7 +62,7 @@ const GenerateApplication = () => {
   }, []);
 
   const onNextClick = useCallback(() => {
-    return applicationCompanyStepValidations(editApplicationData[steps[stepIndex].name]);
+    return applicationCompanyStepValidations(dispatch, editApplicationData[steps[stepIndex].name]);
   }, [editApplicationData, stepIndex]);
 
   return (

@@ -295,9 +295,10 @@ const ApplicationCompanyStep = () => {
 
   const getComponentFromType = useCallback(
     input => {
+      let component = null;
       switch (input.type) {
         case 'text':
-          return (
+          component = (
             <>
               <span>{input.label}</span>
               <Input
@@ -309,8 +310,9 @@ const ApplicationCompanyStep = () => {
               />
             </>
           );
+          break;
         case 'search':
-          return (
+          component = (
             <>
               <span>{input.label}</span>
               <Input
@@ -323,8 +325,9 @@ const ApplicationCompanyStep = () => {
               />
             </>
           );
+          break;
         case 'entityName':
-          return (
+          component = (
             <>
               <span>{input.label}</span>
               <Input
@@ -334,12 +337,13 @@ const ApplicationCompanyStep = () => {
               />
             </>
           );
+          break;
         case 'select': {
           let handleOnChange = handleSelectInputChange;
           if (input.name === 'debtor') {
             handleOnChange = handleDebtorSelectChange;
           }
-          return (
+          component = (
             <>
               <span>{input.label}</span>
               <ReactSelect
@@ -352,10 +356,19 @@ const ApplicationCompanyStep = () => {
               />
             </>
           );
+          break;
         }
         default:
           return null;
       }
+      return (
+        <>
+          {component}
+          {companyState.errors[input.name] && (
+            <span className="ui-state-error">{companyState.errors[input.name]}</span>
+          )}
+        </>
+      );
     },
     [companyState, handleDebtorSelectChange, handleSelectInputChange, handleTextInputChange]
   );

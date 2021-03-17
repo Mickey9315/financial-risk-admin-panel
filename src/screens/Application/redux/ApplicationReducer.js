@@ -47,6 +47,7 @@ const initialApplicationList = {
       abn: '',
       tradingName: '',
       debtor: [],
+      errors: {},
     },
   },
 
