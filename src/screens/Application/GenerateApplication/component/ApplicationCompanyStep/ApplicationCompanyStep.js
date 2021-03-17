@@ -28,7 +28,6 @@ const drawerInitialState = {
 };
 
 const drawerReducer = (state, action) => {
-  console.log({ state, action });
   switch (action.type) {
     case DRAWER_ACTIONS.SHOW_DRAWER:
       return {
