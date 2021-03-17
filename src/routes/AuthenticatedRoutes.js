@@ -11,6 +11,8 @@ import ApplicationList from '../screens/Application/ApplicationList/ApplicationL
 import InsurerList from '../screens/Insurer/InsurerList/InsurerList';
 import GenerateApplication from '../screens/Application/GenerateApplication/GenerateApplication';
 import ViewInsurer from '../screens/Insurer/ViewInsurer/ViewInsurer';
+import MyWork from '../screens/MyWork/MyWork';
+import MyWorkAddTask from '../screens/MyWork/MyWorkTasks/MyWorkAddTask/MyWorkAddTask';
 
 export const AuthenticatedRoute = ({ component, ...options }) => {
   const isLoggedIn = getAuthTokenLocalStorage();
@@ -43,7 +45,8 @@ export const AllAuthenticatedRoutes = () => {
   return (
     <Dashboard>
       <AuthenticatedRoute exact path="/dashboard" component={null} />
-      <AuthenticatedRoute exact path="/my-work" component={null} />
+      <AuthenticatedRoute exact path="/my-work" component={MyWork} />
+      <AuthenticatedRoute exact path="/my-work/add" component={MyWorkAddTask} />
       <AuthenticatedRoute exact path="/applications" component={ApplicationList} />
       <AuthenticatedRoute
         exact

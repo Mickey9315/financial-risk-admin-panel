@@ -1,6 +1,6 @@
 @import "../../../index";
 
-.client-details-container {
+.client-details-container, .my-work-add-task-container {
   display: grid!important;
   grid-template-columns: 15% calc(35% - 7px) 15% calc(35% - 7px);
   align-items: center;

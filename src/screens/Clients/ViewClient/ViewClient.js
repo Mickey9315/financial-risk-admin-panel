@@ -142,6 +142,17 @@ const ViewClient = () => {
   if (!viewClientData) {
     return <Loader />;
   }
+  const tabComponent = [
+    <ClientContactsTab />,
+    <CreditLimitTab />,
+    <ApplicationTab />,
+    <OverDuesTab />,
+    <ClaimsTab />,
+    <TasksTab />,
+    <ClientPoliciesTab />,
+    <ClientDocumentsTab />,
+    <ClientNotesTab />,
+  ];
 
   return (
     <>
@@ -222,17 +233,7 @@ const ViewClient = () => {
         </div>
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
-      <div className="common-white-container">
-        {activeTabIndex === 0 && <ClientContactsTab />}
-        {activeTabIndex === 1 && <CreditLimitTab />}
-        {activeTabIndex === 2 && <ApplicationTab />}
-        {activeTabIndex === 3 && <OverDuesTab />}
-        {activeTabIndex === 4 && <ClaimsTab />}
-        {activeTabIndex === 5 && <TasksTab />}
-        {activeTabIndex === 6 && <ClientPoliciesTab />}
-        {activeTabIndex === 7 && <ClientDocumentsTab />}
-        {activeTabIndex === 8 && <ClientNotesTab />}
-      </div>
+      <div className="common-white-container">{tabComponent[activeTabIndex]}</div>
     </>
   );
 };

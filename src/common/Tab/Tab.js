@@ -9,12 +9,12 @@ const Tab = props => {
   return (
     <div className={tabClass} {...restProps}>
       {tabs.length > 0 &&
-        tabs.map((e, index) => (
+        tabs.map((tab, index) => (
           <div
             className={`tab ${activeTabIndex === index && 'active-tab'}`}
             onClick={() => tabActive(index)}
           >
-            {e}
+            {tab}
           </div>
         ))}
     </div>
