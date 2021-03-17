@@ -3,19 +3,20 @@ import PropTypes from 'prop-types';
 import './RadioButton.scss';
 
 const RadioButton = props => {
-  const { id, label, value, name } = props;
+  const { id, label, value, name, className, ...restProps } = props;
   return (
-    <>
-      <input type="radio" id={id} name={name} value={value} />
+    <div className={className}>
+      <input type="radio" id={id} name={name} value={value} {...restProps} />
       <label htmlFor={id} className="radio-button mr-15">
         {label}
       </label>
-    </>
+    </div>
   );
 };
 
 RadioButton.propTypes = {
   id: PropTypes.string.isRequired,
+  className: PropTypes.string,
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   value: PropTypes.string.isRequired,
@@ -23,6 +24,7 @@ RadioButton.propTypes = {
 
 RadioButton.defaultProps = {
   label: '',
+  className: '',
 };
 
 export default RadioButton;
