@@ -50,11 +50,12 @@ const initialApplicationList = {
       errors: {},
     },
     creditLimitStep: {
-      isExtendedPaymentTerms: false,
+      isExtendedPaymentTerms: '',
       extendedPaymentTermsDetails: '',
-      isPassedOverdueAmount: false,
+      isPassedOverdueAmount: '',
       passedOverdueDetails: '',
       creditLimit: '',
+      errors: {},
     },
   },
 
