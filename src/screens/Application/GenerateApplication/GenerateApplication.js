@@ -9,6 +9,7 @@ import ApplicationDocumentStep from './component/ApplicationDocumentsStep/Applic
 import ApplicationConfirmationStep from './component/ApplicationConfirmationStep/ApplicationConfirmationStep';
 import { applicationCompanyStepValidations } from './component/ApplicationCompanyStep/validations/ApplicationCompanyStepValidations';
 import { changeEditApplicationFieldValue } from '../redux/ApplicationAction';
+import { applicationCreditStepValidations } from './component/ApplicationCreditLimitStep/validations/ApplicationCreditStepValidations';
 
 const STEP_COMPONENT = [
   <ApplicationCompanyStep />,
@@ -62,7 +63,21 @@ const GenerateApplication = () => {
   }, []);
 
   const onNextClick = useCallback(() => {
-    return applicationCompanyStepValidations(dispatch, editApplicationData[steps[stepIndex].name]);
+    switch (stepIndex) {
+      case 0:
+        return applicationCompanyStepValidations(
+          dispatch,
+          editApplicationData[steps[stepIndex].name]
+        );
+      case 2:
+        return applicationCreditStepValidations(
+          dispatch,
+          editApplicationData[steps[stepIndex].name]
+        );
+
+      default:
+        return false;
+    }
   }, [editApplicationData, stepIndex]);
 
   return (
