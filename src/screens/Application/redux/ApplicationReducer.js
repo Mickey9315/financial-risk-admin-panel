@@ -49,6 +49,13 @@ const initialApplicationList = {
       debtor: [],
       errors: {},
     },
+    creditLimitStep: {
+      isExtendedPaymentTerms: false,
+      extendedPaymentTermsDetails: '',
+      isPassedOverdueAmount: false,
+      passedOverdueDetails: '',
+      creditLimit: '',
+    },
   },
 
   company: {
