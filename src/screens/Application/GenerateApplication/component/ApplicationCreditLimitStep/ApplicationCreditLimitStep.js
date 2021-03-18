@@ -14,6 +14,7 @@ const ApplicationCreditLimitStep = () => {
     isPassedOverdueAmount,
     passedOverdueDetails,
     creditLimit,
+    errors,
   } = useSelector(({ application }) => application.editApplication.creditLimitStep);
 
   const updateSingleCompanyState = useCallback((name, value) => {
@@ -30,26 +31,30 @@ const ApplicationCreditLimitStep = () => {
 
   return (
     <>
-      <div className="f-14 font-primary mb-10">
-        Any extended payment terms outside your policy standard terms? *
+      <div>
+        <div className="f-14 font-primary mb-10">
+          Any extended payment terms outside your policy standard terms? *
+        </div>
+        <RadioButton
+          id="any-extended-pay-yes"
+          name="isExtendedPaymentTerms"
+          label="Yes"
+          value="yes"
+          checked={isExtendedPaymentTerms === 'yes'}
+          onChange={handleInputChange}
+        />
+        <RadioButton
+          id="any-extended-pay-no"
+          name="isExtendedPaymentTerms"
+          label="No"
+          value="no"
+          checked={isExtendedPaymentTerms === 'no'}
+          onChange={handleInputChange}
+        />
+        {errors.isExtendedPaymentTerms && (
+          <div className="ui-state-error">{errors.isExtendedPaymentTerms}</div>
+        )}
       </div>
-      <RadioButton
-        id="any-extended-pay-yes"
-        name="isExtendedPaymentTerms"
-        label="Yes"
-        value="yes"
-        checked={isExtendedPaymentTerms === 'yes'}
-        onChange={handleInputChange}
-      />
-      <RadioButton
-        id="any-extended-pay-no"
-        name="isExtendedPaymentTerms"
-        label="No"
-        value="no"
-        checked={isExtendedPaymentTerms === 'no'}
-        onChange={handleInputChange}
-      />
-
       <div className="if-yes-row">
         <span className="font-primary mr-15">If yes, please provide details</span>
         <Input
@@ -59,27 +64,35 @@ const ApplicationCreditLimitStep = () => {
           value={extendedPaymentTermsDetails}
           onChange={handleInputChange}
         />
+        {errors.extendedPaymentTermsDetails && (
+          <div className="ui-state-error">{errors.extendedPaymentTermsDetails}</div>
+        )}
       </div>
 
-      <div className="f-14 font-primary mb-10">
-        Any overdue amounts passed your maximum extension period / Credit period? *
+      <div>
+        <div className="f-14 font-primary mb-10">
+          Any overdue amounts passed your maximum extension period / Credit period? *
+        </div>
+        <RadioButton
+          id="passed-max-period-yes"
+          name="isPassedOverdueAmount"
+          label="Yes"
+          value="yes"
+          checked={isPassedOverdueAmount === 'yes'}
+          onChange={handleInputChange}
+        />
+        <RadioButton
+          id="passed-max-period-no"
+          name="isPassedOverdueAmount"
+          label="No"
+          value="no"
+          checked={isPassedOverdueAmount === 'no'}
+          onChange={handleInputChange}
+        />
+        {errors.isPassedOverdueAmount && (
+          <div className="ui-state-error">{errors.isPassedOverdueAmount}</div>
+        )}
       </div>
-      <RadioButton
-        id="passed-max-period-yes"
-        name="isPassedOverdueAmount"
-        label="Yes"
-        value="yes"
-        checked={isPassedOverdueAmount === 'yes'}
-        onChange={handleInputChange}
-      />
-      <RadioButton
-        id="passed-max-period-no"
-        name="isPassedOverdueAmount"
-        label="No"
-        value="no"
-        checked={isPassedOverdueAmount === 'no'}
-        onChange={handleInputChange}
-      />
 
       <div className="if-yes-row">
         <span className="font-primary mr-15">If yes, please provide details</span>
@@ -90,6 +103,9 @@ const ApplicationCreditLimitStep = () => {
           value={passedOverdueDetails}
           onChange={handleInputChange}
         />
+        {errors.passedOverdueDetails && (
+          <div className="ui-state-error">{errors.passedOverdueDetails}</div>
+        )}
       </div>
 
       <div className="f-14 font-secondary mb-10">
@@ -106,6 +122,7 @@ const ApplicationCreditLimitStep = () => {
           onChange={handleInputChange}
         />
       </div>
+      {errors.creditLimit && <div className="ui-state-error">{errors.creditLimit}</div>}
     </>
   );
 };
