@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
-
+import './ApplicationCompanyStep.scss';
 import {
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
@@ -13,8 +13,8 @@ import {
 } from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
 import Loader from '../../../../../common/Loader/Loader';
-import ApplicationEntityNameModal from '../components/ApplicationEntityNameModal/ApplicationEntityNameModal';
 import ApplicationEntityNameTable from '../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
+import Modal from '../../../../../common/Modal/Modal';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -265,6 +265,17 @@ const ApplicationCompanyStep = () => {
     [companyState, updateCompanyState, dispatchDrawerState]
   );
 
+  const handleToggleDropdown = useCallback(
+    value =>
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.UPDATE_DATA,
+        data: {
+          visible: value !== undefined ? value : e => !e,
+        },
+      }),
+    [dispatchDrawerState]
+  );
+
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
@@ -277,19 +288,9 @@ const ApplicationCompanyStep = () => {
       } catch (err) {
         /**/
       }
+      handleToggleDropdown(false);
     },
     [companyState, updateCompanyState]
-  );
-
-  const handleToggleDropdown = useCallback(
-    value =>
-      dispatchDrawerState({
-        type: DRAWER_ACTIONS.UPDATE_DATA,
-        data: {
-          visible: value !== undefined ? value : e => !e,
-        },
-      }),
-    [dispatchDrawerState]
   );
 
   const getComponentFromType = useCallback(
@@ -298,43 +299,30 @@ const ApplicationCompanyStep = () => {
       switch (input.type) {
         case 'text':
           component = (
-            <>
-              <span>{input.label}</span>
-              <Input
-                type="text"
-                name={input.name}
-                placeholder={input.placeholder}
-                value={companyState[input.name]}
-                onChange={handleTextInputChange}
-              />
-            </>
+            <Input
+              type="text"
+              name={input.name}
+              placeholder={input.placeholder}
+              value={companyState[input.name]}
+              onChange={handleTextInputChange}
+            />
           );
           break;
         case 'search':
           component = (
-            <>
-              <span>{input.label}</span>
-              <Input
-                type="text"
-                name={input.name}
-                placeholder={input.placeholder}
-                value={companyState[input.name]}
-                onChange={handleTextInputChange}
-                onKeyDown={handleSearchTextInputKeyDown}
-              />
-            </>
+            <Input
+              type="text"
+              name={input.name}
+              placeholder={input.placeholder}
+              value={companyState[input.name]}
+              onChange={handleTextInputChange}
+              onKeyDown={handleSearchTextInputKeyDown}
+            />
           );
           break;
         case 'entityName':
           component = (
-            <>
-              <span>{input.label}</span>
-              <Input
-                type="text"
-                placeholder={input.placeholder}
-                onKeyDown={handleEntityNameSearch}
-              />
-            </>
+            <Input type="text" placeholder={input.placeholder} onKeyDown={handleEntityNameSearch} />
           );
           break;
         case 'select': {
@@ -343,17 +331,14 @@ const ApplicationCompanyStep = () => {
             handleOnChange = handleDebtorSelectChange;
           }
           component = (
-            <>
-              <span>{input.label}</span>
-              <ReactSelect
-                placeholder={input.placeholder}
-                name={input.name}
-                options={input.data}
-                searchable={false}
-                values={companyState[input.name]}
-                onChange={handleOnChange}
-              />
-            </>
+            <ReactSelect
+              placeholder={input.placeholder}
+              name={input.name}
+              options={input.data}
+              searchable={false}
+              values={companyState[input.name]}
+              onChange={handleOnChange}
+            />
           );
           break;
         }
@@ -362,10 +347,13 @@ const ApplicationCompanyStep = () => {
       }
       return (
         <>
-          {component}
-          {companyState.errors[input.name] && (
-            <span className="ui-state-error">{companyState.errors[input.name]}</span>
-          )}
+          <span>{input.label}</span>
+          <div>
+            {component}
+            {companyState.errors[input.name] && (
+              <div className="ui-state-error">{companyState.errors[input.name]}</div>
+            )}
+          </div>
         </>
       );
     },
@@ -379,7 +367,13 @@ const ApplicationCompanyStep = () => {
   return (
     <>
       {drawerState.visible && (
-        <ApplicationEntityNameModal hideModal={handleToggleDropdown}>
+        <Modal
+          hideModal={handleToggleDropdown}
+          className="application-entity-name-modal"
+          header="Search Results"
+          closeIcon="cancel"
+          closeClassName="font-secondary"
+        >
           {entityNameSearchDropDownData.isLoading ? (
             <Loader />
           ) : (
@@ -388,7 +382,7 @@ const ApplicationCompanyStep = () => {
               handleEntityNameSelect={handleEntityNameSelect}
             />
           )}
-        </ApplicationEntityNameModal>
+        </Modal>
       )}
       <div className="common-white-container client-details-container">
         <span>Client</span>

@@ -5,11 +5,11 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../../common/Input/Input';
 import Tab from '../../../common/Tab/Tab';
-import ContactsTab from '../../../common/Tab/ContactsTab/ContactsTab';
 import { getInsurerById, syncInsurerData } from '../redux/InsurerAction';
 import InsurerContactTab from '../Components/InsurerContactTab';
 import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
 import Button from '../../../common/Button/Button';
+import InsurerMatrixTab from '../InsurerMatrixTab/InsurerMatrixTab';
 
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -116,7 +116,7 @@ const ViewInsurer = () => {
       <div className="common-white-container">
         {activeTabIndex === 0 && <InsurerPoliciesTab />}
         {activeTabIndex === 1 && <InsurerContactTab />}
-        {activeTabIndex === 2 && <ContactsTab />}
+        {activeTabIndex === 2 && <InsurerMatrixTab />}
       </div>
     </>
   );

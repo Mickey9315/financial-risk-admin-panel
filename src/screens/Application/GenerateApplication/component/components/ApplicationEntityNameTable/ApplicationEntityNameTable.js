@@ -10,14 +10,14 @@ const ApplicationEntityNameTable = props => {
     <table className="table-class">
       <thead>
         {headers.map(column => (
-          <th width={10} align="center" valign="center">
+          <th width={10} style={{ backgroundColor: 'white' }}>
             {column}
           </th>
         ))}
       </thead>
       <tbody>
         {data.map(row => (
-          <tr align="center" valign="center">
+          <tr>
             <td>
               <div className="link" onClick={() => handleEntityNameSelect(row)}>
                 {row.label}

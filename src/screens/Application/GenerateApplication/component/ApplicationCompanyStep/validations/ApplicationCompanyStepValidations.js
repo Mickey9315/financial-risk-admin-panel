@@ -16,9 +16,9 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
   if (data.acn && data.acn.trim().length < 9) {
     errors.acn = 'Please enter valid ACN number before continue';
   }
-  // else if (!data.entityName || data.entityName.trim().length <= 0) {
-  //   errorNotification('Please enter entity name');
-  // }
+  if (!data.entityName || data.entityName.length <= 0) {
+    errors.entityName = 'Please enter entity name';
+  }
   if (!data.entityType || data.entityType.length <= 0) {
     errors.entityType = 'Please select entity type before continue';
   }

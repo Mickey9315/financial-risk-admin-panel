@@ -162,3 +162,8 @@
 .confirmation-message {
   color: $field-color;
 }
+
+.ui-state-error {
+  margin-top: 5px;
+  color: $error-color;
+}

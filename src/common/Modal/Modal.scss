@@ -31,7 +31,7 @@
   color: $primary-color;
   border-bottom: 1px solid $border-color;
 
-  div {
+   > div {
     display: flex;
     align-items: center;
     justify-content: center;
