@@ -8,6 +8,7 @@ import {
 } from './InsurerReduxConstants';
 import InsurerContactApiServices from '../services/InsurerContactApiServices';
 import InsurerPoliciesApiServices from '../services/InsurerPoliciesApiServices';
+import InsurerMatrixApiServices from '../services/InsurerMatrixApiServices';
 
 export const getInsurerListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -428,6 +429,31 @@ export const syncInsurerData = id => {
         } else {
           errorNotification('Internal server error');
         }
+      }
+    }
+  };
+};
+
+export const getInsurerMatrixData = id => {
+  return async dispatch => {
+    try {
+      const response = await InsurerMatrixApiServices.getInsurerMatrixData(id);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: INSURER_VIEW_REDUX_CONSTANT.MATRIX.INSURER_MATRIX_GET_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
       }
     }
   };

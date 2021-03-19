@@ -26,6 +26,10 @@ const initialInsurer = {
     policiesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
+  matrix: {
+    generalGuideLines: [],
+    priceRange: [],
+  },
 };
 
 export const insurer = (state = initialInsurer, action) => {
@@ -132,6 +136,9 @@ export const insurer = (state = initialInsurer, action) => {
         },
       };
     }
+
+    case INSURER_VIEW_REDUX_CONSTANT.MATRIX.INSURER_MATRIX_GET_DATA:
+      return { ...state, matrix: action.data };
 
     case INSURER_CRM_REDUX_CONSTANTS.INSURER_GET_LIST_FROM_CRM_ACTION:
       return {

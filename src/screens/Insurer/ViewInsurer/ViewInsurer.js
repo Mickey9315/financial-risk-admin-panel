@@ -9,7 +9,7 @@ import { getInsurerById, syncInsurerData } from '../redux/InsurerAction';
 import InsurerContactTab from '../Components/InsurerContactTab';
 import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
 import Button from '../../../common/Button/Button';
-import InsurerMatrixTab from '../InsurerMatrixTab/InsurerMatrixTab';
+import InsurerMatrixTab from '../Components/InsurerMatrixTab/InsurerMatrixTab';
 
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);

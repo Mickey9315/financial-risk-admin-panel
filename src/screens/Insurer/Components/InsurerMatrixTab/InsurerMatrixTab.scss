@@ -1,4 +1,4 @@
-@import "../../../index";
+@import "src/index";
 
 .matrix-container {
   flex-direction: column;
@@ -91,11 +91,6 @@
     color: $secondary-color;
     transform: rotate(90deg);
   }
-}
-
-.report-title {
-  font: $subtitle $font-bold;
-  color: $field-color
 }
 
 .illion-report {

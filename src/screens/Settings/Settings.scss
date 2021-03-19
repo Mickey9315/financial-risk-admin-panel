@@ -1,0 +1,94 @@
+@import '../../index';
+
+.settings-tab.tab-container {
+  background-color: white;
+}
+
+.settings-api-integration-container.common-white-container {
+  padding: 0;
+}
+
+.settings-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  .title {
+    font: $h5 $font-medium;
+    color: $primary-color;
+  }
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px 20px 10px 20px;
+  border-bottom: 1px solid $border-color;
+
+  .title {
+    font: $h5 $font-medium;
+    color: $secondary-color;
+  }
+
+  .input-container {
+    min-width: 220px;
+    width: 20%;
+  }
+}
+
+.settings-row:first-child {
+  margin-top: 10px;
+}
+
+.settings-row:last-child {
+  margin-bottom: 10px;
+  border-bottom: 0;
+}
+
+.settings-row > div:first-child {
+  flex: 1;
+}
+
+.settings-input-container {
+  display: grid;
+  grid-template-columns: 60px 230px 80px 230px;
+  gap: 10px;
+  align-items: center;
+  margin: 15px 30px 0 0;
+}
+
+.settings-row-input-title {
+  margin-right: 10px;
+  font: $subtitle $font-regular;
+  color: $primary-color;
+}
+
+.common-white-container.settings-organization-details {
+  flex-direction: column;
+  padding: 30px;
+}
+
+.add-document-modal {
+  width: 500px;
+}
+
+.settings-organization-details-row, .add-document-modal-body {
+  display: grid;
+  grid-template-columns: 150px minmax(200px, 400px);
+  gap: 10px;
+  align-items: center;
+  font-size: $subtitle;
+
+  span {
+    color: $primary-color;
+  }
+}
+
+
+.add-document-modal-body {
+  grid-template-columns: 150px minmax(200px, 300px);
+  gap: 15px;
+}
