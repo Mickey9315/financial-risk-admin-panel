@@ -16,7 +16,5 @@ const ApplicationCompanyStepApiServices = {
     ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_ENTITY_TYPE}${searchText}`, {
       params,
     }),
-  saveApplicationStepDataToBackend: data =>
-    ApiService.putData(`${APPLICATION_URLS.APPLICATION_SAVE_STEP_DATA}`, data),
 };
 export default ApplicationCompanyStepApiServices;

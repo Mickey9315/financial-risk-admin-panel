@@ -269,6 +269,7 @@ export const updateEditApplicationData = (stepName, data) => {
 };
 
 export const updateEditApplicationField = (stepName, name, value) => {
+  console.log('update application field', stepName, name, value);
   return dispatch => {
     dispatch({
       type:
@@ -280,10 +281,116 @@ export const updateEditApplicationField = (stepName, name, value) => {
     });
   };
 };
+// for person step
+export const addPersonDetail = type => {
+  const companyData = {
+    type: 'company',
+    abn: '',
+    acn: '',
+    entityType: '',
+    entityName: '',
+    tradingName: '',
+  };
+
+  const individualData = {
+    type: 'individual',
+    title: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    dateOfBirth: '',
+    driverLicenceNumber: '',
+    phoneNumber: '',
+    mobileNumber: '',
+    email: '',
+    allowToCheckCreditHistory: false,
+    property: '',
+    unitNumber: '',
+    streetNumber: '',
+    streetName: '',
+    streetType: '',
+    suburb: '',
+    state: '',
+    country: '',
+    postCode: '',
+  };
+  const data = type === 'individual' ? individualData : companyData;
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.PERSON.ADD_APPLICATION_PERSON,
+      data,
+    });
+  };
+};
+
+// person step edit application
+export const updatePersonData = (index, name, value) => {
+  console.log('updatePersonData', index, name, value);
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.PERSON.EDIT_APPLICATION_PERSON,
+      index,
+      name,
+      value,
+    });
+  };
+};
+// dispatch this when radio button change from indi to company
+export const changePersonType = (index, type) => {
+  const companyData = {
+    type: 'company',
+    abn: '',
+    acn: '',
+    entityType: '',
+    entityName: '',
+    tradingName: '',
+  };
+
+  const individualData = {
+    type: 'individual',
+    title: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    dateOfBirth: '',
+    driverLicenceNumber: '',
+    phoneNumber: '',
+    mobileNumber: '',
+    email: '',
+    allowToCheckCreditHistory: false,
+    property: '',
+    unitNumber: '',
+    streetNumber: '',
+    streetName: '',
+    streetType: '',
+    suburb: '',
+    state: '',
+    country: '',
+    postCode: '',
+  };
+  const data = type === 'individual' ? individualData : companyData;
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.PERSON.CHANGE_APPLICATION_PERSON_TYPE,
+      index,
+      data,
+    });
+  };
+};
+
+export const updatePersonStepDataOnValueSelected = (index, data) => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.PERSON.PERSON_STEP_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA,
+      index,
+      data,
+    });
+  };
+};
 
 export const saveApplicationStepDataToBackend = async data => {
   try {
-    const response = await ApplicationCompanyStepApiServices.saveApplicationStepDataToBackend(data);
+    const response = await ApplicationApiServices.saveApplicationStepDataToBackend(data);
 
     if (response.data.status === 'SUCCESS') {
       return response.data.data;

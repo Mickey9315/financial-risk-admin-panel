@@ -23,11 +23,12 @@ const initialApplicationList = {
       australianStates: [],
       entityType: [],
       applicationStatus: [],
+      companyEntityType: [],
     },
   },
 
   editApplication: {
-    currentStepIndex: 0,
+    currentStepIndex: 1,
     companyStep: {
       clientId: [],
       postcode: '',
@@ -57,6 +58,7 @@ const initialApplicationList = {
       creditLimit: '',
       errors: {},
     },
+    personStep: [],
   },
 
   company: {
@@ -183,6 +185,60 @@ export const application = (state = initialApplicationList, action) => {
             ...state.editApplication[action.stepName],
             [action.name]: action.value,
           },
+        },
+      };
+    }
+    case APPLICATION_REDUX_CONSTANTS.PERSON.ADD_APPLICATION_PERSON: {
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          personStep: [...state.editApplication.personStep, action.data],
+        },
+      };
+    }
+    case APPLICATION_REDUX_CONSTANTS.PERSON.EDIT_APPLICATION_PERSON: {
+      const personStep = [...state.editApplication.personStep];
+      personStep[action.index] = {
+        ...personStep[action.index],
+        [action.name]: action.value,
+      };
+
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          personStep,
+        },
+      };
+    }
+    case APPLICATION_REDUX_CONSTANTS.PERSON.PERSON_STEP_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA: {
+      const personStep = [...state.editApplication.personStep];
+      personStep[action.index] = {
+        ...personStep[action.index],
+        ...action.data,
+      };
+
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          personStep,
+        },
+      };
+    }
+
+    case APPLICATION_REDUX_CONSTANTS.PERSON.CHANGE_APPLICATION_PERSON_TYPE: {
+      const personStep = [...state.editApplication.personStep];
+      personStep[action.index] = {
+        ...action.data,
+      };
+
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          personStep,
         },
       };
     }

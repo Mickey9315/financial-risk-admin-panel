@@ -1,18 +1,47 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import './ApplicationPersonStep.scss';
-import ReactSelect from 'react-dropdown-select';
-import DatePicker from 'react-datepicker';
+import { useDispatch, useSelector } from 'react-redux';
 import Accordion from '../../../../../common/Accordion/Accordion';
-import AccordionItem from '../../../../../common/Accordion/AccordionItem';
-import Input from '../../../../../common/Input/Input';
-import Checkbox from '../../../../../common/Checkbox/Checkbox';
-import RadioButton from '../../../../../common/RadioButton/RadioButton';
+import {
+  addPersonDetail,
+  getApplicationCompanyDropDownData,
+  getApplicationFilter,
+} from '../../../redux/ApplicationAction';
+import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDetail';
 
 const ApplicationPersonStep = () => {
+  const personState = useSelector(({ application }) => application.editApplication.personStep);
+
+  const { streetType, australianStates } = useSelector(
+    ({ application }) => application.company.dropdownData
+  );
+  const companyEntityType = useSelector(
+    ({ application }) => application.applicationFilterList.dropdownData.companyEntityType
+  );
+
+  const entityTypeFromCompany = 'PARTNERSHIP';
+  console.log('entityTypeFromCompany', entityTypeFromCompany);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getApplicationFilter());
+    dispatch(getApplicationCompanyDropDownData());
+  }, []);
+
+  const titleDropDown = useMemo(() => {
+    const finalData = ['Mr', 'Mrs', 'Ms', 'Doctor', 'Miss', 'Professor'];
+
+    return finalData.map(e => ({
+      label: e,
+      name: 'title',
+      value: e,
+    }));
+  }, []);
+
   const INPUTS = [
     {
       type: 'radio',
-      name: 'partnershipType',
+      name: 'type',
       data: [
         {
           id: 'individual',
@@ -26,6 +55,54 @@ const ApplicationPersonStep = () => {
         },
       ],
     },
+  ];
+
+  const COMPANY_INPUT = [
+    {
+      type: 'blank',
+    },
+    {
+      label: 'Trading Name',
+      placeholder: 'Trading Name',
+      type: 'text',
+      name: 'tradingName',
+      data: [],
+    },
+    {
+      label: 'Entity Type*',
+      placeholder: 'Select',
+      type: 'select',
+      name: 'entityType',
+      data: companyEntityType,
+    },
+    {
+      label: 'ACN',
+      placeholder: '01234',
+      type: 'search',
+      name: 'acn',
+      data: [],
+    },
+
+    {
+      label: 'Entity Name*',
+      placeholder: 'Enter Entity',
+      type: 'entityName',
+      name: 'entityName',
+      data: [],
+    },
+    {
+      label: 'ABN*',
+      placeholder: '01234',
+      type: 'search',
+      name: 'abn',
+      data: [],
+    },
+    {
+      type: 'blank',
+    },
+  ];
+
+  const INDIVIDUAL_INPUT = [
     {
       label: 'Individual Details',
       placeholder: '',
@@ -38,14 +115,14 @@ const ApplicationPersonStep = () => {
       placeholder: 'Select',
       type: 'select',
       name: 'title',
-      data: [],
+      data: titleDropDown,
     },
     {
       type: 'blank',
     },
     {
       label: 'First Name*',
-      placeholder: '',
+      placeholder: 'Enter first name',
       type: 'text',
       name: 'firstName',
     },
@@ -65,13 +142,13 @@ const ApplicationPersonStep = () => {
       label: 'Date of Birth*',
       placeholder: 'Select date',
       type: 'date',
-      name: 'birthDate',
+      name: 'dateOfBirth',
     },
     {
       label:
         'Do you give your consent for us to check your credit history with external credit agencies?',
       type: 'checkbox',
-      name: 'creditHistory',
+      name: 'allowToCheckCreditHistory',
     },
     {
       label: 'Identification Details',
@@ -81,7 +158,7 @@ const ApplicationPersonStep = () => {
       label: 'Driver License Number',
       placeholder: 'Enter driver license number',
       type: 'text',
-      name: 'licenseNumber',
+      name: 'driverLicenceNumber',
     },
     {
       type: 'blank',
@@ -115,7 +192,7 @@ const ApplicationPersonStep = () => {
       placeholder: 'Select',
       type: 'select',
       name: 'streetType',
-      data: [],
+      data: streetType,
     },
     {
       label: 'Suburb',
@@ -129,7 +206,7 @@ const ApplicationPersonStep = () => {
       placeholder: 'Select',
       type: 'select',
       name: 'state',
-      data: [],
+      data: australianStates,
     },
     {
       label: 'Postcode*',
@@ -145,112 +222,83 @@ const ApplicationPersonStep = () => {
       label: 'Phone Number',
       placeholder: '1234567890',
       type: 'text',
-      name: 'phoneNo',
+      name: 'phoneNumber',
     },
     {
       label: 'Mobile',
       placeholder: '1234567890',
       type: 'text',
-      name: 'phoneNo',
+      name: 'mobileNumber',
     },
     {
       label: 'Email',
       placeholder: 'Enter email address',
       type: 'email',
-      name: 'phoneNo',
+      name: 'email',
     },
   ];
-  const getComponentFromType = useCallback(input => {
-    switch (input.type) {
-      case 'text':
-        return (
-          <>
-            <span>{input.label}</span>
-            <Input type="text" placeholder={input.placeholder} />
-          </>
-        );
-      case 'email':
-        return (
-          <>
-            <span>{input.label}</span>
-            <Input type="email" placeholder={input.placeholder} />
-          </>
-        );
-      case 'search':
-        return (
-          <>
-            <span>{input.label}</span>
-            <Input type="text" placeholder={input.placeholder} />
-          </>
-        );
-      case 'select':
-        return (
-          <>
-            <span>{input.label}</span>
-            <ReactSelect
-              placeholder={input.placeholder}
-              name={input.name}
-              options={input.data}
-              searchable={false}
-            />
-          </>
-        );
-      case 'checkbox':
-        return (
-          <>
-            <Checkbox className="grid-checkbox" title={input.label} />
-          </>
-        );
-      case 'radio':
-        return (
-          <>
-            {input.data.map(radio => (
-              <RadioButton
-                className="mb-5"
-                id={radio.id}
-                name={input.name}
-                value={radio.value}
-                label={radio.label}
-              />
-            ))}
-          </>
-        );
-      case 'main-title':
-        return (
-          <>
-            <div className="main-title">{input.label}</div>
-          </>
-        );
-      case 'blank':
-        return (
-          <>
-            <span />
-            <span />
-          </>
-        );
-      case 'date':
-        return (
-          <>
-            <span>Date of Birth*</span>
-            <div className="date-picker-container">
-              <DatePicker placeholderText={input.placeholder} />
-              <span className="material-icons-round">event_available</span>
-            </div>
-          </>
-        );
-      default:
-        return null;
-    }
+
+  useEffect(() => {
+    dispatch(addPersonDetail('individual'));
   }, []);
+
+  const hasRadio = useMemo(() => ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany), [
+    entityTypeFromCompany,
+  ]);
+
+  const getAccordionAccordingEntityType = useCallback(
+    (person, index) => {
+      let itemHeader = 'Director Details';
+      switch (entityTypeFromCompany) {
+        // case 'PROPRIETARY_LIMITED':
+        //   return getAccordionItem();
+        // case 'LIMITED_COMPANY':
+        //   return getAccordionItem();
+        case 'PARTNERSHIP':
+          itemHeader = 'Partner Details';
+          break;
+        case 'SOLE_TRADER':
+          itemHeader = 'Sole Trader Details';
+          break;
+        case 'TRUST':
+          itemHeader = 'Trustee Details';
+          break;
+        case 'BUSINESS':
+          itemHeader = 'Proprietor Details';
+          break;
+        // case 'CORPORATION':
+        //   return getAccordionItem();
+        // case 'GOVERNMENT':
+        //   return getAccordionItem();
+        // case 'INCORPORATED':
+        //   return getAccordionItem();
+        // case 'NO_LIABILITY':
+        //   return getAccordionItem();
+        // case 'PROPRIETARY':
+        //   return getAccordionItem();
+        // case 'REGISTERED_BODY':
+        //   return getAccordionItem();
+        default:
+          break;
+      }
+      return (
+        <PersonIndividualDetail
+          itemHeader={itemHeader}
+          hasRadio={hasRadio}
+          INPUTS={INPUTS}
+          COMPANY_INPUT={COMPANY_INPUT}
+          INDIVIDUAL_INPUT={INDIVIDUAL_INPUT}
+          index={index}
+        />
+      );
+    },
+    [INDIVIDUAL_INPUT, COMPANY_INPUT, INPUTS, hasRadio]
+  );
+
   return (
     <>
-      <Accordion className="application-person-step-accordion">
-        <AccordionItem header="Director Details" prefix="expand_more">
-          <div className="application-person-step-accordion-item">
-            {INPUTS.map(getComponentFromType)}
-          </div>
-        </AccordionItem>
-        <AccordionItem header="Director Details" prefix="expand_more" />
+      <Accordion>
+        {personState && personState ? personState.map(getAccordionAccordingEntityType) : ''}
       </Accordion>
     </>
   );

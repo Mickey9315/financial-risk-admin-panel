@@ -179,8 +179,6 @@ const ClientDocumentsTab = () => {
   const onClickUploadDocument = useCallback(async () => {
     if (selectedClientDocument.documentType.length === 0) {
       errorNotification('Please select document type');
-    } else if (!selectedClientDocument.fileData) {
-      errorNotification('Please select any document');
     } else if (!selectedClientDocument.description) {
       errorNotification('Description is required');
     } else {

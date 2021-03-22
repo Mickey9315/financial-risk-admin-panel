@@ -1,10 +1,20 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import './Stepper.scss';
 import Button from '../Button/Button';
 
 const Stepper = props => {
-  const { steps, children, className, backClick, nextClick, onChangeIndex, ...restProps } = props;
+  const {
+    steps,
+    stepIndex,
+    children,
+    className,
+    backClick,
+    nextClick,
+    addStepClick,
+    onChangeIndex,
+    ...restProps
+  } = props;
   const [activeStep, setActiveStep] = useState(0);
 
   const onClickBackButton = useCallback(() => {
@@ -19,6 +29,12 @@ const Stepper = props => {
       setActiveStep(prevState => prevState + 1);
     }
   }, [steps, activeStep, setActiveStep, nextClick]);
+
+  useEffect(() => {
+    if (stepIndex !== activeStep) {
+      setActiveStep(stepIndex);
+    }
+  }, [stepIndex]);
 
   return (
     <div className={className} {...restProps}>
@@ -45,7 +61,7 @@ const Stepper = props => {
       <div className="stepper-buttons-row">
         <div>
           {steps[activeStep].text === 'Person' && (
-            <Button buttonType="secondary" title="Add Director" />
+            <Button buttonType="secondary" title="Add Director" onClick={addStepClick} />
           )}
         </div>
         <div className="d-flex">
@@ -70,9 +86,11 @@ const Stepper = props => {
 
 Stepper.propTypes = {
   className: PropTypes.string,
+  stepIndex: PropTypes.number.isRequired,
   steps: PropTypes.array.isRequired,
   backClick: PropTypes.func,
   nextClick: PropTypes.func,
+  addStepClick: PropTypes.func,
   onChangeIndex: PropTypes.func,
   children: PropTypes.element.isRequired,
 };
@@ -82,6 +100,7 @@ Stepper.defaultProps = {
   onChangeIndex: () => {},
   backClick: () => {},
   nextClick: () => {},
+  addStepClick: () => {},
 };
 
 export default Stepper;

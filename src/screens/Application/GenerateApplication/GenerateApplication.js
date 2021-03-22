@@ -8,7 +8,7 @@ import ApplicationCreditLimitStep from './component/ApplicationCreditLimitStep/A
 import ApplicationDocumentStep from './component/ApplicationDocumentsStep/ApplicationDocumentStep';
 import ApplicationConfirmationStep from './component/ApplicationConfirmationStep/ApplicationConfirmationStep';
 import { applicationCompanyStepValidations } from './component/ApplicationCompanyStep/validations/ApplicationCompanyStepValidations';
-import { changeEditApplicationFieldValue } from '../redux/ApplicationAction';
+import { addPersonDetail, changeEditApplicationFieldValue } from '../redux/ApplicationAction';
 import { applicationCreditStepValidations } from './component/ApplicationCreditLimitStep/validations/ApplicationCreditStepValidations';
 
 const STEP_COMPONENT = [
@@ -62,6 +62,10 @@ const GenerateApplication = () => {
     dispatch(changeEditApplicationFieldValue('currentStepIndex', newIndex));
   }, []);
 
+  const addStepClick = useCallback(() => {
+    dispatch(addPersonDetail('individual'));
+  }, []);
+
   const onNextClick = useCallback(() => {
     switch (stepIndex) {
       case 0:
@@ -92,9 +96,11 @@ const GenerateApplication = () => {
       <Stepper
         className="mt-10"
         steps={steps}
+        stepIndex={stepIndex}
         onChangeIndex={onChangeIndex}
         canGoNext
         nextClick={onNextClick}
+        addStepClick={addStepClick}
       >
         {STEP_COMPONENT[stepIndex]}
       </Stepper>
