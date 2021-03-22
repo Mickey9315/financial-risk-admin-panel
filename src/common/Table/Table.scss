@@ -76,6 +76,10 @@
     position: sticky;
     right: 0;
     color: $placeholder-color;
+
+      .material-icons-round:hover {
+        color: $field-color;
+      }
   }
 
   .fixed-action-menu-clicked {

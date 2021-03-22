@@ -80,7 +80,7 @@
   color: $primary-color;
 }
 
-.matrix-detail-report-container, .au-illion-report-container, .au-equifax-report-container, .nz-illion-report-container {
+.matrix-detail-report-container, .au-illion-report-container, .au-equifax-report-container, .nz-illion-report-container, .au-report-container {
   display: flex;
   span {
     min-height: 12px;
@@ -93,7 +93,7 @@
   }
 }
 
-.illion-report {
+.illion-report, .au-report-container {
   grid-column: 1;
 }
 

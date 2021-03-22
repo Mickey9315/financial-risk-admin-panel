@@ -1,4 +1,9 @@
 @import "../../index";
+@import "../Clients/ViewClient/ViewClient";
+
+.my-work-add-task-container {
+  @extend .client-details-container
+}
 
 .my-work-tab-button-row {
   display: flex;

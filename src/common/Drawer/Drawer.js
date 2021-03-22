@@ -16,7 +16,11 @@ const Drawer = props => {
         <div className="drawer-wrapper">
           <div className="drawer-header-container">
             {header}
-            <span className="material-icons-round" title="Close drawer" onClick={closeDrawer}>
+            <span
+              className="material-icons-round close-drawer"
+              title="Close drawer"
+              onClick={closeDrawer}
+            >
               close
             </span>{' '}
           </div>
@@ -28,7 +32,7 @@ const Drawer = props => {
 };
 
 Drawer.propTypes = {
-  header: PropTypes.string,
+  header: PropTypes.element,
   className: PropTypes.string,
   children: PropTypes.element,
   drawerState: PropTypes.bool,
@@ -36,7 +40,7 @@ Drawer.propTypes = {
 };
 
 Drawer.defaultProps = {
-  header: '',
+  header: null,
   className: '',
   drawerState: false,
   children: null,

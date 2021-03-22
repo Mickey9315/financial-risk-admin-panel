@@ -24,7 +24,7 @@
   height: calc(100vh - 15px);
   background-color: white;
   border-radius: 10px 0 0 0;
-  transition: width .5s ease-in-out;
+  transition: all .5s ease-in-out;
   box-shadow: 0 0 30px #7272724D;
   overflow: hidden;
   z-index: 11;
@@ -54,16 +54,16 @@
     overflow: hidden;
     white-space: nowrap;
   }
+}
 
-  span {
-    padding: 3px;
-    font-size: 14px;
-    font-weight: 700;
-    color: $primary-color ;
-    background-color: white;
-    border-radius: 50%;
-    cursor: pointer;
-  }
+.close-drawer {
+  padding: 3px;
+  font-size: 14px;
+  font-weight: 700;
+  color: $primary-color ;
+  background-color: white;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .drawer-content {
