@@ -10,7 +10,6 @@ import {
   changeEditProfileData,
   uploadProfilePicture,
 } from './redux/HeaderAction';
-import BigInput from '../BigInput/BigInput';
 import dummy from '../../assets/images/dummy.svg';
 import IconButton from '../IconButton/IconButton';
 import Modal from '../Modal/Modal';
@@ -252,18 +251,42 @@ const Header = () => {
     );
   };
 
+  const [headerSearchFocused, setHeaderSearchFocused] = useState(false);
+  const searchOnFocus = () => setHeaderSearchFocused(true);
+  const headerSearchRef = useRef();
+  const [searchStart, setSearchStart] = useState(false);
+  const searchOutsideClick = () => {
+    setSearchStart(false);
+    setHeaderSearchFocused(false);
+  };
+  useOnClickOutside(headerSearchRef, searchOutsideClick);
+  const onSearchEnterKeyPress = e => {
+    if (e.keyCode === 13) {
+      setSearchStart(true);
+    }
+  };
+
   return (
     <div className="header-container">
       <div className="screen-title">{headerTitle}</div>
       <div className="header-right-part">
-        <BigInput
-          prefix="search"
-          prefixClass="font-placeholder"
-          placeholder="Search Here"
-          suffix="tune"
-          suffixClass="font-primary"
-          className="search"
-        />
+        <div
+          ref={headerSearchRef}
+          className={`header-search-container ${
+            headerSearchFocused && 'header-search-container-focused'
+          } ${searchStart && 'got-search-results'}`}
+        >
+          <div>
+            <input
+              type="text"
+              placeholder="Search Here"
+              onFocus={searchOnFocus}
+              onKeyDown={onSearchEnterKeyPress}
+            />
+            <span className="material-icons-round">search</span>
+          </div>
+          {searchStart && <div className="header-search-results">Opps! No such results found.</div>}
+        </div>
         <IconButton
           title="notifications_active"
           buttonType="outlined-bg"
