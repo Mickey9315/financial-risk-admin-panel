@@ -286,7 +286,7 @@ const PersonIndividualDetail = ({
                   value={
                     personStep[index].dateOfBirth
                       ? moment(personStep[index].dateOfBirth).format('DD/MM/YYYY')
-                      : input.placeholder
+                      : ''
                   }
                   onChange={date => onChangeDate(input.name, date)}
                 />
