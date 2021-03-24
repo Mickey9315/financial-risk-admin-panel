@@ -370,7 +370,7 @@ export const syncInsurerPolicyListData = id => {
 
       if (response.data.status === 'SUCCESS') {
         dispatch(getInsurerPoliciesListData(id));
-        successNotification('Client policies updated successfully.');
+        successNotification('Insurer policies updated successfully.');
       }
     } catch (e) {
       if (e.response && e.response.data) {

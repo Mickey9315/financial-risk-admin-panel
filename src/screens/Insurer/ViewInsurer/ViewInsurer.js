@@ -10,6 +10,7 @@ import InsurerContactTab from '../Components/InsurerContactTab';
 import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
 import Button from '../../../common/Button/Button';
 import InsurerMatrixTab from '../Components/InsurerMatrixTab/InsurerMatrixTab';
+import Loader from '../../../common/Loader/Loader';
 
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -36,6 +37,10 @@ const ViewInsurer = () => {
   const syncInsurersDataOnClick = useCallback(() => {
     dispatch(syncInsurerData(id));
   }, [id]);
+
+  if (!insurerData.name) {
+    return <Loader />;
+  }
   return (
     <>
       <div className="breadcrumb-button-row">
@@ -55,9 +60,9 @@ const ViewInsurer = () => {
             <span className="common-detail-title">Name</span>
             <Input
               type="text"
-              value={name}
+              value={name || '-'}
               name="name"
-              placeholder="Jason Gatt"
+              placeholder="abc"
               disabled
               borderClass="disabled-control"
             />
@@ -67,22 +72,33 @@ const ViewInsurer = () => {
             <Input
               type="text"
               name="address"
-              value={`${address?.addressLine} ${address?.city}, ${address?.country}`}
-              placeholder="Enter Address"
+              value={
+                address ? `${address?.addressLine} ${address?.city}, ${address?.country}` : '-'
+              }
+              placeholder="1, street, Australia"
               disabled
               borderClass="disabled-control"
             />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Contact Person</span>
-            <ReactSelect name="contact_person" options={contactPerson} />
+            <ReactSelect
+              name="contact_person"
+              options={contactPerson || ''}
+              placeholder="Select Contact Person"
+              value={contactPerson || '-'}
+              disabled
+              className="disabled-control"
+              dropdownHandle={false}
+              searchable={false}
+            />
           </div>
           <div className="common-detail-field">
             <span className="common-detail-title">Phone Number</span>
             <Input
               type="text"
               name="contactNumber"
-              value={contactNumber}
+              value={contactNumber || '-'}
               placeholder="1234567890"
               disabled
               borderClass="disabled-control"
@@ -93,8 +109,8 @@ const ViewInsurer = () => {
             <Input
               type="email"
               name="email"
-              value={email}
-              placeholder="jason@trad.com"
+              value={email || '-'}
+              placeholder="abc@xyz.com"
               disabled
               borderClass="disabled-control"
             />
@@ -104,7 +120,7 @@ const ViewInsurer = () => {
             <Input
               name="website"
               type="text"
-              value={website}
+              value={website || '-'}
               placeholder="www.trad.com"
               disabled
               borderClass="disabled-control"

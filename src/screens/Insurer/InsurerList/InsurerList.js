@@ -162,7 +162,7 @@ const InsurerList = () => {
     InsurerApiService.addInsurerListFromCrm(data)
       .then(res => {
         if (res.data.status === 'SUCCESS') {
-          successNotification('Insurer data successfully synced');
+          successNotification('Insurer data synced successfully');
           setAddFromCRM(e => !e);
           dispatch(getInsurerListByFilter());
         }
@@ -238,7 +238,6 @@ const InsurerList = () => {
               recordSelected={onSelectInsurerRecord}
               recordActionClick={() => {}}
               rowClass="cursor-pointer"
-              haveActions
             />
           </div>
           <Pagination
