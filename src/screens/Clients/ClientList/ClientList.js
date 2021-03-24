@@ -297,17 +297,21 @@ const ClientList = () => {
     const data = {
       crmIds,
     };
-    ClientApiService.updateClientListFromCrm(data)
-      .then(res => {
-        if (res.data.status === 'SUCCESS') {
-          successNotification('Client data successfully synced');
-          setAddFromCRM(e => !e);
-          dispatch(getClientList());
-        }
-      })
-      .catch(() => {
-        /**/
-      });
+    if (data.crmIds.length > 0) {
+      ClientApiService.updateClientListFromCrm(data)
+        .then(res => {
+          if (res.data.status === 'SUCCESS') {
+            successNotification('Client data successfully synced');
+            setAddFromCRM(e => !e);
+            dispatch(getClientList());
+          }
+        })
+        .catch(() => {
+          errorNotification('Server error');
+        });
+    } else {
+      errorNotification('Select at least one client to Add');
+    }
   };
 
   const toggleAddFromCRM = useCallback(() => {
@@ -404,6 +408,15 @@ const ClientList = () => {
       arr = [...arr, crmId];
     }
     setCrmIds(arr);
+  };
+
+  const selectAllClientsFromCrm = e => {
+    if (e.target.checked) {
+      const arr = syncListFromCrm.map(crm => crm.crmId.toString());
+      setCrmIds(arr);
+    } else {
+      setCrmIds([]);
+    }
   };
 
   return (
@@ -529,6 +542,13 @@ const ClientList = () => {
             <>
               {/* <Checkbox title="Name" className="check-all-crmList" /> */}
               <div className="crm-checkbox-list-container">
+                {syncListFromCrm && syncListFromCrm.length > 0 && (
+                  <Checkbox
+                    title="Add All"
+                    className="crm-checkbox-list"
+                    onChange={e => selectAllClientsFromCrm(e)}
+                  />
+                )}
                 {syncListFromCrm && syncListFromCrm.length > 0 ? (
                   syncListFromCrm.map(crm => (
                     <Checkbox
