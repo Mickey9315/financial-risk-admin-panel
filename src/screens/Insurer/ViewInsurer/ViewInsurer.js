@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import './ViewInsurer.scss';
-import ReactSelect from 'react-dropdown-select';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../../common/Input/Input';
@@ -26,10 +25,9 @@ const ViewInsurer = () => {
 
   const tabs = ['Policies', 'Contacts', 'Matrix'];
   const insurerData = useSelector(({ insurer }) => insurer.insurerViewData);
-  const { name, address, contactNumber, website, contactPerson, email } = useMemo(
-    () => insurerData,
-    [insurerData]
-  );
+  const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
+    insurerData,
+  ]);
   useEffect(() => {
     dispatch(getInsurerById(id));
   }, []);
@@ -78,19 +76,6 @@ const ViewInsurer = () => {
               placeholder="1, street, Australia"
               disabled
               borderClass="disabled-control"
-            />
-          </div>
-          <div className="common-detail-field">
-            <span className="common-detail-title">Contact Person</span>
-            <ReactSelect
-              name="contact_person"
-              options={contactPerson || ''}
-              placeholder="Select Contact Person"
-              value={contactPerson || '-'}
-              disabled
-              className="disabled-control"
-              dropdownHandle={false}
-              searchable={false}
             />
           </div>
           <div className="common-detail-field">
