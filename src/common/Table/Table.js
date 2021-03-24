@@ -91,6 +91,22 @@ const Table = props => {
     }
   }, []);
 
+  const handleViewDocument = useCallback(async (header, row) => {
+    try {
+      const response = await TableApiService.viewDocument({
+        url: header.request.url,
+        method: header.request.method,
+        id: row._id,
+      });
+      if (response.data.status === 'SUCCESS') {
+        const url = response.data.data;
+        window.open(url);
+      }
+    } catch (e) {
+      /**/
+    }
+  }, []);
+
   const closeDrawer = useCallback(() => {
     dispatchDrawerState({
       type: DRAWER_ACTIONS.HIDE_DRAWER,
@@ -101,6 +117,7 @@ const Table = props => {
     const actions = {
       handleDrawerState,
       handleCheckBoxState,
+      handleViewDocument,
     };
 
     return data.map(e => {
@@ -113,7 +130,7 @@ const Table = props => {
 
       return finalObj;
     });
-  }, [data, handleDrawerState, handleCheckBoxState]);
+  }, [data, handleDrawerState, handleCheckBoxState, handleViewDocument]);
 
   const onRowSelectedDataChange = useCallback(
     current => {

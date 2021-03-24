@@ -292,8 +292,8 @@ const ClientDocumentsTab = () => {
     if (clientDocumentsList.docs.length !== 0) {
       if (selectedCheckBoxData.length !== 0) {
         const docsToDownload = selectedCheckBoxData.map(e => e.id);
-        const docUrls = await downloadDocuments(docsToDownload);
-        downloadAll(docUrls);
+        const res = await downloadDocuments(docsToDownload);
+        downloadAll(res);
       } else {
         errorNotification('Please select at least one document to download');
       }

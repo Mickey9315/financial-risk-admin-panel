@@ -13,7 +13,12 @@ const ClientDocumentsApiService = {
   uploadDocument: (data, config) =>
     ApiService.postData(CLIENT_URLS.DOCUMENTS.UPLOAD_DOCUMENT_URL, data, config),
   downloadDocuments: params =>
-    ApiService.getData(`${CLIENT_URLS.DOCUMENTS.DOWNLOAD_DOCUMENTS_URL}`, { params }),
+    ApiService.request({
+      url: `${CLIENT_URLS.DOCUMENTS.DOWNLOAD_DOCUMENTS_URL}`,
+      params,
+      method: 'GET',
+      responseType: 'blob',
+    }),
   deleteClientDocument: id => ApiService.deleteData(`${CLIENT_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`),
 };
 export default ClientDocumentsApiService;

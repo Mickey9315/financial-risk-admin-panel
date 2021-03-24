@@ -765,11 +765,12 @@ export const downloadDocuments = async data => {
   try {
     const config = {
       documentIds: str,
+      action: 'download',
     };
 
     const response = await ClientDocumentsApiService.downloadDocuments(config);
-    if (response.data.status === 'SUCCESS') {
-      return response.data.data;
+    if (response.statusText === 'OK') {
+      return response;
     }
   } catch (e) {
     if (e.response && e.response.data) {

@@ -5,7 +5,7 @@ import Checkbox from '../common/Checkbox/Checkbox';
 export const processTableDataByType = ({ header, row, actions }) => {
   const { type } = header;
   const currentData = row[`${header.name}`];
-  const { handleDrawerState, handleCheckBoxState } = actions;
+  const { handleDrawerState, handleCheckBoxState, handleViewDocument } = actions;
 
   switch (type) {
     case 'date':
@@ -26,6 +26,12 @@ export const processTableDataByType = ({ header, row, actions }) => {
       );
     case 'booleanString':
       return currentData ? 'Yes' : 'No';
+    case 'link':
+      return (
+        <div className="link" onClick={() => handleViewDocument(header, row)}>
+          {currentData}
+        </div>
+      );
 
     default:
       return currentData;
