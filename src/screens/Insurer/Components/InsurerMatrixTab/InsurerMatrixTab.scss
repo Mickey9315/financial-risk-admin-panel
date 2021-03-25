@@ -11,23 +11,35 @@
 }
 
 .matrix-table {
+  display: grid;
+  grid-template-columns: 150px calc(50% - 70px) calc(30% - 60px) calc(20% - 50px);
+  gap: 10px;
   border-spacing: 10px;
   border-collapse: separate;
-  thead {
+  .header {
     font: $subtitle $font-bold;
     color: $field-color;
-  }
-  th {
-    text-align: left;
-  }
-  td > div {
-    height: 100%;
   }
 }
 
 .matrix-level {
+  grid-column: 1;
+  align-items: center;
+  align-self: center;
   font: $h4 $font-bold;
   color: $primary-color;
+}
+
+.matrix-australia {
+  grid-column: 2;
+}
+
+.matrix-new-zealand {
+  grid-column: 3;
+}
+
+.matrix-guidelines {
+  grid-column: 4;
 }
 
 .matrix-detail-container {

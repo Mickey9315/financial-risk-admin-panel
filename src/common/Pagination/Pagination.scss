@@ -12,9 +12,12 @@
   }
 }
 
-.no-per-page-select {
+.react-dropdown-select.no-per-page-select {
   height: 35px;
   width: 80px!important;
+  .react-dropdown-select-content {
+    font: $title $font-medium;
+  }
 }
 
 .records-per-page-container {
@@ -69,6 +72,7 @@
 
 .page-number {
   font-size: $title;
+  color: $field-color;
   border-left: 0.063rem solid $border-color;
   border-right: 0.063rem solid $border-color;
   cursor: text;

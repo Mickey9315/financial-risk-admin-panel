@@ -38,74 +38,64 @@ const InsurerMatrixTab = () => {
   return (
     <div className="matrix-container">
       <div className="matrix-title">Matrix</div>
-      <table className="matrix-table">
-        <thead>
-          <th>Level</th>
-          <th>Information Sourced / Guidelines</th>
-          <th />
-          <th />
-        </thead>
+      <div className="matrix-table">
+        <div className="matrix-level header">Level</div>
+        <div className="matrix-australia header">Information Sourced / Guidelines</div>
         {matrixReportData &&
           matrixReportData.map(report => (
-            <tr>
-              <td height="1" valign="middle" className="matrix-level">
-                {report.level}
-              </td>
-              <td height="1" valign="top">
-                <div className="d-flex">
+            <>
+              <div className="matrix-level">{report.level}</div>
+              <div className="matrix-australia matrix-detail-container">
+                <div className="country-name">
+                  <div>
+                    <img src={australia} alt="AU" />
+                  </div>
+                  Australia
+                </div>
+                <div className="matrix-detail-grid">
+                  {report.australianCompanies && (
+                    <div className="matrix-detail-title">Companies</div>
+                  )}
+                  {report.australianIndividuals && (
+                    <div className="matrix-detail-title">Individuals</div>
+                  )}
+
+                  {report.australianCompanies &&
+                    report.australianCompanies.map(auIllion => (
+                      <div className="au-illion-report-container mb-10">
+                        <span className="material-icons-round">arrow_circle_up</span>
+                        <div className="font-field">{auIllion}</div>
+                      </div>
+                    ))}
+
+                  {report.australianReports &&
+                    report.australianReports.map(auReport => (
+                      <div className="au-report-container mb-10">
+                        <span className="material-icons-round">arrow_circle_up</span>
+                        <div className="font-field">{auReport}</div>
+                      </div>
+                    ))}
+
+                  {report.australianIndividuals &&
+                    report.australianIndividuals.map(auEquifax => (
+                      <div className="au-equifax-report-container">
+                        <span className="material-icons-round">arrow_circle_up</span>
+                        <div className="font-field">{auEquifax}</div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+              <div className="matrix-new-zealand">
+                {report.newZealand.length > 0 && (
                   <div className="matrix-detail-container">
                     <div className="country-name">
                       <div>
-                        <img src={australia} alt="AU" />
+                        <img src={newZealandFlag} alt="NZ" />
                       </div>
-                      Australia
+                      New Zealand
                     </div>
-                    <div className="matrix-detail-grid">
-                      {report.australianCompanies && (
-                        <div className="matrix-detail-title">Companies</div>
-                      )}
-                      {report.australianIndividuals && (
-                        <div className="matrix-detail-title">Individuals</div>
-                      )}
 
-                      {report.australianCompanies &&
-                        report.australianCompanies.map(auIllion => (
-                          <div className="au-illion-report-container mb-10">
-                            <span className="material-icons-round">arrow_circle_up</span>
-                            <div className="font-field">{auIllion}</div>
-                          </div>
-                        ))}
-
-                      {report.australianReports &&
-                        report.australianReports.map(auReport => (
-                          <div className="au-report-container mb-10">
-                            <span className="material-icons-round">arrow_circle_up</span>
-                            <div className="font-field">{auReport}</div>
-                          </div>
-                        ))}
-
-                      {report.australianIndividuals &&
-                        report.australianIndividuals.map(auEquifax => (
-                          <div className="au-equifax-report-container">
-                            <span className="material-icons-round">arrow_circle_up</span>
-                            <div className="font-field">{auEquifax}</div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td height="1" valign="top">
-                <div className="matrix-detail-container">
-                  <div className="country-name">
-                    <div>
-                      <img src={newZealandFlag} alt="NZ" />
-                    </div>
-                    New Zealand
-                  </div>
-
-                  {report.newZealand &&
-                    report.newZealand.map(nzIllion => (
+                    {report.newZealand.map(nzIllion => (
                       <div className="matrix-detail-report-container mb-10">
                         <span className="material-icons-round">arrow_circle_up</span>
                         <div className="font-field">
@@ -113,27 +103,26 @@ const InsurerMatrixTab = () => {
                         </div>
                       </div>
                     ))}
-                </div>
-              </td>
-              {report.commonGuideLines.length > 0 && (
-                <td height="1" width="20%" valign="top" className="matrix-report-guideline">
-                  <div className="matrix-detail-container">
-                    <div className="report-guideline-title">
-                      <span className="material-icons-round">screen_search_desktop</span>
-                      Guidelines
-                    </div>
-                    {report.commonGuideLines.map(guideline => (
-                      <div className="matrix-detail-report-container">
-                        <span className="material-icons-round">arrow_circle_up</span>
-                        <div className="font-field">{guideline}</div>
-                      </div>
-                    ))}
                   </div>
-                </td>
+                )}
+              </div>
+              {report.commonGuideLines.length > 0 && (
+                <div className="matrix-guidelines matrix-detail-container">
+                  <div className="report-guideline-title">
+                    <span className="material-icons-round">screen_search_desktop</span>
+                    Guidelines
+                  </div>
+                  {report.commonGuideLines.map(guideline => (
+                    <div className="matrix-detail-report-container">
+                      <span className="material-icons-round">arrow_circle_up</span>
+                      <div className="font-field">{guideline}</div>
+                    </div>
+                  ))}
+                </div>
               )}
-            </tr>
+            </>
           ))}
-      </table>
+      </div>
 
       <div className="matrix-horizontal-line" />
       <div className="matrix-guidelines-title">Guidelines</div>

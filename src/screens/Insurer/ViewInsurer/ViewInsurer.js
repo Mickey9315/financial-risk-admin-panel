@@ -60,7 +60,7 @@ const ViewInsurer = () => {
               type="text"
               value={name || '-'}
               name="name"
-              placeholder="abc"
+              placeholder="Please enter name"
               disabled
               borderClass="disabled-control"
             />
@@ -73,7 +73,7 @@ const ViewInsurer = () => {
               value={
                 address ? `${address?.addressLine} ${address?.city}, ${address?.country}` : '-'
               }
-              placeholder="1, street, Australia"
+              placeholder="Please enter address"
               disabled
               borderClass="disabled-control"
             />
