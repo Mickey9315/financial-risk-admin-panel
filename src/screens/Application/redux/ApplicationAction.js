@@ -141,6 +141,30 @@ export const getApplicationFilter = () => {
     }
   };
 };
+export const getApplicationDetail = applicationId => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationApiServices.getApplicationDetail(applicationId);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
 
 /*
  * Contact
@@ -269,7 +293,6 @@ export const updateEditApplicationData = (stepName, data) => {
 };
 
 export const updateEditApplicationField = (stepName, name, value) => {
-  console.log('update application field', stepName, name, value);
   return dispatch => {
     dispatch({
       type:
@@ -325,7 +348,6 @@ export const addPersonDetail = type => {
 
 // person step edit application
 export const updatePersonData = (index, name, value) => {
-  console.log('updatePersonData', index, name, value);
   return dispatch => {
     dispatch({
       type: APPLICATION_REDUX_CONSTANTS.PERSON.EDIT_APPLICATION_PERSON,
@@ -388,16 +410,26 @@ export const updatePersonStepDataOnValueSelected = (index, data) => {
   };
 };
 
-export const saveApplicationStepDataToBackend = async data => {
-  try {
-    const response = await ApplicationApiServices.saveApplicationStepDataToBackend(data);
-
-    if (response.data.status === 'SUCCESS') {
-      return response.data.data;
+export const saveApplicationStepDataToBackend = data => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationApiServices.saveApplicationStepDataToBackend(data);
+      if (response.data.status === 'SUCCESS') {
+        const { _id } = response.data.data;
+        dispatch(changeEditApplicationFieldValue('applicationId', _id));
+        successNotification('Application step saved successfully');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
     }
-    return null;
-  } catch (e) {
-    errorNotification('Internal server error');
-    throw Error();
-  }
+  };
 };

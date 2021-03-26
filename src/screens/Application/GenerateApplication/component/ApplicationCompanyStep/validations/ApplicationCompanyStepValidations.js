@@ -5,23 +5,29 @@ import {
 
 export const applicationCompanyStepValidations = (dispatch, data) => {
   const errors = {};
-  let validated = false;
+  let validated = true;
 
   if (!data.abn || data.abn.trim().length <= 0) {
+    validated = false;
     errors.abn = 'Please enter ABN number before continue';
   }
   if (data.abn && data.abn.trim().length < 11) {
+    validated = false;
     errors.abn = 'Please enter valid ABN number before continue';
   }
   if (data.acn && data.acn.trim().length < 9) {
+    validated = false;
     errors.acn = 'Please enter valid ACN number before continue';
   }
   if (!data.entityName || data.entityName.length <= 0) {
+    validated = false;
     errors.entityName = 'Please enter entity name';
   }
   if (!data.entityType || data.entityType.length <= 0) {
+    validated = false;
     errors.entityType = 'Please select entity type before continue';
   }
+
   if (validated) {
     const {
       client,
@@ -39,6 +45,7 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
       acn,
       abn,
       tradingName,
+      outstandingAmount,
       debtor,
     } = data;
 
@@ -48,9 +55,10 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
       debtorId: debtor[0]?.value,
       abn,
       acn,
-      entityName,
+      entityName: entityName[0]?.value,
       tradingName,
       contactNumber: phoneNumber,
+      outstandingAmount,
       entityType: entityType[0]?.value,
       address: {
         property,
@@ -66,7 +74,7 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
       applicationId: '',
     };
 
-    saveApplicationStepDataToBackend(finalData);
+    dispatch(saveApplicationStepDataToBackend(finalData));
 
     validated = true;
   }

@@ -10,6 +10,7 @@ import ApplicationConfirmationStep from './component/ApplicationConfirmationStep
 import { applicationCompanyStepValidations } from './component/ApplicationCompanyStep/validations/ApplicationCompanyStepValidations';
 import { addPersonDetail, changeEditApplicationFieldValue } from '../redux/ApplicationAction';
 import { applicationCreditStepValidations } from './component/ApplicationCreditLimitStep/validations/ApplicationCreditStepValidations';
+import { applicationPersonStepValidation } from './component/ApplicationPersonStep/validations/ApplicationPersonStepValidations';
 
 const STEP_COMPONENT = [
   <ApplicationCompanyStep />,
@@ -72,6 +73,12 @@ const GenerateApplication = () => {
         return applicationCompanyStepValidations(
           dispatch,
           editApplicationData[steps[stepIndex].name]
+        );
+      case 1:
+        return applicationPersonStepValidation(
+          dispatch,
+          editApplicationData[steps[stepIndex].name],
+          editApplicationData
         );
       case 2:
         return applicationCreditStepValidations(

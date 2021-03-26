@@ -4,6 +4,7 @@ import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
 import './ApplicationCompanyStep.scss';
 import {
+  changeEditApplicationFieldValue,
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
@@ -204,6 +205,9 @@ const ApplicationCompanyStep = () => {
   const handleSelectInputChange = useCallback(
     data => {
       updateSingleCompanyState(data[0]?.name, data);
+      if (data[0].name === 'entityType') {
+        dispatch(changeEditApplicationFieldValue(data[0].name, data[0].value));
+      }
     },
     [updateSingleCompanyState]
   );

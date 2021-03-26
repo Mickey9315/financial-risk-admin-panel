@@ -64,6 +64,7 @@ const PersonIndividualDetail = ({
   const entityNameSearchDropDownData = useSelector(
     ({ application }) => application.company.entityNameSearch
   );
+  console.log('companyState', companyState.client[0].value);
 
   const personStep = useSelector(({ application }) => application.editApplication.personStep);
   // const [partnerType, setPartnerType] = useState('individual');
@@ -78,7 +79,7 @@ const PersonIndividualDetail = ({
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSinglePersonState(data[0].name, data[0].value);
+      updateSinglePersonState(data[0]?.name, data[0].value);
     },
     [updateSinglePersonState]
   );
@@ -110,6 +111,7 @@ const PersonIndividualDetail = ({
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
         if (response) {
           updatePersonState(response);
+          handleToggleDropdown();
         }
       } catch (err) {
         /**/
@@ -135,8 +137,7 @@ const PersonIndividualDetail = ({
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
       if (e.key === 'Enter') {
-        // companyState.client[0].value
-        const params = { clientId: '6054571ee79c55672f41a227' };
+        const params = { clientId: companyState.client[0].value };
         const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
 
         if (response) {
@@ -219,7 +220,10 @@ const PersonIndividualDetail = ({
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
-                values={personStep[index].name}
+                values={
+                  (personStep && personStep[index][input.name] && personStep[index][input.name]) ||
+                  []
+                }
                 searchable={false}
                 onChange={handleSelectInputChange}
               />
@@ -285,10 +289,10 @@ const PersonIndividualDetail = ({
                   placeholderText={input.placeholder}
                   value={
                     personStep[index].dateOfBirth
-                      ? moment(personStep[index].dateOfBirth).format('DD/MM/YYYY')
+                      ? moment(personStep[index].dateOfBirth).format('LL')
                       : ''
                   }
-                  onChange={date => onChangeDate(input.name, date)}
+                  onChange={date => onChangeDate(input.name, moment(date).format('DD/MM/YYYY'))}
                 />
                 <span className="material-icons-round">event_available</span>
               </div>

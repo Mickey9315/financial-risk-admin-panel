@@ -13,6 +13,8 @@ const initialApplicationList = {
     pages: 1,
     headers: [],
   },
+  viewApplicationDetails: {},
+
   applicationColumnNameList: {},
 
   applicationFilterList: {
@@ -28,7 +30,9 @@ const initialApplicationList = {
   },
 
   editApplication: {
-    currentStepIndex: 1,
+    currentStepIndex: 0,
+    applicationId: '',
+    entityType: '',
     companyStep: {
       clientId: [],
       postcode: '',
@@ -61,6 +65,28 @@ const initialApplicationList = {
     personStep: [],
   },
 
+  personStep: {
+    title: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    dateOfBirth: '',
+    driverLicenceNumber: '',
+    phoneNumber: '',
+    mobileNumber: '',
+    email: '',
+    address: {
+      property: '',
+      unitNumber: '',
+      streetNumber: '',
+      streetName: '',
+      streetType: '',
+      suburb: '',
+      state: '',
+      country: '',
+      postCode: '',
+    },
+  },
   company: {
     dropdownData: {
       clients: [],
@@ -82,6 +108,11 @@ export const application = (state = initialApplicationList, action) => {
       return {
         ...state,
         applicationList: action.data,
+      };
+    case APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS:
+      return {
+        ...state,
+        viewApplicationDetails: action.data,
       };
     case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_COLUMN_LIST_ACTION:
       return {

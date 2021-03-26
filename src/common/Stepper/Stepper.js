@@ -1,7 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import './Stepper.scss';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '../Button/Button';
+import { getLabelFromValues } from '../../helpers/entityiTypeHelper';
+import { entityTypeMapperObjectForPersonStep } from '../../helpers/Mappers';
+import { getApplicationDetail } from '../../screens/Application/redux/ApplicationAction';
 
 const Stepper = props => {
   const {
@@ -29,12 +33,27 @@ const Stepper = props => {
       setActiveStep(prevState => prevState + 1);
     }
   }, [steps, activeStep, setActiveStep, nextClick]);
+  const dispatch = useDispatch();
+  const editApplication = useSelector(({ application }) => application.editApplication);
+
+  useEffect(() => {
+    if (editApplication && editApplication.applicationId) {
+      dispatch(getApplicationDetail(editApplication.applicationId));
+    }
+  }, [editApplication.applicationId]);
 
   useEffect(() => {
     if (stepIndex !== activeStep) {
       setActiveStep(stepIndex);
     }
   }, [stepIndex]);
+
+  const applicationDetail = useSelector(({ application }) => application.viewApplicationDetails);
+
+  const entityType = useMemo(
+    () => applicationDetail?.company?.entityType || 'PROPRIETARY_LIMITED',
+    [applicationDetail]
+  );
 
   return (
     <div className={className} {...restProps}>
@@ -61,7 +80,12 @@ const Stepper = props => {
       <div className="stepper-buttons-row">
         <div>
           {steps[activeStep].text === 'Person' && (
-            <Button buttonType="secondary" title="Add Director" onClick={addStepClick} />
+            <Button
+              buttonType="secondary"
+              title={getLabelFromValues(entityType, entityTypeMapperObjectForPersonStep)}
+              disable
+              onClick={addStepClick}
+            />
           )}
         </div>
         <div className="d-flex">

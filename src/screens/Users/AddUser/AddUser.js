@@ -70,10 +70,10 @@ const AddUser = () => {
     history.replace('/users');
   }, [history]);
 
-  const { name, role, email, contactNumber, clientIds } = useMemo(() => {
+  const { name, role, email, contactNumber, maxCreditLimit, clientIds } = useMemo(() => {
     if (selectedUser) {
       // eslint-disable-next-line no-shadow
-      const { name, role, email, contactNumber, clientIds } = selectedUser;
+      const { name, role, email, contactNumber, maxCreditLimit, clientIds } = selectedUser;
 
       return {
         name: name || '',
@@ -81,9 +81,10 @@ const AddUser = () => {
         email: email || '',
         clientIds: clientIds || [],
         contactNumber: contactNumber || '',
+        maxCreditLimit: maxCreditLimit || '',
       };
     }
-    return { name: '', role: '', email: '', contactNumber: '', clientIds: [] };
+    return { name: '', role: '', email: '', contactNumber: '', maxCreditLimit: '', clientIds: [] };
   }, [selectedUser]);
 
   const onChangeUserData = useCallback(e => {
@@ -129,6 +130,9 @@ const AddUser = () => {
       errorNotification('Please select role');
     } else if (contactNumber && !contactNumber.match(NUMBER_REGEX)) {
       errorNotification('Please enter valid contact number');
+      // eslint-disable-next-line no-restricted-globals
+    } else if (maxCreditLimit && isNaN(maxCreditLimit)) {
+      errorNotification('Please enter number for max credit limit');
     } else {
       try {
         if (action === 'add') {
@@ -141,7 +145,7 @@ const AddUser = () => {
         /**/
       }
     }
-  }, [selectedUser, name, email, role, contactNumber, action, id, backToUser]);
+  }, [selectedUser, name, email, role, contactNumber, maxCreditLimit, action, id, backToUser]);
 
   const editUserClick = useCallback(() => {
     history.replace(`/users/user/edit/${id}`);
@@ -293,6 +297,18 @@ const AddUser = () => {
               value={contactNumber}
               type="text"
               placeholder="1234567890"
+              onChange={onChangeUserData}
+              disabled={action === 'view'}
+              borderClass={action === 'view' && 'disabled-control'}
+            />
+          </div>
+          <div className="common-detail-field">
+            <span className="common-detail-title">Max credit limit approval</span>
+            <Input
+              name="maxCreditLimit"
+              value={maxCreditLimit}
+              type="text"
+              placeholder="Enter credit limit"
               onChange={onChangeUserData}
               disabled={action === 'view'}
               borderClass={action === 'view' && 'disabled-control'}

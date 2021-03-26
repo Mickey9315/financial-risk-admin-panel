@@ -158,7 +158,7 @@ export const getSelectedUserData = id => {
   return async dispatch => {
     try {
       const response = await UserManagementApiService.getSelectedUserData(id);
-
+      console.log('getSelectedUserData', response);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
@@ -288,6 +288,7 @@ export const updateUserDetails = (id, data) => {
         ...data,
         clientIds: data.clientIds ? data.clientIds.map(e => e.value) : [],
         _id: undefined,
+        maxCreditLimit: data.maxCreditLimit || 0,
       };
 
       const response = await UserManagementApiService.updateUser(id, finalData);

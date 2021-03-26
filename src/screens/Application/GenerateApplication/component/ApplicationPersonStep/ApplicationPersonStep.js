@@ -1,13 +1,14 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import './ApplicationPersonStep.scss';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Accordion from '../../../../../common/Accordion/Accordion';
+import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDetail';
+
 import {
   addPersonDetail,
   getApplicationCompanyDropDownData,
   getApplicationFilter,
 } from '../../../redux/ApplicationAction';
-import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDetail';
 
 const ApplicationPersonStep = () => {
   const personState = useSelector(({ application }) => application.editApplication.personStep);
@@ -19,8 +20,13 @@ const ApplicationPersonStep = () => {
     ({ application }) => application.applicationFilterList.dropdownData.companyEntityType
   );
 
-  const entityTypeFromCompany = 'PARTNERSHIP';
-  console.log('entityTypeFromCompany', entityTypeFromCompany);
+  // const entityTypeFrom = 'PARTNERSHIP';
+
+  const entityType = useSelector(
+    ({ application }) => application.editApplication.companyStep.entityType
+  );
+
+  const entityTypeFromCompany = entityType[0].value;
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -202,7 +208,7 @@ const ApplicationPersonStep = () => {
       data: [],
     },
     {
-      label: 'State',
+      label: 'State*',
       placeholder: 'Select',
       type: 'select',
       name: 'state',
@@ -212,7 +218,13 @@ const ApplicationPersonStep = () => {
       label: 'Postcode*',
       placeholder: 'Enter postcode',
       type: 'text',
-      name: 'postcode',
+      name: 'postCode',
+    },
+    {
+      label: 'Country',
+      placeholder: 'Enter Country',
+      type: 'text',
+      name: 'country',
     },
     {
       label: 'Contact Details',
