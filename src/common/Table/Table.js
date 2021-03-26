@@ -58,12 +58,12 @@ const Table = props => {
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const [selectedRowData, setSelectedRowData] = React.useState([]);
 
-  const handleDrawerState = useCallback(async (header, currentData) => {
+  const handleDrawerState = useCallback(async (header, currentData, row) => {
     try {
       const response = await TableApiService.tableActions({
         url: header.request.url,
         method: header.request.method,
-        id: currentData.id,
+        id: currentData.id || row._id,
       });
 
       dispatchDrawerState({
@@ -367,6 +367,17 @@ Row.defaultProps = {
 
 function TableLinkDrawer(props) {
   const { drawerState, closeDrawer } = props;
+  const checkValue = row => {
+    console.log(row.type);
+    switch (row.type) {
+      case 'dollar':
+        return row.value ? `$ ${row.value}` : '-';
+      case 'percent':
+        return row.value ? `${row.value} %` : '-';
+      default:
+        return row.value;
+    }
+  };
 
   return (
     <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
@@ -374,7 +385,7 @@ function TableLinkDrawer(props) {
         {drawerState.data.map(row => (
           <>
             <div className="title">{row.label}</div>
-            <div>{row.value}</div>
+            <div>{checkValue(row)}</div>
           </>
         ))}
       </div>
