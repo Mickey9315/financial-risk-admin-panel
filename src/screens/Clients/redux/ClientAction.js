@@ -10,6 +10,8 @@ import {
 import ClientPoliciesApiService from '../services/ClientPoliciesApiService';
 import ClientNotesApiService from '../services/ClientNotesApiService';
 import ClientDocumentsApiService from '../services/ClientDocumentsApiService';
+import ClientCreditLimitApiService from '../services/ClientCreditLimitApiService';
+import ClientApplicationApiService from '../services/ClientApplicationApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -802,4 +804,215 @@ export const deleteClientDocumentAction = async (docId, cb) => {
       }
     }
   }
+};
+
+// creditLimit
+export const getClientCreditLimitData = (id, data) => {
+  return async dispatch => {
+    try {
+      const response = await ClientCreditLimitApiService.getClientCreditLimitList(id, data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getCreditLimitColumnsNameList = () => {
+  return async dispatch => {
+    try {
+      const response = await ClientCreditLimitApiService.getClientCreditLimitColumnNameList();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const changeClientCreditLimitColumnListStatus = data => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.UPDATE_CLIENT_CREDIT_LIMIT_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+
+export const saveClientCreditLimitColumnNameList = ({
+  clientCreditLimitColumnNameList = {},
+  isReset = false,
+}) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+      };
+      if (!isReset) {
+        const defaultFields = clientCreditLimitColumnNameList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = clientCreditLimitColumnNameList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          isReset: false,
+          columns: [...defaultFields, ...customFields],
+        };
+      }
+      if (!isReset && data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await ClientCreditLimitApiService.updateClientCreditLimitColumnNameList(
+          data
+        );
+        dispatch(getCreditLimitColumnsNameList());
+        if (response.data.status === 'SUCCESS') {
+          successNotification(response.data.message);
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+export const getClientApplicationListData = (id, param) => {
+  return async dispatch => {
+    try {
+      const params = {
+        ...param,
+        listFor: 'client-application',
+      };
+      const response = await ClientApplicationApiService.getApplicationListData(id, params);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getClientApplicationColumnNameList = () => {
+  return async dispatch => {
+    try {
+      const params = {
+        columnFor: 'client-application',
+      };
+      const response = await ClientApplicationApiService.getClientApplicationColumnNameList(params);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const changeClientApplicationColumnListStatus = data => {
+  return async dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.APPLICATION.UPDATE_CLIENT_APPLICATION_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+
+export const saveClientApplicationColumnNameList = ({
+  clientApplicationColumnNameListData = {},
+  isReset = false,
+}) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+        columnFor: 'client-application',
+      };
+      if (!isReset) {
+        const defaultFields = clientApplicationColumnNameListData.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = clientApplicationColumnNameListData.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          ...data,
+          isReset: false,
+          columns: [...defaultFields, ...customFields],
+        };
+      }
+      if (!isReset && data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await ClientApplicationApiService.updateClientApplicationColumnNameList(
+          data
+        );
+        dispatch(getClientApplicationColumnNameList());
+        if (response.data.status === 'SUCCESS') {
+          successNotification(response.data.message);
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
 };

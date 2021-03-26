@@ -7,17 +7,17 @@ import ReactSelect from 'react-dropdown-select';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Tab from '../../../common/Tab/Tab';
-import CreditLimitTab from '../../../common/Tab/CreditLimitTab/CreditLimitTab';
-import ApplicationTab from '../../../common/Tab/ApplicationTab/ApplicationTab';
 import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
 import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
 import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
 import { getClientById, syncClientData, updateSelectedClientData } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
-import ClientContactsTab from '../component/ClientContactTab';
 import ClientPoliciesTab from '../component/ClientPoliciesTab';
 import ClientNotesTab from '../component/ClientNotesTab';
 import ClientDocumentsTab from '../component/ClientDocumentsTab';
+import ClientCreditLimitTab from '../component/ClientCreditLimitTab';
+import ClientContactTab from '../component/ClientContactTab';
+import ClientApplicationTab from '../component/ClientApplicationTab';
 
 const initialAssigneeState = {
   riskAnalystId: '',
@@ -143,9 +143,9 @@ const ViewClient = () => {
     return <Loader />;
   }
   const tabComponent = [
-    <ClientContactsTab />,
-    <CreditLimitTab />,
-    <ApplicationTab />,
+    <ClientContactTab />,
+    <ClientCreditLimitTab />,
+    <ClientApplicationTab />,
     <OverDuesTab />,
     <ClaimsTab />,
     <TasksTab />,

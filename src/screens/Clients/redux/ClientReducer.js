@@ -9,6 +9,14 @@ import {
 const initialClientListState = {
   clientList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   selectedClient: null,
+  creditLimit: {
+    creditLimitList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+  },
+  application: {
+    applicationList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+  },
   contact: {
     contactList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
@@ -211,6 +219,78 @@ export const clientManagement = (state = initialClientListState, action) => {
         documents: {
           ...state.documents,
           uploadDocumentData: action.data,
+        },
+      };
+    }
+
+    // creditLimit
+    case CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_LIST_ACTION: {
+      return {
+        ...state,
+        creditLimit: {
+          ...state.creditLimit,
+          creditLimitList: action.data,
+        },
+      };
+    }
+    case CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_COLUMN_LIST_ACTION: {
+      return {
+        ...state,
+        creditLimit: {
+          ...state.creditLimit,
+          columnList: action.data,
+        },
+      };
+    }
+    case CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.UPDATE_CLIENT_CREDIT_LIMIT_COLUMN_LIST_ACTION: {
+      const columnList = {
+        ...state.creditLimit.columnList,
+      };
+      const { type, name, value } = action.data;
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name ? { ...e, isChecked: value } : e
+      );
+      return {
+        ...state,
+        creditLimit: {
+          ...state.creditLimit,
+          columnList,
+        },
+      };
+    }
+
+    // application
+    case CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_LIST_ACTION: {
+      return {
+        ...state,
+        application: {
+          ...state.application,
+          applicationList: action.data,
+        },
+      };
+    }
+    case CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_COLUMN_LIST_ACTION: {
+      return {
+        ...state,
+        application: {
+          ...state.application,
+          columnList: action.data,
+        },
+      };
+    }
+    case CLIENT_REDUX_CONSTANTS.APPLICATION.UPDATE_CLIENT_APPLICATION_COLUMN_LIST_ACTION: {
+      const columnList = {
+        ...state.application.columnList,
+      };
+      const { name, type, value } = action.data;
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name ? { ...e, isChecked: value } : e
+      );
+      return {
+        ...state,
+        application: {
+          ...state.application,
+          columnList,
         },
       };
     }

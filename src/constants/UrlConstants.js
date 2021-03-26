@@ -54,6 +54,18 @@ export const CLIENT_URLS = {
   SYNC_CLIENT_DATA_URL: `${BASE_URL}client/sync-from-crm/`,
   GET_DATA_FROM_CRM_URL: `${BASE_URL}client/search-from-crm`,
 
+  CREDIT_LIMIT: {
+    CREDIT_LIMIT_LIST: `${BASE_URL}client/credit-limit/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
+    UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
+  },
+
+  APPLICATION: {
+    APPLICATION_LIST: `${BASE_URL}application/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
+    UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
+  },
+
   CONTACT: {
     CONTACT_LIST: `${BASE_URL}client/user/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}client/user/column-name/`,
