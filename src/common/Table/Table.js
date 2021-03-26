@@ -368,14 +368,13 @@ Row.defaultProps = {
 function TableLinkDrawer(props) {
   const { drawerState, closeDrawer } = props;
   const checkValue = row => {
-    console.log(row.type);
     switch (row.type) {
       case 'dollar':
         return row.value ? `$ ${row.value}` : '-';
       case 'percent':
         return row.value ? `${row.value} %` : '-';
       default:
-        return row.value;
+        return row.value || '-';
     }
   };
 

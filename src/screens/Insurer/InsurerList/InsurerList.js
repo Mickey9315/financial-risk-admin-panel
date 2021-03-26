@@ -23,7 +23,6 @@ import Checkbox from '../../../common/Checkbox/Checkbox';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { INSURER_CRM_REDUX_CONSTANTS } from '../redux/InsurerReduxConstants';
 import InsurerApiService from '../services/InsurerApiService';
-// import InsurerApiService from '../services/InsurerApiService';
 
 const InsurerList = () => {
   const history = useHistory();
@@ -54,14 +53,14 @@ const InsurerList = () => {
     newLimit => {
       getInsurerList({ page: 1, limit: newLimit });
     },
-    [dispatch, getInsurerList]
+    [getInsurerList]
   );
 
   const pageActionClick = useCallback(
     newPage => {
       getInsurerList({ page: newPage, limit });
     },
-    [dispatch, limit, getInsurerList]
+    [limit, getInsurerList]
   );
 
   const [customFieldModal, setCustomFieldModal] = useState(false);
@@ -72,14 +71,16 @@ const InsurerList = () => {
 
   const onClickSaveColumnSelection = useCallback(async () => {
     await dispatch(saveInsurerColumnListName({ insurerColumnList }));
+    getInsurerList();
     toggleCustomField();
-  }, [dispatch, toggleCustomField, insurerColumnList]);
+  }, [toggleCustomField, insurerColumnList, getInsurerList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveInsurerColumnListName({ isReset: true }));
+    getInsurerList();
     dispatch(getInsurerColumnNameList());
     toggleCustomField();
-  }, [dispatch, toggleCustomField]);
+  }, [toggleCustomField, getInsurerList]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -98,13 +99,10 @@ const InsurerList = () => {
     [insurerColumnList]
   );
 
-  const onChangeSelectedColumn = useCallback(
-    (type, name, value) => {
-      const data = { type, name, value };
-      dispatch(changeInsurerColumnListStatus(data));
-    },
-    [dispatch]
-  );
+  const onChangeSelectedColumn = useCallback((type, name, value) => {
+    const data = { type, name, value };
+    dispatch(changeInsurerColumnListStatus(data));
+  }, []);
 
   const onSelectInsurerRecord = useCallback(
     id => {
@@ -151,27 +149,6 @@ const InsurerList = () => {
     [addFromCRM]
   );
 
-  const addDataFromCrm = () => {
-    dispatch({
-      type: INSURER_CRM_REDUX_CONSTANTS.INSURER_GET_LIST_FROM_CRM_ACTION,
-      data: [],
-    });
-    const data = {
-      crmIds,
-    };
-    InsurerApiService.addInsurerListFromCrm(data)
-      .then(res => {
-        if (res.data.status === 'SUCCESS') {
-          successNotification('Insurer data synced successfully');
-          setAddFromCRM(e => !e);
-          dispatch(getInsurerListByFilter());
-        }
-      })
-      .catch(() => {
-        /**/
-      });
-  };
-
   const toggleAddFromCRM = useCallback(() => {
     setCrmIds([]);
     dispatch({
@@ -181,6 +158,28 @@ const InsurerList = () => {
     setAddFromCRM(e => !e);
   }, [setAddFromCRM, setCrmIds]);
 
+  const addDataFromCrm = useCallback(() => {
+    const data = {
+      crmIds,
+    };
+    if (data.crmIds.length > 0) {
+      toggleAddFromCRM();
+      InsurerApiService.addInsurerListFromCrm(data)
+        .then(res => {
+          if (res.data.status === 'SUCCESS') {
+            successNotification('Insurer data synced successfully');
+            // setAddFromCRM();
+            getInsurerList();
+          }
+        })
+        .catch(() => {
+          errorNotification('Internal server error');
+        });
+    } else {
+      errorNotification('Please select insurer to Add');
+    }
+  }, [crmIds, toggleAddFromCRM, getInsurerList]);
+
   const addToCRMButtons = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: toggleAddFromCRM },
@@ -189,27 +188,33 @@ const InsurerList = () => {
     [toggleAddFromCRM, addDataFromCrm]
   );
 
-  const checkIfEnterKeyPressed = e => {
-    if (e.key === 'Enter') {
-      const searchKeyword = searchInputRef.current.value;
-      if (searchKeyword.trim().toString().length !== 0) {
-        dispatch(getListFromCrm(searchKeyword.trim().toString()));
-        setSearchInsurers(true);
-      } else {
-        errorNotification('Please enter any value than press enter');
+  const checkIfEnterKeyPressed = useCallback(
+    e => {
+      if (e.key === 'Enter') {
+        const searchKeyword = searchInputRef.current.value;
+        if (searchKeyword.trim().toString().length !== 0) {
+          dispatch(getListFromCrm(searchKeyword.trim().toString()));
+          setSearchInsurers(true);
+        } else {
+          errorNotification('Please enter any value than press enter');
+        }
       }
-    }
-  };
+    },
+    [setSearchInsurers]
+  );
 
-  const selectInsurerFromCrm = crmId => {
-    let arr = [...crmIds];
-    if (arr.includes(crmId)) {
-      arr = arr.filter(e => e !== crmId);
-    } else {
-      arr = [...arr, crmId];
-    }
-    setCrmIds(arr);
-  };
+  const selectInsurerFromCrm = useCallback(
+    crmId => {
+      let arr = [...crmIds];
+      if (arr.includes(crmId)) {
+        arr = arr.filter(e => e !== crmId);
+      } else {
+        arr = [...arr, crmId];
+      }
+      setCrmIds(arr);
+    },
+    [crmIds, setCrmIds]
+  );
 
   return (
     <>
@@ -266,7 +271,7 @@ const InsurerList = () => {
           header="Add From CRM"
           className="add-to-crm-modal"
           buttons={addToCRMButtons}
-          hideModal={onClickAddFromCRM}
+          hideModal={toggleAddFromCRM}
         >
           <BigInput
             ref={searchInputRef}

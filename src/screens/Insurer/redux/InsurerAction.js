@@ -90,10 +90,11 @@ export const saveInsurerColumnListName = ({ insurerColumnList = {}, isReset = fa
       }
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getInsurerColumnNameList());
       } else {
         const response = await InsurerApiService.updateInsurerColumnListName(data);
         if (response && response.data && response.data.status === 'SUCCESS') {
-          dispatch(getInsurerListByFilter());
+          // dispatch(getInsurerListByFilter());
           successNotification('Columns updated successfully.');
         }
       }
@@ -318,7 +319,7 @@ export const saveInsurerPoliciesColumnListName = ({
   insurerPoliciesColumnList = {},
   isReset = false,
 }) => {
-  return async dispatch => {
+  return async () => {
     try {
       let data = {
         isReset: true,
@@ -344,33 +345,10 @@ export const saveInsurerPoliciesColumnListName = ({
         errorNotification('Please select at least one column to continue.');
       } else {
         const response = await InsurerPoliciesApiServices.updateInsurerPoliciesColumnListName(data);
-
-        dispatch(getInsurerPoliciesColumnNamesList());
-
+        // dispatch(getInsurerPoliciesColumnNamesList());
         if (response && response.data && response.data.status === 'SUCCESS') {
           successNotification('Columns updated successfully.');
         }
-      }
-    } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
-    }
-  };
-};
-
-export const syncInsurerPolicyListData = id => {
-  return async dispatch => {
-    try {
-      const response = await InsurerPoliciesApiServices.syncInsurerPolicyList(id);
-
-      if (response.data.status === 'SUCCESS') {
-        dispatch(getInsurerPoliciesListData(id));
-        successNotification('Insurer policies updated successfully.');
       }
     } catch (e) {
       if (e.response && e.response.data) {
@@ -441,6 +419,31 @@ export const getInsurerMatrixData = id => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.MATRIX.INSURER_MATRIX_GET_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const getPolicySyncListForCRM = (id, data) => {
+  return async dispatch => {
+    try {
+      const response = await InsurerPoliciesApiServices.getPolicySyncListBySearch(id, data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICY_SYNC_LIST_BY_SEARCH,
           data: response.data.data,
         });
       }

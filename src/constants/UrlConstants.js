@@ -110,6 +110,7 @@ export const INSURER_URLS = {
     POLICIES_LIST: `${BASE_URL}policy/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}policy/column-name/`,
     SYNC_CLIENT_POLICIES_DATA_URL: `${BASE_URL}policy/sync-from-crm/`,
+    SYNC_LIST_BY_SEARCH: `${BASE_URL}insurer/client-list/`,
   },
 
   MATRIX: {

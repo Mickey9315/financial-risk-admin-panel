@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   changeInsurerPoliciesColumnListStatus,
   getInsurerPoliciesColumnNamesList,
   getInsurerPoliciesListData,
+  getPolicySyncListForCRM,
   saveInsurerPoliciesColumnListName,
-  syncInsurerPolicyListData,
 } from '../redux/InsurerAction';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -15,7 +15,11 @@ import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
-import { errorNotification } from '../../../common/Toast';
+import { errorNotification, successNotification } from '../../../common/Toast';
+import Modal from '../../../common/Modal/Modal';
+import Checkbox from '../../../common/Checkbox/Checkbox';
+import { INSURER_VIEW_REDUX_CONSTANT } from '../redux/InsurerReduxConstants';
+import InsurerPoliciesApiServices from '../services/InsurerPoliciesApiServices';
 
 const InsurerPoliciesTab = () => {
   const dispatch = useDispatch();
@@ -33,6 +37,8 @@ const InsurerPoliciesTab = () => {
   ]);
 
   const insurerPoliciesColumnList = useSelector(({ insurer }) => insurer.policies.columnList);
+
+  const syncListFromCrm = useSelector(({ insurer }) => insurer.policies.policySyncList);
 
   const getInsurerPoliciesList = useCallback(
     (params = {}, cb) => {
@@ -62,13 +68,14 @@ const InsurerPoliciesTab = () => {
       /**/
     }
     toggleCustomField();
-  }, [dispatch, toggleCustomField, insurerPoliciesColumnList]);
+  }, [dispatch, toggleCustomField, insurerPoliciesColumnList, getInsurerPoliciesList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveInsurerPoliciesColumnListName({ isReset: true }));
+    dispatch(getInsurerPoliciesColumnNamesList());
     getInsurerPoliciesList();
     toggleCustomField();
-  }, [dispatch, toggleCustomField]);
+  }, [dispatch, toggleCustomField, getInsurerPoliciesList]);
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
@@ -104,22 +111,98 @@ const InsurerPoliciesTab = () => {
     },
     [limit, getInsurerPoliciesList]
   );
-  const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
-      getInsurerPoliciesList();
-    } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getInsurerPoliciesList({ search: searchKeyword.trim().toString() });
-      } else {
-        errorNotification('Please enter any value than press enter');
-      }
-    }
-  };
 
-  const syncInsurerPoliciesData = useCallback(() => {
-    dispatch(syncInsurerPolicyListData(id));
-  }, [id]);
+  const [crmIds, setCrmIds] = useState([]);
+  const [syncFromCRM, setSyncFromCRM] = useState(false);
+  const [searchPolicies, setSearchPolicies] = useState(false);
+
+  const toggleSyncWithCRM = useCallback(() => {
+    setCrmIds([]);
+    dispatch({
+      type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICY_SYNC_LIST_BY_SEARCH,
+      data: [],
+    });
+    setSyncFromCRM(e => !e);
+  }, [setSyncFromCRM, setCrmIds]);
+
+  const syncDataFromCRM = useCallback(() => {
+    dispatch({
+      type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICY_SYNC_LIST_BY_SEARCH,
+      data: [],
+    });
+    const data = {
+      clientIds: crmIds,
+    };
+    if (data.clientIds.length > 0) {
+      toggleSyncWithCRM();
+      InsurerPoliciesApiServices.syncInsurerPolicyList(id, data)
+        .then(res => {
+          if (res.data.status === 'SUCCESS') {
+            successNotification(res.data.message);
+            getInsurerPoliciesList();
+          }
+        })
+        .catch(() => {
+          errorNotification('Server error');
+        });
+    } else {
+      errorNotification('Select at least one policy to sync');
+    }
+  }, [crmIds, getInsurerPoliciesList, setSyncFromCRM]);
+
+  const syncWithCRMButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: toggleSyncWithCRM },
+      { title: 'Sync', buttonType: 'primary', onClick: syncDataFromCRM },
+    ],
+    [toggleSyncWithCRM, syncDataFromCRM]
+  );
+
+  const checkIfEnterKeyPressed = useCallback(
+    e => {
+      const searchKeyword = searchInputRef.current.value;
+      if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+        getInsurerPoliciesList();
+      } else if (e.key === 'Enter') {
+        if (searchKeyword.trim().toString().length !== 0) {
+          getInsurerPoliciesList({ search: searchKeyword.trim().toString() });
+        } else {
+          errorNotification('Please enter any value than press enter');
+        }
+      }
+    },
+    [getInsurerPoliciesList]
+  );
+
+  const checkIfEnterKeyPressedForPolicy = useCallback(
+    e => {
+      if (e.key === 'Enter') {
+        const searchKeyword = searchInputRef.current.value;
+        if (searchKeyword.trim().toString().length !== 0) {
+          dispatch(getPolicySyncListForCRM(id, searchKeyword.trim().toString()));
+          setSearchPolicies(true);
+        } else {
+          errorNotification('Please enter any value than press enter');
+        }
+      }
+    },
+    [setSearchPolicies]
+  );
+
+  const selectPolicyFromCRMList = useCallback(
+    crmId => {
+      let arr = [...crmIds];
+      if (arr.includes(crmId)) {
+        arr = arr.filter(e => e !== crmId);
+      } else if (crmIds.length < 10) {
+        arr = [...arr, crmId];
+      } else {
+        errorNotification('Maximum 10 policies can be synced at a time');
+      }
+      setCrmIds(arr);
+    },
+    [crmIds]
+  );
 
   useEffect(() => {
     getInsurerPoliciesList();
@@ -146,7 +229,7 @@ const InsurerPoliciesTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Sync With CRM" onClick={syncInsurerPoliciesData} />
+          <Button buttonType="secondary" title="Sync With CRM" onClick={toggleSyncWithCRM} />
         </div>
       </div>
       {docs ? (
@@ -182,6 +265,41 @@ const InsurerPoliciesTab = () => {
           buttons={buttons}
           toggleCustomField={toggleCustomField}
         />
+      )}
+      {syncFromCRM && (
+        <Modal
+          header="Sync With CRM"
+          className="add-to-crm-modal"
+          buttons={syncWithCRMButtons}
+          hideModal={toggleSyncWithCRM}
+        >
+          <BigInput
+            ref={searchInputRef}
+            prefix="search"
+            prefixClass="font-placeholder"
+            placeholder="Search policy"
+            type="text"
+            onKeyDown={checkIfEnterKeyPressedForPolicy}
+          />
+          {searchPolicies && (
+            <>
+              <div className="crm-checkbox-list-container">
+                {syncListFromCrm && syncListFromCrm.length > 0 ? (
+                  syncListFromCrm.map(crm => (
+                    <Checkbox
+                      title={crm.name}
+                      className="crm-checkbox-list"
+                      checked={crmIds.includes(crm._id.toString())}
+                      onChange={() => selectPolicyFromCRMList(crm._id.toString())}
+                    />
+                  ))
+                ) : (
+                  <div className="no-data-available">No data available</div>
+                )}
+              </div>
+            </>
+          )}
+        </Modal>
       )}
     </>
   );

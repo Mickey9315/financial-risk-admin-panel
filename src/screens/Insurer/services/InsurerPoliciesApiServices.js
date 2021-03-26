@@ -8,7 +8,9 @@ const InsurerPoliciesApiServices = {
     ApiService.getData(`${INSURER_URLS.POLICIES.COLUMN_NAME_LIST_URL}?columnFor=insurer-policy`),
   updateInsurerPoliciesColumnListName: data =>
     ApiService.putData(INSURER_URLS.POLICIES.COLUMN_NAME_LIST_URL, data),
-  syncInsurerPolicyList: id =>
-    ApiService.putData(`${INSURER_URLS.POLICIES.SYNC_CLIENT_POLICIES_DATA_URL}${id}`),
+  syncInsurerPolicyList: (id, data) =>
+    ApiService.putData(`${INSURER_URLS.POLICIES.SYNC_CLIENT_POLICIES_DATA_URL}${id}`, data),
+  getPolicySyncListBySearch: (id, data) =>
+    ApiService.getData(`${INSURER_URLS.POLICIES.SYNC_LIST_BY_SEARCH}${id}?searchKeyword=${data}`),
 };
 export default InsurerPoliciesApiServices;

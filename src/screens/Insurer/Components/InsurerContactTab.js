@@ -66,7 +66,7 @@ const InsurerContactTab = () => {
     await dispatch(saveInsurerContactColumnListName({ isReset: true }));
     getInsurerContactsList();
     toggleCustomField();
-  }, [dispatch, toggleCustomField]);
+  }, [dispatch, toggleCustomField, getInsurerContactsList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
@@ -76,7 +76,7 @@ const InsurerContactTab = () => {
       /***/
     }
     toggleCustomField();
-  }, [dispatch, toggleCustomField, insurerContactColumnList]);
+  }, [dispatch, toggleCustomField, insurerContactColumnList, getInsurerContactsList]);
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
@@ -99,18 +99,21 @@ const InsurerContactTab = () => {
     [toggleCustomField, onClickResetDefaultColumnSelection, onClickSaveColumnSelection]
   );
 
-  const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
-      getInsurerContactsList();
-    } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getInsurerContactsList({ search: searchKeyword.trim().toString() });
-      } else {
-        errorNotification('Please enter any value than press enter');
+  const checkIfEnterKeyPressed = useCallback(
+    e => {
+      const searchKeyword = searchInputRef.current.value;
+      if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+        getInsurerContactsList();
+      } else if (e.key === 'Enter') {
+        if (searchKeyword.trim().toString().length !== 0) {
+          getInsurerContactsList({ search: searchKeyword.trim().toString() });
+        } else {
+          errorNotification('Please enter any value than press enter');
+        }
       }
-    }
-  };
+    },
+    [getInsurerContactsList]
+  );
 
   const syncInsurerContactData = useCallback(() => {
     dispatch(syncInsurerContactListData(id));

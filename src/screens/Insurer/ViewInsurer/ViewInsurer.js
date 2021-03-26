@@ -23,8 +23,8 @@ const ViewInsurer = () => {
     history.replace('/insurer');
   };
 
-  const tabs = ['Policies', 'Contacts', 'Matrix'];
   const insurerData = useSelector(({ insurer }) => insurer.insurerViewData);
+  const tabs = !insurerData.isDefault ? ['Policies', 'Contacts', 'Matrix'] : ['Policies', 'Matrix'];
   const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
     insurerData,
   ]);
@@ -47,9 +47,15 @@ const ViewInsurer = () => {
           <span className="material-icons-round">navigate_next</span>
           <span>View Insurer</span>
         </div>
-        <div className="buttons-row">
-          <Button buttonType="secondary" title="Sync With CRM" onClick={syncInsurersDataOnClick} />
-        </div>
+        {!insurerData.isDefault && (
+          <div className="buttons-row">
+            <Button
+              buttonType="secondary"
+              title="Sync With CRM"
+              onClick={syncInsurersDataOnClick}
+            />
+          </div>
+        )}
       </div>
 
       <div className="common-detail-container">
@@ -114,11 +120,18 @@ const ViewInsurer = () => {
         </div>
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
-      <div className="common-white-container">
-        {activeTabIndex === 0 && <InsurerPoliciesTab />}
-        {activeTabIndex === 1 && <InsurerContactTab />}
-        {activeTabIndex === 2 && <InsurerMatrixTab />}
-      </div>
+      {!insurerData.isDefault ? (
+        <div className="common-white-container">
+          {activeTabIndex === 0 && <InsurerPoliciesTab />}
+          {activeTabIndex === 1 && <InsurerContactTab />}
+          {activeTabIndex === 2 && <InsurerMatrixTab />}
+        </div>
+      ) : (
+        <div className="common-white-container">
+          {activeTabIndex === 0 && <InsurerPoliciesTab />}
+          {activeTabIndex === 1 && <InsurerMatrixTab />}
+        </div>
+      )}
     </>
   );
 };

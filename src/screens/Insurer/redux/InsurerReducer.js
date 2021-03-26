@@ -25,6 +25,7 @@ const initialInsurer = {
   policies: {
     policiesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    policySyncList: [],
   },
   matrix: {
     generalGuideLines: [],
@@ -145,6 +146,16 @@ export const insurer = (state = initialInsurer, action) => {
         ...state,
         syncInsurerWithCRM: action.data,
       };
+
+    case INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICY_SYNC_LIST_BY_SEARCH: {
+      return {
+        ...state,
+        policies: {
+          ...state.policies,
+          policySyncList: action.data,
+        },
+      };
+    }
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
