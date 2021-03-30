@@ -122,3 +122,9 @@ export const INSURER_URLS = {
     MATRIX_DATA: `${BASE_URL}insurer/matrix/`,
   },
 };
+
+export const MY_WORK_URL = {
+  TASK: {
+    TASK_LIST_URL: `${BASE_URL}task/`,
+  },
+};

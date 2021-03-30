@@ -1,11 +1,17 @@
 import React, { useCallback, useMemo } from 'react';
 import './MyWorkAddTask.scss';
+import { useHistory } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
 import DatePicker from 'react-datepicker';
 import Button from '../../../../common/Button/Button';
 import Input from '../../../../common/Input/Input';
 
 const MyWorkAddTask = () => {
+  const history = useHistory();
+  const backToTaskList = () => {
+    history.replace('/my-work');
+  };
+
   const INPUTS = useMemo(
     () => [
       {
@@ -141,7 +147,7 @@ const MyWorkAddTask = () => {
     <>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
-          <span>Task List</span>
+          <span onClick={backToTaskList}>Task List</span>
           <span className="material-icons-round">navigate_next</span>
           <span>Add Task</span>
         </div>
