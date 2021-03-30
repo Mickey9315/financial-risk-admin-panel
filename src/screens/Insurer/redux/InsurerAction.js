@@ -461,3 +461,11 @@ export const getPolicySyncListForCRM = (id, data) => {
     }
   };
 };
+
+export const resetPageData = () => {
+  return async dispatch => {
+    dispatch({
+      type: INSURER_REDUX_CONSTANTS.RESET_PAGE_DATA,
+    });
+  };
+};

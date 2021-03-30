@@ -157,6 +157,17 @@ export const insurer = (state = initialInsurer, action) => {
       };
     }
 
+    case INSURER_REDUX_CONSTANTS.RESET_PAGE_DATA: {
+      return {
+        ...state,
+        insurerList: {
+          ...state.insurerList,
+          page: 1,
+          limit: 15,
+        },
+      };
+    }
+
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
 

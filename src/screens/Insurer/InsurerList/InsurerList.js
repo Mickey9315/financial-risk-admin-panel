@@ -11,11 +11,12 @@ import {
   getInsurerColumnNameList,
   getInsurerListByFilter,
   getListFromCrm,
+  resetPageData,
   saveInsurerColumnListName,
 } from '../redux/InsurerAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Loader from '../../../common/Loader/Loader';
-import { useQueryParams } from '../../../hooks/GetQueryParamHook';
+// import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Button from '../../../common/Button/Button';
 import Modal from '../../../common/Modal/Modal';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -23,6 +24,7 @@ import Checkbox from '../../../common/Checkbox/Checkbox';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { INSURER_CRM_REDUX_CONSTANTS } from '../redux/InsurerReduxConstants';
 import InsurerApiService from '../services/InsurerApiService';
+import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 
 const InsurerList = () => {
   const history = useHistory();
@@ -33,6 +35,8 @@ const InsurerList = () => {
   const { total, pages, page, limit, docs, headers } = useMemo(() => insurerListWithPageData, [
     insurerListWithPageData,
   ]);
+
+  const { page: paramPage, limit: paramLimit } = useQueryParams();
 
   const getInsurerList = useCallback(
     (params = {}, cb) => {
@@ -111,18 +115,6 @@ const InsurerList = () => {
     [history]
   );
 
-  const { page: paramPage, limit: paramLimit } = useQueryParams();
-
-  useEffect(() => {
-    const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
-    };
-
-    getInsurerList({ ...params });
-    dispatch(getInsurerColumnNameList());
-  }, []);
-
   useEffect(() => {
     const params = {
       page: page || 1,
@@ -134,7 +126,18 @@ const InsurerList = () => {
       .join('&');
 
     history.replace(`${history.location.pathname}?${url}`);
-  }, [history, total, pages, page, limit]);
+  }, [total, pages, page, limit]);
+
+  useEffect(() => {
+    const params = {
+      page: paramPage || 1,
+      limit: paramLimit || 15,
+    };
+
+    getInsurerList({ ...params });
+    dispatch(getInsurerColumnNameList());
+    return () => dispatch(resetPageData());
+  }, []);
 
   /** *
    * CRM Feature
