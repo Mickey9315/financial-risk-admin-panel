@@ -57,41 +57,19 @@ const Table = props => {
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const [selectedRowData, setSelectedRowData] = React.useState([]);
-  const entityTypeForTask = [
-    'client',
-    'client-user',
-    'user',
-    'debtor',
-    'application',
-    'claim',
-    'overdue',
-  ];
 
   const handleDrawerState = useCallback(async (header, currentData, row) => {
     try {
-      if (entityTypeForTask.includes(currentData.type)) {
-        const response = await TableApiService.tableActions({
-          url: header.request[currentData.type],
-          method: header.request.method,
-          id: currentData._id || row._id,
-        });
+      const response = await TableApiService.tableActions({
+        url: header.request.url || header.request[currentData.type],
+        method: header.request.method,
+        id: currentData.id || currentData._id || row._id,
+      });
 
-        dispatchDrawerState({
-          type: DRAWER_ACTIONS.SHOW_DRAWER,
-          data: response.data.data,
-        });
-      } else {
-        const response = await TableApiService.tableActions({
-          url: header.request.url,
-          method: header.request.method,
-          id: currentData.id || row._id,
-        });
-
-        dispatchDrawerState({
-          type: DRAWER_ACTIONS.SHOW_DRAWER,
-          data: response.data.data,
-        });
-      }
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.SHOW_DRAWER,
+        data: response.data.data,
+      });
     } catch (e) {
       /**/
     }
