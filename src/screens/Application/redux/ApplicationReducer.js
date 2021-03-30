@@ -62,6 +62,10 @@ const initialApplicationList = {
       creditLimit: '',
       errors: {},
     },
+    documentStep: {
+      documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+      uploadDocumentData: {},
+    },
     personStep: [],
   },
 
@@ -273,6 +277,31 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+
+    // Documents
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_TYPE_LIST_DATA:
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          documentStep: {
+            ...state.editApplication.documentStep,
+            documentTypeList: action.data,
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA:
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          documentStep: {
+            ...state.editApplication.documentStep,
+            uploadDocumentData: action.data,
+          },
+        },
+      };
 
     default:
       return state;
