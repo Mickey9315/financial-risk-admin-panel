@@ -9,7 +9,7 @@ const MyWorkTasks = () => {
   const dispatch = useDispatch();
   const taskListData = useSelector(({ myWorkReducer }) => myWorkReducer.task.taskList);
   const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData, [taskListData]);
-  console.log(docs);
+
   const getTaskList = useCallback(
     (params = {}, cb) => {
       const data = {
