@@ -6,6 +6,7 @@ import {
   APPLICATION_REDUX_CONSTANTS,
 } from './ApplicationReduxConstants';
 import ApplicationCompanyStepApiServices from '../services/ApplicationCompanyStepApiServices';
+import ApplicationDocumentStepApiServices from '../services/ApplicationDocumentStepApiServices';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -429,6 +430,54 @@ export const saveApplicationStepDataToBackend = data => {
           errorNotification('It seems like server is down, Please try again later.');
         }
         throw Error();
+      }
+    }
+  };
+};
+
+export const getDocumentTypeList = () => {
+  return async dispatch => {
+    try {
+      const params = {
+        listFor: 'application',
+      };
+      const response = await ApplicationDocumentStepApiServices.getDocumentTypeListData(params);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_TYPE_LIST_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const uploadDocument = (data, config) => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationDocumentStepApiServices.uploadDocument(data, config);
+      if (response.data.status === 'SUCCESS') {
+        console.log(response.data.data);
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
       }
     }
   };

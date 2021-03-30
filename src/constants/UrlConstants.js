@@ -40,6 +40,10 @@ export const APPLICATION_URLS = {
     SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
     SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}application/search-entity-list/`,
   },
+  DOCUMENTS: {
+    GET_DOCUMENT_TYPE_LIST_URL: `${BASE_URL}settings/document-type/`,
+    UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
+  },
 };
 
 export const ORGANISATION_MODULE_URLS = {
