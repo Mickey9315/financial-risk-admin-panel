@@ -66,7 +66,7 @@ const initialApplicationList = {
     },
     documentStep: {
       documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-      uploadDocumentData: {},
+      uploadDocumentData: [],
       applicationDocumentDataList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     },
     personStep: [],
@@ -295,17 +295,22 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
 
-    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA:
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA: {
+      const editApplication = { ...state.editApplication };
+      const documentStep = { ...editApplication.documentStep };
+      const uploadDocumentData = [...documentStep.uploadDocumentData];
+
       return {
         ...state,
         editApplication: {
-          ...state.editApplication,
+          ...editApplication,
           documentStep: {
-            ...state.editApplication.documentStep,
-            uploadDocumentData: action.data,
+            ...documentStep,
+            uploadDocumentData: [...uploadDocumentData, action.data],
           },
         },
       };
+    }
     case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_LIST:
       return {
         ...state,

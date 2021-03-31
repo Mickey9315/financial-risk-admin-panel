@@ -47,7 +47,7 @@ function applicationDocumentReducer(state, action) {
 }
 
 const ApplicationDocumentStep = () => {
-  const documents = [
+  /* const documents = [
     {
       name: 'abc.pdf',
       description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
@@ -68,15 +68,24 @@ const ApplicationDocumentStep = () => {
       name: 'abc.pdf',
       description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
     },
-  ];
+  ]; */
+  const { documentTypeList, applicationDocumentDataList, uploadDocumentData } = useSelector(
+    ({ application }) => application.editApplication.documentStep
+  );
+  const documentData = useMemo(() => uploadDocumentData, [uploadDocumentData]);
+
+  const documentsList = useMemo(() => applicationDocumentDataList.docs, [
+    applicationDocumentDataList.docs,
+  ]);
+  console.log(documentsList);
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');
 
-  const documentTypeList = useSelector(
+  /* const documentTypeList = useSelector(
     ({ application }) => application.editApplication.documentStep.documentTypeList
   );
-
+*/
   const [selectedApplicationDocuments, dispatchSelectedApplicationDocuments] = useReducer(
     applicationDocumentReducer,
     initialApplicationDocumentState
@@ -128,7 +137,6 @@ const ApplicationDocumentStep = () => {
         errorNotification('File size should be less than 4 mb');
       } else {
         setFileData(e.target.files[0]);
-        console.log('calling reducer');
         dispatchSelectedApplicationDocuments({
           type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
           name: 'fileData',
@@ -186,7 +194,9 @@ const ApplicationDocumentStep = () => {
   useEffect(() => {
     dispatch(getDocumentTypeList());
   }, []);
+
   const editApplication = useSelector(({ application }) => application.editApplication);
+  console.log('editApplication', editApplication.applicationId);
   useEffect(() => {
     if (editApplication && editApplication.applicationId) {
       dispatch(getApplicationDocumentDataList(editApplication.applicationId));
@@ -234,14 +244,14 @@ const ApplicationDocumentStep = () => {
       <table className="documents-table">
         <tbody>
           <tr>
-            <th align="left">Document Name</th>
+            <th align="left">Document Type</th>
             <th align="left">Description</th>
             <th />
           </tr>
-          {documents &&
-            documents.map(document => (
+          {documentData &&
+            documentData.map(document => (
               <tr>
-                <td>{document.name}</td>
+                <td>{document.documentTypeId}</td>
                 <td>{document.description}</td>
                 <td align="right">
                   <span className="material-icons-round font-danger cursor-pointer">
