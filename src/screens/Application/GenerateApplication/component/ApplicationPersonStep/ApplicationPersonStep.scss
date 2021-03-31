@@ -19,6 +19,12 @@
     min-width: 170px;
   }
 
+  .radio-container {
+    display: flex;
+    align-items: center;
+    grid-column: 1/span 4;
+  }
+
   .grid-checkbox, .title, .main-title, .horizontal-line, .radio-title {
     grid-column: 1 / span 4;
   }
@@ -30,6 +36,7 @@
   .main-title {
     font: $title $font-medium;
     color: $secondary-color;
+    padding: 5px 0;
   }
 
   .title {

@@ -1,7 +1,10 @@
-import { updateEditApplicationData } from '../../../../redux/ApplicationAction';
+import {
+  saveApplicationStepDataToBackend,
+  updateEditApplicationData,
+} from '../../../../redux/ApplicationAction';
 import { NUMBER_REGEX } from '../../../../../../constants/RegexConstants';
 
-export const applicationCreditStepValidations = (dispatch, data) => {
+export const applicationCreditStepValidations = (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = false;
   console.log(data);
@@ -36,13 +39,17 @@ export const applicationCreditStepValidations = (dispatch, data) => {
 
     const finalData = {
       stepper: 'credit-limit',
-      entityType: '',
-      applicationId: '',
+      applicationId: editApplicationData.applicationId,
+      entityType: editApplicationData.companyStep.entityType[0].value,
       ...data,
       isExtendedPaymentTerms: isExtendedPaymentTerms === 'yes',
       isPassedOverdueAmount: isPassedOverdueAmount === 'no',
     };
-    console.log({ finalData });
+    try {
+      dispatch(saveApplicationStepDataToBackend(finalData));
+    } catch (e) {
+      /**/
+    }
     validated = true;
   }
   dispatch(updateEditApplicationData('creditLimitStep', { errors }));

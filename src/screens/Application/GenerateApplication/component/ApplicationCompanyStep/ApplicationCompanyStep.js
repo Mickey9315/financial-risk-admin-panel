@@ -52,7 +52,7 @@ const ApplicationCompanyStep = () => {
   const dispatch = useDispatch();
 
   const companyState = useSelector(({ application }) => application.editApplication.companyStep);
-  const { clients, debtors, streetType, australianStates, entityType } = useSelector(
+  const { clients, debtors, streetType, australianStates, entityType, countryList } = useSelector(
     ({ application }) => application.company.dropdownData
   );
   const entityNameSearchDropDownData = useSelector(
@@ -63,6 +63,20 @@ const ApplicationCompanyStep = () => {
 
   const INPUTS = useMemo(
     () => [
+      {
+        label: 'Client',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'client',
+        data: clients,
+      },
+      {
+        label: 'Country*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'country',
+        data: countryList,
+      },
       {
         label: 'Debtor',
         placeholder: 'Select',
@@ -389,16 +403,6 @@ const ApplicationCompanyStep = () => {
         </Modal>
       )}
       <div className="common-white-container client-details-container">
-        <span>Client</span>
-        <ReactSelect
-          placeholder="Select"
-          options={clients}
-          searchable={false}
-          values={companyState.client}
-          onChange={handleSelectInputChange}
-        />
-        <span />
-        <span />
         {INPUTS.map(getComponentFromType)}
       </div>
     </>

@@ -1,76 +1,89 @@
 import { errorNotification } from '../../../../../../common/Toast';
-import { saveApplicationStepDataToBackend } from '../../../../redux/ApplicationAction';
+import {
+  saveApplicationStepDataToBackend,
+  updatePersonData,
+} from '../../../../redux/ApplicationAction';
 
 export const applicationPersonStepValidation = (dispatch, data, editApplicationData) => {
-  // const errors = {};
   let validated = true;
-  const partners = data.map(item => {
+  const partners = data.map((item, index) => {
+    const errors = {};
     const { type } = item;
     let preparedData = {};
     if (type === 'company') {
       if (!item.abn || item.abn.trim().length <= 0) {
         validated = false;
-        errorNotification('Please enter ABN number before continue');
-        // errors.abn = 'Please enter ABN number before continue';
+        // errorNotification('Please enter ABN number before continue');
+        errors.abn = 'Please enter ABN number before continue';
       }
       if (item.abn && item.abn.trim().length < 11) {
         validated = false;
-        errorNotification('Please enter valid ABN number before continue');
-        // errors.abn = 'Please enter valid ABN number before continue';
+        // errorNotification('Please enter valid ABN number before continue');
+        errors.abn = 'Please enter valid ABN number before continue';
       }
       if (item.acn && item.acn.trim().length < 9) {
         validated = false;
-        errorNotification('Please enter valid ACN number before continue');
-        // errors.acn = 'Please enter valid ACN number before continue';
+        // errorNotification('Please enter valid ACN number before continue');
+        errors.acn = 'Please enter valid ACN number before continue';
       }
       if (!item.entityName || item.entityName.length <= 0) {
         validated = false;
-        errorNotification('Please enter entity name');
-        // errors.entityName = 'Please enter entity name';
+        // errorNotification('Please enter entity name');
+        errors.entityName = 'Please enter entity name';
       }
       if (!item.entityType || item.entityType.length <= 0) {
-        errorNotification('Please select entity type before continue');
-        // errors.entityType = 'Please select entity type before continue';
+        validated = false;
+        // errorNotification('Please select entity type before continue');
+        errors.entityType = 'Please select entity type before continue';
       }
     }
     if (type === 'individual') {
       if (!item.title || item.title.length <= 0) {
         validated = false;
-        errorNotification('Please select title before continue');
-        // errors.entityType = 'Please select title before continue';
+        // errorNotification('Please select title before continue');
+        errors.title = 'Please select title before continue';
       }
       if (!item.firstName || item.firstName.trim().length <= 0) {
         validated = false;
-        errorNotification('Please enter firstname before continue');
-        // errors.entityType = 'Please enter firstname before continue';
+        // errorNotification('Please enter firstname before continue');
+        errors.firstName = 'Please enter firstname before continue';
       }
       if (!item.lastName || item.lastName.trim().length <= 0) {
         validated = false;
-        errorNotification('Please enter lastname before continue');
-        // errors.entityType = 'Please enter lastname before continue';
+        // errorNotification('Please enter lastname before continue');
+        errors.lastName = 'Please enter lastname before continue';
       }
       if (!item.postCode || item.postCode.trim().length <= 0) {
         validated = false;
-        errorNotification('Please enter postcode before continue');
-        // errors.postCode = 'Please enter postcode before continue';
+        // errorNotification('Please enter postcode before continue');
+        errors.postCode = 'Please enter postcode before continue';
       }
       // eslint-disable-next-line no-restricted-globals
       if (item.postCode && isNaN(item.postCode)) {
         validated = false;
-        errorNotification('Postcode should be number');
+        // errorNotification('Postcode should be number');
+        errors.postCode = 'Postcode should be number';
       }
       if (!item.streetNumber || item.streetNumber.length <= 0) {
         validated = false;
-        errorNotification('Please select street number before continue');
+        // errorNotification('Please select street number before continue');
+        errors.streetName = 'Please select street number before continue';
       }
       // eslint-disable-next-line no-restricted-globals
       if (item.streetNumber && isNaN(item.streetNumber)) {
         validated = false;
-        errorNotification('Street number should be number');
+        // errorNotification('Street number should be number');
+        errors.streetName = 'Street number should be number';
       }
       if (!item.state || item.state.length <= 0) {
         validated = false;
-        errorNotification('Please select state before continue');
+        // errorNotification('Please select state before continue');
+        errors.state = 'Please select state before continue';
+      }
+      if (!item.country || item.country.length <= 0) {
+        validated = false;
+        // errorNotification('Please select country before continue');
+        errors.country = 'Please select country before continue';
       }
       if (!item.dateOfBirth || item.dateOfBirth.length <= 0) {
         validated = false;
@@ -110,6 +123,7 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
         postCode,
         allowToCheckCreditHistory,
       } = item;
+      delete country[0].name;
 
       preparedData = {
         title,
@@ -129,12 +143,13 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
           streetType,
           suburb,
           state,
-          country,
+          country: { name: country[0].label, code: country[0].value },
           postCode,
         },
         allowToCheckCreditHistory,
       };
     }
+    dispatch(updatePersonData(index, 'errors', errors));
 
     return preparedData;
   });
@@ -145,8 +160,13 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       entityType: editApplicationData.companyStep.entityType[0].value,
       partners,
     };
-    dispatch(saveApplicationStepDataToBackend(finalData));
-    console.log('finalData', finalData);
+    try {
+      dispatch(saveApplicationStepDataToBackend(finalData));
+    } catch (e) {
+      /**/
+    }
+    validated = true;
   }
-  // saveApplicationStepDataToBackend
+
+  return validated;
 };

@@ -64,7 +64,6 @@ const PersonIndividualDetail = ({
   const entityNameSearchDropDownData = useSelector(
     ({ application }) => application.company.entityNameSearch
   );
-  console.log('companyState', companyState.client[0].value);
 
   const personStep = useSelector(({ application }) => application.editApplication.personStep);
   // const [partnerType, setPartnerType] = useState('individual');
@@ -173,87 +172,72 @@ const PersonIndividualDetail = ({
 
   const getComponentFromType = useCallback(
     input => {
+      let component = null;
       switch (input.type) {
         case 'text':
-          return (
-            <>
-              <span>{input.label}</span>
-              <Input
-                type="text"
-                placeholder={input.placeholder}
-                name={input.name}
-                value={personStep[index][input.name]}
-                onChange={handleTextInputChange}
-              />
-            </>
+          component = (
+            <Input
+              type="text"
+              placeholder={input.placeholder}
+              name={input.name}
+              value={personStep[index][input.name]}
+              onChange={handleTextInputChange}
+            />
           );
+          break;
         case 'email':
-          return (
-            <>
-              <span>{input.label}</span>
-              <Input
-                type="email"
-                placeholder={input.placeholder}
-                name={input.name}
-                onChange={handleEmailChange}
-              />
-            </>
+          component = (
+            <Input
+              type="email"
+              placeholder={input.placeholder}
+              name={input.name}
+              onChange={handleEmailChange}
+            />
           );
+          break;
         case 'search':
-          return (
-            <>
-              <span>{input.label}</span>
-              <Input
-                type="text"
-                name={input.name}
-                placeholder={input.placeholder}
-                value={personStep[index][input.name]}
-                onKeyDown={handleSearchTextInputKeyDown}
-              />
-            </>
+          component = (
+            <Input
+              type="text"
+              name={input.name}
+              placeholder={input.placeholder}
+              value={personStep[index][input.name]}
+              onKeyDown={handleSearchTextInputKeyDown}
+            />
           );
+          break;
         case 'select':
-          return (
-            <>
-              <span>{input.label}</span>
-              <ReactSelect
-                placeholder={input.placeholder}
-                name={input.name}
-                options={input.data}
-                values={
-                  (personStep && personStep[index][input.name] && personStep[index][input.name]) ||
-                  []
-                }
-                searchable={false}
-                onChange={handleSelectInputChange}
-              />
-            </>
+          component = (
+            <ReactSelect
+              placeholder={input.placeholder}
+              name={input.name}
+              options={input.data}
+              values={
+                (personStep && personStep[index][input.name] && personStep[index][input.name]) || []
+              }
+              searchable={false}
+              onChange={handleSelectInputChange}
+            />
           );
+          break;
         case 'checkbox':
-          return (
-            <>
-              <Checkbox
-                className="grid-checkbox"
-                title={input.label}
-                name={input.name}
-                onChange={handleCheckBoxEvent}
-              />
-            </>
+          component = (
+            <Checkbox
+              className="grid-checkbox"
+              name={input.name}
+              title={input.label}
+              onChange={handleCheckBoxEvent}
+            />
           );
+          break;
         case 'entityName':
-          return (
-            <>
-              <span>{input.label}</span>
-              <Input
-                type="text"
-                placeholder={input.placeholder}
-                onKeyDown={handleEntityNameSearch}
-              />
-            </>
+          component = (
+            <Input type="text" placeholder={input.placeholder} onKeyDown={handleEntityNameSearch} />
           );
+          break;
         case 'radio':
-          return (
-            <>
+          component = (
+            <div className="radio-container">
               {input.data.map(radio => (
                 <RadioButton
                   className="mb-5"
@@ -265,42 +249,60 @@ const PersonIndividualDetail = ({
                   onChange={handleRadioButton}
                 />
               ))}
-            </>
+            </div>
           );
+          break;
         case 'main-title':
-          return (
-            <>
-              <div className="main-title">{input.label}</div>
-            </>
-          );
+          component = <div className="main-title">{input.label}</div>;
+          break;
         case 'blank':
-          return (
+          component = (
             <>
               <span />
               <span />
             </>
           );
+          break;
         case 'date':
-          return (
-            <>
-              <span>Date of Birth*</span>
-              <div className="date-picker-container">
-                <DatePicker
-                  placeholderText={input.placeholder}
-                  value={
-                    personStep[index].dateOfBirth
-                      ? moment(personStep[index].dateOfBirth).format('LL')
-                      : ''
-                  }
-                  onChange={date => onChangeDate(input.name, moment(date).format('DD/MM/YYYY'))}
-                />
-                <span className="material-icons-round">event_available</span>
-              </div>
-            </>
+          component = (
+            <div className="date-picker-container">
+              <DatePicker
+                placeholderText={input.placeholder}
+                value={
+                  personStep[index].dateOfBirth
+                    ? moment(personStep[index].dateOfBirth).format('LL')
+                    : ''
+                }
+                onChange={date => onChangeDate(input.name, moment(date).format('DD/MM/YYYY'))}
+              />
+              <span className="material-icons-round">event_available</span>
+            </div>
           );
+          break;
         default:
           return null;
       }
+
+      const finalComponent = (
+        <>
+          {component}
+          {personStep[index].errors[input.name] && (
+            <div className="ui-state-error">{personStep[index].errors[input.name]}</div>
+          )}
+        </>
+      );
+      return (
+        <>
+          {!['main-title', 'checkbox', 'blank', 'radio'].includes(input.type) && (
+            <span>{input.label}</span>
+          )}
+          {['main-title', 'radio', 'blank', 'checkbox'].includes(input.type) ? (
+            finalComponent
+          ) : (
+            <div>{finalComponent}</div>
+          )}
+        </>
+      );
     },
     [
       INPUTS,

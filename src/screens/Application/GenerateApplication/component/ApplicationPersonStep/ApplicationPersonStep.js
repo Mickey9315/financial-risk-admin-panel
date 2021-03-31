@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import './ApplicationPersonStep.scss';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Accordion from '../../../../../common/Accordion/Accordion';
 import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDetail';
 
@@ -13,7 +13,7 @@ import {
 const ApplicationPersonStep = () => {
   const personState = useSelector(({ application }) => application.editApplication.personStep);
 
-  const { streetType, australianStates } = useSelector(
+  const { streetType, australianStates, countryList } = useSelector(
     ({ application }) => application.company.dropdownData
   );
   const companyEntityType = useSelector(
@@ -65,14 +65,14 @@ const ApplicationPersonStep = () => {
 
   const COMPANY_INPUT = [
     {
-      type: 'blank',
-    },
-    {
       label: 'Trading Name',
       placeholder: 'Trading Name',
       type: 'text',
       name: 'tradingName',
       data: [],
+    },
+    {
+      type: 'blank',
     },
     {
       label: 'Entity Type*',
@@ -82,18 +82,17 @@ const ApplicationPersonStep = () => {
       data: companyEntityType,
     },
     {
-      label: 'ACN',
-      placeholder: '01234',
-      type: 'search',
-      name: 'acn',
-      data: [],
-    },
-
-    {
       label: 'Entity Name*',
       placeholder: 'Enter Entity',
       type: 'entityName',
       name: 'entityName',
+      data: [],
+    },
+    {
+      label: 'ACN',
+      placeholder: '01234',
+      type: 'search',
+      name: 'acn',
       data: [],
     },
     {
@@ -221,10 +220,11 @@ const ApplicationPersonStep = () => {
       name: 'postCode',
     },
     {
-      label: 'Country',
-      placeholder: 'Enter Country',
-      type: 'text',
+      label: 'Country*',
+      placeholder: 'Select',
+      type: 'select',
       name: 'country',
+      data: countryList,
     },
     {
       label: 'Contact Details',

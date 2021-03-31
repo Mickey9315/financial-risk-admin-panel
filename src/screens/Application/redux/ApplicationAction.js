@@ -175,7 +175,6 @@ export const getApplicationCompanyDropDownData = () => {
   return async dispatch => {
     try {
       const response = await ApplicationCompanyStepApiServices.getApplicationCompanyStepDropdownData();
-
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_DROP_DOWN_DATA,
@@ -314,6 +313,7 @@ export const addPersonDetail = type => {
     entityType: '',
     entityName: '',
     tradingName: '',
+    errors: {},
   };
 
   const individualData = {
@@ -337,6 +337,7 @@ export const addPersonDetail = type => {
     state: '',
     country: '',
     postCode: '',
+    errors: {},
   };
   const data = type === 'individual' ? individualData : companyData;
   return dispatch => {
@@ -367,6 +368,7 @@ export const changePersonType = (index, type) => {
     entityType: '',
     entityName: '',
     tradingName: '',
+    errors: {},
   };
 
   const individualData = {
@@ -390,6 +392,7 @@ export const changePersonType = (index, type) => {
     state: '',
     country: '',
     postCode: '',
+    errors: {},
   };
   const data = type === 'individual' ? individualData : companyData;
   return dispatch => {
@@ -428,6 +431,8 @@ export const saveApplicationStepDataToBackend = data => {
           errorNotification('Internal server error');
         } else if (e.response.data.status === 'ERROR') {
           errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.messageCode === 'APPLICATION_ALREADY_EXISTS') {
+          errorNotification('Application already exist');
         }
         throw Error();
       }
@@ -465,7 +470,6 @@ export const uploadDocument = (data, config) => {
     try {
       const response = await ApplicationDocumentStepApiServices.uploadDocument(data, config);
       if (response.data.status === 'SUCCESS') {
-        console.log(response.data.data);
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA,
           data: response.data.data,

@@ -83,7 +83,8 @@ const GenerateApplication = () => {
       case 2:
         return applicationCreditStepValidations(
           dispatch,
-          editApplicationData[steps[stepIndex].name]
+          editApplicationData[steps[stepIndex].name],
+          editApplicationData
         );
 
       default:

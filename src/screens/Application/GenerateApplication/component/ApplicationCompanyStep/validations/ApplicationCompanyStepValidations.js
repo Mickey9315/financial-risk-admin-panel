@@ -27,6 +27,10 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
     validated = false;
     errors.entityType = 'Please select entity type before continue';
   }
+  if (!data.country || data.country.length === 0) {
+    validated = false;
+    errors.country = 'Please select country before continue';
+  }
 
   if (validated) {
     const {
@@ -47,12 +51,17 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
       tradingName,
       outstandingAmount,
       debtor,
+      country,
+      isActive,
     } = data;
+
+    delete country[0].name;
 
     const finalData = {
       stepper: 'company',
       clientId: client[0]?.value,
       debtorId: debtor[0]?.value,
+      isActive,
       abn,
       acn,
       entityName: entityName[0]?.value,
@@ -68,13 +77,16 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
         streetType: streetType[0]?.value,
         suburb,
         state: state[0]?.value,
-        country: '',
+        country: { name: country[0].label, code: country[0].value },
         postCode: postcode,
       },
       applicationId: '',
     };
-
-    dispatch(saveApplicationStepDataToBackend(finalData));
+    try {
+      dispatch(saveApplicationStepDataToBackend(finalData));
+    } catch (e) {
+      /**/
+    }
 
     validated = true;
   }

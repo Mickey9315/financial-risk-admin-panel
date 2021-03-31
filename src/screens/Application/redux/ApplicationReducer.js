@@ -26,6 +26,7 @@ const initialApplicationList = {
       entityType: [],
       applicationStatus: [],
       companyEntityType: [],
+      countryList: [],
     },
   },
 
@@ -52,6 +53,7 @@ const initialApplicationList = {
       abn: '',
       tradingName: '',
       debtor: [],
+      clientList: [],
       errors: {},
     },
     creditLimitStep: {
@@ -69,7 +71,7 @@ const initialApplicationList = {
     personStep: [],
   },
 
-  personStep: {
+  /* personStep: {
     title: '',
     firstName: '',
     middleName: '',
@@ -90,7 +92,7 @@ const initialApplicationList = {
       country: '',
       postCode: '',
     },
-  },
+  }, */
   company: {
     dropdownData: {
       clients: [],
@@ -98,6 +100,7 @@ const initialApplicationList = {
       streetType: [],
       australianStates: [],
       entityType: [],
+      countryList: [],
     },
     entityNameSearch: {
       isLoading: false,
