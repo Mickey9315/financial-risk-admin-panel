@@ -31,7 +31,7 @@ const initialApplicationList = {
   },
 
   editApplication: {
-    currentStepIndex: 0,
+    currentStepIndex: 3,
     applicationId: '',
     entityType: '',
     companyStep: {
@@ -67,6 +67,7 @@ const initialApplicationList = {
     documentStep: {
       documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
       uploadDocumentData: {},
+      applicationDocumentDataList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     },
     personStep: [],
   },
@@ -302,6 +303,17 @@ export const application = (state = initialApplicationList, action) => {
           documentStep: {
             ...state.editApplication.documentStep,
             uploadDocumentData: action.data,
+          },
+        },
+      };
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_LIST:
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          documentStep: {
+            ...state.editApplication.documentStep,
+            applicationDocumentDataList: action.data,
           },
         },
       };

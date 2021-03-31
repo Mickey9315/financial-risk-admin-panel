@@ -7,7 +7,11 @@ import IconButton from '../../../../../common/IconButton/IconButton';
 import Modal from '../../../../../common/Modal/Modal';
 import FileUpload from '../../../../../common/Header/component/FileUpload';
 import Switch from '../../../../../common/Switch/Switch';
-import { getDocumentTypeList, uploadDocument } from '../../../redux/ApplicationAction';
+import {
+  getApplicationDocumentDataList,
+  getDocumentTypeList,
+  uploadDocument,
+} from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
 
 const initialApplicationDocumentState = {
@@ -182,6 +186,12 @@ const ApplicationDocumentStep = () => {
   useEffect(() => {
     dispatch(getDocumentTypeList());
   }, []);
+  const editApplication = useSelector(({ application }) => application.editApplication);
+  useEffect(() => {
+    if (editApplication && editApplication.applicationId) {
+      dispatch(getApplicationDocumentDataList(editApplication.applicationId));
+    }
+  }, [editApplication.applicationId]);
 
   const handleDocumentChange = useCallback(
     newValue => {

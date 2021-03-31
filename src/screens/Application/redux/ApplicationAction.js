@@ -465,6 +465,36 @@ export const getDocumentTypeList = () => {
   };
 };
 
+export const getApplicationDocumentDataList = (id, params = { page: 1, limit: 15 }) => {
+  return async dispatch => {
+    try {
+      const updateParams = {
+        ...params,
+        documentFor: 'application',
+      };
+      const response = await ApplicationDocumentStepApiServices.getApplicationDocumentDataList(
+        id,
+        updateParams
+      );
+      console.log('get document in application', response);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_LIST,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
 export const uploadDocument = (data, config) => {
   return async dispatch => {
     try {
