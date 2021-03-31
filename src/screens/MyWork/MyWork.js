@@ -53,9 +53,7 @@ const MyWork = () => {
           )}
         </div>
       </div>
-      <div className="common-white-container my-work-tab-content-container">
-        {myWorkTabContent[activeTabIndex]}
-      </div>
+      <div className="my-work-tab-content-container">{myWorkTabContent[activeTabIndex]}</div>
     </>
   );
 };

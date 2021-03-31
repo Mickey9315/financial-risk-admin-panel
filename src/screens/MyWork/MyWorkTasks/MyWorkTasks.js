@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Table from '../../../common/Table/Table';
 import { getTaskListByFilter } from '../redux/MyWorkAction';
 import Pagination from '../../../common/Pagination/Pagination';
+import Loader from '../../../common/Loader/Loader';
 
 const MyWorkTasks = () => {
   const dispatch = useDispatch();
@@ -24,32 +25,43 @@ const MyWorkTasks = () => {
     },
     [page, limit]
   );
+
+  const setSelectedCheckBoxData = useCallback(data => {
+    console.log(data);
+  }, []);
+
   useEffect(() => {
     getTaskList();
   }, []);
   return (
     <>
-      <div className="common-list-container">
-        <Table
-          align="left"
-          valign="center"
-          tableClass="main-list-table"
-          data={docs}
-          headers={headers}
-          recordSelected={() => console.log('Record selected')}
-          recordActionClick={() => console.log('Record action clicked')}
-          rowClass="cursor-pointer"
-        />
-      </div>
-      <Pagination
-        className="common-list-pagination"
-        total={total}
-        pages={pages}
-        page={page}
-        limit={limit}
-        // pageActionClick={pageActionClick}
-        // onSelectLimit={onSelectLimit}
-      />
+      {docs?.length ? (
+        <>
+          <div className="common-list-container">
+            <Table
+              align="left"
+              valign="center"
+              tableClass="main-list-table"
+              data={docs}
+              headers={headers}
+              rowClass="cursor-pointer task-row"
+              showCheckbox
+              onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+            />
+          </div>
+          <Pagination
+            className="common-list-pagination"
+            total={total}
+            pages={pages}
+            page={page}
+            limit={limit}
+            // pageActionClick={pageActionClick}
+            // onSelectLimit={onSelectLimit}
+          />
+        </>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 };
