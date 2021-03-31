@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import './MyWorkTasks.scss';
+import propTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -10,23 +11,14 @@ import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 const MyWorkTasks = props => {
   const dispatch = useDispatch();
   const {
-    // eslint-disable-next-line react/prop-types
     total,
-    // eslint-disable-next-line react/prop-types
     pages,
-    // eslint-disable-next-line react/prop-types
     page,
-    // eslint-disable-next-line react/prop-types
     limit,
-    // eslint-disable-next-line react/prop-types
     headers,
-    // eslint-disable-next-line react/prop-types
     docs,
-    // eslint-disable-next-line react/prop-types
     pageActionClick,
-    // eslint-disable-next-line react/prop-types
     onSelectLimit,
-    // eslint-disable-next-line react/prop-types
     getTaskList,
   } = props;
   // const history = useHistory();
@@ -151,4 +143,26 @@ const MyWorkTasks = props => {
   );
 };
 
+MyWorkTasks.defaultProps = {
+  total: 0,
+  pages: 1,
+  page: 1,
+  limit: 15,
+  headers: [],
+  pageActionClick: () => {},
+  onSelectLimit: () => {},
+  getTaskList: () => {},
+  docs: [],
+};
+MyWorkTasks.propTypes = {
+  docs: propTypes.object,
+  total: propTypes.number,
+  pages: propTypes.number,
+  page: propTypes.number,
+  limit: propTypes.number,
+  headers: propTypes.object,
+  pageActionClick: propTypes.func,
+  onSelectLimit: propTypes.func,
+  getTaskList: propTypes.func,
+};
 export default MyWorkTasks;
