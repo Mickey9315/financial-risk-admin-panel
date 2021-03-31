@@ -296,13 +296,24 @@ function Row(props) {
             <Checkbox className="crm-checkbox-list" checked={isSelected} onChange={onRowSelected} />
           </td>
         )}
-        {Object.entries(data).map(([key, value]) =>
-          key !== 'id' ? (
-            <td data-tip={value} data-delay-show="400" align={align}>
-              {value || '-'}
-            </td>
-          ) : null
-        )}
+        {Object.entries(data).map(([key, value]) => {
+          switch (key) {
+            case 'id':
+              return null;
+            case 'priority':
+              return (
+                <td data-tip={value} data-delay-show="400" align={align}>
+                  <span className={`task-priority-${value}`}>{value || '-'}</span>
+                </td>
+              );
+            default:
+              return (
+                <td data-tip={value} data-delay-show="400" align={align}>
+                  {value || '-'}
+                </td>
+              );
+          }
+        })}
         {haveActions && (
           <td
             align="right"
