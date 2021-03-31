@@ -26,6 +26,9 @@ const initialMyWork = {
       entityList: [],
     },
     columnList: {},
+    filterDropDownData: {
+      assigneeList: [],
+    },
   },
 };
 
@@ -146,6 +149,24 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         task: {
           ...state.task,
           columnList,
+        },
+      };
+    }
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_FOR_FILTER: {
+      const assigneeList = action.data.map(data => ({
+        label: data.name,
+        value: data._id,
+        name: 'assigneeId',
+      }));
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          filterDropDownData: {
+            ...state.task.filterDropDownData,
+            assigneeList,
+          },
         },
       };
     }

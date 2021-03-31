@@ -208,3 +208,29 @@ export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = 
     }
   };
 };
+
+export const getTaskFilter = () => {
+  return async dispatch => {
+    try {
+      const response = await MyWorkApiServices.getAssigneeDropDownData();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_FOR_FILTER,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
