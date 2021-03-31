@@ -91,6 +91,24 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       };
     }
 
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          addTask: {
+            title: '',
+            description: '',
+            priority: '',
+            entityType: '',
+            entityId: '',
+            assigneeId: '',
+            dueDate: '',
+            taskFrom: 'task',
+          },
+        },
+      };
+
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
 

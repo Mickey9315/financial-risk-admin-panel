@@ -13,6 +13,7 @@ import {
   updateAddTaskStateFields,
 } from '../../redux/MyWorkAction';
 import { errorNotification } from '../../../../common/Toast';
+import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
 
 const MyWorkAddTask = () => {
   const history = useHistory();
@@ -135,11 +136,17 @@ const MyWorkAddTask = () => {
 
   const handleDateChange = useCallback(
     (name, value) => {
-      console.log(name, value);
       updateAddTaskState(name, value);
     },
     [updateAddTaskState]
   );
+
+  const onCloseAddTask = useCallback(() => {
+    dispatch({
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
+    });
+    backToTaskList();
+  }, [backToTaskList]);
 
   const onSaveTask = useCallback(() => {
     if (!addTaskState.title && addTaskState?.title.length <= 0) {
@@ -167,7 +174,7 @@ const MyWorkAddTask = () => {
         const data = addTaskState;
         dispatch(saveTaskData(data, backToTaskList));
       } catch (e) {
-        /**/
+        errorNotification('Something went wrong please try again');
       }
     }
   }, [addTaskState]);
@@ -277,7 +284,7 @@ const MyWorkAddTask = () => {
           <span>Add Task</span>
         </div>
         <div className="buttons-row">
-          <Button buttonType="primary-1" title="close" onClick={backToTaskList} />
+          <Button buttonType="primary-1" title="close" onClick={onCloseAddTask} />
           <Button buttonType="primary" title="save" onClick={onSaveTask} />
         </div>
       </div>
