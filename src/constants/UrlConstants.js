@@ -129,5 +129,6 @@ export const MY_WORK_URL = {
     ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
     ENTITY_DROP_DOWN_DATA: `${BASE_URL}task/entity-list/`,
     SAVE_NEW_TASK: `${BASE_URL}task/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name/`,
   },
 };

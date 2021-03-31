@@ -25,6 +25,7 @@ const initialMyWork = {
       assigneeList: [],
       entityList: [],
     },
+    columnList: {},
   },
 };
 
@@ -108,6 +109,46 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           },
         },
       };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_PAGE_DATA: {
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          taskList: {
+            ...state.task.taskList,
+            page: 1,
+            limit: 15,
+          },
+        },
+      };
+    }
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_COLUMN_NAME_LIST_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          columnList: action.data,
+        },
+      };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_TASK_COLUMN_NAME_LIST_ACTION: {
+      const columnList = {
+        ...state.task.columnList,
+      };
+      const { type, name, value } = action.data;
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name ? { ...e, isChecked: value } : e
+      );
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          columnList,
+        },
+      };
+    }
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;

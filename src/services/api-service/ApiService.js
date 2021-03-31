@@ -50,8 +50,8 @@ const ApiService = {
   postData(url, data, config) {
     return instance.post(url, data, config);
   },
-  putData(url, data) {
-    return instance.put(url, data);
+  putData(url, data, config) {
+    return instance.put(url, data, config);
   },
   patchData(url, data) {
     return instance.patch(url, data);
