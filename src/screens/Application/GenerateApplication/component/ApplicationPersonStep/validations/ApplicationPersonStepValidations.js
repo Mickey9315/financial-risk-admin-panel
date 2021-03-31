@@ -126,6 +126,7 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       delete country[0].name;
 
       preparedData = {
+        type,
         title,
         firstName,
         middleName,
