@@ -21,12 +21,14 @@ import {
 import Modal from '../../common/Modal/Modal';
 import Checkbox from '../../common/Checkbox/Checkbox';
 import { errorNotification } from '../../common/Toast';
+import { SIDEBAR_NAMES } from '../../constants/SidebarConstants';
+import UserPrivilegeWrapper from '../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const initialFilterState = {
   priority: '',
   isCompleted: false,
-  startDate: '',
-  endDate: '',
+  startDate: null,
+  endDate: null,
   assigneeId: '',
 };
 
@@ -100,6 +102,7 @@ const MyWork = () => {
 
   const handleStartDateChange = useCallback(
     date => {
+      console.log(date);
       dispatchFilter({
         type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'startDate',
@@ -174,8 +177,8 @@ const MyWork = () => {
       priority: priority && priority.trim().length > 0 ? priority : undefined,
       isCompleted: isCompleted && isCompleted ? isCompleted : undefined,
       assigneeId: assigneeId && assigneeId.trim().length > 0 ? assigneeId : undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
+      startDate: startDate ? new Date(startDate) : undefined,
+      endDate: endDate ? new Date(endDate) : undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
@@ -209,6 +212,8 @@ const MyWork = () => {
       getTaskList={getTaskList}
       pageActionClick={pageActionClick}
       onSelectLimit={onSelectLimit}
+      dispatchFilter={dispatchFilter}
+      TASK_FILTER_REDUCER_ACTIONS={TASK_FILTER_REDUCER_ACTIONS}
     />,
     <MyWorkNotifications />,
   ];
@@ -381,18 +386,20 @@ const MyWork = () => {
               <span className="material-icons-round">event_available</span>
             </div>
           </div>
-          <div className="filter-modal-row">
-            <div className="form-title">Assignee</div>
-            <ReactSelect
-              className="filter-select"
-              placeholder="Select"
-              name="role"
-              options={assigneeList}
-              value={assigneeId}
-              onChange={handleAssigneeFilterChange}
-              searchable={false}
-            />
-          </div>
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+            <div className="filter-modal-row">
+              <div className="form-title">Assignee</div>
+              <ReactSelect
+                className="filter-select"
+                placeholder="Select"
+                name="role"
+                options={assigneeList}
+                value={assigneeId}
+                onChange={handleAssigneeFilterChange}
+                searchable={false}
+              />
+            </div>
+          </UserPrivilegeWrapper>
         </Modal>
       )}
     </>

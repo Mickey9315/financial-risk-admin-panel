@@ -20,6 +20,8 @@ const MyWorkTasks = props => {
     pageActionClick,
     onSelectLimit,
     getTaskList,
+    dispatchFilter,
+    TASK_FILTER_REDUCER_ACTIONS,
   } = props;
   // const history = useHistory();
   // const dispatch = useDispatch();
@@ -102,9 +104,16 @@ const MyWorkTasks = props => {
       isCompleted: paramIsCompleted && paramIsCompleted ? paramIsCompleted : undefined,
       assigneeId:
         paramAssigneeId && paramAssigneeId.trim().length > 0 ? paramAssigneeId : undefined,
-      startDate: paramStartDate || undefined,
-      endDate: paramEndDate || undefined,
+      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
+      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
     };
+    Object.entries(filters).forEach(([name, value]) => {
+      dispatchFilter({
+        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name,
+        value,
+      });
+    });
     getTaskList({ ...params, ...filters });
     return () => dispatch(resetPageData());
   }, []);
@@ -153,6 +162,8 @@ MyWorkTasks.defaultProps = {
   onSelectLimit: () => {},
   getTaskList: () => {},
   docs: [],
+  dispatchFilter: () => {},
+  TASK_FILTER_REDUCER_ACTIONS: {},
 };
 MyWorkTasks.propTypes = {
   docs: propTypes.object,
@@ -164,5 +175,7 @@ MyWorkTasks.propTypes = {
   pageActionClick: propTypes.func,
   onSelectLimit: propTypes.func,
   getTaskList: propTypes.func,
+  dispatchFilter: propTypes.func,
+  TASK_FILTER_REDUCER_ACTIONS: propTypes.object,
 };
 export default MyWorkTasks;
