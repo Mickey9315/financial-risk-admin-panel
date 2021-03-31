@@ -93,10 +93,13 @@ export const updateAddTaskStateFields = (name, value) => {
 };
 
 export const saveTaskData = (data, backToTask) => {
-  return async () => {
+  return async dispatch => {
     try {
       const response = await MyWorkApiServices.saveNewTask(data);
       if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
+        });
         backToTask();
       }
     } catch (e) {
