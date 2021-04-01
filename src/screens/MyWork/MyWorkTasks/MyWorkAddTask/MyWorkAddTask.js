@@ -85,8 +85,8 @@ const MyWorkAddTask = () => {
         placeholder: 'Enter Entity',
         type: 'search',
         name: 'entityId',
-        data: entityList,
-        value: addTaskState?.entityId,
+        data: entityList || [],
+        value: addTaskState?.entityType && addTaskState?.entityId,
       },
       {
         type: 'blank',
@@ -131,7 +131,7 @@ const MyWorkAddTask = () => {
         /**/
       }
     },
-    [handleSelectInputChange]
+    [handleSelectInputChange, addTaskState]
   );
 
   const handleDateChange = useCallback(

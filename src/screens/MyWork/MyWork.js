@@ -70,7 +70,6 @@ const MyWork = () => {
   ];
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { priority, isCompleted, startDate, endDate, assigneeId } = useMemo(() => filter, [filter]);
-  console.log(priority, isCompleted, startDate, endDate, assigneeId);
 
   const handlePriorityFilterChange = useCallback(
     event => {
@@ -146,7 +145,6 @@ const MyWork = () => {
           endDate: endDate || undefined,
           ...params,
         };
-        console.log(data);
         dispatch(getTaskListByFilter(data));
         if (cb && typeof cb === 'function') {
           cb();
@@ -177,8 +175,8 @@ const MyWork = () => {
       priority: priority && priority.trim().length > 0 ? priority : undefined,
       isCompleted: isCompleted && isCompleted ? isCompleted : undefined,
       assigneeId: assigneeId && assigneeId.trim().length > 0 ? assigneeId : undefined,
-      startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined,
+      startDate: startDate ? new Date(startDate).toUTCString() : undefined,
+      endDate: endDate ? new Date(endDate).toUTCString() : undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
@@ -280,11 +278,20 @@ const MyWork = () => {
     getTaskList({ page: 1 }, toggleFilterModal);
   }, [getTaskList]);
 
+  const resetFilterOnClick = useCallback(() => {
+    dispatchFilter({
+      type: TASK_FILTER_REDUCER_ACTIONS.RESET_STATE,
+    });
+    toggleFilterModal();
+    getTaskList();
+  }, [dispatchFilter, toggleFilterModal]);
+
   const filterModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
+        onClick: resetFilterOnClick,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: applyFilterOnClick },
