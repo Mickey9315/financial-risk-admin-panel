@@ -195,10 +195,6 @@ const MyWork = () => {
   //   return () => dispatch(resetPageData());
   // }, []);
 
-  // const setSelectedCheckBoxData = useCallback(data => {
-  //   console.log(data);
-  // }, []);
-
   const myWorkTabContent = [
     <MyWorkTasks
       docs={docs}

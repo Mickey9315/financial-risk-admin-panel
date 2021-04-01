@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import './MyWorkTasks.scss';
 import propTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -118,6 +118,10 @@ const MyWorkTasks = props => {
     return () => dispatch(resetPageData());
   }, []);
 
+  const setSelectedCheckBoxData = useCallback(data => {
+    console.log(data);
+  }, []);
+
   return (
     <>
       {docs ? (
@@ -130,9 +134,8 @@ const MyWorkTasks = props => {
               data={docs}
               headers={headers}
               rowClass="cursor-pointer task-row"
-              onRefresh={getTaskList}
-              showCheckbox
-              // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+              refreshData={getTaskList}
+              onChangeRowSelection={data => setSelectedCheckBoxData(data)}
             />
           </div>
           <Pagination

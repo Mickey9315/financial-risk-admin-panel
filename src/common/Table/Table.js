@@ -75,12 +75,12 @@ const Table = props => {
     }
   }, []);
 
-  const handleCheckBoxState = useCallback(async (value, header, currentData) => {
+  const handleCheckBoxState = useCallback(async (value, header, currentData, row) => {
     try {
       await TableApiService.tableActions({
         url: header.request.url,
         method: header.request.method,
-        id: currentData.id,
+        id: currentData.id || row._id,
         data: {
           [`${header.name}`]: value,
         },
