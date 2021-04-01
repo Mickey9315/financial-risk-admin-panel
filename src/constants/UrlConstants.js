@@ -122,3 +122,10 @@ export const INSURER_URLS = {
     MATRIX_DATA: `${BASE_URL}insurer/matrix/`,
   },
 };
+
+export const DEBTORS_URLS = {
+  DEBTORS_LIST_URL: `${BASE_URL}debtor/`,
+  DEBTORS_COLUMNS_NAME_LIST_URL: `${BASE_URL}debtor/column-name`,
+  SELECTED_DEBTOR_DETAILS_URL: `${BASE_URL}debtor/`,
+  DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list`,
+};
