@@ -65,9 +65,9 @@ input[type="checkbox" i]:disabled.checkbox-container:hover input ~ .checkmark {
 /* Style the checkmark/indicator */
 .checkbox-container .checkmark:after {
   left: 8px;
-  top: 3px;
-  width: 5px;
-  height: 10px;
+  top: 4px;
+  width: 6px;
+  height: 11px;
   border: solid white;
   border-width: 0 2px 2px 0;
   -webkit-transform: rotate(45deg);

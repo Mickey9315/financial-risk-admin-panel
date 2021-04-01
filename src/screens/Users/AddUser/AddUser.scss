@@ -19,7 +19,7 @@
 .common-detail-field {
   display: grid;
   align-items: center;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 175px 1fr;
 }
 
 .common-detail-title {
@@ -69,4 +69,10 @@
   margin-bottom: 10px;
   font: $h5 $font-medium;
   color: $primary-color;
+}
+
+.checkbox-disabled {
+  * {
+    cursor: not-allowed;
+  }
 }

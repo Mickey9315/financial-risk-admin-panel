@@ -113,7 +113,13 @@ const AddUser = () => {
   );
 
   const onChangeUserAccess = useCallback((module, value) => {
-    dispatch(changeUserManageAccess({ name: module, value }));
+    if (value === 'full-access') {
+      dispatch(changeUserManageAccess({ name: module, value: 'read' }));
+      dispatch(changeUserManageAccess({ name: module, value: 'write' }));
+      dispatch(changeUserManageAccess({ name: module, value }));
+    } else {
+      dispatch(changeUserManageAccess({ name: module, value }));
+    }
   }, []);
 
   const onClickAddUser = useCallback(async () => {
@@ -342,6 +348,7 @@ const AddUser = () => {
                 disabled={action === 'view'}
                 title={access.label}
                 name={access.value}
+                className={`${action === 'view' && 'checkbox-disabled'}`}
                 checked={module.accessTypes.includes(access.value)}
                 onChange={() => onChangeUserAccess(module.name, access.value)}
               />

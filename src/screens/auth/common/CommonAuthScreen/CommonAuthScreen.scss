@@ -21,11 +21,12 @@
   padding: 3rem;
   background-color: #ffffff;
   border-radius: 0.625rem;
-  border: 0.063rem solid white;
+  border: 2px solid white;
   overflow: hidden;
 
   > div {
     width: 80%;
+    max-width: 420px;
   }
 }
 
@@ -106,7 +107,7 @@
   position: absolute;
   bottom: 0.625rem;
   right: 3.438rem;
-  height: 4.063rem;
+  height: 5.1rem;
 }
 
 .login-input-icon {
