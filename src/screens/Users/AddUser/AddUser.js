@@ -112,13 +112,36 @@ const AddUser = () => {
     [onChangeUserData, clientSelected]
   );
 
-  const onChangeUserAccess = useCallback((module, value) => {
+  const onChangeUserAccess = useCallback((module, access) => {
+    const { name } = module;
+    const { value } = access;
+
     if (value === 'full-access') {
-      dispatch(changeUserManageAccess({ name: module, value: 'read' }));
-      dispatch(changeUserManageAccess({ name: module, value: 'write' }));
-      dispatch(changeUserManageAccess({ name: module, value }));
+      const hasFullAccess = module.accessTypes.includes('full-access');
+      const hasReadAccess = module.accessTypes.includes('read');
+      const hasWriteAccess = module.accessTypes.includes('write');
+
+      if (hasFullAccess) {
+        if (!hasReadAccess) {
+          dispatch(changeUserManageAccess({ name, value: 'read' }));
+        }
+        if (!hasWriteAccess) {
+          dispatch(changeUserManageAccess({ name, value: 'write' }));
+        }
+      } else {
+        if (hasReadAccess) {
+          dispatch(changeUserManageAccess({ name, value: 'read' }));
+        }
+        if (hasWriteAccess) {
+          dispatch(changeUserManageAccess({ name, value: 'write' }));
+        }
+      }
+      dispatch(changeUserManageAccess({ name, value: 'read' }));
+      dispatch(changeUserManageAccess({ name, value: 'write' }));
+      dispatch(changeUserManageAccess({ name, value }));
+      console.log('here if');
     } else {
-      dispatch(changeUserManageAccess({ name: module, value }));
+      dispatch(changeUserManageAccess({ name, value }));
     }
   }, []);
 
@@ -350,7 +373,7 @@ const AddUser = () => {
                 name={access.value}
                 className={`${action === 'view' && 'checkbox-disabled'}`}
                 checked={module.accessTypes.includes(access.value)}
-                onChange={() => onChangeUserAccess(module.name, access.value)}
+                onChange={() => onChangeUserAccess(module, access)}
               />
             ))}
           </div>
