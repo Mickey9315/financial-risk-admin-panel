@@ -16,6 +16,10 @@
   gap: 15px 10%;
 }
 
+.common-detail-field.user-select-client {
+  grid-column: 1/span 2;
+}
+
 .common-detail-field {
   display: grid;
   align-items: center;
