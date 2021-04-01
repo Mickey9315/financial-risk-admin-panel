@@ -290,13 +290,17 @@ function Row(props) {
 
   return (
     <>
-      <tr onClick={() => recordSelected(data.id)} className={rowClass}>
+      <tr
+        onClick={() => recordSelected(data.id)}
+        className={data?.isCompleted?.props.checked ? `completedTask ${rowClass}` : rowClass}
+      >
         {showCheckbox && (
           <td width={10} align={align} valign={valign} className={rowClass}>
             <Checkbox className="crm-checkbox-list" checked={isSelected} onChange={onRowSelected} />
           </td>
         )}
         {Object.entries(data).map(([key, value]) => {
+          console.log(key);
           switch (key) {
             case 'id':
               return null;
