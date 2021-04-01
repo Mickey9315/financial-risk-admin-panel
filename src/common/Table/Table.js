@@ -300,7 +300,6 @@ function Row(props) {
           </td>
         )}
         {Object.entries(data).map(([key, value]) => {
-          console.log(key);
           switch (key) {
             case 'id':
               return null;
