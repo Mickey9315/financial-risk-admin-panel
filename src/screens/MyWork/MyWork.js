@@ -186,15 +186,6 @@ const MyWork = () => {
     history.replace(`${history.location.pathname}?${url}`);
   }, [history, total, pages, page, limit, priority, isCompleted, assigneeId, startDate, endDate]);
 
-  // useEffect(() => {
-  //   const params = {
-  //     page: paramPage || 1,
-  //     limit: paramLimit || 15,
-  //   };
-  //   getTaskList({ ...params });
-  //   return () => dispatch(resetPageData());
-  // }, []);
-
   const myWorkTabContent = [
     <MyWorkTasks
       docs={docs}

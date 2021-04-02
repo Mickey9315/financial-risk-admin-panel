@@ -23,67 +23,6 @@ const MyWorkTasks = props => {
     dispatchFilter,
     TASK_FILTER_REDUCER_ACTIONS,
   } = props;
-  // const history = useHistory();
-  // const dispatch = useDispatch();
-  // const taskListData = useSelector(({ myWorkReducer }) => myWorkReducer.task.taskList);
-  // const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData, [taskListData]);
-  //
-  // const getTaskList = useCallback(
-  //   (params = {}, cb) => {
-  //     const data = {
-  //       page: page || 1,
-  //       limit: limit || 15,
-  //       ...params,
-  //     };
-  //     dispatch(getTaskListByFilter(data));
-  //     if (cb && typeof cb === 'function') {
-  //       cb();
-  //     }
-  //   },
-  //   [page, limit]
-  // );
-  //
-  // const pageActionClick = useCallback(
-  //   newPage => {
-  //     getTaskList({ page: newPage, limit });
-  //   },
-  //   [getTaskList, limit]
-  // );
-  //
-  // const onSelectLimit = useCallback(
-  //   newLimit => {
-  //     getTaskList({ page: 1, limit: newLimit });
-  //   },
-  //   [getTaskList]
-  // );
-  //
-  // useEffect(() => {
-  //   const params = {
-  //     page: page || 1,
-  //     limit: limit || 15,
-  //   };
-  //   const url = Object.entries(params)
-  //     .filter(arr => arr[1] !== undefined)
-  //     .map(([k, v]) => `${k}=${v}`)
-  //     .join('&');
-  //
-  //   history.replace(`${history.location.pathname}?${url}`);
-  // }, [total, pages, page, limit]);
-  //
-  // const { page: paramPage, limit: paramLimit } = useQueryParams();
-  //
-  // useEffect(() => {
-  //   const params = {
-  //     page: paramPage || 1,
-  //     limit: paramLimit || 15,
-  //   };
-  //   getTaskList({ ...params });
-  //   return () => dispatch(resetPageData());
-  // }, []);
-  //
-  // const setSelectedCheckBoxData = useCallback(data => {
-  //   console.log(data);
-  // }, []);
 
   const {
     page: paramPage,
