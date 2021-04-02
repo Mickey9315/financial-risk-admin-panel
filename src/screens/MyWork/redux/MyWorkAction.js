@@ -61,11 +61,11 @@ export const getEntityDropDownData = params => {
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
-      } else {
-        dispatch({
-          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION,
-          data: [],
-        });
+        // } else {
+        //   dispatch({
+        //     type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION,
+        //     data: [],
+        //   });
       }
     } catch (e) {
       if (e.response && e.response.data) {

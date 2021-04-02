@@ -18,9 +18,12 @@ import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
 const MyWorkAddTask = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const backToTaskList = () => {
+  const backToTaskList = useCallback(() => {
+    dispatch({
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
+    });
     history.replace('/my-work');
-  };
+  }, []);
 
   const addTaskState = useSelector(({ myWorkReducer }) => myWorkReducer.task.addTask);
   const { assigneeList, entityList } = useSelector(
@@ -34,7 +37,7 @@ const MyWorkAddTask = () => {
         placeholder: 'Enter title',
         type: 'text',
         name: 'title',
-        value: addTaskState?.title,
+        data: [],
       },
       {
         label: 'Assignee',
@@ -42,7 +45,6 @@ const MyWorkAddTask = () => {
         type: 'select',
         name: 'assigneeId',
         data: assigneeList,
-        value: addTaskState?.assigneeId,
       },
       {
         label: 'Priority',
@@ -54,14 +56,13 @@ const MyWorkAddTask = () => {
           { value: 'high', label: 'High', name: 'priority' },
           { value: 'urgent', label: 'Urgent', name: 'priority' },
         ],
-        value: addTaskState?.priority,
       },
       {
         label: 'Due Date',
         placeholder: 'Select Date',
         type: 'date',
         name: 'dueDate',
-        value: addTaskState?.dueDate,
+        data: [],
       },
       {
         label: 'Task For',
@@ -72,21 +73,19 @@ const MyWorkAddTask = () => {
           { value: 'application', label: 'Application', name: 'entityType' },
           { value: 'client', label: 'Client', name: 'entityType' },
           { value: 'debtor', label: 'Debtor', name: 'entityType' },
-          { value: 'claim', label: 'Claim', name: 'entityType' },
-          { value: 'overdue', label: 'Overdue', name: 'entityType' },
+          // { value: 'claim', label: 'Claim', name: 'entityType' },
+          // { value: 'overdue', label: 'Overdue', name: 'entityType' },
         ],
-        value: addTaskState?.entityType,
       },
       {
         type: 'blank',
       },
       {
         label: 'Entity Labels',
-        placeholder: 'Enter Entity',
+        placeholder: 'Select Entity',
         type: 'search',
         name: 'entityId',
-        data: entityList || [],
-        value: addTaskState?.entityType && addTaskState?.entityId,
+        data: entityList,
       },
       {
         type: 'blank',
@@ -96,7 +95,6 @@ const MyWorkAddTask = () => {
         placeholder: 'Enter Description',
         type: 'text',
         name: 'description',
-        value: addTaskState?.description,
       },
     ],
     [assigneeList, entityList, addTaskState]
@@ -116,7 +114,7 @@ const MyWorkAddTask = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateAddTaskState(data[0]?.name, data[0]?.value);
+      updateAddTaskState(data[0]?.name, data);
     },
     [updateAddTaskState]
   );
@@ -126,7 +124,9 @@ const MyWorkAddTask = () => {
       try {
         handleSelectInputChange(data);
         const params = { entityName: data[0]?.value };
-        dispatch(getEntityDropDownData(params));
+        if (data[0]?.value) {
+          dispatch(getEntityDropDownData(params));
+        }
       } catch (e) {
         /**/
       }
@@ -149,29 +149,24 @@ const MyWorkAddTask = () => {
   }, [backToTaskList]);
 
   const onSaveTask = useCallback(() => {
-    if (!addTaskState.title && addTaskState?.title.length <= 0) {
+    const data = {
+      title: addTaskState?.title?.trim(),
+      priority: addTaskState?.priority[0]?.value,
+      dueDate: addTaskState?.dueDate || new Date().toISOString(),
+      taskFrom: 'task',
+    };
+    if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType[0]?.value;
+    if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0]?.value;
+    if (addTaskState?.assigneeId[0]?.value) data.assigneeId = addTaskState?.assigneeId[0]?.value;
+    if (addTaskState?.description) data.description = addTaskState?.description?.trim();
+
+    if (!data.title && data.title.length === 0) {
       errorNotification('Please add title');
     }
-    if (!addTaskState.assigneeId && addTaskState?.assigneeId.length <= 0) {
-      errorNotification('Please select assignee');
-    }
-    if (!addTaskState.priority && addTaskState?.priority.length <= 0) {
+    if (!data.priority || data.priority.length <= 0) {
       errorNotification('Please select priority');
-    }
-    if (!addTaskState.dueDate && addTaskState?.dueDate.length <= 0) {
-      errorNotification('Please select DueDate');
-    }
-    if (!addTaskState.entityType && addTaskState?.entityType.length <= 0) {
-      errorNotification('Please select task for ');
-    }
-    if (!addTaskState.entityId && addTaskState?.entityId.length <= 0) {
-      errorNotification('Please select entityLabel ');
-    }
-    if (!addTaskState.description && addTaskState?.description.length <= 0) {
-      errorNotification('Please select description');
     } else {
       try {
-        const data = addTaskState;
         dispatch(saveTaskData(data, backToTaskList));
       } catch (e) {
         errorNotification('Something went wrong please try again');
@@ -191,7 +186,7 @@ const MyWorkAddTask = () => {
                 type="text"
                 name={input.name}
                 placeholder={input.placeholder}
-                value={input.value}
+                value={addTaskState[input.name]}
                 onChange={handleTextInputChange}
               />
             </>
@@ -205,9 +200,9 @@ const MyWorkAddTask = () => {
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
-                searchable
+                // searchable
                 // changed from value to values
-                values={entityList}
+                values={addTaskState[input.name] || []}
                 onChange={handleSelectInputChange}
               />
             </>
@@ -228,7 +223,7 @@ const MyWorkAddTask = () => {
                 name={input.name}
                 options={input.data}
                 searchable={false}
-                value={input.value}
+                values={addTaskState[input.name]}
                 onChange={handleOnChange}
               />
             </>
@@ -242,8 +237,13 @@ const MyWorkAddTask = () => {
               <div className="date-picker-container">
                 <DatePicker
                   placeholderText={input.placeholder}
-                  value={input.value && new Date(input.value).toLocaleDateString()}
+                  value={
+                    addTaskState[input.name]
+                      ? new Date(addTaskState[input.name]).toLocaleDateString()
+                      : new Date().toLocaleDateString()
+                  }
                   onChange={date => handleDateChange(input.name, new Date(date).toISOString())}
+                  minDate={new Date()}
                 />
                 <span className="material-icons-round">event_available</span>
               </div>
@@ -264,15 +264,7 @@ const MyWorkAddTask = () => {
       }
       return <>{component}</>;
     },
-    [
-      INPUTS,
-      addTaskState,
-      handleTextInputChange,
-      handleSelectInputChange,
-      handleDateChange,
-      handleEntityTypeSelectInputChange,
-      entityList,
-    ]
+    [INPUTS, addTaskState, updateAddTaskState, entityList]
   );
   useEffect(() => {
     dispatch(getAssigneeDropDownData());
@@ -286,8 +278,8 @@ const MyWorkAddTask = () => {
           <span>Add Task</span>
         </div>
         <div className="buttons-row">
-          <Button buttonType="primary-1" title="close" onClick={onCloseAddTask} />
-          <Button buttonType="primary" title="save" onClick={onSaveTask} />
+          <Button buttonType="primary-1" title="Close" onClick={onCloseAddTask} />
+          <Button buttonType="primary" title="Save" onClick={onSaveTask} />
         </div>
       </div>
       <div className="common-white-container my-work-add-task-container">

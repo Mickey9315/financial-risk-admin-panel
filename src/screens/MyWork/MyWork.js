@@ -129,10 +129,10 @@ const MyWork = () => {
   const getTaskList = useCallback(
     (params = {}, cb) => {
       if (moment(startDate).isAfter(endDate)) {
-        errorNotification('From date should be greater than to date');
+        errorNotification('End date should be after Start date');
         resetFilterDates();
       } else if (moment(endDate).isBefore(startDate)) {
-        errorNotification('To Date should be smaller than from date');
+        errorNotification('Start date should be before End date');
         resetFilterDates();
       } else {
         const data = {

@@ -341,7 +341,7 @@ const ClientList = () => {
   );
   const openViewClient = useCallback(
     id => {
-      history.replace(`/clients/client/view/${id}`);
+      history.push(`/clients/client/view/${id}`);
     },
     [history]
   );

@@ -57,13 +57,9 @@ const MyWorkTasks = props => {
     return () => dispatch(resetPageData());
   }, []);
 
-  // const setSelectedCheckBoxData = useCallback(data => {
-  //   console.log(data);
-  // }, []);
-
   return (
     <>
-      {docs ? (
+      {docs.length ? (
         <>
           <div className="common-list-container">
             <Table
