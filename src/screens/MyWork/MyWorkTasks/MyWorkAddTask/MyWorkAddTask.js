@@ -206,7 +206,8 @@ const MyWorkAddTask = () => {
                 name={input.name}
                 options={input.data}
                 searchable
-                value={input?.value}
+                // changed from value to values
+                values={entityList}
                 onChange={handleSelectInputChange}
               />
             </>
@@ -270,6 +271,7 @@ const MyWorkAddTask = () => {
       handleSelectInputChange,
       handleDateChange,
       handleEntityTypeSelectInputChange,
+      entityList,
     ]
   );
   useEffect(() => {
