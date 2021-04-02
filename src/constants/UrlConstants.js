@@ -129,3 +129,13 @@ export const DEBTORS_URLS = {
   SELECTED_DEBTOR_DETAILS_URL: `${BASE_URL}debtor/`,
   DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list`,
 };
+
+export const MY_WORK_URL = {
+  TASK: {
+    TASK_LIST_URL: `${BASE_URL}task/`,
+    ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
+    ENTITY_DROP_DOWN_DATA: `${BASE_URL}task/entity-list/`,
+    SAVE_NEW_TASK: `${BASE_URL}task/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name/`,
+  },
+};

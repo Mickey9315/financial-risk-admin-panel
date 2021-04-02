@@ -61,9 +61,9 @@ const Table = props => {
   const handleDrawerState = useCallback(async (header, currentData, row) => {
     try {
       const response = await TableApiService.tableActions({
-        url: header.request.url,
+        url: header.request.url || header.request[currentData.type],
         method: header.request.method,
-        id: currentData.id || row._id,
+        id: currentData.id || currentData._id || row._id,
       });
 
       dispatchDrawerState({
@@ -75,12 +75,12 @@ const Table = props => {
     }
   }, []);
 
-  const handleCheckBoxState = useCallback(async (value, header, currentData) => {
+  const handleCheckBoxState = useCallback(async (value, header, currentData, row) => {
     try {
       await TableApiService.tableActions({
         url: header.request.url,
         method: header.request.method,
-        id: currentData.id,
+        id: currentData.id || row._id,
         data: {
           [`${header.name}`]: value,
         },
@@ -290,19 +290,33 @@ function Row(props) {
 
   return (
     <>
-      <tr onClick={() => recordSelected(data.id)} className={rowClass}>
+      <tr
+        onClick={() => recordSelected(data.id)}
+        className={data?.isCompleted?.props.checked ? `completedTask ${rowClass}` : rowClass}
+      >
         {showCheckbox && (
           <td width={10} align={align} valign={valign} className={rowClass}>
             <Checkbox className="crm-checkbox-list" checked={isSelected} onChange={onRowSelected} />
           </td>
         )}
-        {Object.entries(data).map(([key, value]) =>
-          key !== 'id' ? (
-            <td data-tip={value} data-delay-show="400" align={align}>
-              {value || '-'}
-            </td>
-          ) : null
-        )}
+        {Object.entries(data).map(([key, value]) => {
+          switch (key) {
+            case 'id':
+              return null;
+            case 'priority':
+              return (
+                <td data-tip={value} data-delay-show="400" align={align}>
+                  <span className={`task-priority-${value}`}>{value || '-'}</span>
+                </td>
+              );
+            default:
+              return (
+                <td data-tip={value} data-delay-show="400" align={align}>
+                  {value || '-'}
+                </td>
+              );
+          }
+        })}
         {haveActions && (
           <td
             align="right"

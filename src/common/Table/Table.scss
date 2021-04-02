@@ -110,3 +110,37 @@
     background-color: white;
   }
 }
+
+.task-row{
+  background-color: #ffffff !important;
+}
+.task-completed-row{
+  background-color: $background-color !important;
+}
+.task-priority-URGENT{
+  padding: 5px;
+  background: #FEEBEB 0% 0% no-repeat padding-box;
+  border-radius: 5px;
+  opacity: 1;
+  color:$error-color !important;
+  font-size: 12px;
+}
+.task-priority-LOW{
+  padding: 5px;
+  background: #E2E9F0 0% 0% no-repeat padding-box;
+  border-radius: 5px;
+  opacity: 1;
+  color:$primary-color !important;
+  font-size: 12px;
+}
+.task-priority-HIGH{
+  padding: 5px 10px;
+  background: #FDF0E4 0% 0% no-repeat padding-box;
+  border-radius: 5px;
+  opacity: 1;
+  color:$secondary-color !important;
+  font-size: 12px;
+}
+.completedTask{
+  background-color: $background-color !important;
+}

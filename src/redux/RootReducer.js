@@ -17,6 +17,7 @@ import {
 import { application } from '../screens/Application/redux/ApplicationReducer';
 import { insurer } from '../screens/Insurer/redux/InsurerReducer';
 import { loggedUserProfile } from '../common/Header/redux/HeaderReducer';
+import { myWorkReducer } from '../screens/MyWork/redux/MyWorkReducer';
 import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 
 const rootReducer = combineReducers({
@@ -35,5 +36,6 @@ const rootReducer = combineReducers({
   application,
   insurer,
   debtorsManagement,
+  myWorkReducer,
 });
 export default rootReducer;

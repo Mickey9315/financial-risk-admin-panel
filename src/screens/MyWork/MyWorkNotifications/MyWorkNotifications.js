@@ -67,7 +67,7 @@ const MyWorkNotifications = () => {
     },
   ];
   return (
-    <>
+    <div className="common-white-container">
       {notifications.map(record => (
         <>
           <div className="notification-date">{record.date}</div>
@@ -91,7 +91,7 @@ const MyWorkNotifications = () => {
           </div>
         </>
       ))}
-    </>
+    </div>
   );
 };
 
