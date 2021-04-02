@@ -71,6 +71,8 @@ const MyWork = () => {
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { priority, isCompleted, startDate, endDate, assigneeId } = useMemo(() => filter, [filter]);
 
+  console.log(filter);
+
   const handlePriorityFilterChange = useCallback(
     event => {
       dispatchFilter({
@@ -131,16 +133,17 @@ const MyWork = () => {
       if (moment(startDate).isAfter(endDate)) {
         errorNotification('End date should be after Start date');
         resetFilterDates();
-      } else if (moment(endDate).isBefore(startDate)) {
+      }
+      if (moment(endDate).isBefore(startDate)) {
         errorNotification('Start date should be before End date');
         resetFilterDates();
       } else {
         const data = {
           page: page || 1,
           limit: limit || 15,
-          priority: priority && priority.trim().length > 0 ? priority : undefined,
+          priority: priority && priority?.length > 0 ? priority : undefined,
           isCompleted: isCompleted && isCompleted ? isCompleted : undefined,
-          assigneeId: assigneeId && assigneeId.trim().length > 0 ? assigneeId : undefined,
+          assigneeId: assigneeId && assigneeId?.length > 0 ? assigneeId : undefined,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
           ...params,
@@ -168,13 +171,27 @@ const MyWork = () => {
     [getTaskList]
   );
 
+  const prioritySelectedValues = useMemo(() => {
+    const foundValue = priorityListData.find(e => {
+      return e.value === priority;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [priority, priorityListData]);
+
+  const assigneeSelectedValues = useMemo(() => {
+    const foundValue = assigneeList.find(e => {
+      return e.value === assigneeId;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [assigneeId, assigneeList]);
+
   useEffect(() => {
     const params = {
       page: page || 1,
       limit: limit || 15,
-      priority: priority && priority.trim().length > 0 ? priority : undefined,
+      priority: priority && priority?.length > 0 ? priority : undefined,
       isCompleted: isCompleted && isCompleted ? isCompleted : undefined,
-      assigneeId: assigneeId && assigneeId.trim().length > 0 ? assigneeId : undefined,
+      assigneeId: assigneeId && assigneeId?.length > 0 ? assigneeId : undefined,
       startDate: startDate ? new Date(startDate).toUTCString() : undefined,
       endDate: endDate ? new Date(endDate).toUTCString() : undefined,
     };
@@ -224,13 +241,19 @@ const MyWork = () => {
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveTaskListColumnListName({ isReset: true }));
     dispatch(getTaskListColumnList());
+    await dispatchFilter({
+      type: TASK_FILTER_REDUCER_ACTIONS.RESET_STATE,
+    });
     toggleCustomField();
-  }, [toggleCustomField]);
+  }, [toggleCustomField, dispatchFilter]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     await dispatch(saveTaskListColumnListName({ taskColumnListData }));
+    await dispatchFilter({
+      type: TASK_FILTER_REDUCER_ACTIONS.RESET_STATE,
+    });
     toggleCustomField();
-  }, [toggleCustomField, taskColumnListData]);
+  }, [toggleCustomField, dispatchFilter, taskColumnListData]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -261,6 +284,10 @@ const MyWork = () => {
     [setFilterModal]
   );
 
+  const closeFilterOnClick = useCallback(() => {
+    toggleFilterModal();
+  }, [toggleFilterModal]);
+
   const applyFilterOnClick = useCallback(() => {
     getTaskList({ page: 1 }, toggleFilterModal);
   }, [getTaskList]);
@@ -280,7 +307,7 @@ const MyWork = () => {
         buttonType: 'outlined-primary',
         onClick: resetFilterOnClick,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      { title: 'Close', buttonType: 'primary-1', onClick: closeFilterOnClick },
       { title: 'Apply', buttonType: 'primary', onClick: applyFilterOnClick },
     ],
     [toggleFilterModal, applyFilterOnClick]
@@ -339,7 +366,7 @@ const MyWork = () => {
       {filterModal && (
         <Modal
           headerIcon="filter_list"
-          header="filter"
+          header="Filter"
           buttons={filterModalButtons}
           className="filter-modal application-filter-modal"
         >
@@ -350,7 +377,7 @@ const MyWork = () => {
               placeholder="Select"
               name="role"
               options={priorityListData}
-              value={priority}
+              values={prioritySelectedValues}
               onChange={handlePriorityFilterChange}
               searchable={false}
             />
@@ -388,7 +415,7 @@ const MyWork = () => {
                 placeholder="Select"
                 name="role"
                 options={assigneeList}
-                value={assigneeId}
+                values={assigneeSelectedValues}
                 onChange={handleAssigneeFilterChange}
                 searchable={false}
               />
