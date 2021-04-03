@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import './Table.scss';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import Drawer from '../Drawer/Drawer';
 import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
@@ -387,6 +388,8 @@ function TableLinkDrawer(props) {
         return row.value ? `$ ${row.value}` : '-';
       case 'percent':
         return row.value ? `${row.value} %` : '-';
+      case 'date':
+        return row.value ? moment(row.value).format('DD-MMM-YYYY') : '-';
       default:
         return row.value || '-';
     }
