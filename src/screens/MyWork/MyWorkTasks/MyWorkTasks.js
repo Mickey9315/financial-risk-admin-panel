@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import './MyWorkTasks.scss';
 import propTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -57,6 +57,29 @@ const MyWorkTasks = props => {
     return () => dispatch(resetPageData());
   }, []);
 
+  const getTaskListOnRefresh = useCallback(() => {
+    const params = {
+      page: paramPage || 1,
+      limit: paramLimit || 15,
+    };
+    const filters = {
+      priority: paramPriotity && paramPriotity.trim().length > 0 ? paramPriotity : undefined,
+      isCompleted: paramIsCompleted && paramIsCompleted ? paramIsCompleted : undefined,
+      assigneeId:
+        paramAssigneeId && paramAssigneeId.trim().length > 0 ? paramAssigneeId : undefined,
+      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
+      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+    };
+    Object.entries(filters).forEach(([name, value]) => {
+      dispatchFilter({
+        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name,
+        value,
+      });
+    });
+    getTaskList({ ...params, ...filters });
+  }, []);
+
   return (
     <>
       {docs.length ? (
@@ -69,7 +92,7 @@ const MyWorkTasks = props => {
               data={docs}
               headers={headers}
               rowClass="cursor-pointer task-row"
-              refreshData={getTaskList}
+              refreshData={getTaskListOnRefresh}
               // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
             />
           </div>
