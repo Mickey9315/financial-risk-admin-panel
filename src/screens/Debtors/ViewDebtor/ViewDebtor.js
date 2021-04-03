@@ -3,7 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Tab from '../../../common/Tab/Tab';
-import ContactsTab from '../../../common/Tab/ContactsTab/ContactsTab';
+
 import {
   changeDebtorAddressData,
   changeDebtorData,
@@ -19,6 +19,13 @@ import { DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/DebtorsReduxCon
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
+import ApplicationTab from '../../../common/Tab/ApplicationTab/ApplicationTab';
+import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
+import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
+import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
+import DocumentsTab from '../../../common/Tab/DocumentsTab/DocumentsTab';
+import NotesTab from '../../../common/Tab/NotesTab/Notestab';
+import CreditLimitTab from '../../../common/Tab/CreditLimitTab/CreditLimitTab';
 
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -32,15 +39,7 @@ const ViewInsurer = () => {
     history.replace('/debtors');
   };
 
-  const tabs = [
-    'Credit Limits',
-    'Application',
-    'Overdues',
-    'Claims',
-    'Tasks',
-    'Documents',
-    'Notes',
-  ];
+  const tabs = ['Credit Limits', 'Application', 'Overdues', 'Claims', 'Tasks', 'Documents', 'Notes'];
   const debtorData = useSelector(({ debtorsManagement }) => debtorsManagement.selectedDebtorData);
   const dropdownData = useSelector(({ debtorsManagement }) => debtorsManagement.dropdownData);
   const INPUTS = useMemo(
@@ -166,7 +165,7 @@ const ViewInsurer = () => {
         data: debtorData?.address?.postCode,
       },
     ],
-    [debtorData, dropdownData]
+    [debtorData, dropdownData],
   );
 
   console.log(INPUTS);
@@ -195,7 +194,7 @@ const ViewInsurer = () => {
       const { name, value } = e.target;
       handleOnChange(name, value);
     },
-    [handleOnChange]
+    [handleOnChange],
   );
 
   const handleOnAddressChange = useCallback((name, value) => {
@@ -207,7 +206,7 @@ const ViewInsurer = () => {
       const { name, value } = e.target;
       handleOnAddressChange(name, value);
     },
-    [handleOnAddressChange]
+    [handleOnAddressChange],
   );
 
   const handleOnSelectInputChange = useCallback(
@@ -215,13 +214,13 @@ const ViewInsurer = () => {
       console.log(data);
       handleOnChange(data[0]?.name, data[0]?.value);
     },
-    [handleOnChange]
+    [handleOnChange],
   );
   const handleOnAddressSelectInputChange = useCallback(
     data => {
       handleOnAddressChange(data[0]?.name, data[0]?.value);
     },
-    [handleOnAddressChange]
+    [handleOnAddressChange],
   );
 
   const onClickUpdateDebtor = useCallback(async () => {
@@ -321,9 +320,7 @@ const ViewInsurer = () => {
                 options={input.data}
                 value={`${debtorData}.${input.name}`}
                 searchable={false}
-                onChange={
-                  !input.isAddress ? handleOnSelectInputChange : handleOnAddressSelectInputChange
-                }
+                onChange={!input.isAddress ? handleOnSelectInputChange : handleOnAddressSelectInputChange}
                 disabled={action === 'view'}
                 borderClass={action === 'view' && 'disabled-control'}
               />
@@ -336,7 +333,7 @@ const ViewInsurer = () => {
       }
       return <>{component}</>;
     },
-    [debtorData, editDebtorClick, action, handleOnChange]
+    [debtorData, editDebtorClick, action, handleOnChange],
   );
 
   useEffect(() => {
@@ -375,13 +372,13 @@ const ViewInsurer = () => {
       )}
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
       <div className="common-white-container">
-        {activeTabIndex === 0 && <ContactsTab />}
-        {activeTabIndex === 1 && <ContactsTab />}
-        {activeTabIndex === 2 && <ContactsTab />}
-        {activeTabIndex === 3 && <ContactsTab />}
-        {activeTabIndex === 4 && <ContactsTab />}
-        {activeTabIndex === 5 && <ContactsTab />}
-        {activeTabIndex === 6 && <ContactsTab />}
+        {activeTabIndex === 0 && <CreditLimitTab />}
+        {activeTabIndex === 1 && <ApplicationTab />}
+        {activeTabIndex === 2 && <OverDuesTab />}
+        {activeTabIndex === 3 && <ClaimsTab />}
+        {activeTabIndex === 4 && <TasksTab />}
+        {activeTabIndex === 5 && <DocumentsTab />}
+        {activeTabIndex === 6 && <NotesTab />}
       </div>
     </>
   );
