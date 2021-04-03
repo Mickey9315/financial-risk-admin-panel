@@ -30,6 +30,10 @@ const MyWorkAddTask = () => {
     ({ myWorkReducer }) => myWorkReducer.task.dropDownData
   );
 
+  const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
+  const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
+  console.log(_id);
+
   const INPUTS = useMemo(
     () => [
       {
@@ -141,6 +145,17 @@ const MyWorkAddTask = () => {
     [updateAddTaskState]
   );
 
+  const getAssigneeSelectedValue = useMemo(() => {
+    const assigneeSelected = addTaskState?.assigneeId[0]?.value
+      ? assigneeList.find(e => {
+          return e.value === addTaskState?.assigneeId[0]?.value;
+        })
+      : assigneeList.find(e => {
+          return e.value === _id;
+        });
+    return (assigneeSelected && [assigneeSelected]) || [];
+  }, [addTaskState, _id, assigneeList]);
+
   const onCloseAddTask = useCallback(() => {
     dispatch({
       type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
@@ -212,8 +227,13 @@ const MyWorkAddTask = () => {
 
         case 'select': {
           let handleOnChange = handleSelectInputChange;
+          let selectedValues = addTaskState[input.name];
           if (input.name === 'entityType') {
             handleOnChange = handleEntityTypeSelectInputChange;
+            selectedValues = addTaskState[input.name];
+          }
+          if (input.name === 'assigneeId') {
+            selectedValues = getAssigneeSelectedValue;
           }
           component = (
             <>
@@ -223,7 +243,7 @@ const MyWorkAddTask = () => {
                 name={input.name}
                 options={input.data}
                 searchable={false}
-                values={addTaskState[input.name]}
+                values={selectedValues}
                 onChange={handleOnChange}
               />
             </>
@@ -264,7 +284,7 @@ const MyWorkAddTask = () => {
       }
       return <>{component}</>;
     },
-    [INPUTS, addTaskState, updateAddTaskState, entityList]
+    [INPUTS, addTaskState, updateAddTaskState, entityList, getAssigneeSelectedValue]
   );
   useEffect(() => {
     dispatch(getAssigneeDropDownData());
