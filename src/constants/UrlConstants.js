@@ -1,5 +1,4 @@
-export const BASE_URL = 'https://client.trad.dev.gradlesol.com/app/rp/';
-// export const BASE_URL = 'https://client.trad.test.humanpixel.com.au/app/rp/';
+export const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export const AUTH_URLS = {
   LOGIN_URL: `${BASE_URL}auth/login/`,
