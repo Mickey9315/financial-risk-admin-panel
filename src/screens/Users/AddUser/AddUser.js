@@ -343,24 +343,26 @@ const AddUser = () => {
               borderClass={action === 'view' && 'disabled-control'}
             />
           </div>
+          {(role === 'riskAnalyst' || role === 'serviceManager') && (
+            <div className="common-detail-field user-select-client">
+              <span className="common-detail-title">Select Client</span>
+              <ReactSelect
+                multi
+                values={clientIds}
+                onChange={clientSelected}
+                options={clients}
+                disabled={action === 'view' || role === 'superAdmin'}
+                className={`select-client-list-container ${
+                  action === 'view' && 'disabled-control'
+                }`}
+                color="#003A78"
+                placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
+                dropdownHandle={false}
+                keepSelectedInList={false}
+              />
+            </div>
+          )}
         </div>
-        {(role === 'riskAnalyst' || role === 'serviceManager') && (
-          <div className="common-detail-field">
-            <span className="common-detail-title">Select Client</span>
-            <ReactSelect
-              multi
-              values={clientIds}
-              onChange={clientSelected}
-              options={clients}
-              disabled={action === 'view' || role === 'superAdmin'}
-              className={`select-client-list-container ${action === 'view' && 'disabled-control'}`}
-              color="#003A78"
-              placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
-              dropdownHandle={false}
-              keepSelectedInList={false}
-            />
-          </div>
-        )}
       </div>
       <div className="module-container">
         {filteredOrganisationList.map(module => (
