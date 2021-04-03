@@ -234,3 +234,25 @@ export const getTaskFilter = () => {
     }
   };
 };
+
+export const deleteTaskAction = (taskId, cb) => {
+  return async () => {
+    try {
+      const response = await MyWorkApiServices.deleteTask(taskId);
+      if (response.data.status === 'SUCCESS') {
+        successNotification('Task deleted successfully.');
+        if (cb) {
+          cb();
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};

@@ -32,7 +32,6 @@ const MyWorkAddTask = () => {
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
-  console.log(_id);
 
   const INPUTS = useMemo(
     () => [
@@ -156,6 +155,13 @@ const MyWorkAddTask = () => {
     return (assigneeSelected && [assigneeSelected]) || [];
   }, [addTaskState, _id, assigneeList]);
 
+  useEffect(() => {
+    const result = assigneeList.find(e => {
+      return e.value === _id;
+    });
+    handleSelectInputChange([result]);
+  }, []);
+
   const onCloseAddTask = useCallback(() => {
     dispatch({
       type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
@@ -168,18 +174,15 @@ const MyWorkAddTask = () => {
       title: addTaskState?.title?.trim(),
       priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
+      assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'task',
     };
     if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType[0]?.value;
     if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0]?.value;
-    if (addTaskState?.assigneeId[0]?.value) data.assigneeId = addTaskState?.assigneeId[0]?.value;
     if (addTaskState?.description) data.description = addTaskState?.description?.trim();
 
     if (!data.title && data.title.length === 0) {
       errorNotification('Please add title');
-    }
-    if (!data.priority || data.priority.length <= 0) {
-      errorNotification('Please select priority');
     } else {
       try {
         dispatch(saveTaskData(data, backToTaskList));

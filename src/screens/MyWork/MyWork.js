@@ -51,6 +51,12 @@ function filterReducer(state, action) {
   }
 }
 
+const priorityListData = [
+  { value: 'low', label: 'Low', name: 'priority' },
+  { value: 'high', label: 'High', name: 'priority' },
+  { value: 'urgent', label: 'Urgent', name: 'priority' },
+];
+
 const MyWork = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -63,15 +69,9 @@ const MyWork = () => {
   const { assigneeList } = useSelector(
     ({ myWorkReducer }) => myWorkReducer.task.filterDropDownData
   );
-  const priorityListData = [
-    { value: 'low', label: 'Low', name: 'priority' },
-    { value: 'high', label: 'High', name: 'priority' },
-    { value: 'urgent', label: 'Urgent', name: 'priority' },
-  ];
+
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { priority, isCompleted, startDate, endDate, assigneeId } = useMemo(() => filter, [filter]);
-
-  console.log(filter);
 
   const handlePriorityFilterChange = useCallback(
     event => {
@@ -103,7 +103,6 @@ const MyWork = () => {
 
   const handleStartDateChange = useCallback(
     date => {
-      console.log(date);
       dispatchFilter({
         type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'startDate',
@@ -200,7 +199,7 @@ const MyWork = () => {
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
 
-    history.replace(`${history.location.pathname}?${url}`);
+    history.push(`${history.location.pathname}?${url}`);
   }, [history, total, pages, page, limit, priority, isCompleted, assigneeId, startDate, endDate]);
 
   const myWorkTabContent = [
