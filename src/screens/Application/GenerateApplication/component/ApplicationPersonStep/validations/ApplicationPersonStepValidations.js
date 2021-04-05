@@ -67,13 +67,13 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       if (!item.streetNumber || item.streetNumber.length <= 0) {
         validated = false;
         // errorNotification('Please select street number before continue');
-        errors.streetName = 'Please select street number before continue';
+        errors.streetNumber = 'Please select street number before continue';
       }
       // eslint-disable-next-line no-restricted-globals
       if (item.streetNumber && isNaN(item.streetNumber)) {
         validated = false;
         // errorNotification('Street number should be number');
-        errors.streetName = 'Street number should be number';
+        errors.streetNumber = 'Street number should be number';
       }
       if (!item.state || item.state.length <= 0) {
         validated = false;
@@ -87,8 +87,8 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       }
       if (!item.dateOfBirth || item.dateOfBirth.length <= 0) {
         validated = false;
-        errorNotification('Please select date of birth before continue');
-        // errors.postCode = 'Please select date of birth before continue';
+        // errorNotification('Please select date of birth before continue');
+        errors.dateOfBirth = 'Please select date of birth before continue';
       }
     }
     if (type === 'company' && validated) {
@@ -162,11 +162,25 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       partners,
     };
     try {
-      dispatch(saveApplicationStepDataToBackend(finalData));
+      if (
+        editApplicationData.companyStep.entityType[0].value === 'PARTNERSHIP' &&
+        partners.length < 2
+      ) {
+        validated = false;
+        errorNotification('You have to add two partners at least');
+      }
+      if (
+        editApplicationData.companyStep.entityType[0].value === 'SOLE_TRADER' &&
+        partners.length > 1
+      ) {
+        errorNotification('You can not add more than one partners for sole trader');
+      } else {
+        validated = true;
+        dispatch(saveApplicationStepDataToBackend(finalData));
+      }
     } catch (e) {
       /**/
     }
-    validated = true;
   }
 
   return validated;
