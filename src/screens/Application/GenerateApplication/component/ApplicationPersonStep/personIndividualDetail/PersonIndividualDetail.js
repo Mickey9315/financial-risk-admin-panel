@@ -153,13 +153,13 @@ const PersonIndividualDetail = ({
       const value = e.target.checked;
       updateSinglePersonState(checkBoxName, value);
     },
-    [index]
+    [updateSinglePersonState]
   );
   const onChangeDate = useCallback(
     (name, date) => {
       updateSinglePersonState(name, date);
     },
-    [index]
+    [updateSinglePersonState]
   );
   const handleEmailChange = useCallback(
     e => {
@@ -167,7 +167,7 @@ const PersonIndividualDetail = ({
       const { value } = e.target;
       updateSinglePersonState(email, value);
     },
-    [index]
+    [updateSinglePersonState]
   );
 
   const getComponentFromType = useCallback(
@@ -270,10 +270,10 @@ const PersonIndividualDetail = ({
                 placeholderText={input.placeholder}
                 value={
                   personStep[index].dateOfBirth
-                    ? moment(personStep[index].dateOfBirth).format('LL')
+                    ? moment(personStep[index].dateOfBirth).format('MM/DD/YYYY')
                     : ''
                 }
-                onChange={date => onChangeDate(input.name, moment(date).format('DD/MM/YYYY'))}
+                onChange={date => onChangeDate(input.name, moment(date).format('MM/DD/YYYY'))}
               />
               <span className="material-icons-round">event_available</span>
             </div>
