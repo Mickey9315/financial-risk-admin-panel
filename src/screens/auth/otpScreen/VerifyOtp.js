@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './VerifyOtp.scss';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import Button from '../../../common/Button/Button';
@@ -66,7 +66,9 @@ function VerifyOtp() {
       </div>
       <div className="login-action-row">
         <div />
-        <Link to="/login">Back To Login</Link>
+        <a href="/login" className="login-module-link">
+          Back To Login
+        </a>
       </div>
       <Button title="Resend OTP" buttonType="outlined-secondary" onClick={resendOTP} />
       <Button title="Submit" buttonType="secondary" className="ml-15" onClick={onClickVerifyOTP} />

@@ -12,37 +12,17 @@ const InsurerMatrixTab = () => {
   const { priceRange: matrixReportData, generalGuideLines: matrixGuidelinesData } = useSelector(
     ({ insurer }) => insurer.matrix
   );
-  // const reports = useMemo(
-  //   () => (matrixData ? matrixData.priceRange.map(report => console.log(report)) : []),
-  //   []
-  // );
-  // console.log(reports);
-  // const {
-  //   australianIndividuals = [],
-  //   australianCompanies = [],
-  //   newZealand = [],
-  //   commonGuideLines = [],
-  //   level = '',
-  // } = useMemo(() => matrixReportData, [matrixReportData]);
-  // console.log(level);
-  // const australianCompanies = useMemo(
-  //   () =>
-  //     reports
-  //       ? reports.australianCompanies.map(auCompanyReport => console.log(auCompanyReport))
-  //       : [],
-  //   []
-  // );
   useEffect(() => {
     dispatch(getInsurerMatrixData(id));
   }, []);
   return (
     <div className="matrix-container">
       <div className="matrix-title">Matrix</div>
-      <div className="matrix-table">
-        <div className="matrix-level header">Level</div>
-        <div className="matrix-australia header">Information Sourced / Guidelines</div>
-        {matrixReportData &&
-          matrixReportData.map(report => (
+      {matrixReportData ? (
+        <div className="matrix-table">
+          <div className="matrix-level header">Level</div>
+          <div className="matrix-australia header">Information Sourced / Guidelines</div>
+          {matrixReportData.map(report => (
             <>
               <div className="matrix-level">{report.level}</div>
               <div className="matrix-australia matrix-detail-container">
@@ -122,19 +102,25 @@ const InsurerMatrixTab = () => {
               )}
             </>
           ))}
-      </div>
+        </div>
+      ) : (
+        <div className="no-data-available">No data available</div>
+      )}
 
       <div className="matrix-horizontal-line" />
       <div className="matrix-guidelines-title">Guidelines</div>
-      <div className="matrix-guidelines-container">
-        {matrixGuidelinesData &&
-          matrixGuidelinesData.map(guideline => (
+      {matrixGuidelinesData ? (
+        <div className="matrix-guidelines-container">
+          {matrixGuidelinesData.map(guideline => (
             <div>
               <span className="material-icons-round">arrow_circle_up</span>
               {guideline}
             </div>
           ))}
-      </div>
+        </div>
+      ) : (
+        <div className="no-data-available">No data available</div>
+      )}
     </div>
   );
 };

@@ -18,11 +18,13 @@ export const processTableDataByType = ({ header, row, actions }) => {
       );
     case 'boolean':
       return (
-        <Checkbox
-          title={null}
-          checked={currentData?.value || currentData}
-          onChange={e => handleCheckBoxState(e.target.checked, header, currentData, row)}
-        />
+        <div className="d-flex just-center w-100">
+          <Checkbox
+            title={null}
+            checked={currentData.value}
+            onChange={e => handleCheckBoxState(e.target.checked, header, currentData)}
+          />
+        </div>
       );
     case 'booleanString':
       return currentData ? 'Yes' : 'No';

@@ -32,6 +32,19 @@ export const changePassword = async (oldPassword, newPassword) => {
         } else {
           errorNotification('It seems like server is down, Please try again later.');
         }
+      } else if (e.response.data.status === 'BAD_REQUEST') {
+        if (e.response.data.messageCode) {
+          switch (e.response.data.messageCode) {
+            case 'SAME_OLD_PASSWORD':
+              errorNotification("User can't set last used password");
+              break;
+            default:
+              errorNotification(e.response.data.message);
+              break;
+          }
+        }
+      } else {
+        errorNotification('It seems like server is down, Please try again later.');
       }
       throw Error();
     }

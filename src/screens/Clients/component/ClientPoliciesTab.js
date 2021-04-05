@@ -153,28 +153,33 @@ const ClientPoliciesTab = () => {
           <Button buttonType="secondary" title="Sync With CRM" onClick={syncClientPoliciesData} />
         </div>
       </div>
+      {/* eslint-disable-next-line no-nested-ternary */}
       {docs ? (
-        <>
-          <div className="tab-table-container">
-            <Table
-              align="left"
-              tableClass="white-header-table"
-              valign="center"
-              data={docs}
-              headers={headers}
-              refreshData={getClientPoliciesList}
+        docs.length > 0 ? (
+          <>
+            <div className="tab-table-container">
+              <Table
+                align="left"
+                tableClass="white-header-table"
+                valign="center"
+                data={docs}
+                headers={headers}
+                refreshData={getClientPoliciesList}
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
         <Loader />
       )}

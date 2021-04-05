@@ -27,7 +27,7 @@ import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivi
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialFilterState = {
-  role: '',
+  role: [],
   startDate: null,
   endDate: null,
 };
@@ -63,7 +63,6 @@ const UserList = () => {
   const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
     userListWithPageData,
   ]);
-
   const handleStartDateChange = useCallback(
     date => {
       dispatchFilter({
@@ -103,7 +102,7 @@ const UserList = () => {
         const data = {
           page: page || 1,
           limit: limit || 15,
-          role: role && role.trim().length > 0 ? role : undefined,
+          role: role && role.length > 0 && role[0].label ? role[0].label : undefined,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
           ...params,
@@ -119,11 +118,13 @@ const UserList = () => {
 
   const handleFilterChange = useCallback(
     event => {
-      dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'role',
-        value: event[0].value,
-      });
+      if (event && event[0] && event[0].value) {
+        dispatchFilter({
+          type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+          name: 'role',
+          value: event[0].value,
+        });
+      }
     },
     [dispatchFilter]
   );
@@ -152,11 +153,16 @@ const UserList = () => {
     getUserManagementByFilter({ page: 1 }, toggleFilterModal);
   }, [getUserManagementByFilter]);
 
+  const onClickResetFilterUserList = useCallback(() => {
+    dispatchFilter({ type: USER_FILTER_REDUCER_ACTIONS.RESET_STATE });
+  }, [dispatchFilter]);
+
   const filterModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
+        onClick: onClickResetFilterUserList,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
@@ -164,6 +170,7 @@ const UserList = () => {
     [toggleFilterModal, onClickApplyFilter]
   );
   const [customFieldModal, setCustomFieldModal] = useState(false);
+
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
     [setCustomFieldModal]
@@ -293,7 +300,7 @@ const UserList = () => {
     const params = {
       page: page || 1,
       limit: limit || 15,
-      role: role && role.trim().length > 0 ? role : undefined,
+      role: role && role.length > 0 && role[0].label ? role[0].label : undefined,
       startDate: startDate ? new Date(startDate).toISOString() : undefined,
       endDate: endDate ? new Date(endDate).toISOString() : undefined,
     };
@@ -336,31 +343,36 @@ const UserList = () => {
           </UserPrivilegeWrapper>
         </div>
       </div>
+      {/* eslint-disable-next-line no-nested-ternary */}
       {docs ? (
-        <>
-          <div className="common-list-container">
-            <Table
-              align="left"
-              valign="center"
-              tableClass="main-list-table"
-              data={docs}
-              headers={headers}
-              recordSelected={onSelectUserRecord}
-              recordActionClick={onSelectUserRecordActionClick}
-              rowClass="cursor-pointer"
-              haveActions
+        docs.length > 0 ? (
+          <>
+            <div className="common-list-container">
+              <Table
+                align="left"
+                valign="center"
+                tableClass="main-list-table"
+                data={docs}
+                headers={headers}
+                recordSelected={onSelectUserRecord}
+                recordActionClick={onSelectUserRecordActionClick}
+                rowClass="cursor-pointer"
+                haveActions
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
         <Loader />
       )}
