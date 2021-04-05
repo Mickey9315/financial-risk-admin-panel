@@ -31,7 +31,7 @@ const initialApplicationList = {
   },
 
   editApplication: {
-    currentStepIndex: 3,
+    currentStepIndex: 0,
     applicationId: '',
     entityType: '',
     companyStep: {
@@ -66,7 +66,7 @@ const initialApplicationList = {
     },
     documentStep: {
       documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-      uploadDocumentData: [],
+      uploadDocumentApplicationData: [],
     },
     personStep: [],
   },
@@ -294,10 +294,10 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
 
-    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA: {
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.APPLICATION_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA: {
       const editApplication = { ...state.editApplication };
       const documentStep = { ...editApplication.documentStep };
-      const uploadDocumentData = [...documentStep.uploadDocumentData];
+      const uploadDocumentApplicationData = [...action.data];
 
       return {
         ...state,
@@ -305,7 +305,23 @@ export const application = (state = initialApplicationList, action) => {
           ...editApplication,
           documentStep: {
             ...documentStep,
-            uploadDocumentData: [...uploadDocumentData, action.data],
+            uploadDocumentApplicationData,
+          },
+        },
+      };
+    }
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA: {
+      const editApplication = { ...state.editApplication };
+      const documentStep = { ...editApplication.documentStep };
+      const uploadDocumentApplicationData = [...documentStep.uploadDocumentApplicationData];
+
+      return {
+        ...state,
+        editApplication: {
+          ...editApplication,
+          documentStep: {
+            ...documentStep,
+            uploadDocumentApplicationData: [...uploadDocumentApplicationData, action.data],
           },
         },
       };

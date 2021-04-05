@@ -69,10 +69,12 @@ const ApplicationDocumentStep = () => {
       description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
     },
   ]; */
-  const { documentTypeList, uploadDocumentData } = useSelector(
+  const { documentTypeList, uploadDocumentApplicationData } = useSelector(
     ({ application }) => application.editApplication.documentStep
   );
-  const documentData = useMemo(() => uploadDocumentData, [uploadDocumentData]);
+  const documentData = useMemo(() => uploadDocumentApplicationData, [
+    uploadDocumentApplicationData,
+  ]);
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');

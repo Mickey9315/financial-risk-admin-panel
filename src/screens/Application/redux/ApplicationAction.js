@@ -476,11 +476,10 @@ export const getApplicationDocumentDataList = (id, params = { page: 1, limit: 15
         id,
         updateParams
       );
-      console.log('get document in application', response);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA,
-          data: response.data.data,
+          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.APPLICATION_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA,
+          data: response.data.data && response.data.data.docs ? response.data.data.docs : [],
         });
       }
     } catch (e) {
