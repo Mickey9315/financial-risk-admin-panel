@@ -466,6 +466,7 @@ export const getDocumentTypeList = () => {
 };
 
 export const getApplicationDocumentDataList = (id, params = { page: 1, limit: 15 }) => {
+  // console.log('getApplicationDocumentDataList', id);
   return async dispatch => {
     try {
       const updateParams = {
@@ -514,4 +515,24 @@ export const uploadDocument = (data, config) => {
       }
     }
   };
+};
+
+export const deleteApplicationDocumentAction = async (appDocId, cb) => {
+  try {
+    const response = await ApplicationDocumentStepApiServices.deleteApplicationDocument(appDocId);
+    if (response.data.status === 'SUCCESS') {
+      successNotification('Application document deleted successfully.');
+      if (cb) {
+        cb();
+      }
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else {
+        errorNotification('Internal server error');
+      }
+    }
+  }
 };
