@@ -342,6 +342,9 @@ const PersonIndividualDetail = ({
         className="application-person-step-accordion"
         header={itemHeader || 'Director Details'}
         prefix="expand_more"
+        suffix="delete_outline"
+        suffixClass="material-icons-round font-danger cursor-pointer"
+        suffixClick={e => e.stopPropagation()}
       >
         <div className="application-person-step-accordion-item">
           {hasRadio && INPUTS.map(getComponentFromType)}
