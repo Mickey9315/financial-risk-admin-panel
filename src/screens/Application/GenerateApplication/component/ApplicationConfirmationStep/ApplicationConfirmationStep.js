@@ -1,13 +1,18 @@
 import React, { useCallback } from 'react';
 import './ApplicationConfirmationStep.scss';
+import { useSelector } from 'react-redux';
 import Checkbox from '../../../../../common/Checkbox/Checkbox';
 import RadioButton from '../../../../../common/RadioButton/RadioButton';
 
 const ApplicationConfirmationStep = () => {
+  const { company, creditLimit, partners } = useSelector(
+    ({ application }) => application.viewApplicationDetails
+  );
+  console.log('viewApplication', company, creditLimit, partners);
   const confirmationDetails = [
     {
       title: 'Client Name',
-      value: 'Select',
+      value: company?.clientId.name || '-',
       label: 'clientName',
       type: 'text',
     },
@@ -16,49 +21,49 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Debtor',
-      value: 'Select',
+      value: company?.debtorId.name || '-',
       label: 'debtor',
       type: 'text',
     },
     {
       title: 'Trading Name',
-      value: 'Select',
+      value: company?.tradingName || '-',
       label: 'tradingName',
       type: 'text',
     },
     {
       title: 'ABN*',
-      value: '01234',
+      value: company?.abn || '-',
       label: 'abn',
       type: 'text',
     },
     {
       title: 'ACN',
-      value: '01234',
+      value: company?.acn || '-',
       label: 'acn',
       type: 'text',
     },
     {
       title: 'Entity Name*',
-      value: 'Enter entity',
+      value: company?.entityName || '-',
       label: 'entityName',
       type: 'text',
     },
     {
       title: 'Phone Number',
-      value: '1234567890',
+      value: company?.contactNumber || '-',
       label: 'phoneNumber',
       type: 'text',
     },
     {
       title: 'Entity Type*',
-      value: 'Proprietary Limited',
+      value: company?.entityType || '-',
       label: 'entityType',
       type: 'text',
     },
     {
       title: 'Outstanding Amount',
-      value: '$0000',
+      value: company?.outstandingAmount || '-',
       label: 'outstandingAmount',
       type: 'text',
     },
@@ -71,62 +76,81 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Property',
-      value: 'Enter',
+      value: company?.property || '-',
       label: 'property',
       type: 'text',
     },
     {
       title: 'Unit Number',
-      value: 'Enter',
+      value: company?.unitNumber || '-',
       label: 'unitNumber',
       type: 'text',
     },
     {
       title: 'Street Number',
-      value: 'Enter',
+      value: company?.streetNumber || '-',
       label: 'streetNumber',
       type: 'text',
     },
     {
       title: 'Street Name',
-      value: 'Enter',
+      value: company?.streetName || '-',
       label: 'streetName',
       type: 'text',
     },
     {
       title: 'State',
-      value: 'Select',
+      value: company?.state || '-',
       label: 'state',
       type: 'text',
     },
     {
       title: 'Postcode',
-      value: 'Enter',
+      value: company?.postCode || '-',
       label: 'postCode',
       type: 'text',
     },
     {
+      title: 'Street Type',
+      value: company?.streetType || '-',
+      label: 'streetType',
+      type: 'text',
+    },
+    {
+      title: 'Country',
+      value: company?.country.name || '-',
+      label: 'country',
+      type: 'text',
+    },
+    {
+      title: 'Suburb',
+      value: company?.suburb || '-',
+      label: 'Suburb',
+      type: 'text',
+    },
+    {
       title: 'Any extended payment terms outside your policy standard terms? *',
-      value: 'yes',
+      value: creditLimit?.isExtendedPaymentTerms || false,
+      id: 'is-extended-payment',
       label: 'isExtendedPay',
       type: 'radio',
     },
     {
       title: 'If yes, provide details',
-      value: 'Details',
+      value: creditLimit?.extendedPaymentTermsDetails || '-',
       label: 'isExtendedPayDetails',
       type: 'ifYesText',
     },
     {
       title: 'Any overdue amounts passed your maximum extension period / Credit period? *',
-      value: 'yes',
-      id1: 'passed-max-period-yes',
+      value: creditLimit?.isPassedOverdueAmount || false,
+      id: 'passed-max-period',
       label: 'isPassedMaxPeriod',
       type: 'radio',
     },
     {
       title: 'If yes, provide details',
-      value: 'Details',
+      value: creditLimit?.passedOverdueDetails || '-',
       label: 'isPassedMaxPeriodDetails',
       type: 'ifYesText',
     },
@@ -139,7 +163,7 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Amount *',
-      value: '$0000',
+      value: creditLimit?.creditLimit || '-',
       label: 'isPassedMaxPeriodDetails',
       type: 'text',
     },
@@ -287,9 +311,24 @@ const ApplicationConfirmationStep = () => {
         return (
           <>
             <span className="radio-title">{detail.title}</span>
+            {console.log(detail.label, detail.value)}
             <span className="radio-buttons">
-              <RadioButton disabled id="any-extended-pay-yes" label="Yes" />
-              <RadioButton disabled id="any-extended-pay-no" label="No" />
+              <RadioButton
+                disabled
+                id={`${detail.id}-yes`}
+                name={detail.name}
+                label="Yes"
+                value
+                checked={detail.value}
+              />
+              <RadioButton
+                disabled
+                id={`${detail.id}-no`}
+                name={detail.name}
+                label="No"
+                value={false}
+                checked={!detail.value}
+              />
             </span>
           </>
         );
