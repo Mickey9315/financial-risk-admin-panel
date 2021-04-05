@@ -23,6 +23,7 @@ export const forgotPassword = async email => {
               errorNotification('User not found');
               break;
             default:
+              errorNotification(e.response.data?.message);
               break;
           }
         } else {

@@ -67,7 +67,9 @@ function ResetPassword() {
       />
       <div className="login-action-row">
         <div />
-        <Link to="/login">Back To Login</Link>
+        <Link to="/login" className="login-module-link">
+          Back To Login
+        </Link>
       </div>
       <Button
         title="Set New Password"

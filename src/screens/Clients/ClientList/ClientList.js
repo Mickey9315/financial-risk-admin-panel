@@ -26,6 +26,7 @@ import { errorNotification, successNotification } from '../../../common/Toast';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import ClientApiService from '../services/ClientApiService';
 import { CLIENT_ADD_FROM_CRM_REDUX_CONSTANT } from '../redux/ClientReduxConstants';
+import Loader from '../../../common/Loader/Loader';
 
 const initialFilterState = {
   riskAnalystId: '',
@@ -52,6 +53,7 @@ function filterReducer(state, action) {
       return state;
   }
 }
+
 const ClientList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -224,11 +226,16 @@ const ClientList = () => {
     getClientListByFilter({ page: 1 }, toggleFilterModal);
   }, [getClientListByFilter]);
 
+  const onClickResetFilterClientList = useCallback(() => {
+    dispatchFilter({ type: CLIENT_FILTER_REDUCER_ACTIONS.RESET_STATE });
+  }, [dispatchFilter]);
+
   const filterModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
+        onClick: onClickResetFilterClientList,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
@@ -354,21 +361,25 @@ const ClientList = () => {
 
   const handleRiskAanalystFilterChange = useCallback(
     event => {
-      dispatchFilter({
-        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'riskAnalystId',
-        value: event[0].value,
-      });
+      if (event && event[0] && event[0].value) {
+        dispatchFilter({
+          type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+          name: 'riskAnalystId',
+          value: event[0].value,
+        });
+      }
     },
     [dispatchFilter]
   );
   const handleServiceManagerFilterChange = useCallback(
     event => {
-      dispatchFilter({
-        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'serviceManagerId',
-        value: event[0].value,
-      });
+      if (event && event[0] && event[0].value) {
+        dispatchFilter({
+          type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+          name: 'serviceManagerId',
+          value: event[0].value,
+        });
+      }
     },
     [dispatchFilter]
   );
@@ -439,26 +450,38 @@ const ClientList = () => {
           <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
         </div>
       </div>
-      <div className="common-list-container">
-        <Table
-          align="left"
-          valign="center"
-          tableClass="main-list-table"
-          recordSelected={openViewClient}
-          data={docs}
-          headers={headers}
-          rowClass="client-list-row"
-        />
-      </div>
-      <Pagination
-        className="common-list-pagination"
-        total={total}
-        pages={pages}
-        page={page}
-        limit={limit}
-        pageActionClick={pageActionClick}
-        onSelectLimit={onSelectLimit}
-      />
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {docs ? (
+        docs.length > 0 ? (
+          <>
+            <div className="common-list-container">
+              <Table
+                align="left"
+                valign="center"
+                tableClass="main-list-table"
+                recordSelected={openViewClient}
+                data={docs}
+                headers={headers}
+                rowClass="client-list-row"
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
+            />
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
+      ) : (
+        <Loader />
+      )}
+
       {filterModal && (
         <Modal
           headerIcon="filter_list"
@@ -540,28 +563,33 @@ const ClientList = () => {
           />
           {searchClients && (
             <>
-              {/* <Checkbox title="Name" className="check-all-crmList" /> */}
-              <div className="crm-checkbox-list-container">
-                {syncListFromCrm && syncListFromCrm.length > 0 && (
-                  <Checkbox
-                    title="Add All"
-                    className="crm-checkbox-list"
-                    onChange={e => selectAllClientsFromCrm(e)}
-                  />
-                )}
-                {syncListFromCrm && syncListFromCrm.length > 0 ? (
-                  syncListFromCrm.map(crm => (
+              {/* eslint-disable-next-line no-nested-ternary */}
+              {syncListFromCrm ? (
+                syncListFromCrm.length > 0 ? (
+                  <>
+                    {/* <Checkbox title="Name" className="check-all-crmList" /> */}
                     <Checkbox
-                      title={crm.name}
-                      className="crm-checkbox-list"
-                      checked={crmIds.includes(crm.crmId.toString())}
-                      onChange={() => selectClientFromCrm(crm.crmId.toString())}
+                      title="Add All"
+                      className="check-all-crmList"
+                      onChange={e => selectAllClientsFromCrm(e)}
                     />
-                  ))
+                    <div className="crm-checkbox-list-container">
+                      {syncListFromCrm.map(crm => (
+                        <Checkbox
+                          title={crm.name}
+                          className="crm-checkbox-list"
+                          checked={crmIds.includes(crm.crmId.toString())}
+                          onChange={() => selectClientFromCrm(crm.crmId.toString())}
+                        />
+                      ))}
+                    </div>
+                  </>
                 ) : (
                   <div className="no-data-available">No data available</div>
-                )}
-              </div>
+                )
+              ) : (
+                <Loader />
+              )}
             </>
           )}
         </Modal>

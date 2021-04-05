@@ -109,7 +109,11 @@ const Header = () => {
   /** **********edit profile methods******** */
   const onCloseEditProfileClick = () => {
     if (changed) {
-      dispatch(getLoggedUserDetails());
+      try {
+        dispatch(getLoggedUserDetails());
+      } catch (e) {
+        /**/
+      }
     }
     setFileName('Browse...');
     setFile(null);
@@ -213,7 +217,11 @@ const Header = () => {
   );
 
   useEffect(() => {
-    dispatch(getLoggedUserDetails());
+    try {
+      dispatch(getLoggedUserDetails());
+    } catch (e) {
+      /**/
+    }
   }, []);
 
   const handleChange = e => {

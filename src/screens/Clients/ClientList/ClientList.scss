@@ -15,8 +15,11 @@
 }
 
 .check-all-crmList {
+  label {
+    font: $subtitle $font-bold;
+  }
   margin-top: 10px;
-  padding-left: 5px;
+  padding-left: 8px;
 }
 
 .crm-checkbox-list {

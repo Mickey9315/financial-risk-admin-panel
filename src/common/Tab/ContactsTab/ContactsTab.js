@@ -45,8 +45,6 @@ const ContactsTab = props => {
       </div>
       <div className="tab-table-container">
         <Table
-          align="left"
-          valign="center"
           data={data}
           headers={headers}
           recordSelected={recordSelected}

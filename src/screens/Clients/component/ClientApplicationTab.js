@@ -147,27 +147,32 @@ const ClientApplicationTab = () => {
           />
         </div>
       </div>
+      {/* eslint-disable-next-line no-nested-ternary */}
       {docs ? (
-        <>
-          <div className="tab-table-container">
-            <Table
-              align="left"
-              valign="center"
-              tableClass="white-header-table"
-              data={docs}
-              headers={headers}
+        docs.length > 0 ? (
+          <>
+            <div className="tab-table-container">
+              <Table
+                align="left"
+                valign="center"
+                tableClass="white-header-table"
+                data={docs}
+                headers={headers}
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
         <Loader />
       )}

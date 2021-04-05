@@ -23,7 +23,16 @@
 
 .big-input {
   font: $title $font-regular;
-  color: $field-color!important;
+  color: $field-color !important;
+}
+
+.big-input:-webkit-autofill,
+.big-input:-webkit-autofill:hover,
+.big-input:-webkit-autofill:focus,
+.big-input:-webkit-autofill:active {
+    font: $title $font-regular!important;
+    transition: background-color 5000s;
+    -webkit-text-fill-color: $field-color !important;
 }
 
 .suffix {
