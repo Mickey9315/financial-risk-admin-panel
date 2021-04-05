@@ -8,7 +8,7 @@ import Tab from '../../common/Tab/Tab';
 import './MyWork.scss';
 import IconButton from '../../common/IconButton/IconButton';
 import Button from '../../common/Button/Button';
-import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';
+// import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';
 import MyWorkTasks from './MyWorkTasks/MyWorkTasks';
 import CustomFieldModal from '../../common/Modal/CustomFieldModal/CustomFieldModal';
 import {
@@ -224,7 +224,7 @@ const MyWork = () => {
       TASK_FILTER_REDUCER_ACTIONS={TASK_FILTER_REDUCER_ACTIONS}
       onSelectTaskRecord={onSelectTaskRecord}
     />,
-    <MyWorkNotifications />,
+    // <MyWorkNotifications />,
   ];
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const tabActive = index => {
