@@ -105,8 +105,7 @@ const PersonIndividualDetail = ({
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        // companyState.client[0].value
-        const params = { clientId: '6054571ee79c55672f41a227' };
+        const params = { clientId: companyState.client[0].value };
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
         if (response) {
           updatePersonState(response);
@@ -127,7 +126,7 @@ const PersonIndividualDetail = ({
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
-        const params = { clientId: '6054571ee79c55672f41a227' };
+        const params = { clientId: companyState.client[0].value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
