@@ -43,6 +43,7 @@ export const APPLICATION_URLS = {
   DOCUMENTS: {
     GET_DOCUMENT_TYPE_LIST_URL: `${BASE_URL}settings/document-type/`,
     UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
+    APPLICATION_DELETE_DOCUMENT: `${BASE_URL}document/`,
   },
 };
 
