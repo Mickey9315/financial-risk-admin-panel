@@ -479,7 +479,7 @@ export const getApplicationDocumentDataList = (id, params = { page: 1, limit: 15
       console.log('get document in application', response);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_LIST,
+          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA,
           data: response.data.data,
         });
       }
