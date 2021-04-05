@@ -8,6 +8,7 @@ import Modal from '../../../../../common/Modal/Modal';
 import FileUpload from '../../../../../common/Header/component/FileUpload';
 import Switch from '../../../../../common/Switch/Switch';
 import {
+  deleteApplicationDocumentAction,
   getApplicationDocumentDataList,
   getDocumentTypeList,
   uploadDocument,
@@ -29,7 +30,6 @@ const APPLICATION_DOCUMENT_REDUCER_ACTIONS = {
 function applicationDocumentReducer(state, action) {
   switch (action.type) {
     case APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA:
-      console.log(action.name, action.value);
       return {
         ...state,
         [`${action.name}`]: action.value,
@@ -78,6 +78,13 @@ const ApplicationDocumentStep = () => {
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');
+
+  const [applicationDocId, setApplicationDocId] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const toggleConfirmationModal = useCallback(
+    value => setShowConfirmModal(value !== undefined ? value : e => !e),
+    [setShowConfirmModal]
+  );
 
   /* const documentTypeList = useSelector(
     ({ application }) => application.editApplication.documentStep.documentTypeList
@@ -151,6 +158,14 @@ const ApplicationDocumentStep = () => {
     toggleUploadModel();
   }, [toggleUploadModel, dispatchSelectedApplicationDocuments]);
 
+  const editApplication = useSelector(({ application }) => application.editApplication);
+  // console.log('editApplication', editApplication.applicationId);
+  useEffect(() => {
+    if (editApplication && editApplication.applicationId) {
+      dispatch(getApplicationDocumentDataList(editApplication.applicationId));
+    }
+  }, [editApplication.applicationId]);
+
   const onClickUploadDocument = useCallback(async () => {
     if (selectedApplicationDocuments.documentType.length === 0) {
       errorNotification('Please select document type');
@@ -164,7 +179,7 @@ const ApplicationDocumentStep = () => {
       formData.append('isPublic', selectedApplicationDocuments.isPublic);
       formData.append('documentType', selectedApplicationDocuments.documentType);
       formData.append('document', selectedApplicationDocuments.fileData);
-      formData.append('entityId', '6054aaeb377cbc4f5f824f0e');
+      formData.append('entityId', editApplication.applicationId);
       formData.append('documentFor', 'application');
       const config = {
         headers: {
@@ -178,7 +193,12 @@ const ApplicationDocumentStep = () => {
       setFileData('');
       toggleUploadModel();
     }
-  }, [selectedApplicationDocuments, dispatchSelectedApplicationDocuments, toggleUploadModel]);
+  }, [
+    selectedApplicationDocuments,
+    dispatchSelectedApplicationDocuments,
+    toggleUploadModel,
+    editApplication.applicationId,
+  ]);
 
   const uploadDocumentButton = useMemo(
     () => [
@@ -191,14 +211,6 @@ const ApplicationDocumentStep = () => {
   useEffect(() => {
     dispatch(getDocumentTypeList());
   }, []);
-
-  const editApplication = useSelector(({ application }) => application.editApplication);
-  console.log('editApplication', editApplication.applicationId);
-  useEffect(() => {
-    if (editApplication && editApplication.applicationId) {
-      dispatch(getApplicationDocumentDataList(editApplication.applicationId));
-    }
-  }, [editApplication.applicationId]);
 
   const handleDocumentChange = useCallback(
     newValue => {
@@ -231,8 +243,50 @@ const ApplicationDocumentStep = () => {
     [dispatchSelectedApplicationDocuments]
   );
 
+  const callBack = useCallback(() => {
+    toggleConfirmationModal();
+    dispatch(getApplicationDocumentDataList(editApplication.applicationId));
+  }, [editApplication.applicationId]);
+
+  const deleteDocumentButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Delete',
+        buttonType: 'danger',
+        onClick: async () => {
+          try {
+            await dispatch(deleteApplicationDocumentAction(applicationDocId, callBack));
+          } catch (e) {
+            /**/
+          }
+        },
+      },
+    ],
+    [toggleConfirmationModal, applicationDocId]
+  );
+
+  const deleteApplicationDocument = useCallback(
+    docId => {
+      setApplicationDocId(docId);
+      setShowConfirmModal(true);
+    },
+    [showConfirmModal]
+  );
+
   return (
     <>
+      {showConfirmModal && (
+        <Modal
+          header="Delete Document"
+          buttons={deleteDocumentButtons}
+          hideModal={toggleConfirmationModal}
+        >
+          <span className="confirmation-message">
+            Are you sure you want to delete this document?
+          </span>
+        </Modal>
+      )}
       <div className="font-secondary f-14 mb-10">Upload Documents</div>
       <div className="if-yes-row">
         <span className="font-primary mr-15">Upload your documents here</span>
@@ -251,7 +305,10 @@ const ApplicationDocumentStep = () => {
                 <td>{document.documentTypeId}</td>
                 <td>{document.description}</td>
                 <td align="right">
-                  <span className="material-icons-round font-danger cursor-pointer">
+                  <span
+                    className="material-icons-round font-danger cursor-pointer"
+                    onClick={() => deleteApplicationDocument(document._id)}
+                  >
                     delete_outline
                   </span>{' '}
                 </td>
