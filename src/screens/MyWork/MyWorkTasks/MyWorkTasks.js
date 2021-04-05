@@ -135,6 +135,7 @@ const MyWorkTasks = props => {
               rowClass="cursor-pointer task-row"
               extraColumns={deleteTaskColumn}
               refreshData={getTaskListOnRefresh}
+              // recordSelected={onSelectTaskRecord}
               // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
             />
           </div>
@@ -150,7 +151,7 @@ const MyWorkTasks = props => {
         </>
       ) : (
         <>
-          <center>No data to show</center>
+          <center>No Record Found</center>
         </>
       )}
       {showConfirmModal && (
