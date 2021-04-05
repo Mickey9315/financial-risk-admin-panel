@@ -127,6 +127,10 @@ export const DEBTORS_URLS = {
   DEBTORS_COLUMNS_NAME_LIST_URL: `${BASE_URL}debtor/column-name`,
   SELECTED_DEBTOR_DETAILS_URL: `${BASE_URL}debtor/`,
   DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list`,
+
+  NOTES: {
+    NOTES_LIST: `${BASE_URL}note/`,
+  },
 };
 
 export const MY_WORK_URL = {

@@ -1,5 +1,6 @@
 import { errorNotification, successNotification } from '../../../common/Toast';
 import DebtorsApiServices from '../services/DebtorsApiServices';
+import DebtorsNotesApiService from '../services/DebtorsNotesApiService';
 import {
   DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS,
   DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
@@ -35,8 +36,7 @@ export const getDebtorsColumnNameList = () => {
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
+          type: DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
       }
@@ -58,8 +58,7 @@ export const getDebtorsColumnNameList = () => {
 export const changeDebtorsColumnListStatus = data => {
   return async dispatch => {
     dispatch({
-      type:
-        DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
+      type: DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
       data,
     });
   };
@@ -73,12 +72,8 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameListData = {}, isRe
         isReset: true,
       };
       if (!isReset) {
-        const defaultFields = debtorsColumnNameListData.defaultFields
-          .filter(e => e.isChecked)
-          .map(e => e.name);
-        const customFields = debtorsColumnNameListData.customFields
-          .filter(e => e.isChecked)
-          .map(e => e.name);
+        const defaultFields = debtorsColumnNameListData.defaultFields.filter(e => e.isChecked).map(e => e.name);
+        const customFields = debtorsColumnNameListData.customFields.filter(e => e.isChecked).map(e => e.name);
         data = {
           columns: [...defaultFields, ...customFields],
           isReset: false,
@@ -139,8 +134,7 @@ export const getDebtorDropdownData = () => {
       const response = await DebtorsApiServices.getDebtorDropdownDataList();
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS,
+          type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS,
           data: response.data.data,
         });
       }
@@ -198,4 +192,114 @@ export const updateDebtorData = (id, data) => {
       }
     }
   };
+};
+
+// DEBTORS NOTES TAB
+
+export const getDebtorsNotesListDataAction = (id, params = { page: 1, limit: 15 }) => {
+  return async dispatch => {
+    try {
+      const updatedParams = {
+        ...params,
+        noteFor: 'debtor',
+      };
+
+      const response = await DebtorsNotesApiService.getDebtorsNotesList(id, updatedParams);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.NOTES.DEBTORS_NOTES_LIST_USER_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const addDebtorsNoteAction = (entityId, noteData) => {
+  return async dispatch => {
+    try {
+      const { description, isPublic } = noteData;
+      const data = {
+        noteFor: 'debtor',
+        entityId,
+        isPublic,
+        description,
+      };
+
+      const response = await DebtorsNotesApiService.addDebtorsNote(data);
+
+      if (response.data.status === 'SUCCESS') {
+        await dispatch(getDebtorsNotesListDataAction(entityId));
+        successNotification('Note added successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const updateDebtorsNoteAction = (entityId, noteData) => {
+  return async dispatch => {
+    try {
+      const { noteId, description, isPublic } = noteData;
+      const data = {
+        noteFor: 'debtor',
+        entityId,
+        isPublic,
+        description,
+      };
+
+      const response = await DebtorsNotesApiService.updateDebtorsNote(noteId, data);
+
+      if (response.data.status === 'SUCCESS') {
+        await dispatch(getDebtorsNotesListDataAction(entityId));
+        successNotification('Note updated successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const deleteDebtorsNoteAction = async (noteId, cb) => {
+  try {
+    const response = await DebtorsNotesApiService.deleteDebtorsNote(noteId);
+
+    if (response.data.status === 'SUCCESS') {
+      successNotification('Note deleted successfully.');
+      if (cb) {
+        console.log('note callback');
+        cb();
+      }
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else {
+        errorNotification('Internal server error');
+      }
+    }
+  }
 };

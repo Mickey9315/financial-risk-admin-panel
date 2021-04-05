@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
+
 import Tab from '../../../common/Tab/Tab';
+
+import './DebtorsTabs.scss';
 
 import {
   changeDebtorAddressData,
@@ -19,13 +22,15 @@ import { DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/DebtorsReduxCon
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
-import ApplicationTab from '../../../common/Tab/ApplicationTab/ApplicationTab';
-import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
-import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
-import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
-import DocumentsTab from '../../../common/Tab/DocumentsTab/DocumentsTab';
-import NotesTab from '../../../common/Tab/NotesTab/Notestab';
-import CreditLimitTab from '../../../common/Tab/CreditLimitTab/CreditLimitTab';
+import DebtorsCreditLimitTab from '../components/DebtorsCreditLimitTab';
+import DebtorsStakeHolderTab from '../components/DebtorsStakeHolderTab';
+import DebtorsApplicationTab from '../components/DebtorsApplicationTab';
+import DebtorsOverduesTab from '../components/DebtorsOverduesTab';
+import DebtorsClaimsTab from '../components/DebtorsClaimsTab';
+import DebtorsDocumentsTab from '../components/DebtorsDocumentsTab';
+import DebtorsNotesTab from '../components/DebtorsNotesTab';
+import DebtorsReportsTab from '../components/DebtorsReportsTab';
+import DebtorsTasksTab from '../components/DebtorsTasksTab';
 
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -39,7 +44,17 @@ const ViewInsurer = () => {
     history.replace('/debtors');
   };
 
-  const tabs = ['Credit Limits', 'Application', 'Overdues', 'Claims', 'Tasks', 'Documents', 'Notes'];
+  const tabs = [
+    'Credit Limits',
+    'Stakeholder',
+    'Application',
+    'Overdues',
+    'Claims',
+    'Tasks',
+    'Documents',
+    'Notes',
+    'Reports',
+  ];
   const debtorData = useSelector(({ debtorsManagement }) => debtorsManagement.selectedDebtorData);
   const dropdownData = useSelector(({ debtorsManagement }) => debtorsManagement.dropdownData);
   const INPUTS = useMemo(
@@ -372,13 +387,15 @@ const ViewInsurer = () => {
       )}
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
       <div className="common-white-container">
-        {activeTabIndex === 0 && <CreditLimitTab />}
-        {activeTabIndex === 1 && <ApplicationTab />}
-        {activeTabIndex === 2 && <OverDuesTab />}
-        {activeTabIndex === 3 && <ClaimsTab />}
-        {activeTabIndex === 4 && <TasksTab />}
-        {activeTabIndex === 5 && <DocumentsTab />}
-        {activeTabIndex === 6 && <NotesTab />}
+        {activeTabIndex === 0 && <DebtorsCreditLimitTab />}
+        {activeTabIndex === 1 && <DebtorsStakeHolderTab />}
+        {activeTabIndex === 2 && <DebtorsApplicationTab />}
+        {activeTabIndex === 3 && <DebtorsOverduesTab />}
+        {activeTabIndex === 4 && <DebtorsClaimsTab />}
+        {activeTabIndex === 5 && <DebtorsTasksTab />}
+        {activeTabIndex === 6 && <DebtorsDocumentsTab />}
+        {activeTabIndex === 7 && <DebtorsNotesTab />}
+        {activeTabIndex === 8 && <DebtorsReportsTab />}
       </div>
     </>
   );

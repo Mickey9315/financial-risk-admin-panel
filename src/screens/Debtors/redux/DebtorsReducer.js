@@ -7,6 +7,9 @@ import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstant
 
 const initialDebtorState = {
   debtorsList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+  notes: {
+    notesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+  },
   debtorsColumnNameList: {},
   selectedDebtorData: {},
   dropdownData: {
@@ -35,9 +38,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       };
       // eslint-disable-next-line no-case-declarations
       const { name, type, value } = action.data;
-      temp[`${type}`] = temp[`${type}`].map(e =>
-        e.name === name ? { ...e, isChecked: value } : e
-      );
+      temp[`${type}`] = temp[`${type}`].map(e => (e.name === name ? { ...e, isChecked: value } : e));
       return {
         ...state,
         debtorsColumnNameList: temp,
@@ -80,6 +81,16 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
             ...state.selectedDebtorData.address,
             [`${action.data.name}`]: `${action.data.value}`,
           },
+        },
+      };
+
+    // DEBTORS NOTES
+    case DEBTORS_REDUX_CONSTANTS.NOTES.DEBTORS_NOTES_LIST_USER_ACTION:
+      return {
+        ...state,
+        notes: {
+          ...state.notes,
+          notesList: action.data,
         },
       };
 
