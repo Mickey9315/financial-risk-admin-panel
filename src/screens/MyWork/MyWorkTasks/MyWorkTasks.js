@@ -23,6 +23,7 @@ const MyWorkTasks = props => {
     getTaskList,
     dispatchFilter,
     TASK_FILTER_REDUCER_ACTIONS,
+    onSelectTaskRecord,
   } = props;
 
   const {
@@ -86,7 +87,13 @@ const MyWorkTasks = props => {
   const deleteTaskColumn = useMemo(
     () => [
       data => (
-        <span className="material-icons-round font-danger" onClick={() => deleteTask(data)}>
+        <span
+          className="material-icons-round font-danger"
+          onClick={e => {
+            e.stopPropagation();
+            deleteTask(data);
+          }}
+        >
           delete_outline
         </span>
       ),
@@ -121,6 +128,10 @@ const MyWorkTasks = props => {
     return () => dispatch(resetPageData());
   }, []);
 
+  // const setSelectedCheckBoxData = useCallback(data => {
+  //   console.log(data);
+  // }, []);
+
   return (
     <>
       {docs.length ? (
@@ -135,7 +146,7 @@ const MyWorkTasks = props => {
               rowClass="cursor-pointer task-row"
               extraColumns={deleteTaskColumn}
               refreshData={getTaskListOnRefresh}
-              // recordSelected={onSelectTaskRecord}
+              recordSelected={onSelectTaskRecord}
               // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
             />
           </div>
@@ -175,6 +186,7 @@ MyWorkTasks.defaultProps = {
   docs: [],
   dispatchFilter: () => {},
   TASK_FILTER_REDUCER_ACTIONS: {},
+  onSelectTaskRecord: () => {},
 };
 MyWorkTasks.propTypes = {
   docs: propTypes.object,
@@ -188,5 +200,6 @@ MyWorkTasks.propTypes = {
   getTaskList: propTypes.func,
   dispatchFilter: propTypes.func,
   TASK_FILTER_REDUCER_ACTIONS: propTypes.object,
+  onSelectTaskRecord: propTypes.func,
 };
 export default MyWorkTasks;

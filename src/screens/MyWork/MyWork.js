@@ -184,6 +184,13 @@ const MyWork = () => {
     return foundValue ? [foundValue] : [];
   }, [assigneeId, assigneeList]);
 
+  const onSelectTaskRecord = useCallback(
+    id => {
+      history.push(`/my-work/edit/${id}`);
+    },
+    [history]
+  );
+
   useEffect(() => {
     const params = {
       page: page || 1,
@@ -215,6 +222,7 @@ const MyWork = () => {
       onSelectLimit={onSelectLimit}
       dispatchFilter={dispatchFilter}
       TASK_FILTER_REDUCER_ACTIONS={TASK_FILTER_REDUCER_ACTIONS}
+      onSelectTaskRecord={onSelectTaskRecord}
     />,
     <MyWorkNotifications />,
   ];

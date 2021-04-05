@@ -97,6 +97,7 @@ export const saveTaskData = (data, backToTask) => {
     try {
       const response = await MyWorkApiServices.saveNewTask(data);
       if (response.data.status === 'SUCCESS') {
+        successNotification(response.data.message);
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
         });
@@ -252,6 +253,67 @@ export const deleteTaskAction = (taskId, cb) => {
         } else {
           errorNotification('Internal server error');
         }
+      }
+    }
+  };
+};
+
+export const getTaskById = id => {
+  return async dispatch => {
+    try {
+      const response = await MyWorkApiServices.getTaskDetailById(id);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_DETAIL_BY_ID_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const updateEditTaskStateFields = (name, value) => {
+  return dispatch => {
+    dispatch({
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_EDIT_TASK_FIELD_ACTION,
+      name,
+      value,
+    });
+  };
+};
+
+export const editTaskData = (id, data, backToTask) => {
+  return async dispatch => {
+    try {
+      const response = await MyWorkApiServices.updateTask(id, data);
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response.data.message);
+        dispatch({
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
+        });
+        backToTask();
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
       }
     }
   };
