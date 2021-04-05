@@ -153,48 +153,25 @@ const MyWorkAddTask = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          if (typeof taskDetails.assigneeId === 'object') {
-            return [taskDetails.assigneeId[0]];
-          }
-          const assigneeId =
-            taskDetails?.assigneeId &&
-            assigneeList.find(e => {
-              return e.value === taskDetails?.assigneeId;
-            });
-          return (assigneeId && [assigneeId]) || [];
+          return taskDetails.assigneeId || [];
         }
         case 'priority': {
-          if (typeof taskDetails.priority === 'object') {
-            return [taskDetails.priority[0]];
-          }
-          const priority =
-            taskDetails?.priority &&
-            priorityData.find(e => {
-              return e.label.toUpperCase() === taskDetails?.priority;
-            });
-          return (priority && [priority]) || [];
+          return taskDetails.priority || [];
         }
         case 'entityType': {
-          if (typeof taskDetails.entityType === 'object') {
-            return [taskDetails.entityType[0]];
-          }
-          const entityType =
-            taskDetails?.entityType &&
-            entityTypeData.find(e => {
-              return e.value === taskDetails?.entityType;
-            });
-          return (entityType && [entityType]) || [];
+          // if (typeof taskDetails.entityType === 'object') {
+          //   return [taskDetails.entityType[0]];
+          // }
+          //   console.log(taskDetails)
+          // const entityType = taskDetails &&
+          //   taskDetails.entityType ?
+          //   entityTypeData.filter(e => {
+          //     return e.value === taskDetails.entityType;
+          //   }) : [];
+          return [];
         }
         case 'entityId': {
-          if (typeof taskDetails.entityId === 'object') {
-            return [taskDetails.entityId[0]];
-          }
-          const entityId =
-            taskDetails?.entityId &&
-            entityList.find(e => {
-              return e.value === taskDetails?.entityId;
-            });
-          return (entityId && [entityId]) || [];
+          return taskDetails.entityId || [];
         }
         default:
           return [];
@@ -275,6 +252,8 @@ const MyWorkAddTask = () => {
           break;
 
         case 'select': {
+          console.log({ selectedValues });
+          console.log(input.label);
           let handleOnChange = handleSelectInputChange;
           if (input.name === 'entityType') {
             handleOnChange = handleEntityTypeSelectInputChange;
