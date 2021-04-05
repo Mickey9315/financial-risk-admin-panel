@@ -343,4 +343,4 @@ const MyWorkAddTask = () => {
   );
 };
 
-export default React.memo(MyWorkAddTask);
+export default MyWorkAddTask;
