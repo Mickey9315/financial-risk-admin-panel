@@ -251,7 +251,15 @@ const ApplicationPersonStep = () => {
   ];
 
   useEffect(() => {
-    dispatch(addPersonDetail('individual'));
+    if (personState.length < 1) {
+      dispatch(addPersonDetail('individual'));
+    }
+    if (entityTypeFromCompany === 'PARTNERSHIP' && personState.length <= 1) {
+      dispatch(addPersonDetail('individual'));
+    } else {
+      return false;
+    }
+    return false;
   }, []);
 
   const hasRadio = useMemo(() => ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany), [
