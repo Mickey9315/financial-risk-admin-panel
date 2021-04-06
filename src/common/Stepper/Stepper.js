@@ -49,10 +49,12 @@ const Stepper = props => {
     }
   }, [stepIndex]);
 
-  const applicationDetail = useSelector(({ application }) => application.viewApplicationDetails);
+  const applicationDetail = useSelector(
+    ({ application }) => application.editApplication.companyStep
+  );
 
   const entityType = useMemo(
-    () => applicationDetail?.company?.entityType || 'PROPRIETARY_LIMITED',
+    () => applicationDetail?.entityType[0].value || 'PROPRIETARY_LIMITED',
     [applicationDetail]
   );
   console.log(entityType);
