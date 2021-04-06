@@ -208,6 +208,12 @@ export const getApplicationCompanyDataFromDebtor = async (id, params) => {
     }
     return null;
   } catch (e) {
+    console.log(e);
+    if (e.response.data.status === 'ERROR') {
+      if (e.response.data.messageCode === 'APPLICATION_ALREADY_EXISTS') {
+        errorNotification('Application already exist with this debtor');
+      }
+    }
     errorNotification('Internal server error');
     throw Error();
   }
