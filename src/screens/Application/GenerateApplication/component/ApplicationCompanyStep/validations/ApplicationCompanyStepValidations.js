@@ -3,7 +3,7 @@ import {
   updateEditApplicationData,
 } from '../../../../redux/ApplicationAction';
 
-export const applicationCompanyStepValidations = (dispatch, data) => {
+export const applicationCompanyStepValidations = (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = true;
 
@@ -80,7 +80,7 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
         country: { name: country[0].label, code: country[0].value },
         postCode: postcode,
       },
-      applicationId: '',
+      applicationId: editApplicationData?.applicationId || '',
     };
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));
