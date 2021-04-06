@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import moment from 'moment';
 import './ApplicationConfirmationStep.scss';
 import { useSelector } from 'react-redux';
 import Checkbox from '../../../../../common/Checkbox/Checkbox';
@@ -8,7 +9,167 @@ const ApplicationConfirmationStep = () => {
   const { company, creditLimit, partners } = useSelector(
     ({ application }) => application.viewApplicationDetails
   );
+
   console.log('viewApplication', company, creditLimit, partners);
+
+  function getPersonStepData(personStep) {
+    return personStep.map(person => {
+      console.log('person', person);
+      if (person.type === 'individual') {
+        return [
+          {
+            title: 'Individual Details',
+            type: 'title',
+          },
+          {
+            title: 'Title*',
+            value: person?.title || '-',
+            label: 'directorTitle',
+            type: 'text',
+          },
+          {
+            type: 'blank',
+          },
+          {
+            title: 'First Name *',
+            value: person?.firstName || '-',
+            label: 'directorFirstName',
+            type: 'text',
+          },
+          {
+            title: 'Middle Name',
+            value: person?.middleName || '-',
+            label: 'directorMiddleName',
+            type: 'text',
+          },
+          {
+            title: 'Last Name',
+            value: person?.lastName || '-',
+            label: 'directorLastName',
+            type: 'text',
+          },
+          {
+            title: 'Date of Birth *',
+            value: person.dateOfBirth ? moment(person.dateOfBirth).format('DD/MM/YYYY') : '-',
+            label: 'directorDOB',
+            type: 'text',
+          },
+          {
+            title:
+              'Do you give your consent for us to check your credit history with external credit agencies?',
+            value: person?.allowToCheckCreditHistory || false,
+            label: 'directorLastName',
+            type: 'checkbox',
+          },
+          {
+            title: 'Identification Details',
+            type: 'title',
+          },
+          {
+            title: 'Driver License Number',
+            value: person?.driverLicenceNumber || '-',
+            label: 'directorLicenseNumber',
+            type: 'text',
+          },
+          {
+            title: 'Unit Number',
+            value: person?.unitNumber || '-',
+            label: 'directorUnitNumber',
+            type: 'text',
+          },
+          {
+            title: 'Street Number *',
+            value: person?.streetNumber || '-',
+            label: 'directorStreetNumber',
+            type: 'text',
+          },
+          {
+            title: 'Street Name',
+            value: person?.streetName || '-',
+            label: 'directorStreetName',
+            type: 'text',
+          },
+          {
+            title: 'State *',
+            value: person?.state || '-',
+            label: 'directorState',
+            type: 'text',
+          },
+          {
+            title: 'Postcode *',
+            value: person?.postCode || '-',
+            label: 'directorPostCode',
+            type: 'text',
+          },
+          {
+            title: 'Contact Details',
+            type: 'title',
+          },
+          {
+            title: 'Phone Number',
+            value: person?.phoneNumber || '-',
+            label: 'directorPhoneNumber',
+            type: 'text',
+          },
+          {
+            title: 'Mobile',
+            value: person?.mobileNumber || '-',
+            label: 'directorMobile',
+            type: 'text',
+          },
+          {
+            title: 'Email Address',
+            value: person?.email || '-',
+            label: 'directorEmail',
+            type: 'text',
+          },
+          { type: 'line' },
+        ];
+      }
+      return [
+        {
+          title: 'Company Details',
+          type: 'title',
+        },
+        {
+          title: 'Trading Name',
+          value: person?.tradingName || '-',
+          label: 'tradingName',
+          type: 'text',
+        },
+        {
+          type: 'blank',
+        },
+        {
+          title: 'Entity Type*',
+          value: person?.entityType || '-',
+          label: 'entityType',
+          type: 'text',
+        },
+        {
+          title: 'Entity Name*',
+          value: person?.entityName || '-',
+          label: 'entityName',
+          type: 'text',
+        },
+        {
+          title: 'ACN',
+          value: person?.acn || '-',
+          label: 'acn',
+          type: 'text',
+        },
+        {
+          title: 'ABN*',
+          value: person?.abn || '-',
+          label: 'abn',
+          type: 'text',
+        },
+
+        { type: 'line' },
+      ];
+    });
+  }
+
   const confirmationDetails = [
     {
       title: 'Client Name',
@@ -175,114 +336,8 @@ const ApplicationConfirmationStep = () => {
       type: 'main-title',
     },
     {
-      title: 'Individual Details',
-      type: 'title',
-    },
-    {
-      title: 'Title *',
-      value: 'Select',
-      label: 'directorTitle',
-      type: 'text',
-    },
-    {
-      type: 'blank',
-    },
-    {
-      title: 'First Name *',
-      value: 'Enter first name',
-      label: 'directorFirstName',
-      type: 'text',
-    },
-    {
-      title: 'Middle Name',
-      value: 'Enter middle name',
-      label: 'directorMiddleName',
-      type: 'text',
-    },
-    {
-      title: 'Last Name',
-      value: 'Enter last name',
-      label: 'directorLastName',
-      type: 'text',
-    },
-    {
-      title: 'Date of Birth *',
-      value: 'Select Date',
-      label: 'directorDOB',
-      type: 'text',
-    },
-    {
-      title:
-        'Do you give your consent for us to check your credit history with external credit agencies?',
-      value: 'true',
-      label: 'directorLastName',
-      type: 'checkbox',
-    },
-    {
-      title: 'Identification Details',
-      type: 'title',
-    },
-    {
-      title: 'Driver License Number',
-      value: 'Enter driver license number',
-      label: 'directorLicenseNumber',
-      type: 'text',
-    },
-    {
-      title: 'Identification Details',
-      type: 'title',
-    },
-    {
-      title: 'Unit Number',
-      value: 'Enter driver license number',
-      label: 'directorUnitNumber',
-      type: 'text',
-    },
-    {
-      title: 'Street Number *',
-      value: 'Enter',
-      label: 'directorStreetNumber',
-      type: 'text',
-    },
-    {
-      title: 'Street Name',
-      value: 'Enter',
-      label: 'directorStreetName',
-      type: 'text',
-    },
-    {
-      title: 'State *',
-      value: 'Select',
-      label: 'directorState',
-      type: 'text',
-    },
-    {
-      title: 'Postcode *',
-      value: 'Enter',
-      label: 'directorPostCode',
-      type: 'text',
-    },
-    {
-      title: 'Contact Details',
-      type: 'title',
-    },
-    {
-      title: 'Phone Number',
-      value: '1234567890',
-      label: 'directorPhoneNumber',
-      type: 'text',
-    },
-    {
-      title: 'Mobile',
-      value: '1234567890',
-      label: 'directorMobile',
-      type: 'text',
-    },
-    {
-      title: 'Email Address',
-      value: 'Enter',
-      label: 'directorEmail',
-      type: 'text',
+      type: 'array',
+      data: getPersonStepData(partners),
     },
   ];
   const getConfirmationComponentFromType = useCallback(detail => {
@@ -353,6 +408,8 @@ const ApplicationConfirmationStep = () => {
             <div />
           </>
         );
+      case 'array':
+        return detail.data.map(elem => elem.map(getConfirmationComponentFromType));
       default:
         return null;
     }
