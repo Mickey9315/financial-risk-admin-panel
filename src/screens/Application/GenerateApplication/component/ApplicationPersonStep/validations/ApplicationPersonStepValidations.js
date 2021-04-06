@@ -168,12 +168,6 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       ) {
         validated = false;
         errorNotification('You have to add two partners at least');
-      }
-      if (
-        editApplicationData.companyStep.entityType[0].value === 'SOLE_TRADER' &&
-        partners.length > 1
-      ) {
-        errorNotification('You can not add more than one partners for sole trader');
       } else {
         validated = true;
         dispatch(saveApplicationStepDataToBackend(finalData));
