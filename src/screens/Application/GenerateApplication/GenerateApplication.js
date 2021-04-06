@@ -73,7 +73,8 @@ const GenerateApplication = () => {
       case 0:
         return applicationCompanyStepValidations(
           dispatch,
-          editApplicationData[steps[stepIndex].name]
+          editApplicationData[steps[stepIndex].name],
+          editApplicationData
         );
       case 1:
         return applicationPersonStepValidation(
