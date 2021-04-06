@@ -181,7 +181,10 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         ...state,
         task: {
           ...state.task,
-          taskDetail: action.data,
+          taskDetail: {
+            defaultEntityId: action.data.entityId,
+            ...action.data,
+          },
         },
       };
 

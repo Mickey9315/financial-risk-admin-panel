@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import '../MyWorkAddTask/MyWorkAddTask.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
@@ -34,7 +34,6 @@ const MyWorkAddTask = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const [entityCall, setEntityCall] = useState(false);
   const backToTaskList = useCallback(() => {
     dispatch({
       type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
@@ -131,10 +130,10 @@ const MyWorkAddTask = () => {
       try {
         handleSelectInputChange(data);
         const params = { entityName: data[0]?.value };
-        if (data[0]?.value && entityCall) {
+        if (data[0]?.value) {
           dispatch(getEntityDropDownData(params));
         }
-        setEntityCall(true);
+        // setEntityCall(true);
       } catch (e) {
         /**/
       }
@@ -162,7 +161,9 @@ const MyWorkAddTask = () => {
           return taskDetails.entityType || [];
         }
         case 'entityId': {
-          return taskDetails.entityId || [];
+          return taskDetails.entityId
+            ? taskDetails.entityId || []
+            : taskDetails.defaultEntityId || [];
         }
         default:
           return [];
