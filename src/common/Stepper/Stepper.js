@@ -6,6 +6,7 @@ import Button from '../Button/Button';
 import { getLabelFromValues } from '../../helpers/entityiTypeHelper';
 import { entityTypeMapperObjectForPersonStep } from '../../helpers/Mappers';
 import { getApplicationDetail } from '../../screens/Application/redux/ApplicationAction';
+import { errorNotification } from '../Toast';
 
 const Stepper = props => {
   const {
@@ -54,7 +55,7 @@ const Stepper = props => {
     () => applicationDetail?.company?.entityType || 'PROPRIETARY_LIMITED',
     [applicationDetail]
   );
-
+  console.log(entityType);
   return (
     <div className={className} {...restProps}>
       <div className="stepper-container">
@@ -83,8 +84,13 @@ const Stepper = props => {
             <Button
               buttonType="secondary"
               title={getLabelFromValues(entityType, entityTypeMapperObjectForPersonStep)}
-              disable
-              onClick={addStepClick}
+              onClick={() => {
+                if (entityType !== 'SOLE_TRADER') {
+                  addStepClick();
+                } else if (entityType === 'SOLE_TRADER') {
+                  errorNotification('Can not add more than one sole trader');
+                }
+              }}
             />
           )}
         </div>
