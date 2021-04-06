@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import '../MyWorkAddTask/MyWorkAddTask.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
@@ -17,9 +17,9 @@ import { errorNotification } from '../../../../common/Toast';
 import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
 
 const priorityData = [
-  { value: 'low', label: 'LOW', name: 'priority' },
-  { value: 'high', label: 'HIGH', name: 'priority' },
-  { value: 'urgent', label: 'URGENT', name: 'priority' },
+  { value: 'low', label: 'Low', name: 'priority' },
+  { value: 'high', label: 'High', name: 'priority' },
+  { value: 'urgent', label: 'Urgent', name: 'priority' },
 ];
 
 const entityTypeData = [
@@ -34,6 +34,7 @@ const MyWorkAddTask = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { id } = useParams();
+  const [entityCall, setEntityCall] = useState(false);
   const backToTaskList = useCallback(() => {
     dispatch({
       type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
@@ -130,9 +131,10 @@ const MyWorkAddTask = () => {
       try {
         handleSelectInputChange(data);
         const params = { entityName: data[0]?.value };
-        if (data[0]?.value) {
+        if (data[0]?.value && entityCall) {
           dispatch(getEntityDropDownData(params));
         }
+        setEntityCall(true);
       } catch (e) {
         /**/
       }
@@ -157,16 +159,7 @@ const MyWorkAddTask = () => {
           return taskDetails.priority || [];
         }
         case 'entityType': {
-          // if (typeof taskDetails.entityType === 'object') {
-          //   return [taskDetails.entityType[0]];
-          // }
-          //   console.log(taskDetails)
-          // const entityType = taskDetails &&
-          //   taskDetails.entityType ?
-          //   entityTypeData.filter(e => {
-          //     return e.value === taskDetails.entityType;
-          //   }) : [];
-          return [];
+          return taskDetails.entityType || [];
         }
         case 'entityId': {
           return taskDetails.entityId || [];
