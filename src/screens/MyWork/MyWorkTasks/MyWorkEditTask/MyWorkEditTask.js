@@ -133,7 +133,6 @@ const MyWorkAddTask = () => {
         if (data[0]?.value) {
           dispatch(getEntityDropDownData(params));
         }
-        // setEntityCall(true);
       } catch (e) {
         /**/
       }
