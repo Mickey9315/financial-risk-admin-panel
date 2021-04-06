@@ -176,11 +176,12 @@ const MyWorkAddTask = () => {
   const onSaveTask = useCallback(() => {
     const data = {
       title: addTaskState?.title?.trim(),
-      priority: addTaskState?.priority[0]?.value,
+      // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'task',
     };
+    if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority[0]?.value;
     if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType[0]?.value;
     if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0]?.value;
     if (addTaskState?.description) data.description = addTaskState?.description?.trim();

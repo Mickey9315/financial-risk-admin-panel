@@ -17,9 +17,9 @@ import { errorNotification } from '../../../../common/Toast';
 import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
 
 const priorityData = [
-  { value: 'low', label: 'Low', name: 'priority' },
-  { value: 'high', label: 'High', name: 'priority' },
-  { value: 'urgent', label: 'Urgent', name: 'priority' },
+  { value: 'low', label: 'LOW', name: 'priority' },
+  { value: 'high', label: 'HIGH', name: 'priority' },
+  { value: 'urgent', label: 'URGENT', name: 'priority' },
 ];
 
 const entityTypeData = [
@@ -206,8 +206,7 @@ const MyWorkAddTask = () => {
       errorNotification('Please add title');
     } else {
       try {
-        console.log(data);
-        dispatch(editTaskData(id, backToTaskList));
+        dispatch(editTaskData(id, data, backToTaskList));
       } catch (e) {
         errorNotification('Something went wrong please add again');
       }
