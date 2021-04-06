@@ -46,8 +46,6 @@ const MyWorkAddTask = () => {
     ({ myWorkReducer }) => myWorkReducer.task.dropDownData
   );
 
-  console.log(taskDetails);
-
   const INPUTS = useMemo(
     () => [
       {
@@ -189,25 +187,27 @@ const MyWorkAddTask = () => {
 
   const onSaveTask = useCallback(() => {
     const data = {
-      title: taskDetails?.title?.trim(),
-      priority: taskDetails?.priority && taskDetails?.priority[0]?.value,
-      dueDate: taskDetails?.dueDate || new Date().toISOString(),
-      assigneeId: taskDetails?.assigneeId[0]?.value,
+      title: taskDetails.title.trim(),
+      // priority: taskDetails.priority && taskDetails.priority[0].value,
+      dueDate: taskDetails.dueDate || new Date().toISOString(),
+      assigneeId: taskDetails.assigneeId[0].value,
       taskFrom: 'task',
     };
-    if (taskDetails?.entityType && taskDetails?.entityType[0]?.value)
-      data.entityType = taskDetails?.entityType[0]?.value;
-    if (taskDetails?.entityId && taskDetails?.entityId[0]?.value)
-      data.entityId = taskDetails?.entityId[0]?.value;
-    if (taskDetails?.description && taskDetails?.description)
-      data.description = taskDetails?.description?.trim();
+    if (taskDetails.priority && taskDetails.priority[0].value)
+      data.priority = taskDetails.priority[0].value;
+    if (taskDetails.entityType && taskDetails.entityType[0].value)
+      data.entityType = taskDetails.entityType[0].value;
+    if (taskDetails.entityId && taskDetails.entityId[0].value)
+      data.entityId = taskDetails.entityId[0].value;
+    if (taskDetails.description && taskDetails.description)
+      data.description = taskDetails?.description.trim();
 
     if (!data.title && data.title.length === 0) {
       errorNotification('Please add title');
     } else {
       try {
         console.log(data);
-        dispatch(editTaskData(id, data, backToTaskList));
+        dispatch(editTaskData(id, backToTaskList));
       } catch (e) {
         errorNotification('Something went wrong please add again');
       }
@@ -252,8 +252,6 @@ const MyWorkAddTask = () => {
           break;
 
         case 'select': {
-          console.log({ selectedValues });
-          console.log(input.label);
           let handleOnChange = handleSelectInputChange;
           if (input.name === 'entityType') {
             handleOnChange = handleEntityTypeSelectInputChange;
