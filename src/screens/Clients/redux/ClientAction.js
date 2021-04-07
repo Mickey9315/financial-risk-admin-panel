@@ -15,16 +15,23 @@ import ClientApplicationApiService from '../services/ClientApplicationApiService
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST,
+    });
     try {
       const response = await ClientApiService.getAllClientList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: CLIENT_REDUX_CONSTANTS.CLIENT_LIST_USER_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {

@@ -34,19 +34,16 @@ const InsurerMatrixTab = () => {
                 </div>
                 <div className="matrix-detail-grid">
                   {report.australianCompanies && (
-                    <div className="matrix-detail-title">Companies</div>
+                    <div>
+                      <div className="matrix-detail-title">Companies</div>
+                      {report.australianCompanies.map(auIllion => (
+                        <div className="au-illion-report-container mb-10">
+                          <span className="material-icons-round">arrow_circle_up</span>
+                          <div className="font-field">{auIllion}</div>
+                        </div>
+                      ))}
+                    </div>
                   )}
-                  {report.australianIndividuals && (
-                    <div className="matrix-detail-title">Individuals</div>
-                  )}
-
-                  {report.australianCompanies &&
-                    report.australianCompanies.map(auIllion => (
-                      <div className="au-illion-report-container mb-10">
-                        <span className="material-icons-round">arrow_circle_up</span>
-                        <div className="font-field">{auIllion}</div>
-                      </div>
-                    ))}
 
                   {report.australianReports &&
                     report.australianReports.map(auReport => (
@@ -58,13 +55,17 @@ const InsurerMatrixTab = () => {
 
                   {report.australianIndividuals &&
                     report.australianIndividuals.map(auEquifax => (
-                      <div className="au-equifax-report-container">
-                        <span className="material-icons-round">arrow_circle_up</span>
-                        <div className="font-field">{auEquifax}</div>
+                      <div>
+                        <div className="matrix-detail-title">Individuals</div>
+                        <div className="au-equifax-report-container">
+                          <span className="material-icons-round">arrow_circle_up</span>
+                          <div className="font-field">{auEquifax}</div>
+                        </div>
                       </div>
                     ))}
                 </div>
               </div>
+
               <div className="matrix-new-zealand">
                 {report.newZealand.length > 0 && (
                   <div className="matrix-detail-container">
@@ -124,5 +125,4 @@ const InsurerMatrixTab = () => {
     </div>
   );
 };
-
 export default InsurerMatrixTab;

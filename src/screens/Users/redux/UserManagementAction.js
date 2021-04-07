@@ -10,17 +10,24 @@ import {
 
 export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST,
+    });
     try {
       const response = await UserManagementApiService.getAllUserListByFilter(params);
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: USER_MANAGEMENT_REDUX_CONSTANTS.USER_MANAGEMENT_LIST_USER_ACTION,
+          type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {

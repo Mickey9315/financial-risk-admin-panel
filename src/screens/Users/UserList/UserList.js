@@ -60,9 +60,10 @@ const UserList = () => {
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const [deleteId, setDeleteId] = useState(null);
   const { role, startDate, endDate } = useMemo(() => filter, [filter]);
-  const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData, [
-    userListWithPageData,
-  ]);
+  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
+    () => userListWithPageData,
+    [userListWithPageData]
+  );
   const handleStartDateChange = useCallback(
     date => {
       dispatchFilter({
@@ -344,8 +345,8 @@ const UserList = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {docs ? (
-        docs.length > 0 ? (
+      {!isLoading ? (
+        docs && docs.length > 0 ? (
           <>
             <div className="common-list-container">
               <Table

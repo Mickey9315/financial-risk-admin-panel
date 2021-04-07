@@ -13,7 +13,7 @@
 
 .matrix-table {
   display: grid;
-  grid-template-columns: 150px calc(50% - 70px) calc(30% - 60px) calc(20% - 50px);
+  grid-template-columns: 150px calc(45% - 70px) calc(30% - 60px) calc(25% - 50px);
   gap: 10px;
   margin-bottom: 20px;
   border-spacing: 10px;
@@ -84,12 +84,16 @@
 }
 
 .matrix-detail-grid {
-  display: grid;
-  grid-template-columns: 50% 50%;
+  display: flex;
   gap: 10px;
+
+  > div {
+    width: 50%;
+  }
  }
 
 .matrix-detail-title {
+  margin-bottom: 5px;
   font: $subtitle $font-bold;
   color: $primary-color;
 }
@@ -107,11 +111,11 @@
   }
 }
 
-.illion-report, .au-report-container {
+.illion-report, .au-report-container, .au-illion-report-container {
   grid-column: 1;
 }
 
-.equifax-report {
+.equifax-report, .au-equifax-report-container {
   grid-column: 2;
 }
 
