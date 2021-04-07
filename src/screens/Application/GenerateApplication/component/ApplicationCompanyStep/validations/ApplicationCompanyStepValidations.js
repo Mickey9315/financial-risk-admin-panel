@@ -31,6 +31,18 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     validated = false;
     errors.country = 'Please select country before continue';
   }
+  if (!data.streetNumber || data.streetNumber.length === 0) {
+    validated = false;
+    errors.streetNumber = 'Please enter street number before continue';
+  }
+  if (!data.state || data.state.length === 0) {
+    validated = false;
+    errors.state = 'Please select state before continue';
+  }
+  if (!data.postcode || data.postcode.length === 0) {
+    validated = false;
+    errors.postcode = 'Please enter post code before continue';
+  }
 
   if (validated) {
     const {

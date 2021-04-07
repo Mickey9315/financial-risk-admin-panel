@@ -134,13 +134,6 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'Address*',
-        placeholder: 'Enter a location',
-        type: 'text',
-        name: 'address',
-        data: [],
-      },
-      {
         label: 'Property',
         placeholder: 'Property',
         type: 'text',
@@ -155,7 +148,7 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'Street Number',
+        label: 'Street Number*',
         placeholder: 'Street Number',
         type: 'text',
         name: 'streetNumber',
@@ -183,14 +176,14 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'State',
+        label: 'State*',
         placeholder: 'Select',
         type: 'select',
         name: 'state',
         data: australianStates,
       },
       {
-        label: 'Postcode',
+        label: 'Postcode*',
         placeholder: 'Postcode',
         type: 'text',
         name: 'postcode',
