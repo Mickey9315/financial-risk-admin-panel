@@ -127,7 +127,7 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
 
       preparedData = {
         type,
-        title,
+        title: title[0]?.value,
         firstName,
         middleName,
         lastName,
@@ -141,9 +141,9 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
           unitNumber,
           streetNumber,
           streetName,
-          streetType,
+          streetType: streetType[0]?.value,
           suburb,
-          state,
+          state: state[0]?.value,
           country: { name: country[0].label, code: country[0].value },
           postCode,
         },
