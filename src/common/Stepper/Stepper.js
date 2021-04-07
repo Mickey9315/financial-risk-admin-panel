@@ -50,12 +50,12 @@ const Stepper = props => {
   }, [stepIndex]);
 
   const applicationDetail = useSelector(
-    ({ application }) => application.editApplication.companyStep
+    ({ application }) => application.editApplication
   );
 
   const entityType = useMemo(
-    () => applicationDetail?.entityType[0].value || 'PROPRIETARY_LIMITED',
-    [applicationDetail]
+    () => applicationDetail?.companyStep?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
+    [applicationDetail.companyStep?.entityType]
   );
   console.log(entityType);
   return (
@@ -85,7 +85,7 @@ const Stepper = props => {
           {steps[activeStep].text === 'Person' && (
             <Button
               buttonType="secondary"
-              title={getLabelFromValues(entityType, entityTypeMapperObjectForPersonStep)}
+              title={getLabelFromValues(entityType && entityType, entityTypeMapperObjectForPersonStep)}
               onClick={() => {
                 if (entityType !== 'SOLE_TRADER') {
                   addStepClick();

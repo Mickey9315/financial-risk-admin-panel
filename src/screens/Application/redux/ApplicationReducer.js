@@ -99,6 +99,7 @@ const initialApplicationList = {
       debtors: [],
       streetType: [],
       australianStates: [],
+      newZealandStates:[],
       entityType: [],
       countryList: [],
     },
