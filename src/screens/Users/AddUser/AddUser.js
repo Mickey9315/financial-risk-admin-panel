@@ -337,7 +337,7 @@ const AddUser = () => {
               name="maxCreditLimit"
               value={maxCreditLimit}
               type="text"
-              placeholder="Enter credit limit"
+              placeholder={action === 'view' ? 'No credit limit added' : 'Enter credit limit'}
               onChange={onChangeUserData}
               disabled={action === 'view'}
               borderClass={action === 'view' && 'disabled-control'}
