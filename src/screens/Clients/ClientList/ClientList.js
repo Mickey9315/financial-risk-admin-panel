@@ -66,7 +66,9 @@ const ClientList = () => {
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
-  const { docs, headers } = useMemo(() => clientListWithPageData, [clientListWithPageData]);
+  const { docs, isLoading, headers } = useMemo(() => clientListWithPageData, [
+    clientListWithPageData,
+  ]);
   const [crmIds, setCrmIds] = useState([]);
   useEffect(() => {
     dispatch(getClientList());
@@ -451,7 +453,7 @@ const ClientList = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {docs ? (
+      {!isLoading ? (
         docs.length > 0 ? (
           <>
             <div className="common-list-container">
