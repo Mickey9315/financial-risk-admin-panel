@@ -4,8 +4,12 @@ import { errorNotification, successNotification } from '../../../common/Toast';
 
 export const getTaskListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
+    const param = {
+      ...params,
+      columnFor: 'task',
+    };
     try {
-      const response = await MyWorkApiServices.getTaskListData(params);
+      const response = await MyWorkApiServices.getTaskListData(param);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_LIST_ACTION,
