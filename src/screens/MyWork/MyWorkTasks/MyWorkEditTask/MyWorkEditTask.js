@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import '../MyWorkAddTask/MyWorkAddTask.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
@@ -45,6 +45,7 @@ const MyWorkAddTask = () => {
   const { assigneeList, entityList } = useSelector(
     ({ myWorkReducer }) => myWorkReducer.task.dropDownData
   );
+  const [entityCall, setEntityCall] = useState(false);
 
   const INPUTS = useMemo(
     () => [
@@ -131,7 +132,10 @@ const MyWorkAddTask = () => {
         handleSelectInputChange(data);
         const params = { entityName: data[0]?.value };
         if (data[0]?.value) {
-          dispatch(getEntityDropDownData(params));
+          if (data[0]?.value && entityCall) {
+            dispatch(getEntityDropDownData(params));
+          }
+          setEntityCall(true);
         }
       } catch (e) {
         /**/
@@ -160,7 +164,7 @@ const MyWorkAddTask = () => {
           return taskDetails.entityType || [];
         }
         case 'entityId': {
-         return taskDetails.entityId || [];
+          return taskDetails.entityId || [];
         }
         default:
           return [];
@@ -188,7 +192,7 @@ const MyWorkAddTask = () => {
       data.priority = taskDetails.priority[0].value;
     if (taskDetails.entityType && taskDetails.entityType[0].value)
       data.entityType = taskDetails.entityType[0].value;
-    if (taskDetails.entityId && taskDetails.entityId[0].value)
+    if (taskDetails.entityId.length > 0 && taskDetails.entityId[0].value)
       data.entityId = taskDetails.entityId[0].value;
     if (taskDetails.description && taskDetails.description)
       data.description = taskDetails?.description.trim();
