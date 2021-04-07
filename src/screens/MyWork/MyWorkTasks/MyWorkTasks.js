@@ -128,10 +128,6 @@ const MyWorkTasks = props => {
     return () => dispatch(resetPageData());
   }, []);
 
-  // const setSelectedCheckBoxData = useCallback(data => {
-  //   console.log(data);
-  // }, []);
-
   return (
     <>
       {docs.length ? (
