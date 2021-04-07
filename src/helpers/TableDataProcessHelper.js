@@ -19,7 +19,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
             handleDrawerState(header, currentData, row);
           }}
         >
-          {currentData.value || currentData}
+          {currentData.value}
         </div>
       );
     case 'boolean':

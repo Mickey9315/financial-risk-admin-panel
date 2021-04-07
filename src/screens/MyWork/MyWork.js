@@ -145,6 +145,7 @@ const MyWork = () => {
           assigneeId: assigneeId && assigneeId?.length > 0 ? assigneeId : undefined,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
+          columnFor:'task',
           ...params,
         };
         dispatch(getTaskListByFilter(data));

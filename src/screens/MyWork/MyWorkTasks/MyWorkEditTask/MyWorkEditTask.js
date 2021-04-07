@@ -160,9 +160,7 @@ const MyWorkAddTask = () => {
           return taskDetails.entityType || [];
         }
         case 'entityId': {
-          return taskDetails.entityId
-            ? taskDetails.entityId || []
-            : taskDetails.defaultEntityId || [];
+         return taskDetails.entityId || [];
         }
         default:
           return [];

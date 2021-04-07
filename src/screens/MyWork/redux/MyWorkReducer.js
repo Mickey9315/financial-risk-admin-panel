@@ -86,11 +86,11 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           ...state.task,
           addTask: {
             ...state.task.addTask,
-            entityId: '',
+            entityId: [],
           },
           taskDetail: {
             ...state.task.taskDetail,
-            entityId: '',
+            entityId: [],
           },
           dropDownData: {
             ...state.task.dropDownData,
