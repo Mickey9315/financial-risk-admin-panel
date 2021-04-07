@@ -13,39 +13,32 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
     if (type === 'company') {
       if (!item.abn || item.abn.trim().length <= 0) {
         validated = false;
-        // errorNotification('Please enter ABN number before continue');
         errors.abn = 'Please enter ABN number before continue';
       }
       if (item.abn && item.abn.trim().length < 11) {
         validated = false;
-        // errorNotification('Please enter valid ABN number before continue');
         errors.abn = 'Please enter valid ABN number before continue';
       }
       if (item.acn && item.acn.trim().length < 9) {
         validated = false;
-        // errorNotification('Please enter valid ACN number before continue');
         errors.acn = 'Please enter valid ACN number before continue';
       }
       if (!item.entityName || item.entityName.length <= 0) {
         validated = false;
-        // errorNotification('Please enter entity name');
         errors.entityName = 'Please enter entity name';
       }
       if (!item.entityType || item.entityType.length <= 0) {
         validated = false;
-        // errorNotification('Please select entity type before continue');
         errors.entityType = 'Please select entity type before continue';
       }
     }
     if (type === 'individual') {
       if (!item.title || item.title.length <= 0) {
         validated = false;
-        // errorNotification('Please select title before continue');
         errors.title = 'Please select title before continue';
       }
       if (!item.firstName || item.firstName.trim().length <= 0) {
         validated = false;
-        // errorNotification('Please enter firstname before continue');
         errors.firstName = 'Please enter firstname before continue';
       }
       if (!item.lastName || item.lastName.trim().length <= 0) {
@@ -53,42 +46,55 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
         // errorNotification('Please enter lastname before continue');
         errors.lastName = 'Please enter lastname before continue';
       }
-      if (!item.postCode || item.postCode.trim().length <= 0) {
+      if (!item.state || item.state.length <= 0) {
         validated = false;
-        // errorNotification('Please enter postcode before continue');
-        errors.postCode = 'Please enter postcode before continue';
+        errors.state = 'Please select state before continue';
       }
-      // eslint-disable-next-line no-restricted-globals
-      if (item.postCode && isNaN(item.postCode)) {
+      if (!item.country || item.country.length <= 0) {
         validated = false;
-        // errorNotification('Postcode should be number');
-        errors.postCode = 'Postcode should be number';
+        errors.country = 'Please select country before continue';
+      }
+      if (!item.dateOfBirth || item.dateOfBirth.length <= 0) {
+        validated = false;
+        errors.dateOfBirth = 'Please select date of birth before continue';
+      }
+      if (!item.driverLicenceNumber || item.driverLicenceNumber.length <= 0) {
+        validated = false;
+        errors.driverLicenceNumber = 'Please enter driver licence number before continue';
       }
       if (!item.streetNumber || item.streetNumber.length <= 0) {
         validated = false;
-        // errorNotification('Please select street number before continue');
         errors.streetNumber = 'Please select street number before continue';
       }
       // eslint-disable-next-line no-restricted-globals
       if (item.streetNumber && isNaN(item.streetNumber)) {
         validated = false;
-        // errorNotification('Street number should be number');
         errors.streetNumber = 'Street number should be number';
+      }
+      if (!item.streetName || item.streetName.length <= 0) {
+        validated = false;
+        errors.streetName = 'Please enter street name before continue';
+      }
+      if (!item.streetType || item.streetType.length <= 0) {
+        validated = false;
+        errors.streetType = 'Please select street type before continue';
       }
       if (!item.state || item.state.length <= 0) {
         validated = false;
-        // errorNotification('Please select state before continue');
         errors.state = 'Please select state before continue';
       }
-      if (!item.country || item.country.length <= 0) {
+      if (!item.suburb || item.suburb.length <= 0) {
         validated = false;
-        // errorNotification('Please select country before continue');
-        errors.country = 'Please select country before continue';
+        errors.suburb = 'Please enter suburb before continue';
       }
-      if (!item.dateOfBirth || item.dateOfBirth.length <= 0) {
+      if (!item.postCode || item.postCode.trim().length <= 0) {
         validated = false;
-        // errorNotification('Please select date of birth before continue');
-        errors.dateOfBirth = 'Please select date of birth before continue';
+        errors.postCode = 'Please enter postcode before continue';
+      }
+      // eslint-disable-next-line no-restricted-globals
+      if (item.postCode && isNaN(item.postCode)) {
+        validated = false;
+        errors.postCode = 'Postcode should be number';
       }
     }
     if (type === 'company' && validated) {
