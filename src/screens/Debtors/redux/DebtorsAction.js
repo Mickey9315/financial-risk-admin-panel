@@ -32,7 +32,10 @@ export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
 export const getDebtorsColumnNameList = () => {
   return async dispatch => {
     try {
-      const response = await DebtorsApiServices.getDebtorsColumnNameList();
+      const param = {
+        columnFor: 'debtor',
+      };
+      const response = await DebtorsApiServices.getDebtorsColumnNameList(param);
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
