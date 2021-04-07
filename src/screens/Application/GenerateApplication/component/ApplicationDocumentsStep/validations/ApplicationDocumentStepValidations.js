@@ -2,7 +2,6 @@ import { saveApplicationStepDataToBackend } from '../../../../redux/ApplicationA
 
 export const applicationDocumentsStepValidations = (dispatch, data, editApplicationData) => {
   let validated = true;
-  console.log('applicationDocumentsStepValidations', data);
   if (validated) {
     const finalData = {
       stepper: 'documents',
@@ -10,7 +9,6 @@ export const applicationDocumentsStepValidations = (dispatch, data, editApplicat
       /* entityType: editApplicationData.companyStep.entityType[0].value,
       ...data, */
     };
-    console.log('finalData', finalData);
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));
     } catch (e) {
