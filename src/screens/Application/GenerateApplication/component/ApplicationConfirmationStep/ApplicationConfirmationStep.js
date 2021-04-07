@@ -24,6 +24,28 @@ const ApplicationConfirmationStep = () => {
     }
   }, [editApplication]);
 
+  function getDocumentStepData(document) {
+    return (
+      document &&
+      document?.map(doc => {
+        return [
+          {
+            title: 'Document Type',
+            value: doc?.documentTypeId || '-',
+            label: 'documentType',
+            type: 'text',
+          },
+          {
+            title: 'Description',
+            value: doc?.description || '-',
+            label: 'description',
+            type: 'text',
+          },
+        ];
+      })
+    );
+  }
+
   function getPersonStepData(personStep) {
     return (
       personStep &&
@@ -352,6 +374,14 @@ const ApplicationConfirmationStep = () => {
     {
       type: 'array',
       data: getPersonStepData(partners || []),
+    },
+    {
+      title: 'Documents Details',
+      type: 'main-title',
+    },
+    {
+      type: 'array',
+      data: getDocumentStepData(documents || []),
     },
   ];
   const getConfirmationComponentFromType = useCallback(
