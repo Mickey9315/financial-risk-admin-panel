@@ -1023,3 +1023,11 @@ export const saveClientApplicationColumnNameList = ({
     }
   };
 };
+
+export const resetPageData = () => {
+  return async dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.RESET_PAGE_DATA,
+    });
+  };
+};
