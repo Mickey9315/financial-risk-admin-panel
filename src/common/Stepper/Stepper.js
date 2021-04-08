@@ -55,7 +55,6 @@ const Stepper = props => {
     () => applicationDetail?.companyStep?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
     [applicationDetail.companyStep?.entityType]
   );
-  console.log(entityType);
   return (
     <div className={className} {...restProps}>
       <div className="stepper-container">
