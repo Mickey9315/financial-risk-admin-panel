@@ -262,10 +262,10 @@ const ApplicationPersonStep = () => {
   ];
 
   useEffect(() => {
-    if (personState.length < 1) {
+    if (personState.length < 1 && entityTypeFromCompany === 'SOLE_TRADER') {
       dispatch(addPersonDetail('individual'));
     }
-    if (entityTypeFromCompany === 'PARTNERSHIP' && personState.length < 1) {
+    if (entityTypeFromCompany === 'PARTNERSHIP' && personState.length <= 1) {
       dispatch(addPersonDetail('individual'));
     }
   }, []);
