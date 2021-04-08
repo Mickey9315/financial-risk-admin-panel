@@ -262,7 +262,6 @@ const ApplicationDocumentStep = () => {
             <FileUpload
               isProfile={false}
               fileName={fileData.name || 'Browse'}
-              className="document-upload-input"
               handleChange={onUploadClick}
             />
             <span>Description</span>
