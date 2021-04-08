@@ -9,8 +9,6 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
   const partners = data.map((item, index) => {
     const errors = {};
     const { type, isDisabled } = item;
-    console.log('item-->', item);
-    console.log('isDisabled-->', isDisabled);
     let preparedData = {};
     if (!isDisabled) {
       if (type === 'company') {
