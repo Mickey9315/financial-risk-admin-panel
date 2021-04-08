@@ -258,7 +258,7 @@ const PersonIndividualDetail = ({
         return null;
     }
   }, []);
-  console.log('personStep[index].isDisabled', personStep[index].isDisabled);
+
   const getComponentFromType = useCallback(
     input => {
       let component = null;
