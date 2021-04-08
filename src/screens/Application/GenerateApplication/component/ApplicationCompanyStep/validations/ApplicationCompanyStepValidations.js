@@ -35,6 +35,11 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     validated = false;
     errors.streetNumber = 'Please enter street number before continue';
   }
+  // eslint-disable-next-line no-restricted-globals
+  if (data.streetNumber || isNaN(data.streetNumber)) {
+    validated = false;
+    errors.streetNumber = 'Street number should be number';
+  }
   if (!data.state || data.state.length === 0) {
     validated = false;
     errors.state = 'Please select state before continue';
@@ -42,6 +47,11 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
   if (!data.postcode || data.postcode.length === 0) {
     validated = false;
     errors.postcode = 'Please enter post code before continue';
+  }
+  // eslint-disable-next-line no-restricted-globals
+  if (data.postcode || isNaN(data.postcode)) {
+    validated = false;
+    errors.postcode = 'Post code should be number';
   }
 
   if (validated) {
