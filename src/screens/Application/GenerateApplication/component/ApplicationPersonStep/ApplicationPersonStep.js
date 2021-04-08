@@ -214,11 +214,11 @@ const ApplicationPersonStep = () => {
       data: [],
     },
     {
-      label: 'State*',
+      label: 'Country*',
       placeholder: 'Select',
       type: 'select',
-      name: 'state',
-      data: australianStates,
+      name: 'country',
+      data: countryList,
     },
     {
       label: 'Postcode*',
@@ -227,13 +227,12 @@ const ApplicationPersonStep = () => {
       name: 'postCode',
     },
     {
-      label: 'Country*',
+      label: 'State*',
       placeholder: 'Select',
       type: 'select',
-      name: 'country',
-      data: countryList,
+      name: 'state',
+      data: australianStates,
     },
-
     {
       label: 'Contact Details',
       type: 'main-title',
