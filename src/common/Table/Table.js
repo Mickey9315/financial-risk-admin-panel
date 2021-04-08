@@ -308,13 +308,21 @@ function Row(props) {
               return null;
             case 'priority':
               return (
-                <td data-tip={value} data-delay-show="100" align={align}>
+                <td
+                  data-tip={data?.name?.props?.className === 'link' ? '' : value}
+                  data-delay-show="100"
+                  align={align}
+                >
                   <span className={`task-priority-${value}`}>{value || '-'}</span>
                 </td>
               );
             default:
               return (
-                <td data-tip={value} data-delay-show="100" align={align}>
+                <td
+                  data-tip={data?.name?.props?.className === 'link' ? '' : value}
+                  data-delay-show="100"
+                  align={align}
+                >
                   {value || '-'}
                 </td>
               );
