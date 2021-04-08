@@ -317,6 +317,7 @@ const ApplicationPersonStep = () => {
           COMPANY_INPUT={COMPANY_INPUT}
           INDIVIDUAL_INPUT={INDIVIDUAL_INPUT}
           index={index}
+          entityTypeFromCompany={entityTypeFromCompany}
         />
       );
     },

@@ -22,7 +22,7 @@ import { DRAWER_ACTIONS } from '../../ApplicationCompanyStep/ApplicationCompanyS
 import Loader from '../../../../../../common/Loader/Loader';
 import ApplicationEntityNameTable from '../../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import Modal from '../../../../../../common/Modal/Modal';
-import { successNotification } from '../../../../../../common/Toast';
+import { errorNotification, successNotification } from '../../../../../../common/Toast';
 
 const drawerInitialState = {
   visible: false,
@@ -54,6 +54,7 @@ const PersonIndividualDetail = ({
   COMPANY_INPUT,
   INDIVIDUAL_INPUT,
   index,
+  entityTypeFromCompany,
 }) => {
   const dispatch = useDispatch();
   const updateSinglePersonState = useCallback(
@@ -435,7 +436,13 @@ const PersonIndividualDetail = ({
   );
   const deletePartner = e => {
     e.stopPropagation();
-    dispatch(removePersonDetail(index));
+    if (index <= 1 && entityTypeFromCompany === 'PARTNERSHIP') {
+      errorNotification('You can not remove partner');
+    } else if (index < 1) {
+      errorNotification('You can not remove every partner');
+    } else {
+      dispatch(removePersonDetail(index));
+    }
     successNotification('Partner deleted successfully');
   };
 
@@ -485,9 +492,11 @@ PersonIndividualDetail.propTypes = {
   COMPANY_INPUT: PropTypes.arrayOf(PropTypes.object).isRequired,
   INDIVIDUAL_INPUT: PropTypes.arrayOf(PropTypes.object).isRequired,
   index: PropTypes.number.isRequired,
+  entityTypeFromCompany: PropTypes.string,
 };
 PersonIndividualDetail.defaultProps = {
   hasRadio: false,
+  entityTypeFromCompany: '',
 };
 
 export default PersonIndividualDetail;
