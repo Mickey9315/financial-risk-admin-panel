@@ -36,7 +36,7 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     errors.streetNumber = 'Please enter street number before continue';
   }
   // eslint-disable-next-line no-restricted-globals
-  if (data.streetNumber || isNaN(data.streetNumber)) {
+  if (data.streetNumber && isNaN(data.streetNumber)) {
     validated = false;
     errors.streetNumber = 'Street number should be number';
   }
@@ -49,7 +49,7 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     errors.postcode = 'Please enter post code before continue';
   }
   // eslint-disable-next-line no-restricted-globals
-  if (data.postcode || isNaN(data.postcode)) {
+  if (data.postcode && isNaN(data.postcode)) {
     validated = false;
     errors.postcode = 'Post code should be number';
   }
