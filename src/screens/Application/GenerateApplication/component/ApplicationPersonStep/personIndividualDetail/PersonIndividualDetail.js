@@ -13,6 +13,7 @@ import {
   changeEditApplicationFieldValue,
   changePersonType,
   getApplicationCompanyDataFromABNOrACN,
+  removePersonDetail,
   searchApplicationCompanyEntityName,
   updatePersonData,
   updatePersonStepDataOnValueSelected,
@@ -21,6 +22,7 @@ import { DRAWER_ACTIONS } from '../../ApplicationCompanyStep/ApplicationCompanyS
 import Loader from '../../../../../../common/Loader/Loader';
 import ApplicationEntityNameTable from '../../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import Modal from '../../../../../../common/Modal/Modal';
+import { successNotification } from '../../../../../../common/Toast';
 
 const drawerInitialState = {
   visible: false,
@@ -431,6 +433,11 @@ const PersonIndividualDetail = ({
       viewApplication.partners,
     ]
   );
+  const deletePartner = e => {
+    e.stopPropagation();
+    dispatch(removePersonDetail(index));
+    successNotification('Partner deleted successfully');
+  };
 
   return (
     <>
@@ -452,29 +459,13 @@ const PersonIndividualDetail = ({
           )}
         </Modal>
       )}
-
-      {/*  {viewPartner && viewPartner.length > 0 && (
-        <AccordionItem
-          className="application-person-step-accordion"
-          header={itemHeader || 'Director Details'}
-          prefix="expand_more"
-          suffix="delete_outline"
-          suffixClass="material-icons-round font-danger cursor-pointer"
-          suffixClick={e => e.stopPropagation()}
-        >
-          <div className="application-person-step-accordion-item">
-            {VIEW_STEP_DETAILS.map(getConfirmationComponentFromType)}
-          </div>
-        </AccordionItem>
-      )} */}
-
       <AccordionItem
         className="application-person-step-accordion"
         header={itemHeader || 'Director Details'}
         prefix="expand_more"
         suffix="delete_outline"
         suffixClass="material-icons-round font-danger cursor-pointer"
-        suffixClick={e => e.stopPropagation()}
+        suffixClick={e => deletePartner(e)}
       >
         <div className="application-person-step-accordion-item">
           {hasRadio && INPUTS.map(getComponentFromType)}

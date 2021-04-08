@@ -354,6 +354,15 @@ export const addPersonDetail = type => {
   };
 };
 
+export const removePersonDetail = index => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.PERSON.REMOVE_APPLICATION_PERSON,
+      data: index,
+    });
+  };
+};
+
 // person step edit application
 export const updatePersonData = (index, name, value) => {
   return dispatch => {

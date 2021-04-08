@@ -99,7 +99,7 @@ const initialApplicationList = {
       debtors: [],
       streetType: [],
       australianStates: [],
-      newZealandStates:[],
+      newZealandStates: [],
       entityType: [],
       countryList: [],
     },
@@ -236,6 +236,18 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+
+    case APPLICATION_REDUX_CONSTANTS.PERSON.REMOVE_APPLICATION_PERSON: {
+      const perStep = state.editApplication.personStep;
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          personStep: perStep.filter((e, i) => i !== action.data),
+        },
+      };
+    }
+
     case APPLICATION_REDUX_CONSTANTS.PERSON.EDIT_APPLICATION_PERSON: {
       const personStep = [...state.editApplication.personStep];
       personStep[action.index] = {
