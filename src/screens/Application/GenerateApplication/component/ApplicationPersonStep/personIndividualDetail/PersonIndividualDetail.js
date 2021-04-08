@@ -188,6 +188,7 @@ const PersonIndividualDetail = ({
     [updateSinglePersonState]
   );
 
+  /*
   const getConfirmationComponentFromType = useCallback(detail => {
     switch (detail.type) {
       case 'text':
@@ -261,6 +262,7 @@ const PersonIndividualDetail = ({
         return null;
     }
   }, []);
+  */
 
   const getComponentFromType = useCallback(
     input => {
