@@ -66,14 +66,14 @@ const ApplicationPersonStep = () => {
 
   const COMPANY_INPUT = [
     {
+      type: 'blank',
+    },
+    {
       label: 'Trading Name',
       placeholder: 'Trading Name',
       type: 'text',
       name: 'tradingName',
       data: [],
-    },
-    {
-      type: 'blank',
     },
     {
       label: 'Entity Type*',
