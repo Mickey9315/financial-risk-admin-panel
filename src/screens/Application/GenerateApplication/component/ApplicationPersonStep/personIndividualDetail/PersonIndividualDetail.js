@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import ReactSelect from 'react-dropdown-select';
@@ -66,7 +66,7 @@ const PersonIndividualDetail = ({
     ({ application }) => application.company.entityNameSearch
   );
   const personStep = useSelector(({ application }) => application.editApplication.personStep);
-  const [viewPartner, setViewPartner] = useState([]);
+  // const [viewPartner, setViewPartner] = useState([]);
 
   const viewApplication = useSelector(({ application }) => application.viewApplicationDetails);
   useEffect(() => {
@@ -79,10 +79,10 @@ const PersonIndividualDetail = ({
       viewApplication.partners.length !== 0 &&
       !hasAddedApplication
     ) {
-      setViewPartner(viewApplication.partners);
+      // setViewPartner(viewApplication.partners);
       dispatch(changeEditApplicationFieldValue('personStep', viewApplication.partners));
     }
-  }, [viewApplication, setViewPartner]);
+  }, [viewApplication]);
 
   const handleTextInputChange = useCallback(
     e => {
@@ -258,7 +258,7 @@ const PersonIndividualDetail = ({
         return null;
     }
   }, []);
-
+  console.log('personStep[index].isDisabled', personStep[index].isDisabled);
   const getComponentFromType = useCallback(
     input => {
       let component = null;
@@ -271,7 +271,7 @@ const PersonIndividualDetail = ({
               name={input.name}
               value={personStep[index][input.name]}
               onChange={handleTextInputChange}
-              disabled={viewPartner}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -282,7 +282,7 @@ const PersonIndividualDetail = ({
               placeholder={input.placeholder}
               name={input.name}
               onChange={handleEmailChange}
-              disabled={viewPartner}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -294,7 +294,7 @@ const PersonIndividualDetail = ({
               placeholder={input.placeholder}
               value={personStep[index][input.name]}
               onKeyDown={handleSearchTextInputKeyDown}
-              disabled={viewPartner}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -308,8 +308,8 @@ const PersonIndividualDetail = ({
                 (personStep && personStep[index][input.name] && personStep[index][input.name]) || []
               }
               searchable={false}
-              disabled={viewPartner}
               onChange={handleSelectInputChange}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -320,13 +320,18 @@ const PersonIndividualDetail = ({
               name={input.name}
               title={input.label}
               onChange={handleCheckBoxEvent}
-              disabled={viewPartner}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
         case 'entityName':
           component = (
-            <Input type="text" placeholder={input.placeholder} onKeyDown={handleEntityNameSearch} />
+            <Input
+              type="text"
+              placeholder={input.placeholder}
+              onKeyDown={handleEntityNameSearch}
+              disabled={personStep[index].isDisabled || false}
+            />
           );
           break;
         case 'radio':
@@ -341,7 +346,7 @@ const PersonIndividualDetail = ({
                   checked={personStep[index].type === radio.value}
                   label={radio.label}
                   onChange={handleRadioButton}
-                  disabled={viewPartner}
+                  disabled={personStep[index].isDisabled || false}
                 />
               ))}
             </div>
@@ -369,7 +374,7 @@ const PersonIndividualDetail = ({
                     : ''
                 }
                 onChange={date => onChangeDate(input.name, moment(date).format('MM/DD/YYYY'))}
-                disabled={viewPartner}
+                disabled={personStep[index].isDisabled || false}
               />
               <span className="material-icons-round">event_available</span>
             </div>
@@ -423,6 +428,7 @@ const PersonIndividualDetail = ({
       handleSelectInputChange,
       handleEmailChange,
       handleTextInputChange,
+      viewApplication.partners,
     ]
   );
 
@@ -461,6 +467,7 @@ const PersonIndividualDetail = ({
           </div>
         </AccordionItem>
       )} */}
+
       <AccordionItem
         className="application-person-step-accordion"
         header={itemHeader || 'Director Details'}
