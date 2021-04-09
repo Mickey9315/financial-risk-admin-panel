@@ -90,6 +90,17 @@ export const clientManagement = (state = initialClientListState, action) => {
         selectedClient: action.data,
       };
 
+    case CLIENT_REDUX_CONSTANTS.RESET_PAGE_DATA: {
+      return {
+        ...state,
+        clientList: {
+          ...state.clientList,
+          page: 1,
+          limit: 15,
+        },
+      };
+    }
+
     /*
      *  Contact section
      * */

@@ -38,6 +38,13 @@ export const userManagementList = (state = initialUserManagementListState, actio
         docs: null,
         error: action.error,
       };
+    case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_PAGE_DATA: {
+      return {
+        ...state,
+        page: 1,
+        limit: 15,
+      };
+    }
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;

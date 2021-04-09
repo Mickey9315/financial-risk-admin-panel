@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import './Table.scss';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import ReactTooltip from 'react-tooltip';
+import '../../../node_modules/react-tooltip/dist/index';
 import Drawer from '../Drawer/Drawer';
 import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
@@ -171,6 +173,7 @@ const Table = props => {
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
+      <ReactTooltip effect="float" />
       <table className={tableClassName}>
         <thead>
           {showCheckbox && (
@@ -309,13 +312,21 @@ function Row(props) {
               return null;
             case 'priority':
               return (
-                <td data-tip={value} data-delay-show="400" align={align}>
+                <td
+                  data-tip={data?.name?.props?.className === 'link' ? '' : value}
+                  data-delay-show="100"
+                  align={align}
+                >
                   <span className={`task-priority-${value}`}>{value || '-'}</span>
                 </td>
               );
             default:
               return (
-                <td data-tip={value} data-delay-show="400" align={align}>
+                <td
+                  data-tip={data?.name?.props?.className === 'link' ? '' : value}
+                  data-delay-show="100"
+                  align={align}
+                >
                   {value || '-'}
                 </td>
               );

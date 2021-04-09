@@ -10,12 +10,11 @@ import {
 
 export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
-    dispatch({
-      type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST,
-    });
+    // dispatch({
+    //   type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST,
+    // });
     try {
       const response = await UserManagementApiService.getAllUserListByFilter(params);
-
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS,
@@ -351,5 +350,13 @@ export const deleteUserDetails = (id, params) => {
         throw Error();
       }
     }
+  };
+};
+
+export const resetPageData = () => {
+  return async dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_REDUX_CONSTANTS.RESET_PAGE_DATA,
+    });
   };
 };

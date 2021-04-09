@@ -16,9 +16,6 @@ import ClientTaskApiService from '../services/ClientTaskApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
-    dispatch({
-      type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST,
-    });
     try {
       const response = await ClientApiService.getAllClientList(params);
       if (response.data.status === 'SUCCESS') {
@@ -1292,5 +1289,13 @@ export const updateTaskData = (id, data, cb) => {
         throw Error();
       }
     }
+  };
+};
+
+export const resetPageData = () => {
+  return async dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.RESET_PAGE_DATA,
+    });
   };
 };
