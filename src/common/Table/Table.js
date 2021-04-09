@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import './Table.scss';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import Drawer from '../Drawer/Drawer';
 import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
@@ -75,21 +76,24 @@ const Table = props => {
     }
   }, []);
 
-  const handleCheckBoxState = useCallback(async (value, header, currentData, row) => {
-    try {
-      await TableApiService.tableActions({
-        url: header.request.url,
-        method: header.request.method,
-        id: currentData.id || row._id,
-        data: {
-          [`${header.name}`]: value,
-        },
-      });
-      refreshData();
-    } catch (e) {
-      /**/
-    }
-  }, []);
+  const handleCheckBoxState = useCallback(
+    async (value, header, currentData, row) => {
+      try {
+        await TableApiService.tableActions({
+          url: header.request.url,
+          method: header.request.method,
+          id: currentData.id || row._id,
+          data: {
+            [`${header.name}`]: value,
+          },
+        });
+        refreshData();
+      } catch (e) {
+        /**/
+      }
+    },
+    [refreshData]
+  );
 
   const handleViewDocument = useCallback(async (header, row) => {
     try {
@@ -332,7 +336,12 @@ function Row(props) {
           </td>
         )}
         {extraColumns.map(element => (
-          <td width={10} align={align} valign={valign} className={rowClass}>
+          <td
+            width={10}
+            align={align}
+            valign={valign}
+            className={data?.isCompleted?.props.checked ? `completedTask ${rowClass}` : rowClass}
+          >
             {element(data)}
           </td>
         ))}
@@ -387,6 +396,8 @@ function TableLinkDrawer(props) {
         return row.value ? `$ ${row.value}` : '-';
       case 'percent':
         return row.value ? `${row.value} %` : '-';
+      case 'date':
+        return row.value ? moment(row.value).format('DD-MMM-YYYY') : '-';
       default:
         return row.value || '-';
     }

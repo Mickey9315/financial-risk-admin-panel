@@ -9,7 +9,6 @@ import Input from '../../../common/Input/Input';
 import Tab from '../../../common/Tab/Tab';
 import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
 import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
-import TasksTab from '../../../common/Tab/TasksTab/TasksTab';
 import { getClientById, syncClientData, updateSelectedClientData } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import ClientPoliciesTab from '../component/ClientPoliciesTab';
@@ -18,6 +17,7 @@ import ClientDocumentsTab from '../component/ClientDocumentsTab';
 import ClientCreditLimitTab from '../component/ClientCreditLimitTab';
 import ClientContactTab from '../component/ClientContactTab';
 import ClientApplicationTab from '../component/ClientApplicationTab';
+import ClientTaskTab from '../component/ClientTaskTab';
 
 const initialAssigneeState = {
   riskAnalystId: '',
@@ -148,7 +148,7 @@ const ViewClient = () => {
     <ClientApplicationTab />,
     <OverDuesTab />,
     <ClaimsTab />,
-    <TasksTab />,
+    <ClientTaskTab />,
     <ClientPoliciesTab />,
     <ClientDocumentsTab />,
     <ClientNotesTab />,

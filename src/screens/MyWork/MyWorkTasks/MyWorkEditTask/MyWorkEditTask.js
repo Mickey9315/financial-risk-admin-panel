@@ -1,16 +1,17 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import './MyWorkAddTask.scss';
-import { useHistory } from 'react-router-dom';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import '../MyWorkAddTask/MyWorkAddTask.scss';
+import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../../../common/Button/Button';
 import Input from '../../../../common/Input/Input';
 import {
+  editTaskData,
   getAssigneeDropDownData,
   getEntityDropDownData,
-  saveTaskData,
-  updateAddTaskStateFields,
+  getTaskById,
+  updateEditTaskStateFields,
 } from '../../redux/MyWorkAction';
 import { errorNotification } from '../../../../common/Toast';
 import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
@@ -32,20 +33,19 @@ const entityTypeData = [
 const MyWorkAddTask = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const { id } = useParams();
   const backToTaskList = useCallback(() => {
     dispatch({
-      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
     });
     history.push('/my-work');
   }, []);
 
-  const addTaskState = useSelector(({ myWorkReducer }) => myWorkReducer.task.addTask);
+  const taskDetails = useSelector(({ myWorkReducer }) => myWorkReducer.task.taskDetail);
   const { assigneeList, entityList } = useSelector(
     ({ myWorkReducer }) => myWorkReducer.task.dropDownData
   );
-
-  const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
-  const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
+  const [entityCall, setEntityCall] = useState(false);
 
   const INPUTS = useMemo(
     () => [
@@ -104,26 +104,26 @@ const MyWorkAddTask = () => {
         name: 'description',
       },
     ],
-    [assigneeList, entityList, addTaskState, priorityData, entityTypeData]
+    [assigneeList, entityList, taskDetails, priorityData, entityTypeData]
   );
 
-  const updateAddTaskState = useCallback((name, value) => {
-    dispatch(updateAddTaskStateFields(name, value));
+  const updateEditTaskState = useCallback((name, value) => {
+    dispatch(updateEditTaskStateFields(name, value));
   }, []);
 
   const handleTextInputChange = useCallback(
     e => {
       const { name, value } = e.target;
-      updateAddTaskState(name, value);
+      updateEditTaskState(name, value);
     },
-    [updateAddTaskState]
+    [updateEditTaskState]
   );
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateAddTaskState(data[0]?.name, data);
+      updateEditTaskState(data[0]?.name, data);
     },
-    [updateAddTaskState]
+    [updateEditTaskState]
   );
 
   const handleEntityTypeSelectInputChange = useCallback(
@@ -132,74 +132,86 @@ const MyWorkAddTask = () => {
         handleSelectInputChange(data);
         const params = { entityName: data[0]?.value };
         if (data[0]?.value) {
-          dispatch(getEntityDropDownData(params));
+          if (data[0]?.value && entityCall) {
+            dispatch(getEntityDropDownData(params));
+          }
+          setEntityCall(true);
         }
       } catch (e) {
         /**/
       }
     },
-    [handleSelectInputChange, addTaskState]
+    [handleSelectInputChange, taskDetails]
   );
 
   const handleDateChange = useCallback(
     (name, value) => {
-      updateAddTaskState(name, value);
+      updateEditTaskState(name, value);
     },
-    [updateAddTaskState]
+    [updateEditTaskState]
   );
 
-  const getAssigneeSelectedValue = useMemo(() => {
-    const assigneeSelected = addTaskState?.assigneeId[0]?.value
-      ? assigneeList.find(e => {
-          return e.value === addTaskState?.assigneeId[0]?.value;
-        })
-      : assigneeList.find(e => {
-          return e.value === _id;
-        });
-    return (assigneeSelected && [assigneeSelected]) || [];
-  }, [addTaskState, _id, assigneeList]);
+  const selectedValuesForDropDown = useCallback(
+    fieldFor => {
+      switch (fieldFor) {
+        case 'assigneeId': {
+          return taskDetails.assigneeId || [];
+        }
+        case 'priority': {
+          return taskDetails.priority || [];
+        }
+        case 'entityType': {
+          return taskDetails.entityType || [];
+        }
+        case 'entityId': {
+          return taskDetails.entityId || [];
+        }
+        default:
+          return [];
+      }
+    },
+    [taskDetails, assigneeList, priorityData, entityList, entityTypeData]
+  );
 
-  useEffect(() => {
-    const result = assigneeList.find(e => {
-      return e.value === _id;
-    });
-    handleSelectInputChange([result]);
-  }, []);
-
-  const onCloseAddTask = useCallback(() => {
+  const onCloseEditTask = useCallback(() => {
     dispatch({
-      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
     });
     backToTaskList();
   }, [backToTaskList]);
 
   const onSaveTask = useCallback(() => {
     const data = {
-      title: addTaskState?.title?.trim(),
-      // priority: addTaskState?.priority[0]?.value,
-      dueDate: addTaskState?.dueDate || new Date().toISOString(),
-      assigneeId: addTaskState?.assigneeId[0]?.value,
+      title: taskDetails.title.trim(),
+      // priority: taskDetails.priority && taskDetails.priority[0].value,
+      dueDate: taskDetails.dueDate || new Date().toISOString(),
+      assigneeId: taskDetails.assigneeId[0].value,
       taskFrom: 'task',
     };
-    if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority[0]?.value;
-    if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType[0]?.value;
-    if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0]?.value;
-    if (addTaskState?.description) data.description = addTaskState?.description?.trim();
+    if (taskDetails.priority && taskDetails.priority[0].value)
+      data.priority = taskDetails.priority[0].value;
+    if (taskDetails.entityType && taskDetails.entityType[0].value)
+      data.entityType = taskDetails.entityType[0].value;
+    if (taskDetails.entityId.length > 0 && taskDetails.entityId[0].value)
+      data.entityId = taskDetails.entityId[0].value;
+    if (taskDetails.description && taskDetails.description)
+      data.description = taskDetails?.description.trim();
 
     if (!data.title && data.title.length === 0) {
       errorNotification('Please add title');
     } else {
       try {
-        dispatch(saveTaskData(data, backToTaskList));
+        dispatch(editTaskData(id, data, backToTaskList));
       } catch (e) {
         errorNotification('Something went wrong please add again');
       }
     }
-  }, [addTaskState]);
+  }, [taskDetails]);
 
   const getComponentFromType = useCallback(
     input => {
       let component = null;
+      const selectedValues = selectedValuesForDropDown(input.name);
       switch (input.type) {
         case 'text':
           component = (
@@ -209,7 +221,7 @@ const MyWorkAddTask = () => {
                 type="text"
                 name={input.name}
                 placeholder={input.placeholder}
-                value={addTaskState[input.name]}
+                value={taskDetails[input.name]}
                 onChange={handleTextInputChange}
               />
             </>
@@ -225,7 +237,7 @@ const MyWorkAddTask = () => {
                 options={input.data}
                 // searchable
                 // changed from value to values
-                values={addTaskState[input.name] || []}
+                values={selectedValues}
                 onChange={handleSelectInputChange}
               />
             </>
@@ -235,13 +247,8 @@ const MyWorkAddTask = () => {
 
         case 'select': {
           let handleOnChange = handleSelectInputChange;
-          let selectedValues = addTaskState[input.name];
           if (input.name === 'entityType') {
             handleOnChange = handleEntityTypeSelectInputChange;
-            selectedValues = addTaskState[input.name];
-          }
-          if (input.name === 'assigneeId') {
-            selectedValues = getAssigneeSelectedValue;
           }
           component = (
             <>
@@ -266,8 +273,8 @@ const MyWorkAddTask = () => {
                 <DatePicker
                   placeholderText={input.placeholder}
                   value={
-                    addTaskState[input.name]
-                      ? new Date(addTaskState[input.name]).toLocaleDateString()
+                    taskDetails[input.name]
+                      ? new Date(taskDetails[input.name]).toLocaleDateString()
                       : new Date().toLocaleDateString()
                   }
                   onChange={date => handleDateChange(input.name, new Date(date).toISOString())}
@@ -292,21 +299,32 @@ const MyWorkAddTask = () => {
       }
       return <>{component}</>;
     },
-    [INPUTS, addTaskState, updateAddTaskState, entityList, getAssigneeSelectedValue]
+    [
+      INPUTS,
+      taskDetails,
+      updateEditTaskState,
+      entityList,
+      selectedValuesForDropDown,
+      assigneeList,
+      priorityData,
+      handleEntityTypeSelectInputChange,
+    ]
   );
   useEffect(() => {
     dispatch(getAssigneeDropDownData());
+    dispatch(getTaskById(id));
   }, []);
+
   return (
     <>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
           <span onClick={backToTaskList}>Task List</span>
           <span className="material-icons-round">navigate_next</span>
-          <span>Add Task</span>
+          <span>Edit Task</span>
         </div>
         <div className="buttons-row">
-          <Button buttonType="primary-1" title="Close" onClick={onCloseAddTask} />
+          <Button buttonType="primary-1" title="Close" onClick={onCloseEditTask} />
           <Button buttonType="primary" title="Save" onClick={onSaveTask} />
         </div>
       </div>

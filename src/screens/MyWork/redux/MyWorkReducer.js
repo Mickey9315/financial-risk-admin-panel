@@ -14,13 +14,14 @@ const initialMyWork = {
     addTask: {
       title: '',
       description: '',
-      priority: '',
-      entityType: '',
-      entityId: '',
-      assigneeId: '',
+      priority: [],
+      entityType: [],
+      entityId: [],
+      assigneeId: [],
       dueDate: '',
       taskFrom: 'task',
     },
+    taskDetail: {},
     dropDownData: {
       assigneeList: [],
       entityList: [],
@@ -85,7 +86,11 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           ...state.task,
           addTask: {
             ...state.task.addTask,
-            entityId: '',
+            entityId: [],
+          },
+          taskDetail: {
+            ...state.task.taskDetail,
+            entityId: [],
           },
           dropDownData: {
             ...state.task.dropDownData,
@@ -103,10 +108,10 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           addTask: {
             title: '',
             description: '',
-            priority: '',
-            entityType: '',
-            entityId: '',
-            assigneeId: '',
+            priority: [],
+            entityType: [],
+            entityId: [],
+            assigneeId: [],
             dueDate: '',
             taskFrom: 'task',
           },
@@ -170,6 +175,39 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         },
       };
     }
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_DETAIL_BY_ID_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          taskDetail: {
+            defaultEntityId: action.data.entityId,
+            ...action.data,
+          },
+        },
+      };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_EDIT_TASK_FIELD_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          taskDetail: {
+            ...state.task.taskDetail,
+            [action.name]: action.value,
+          },
+        },
+      };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          taskDetail: {},
+        },
+      };
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;

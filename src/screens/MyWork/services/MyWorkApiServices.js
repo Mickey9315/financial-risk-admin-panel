@@ -11,5 +11,8 @@ const MyWorkApiServices = {
     ApiService.getData(MY_WORK_URL.TASK.COLUMN_NAME_LIST_URL, { params }),
   saveColumnNameList: data => ApiService.putData(MY_WORK_URL.TASK.COLUMN_NAME_LIST_URL, data),
   getTaskFilterListData: () => ApiService.getData(MY_WORK_URL.TASK.ASSIGNEE_DROP_DOWN_DATA),
+  deleteTask: taskId => ApiService.deleteData(`${MY_WORK_URL.TASK.TASK_LIST_URL}${taskId}`),
+  getTaskDetailById: id => ApiService.getData(`${MY_WORK_URL.TASK.TASK_DETAIL_BY_ID_URL}${id}`),
+  updateTask: (id, data) => ApiService.putData(`${MY_WORK_URL.TASK.UPDATE_TASK}${id}`, data),
 };
 export default MyWorkApiServices;

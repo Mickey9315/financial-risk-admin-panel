@@ -12,6 +12,7 @@ import ClientNotesApiService from '../services/ClientNotesApiService';
 import ClientDocumentsApiService from '../services/ClientDocumentsApiService';
 import ClientCreditLimitApiService from '../services/ClientCreditLimitApiService';
 import ClientApplicationApiService from '../services/ClientApplicationApiService';
+import ClientTaskApiService from '../services/ClientTaskApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1008,6 +1009,276 @@ export const saveClientApplicationColumnNameList = ({
         if (response.data.status === 'SUCCESS') {
           successNotification(response.data.message);
         }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+// tasks
+export const getClientTaskListData = (params, id) => {
+  return async dispatch => {
+    try {
+      const data = {
+        ...params,
+        requestedEntityId: id,
+      };
+      const response = await ClientTaskApiService.getClientTaskListData(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getClientTaskColumnList = () => {
+  return async dispatch => {
+    try {
+      const params = {
+        columnFor: 'client-task',
+      };
+      const response = await ClientTaskApiService.getClientTaskColumnNameList(params);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_COLUMN_NAME_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const changeClientTaskColumnNameListStatus = data => {
+  return async dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.TASK.UPDATE_CLIENT_TASK_COLUMN_NAME_LIST_ACTION,
+      data,
+    });
+  };
+};
+
+export const saveClientTaskColumnNameListSelection = ({
+  clientTaskColumnNameListData = {},
+  isReset = false,
+}) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+        columnFor: 'client-task',
+      };
+
+      if (!isReset) {
+        const defaultColumns = clientTaskColumnNameListData.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = clientTaskColumnNameListData.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          ...data,
+          isReset: false,
+          columns: [...defaultColumns, ...customFields],
+        };
+      }
+
+      if (!isReset && data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+      } else {
+        const response = await ClientTaskApiService.updateClientTaskColumnNameList(data);
+
+        dispatch(getClientTaskColumnList());
+
+        if (response && response.data && response.data.status === 'SUCCESS') {
+          successNotification('Columns updated successfully.');
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getAssigneeDropDownData = () => {
+  return async dispatch => {
+    try {
+      const response = await ClientTaskApiService.getAssigneeDropDownData();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ASSIGNEE_DROP_DOWN_DATA_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const getEntityDropDownData = params => {
+  return async dispatch => {
+    try {
+      const response = await ClientTaskApiService.getEntityDropDownData(params);
+      if (response.data.status === 'SUCCESS' && response.data.data) {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const updateAddTaskStateFields = (name, value) => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.UPDATE_ADD_TASK_FIELD_ACTION,
+      name,
+      value,
+    });
+  };
+};
+
+export const saveTaskData = (data, cb) => {
+  return async dispatch => {
+    try {
+      const response = await ClientTaskApiService.saveNewTask(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION,
+        });
+        cb();
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const deleteTaskAction = (taskId, cb) => {
+  return async () => {
+    try {
+      const response = await ClientTaskApiService.deleteTask();
+      if (response.data.status === 'SUCCESS') {
+        successNotification('Task deleted successfully.');
+        if (cb) {
+          cb();
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getClientTaskDetail = id => {
+  return async dispatch => {
+    try {
+      const response = await ClientTaskApiService.getClientTaskDetailById(id);
+      console.log(response);
+      if (response.data.status === 'SUCCESS') {
+        console.log(response.data.data);
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.EDIT_TASK.GET_CLIENT_TASK_DETAILS_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const updateTaskData = (id, data, cb) => {
+  return async dispatch => {
+    try {
+      const response = await ClientTaskApiService.updateTask(id, data);
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response.data.message);
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION,
+        });
+        cb();
       }
     } catch (e) {
       if (e.response && e.response.data) {

@@ -12,8 +12,14 @@ export const processTableDataByType = ({ header, row, actions }) => {
       return moment(currentData).format('DD-MMM-YYYY');
     case 'modal':
       return (
-        <div className="link" onClick={() => handleDrawerState(header, currentData, row)}>
-          {currentData.value || currentData}
+        <div
+          className="link"
+          onClick={e => {
+            e.stopPropagation();
+            handleDrawerState(header, currentData, row);
+          }}
+        >
+          {currentData.value}
         </div>
       );
     case 'boolean':

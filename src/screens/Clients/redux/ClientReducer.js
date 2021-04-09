@@ -34,6 +34,24 @@ const initialClientListState = {
     documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     uploadDocumentData: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
+  task: {
+    taskList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    addTask: {
+      title: '',
+      description: '',
+      priority: [],
+      entityType: [],
+      entityId: [],
+      assigneeId: [],
+      dueDate: '',
+      taskFrom: 'client-task',
+    },
+    dropDownData: {
+      assigneeList: [],
+      entityList: [],
+    },
+  },
 };
 const initialClientManagementClientListState = {
   riskAnalystList: [],
@@ -312,6 +330,119 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
     }
+    // tasks
+    case CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_LIST_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          taskList: action.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_COLUMN_NAME_LIST_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          columnList: action.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.TASK.UPDATE_CLIENT_TASK_COLUMN_NAME_LIST_ACTION: {
+      const columnList = {
+        ...state.task.columnList,
+      };
+      const { name, type, value } = action.data;
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name ? { ...e, isChecked: value } : e
+      );
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          columnList,
+        },
+      };
+    }
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.UPDATE_ADD_TASK_FIELD_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          addTask: {
+            ...state.task.addTask,
+            [action.name]: action.value,
+          },
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ASSIGNEE_DROP_DOWN_DATA_ACTION: {
+      const assigneeList = action.data.map(data => ({
+        label: data.name,
+        value: data._id,
+        name: 'assigneeId',
+      }));
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          dropDownData: {
+            ...state.task.dropDownData,
+            assigneeList,
+          },
+        },
+      };
+    }
+
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION: {
+      const entityList = action.data.map(data => ({
+        label: data.applicationId || data.name,
+        value: data._id,
+        name: 'entityId',
+      }));
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          addTask: {
+            ...state.task.addTask,
+            entityId: [],
+          },
+          dropDownData: {
+            ...state.task.dropDownData,
+            entityList,
+          },
+        },
+      };
+    }
+
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          addTask: {
+            title: '',
+            description: '',
+            priority: [],
+            entityType: [],
+            entityId: [],
+            assigneeId: [],
+            dueDate: '',
+            taskFrom: 'client-task',
+          },
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.TASK.EDIT_TASK.GET_CLIENT_TASK_DETAILS_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          addTask: action.data,
+        },
+      };
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;

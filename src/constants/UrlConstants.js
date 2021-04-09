@@ -92,6 +92,18 @@ export const CLIENT_URLS = {
     UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
     DOWNLOAD_DOCUMENTS_URL: `${BASE_URL}document/download`,
   },
+  TASK: {
+    TASK_LIST_URL: `${BASE_URL}task/`,
+    TASK_COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name`,
+    ADD_TASK: {
+      ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
+      ENTITY_DROP_DOWN_DATA: `${BASE_URL}task/entity-list/`,
+      SAVE_NEW_TASK: `${BASE_URL}task/`,
+    },
+    EDIT_TASK: {
+      GET_CLIENT_TASK_DETAIL: `${BASE_URL}task/details/`,
+    },
+  },
 };
 
 export const INSURER_URLS = {
@@ -140,5 +152,7 @@ export const MY_WORK_URL = {
     ENTITY_DROP_DOWN_DATA: `${BASE_URL}task/entity-list/`,
     SAVE_NEW_TASK: `${BASE_URL}task/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name/`,
+    TASK_DETAIL_BY_ID_URL: `${BASE_URL}task/details/`,
+    UPDATE_TASK: `${BASE_URL}task/`,
   },
 };
