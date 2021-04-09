@@ -15,9 +15,9 @@ import ClientApplicationApiService from '../services/ClientApplicationApiService
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
-    dispatch({
-      type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST,
-    });
+    // dispatch({
+    //   type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST,
+    // });
     try {
       const response = await ClientApiService.getAllClientList(params);
       if (response.data.status === 'SUCCESS') {
