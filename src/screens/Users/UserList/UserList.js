@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import './UserList.scss';
 import { useDispatch, useSelector } from 'react-redux';
