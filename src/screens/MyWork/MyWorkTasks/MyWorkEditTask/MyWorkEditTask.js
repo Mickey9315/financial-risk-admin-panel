@@ -183,7 +183,6 @@ const MyWorkAddTask = () => {
   const onSaveTask = useCallback(() => {
     const data = {
       title: taskDetails.title.trim(),
-      // priority: taskDetails.priority && taskDetails.priority[0].value,
       dueDate: taskDetails.dueDate || new Date().toISOString(),
       assigneeId: taskDetails.assigneeId[0].value,
       taskFrom: 'task',
@@ -235,8 +234,6 @@ const MyWorkAddTask = () => {
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
-                // searchable
-                // changed from value to values
                 values={selectedValues}
                 onChange={handleSelectInputChange}
               />
