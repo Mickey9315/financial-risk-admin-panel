@@ -208,6 +208,12 @@ export const getApplicationCompanyDataFromDebtor = async (id, params) => {
     }
     return null;
   } catch (e) {
+    console.log(e);
+    if (e.response.data.status === 'ERROR') {
+      if (e.response.data.messageCode === 'APPLICATION_ALREADY_EXISTS') {
+        errorNotification('Application already exist with this debtor');
+      }
+    }
     errorNotification('Internal server error');
     throw Error();
   }
@@ -348,6 +354,15 @@ export const addPersonDetail = type => {
   };
 };
 
+export const removePersonDetail = index => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.PERSON.REMOVE_APPLICATION_PERSON,
+      data: index,
+    });
+  };
+};
+
 // person step edit application
 export const updatePersonData = (index, name, value) => {
   return dispatch => {
@@ -465,6 +480,36 @@ export const getDocumentTypeList = () => {
   };
 };
 
+export const getApplicationDocumentDataList = (id, params = { page: 1, limit: 15 }) => {
+  // console.log('getApplicationDocumentDataList', id);
+  return async dispatch => {
+    try {
+      const updateParams = {
+        ...params,
+        documentFor: 'application',
+      };
+      const response = await ApplicationDocumentStepApiServices.getApplicationDocumentDataList(
+        id,
+        updateParams
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.APPLICATION_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA,
+          data: response.data.data && response.data.data.docs ? response.data.data.docs : [],
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
 export const uploadDocument = (data, config) => {
   return async dispatch => {
     try {
@@ -485,4 +530,24 @@ export const uploadDocument = (data, config) => {
       }
     }
   };
+};
+
+export const deleteApplicationDocumentAction = async (appDocId, cb) => {
+  try {
+    const response = await ApplicationDocumentStepApiServices.deleteApplicationDocument(appDocId);
+    if (response.data.status === 'SUCCESS') {
+      successNotification('Application document deleted successfully.');
+      if (cb) {
+        cb();
+      }
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else {
+        errorNotification('Internal server error');
+      }
+    }
+  }
 };

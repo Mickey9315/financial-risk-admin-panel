@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import ReactSelect from 'react-dropdown-select';
@@ -10,8 +10,10 @@ import Input from '../../../../../../common/Input/Input';
 import Checkbox from '../../../../../../common/Checkbox/Checkbox';
 import RadioButton from '../../../../../../common/RadioButton/RadioButton';
 import {
+  changeEditApplicationFieldValue,
   changePersonType,
   getApplicationCompanyDataFromABNOrACN,
+  removePersonDetail,
   searchApplicationCompanyEntityName,
   updatePersonData,
   updatePersonStepDataOnValueSelected,
@@ -20,6 +22,7 @@ import { DRAWER_ACTIONS } from '../../ApplicationCompanyStep/ApplicationCompanyS
 import Loader from '../../../../../../common/Loader/Loader';
 import ApplicationEntityNameTable from '../../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import Modal from '../../../../../../common/Modal/Modal';
+import { errorNotification, successNotification } from '../../../../../../common/Toast';
 
 const drawerInitialState = {
   visible: false,
@@ -51,6 +54,7 @@ const PersonIndividualDetail = ({
   COMPANY_INPUT,
   INDIVIDUAL_INPUT,
   index,
+  entityTypeFromCompany,
 }) => {
   const dispatch = useDispatch();
   const updateSinglePersonState = useCallback(
@@ -64,9 +68,24 @@ const PersonIndividualDetail = ({
   const entityNameSearchDropDownData = useSelector(
     ({ application }) => application.company.entityNameSearch
   );
-
   const personStep = useSelector(({ application }) => application.editApplication.personStep);
-  // const [partnerType, setPartnerType] = useState('individual');
+  // const [viewPartner, setViewPartner] = useState([]);
+
+  const viewApplication = useSelector(({ application }) => application.viewApplicationDetails);
+  useEffect(() => {
+    const hasAddedApplication = viewApplication?.partners?.some(e => {
+      return personStep?.some(f => e?._id === f?._id);
+    });
+    if (
+      viewApplication &&
+      viewApplication.partners &&
+      viewApplication.partners.length !== 0 &&
+      !hasAddedApplication
+    ) {
+      // setViewPartner(viewApplication.partners);
+      dispatch(changeEditApplicationFieldValue('personStep', viewApplication.partners));
+    }
+  }, [viewApplication]);
 
   const handleTextInputChange = useCallback(
     e => {
@@ -78,7 +97,7 @@ const PersonIndividualDetail = ({
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSinglePersonState(data[0]?.name, data[0].value);
+      updateSinglePersonState(data[0]?.name, data);
     },
     [updateSinglePersonState]
   );
@@ -105,8 +124,7 @@ const PersonIndividualDetail = ({
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        // companyState.client[0].value
-        const params = { clientId: '6054571ee79c55672f41a227' };
+        const params = { clientId: companyState.client[0].value };
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
         if (response) {
           updatePersonState(response);
@@ -127,7 +145,7 @@ const PersonIndividualDetail = ({
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
-        const params = { clientId: '6054571ee79c55672f41a227' };
+        const params = { clientId: companyState.client[0].value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
@@ -153,13 +171,13 @@ const PersonIndividualDetail = ({
       const value = e.target.checked;
       updateSinglePersonState(checkBoxName, value);
     },
-    [index]
+    [updateSinglePersonState]
   );
   const onChangeDate = useCallback(
     (name, date) => {
       updateSinglePersonState(name, date);
     },
-    [index]
+    [updateSinglePersonState]
   );
   const handleEmailChange = useCallback(
     e => {
@@ -167,8 +185,84 @@ const PersonIndividualDetail = ({
       const { value } = e.target;
       updateSinglePersonState(email, value);
     },
-    [index]
+    [updateSinglePersonState]
   );
+
+  /*
+  const getConfirmationComponentFromType = useCallback(detail => {
+    switch (detail.type) {
+      case 'text':
+        return (
+          <>
+            <span>{detail.title}</span>
+            <span className="detail-value">{detail.value}</span>
+          </>
+        );
+      case 'ifYesText':
+        return (
+          <>
+            <span>{detail.title}</span>
+            <span className="long-text">{detail.value}</span>
+          </>
+        );
+      case 'title':
+        return (
+          <>
+            <span className="title">{detail.title}</span>
+          </>
+        );
+      case 'radio':
+        return (
+          <>
+            <span className="radio-title">{detail.title}</span>
+            <span className="radio-buttons">
+              <RadioButton
+                disabled
+                id={`${detail.id}-yes`}
+                name={detail.name}
+                label="Yes"
+                value
+                checked={detail.value}
+              />
+              <RadioButton
+                disabled
+                id={`${detail.id}-no`}
+                name={detail.name}
+                label="No"
+                value={false}
+                checked={!detail.value}
+              />
+            </span>
+          </>
+        );
+      case 'checkbox':
+        return (
+          <>
+            <Checkbox className="grid-checkbox" title={detail.title} />
+          </>
+        );
+      case 'main-title':
+        return (
+          <>
+            <div className="main-title">{detail.title}</div>
+          </>
+        );
+      case 'line':
+        return <div className="horizontal-line" />;
+      case 'blank':
+        return (
+          <>
+            <div />
+            <div />
+          </>
+        );
+      case 'array':
+        return detail.data.map(elem => elem.map(f => getConfirmationComponentFromType(f)));
+      default:
+        return null;
+    }
+  }, []);
+  */
 
   const getComponentFromType = useCallback(
     input => {
@@ -182,6 +276,7 @@ const PersonIndividualDetail = ({
               name={input.name}
               value={personStep[index][input.name]}
               onChange={handleTextInputChange}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -192,6 +287,7 @@ const PersonIndividualDetail = ({
               placeholder={input.placeholder}
               name={input.name}
               onChange={handleEmailChange}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -203,6 +299,7 @@ const PersonIndividualDetail = ({
               placeholder={input.placeholder}
               value={personStep[index][input.name]}
               onKeyDown={handleSearchTextInputKeyDown}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -217,6 +314,7 @@ const PersonIndividualDetail = ({
               }
               searchable={false}
               onChange={handleSelectInputChange}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
@@ -227,12 +325,18 @@ const PersonIndividualDetail = ({
               name={input.name}
               title={input.label}
               onChange={handleCheckBoxEvent}
+              disabled={personStep[index].isDisabled || false}
             />
           );
           break;
         case 'entityName':
           component = (
-            <Input type="text" placeholder={input.placeholder} onKeyDown={handleEntityNameSearch} />
+            <Input
+              type="text"
+              placeholder={input.placeholder}
+              onKeyDown={handleEntityNameSearch}
+              disabled={personStep[index].isDisabled || false}
+            />
           );
           break;
         case 'radio':
@@ -247,6 +351,7 @@ const PersonIndividualDetail = ({
                   checked={personStep[index].type === radio.value}
                   label={radio.label}
                   onChange={handleRadioButton}
+                  disabled={personStep[index].isDisabled || false}
                 />
               ))}
             </div>
@@ -270,10 +375,11 @@ const PersonIndividualDetail = ({
                 placeholderText={input.placeholder}
                 value={
                   personStep[index].dateOfBirth
-                    ? moment(personStep[index].dateOfBirth).format('LL')
+                    ? moment(personStep[index].dateOfBirth).format('MM/DD/YYYY')
                     : ''
                 }
-                onChange={date => onChangeDate(input.name, moment(date).format('DD/MM/YYYY'))}
+                onChange={date => onChangeDate(input.name, moment(date).format('MM/DD/YYYY'))}
+                disabled={personStep[index].isDisabled || false}
               />
               <span className="material-icons-round">event_available</span>
             </div>
@@ -283,14 +389,25 @@ const PersonIndividualDetail = ({
           return null;
       }
 
+      /* if (viewPartner) {
+        return component;
+      } */
+
       const finalComponent = (
         <>
           {component}
-          {personStep[index].errors[input.name] && (
-            <div className="ui-state-error">{personStep[index].errors[input.name]}</div>
+          {personStep && personStep[index] ? (
+            <div className="ui-state-error">
+              {personStep && personStep[index] && personStep[index].errors
+                ? personStep[index]?.errors[input?.name]
+                : ''}
+            </div>
+          ) : (
+            ''
           )}
         </>
       );
+
       return (
         <>
           {!['main-title', 'checkbox', 'blank', 'radio'].includes(input.type) && (
@@ -316,8 +433,20 @@ const PersonIndividualDetail = ({
       handleSelectInputChange,
       handleEmailChange,
       handleTextInputChange,
+      viewApplication.partners,
     ]
   );
+  const deletePartner = e => {
+    e.stopPropagation();
+    if (index <= 1 && entityTypeFromCompany === 'PARTNERSHIP') {
+      errorNotification('You can not remove partner');
+    } else if (index < 1) {
+      errorNotification('You can not remove every partner');
+    } else {
+      dispatch(removePersonDetail(index));
+    }
+    successNotification('Partner deleted successfully');
+  };
 
   return (
     <>
@@ -343,12 +472,16 @@ const PersonIndividualDetail = ({
         className="application-person-step-accordion"
         header={itemHeader || 'Director Details'}
         prefix="expand_more"
+        suffix="delete_outline"
+        suffixClass="material-icons-round font-danger cursor-pointer"
+        suffixClick={e => deletePartner(e)}
       >
         <div className="application-person-step-accordion-item">
           {hasRadio && INPUTS.map(getComponentFromType)}
-          {hasRadio && personStep[index].type === 'company'
-            ? COMPANY_INPUT.map(getComponentFromType)
-            : INDIVIDUAL_INPUT.map(getComponentFromType)}
+          {personStep[index] &&
+            (hasRadio && personStep[index].type === 'company'
+              ? COMPANY_INPUT.map(getComponentFromType)
+              : INDIVIDUAL_INPUT.map(getComponentFromType))}
         </div>
       </AccordionItem>
     </>
@@ -361,9 +494,11 @@ PersonIndividualDetail.propTypes = {
   COMPANY_INPUT: PropTypes.arrayOf(PropTypes.object).isRequired,
   INDIVIDUAL_INPUT: PropTypes.arrayOf(PropTypes.object).isRequired,
   index: PropTypes.number.isRequired,
+  entityTypeFromCompany: PropTypes.string,
 };
 PersonIndividualDetail.defaultProps = {
   hasRadio: false,
+  entityTypeFromCompany: '',
 };
 
 export default PersonIndividualDetail;

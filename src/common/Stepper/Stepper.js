@@ -6,6 +6,7 @@ import Button from '../Button/Button';
 import { getLabelFromValues } from '../../helpers/entityiTypeHelper';
 import { entityTypeMapperObjectForPersonStep } from '../../helpers/Mappers';
 import { getApplicationDetail } from '../../screens/Application/redux/ApplicationAction';
+import { errorNotification } from '../Toast';
 
 const Stepper = props => {
   const {
@@ -48,13 +49,12 @@ const Stepper = props => {
     }
   }, [stepIndex]);
 
-  const applicationDetail = useSelector(({ application }) => application.viewApplicationDetails);
+  const applicationDetail = useSelector(({ application }) => application.editApplication);
 
   const entityType = useMemo(
-    () => applicationDetail?.company?.entityType || 'PROPRIETARY_LIMITED',
-    [applicationDetail]
+    () => applicationDetail?.companyStep?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
+    [applicationDetail.companyStep?.entityType]
   );
-
   return (
     <div className={className} {...restProps}>
       <div className="stepper-container">
@@ -82,9 +82,17 @@ const Stepper = props => {
           {steps[activeStep].text === 'Person' && (
             <Button
               buttonType="secondary"
-              title={getLabelFromValues(entityType, entityTypeMapperObjectForPersonStep)}
-              disable
-              onClick={addStepClick}
+              title={getLabelFromValues(
+                entityType && entityType,
+                entityTypeMapperObjectForPersonStep
+              )}
+              onClick={() => {
+                if (entityType !== 'SOLE_TRADER') {
+                  addStepClick();
+                } else if (entityType === 'SOLE_TRADER') {
+                  errorNotification('Can not add more than one sole trader');
+                }
+              }}
             />
           )}
         </div>

@@ -10,6 +10,7 @@ const AccordionItem = props => {
     prefixClass,
     suffix,
     suffixClass,
+    suffixClick,
     header,
     count,
     accordionBodyClass,
@@ -48,6 +49,7 @@ const AccordionItem = props => {
             className={`${suffixClassName} ${
               activeAccordion && suffix === 'expand_more' && 'rotate-icon'
             }`}
+            onClick={suffixClick}
           >
             {suffix}
           </span>
@@ -72,6 +74,7 @@ AccordionItem.propTypes = {
   count: PropTypes.number,
   prefixClass: PropTypes.string,
   suffixClass: PropTypes.string,
+  suffixClick: PropTypes.func,
   accordionBodyClass: PropTypes.string,
   children: PropTypes.element,
 };
@@ -86,6 +89,7 @@ AccordionItem.defaultProps = {
   suffixClass: '',
   accordionBodyClass: '',
   children: null,
+  suffixClick: () => {},
 };
 
 export default AccordionItem;

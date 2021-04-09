@@ -3,7 +3,7 @@ import {
   updateEditApplicationData,
 } from '../../../../redux/ApplicationAction';
 
-export const applicationCompanyStepValidations = (dispatch, data) => {
+export const applicationCompanyStepValidations = (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = true;
 
@@ -30,6 +30,28 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
   if (!data.country || data.country.length === 0) {
     validated = false;
     errors.country = 'Please select country before continue';
+  }
+  if (!data.streetNumber || data.streetNumber.length === 0) {
+    validated = false;
+    errors.streetNumber = 'Please enter street number before continue';
+  }
+  // eslint-disable-next-line no-restricted-globals
+  if (data.streetNumber && isNaN(data.streetNumber)) {
+    validated = false;
+    errors.streetNumber = 'Street number should be number';
+  }
+  if (!data.state || data.state.length === 0) {
+    validated = false;
+    errors.state = 'Please select state before continue';
+  }
+  if (!data.postcode || data.postcode.length === 0) {
+    validated = false;
+    errors.postcode = 'Please enter post code before continue';
+  }
+  // eslint-disable-next-line no-restricted-globals
+  if (data.postcode && isNaN(data.postcode)) {
+    validated = false;
+    errors.postcode = 'Post code should be number';
   }
 
   if (validated) {
@@ -80,7 +102,7 @@ export const applicationCompanyStepValidations = (dispatch, data) => {
         country: { name: country[0].label, code: country[0].value },
         postCode: postcode,
       },
-      applicationId: '',
+      applicationId: editApplicationData?.applicationId || '',
     };
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));

@@ -66,7 +66,7 @@ const initialApplicationList = {
     },
     documentStep: {
       documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-      uploadDocumentData: {},
+      uploadDocumentApplicationData: [],
     },
     personStep: [],
   },
@@ -99,6 +99,7 @@ const initialApplicationList = {
       debtors: [],
       streetType: [],
       australianStates: [],
+      newZealandStates: [],
       entityType: [],
       countryList: [],
     },
@@ -235,6 +236,18 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+
+    case APPLICATION_REDUX_CONSTANTS.PERSON.REMOVE_APPLICATION_PERSON: {
+      const perStep = state.editApplication.personStep;
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          personStep: perStep.filter((e, i) => i !== action.data),
+        },
+      };
+    }
+
     case APPLICATION_REDUX_CONSTANTS.PERSON.EDIT_APPLICATION_PERSON: {
       const personStep = [...state.editApplication.personStep];
       personStep[action.index] = {
@@ -294,17 +307,38 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
 
-    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA:
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.APPLICATION_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA: {
+      const editApplication = { ...state.editApplication };
+      const documentStep = { ...editApplication.documentStep };
+      const uploadDocumentApplicationData = [...action.data];
+
       return {
         ...state,
         editApplication: {
-          ...state.editApplication,
+          ...editApplication,
           documentStep: {
-            ...state.editApplication.documentStep,
-            uploadDocumentData: action.data,
+            ...documentStep,
+            uploadDocumentApplicationData,
           },
         },
       };
+    }
+    case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA: {
+      const editApplication = { ...state.editApplication };
+      const documentStep = { ...editApplication.documentStep };
+      const uploadDocumentApplicationData = [...documentStep.uploadDocumentApplicationData];
+
+      return {
+        ...state,
+        editApplication: {
+          ...editApplication,
+          documentStep: {
+            ...documentStep,
+            uploadDocumentApplicationData: [...uploadDocumentApplicationData, action.data],
+          },
+        },
+      };
+    }
 
     default:
       return state;

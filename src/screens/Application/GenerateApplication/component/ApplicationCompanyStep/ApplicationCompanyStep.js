@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
@@ -52,14 +52,21 @@ const ApplicationCompanyStep = () => {
   const dispatch = useDispatch();
 
   const companyState = useSelector(({ application }) => application.editApplication.companyStep);
-  const { clients, debtors, streetType, australianStates, entityType, countryList } = useSelector(
-    ({ application }) => application.company.dropdownData
-  );
+  const {
+    clients,
+    debtors,
+    streetType,
+    australianStates,
+    newZealandStates,
+    entityType,
+    countryList,
+  } = useSelector(({ application }) => application.company.dropdownData);
   const entityNameSearchDropDownData = useSelector(
     ({ application }) => application.company.entityNameSearch
   );
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
+  const [stateValue, setStateValue] = useState([]);
 
   const INPUTS = useMemo(
     () => [
@@ -134,13 +141,6 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'Address*',
-        placeholder: 'Enter a location',
-        type: 'text',
-        name: 'address',
-        data: [],
-      },
-      {
         label: 'Property',
         placeholder: 'Property',
         type: 'text',
@@ -155,7 +155,7 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'Street Number',
+        label: 'Street Number*',
         placeholder: 'Street Number',
         type: 'text',
         name: 'streetNumber',
@@ -183,21 +183,21 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'State',
+        label: 'State*',
         placeholder: 'Select',
         type: 'select',
         name: 'state',
-        data: australianStates,
+        data: stateValue,
       },
       {
-        label: 'Postcode',
+        label: 'Postcode*',
         placeholder: 'Postcode',
         type: 'text',
         name: 'postcode',
         data: [],
       },
     ],
-    [debtors, streetType, australianStates, entityType]
+    [debtors, streetType, entityType, stateValue]
   );
 
   const updateSingleCompanyState = useCallback((name, value) => {
@@ -219,8 +219,16 @@ const ApplicationCompanyStep = () => {
   const handleSelectInputChange = useCallback(
     data => {
       updateSingleCompanyState(data[0]?.name, data);
-      if (data[0].name === 'entityType') {
-        dispatch(changeEditApplicationFieldValue(data[0].name, data[0].value));
+      if (data[0]?.name === 'entityType') {
+        dispatch(changeEditApplicationFieldValue(data[0]?.name, data[0]?.value));
+      }
+      if (data[0]?.name === 'country') {
+        dispatch(updateEditApplicationField('companyStep', 'state', []));
+        if (data[0]?.value === 'AUS') {
+          setStateValue(australianStates);
+        } else if (data[0]?.value === 'NZL') {
+          setStateValue(newZealandStates);
+        }
       }
     },
     [updateSingleCompanyState]

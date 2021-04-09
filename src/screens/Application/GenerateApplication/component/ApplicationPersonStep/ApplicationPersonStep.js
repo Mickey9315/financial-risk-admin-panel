@@ -13,9 +13,10 @@ import {
 const ApplicationPersonStep = () => {
   const personState = useSelector(({ application }) => application.editApplication.personStep);
 
-  const { streetType, australianStates, countryList } = useSelector(
+  const { streetType, australianStates, countryList, newZealandStates } = useSelector(
     ({ application }) => application.company.dropdownData
   );
+  console.log('newZealandStates', newZealandStates);
   const companyEntityType = useSelector(
     ({ application }) => application.applicationFilterList.dropdownData.companyEntityType
   );
@@ -65,14 +66,14 @@ const ApplicationPersonStep = () => {
 
   const COMPANY_INPUT = [
     {
+      type: 'blank',
+    },
+    {
       label: 'Trading Name',
       placeholder: 'Trading Name',
       type: 'text',
       name: 'tradingName',
       data: [],
-    },
-    {
-      type: 'blank',
     },
     {
       label: 'Entity Type*',
@@ -116,14 +117,14 @@ const ApplicationPersonStep = () => {
       data: [],
     },
     {
+      type: 'blank',
+    },
+    {
       label: 'Title*',
       placeholder: 'Select',
       type: 'select',
       name: 'title',
       data: titleDropDown,
-    },
-    {
-      type: 'blank',
     },
     {
       label: 'First Name*',
@@ -151,7 +152,7 @@ const ApplicationPersonStep = () => {
     },
     {
       label:
-        'Do you give your consent for us to check your credit history with external credit agencies?',
+        'Do you give your consent for us to check your credit history with external credit agencies?*',
       type: 'checkbox',
       name: 'allowToCheckCreditHistory',
     },
@@ -160,7 +161,10 @@ const ApplicationPersonStep = () => {
       type: 'main-title',
     },
     {
-      label: 'Driver License Number',
+      type: 'blank',
+    },
+    {
+      label: 'Driver License Number*',
       placeholder: 'Enter driver license number',
       type: 'text',
       name: 'driverLicenceNumber',
@@ -171,6 +175,9 @@ const ApplicationPersonStep = () => {
     {
       label: 'Residential Details',
       type: 'main-title',
+    },
+    {
+      type: 'blank',
     },
     {
       label: 'Unit Number',
@@ -186,38 +193,25 @@ const ApplicationPersonStep = () => {
       data: [],
     },
     {
-      label: 'Street Name',
+      label: 'Street Name*',
       placeholder: 'Enter street Name',
       type: 'text',
       name: 'streetName',
       data: [],
     },
     {
-      label: 'Street Type',
+      label: 'Street Type*',
       placeholder: 'Select',
       type: 'select',
       name: 'streetType',
       data: streetType,
     },
     {
-      label: 'Suburb',
+      label: 'Suburb*',
       placeholder: 'Suburb',
       type: 'text',
       name: 'suburb',
       data: [],
-    },
-    {
-      label: 'State*',
-      placeholder: 'Select',
-      type: 'select',
-      name: 'state',
-      data: australianStates,
-    },
-    {
-      label: 'Postcode*',
-      placeholder: 'Enter postcode',
-      type: 'text',
-      name: 'postCode',
     },
     {
       label: 'Country*',
@@ -227,8 +221,24 @@ const ApplicationPersonStep = () => {
       data: countryList,
     },
     {
+      label: 'Postcode*',
+      placeholder: 'Enter postcode',
+      type: 'text',
+      name: 'postCode',
+    },
+    {
+      label: 'State*',
+      placeholder: 'Select',
+      type: 'select',
+      name: 'state',
+      data: australianStates,
+    },
+    {
       label: 'Contact Details',
       type: 'main-title',
+    },
+    {
+      type: 'blank',
     },
     {
       label: 'Phone Number',
@@ -251,7 +261,12 @@ const ApplicationPersonStep = () => {
   ];
 
   useEffect(() => {
-    dispatch(addPersonDetail('individual'));
+    if (personState.length < 1 && entityTypeFromCompany === 'SOLE_TRADER') {
+      dispatch(addPersonDetail('individual'));
+    }
+    if (entityTypeFromCompany === 'PARTNERSHIP' && personState.length <= 1) {
+      dispatch(addPersonDetail('individual'));
+    }
   }, []);
 
   const hasRadio = useMemo(() => ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany), [
@@ -301,6 +316,7 @@ const ApplicationPersonStep = () => {
           COMPANY_INPUT={COMPANY_INPUT}
           INDIVIDUAL_INPUT={INDIVIDUAL_INPUT}
           index={index}
+          entityTypeFromCompany={entityTypeFromCompany}
         />
       );
     },
