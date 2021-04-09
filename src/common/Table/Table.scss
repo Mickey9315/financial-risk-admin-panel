@@ -113,6 +113,7 @@
 
 .task-row{
   background-color: #ffffff !important;
+ border-bottom: 2px solid $border-color;
 }
 .task-completed-row{
   background-color: $background-color !important;
@@ -143,4 +144,5 @@
 }
 .completedTask{
   background-color: $background-color !important;
+  border-bottom: 2px solid $primary-color-1;
 }

@@ -3,7 +3,8 @@ import { DEBTORS_URLS } from '../../../constants/UrlConstants';
 
 const DebtorsApiServices = {
   getAllDebtorsList: params => ApiService.getData(DEBTORS_URLS.DEBTORS_LIST_URL, { params }),
-  getDebtorsColumnNameList: () => ApiService.getData(DEBTORS_URLS.DEBTORS_COLUMNS_NAME_LIST_URL),
+  getDebtorsColumnNameList: params =>
+    ApiService.getData(DEBTORS_URLS.DEBTORS_COLUMNS_NAME_LIST_URL, { params }),
   updateDebtorsColumnNameList: data =>
     ApiService.putData(DEBTORS_URLS.DEBTORS_COLUMNS_NAME_LIST_URL, data),
   getDebtorDetailById: id => ApiService.getData(`${DEBTORS_URLS.SELECTED_DEBTOR_DETAILS_URL}${id}`),
