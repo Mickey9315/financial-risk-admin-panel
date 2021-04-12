@@ -187,11 +187,12 @@ const Table = props => {
           )}
           {headers.length > 0 &&
             headers.map(heading => (
+              //     align={heading.type === 'boolean' ? 'center' : align}
               <th align={align} valign={valign} className={headerClass}>
                 {heading.label}
               </th>
             ))}
-          {haveActions && <th style={{ position: 'sticky', right: 0 }} />}
+          {haveActions || (extraColumns && <th style={{ position: 'sticky', right: 0 }} />)}
         </thead>
         <tbody>
           {tableData.map(e => (
@@ -295,11 +296,16 @@ function Row(props) {
     onRowSelectedDataChange(data);
   }, [onRowSelectedDataChange]);
 
+  // console.log(data?.isCompleted?.props?.children?.props?.checked);
   return (
     <>
       <tr
         onClick={() => recordSelected(data.id)}
-        className={data?.isCompleted?.props.checked ? `completedTask ${rowClass}` : rowClass}
+        className={
+          data?.isCompleted?.props?.children?.props?.checked
+            ? `completedTask ${rowClass}`
+            : rowClass
+        }
       >
         {showCheckbox && (
           <td width={10} align={align} valign={valign} className={rowClass}>
@@ -351,7 +357,11 @@ function Row(props) {
             width={10}
             align={align}
             valign={valign}
-            className={data?.isCompleted?.props.checked ? `completedTask ${rowClass}` : rowClass}
+            className={
+              data?.isCompleted?.props?.children?.props?.checked
+                ? `completedTask ${rowClass}`
+                : rowClass
+            }
           >
             {element(data)}
           </td>

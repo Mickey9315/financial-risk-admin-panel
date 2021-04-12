@@ -144,6 +144,40 @@ export const DEBTORS_URLS = {
   NOTES: {
     NOTES_LIST: `${BASE_URL}note/`,
   },
+  DOCUMENTS: {
+    DOCUMENTS_LIST: `${BASE_URL}document/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}document/column-name/`,
+    GET_DOCUMENT_TYPE_URL: `${BASE_URL}settings/document-type/`,
+    UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
+    DOWNLOAD_DOCUMENTS_URL: `${BASE_URL}document/download`,
+  },
+  TASK: {
+    TASK_LIST_URL: `${BASE_URL}task/`,
+    TASK_COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name`,
+    ADD_TASK: {
+      ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
+      ENTITY_DROP_DOWN_DATA: `${BASE_URL}task/entity-list/`,
+      SAVE_NEW_TASK: `${BASE_URL}task/`,
+    },
+    EDIT_TASK: {
+      GET_DEBTOR_TASK_DETAIL: `${BASE_URL}task/details/`,
+    },
+  },
+  APPLICATION: {
+    APPLICATION_LIST: `${BASE_URL}application/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
+    UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
+  },
+  CREDIT_LIMIT: {
+    CREDIT_LIMIT_LIST: `${BASE_URL}debtor/credit-limit/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
+    UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
+  },
+  STAKE_HOLDER: {
+    STAKE_HOLDER_LIST: `${BASE_URL}debtor/stakeholder/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
+    UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
+  },
 };
 
 export const MY_WORK_URL = {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
@@ -46,6 +46,7 @@ const entityTypeData = [
 const ClientTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const searchInputRef = useRef();
   const clientTaskListData = useSelector(({ clientManagement }) => clientManagement.task.taskList);
   const clientTaskColumnNameListData = useSelector(
     ({ clientManagement }) => clientManagement.task.columnList
@@ -540,18 +541,34 @@ const ClientTaskTab = () => {
     [toggleEditTaskModal]
   );
 
+  const checkIfEnterKeyPressed = e => {
+    const searchKeyword = searchInputRef.current.value;
+    console.log(searchKeyword);
+    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+      getClientTaskList();
+    } else if (e.key === 'Enter') {
+      if (searchKeyword.trim().toString().length !== 0) {
+        getClientTaskList({ search: searchKeyword.trim().toString() });
+      } else {
+        errorNotification('Please enter any value than press enter');
+      }
+    }
+  };
+
   return (
     <>
       <div className="tab-content-header-row">
         <div className="tab-content-header">Tasks</div>
         <div className="buttons-row">
           <BigInput
+            ref={searchInputRef}
             type="text"
             className="search"
             borderClass="tab-search mr-15"
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search here"
+            onKeyUp={checkIfEnterKeyPressed}
           />
           <Checkbox
             title="Show Completed"
@@ -566,30 +583,36 @@ const ClientTaskTab = () => {
           <Button buttonType="success" title="Add" onClick={toggleAddTaskModal} />
         </div>
       </div>
+      {/* eslint-disable-next-line no-nested-ternary */}
       {docs ? (
-        <>
-          <div className="tab-table-container">
-            <Table
-              align="left"
-              tableClass="white-header-table"
-              valign="center"
-              data={docs}
-              headers={headers}
-              refreshData={getClientTaskList}
-              recordSelected={onSelectTaskRecord}
-              extraColumns={deleteTaskColumn}
+        docs.length > 0 ? (
+          <>
+            <div className="tab-table-container">
+              <Table
+                align="left"
+                tableClass="white-header-table"
+                valign="center"
+                rowClass="cursor-pointer task-row"
+                data={docs}
+                headers={headers}
+                refreshData={getClientTaskList}
+                recordSelected={onSelectTaskRecord}
+                extraColumns={deleteTaskColumn}
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
         <Loader />
       )}

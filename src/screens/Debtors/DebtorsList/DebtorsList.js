@@ -8,8 +8,10 @@ import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
 import {
   changeDebtorsColumnListStatus,
+  getDebtorDropdownData,
   getDebtorsColumnNameList,
   getDebtorsList,
+  resetPageData,
   saveDebtorsColumnListName,
 } from '../redux/DebtorsAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -51,7 +53,8 @@ const DebtorsList = () => {
     debtorListWithPageData,
   ]);
 
-  // const { dropdownData } = useSelector(({ application }) => application.applicationFilterList);
+  const debtorDropDownData = useSelector(({ debtorsManagement }) => debtorsManagement.dropdownData);
+
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { entityType } = useMemo(() => filter, [filter]);
 
@@ -166,12 +169,12 @@ const DebtorsList = () => {
     ],
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
-  // const entityTypeSelectedValue = useMemo(() => {
-  //   const foundValue = dropdownData.entityType.find(e => {
-  //     return e._id === entityType;
-  //   });
-  //   return foundValue ? [foundValue] : [];
-  // }, [entityType]);
+  const entityTypeSelectedValue = useMemo(() => {
+    const foundValue = debtorDropDownData.entityType.find(e => {
+      return e.value === entityType;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [entityType, debtorDropDownData]);
 
   useEffect(() => {
     const params = {
@@ -205,6 +208,8 @@ const DebtorsList = () => {
     });
     getDebtorsListByFilter({ ...params, ...filters });
     dispatch(getDebtorsColumnNameList());
+    dispatch(getDebtorDropdownData());
+    return () => dispatch(resetPageData());
   }, []);
 
   const onClickViewDebtor = useCallback(id => history.replace(`debtors/view/${id}`), [history]);
@@ -278,8 +283,8 @@ const DebtorsList = () => {
               className="filter-select"
               placeholder="Select"
               name="role"
-              // options={dropdownData.entityType}
-              // values={entityTypeSelectedValue}
+              options={debtorDropDownData?.entityType}
+              values={entityTypeSelectedValue}
               onChange={handleEntityTypeFilterChange}
               searchable={false}
             />

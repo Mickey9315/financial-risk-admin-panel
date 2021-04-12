@@ -8,13 +8,11 @@ import Tab from '../../../common/Tab/Tab';
 import './DebtorsTabs.scss';
 
 import {
-  changeDebtorAddressData,
   changeDebtorData,
   getDebtorById,
   getDebtorDropdownData,
   updateDebtorData,
 } from '../redux/DebtorsAction';
-// import Input from '../../../common/Input/Input';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import Button from '../../../common/Button/Button';
@@ -41,7 +39,12 @@ const ViewInsurer = () => {
   const dispatch = useDispatch();
   const { action, id } = useParams();
   const backToDebtor = () => {
-    history.replace('/debtors');
+    console.log('back');
+    if (action === 'edit') {
+      history.push(`/debtors/view/${id}`);
+    } else {
+      history.push(`/debtors`);
+    }
   };
 
   const tabs = [
@@ -57,133 +60,121 @@ const ViewInsurer = () => {
   ];
   const debtorData = useSelector(({ debtorsManagement }) => debtorsManagement.selectedDebtorData);
   const dropdownData = useSelector(({ debtorsManagement }) => debtorsManagement.dropdownData);
+
   const INPUTS = useMemo(
     () => [
       {
-        isAddress: false,
+        isEditable: false,
         label: 'ABN*',
         placeholder: '01234',
         type: 'text',
         name: 'abn',
-        data: debtorData?.abn,
       },
       {
-        isAddress: false,
+        isEditable: false,
         label: 'ACN',
         placeholder: '01234',
         type: 'text',
         name: 'acn',
-        data: debtorData?.acn,
       },
       {
-        isAddress: false,
+        isEditable: false,
         label: 'Entity Type',
         placeholder: 'Entity Type',
         type: 'select',
         name: 'entityType',
-        data: dropdownData?.entityType,
+        data: [],
       },
       {
-        isAddress: false,
+        isEditable: false,
         label: 'Entity Name',
         placeholder: 'Enter Entity',
         type: 'text',
         name: 'entityName',
-        data: debtorData?.entityName,
       },
       {
-        isAddress: false,
+        isEditable: true,
         label: 'Trading Name',
         placeholder: 'Trading Name',
         type: 'text',
         name: 'tradingName',
-        data: debtorData?.tradingName,
       },
       {
-        isAddress: false,
+        isEditable: true,
         label: 'Phone Number',
         placeholder: '1234567890',
         type: 'text',
         name: 'contactNumber',
-        data: debtorData?.contactNumber,
       },
       {
-        isAddress: true,
+        isEditable: true,
         label: 'Property',
         placeholder: 'Property',
         type: 'text',
         name: 'property',
-        data: debtorData?.address?.property,
       },
       {
-        isAddress: true,
+        isEditable: true,
         label: 'Unit Number',
         placeholder: 'Unit Number',
         type: 'text',
         name: 'unitNumber',
-        data: debtorData?.address?.unitNumber,
       },
       {
-        isAddress: true,
+        isEditable: true,
         label: 'Street Number',
         placeholder: 'Street Number',
         type: 'text',
         name: 'streetNumber',
-        data: debtorData?.address?.streetNumber,
       },
       {
-        isAddress: true,
+        isEditable: true,
         label: 'Street Name',
         placeholder: 'Street Name',
         type: 'text',
         name: 'streetName',
-        data: debtorData?.address?.streetName,
       },
       {
-        isAddress: true,
+        isEditable: true,
         label: 'Street Type',
         placeholder: 'Street Type',
         type: 'select',
         name: 'streetType',
-        data: dropdownData?.streetType,
+        data: dropdownData?.streetType || [],
       },
       {
-        isAddress: true,
+        isEditable: true,
         label: 'Suburb',
         placeholder: 'Suburb',
         type: 'text',
         name: 'suburb',
-        data: debtorData?.address?.suburb,
       },
       {
-        isAddress: true,
+        isEditable: false,
         label: 'State',
         placeholder: 'State',
         type: 'select',
         name: 'state',
-        data: dropdownData?.australianStates,
+        data: [],
       },
       {
-        isAddress: true,
+        isEditable: false,
         label: 'Country',
         placeholder: 'Country',
-        type: 'text',
+        type: 'select',
         name: 'country',
-        data: debtorData?.address?.country,
       },
       {
-        isAddress: true,
+        isEditable: true,
         label: 'Postcode',
         placeholder: 'Postcode',
         type: 'text',
         name: 'postCode',
-        data: debtorData?.address?.postCode,
       },
     ],
-    [debtorData, dropdownData],
+    [debtorData, dropdownData]
   );
 
-  console.log(INPUTS);
   useEffect(() => {
     if (action !== 'add' && id) {
       dispatch(getDebtorById(id));
@@ -201,7 +192,7 @@ const ViewInsurer = () => {
   }, [id, history]);
 
   const handleOnChange = useCallback((name, value) => {
-    dispatch(changeDebtorData({ name, value }));
+    dispatch(changeDebtorData(name, value));
   }, []);
 
   const handleOnTextChange = useCallback(
@@ -209,92 +200,114 @@ const ViewInsurer = () => {
       const { name, value } = e.target;
       handleOnChange(name, value);
     },
-    [handleOnChange],
-  );
-
-  const handleOnAddressChange = useCallback((name, value) => {
-    dispatch(changeDebtorAddressData({ name, value }));
-  }, []);
-
-  const handleOnAddressTextChange = useCallback(
-    e => {
-      const { name, value } = e.target;
-      handleOnAddressChange(name, value);
-    },
-    [handleOnAddressChange],
+    [handleOnChange]
   );
 
   const handleOnSelectInputChange = useCallback(
     data => {
-      console.log(data);
-      handleOnChange(data[0]?.name, data[0]?.value);
+      handleOnChange(data[0]?.name, data);
     },
-    [handleOnChange],
+    [handleOnChange]
   );
-  const handleOnAddressSelectInputChange = useCallback(
-    data => {
-      handleOnAddressChange(data[0]?.name, data[0]?.value);
+
+  const setValuesFromRedux = useCallback(
+    fieldFor => {
+      switch (fieldFor) {
+        case 'abn': {
+          return debtorData.abn || '';
+        }
+        case 'acn': {
+          return debtorData.acn || '';
+        }
+        case 'entityName': {
+          return debtorData.entityName || [];
+        }
+        case 'entityType': {
+          return debtorData.entityType || [];
+        }
+        case 'contactNumber': {
+          return debtorData.contactNumber || '';
+        }
+        case 'tradingName': {
+          return debtorData.tradingName || '';
+        }
+        case 'unitNumber': {
+          return debtorData.unitNumber || '';
+        }
+        case 'property': {
+          return debtorData.property || '';
+        }
+        case 'suburb': {
+          return debtorData.suburb || '';
+        }
+        case 'streetNumber': {
+          return debtorData.streetNumber || '';
+        }
+        case 'streetName': {
+          return debtorData.streetName || '';
+        }
+        case 'streetType': {
+          return debtorData.streetType || [];
+        }
+        case 'state': {
+          return debtorData.state || [];
+        }
+        case 'country': {
+          return debtorData.country || [];
+        }
+        case 'postCode': {
+          return debtorData.postCode || '';
+        }
+
+        default:
+          return null;
+      }
     },
-    [handleOnAddressChange],
+    [debtorData]
   );
 
   const onClickUpdateDebtor = useCallback(async () => {
     if (debtorData) {
-      if (!debtorData.abn || debtorData.abn.trim().length <= 0) {
-        errorNotification('Please enter ABN number before continue');
-      } else if (debtorData.abn && debtorData.abn.trim().length < 11) {
-        errorNotification('Please enter valid ABN number before continue');
-      } else if (debtorData.acn && debtorData.acn.trim().length < 9) {
-        errorNotification('Please enter valid ACN number before continue');
-      } else if (!debtorData.entityType || debtorData.entityType.length <= 0) {
-        errorNotification('Please select entity type before continue');
-        // } else if (debtorData.address) {
-        //   Object.entries(debtorData.address).forEach(([key, value]) => {
-        //     if (!value && value.trim().length <= 0) {
-        //       errorNotification(`Please enter valid ${key}`);
-        //     }
-        //   });
-      } else if (debtorData.address.property.trim().length <= 0) {
+      if (debtorData.tradingName.trim().length <= 0) {
+        errorNotification('Please enter trading name before continue');
+      }
+      if (debtorData.contactNumber.trim().length <= 0) {
+        errorNotification('Please enter contact number before continue');
+      }
+      if (debtorData?.property?.trim().length <= 0) {
         errorNotification('Please enter property before continue');
-      } else if (debtorData.address.unitNumber.trim().length <= 0) {
+      }
+      if (debtorData.unitNumber.trim().length <= 0) {
         errorNotification('Please enter unit number continue');
-      } else if (debtorData.address.streetNumber.trim().length <= 0) {
+      }
+      if (debtorData.streetNumber.trim().length <= 0) {
         errorNotification('Please enter street number before continue');
-      } else if (debtorData.address.streetName.trim().length <= 0) {
+      }
+      if (debtorData.streetName.trim().length <= 0) {
         errorNotification('Please enter street name before continue');
-      } else if (debtorData.address.streetType.trim().length <= 0) {
+      }
+      if (debtorData.streetType[0].value.length <= 0) {
         errorNotification('Please enter street type before continue');
-      } else if (debtorData.address.suburb.trim().length <= 0) {
+      }
+      if (debtorData?.suburb?.trim().length <= 0) {
         errorNotification('Please enter suburb before continue');
-      } else if (debtorData.address.state.trim().length <= 0) {
-        errorNotification('Please enter state before continue');
-      } else if (debtorData.address.country.trim().length <= 0) {
-        errorNotification('Please enter country before continue');
-      } else if (debtorData.address.postCode.trim().length <= 0) {
-        errorNotification('Please enter post code before continue');
-      } else {
+      }
+      // if (debtorData.postCode.trim().length <= 0) {
+      //   errorNotification('Please enter post code before continue');
+      // }
+      else {
         try {
-          const finalData = {
-            entityName: debtorData?.entityName,
-            tradingName: debtorData?.tradingName,
-            contactNumber: debtorData?.contactNumber,
-            entityType: debtorData?.entityType,
-            address: {
-              property: debtorData?.address?.property,
-              unitNumber: debtorData?.address?.unitNumber,
-              streetNumber: debtorData?.address?.streetNumber,
-              streetName: debtorData?.address?.streetName,
-              streetType: debtorData?.address?.streetType,
-              suburb: debtorData?.address?.suburb,
-              state: debtorData?.address?.state,
-              country: debtorData?.address?.country,
-              postCode: debtorData?.address?.postCode,
-            },
-          };
-          if (finalData) {
-            await dispatch(updateDebtorData(id, finalData));
-            backToDebtor();
-          }
+          const finalData = {};
+          if (debtorData?.tradingName) finalData.tradingName = debtorData?.tradingName;
+          if (debtorData?.contactNumber) finalData.contactNumber = debtorData?.contactNumber;
+          if (debtorData?.property) finalData.property = debtorData?.property;
+          if (debtorData?.unitNumber) finalData.unitNumber = debtorData?.unitNumber;
+          if (debtorData?.streetNumber) finalData.streetNumber = debtorData?.streetNumber;
+          if (debtorData?.streetName) finalData.streetName = debtorData?.streetName;
+          if (debtorData?.streetType) finalData.streetType = debtorData?.streetType[0]?.value;
+          if (debtorData?.suburb) finalData.suburb = debtorData?.suburb;
+          if (debtorData?.postCode) finalData.postCode = debtorData?.postCode;
+          dispatch(updateDebtorData(id, finalData, () => backToDebtor()));
         } catch (e) {
           /**/
         }
@@ -306,9 +319,9 @@ const ViewInsurer = () => {
   const getComponentFromType = useCallback(
     input => {
       let component = null;
+      const getSelectedValues = setValuesFromRedux(input.name);
       switch (input.type) {
         case 'text':
-          // eslint-disable-next-line no-unused-vars
           component = (
             <div className="common-detail-field">
               <div className="common-detail-title">{input.label}</div>
@@ -316,10 +329,10 @@ const ViewInsurer = () => {
                 type="text"
                 name={input.name}
                 placeholder={action === 'view' ? '-' : input.placeholder}
-                value={input.data}
-                onChange={!input.isAddress ? handleOnTextChange : handleOnAddressTextChange}
-                disabled={action === 'view'}
-                borderClass={action === 'view' && 'disabled-control'}
+                value={debtorData[input.name]}
+                onChange={handleOnTextChange}
+                disabled={action === 'view' || !input.isEditable}
+                borderClass={(action === 'view' || !input.isEditable) && 'disabled-control'}
               />
             </div>
           );
@@ -333,11 +346,13 @@ const ViewInsurer = () => {
                 name={input.name}
                 placeholder={action === 'view' ? debtorData[`${input.name}`] : input.placeholder}
                 options={input.data}
-                value={`${debtorData}.${input.name}`}
+                values={getSelectedValues}
                 searchable={false}
-                onChange={!input.isAddress ? handleOnSelectInputChange : handleOnAddressSelectInputChange}
-                disabled={action === 'view'}
-                borderClass={action === 'view' && 'disabled-control'}
+                onChange={handleOnSelectInputChange}
+                disabled={action === 'view' || !input.isEditable}
+                className={`select-client-list-container ${
+                  (action === 'view' || !input.isEditable) && 'disabled-control'
+                }`}
               />
             </div>
           );
@@ -348,7 +363,7 @@ const ViewInsurer = () => {
       }
       return <>{component}</>;
     },
-    [debtorData, editDebtorClick, action, handleOnChange],
+    [debtorData, editDebtorClick, action, handleOnChange, setValuesFromRedux]
   );
 
   useEffect(() => {
@@ -359,7 +374,7 @@ const ViewInsurer = () => {
     <>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
-          <span onClick={backToDebtor}>Debtor List</span>
+          <span onClick={() => backToDebtor()}>Debtor List</span>
           <span className="material-icons-round">navigate_next</span>
           <span>View Debtor</span>
         </div>

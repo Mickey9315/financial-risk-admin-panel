@@ -1243,9 +1243,7 @@ export const getClientTaskDetail = id => {
   return async dispatch => {
     try {
       const response = await ClientTaskApiService.getClientTaskDetailById(id);
-      console.log(response);
       if (response.data.status === 'SUCCESS') {
-        console.log(response.data.data);
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.TASK.EDIT_TASK.GET_CLIENT_TASK_DETAILS_ACTION,
           data: response.data.data,

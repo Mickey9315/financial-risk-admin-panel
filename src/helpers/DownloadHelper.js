@@ -2,10 +2,6 @@
 
 //
 export const downloadAll = response => {
-  console.log(response);
-  // download(response.data, 'doc', response.headers['content-type']);
-  //   console.log(response);
-  //
   const blob = new Blob([response.data], { type: response.headers['content-type'] });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -18,6 +14,4 @@ export const downloadAll = response => {
 
   link.setAttribute('href', url);
   link.click();
-  //
-  //   // document.body.removeChild(link);
 };

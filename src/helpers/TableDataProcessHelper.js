@@ -19,7 +19,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
             handleDrawerState(header, currentData, row);
           }}
         >
-          {currentData.value}
+          {currentData?.value}
         </div>
       );
     case 'boolean':
@@ -27,8 +27,8 @@ export const processTableDataByType = ({ header, row, actions }) => {
         <div className="d-flex just-center w-100">
           <Checkbox
             title={null}
-            checked={currentData.value}
-            onChange={e => handleCheckBoxState(e.target.checked, header, currentData)}
+            checked={currentData.value || currentData}
+            onChange={e => handleCheckBoxState(e.target.checked, header, currentData, row)}
           />
         </div>
       );
