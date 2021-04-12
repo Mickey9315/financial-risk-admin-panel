@@ -230,6 +230,7 @@ const ClientList = () => {
 
   const onClickResetFilterClientList = useCallback(() => {
     dispatchFilter({ type: CLIENT_FILTER_REDUCER_ACTIONS.RESET_STATE });
+    onClickApplyFilter();
   }, [dispatchFilter]);
 
   const filterModalButtons = useMemo(

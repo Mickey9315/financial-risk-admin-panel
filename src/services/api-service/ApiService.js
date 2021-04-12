@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import { clearAuthToken, getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
+import { errorNotification } from '../../common/Toast';
 
 const instance = axios.create({
   timeout: 10000,
@@ -29,7 +30,8 @@ instance.interceptors.response.use(
   error => {
     if (error.response.status === 401) {
       clearAuthToken();
-      window.location.href = '/login';
+      errorNotification('For security purposes you have been logged out, you need to re login');
+      // window.location.href = '/login';
       return false;
     }
     if (error.response.status === 403) {

@@ -16,6 +16,7 @@ import {
   deleteUserDetails,
   getUserColumnListName,
   getUserManagementListByFilter,
+  resetPageData,
   saveUserColumnListName,
 } from '../redux/UserManagementAction';
 import Modal from '../../../common/Modal/Modal';
@@ -157,6 +158,7 @@ const UserList = () => {
 
   const onClickResetFilterUserList = useCallback(() => {
     dispatchFilter({ type: USER_FILTER_REDUCER_ACTIONS.RESET_STATE });
+    onClickApplyFilter();
   }, [dispatchFilter]);
 
   const filterModalButtons = useMemo(
@@ -296,6 +298,7 @@ const UserList = () => {
 
     getUserManagementByFilter({ ...params, ...filters });
     dispatch(getUserColumnListName());
+    return () => dispatch(resetPageData());
   }, []);
 
   useEffect(() => {

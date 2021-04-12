@@ -1,3 +1,4 @@
+
 @import "../../index";
 
 .table-class {
@@ -145,4 +146,18 @@
 .completedTask{
   background-color: $background-color !important;
   border-bottom: 2px solid $primary-color-1;
+}
+
+.table-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  max-width: 100px;
+}
+
+.table-checkbox-header {
+  width: 100px;
+  max-width: 100px;
+  text-align: center;
 }

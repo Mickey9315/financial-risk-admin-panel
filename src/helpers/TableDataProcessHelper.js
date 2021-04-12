@@ -24,7 +24,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
       );
     case 'boolean':
       return (
-        <div className="d-flex just-center w-100">
+        <div className="table-checkbox">
           <Checkbox
             title={null}
             checked={currentData.value || currentData}

@@ -187,8 +187,13 @@ const Table = props => {
           )}
           {headers.length > 0 &&
             headers.map(heading => (
-              //     align={heading.type === 'boolean' ? 'center' : align}
-              <th align={align} valign={valign} className={headerClass}>
+              <th
+                align={data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align}
+                valign={valign}
+                className={`${headerClass} ${
+                  heading.type === 'boolean' && 'table-checkbox-header'
+                }  `}
+              >
                 {heading.label}
               </th>
             ))}
@@ -296,7 +301,6 @@ function Row(props) {
     onRowSelectedDataChange(data);
   }, [onRowSelectedDataChange]);
 
-  // console.log(data?.isCompleted?.props?.children?.props?.checked);
   return (
     <>
       <tr
@@ -319,7 +323,9 @@ function Row(props) {
             case 'priority':
               return (
                 <td
-                  data-tip={data?.name?.props?.className === 'link' ? '' : value}
+                  data-tip={
+                    data?.name?.props?.className === 'link' || data?.isCompleted ? '' : value
+                  }
                   data-delay-show="100"
                   align={align}
                 >

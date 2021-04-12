@@ -21,26 +21,22 @@ export const userManagementList = (state = initialUserManagementListState, actio
   switch (action.type) {
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST:
       return {
-        ...state,
         isLoading: true,
       };
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS:
       return {
-        ...state,
         ...action.data,
         isLoading: false,
         error: null,
       };
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE:
       return {
-        ...state,
         isLoading: false,
         docs: null,
         error: action.error,
       };
     case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_PAGE_DATA: {
       return {
-        ...state,
         page: 1,
         limit: 15,
       };
