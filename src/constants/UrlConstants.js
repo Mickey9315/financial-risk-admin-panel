@@ -191,3 +191,13 @@ export const MY_WORK_URL = {
     UPDATE_TASK: `${BASE_URL}task/`,
   },
 };
+
+export const SETTING_URL = {
+  DOCUMENT_TYPE: {
+    DOCUMENT_TYPE_LIST: `${BASE_URL}settings/document-type/`,
+    ADD_NEW_DOCUMENT_TYPE_LIST: `${BASE_URL}settings/document-type/`,
+    GET_DOCTYPE_DETAIL: `${BASE_URL}settings/document-type-details/`,
+    UPDATE_DOCUMENT_BY_ID: `${BASE_URL}settings/document-type/`,
+    DELETE_DOCUMENT_BY_ID: `${BASE_URL}settings/document-type/`,
+  },
+};

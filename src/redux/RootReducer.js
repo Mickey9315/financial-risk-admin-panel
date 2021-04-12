@@ -19,6 +19,7 @@ import { insurer } from '../screens/Insurer/redux/InsurerReducer';
 import { loggedUserProfile } from '../common/Header/redux/HeaderReducer';
 import { myWorkReducer } from '../screens/MyWork/redux/MyWorkReducer';
 import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
+import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 
 const rootReducer = combineReducers({
   loggedUser,
@@ -37,5 +38,6 @@ const rootReducer = combineReducers({
   insurer,
   debtorsManagement,
   myWorkReducer,
+  settingReducer,
 });
 export default rootReducer;
