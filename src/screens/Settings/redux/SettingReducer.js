@@ -13,6 +13,24 @@ const initialSettingState = {
     error: null,
   },
   addDocumentType: [],
+  organizationDetails: {
+    isLoading: true,
+    error: null,
+  },
+  apiIntegration: {
+    isLoading: true,
+    error: null,
+  },
+  auditLogList: {
+    docs: [],
+    total: 0,
+    limit: 0,
+    page: 1,
+    pages: 1,
+    headers: [],
+    isLoading: true,
+    error: null,
+  },
 };
 
 export const settingReducer = (state = initialSettingState, action) => {
@@ -75,6 +93,34 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         addDocumentType: action.data,
+      };
+
+    case SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.FETCH_ORGANIZATION_DETAILS_SUCCESS:
+      return {
+        ...state,
+        organizationDetails: {
+          ...action.data,
+          isLoading: false,
+        },
+      };
+
+    case SETTING_REDUX_CONSTANTS.API_INTEGRATION.FETCH_API_INTEGRATION_SUCCESS:
+      return {
+        ...state,
+        apiIntegration: {
+          ...action.data,
+          isLoading: false,
+        },
+      };
+
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_SUCCESS:
+      return {
+        ...state,
+        auditLogList: {
+          ...action.data,
+          isLoading: false,
+          error: null,
+        },
       };
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:

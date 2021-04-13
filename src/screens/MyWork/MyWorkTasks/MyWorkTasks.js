@@ -132,7 +132,7 @@ const MyWorkTasks = props => {
     <>
       {docs.length ? (
         <>
-          <div className="common-list-container">
+          <div className="common-list-container" style={{ maxHeight: 'calc(100vh - 15.75rem)' }}>
             <Table
               align="left"
               valign="center"

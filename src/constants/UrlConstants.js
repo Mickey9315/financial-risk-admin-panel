@@ -200,4 +200,13 @@ export const SETTING_URL = {
     UPDATE_DOCUMENT_BY_ID: `${BASE_URL}settings/document-type/`,
     DELETE_DOCUMENT_BY_ID: `${BASE_URL}settings/document-type/`,
   },
+  ORGANIZATION_DETAILS: {
+    GET_ORGANIZATION_DETAILS: `${BASE_URL}settings/origination-details/`,
+  },
+  API_INTEGRATION: {
+    GET_API_INTEGRATION: `${BASE_URL}settings/api-integration/`,
+  },
+  AUDIT_LOG: {
+    GET_AUDIT_LOG_LIST: `${BASE_URL}settings/audit-logs/`,
+  },
 };

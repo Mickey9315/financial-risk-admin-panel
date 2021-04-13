@@ -14,15 +14,11 @@ const initialUserManagementListState = {
   limit: 0,
   page: 1,
   pages: 1,
-  isLoading: false,
+  isLoading: true,
 };
 
 export const userManagementList = (state = initialUserManagementListState, action) => {
   switch (action.type) {
-    case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST:
-      return {
-        isLoading: true,
-      };
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS:
       return {
         ...action.data,
@@ -31,6 +27,7 @@ export const userManagementList = (state = initialUserManagementListState, actio
       };
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE:
       return {
+        ...state,
         isLoading: false,
         docs: null,
         error: action.error,

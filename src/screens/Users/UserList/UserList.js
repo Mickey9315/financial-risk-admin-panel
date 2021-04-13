@@ -349,8 +349,8 @@ const UserList = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading ? (
-        docs && docs.length > 0 ? (
+      {!isLoading && docs ? (
+        docs.length > 0 ? (
           <>
             <div className="common-list-container">
               <Table

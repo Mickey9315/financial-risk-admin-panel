@@ -1,6 +1,9 @@
 import SettingDocumentTypeApiServices from '../services/SettingDocumentTypeApiServices';
 import { SETTING_REDUX_CONSTANTS } from './SettingReduxConstants';
 import { errorNotification, successNotification } from '../../../common/Toast';
+import SettingOrganizationDetailsApiService from '../services/SettingOrganizationDetailsApiService';
+import SettingApiIntegrationService from '../services/SettingApiIntegrationService';
+import SettingAuditLogApiService from '../services/SettingAuditLogApiService';
 
 export const fetchDocRequest = () => ({
   type: SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.FETCH_DOCUMENT_TYPE_LIST_REQUEST,
@@ -35,6 +38,25 @@ export const getDocTypeById = data => ({
   data,
 });
 
+export const fetchOrgDetailRequest = data => ({
+  type: SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.FETCH_ORGANIZATION_DETAILS_REQUEST,
+  data,
+});
+
+export const fetchOrgDetailSuccess = data => ({
+  type: SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.FETCH_ORGANIZATION_DETAILS_SUCCESS,
+  data,
+});
+
+export const fetchApiIntegrationSuccess = data => ({
+  type: SETTING_REDUX_CONSTANTS.API_INTEGRATION.FETCH_API_INTEGRATION_SUCCESS,
+  data,
+});
+
+export const fetchAuditLogList = data => ({
+  type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_SUCCESS,
+  data,
+});
 export const getSettingDocumentTypeList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
@@ -131,6 +153,64 @@ export const deleteSettingDocumentType = (id, cb) => {
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getApiIntegration = data => {
+  return async dispatch => {
+    try {
+      const response = await SettingApiIntegrationService.getApiIntegrationDetails(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch(fetchApiIntegrationSuccess(response.data.data));
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getOrganizationDetails = data => {
+  return async dispatch => {
+    try {
+      const response = await SettingOrganizationDetailsApiService.getOrganizationDetails(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch(fetchOrgDetailSuccess(response.data.data));
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getAuditLogsList = (params = { page: 1, limit: 15 }) => {
+  return async dispatch => {
+    try {
+      const response = await SettingAuditLogApiService.getAuditLogList(params);
+      if (response.data.status === 'SUCCESS') {
+        dispatch(fetchAuditLogList(response.data.data));
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        dispatch(fetchDocFailure(e));
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {

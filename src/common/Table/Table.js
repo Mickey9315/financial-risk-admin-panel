@@ -197,7 +197,9 @@ const Table = props => {
                 {heading.label}
               </th>
             ))}
-          {haveActions || (extraColumns && <th style={{ position: 'sticky', right: 0 }} />)}
+          {(haveActions || extraColumns.length > 0) && (
+            <th style={{ position: 'sticky', right: 0 }} />
+          )}
         </thead>
         <tbody>
           {tableData.map(e => (
@@ -363,6 +365,7 @@ function Row(props) {
             width={10}
             align={align}
             valign={valign}
+            style={{ position: 'sticky', right: 0 }}
             className={
               data?.isCompleted?.props?.children?.props?.checked
                 ? `completedTask ${rowClass}`

@@ -7,7 +7,7 @@ import {
 } from './ClientReduxConstants';
 
 const initialClientListState = {
-  clientList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: false, error: null },
+  clientList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: true, error: null },
   selectedClient: null,
   creditLimit: {
     creditLimitList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
@@ -60,14 +60,6 @@ const initialClientManagementClientListState = {
 
 export const clientManagement = (state = initialClientListState, action) => {
   switch (action.type) {
-    case CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST:
-      return {
-        ...state,
-        clientList: {
-          ...state.clientList,
-          isLoading: true,
-        },
-      };
     case CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_SUCCESS:
       return {
         ...state,

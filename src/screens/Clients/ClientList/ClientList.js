@@ -454,7 +454,7 @@ const ClientList = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading ? (
+      {!isLoading && docs ? (
         docs.length > 0 ? (
           <>
             <div className="common-list-container">

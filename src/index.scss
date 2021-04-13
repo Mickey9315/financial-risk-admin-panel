@@ -23,7 +23,7 @@ code {
   font-family: $font-regular;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
   font: $subtitle $font-regular;
   color: $placeholder-color;
 }
