@@ -165,19 +165,19 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
   if (validated) {
     const finalData = {
       stepper: 'person',
-      applicationId: editApplicationData?.applicationId,
-      entityType: editApplicationData?.companyStep?.entityType?.[0].value,
+      applicationId: editApplicationData?._id,
+      entityType: editApplicationData?.company?.entityType?.[0].value,
       partners,
     };
     try {
       if (
-        editApplicationData?.companyStep?.entityType?.[0].value === 'PARTNERSHIP' &&
+        editApplicationData?.company?.entityType?.[0].value === 'PARTNERSHIP' &&
         partners.length < 2
       ) {
         validated = false;
         errorNotification('You have to add two partners at least');
       } else if (
-        editApplicationData?.companyStep?.entityType?.[0].value === 'SOLE_TRADER' &&
+        editApplicationData?.company?.entityType?.[0].value === 'SOLE_TRADER' &&
         partners.length > 1
       ) {
         validated = false;

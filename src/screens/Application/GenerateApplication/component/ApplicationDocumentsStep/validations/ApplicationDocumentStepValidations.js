@@ -5,7 +5,7 @@ export const applicationDocumentsStepValidations = (dispatch, data, editApplicat
   if (validated) {
     const finalData = {
       stepper: 'documents',
-      applicationId: editApplicationData.applicationId,
+      applicationId: editApplicationData?._id,
       /* entityType: editApplicationData.companyStep.entityType[0].value,
       ...data, */
     };

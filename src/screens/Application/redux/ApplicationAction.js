@@ -362,6 +362,14 @@ export const removePersonDetail = index => {
     });
   };
 };
+export const wipeOutPersonsAsEntityChange = data => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.PERSON.WIPE_OUT_PERSON_STEP_DATA,
+      data,
+    });
+  };
+};
 
 // person step edit application
 export const updatePersonData = (index, name, value) => {
@@ -435,7 +443,7 @@ export const saveApplicationStepDataToBackend = data => {
       const response = await ApplicationApiServices.saveApplicationStepDataToBackend(data);
       if (response.data.status === 'SUCCESS') {
         const { _id } = response.data.data;
-        dispatch(changeEditApplicationFieldValue('applicationId', _id));
+        dispatch(changeEditApplicationFieldValue('_id', _id));
         successNotification('Application step saved successfully');
       }
     } catch (e) {

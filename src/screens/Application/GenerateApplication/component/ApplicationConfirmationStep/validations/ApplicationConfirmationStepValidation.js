@@ -10,7 +10,7 @@ export const applicationConfirmationStepValidations = (
   if (validated) {
     const finalData = {
       stepper: 'confirmation',
-      applicationId: editApplicationData.applicationId,
+      applicationId: editApplicationData._id,
     };
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));

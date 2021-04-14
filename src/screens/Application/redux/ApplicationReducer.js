@@ -13,8 +13,6 @@ const initialApplicationList = {
     pages: 1,
     headers: [],
   },
-  viewApplicationDetails: {},
-
   applicationColumnNameList: {},
 
   applicationFilterList: {
@@ -31,13 +29,14 @@ const initialApplicationList = {
   },
 
   editApplication: {
-    currentStepIndex: 0,
-    applicationId: '',
+    applicationStage: 0,
+    _id: '',
     entityType: '',
-    companyStep: {
+    company: {
       clientId: [],
-      postcode: '',
+      postCode: '',
       state: [],
+      country: [],
       suburb: '',
       streetType: [],
       streetName: '',
@@ -52,23 +51,24 @@ const initialApplicationList = {
       acn: '',
       abn: '',
       tradingName: '',
-      debtor: [],
+      debtorId: [],
       clientList: [],
+      wipeOutDetails: false,
       errors: {},
     },
-    creditLimitStep: {
-      isExtendedPaymentTerms: '',
+    creditLimit: {
+      isExtendedPaymentTerms: false,
       extendedPaymentTermsDetails: '',
-      isPassedOverdueAmount: '',
+      isPassedOverdueAmount: false,
       passedOverdueDetails: '',
       creditLimit: '',
       errors: {},
     },
-    documentStep: {
+    documents: {
       documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
       uploadDocumentApplicationData: [],
     },
-    personStep: [],
+    partners: [],
   },
 
   /* personStep: {
@@ -93,7 +93,7 @@ const initialApplicationList = {
       postCode: '',
     },
   }, */
-  company: {
+  companyData: {
     dropdownData: {
       clients: [],
       debtors: [],
@@ -120,7 +120,7 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS:
       return {
         ...state,
-        viewApplicationDetails: action.data,
+        editApplication: { ...state.editApplication, ...action.data },
       };
     case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_COLUMN_LIST_ACTION:
       return {
@@ -162,7 +162,7 @@ export const application = (state = initialApplicationList, action) => {
 
     // Company step
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_DROP_DOWN_DATA: {
-      const dropdownData = { ...state.company.dropdownData };
+      const dropdownData = { ...state.companyData.dropdownData };
       Object.entries(action.data).forEach(([key, value]) => {
         dropdownData[key] = value.data.map(entity => ({
           label: entity.name,
@@ -170,26 +170,26 @@ export const application = (state = initialApplicationList, action) => {
           value: entity._id,
         }));
       });
-      const company = {
-        ...state.company,
+      const companyData = {
+        ...state.companyData,
         dropdownData,
       };
 
       return {
         ...state,
-        company,
+        companyData,
       };
     }
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA: {
       const entityNameSearch = { ...action.data };
-      const company = {
-        ...state.company,
+      const companyData = {
+        ...state.companyData,
         entityNameSearch,
       };
 
       return {
         ...state,
-        company,
+        companyData,
       };
     }
 
@@ -227,31 +227,43 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+
     case APPLICATION_REDUX_CONSTANTS.PERSON.ADD_APPLICATION_PERSON: {
       return {
         ...state,
         editApplication: {
           ...state.editApplication,
-          personStep: [...state.editApplication.personStep, action.data],
+          partners: [...state.editApplication.partners, action.data],
         },
       };
     }
 
     case APPLICATION_REDUX_CONSTANTS.PERSON.REMOVE_APPLICATION_PERSON: {
-      const perStep = state.editApplication.personStep;
+      const perStep = state.editApplication.partners;
       return {
         ...state,
         editApplication: {
           ...state.editApplication,
-          personStep: perStep.filter((e, i) => i !== action.data),
+          partners: perStep.filter((e, i) => i !== action.data),
+        },
+      };
+    }
+
+    case APPLICATION_REDUX_CONSTANTS.PERSON.WIPE_OUT_PERSON_STEP_DATA: {
+      // const perStep = state.editApplication.partners;
+      return {
+        ...state,
+        editApplication: {
+          ...state.editApplication,
+          partners: action.data,
         },
       };
     }
 
     case APPLICATION_REDUX_CONSTANTS.PERSON.EDIT_APPLICATION_PERSON: {
-      const personStep = [...state.editApplication.personStep];
-      personStep[action.index] = {
-        ...personStep[action.index],
+      const partners = [...state.editApplication.partners];
+      partners[action.index] = {
+        ...partners[action.index],
         [action.name]: action.value,
       };
 
@@ -259,14 +271,14 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         editApplication: {
           ...state.editApplication,
-          personStep,
+          partners,
         },
       };
     }
     case APPLICATION_REDUX_CONSTANTS.PERSON.PERSON_STEP_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA: {
-      const personStep = [...state.editApplication.personStep];
-      personStep[action.index] = {
-        ...personStep[action.index],
+      const partners = [...state.editApplication.partners];
+      partners[action.index] = {
+        ...partners[action.index],
         ...action.data,
       };
 
@@ -274,14 +286,14 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         editApplication: {
           ...state.editApplication,
-          personStep,
+          partners,
         },
       };
     }
 
     case APPLICATION_REDUX_CONSTANTS.PERSON.CHANGE_APPLICATION_PERSON_TYPE: {
-      const personStep = [...state.editApplication.personStep];
-      personStep[action.index] = {
+      const partners = [...state.editApplication.partners];
+      partners[action.index] = {
         ...action.data,
       };
 
@@ -289,7 +301,7 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         editApplication: {
           ...state.editApplication,
-          personStep,
+          partners,
         },
       };
     }
@@ -300,8 +312,8 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         editApplication: {
           ...state.editApplication,
-          documentStep: {
-            ...state.editApplication.documentStep,
+          documents: {
+            ...state.editApplication.documents,
             documentTypeList: action.data,
           },
         },
@@ -309,15 +321,15 @@ export const application = (state = initialApplicationList, action) => {
 
     case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.APPLICATION_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA: {
       const editApplication = { ...state.editApplication };
-      const documentStep = { ...editApplication.documentStep };
+      const documents = { ...editApplication.documents };
       const uploadDocumentApplicationData = [...action.data];
 
       return {
         ...state,
         editApplication: {
           ...editApplication,
-          documentStep: {
-            ...documentStep,
+          documents: {
+            ...documents,
             uploadDocumentApplicationData,
           },
         },
@@ -325,15 +337,15 @@ export const application = (state = initialApplicationList, action) => {
     }
     case APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA: {
       const editApplication = { ...state.editApplication };
-      const documentStep = { ...editApplication.documentStep };
-      const uploadDocumentApplicationData = [...documentStep.uploadDocumentApplicationData];
+      const documents = { ...editApplication.documents };
+      const uploadDocumentApplicationData = [...documents.uploadDocumentApplicationData];
 
       return {
         ...state,
         editApplication: {
           ...editApplication,
-          documentStep: {
-            ...documentStep,
+          documents: {
+            ...documents,
             uploadDocumentApplicationData: [...uploadDocumentApplicationData, action.data],
           },
         },

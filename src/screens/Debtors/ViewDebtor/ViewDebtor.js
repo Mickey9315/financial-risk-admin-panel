@@ -2,11 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-dropdown-select';
-
 import Tab from '../../../common/Tab/Tab';
-
 import './DebtorsTabs.scss';
-
 import {
   changeDebtorData,
   getDebtorById,
@@ -19,9 +16,8 @@ import Button from '../../../common/Button/Button';
 import { DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
-import { errorNotification } from '../../../common/Toast';
 import DebtorsCreditLimitTab from '../components/DebtorsCreditLimitTab';
-import DebtorsStakeHolderTab from '../components/DebtorsStakeHolderTab';
+// import DebtorsStakeHolderTab from '../components/DebtorsStakeHolderTab';
 import DebtorsApplicationTab from '../components/DebtorsApplicationTab';
 import DebtorsOverduesTab from '../components/DebtorsOverduesTab';
 import DebtorsClaimsTab from '../components/DebtorsClaimsTab';
@@ -38,14 +34,14 @@ const ViewInsurer = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { action, id } = useParams();
-  const backToDebtor = () => {
-    console.log('back');
-    if (action === 'edit') {
-      history.push(`/debtors/view/${id}`);
-    } else {
-      history.push(`/debtors`);
-    }
-  };
+
+  const backToDebtor = useCallback(() => {
+    history.push(`/debtors/debtor/view/${id}`);
+  }, []);
+
+  const backToDebtorList = useCallback(() => {
+    history.push(`/debtors`);
+  }, []);
 
   const tabs = [
     'Credit Limits',
@@ -188,7 +184,7 @@ const ViewInsurer = () => {
   }, []);
 
   const editDebtorClick = useCallback(() => {
-    history.replace(`/debtors/edit/${id}`);
+    history.push(`/debtors/debtor/edit/${id}`);
   }, [id, history]);
 
   const handleOnChange = useCallback((name, value) => {
@@ -214,49 +210,49 @@ const ViewInsurer = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'abn': {
-          return debtorData.abn || '';
+          return debtorData?.abn || '';
         }
         case 'acn': {
-          return debtorData.acn || '';
+          return debtorData?.acn || '';
         }
         case 'entityName': {
-          return debtorData.entityName || [];
+          return debtorData?.entityName || [];
         }
         case 'entityType': {
-          return debtorData.entityType || [];
+          return debtorData?.entityType || [];
         }
         case 'contactNumber': {
-          return debtorData.contactNumber || '';
+          return debtorData?.contactNumber || '';
         }
         case 'tradingName': {
-          return debtorData.tradingName || '';
+          return debtorData?.tradingName || '';
         }
         case 'unitNumber': {
-          return debtorData.unitNumber || '';
+          return debtorData?.unitNumber || '';
         }
         case 'property': {
-          return debtorData.property || '';
+          return debtorData?.property || '';
         }
         case 'suburb': {
-          return debtorData.suburb || '';
+          return debtorData?.suburb || '';
         }
         case 'streetNumber': {
-          return debtorData.streetNumber || '';
+          return debtorData?.streetNumber || '';
         }
         case 'streetName': {
-          return debtorData.streetName || '';
+          return debtorData?.streetName || '';
         }
         case 'streetType': {
-          return debtorData.streetType || [];
+          return debtorData?.streetType || [];
         }
         case 'state': {
-          return debtorData.state || [];
+          return debtorData?.state || [];
         }
         case 'country': {
-          return debtorData.country || [];
+          return debtorData?.country || [];
         }
         case 'postCode': {
-          return debtorData.postCode || '';
+          return debtorData?.postCode || '';
         }
 
         default:
@@ -266,54 +262,23 @@ const ViewInsurer = () => {
     [debtorData]
   );
 
-  const onClickUpdateDebtor = useCallback(async () => {
-    if (debtorData) {
-      if (debtorData.tradingName.trim().length <= 0) {
-        errorNotification('Please enter trading name before continue');
-      }
-      if (debtorData.contactNumber.trim().length <= 0) {
-        errorNotification('Please enter contact number before continue');
-      }
-      if (debtorData?.property?.trim().length <= 0) {
-        errorNotification('Please enter property before continue');
-      }
-      if (debtorData.unitNumber.trim().length <= 0) {
-        errorNotification('Please enter unit number continue');
-      }
-      if (debtorData.streetNumber.trim().length <= 0) {
-        errorNotification('Please enter street number before continue');
-      }
-      if (debtorData.streetName.trim().length <= 0) {
-        errorNotification('Please enter street name before continue');
-      }
-      if (debtorData.streetType[0].value.length <= 0) {
-        errorNotification('Please enter street type before continue');
-      }
-      if (debtorData?.suburb?.trim().length <= 0) {
-        errorNotification('Please enter suburb before continue');
-      }
-      // if (debtorData.postCode.trim().length <= 0) {
-      //   errorNotification('Please enter post code before continue');
-      // }
-      else {
-        try {
-          const finalData = {};
-          if (debtorData?.tradingName) finalData.tradingName = debtorData?.tradingName;
-          if (debtorData?.contactNumber) finalData.contactNumber = debtorData?.contactNumber;
-          if (debtorData?.property) finalData.property = debtorData?.property;
-          if (debtorData?.unitNumber) finalData.unitNumber = debtorData?.unitNumber;
-          if (debtorData?.streetNumber) finalData.streetNumber = debtorData?.streetNumber;
-          if (debtorData?.streetName) finalData.streetName = debtorData?.streetName;
-          if (debtorData?.streetType) finalData.streetType = debtorData?.streetType[0]?.value;
-          if (debtorData?.suburb) finalData.suburb = debtorData?.suburb;
-          if (debtorData?.postCode) finalData.postCode = debtorData?.postCode;
-          dispatch(updateDebtorData(id, finalData, () => backToDebtor()));
-        } catch (e) {
-          /**/
-        }
-      }
-    }
-    return true;
+  const onClickUpdateDebtor = useCallback(() => {
+    const finalData = {
+      address: {},
+    };
+
+    if (debtorData?.tradingName) finalData.tradingName = debtorData?.tradingName?.trim();
+    if (debtorData?.contactNumber) finalData.contactNumber = debtorData?.contactNumber?.trim();
+    if (debtorData?.property) finalData.address.property = debtorData?.property?.trim();
+    if (debtorData?.unitNumber) finalData.address.unitNumber = debtorData?.unitNumber?.trim();
+    if (debtorData?.streetNumber) finalData.address.streetNumber = debtorData?.streetNumber?.trim();
+    if (debtorData?.streetName) finalData.address.streetName = debtorData?.streetName?.trim();
+    if (debtorData?.streetType)
+      finalData.address.streetType = debtorData?.streetType[0]?.value?.trim();
+    if (debtorData?.suburb) finalData.address.suburb = debtorData?.suburb?.trim();
+    if (debtorData?.postCode) finalData.address.postCode = debtorData?.postCode?.trim();
+
+    dispatch(updateDebtorData(id, finalData, () => backToDebtor()));
   }, [debtorData]);
 
   const getComponentFromType = useCallback(
@@ -344,7 +309,7 @@ const ViewInsurer = () => {
               <ReactSelect
                 type="text"
                 name={input.name}
-                placeholder={action === 'view' ? debtorData[`${input.name}`] : input.placeholder}
+                placeholder={action === 'view' ? '-' : input.placeholder}
                 options={input.data}
                 values={getSelectedValues}
                 searchable={false}
@@ -353,6 +318,7 @@ const ViewInsurer = () => {
                 className={`select-client-list-container ${
                   (action === 'view' || !input.isEditable) && 'disabled-control'
                 }`}
+                dropdownHandle={action !== 'view' && input.isEditable}
               />
             </div>
           );
@@ -374,7 +340,7 @@ const ViewInsurer = () => {
     <>
       <div className="breadcrumb-button-row">
         <div className="breadcrumb">
-          <span onClick={() => backToDebtor()}>Debtor List</span>
+          <span onClick={backToDebtorList}>Debtor List</span>
           <span className="material-icons-round">navigate_next</span>
           <span>View Debtor</span>
         </div>
@@ -403,7 +369,7 @@ const ViewInsurer = () => {
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
       <div className="common-white-container">
         {activeTabIndex === 0 && <DebtorsCreditLimitTab />}
-        {activeTabIndex === 1 && <DebtorsStakeHolderTab />}
+        {/* {activeTabIndex === 1 && <DebtorsStakeHolderTab />} */}
         {activeTabIndex === 2 && <DebtorsApplicationTab />}
         {activeTabIndex === 3 && <DebtorsOverduesTab />}
         {activeTabIndex === 4 && <DebtorsClaimsTab />}

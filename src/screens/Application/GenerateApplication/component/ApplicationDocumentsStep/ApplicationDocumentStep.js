@@ -47,30 +47,8 @@ function applicationDocumentReducer(state, action) {
 }
 
 const ApplicationDocumentStep = () => {
-  /* const documents = [
-    {
-      name: 'abc.pdf',
-      description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
-    },
-    {
-      name: 'abc.pdf',
-      description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
-    },
-    {
-      name: 'abc.pdf',
-      description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
-    },
-    {
-      name: 'abc.pdf',
-      description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
-    },
-    {
-      name: 'abc.pdf',
-      description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed',
-    },
-  ]; */
   const { documentTypeList, uploadDocumentApplicationData } = useSelector(
-    ({ application }) => application.editApplication.documentStep
+    ({ application }) => application.editApplication?.documents
   );
   const documentData = useMemo(() => uploadDocumentApplicationData, [
     uploadDocumentApplicationData,
@@ -107,13 +85,13 @@ const ApplicationDocumentStep = () => {
   );
 
   const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList.docs;
+    const finalData = documentTypeList?.docs || [];
     return finalData.map(e => ({
       name: 'documentType',
       label: e.documentTitle,
       value: e._id,
     }));
-  }, [documentTypeList.docs]);
+  }, [documentTypeList]);
 
   const onUploadClick = e => {
     e.persist();
@@ -159,12 +137,11 @@ const ApplicationDocumentStep = () => {
   }, [toggleUploadModel, dispatchSelectedApplicationDocuments]);
 
   const editApplication = useSelector(({ application }) => application.editApplication);
-  // console.log('editApplication', editApplication.applicationId);
   useEffect(() => {
-    if (editApplication && editApplication.applicationId) {
-      dispatch(getApplicationDocumentDataList(editApplication.applicationId));
+    if (editApplication && editApplication._id) {
+      dispatch(getApplicationDocumentDataList(editApplication._id));
     }
-  }, [editApplication.applicationId]);
+  }, [editApplication._id]);
 
   const onClickUploadDocument = useCallback(async () => {
     if (selectedApplicationDocuments.documentType.length === 0) {
@@ -179,7 +156,7 @@ const ApplicationDocumentStep = () => {
       formData.append('isPublic', selectedApplicationDocuments.isPublic);
       formData.append('documentType', selectedApplicationDocuments.documentType);
       formData.append('document', selectedApplicationDocuments.fileData);
-      formData.append('entityId', editApplication.applicationId);
+      formData.append('entityId', editApplication._id);
       formData.append('documentFor', 'application');
       const config = {
         headers: {
@@ -197,7 +174,7 @@ const ApplicationDocumentStep = () => {
     selectedApplicationDocuments,
     dispatchSelectedApplicationDocuments,
     toggleUploadModel,
-    editApplication.applicationId,
+    editApplication._id,
   ]);
 
   const uploadDocumentButton = useMemo(
@@ -245,8 +222,8 @@ const ApplicationDocumentStep = () => {
 
   const callBack = useCallback(() => {
     toggleConfirmationModal();
-    dispatch(getApplicationDocumentDataList(editApplication.applicationId));
-  }, [editApplication.applicationId]);
+    dispatch(getApplicationDocumentDataList(editApplication._id));
+  }, [editApplication._id]);
 
   const deleteDocumentButtons = useMemo(
     () => [
@@ -300,7 +277,7 @@ const ApplicationDocumentStep = () => {
             <th />
           </tr>
           {documentData &&
-            documentData.map(document => (
+            documentData?.map(document => (
               <tr>
                 <td>{document.documentTypeId}</td>
                 <td>{document.description}</td>

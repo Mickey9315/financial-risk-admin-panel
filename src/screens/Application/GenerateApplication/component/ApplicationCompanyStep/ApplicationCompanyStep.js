@@ -4,13 +4,13 @@ import ReactSelect from 'react-dropdown-select';
 import Input from '../../../../../common/Input/Input';
 import './ApplicationCompanyStep.scss';
 import {
-  changeEditApplicationFieldValue,
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
   searchApplicationCompanyEntityName,
   updateEditApplicationData,
   updateEditApplicationField,
+  wipeOutPersonsAsEntityChange,
 } from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
 import Loader from '../../../../../common/Loader/Loader';
@@ -51,7 +51,8 @@ const drawerReducer = (state, action) => {
 const ApplicationCompanyStep = () => {
   const dispatch = useDispatch();
 
-  const companyState = useSelector(({ application }) => application.editApplication.companyStep);
+  const companyState = useSelector(({ application }) => application.editApplication.company);
+  const { partners } = useSelector(({ application }) => application.editApplication);
   const {
     clients,
     debtors,
@@ -60,21 +61,46 @@ const ApplicationCompanyStep = () => {
     newZealandStates,
     entityType,
     countryList,
-  } = useSelector(({ application }) => application.company.dropdownData);
+  } = useSelector(({ application }) => application.companyData.dropdownData);
   const entityNameSearchDropDownData = useSelector(
-    ({ application }) => application.company.entityNameSearch
+    ({ application }) => application.companyData.entityNameSearch
   );
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const [stateValue, setStateValue] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [wipeOutDetails, setWipeOutDetails] = useState(false);
+  const toggleConfirmationModal = useCallback(
+    value => setShowConfirmModal(value !== undefined ? value : e => !e),
+    [setShowConfirmModal]
+  );
 
+  const changeEntityType = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Delete',
+        buttonType: 'danger',
+        onClick: async () => {
+          try {
+            await dispatch(wipeOutPersonsAsEntityChange([]));
+            setWipeOutDetails(true);
+            toggleConfirmationModal();
+          } catch (e) {
+            /**/
+          }
+        },
+      },
+    ],
+    [toggleConfirmationModal, wipeOutDetails]
+  );
   const INPUTS = useMemo(
     () => [
       {
         label: 'Client',
         placeholder: 'Select',
         type: 'select',
-        name: 'client',
+        name: 'clientId',
         data: clients,
       },
       {
@@ -88,7 +114,7 @@ const ApplicationCompanyStep = () => {
         label: 'Debtor',
         placeholder: 'Select',
         type: 'select',
-        name: 'debtor',
+        name: 'debtorId',
         data: debtors,
       },
       {
@@ -193,19 +219,25 @@ const ApplicationCompanyStep = () => {
         label: 'Postcode*',
         placeholder: 'Postcode',
         type: 'text',
-        name: 'postcode',
+        name: 'postCode',
         data: [],
       },
     ],
     [debtors, streetType, entityType, stateValue]
   );
 
-  const updateSingleCompanyState = useCallback((name, value) => {
-    dispatch(updateEditApplicationField('companyStep', name, value));
-  }, []);
+  const updateSingleCompanyState = useCallback(
+    (name, value) => {
+      if (wipeOutDetails) {
+        dispatch(updateEditApplicationField('company', 'wipeOutDetails', true));
+      }
+      dispatch(updateEditApplicationField('company', name, value));
+    },
+    [wipeOutDetails]
+  );
 
   const updateCompanyState = useCallback(data => {
-    dispatch(updateEditApplicationData('companyStep', data));
+    dispatch(updateEditApplicationData('company', data));
   }, []);
 
   const handleTextInputChange = useCallback(
@@ -219,30 +251,39 @@ const ApplicationCompanyStep = () => {
   const handleSelectInputChange = useCallback(
     data => {
       updateSingleCompanyState(data[0]?.name, data);
-      if (data[0]?.name === 'entityType') {
-        dispatch(changeEditApplicationFieldValue(data[0]?.name, data[0]?.value));
-      }
       if (data[0]?.name === 'country') {
-        dispatch(updateEditApplicationField('companyStep', 'state', []));
         if (data[0]?.value === 'AUS') {
           setStateValue(australianStates);
         } else if (data[0]?.value === 'NZL') {
           setStateValue(newZealandStates);
+        } else {
+          dispatch(updateEditApplicationField('company', 'state', []));
         }
       }
+      if (data[0]?.name === 'entityType' && partners.length !== 0) {
+        setShowConfirmModal(true);
+      } else {
+        dispatch(updateEditApplicationField('company', data[0]?.name, data));
+      }
     },
-    [updateSingleCompanyState]
+    [
+      updateSingleCompanyState,
+      setShowConfirmModal,
+      setStateValue,
+      newZealandStates,
+      australianStates,
+    ]
   );
 
   const handleDebtorSelectChange = useCallback(
     async data => {
       try {
-        if (!companyState.client || companyState.client.length === 0) {
+        if (!companyState.clientId || companyState.clientId.length === 0) {
           errorNotification('Please select client before continue');
           return;
         }
         handleSelectInputChange(data);
-        const params = { clientId: companyState.client[0].value };
+        const params = { clientId: companyState.clientId[0].value };
         const response = await getApplicationCompanyDataFromDebtor(data[0].value, params);
 
         if (response) {
@@ -258,11 +299,11 @@ const ApplicationCompanyStep = () => {
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
       if (e.key === 'Enter') {
-        if (!companyState.client || companyState.client.length === 0) {
-          errorNotification('Please select client before continue');
+        if (!companyState.clientId || companyState.clientId.length === 0) {
+          errorNotification('Please select clientId before continue');
           return;
         }
-        const params = { clientId: companyState.client[0].value };
+        const params = { clientId: companyState.clientId[0].value };
         const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
 
         if (response) {
@@ -276,7 +317,7 @@ const ApplicationCompanyStep = () => {
   const handleEntityNameSearch = useCallback(
     async e => {
       if (e.key === 'Enter') {
-        if (!companyState.client || companyState.client.length === 0) {
+        if (!companyState.clientId || companyState.clientId.length === 0) {
           errorNotification('Please select client before continue');
           return;
         }
@@ -284,7 +325,7 @@ const ApplicationCompanyStep = () => {
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
-        const params = { clientId: companyState.client[0].value };
+        const params = { clientId: companyState.clientId[0].value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
@@ -305,7 +346,7 @@ const ApplicationCompanyStep = () => {
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: companyState.client[0].value };
+        const params = { clientId: companyState.clientId[0].value };
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
 
         if (response) {
@@ -348,12 +389,17 @@ const ApplicationCompanyStep = () => {
           break;
         case 'entityName':
           component = (
-            <Input type="text" placeholder={input.placeholder} onKeyDown={handleEntityNameSearch} />
+            <Input
+              type="text"
+              placeholder={input.placeholder}
+              onKeyDown={handleEntityNameSearch}
+              // value={companyState?.entityName?.[0]?.label}
+            />
           );
           break;
         case 'select': {
           let handleOnChange = handleSelectInputChange;
-          if (input.name === 'debtor') {
+          if (input.name === 'debtorId') {
             handleOnChange = handleDebtorSelectChange;
           }
           component = (
@@ -376,8 +422,8 @@ const ApplicationCompanyStep = () => {
           <span>{input.label}</span>
           <div>
             {component}
-            {companyState.errors[input.name] && (
-              <div className="ui-state-error">{companyState.errors[input.name]}</div>
+            {companyState?.errors?.[input.name] && (
+              <div className="ui-state-error">{companyState?.errors?.[input.name]}</div>
             )}
           </div>
         </>
@@ -392,6 +438,17 @@ const ApplicationCompanyStep = () => {
 
   return (
     <>
+      {showConfirmModal && (
+        <Modal
+          header="Change entity type"
+          buttons={changeEntityType}
+          hideModal={toggleConfirmationModal}
+        >
+          <span className="confirmation-message">
+            Are you sure you want to change entity type it will wipe-up person step data you filled?
+          </span>
+        </Modal>
+      )}
       {drawerState.visible && (
         <Modal
           hideModal={handleToggleDropdown}

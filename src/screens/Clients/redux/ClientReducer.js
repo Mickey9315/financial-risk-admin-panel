@@ -399,8 +399,9 @@ export const clientManagement = (state = initialClientListState, action) => {
     }
 
     case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION: {
+      // TODO application id change to id
       const entityList = action.data.map(data => ({
-        label: data.applicationId || data.name,
+        label: data._id || data.name,
         value: data._id,
         name: 'entityId',
       }));

@@ -6,7 +6,6 @@ import {
 export const applicationCompanyStepValidations = (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = true;
-
   if (!data.abn || data.abn.trim().length <= 0) {
     validated = false;
     errors.abn = 'Please enter ABN number before continue';
@@ -44,20 +43,20 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     validated = false;
     errors.state = 'Please select state before continue';
   }
-  if (!data.postcode || data.postcode.length === 0) {
+  if (!data.postCode || data.postCode.length === 0) {
     validated = false;
-    errors.postcode = 'Please enter post code before continue';
+    errors.postCode = 'Please enter post code before continue';
   }
   // eslint-disable-next-line no-restricted-globals
-  if (data.postcode && isNaN(data.postcode)) {
+  if (data.postCode && isNaN(data.postCode)) {
     validated = false;
-    errors.postcode = 'Post code should be number';
+    errors.postCode = 'Post code should be number';
   }
-
   if (validated) {
+    console.log(validated);
     const {
-      client,
-      postcode,
+      clientId,
+      postCode,
       state,
       suburb,
       streetType,
@@ -72,18 +71,19 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
       abn,
       tradingName,
       outstandingAmount,
-      debtor,
+      debtorId,
       country,
       isActive,
+      wipeOutDetails,
     } = data;
 
     delete country[0].name;
 
     const finalData = {
       stepper: 'company',
-      clientId: client[0]?.value,
-      debtorId: debtor[0]?.value,
-      isActive,
+      clientId: clientId[0]?.value,
+      debtorId: debtorId[0]?.value,
+      isActive: typeof isActive === 'string' ? isActive === 'Active' : isActive,
       abn,
       acn,
       entityName: entityName[0]?.value,
@@ -91,27 +91,28 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
       contactNumber: phoneNumber,
       outstandingAmount,
       entityType: entityType[0]?.value,
+      wipeOutDetails,
       address: {
         property,
         unitNumber,
         streetNumber,
         streetName,
-        streetType: streetType[0]?.value,
+        streetType: streetType?.[0]?.value,
         suburb,
-        state: state[0]?.value,
-        country: { name: country[0].label, code: country[0].value },
-        postCode: postcode,
+        state: state?.[0].value,
+        country: { name: country?.[0]?.label, code: country?.[0]?.value },
+        postCode,
       },
-      applicationId: editApplicationData?.applicationId || '',
+      applicationId: editApplicationData?._id || '',
     };
+
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));
     } catch (e) {
       /**/
     }
-
     validated = true;
   }
-  dispatch(updateEditApplicationData('companyStep', { errors }));
+  dispatch(updateEditApplicationData('company', { errors }));
   return validated;
 };

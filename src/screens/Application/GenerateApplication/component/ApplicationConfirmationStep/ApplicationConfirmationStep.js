@@ -1,33 +1,32 @@
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import moment from 'moment';
 import './ApplicationConfirmationStep.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import Checkbox from '../../../../../common/Checkbox/Checkbox';
 import RadioButton from '../../../../../common/RadioButton/RadioButton';
-import { getApplicationDetail } from '../../../redux/ApplicationAction';
+// import { getApplicationDetail } from '../../../redux/ApplicationAction';
+// import { useQueryParams } from '../../../../../hooks/GetQueryParamHook';
 
 const ApplicationConfirmationStep = () => {
   const dispatch = useDispatch();
-  const editApplication = useSelector(({ application }) => application.editApplication);
+  // const editApplication = useSelector(({ application }) => application.editApplication);
 
   const { company, creditLimit, partners, documents } = useSelector(
-    ({ application }) => application.viewApplicationDetails
+    ({ application }) => application.editApplication
   );
-  console.log('viewApplication', company, creditLimit, partners, documents);
 
-  useEffect(() => {
-    console.log('dispatch happen');
-    if (editApplication.applicationId) {
-      console.log(21);
-      dispatch(getApplicationDetail(editApplication.applicationId));
-    }
-  }, [editApplication]);
+  // const { applicationId } = useQueryParams();
 
-  function getDocumentStepData(document) {
-    return (
-      document &&
-      document?.map(doc => {
+  /*
+ useEffect(() => {
+    dispatch(getApplicationDetail(applicationId));
+  }, []);
+  */
+
+  const getDocumentStepData = useMemo(
+    () =>
+      documents?.uploadDocumentApplicationData?.map(doc => {
         return [
           {
             title: 'Document Type',
@@ -42,9 +41,9 @@ const ApplicationConfirmationStep = () => {
             type: 'text',
           },
         ];
-      })
-    );
-  }
+      }) || [],
+    [documents]
+  );
 
   function getPersonStepData(personStep) {
     return (
@@ -381,7 +380,7 @@ const ApplicationConfirmationStep = () => {
     },
     {
       type: 'array',
-      data: getDocumentStepData(documents || []),
+      data: getDocumentStepData,
     },
   ];
   const getConfirmationComponentFromType = useCallback(

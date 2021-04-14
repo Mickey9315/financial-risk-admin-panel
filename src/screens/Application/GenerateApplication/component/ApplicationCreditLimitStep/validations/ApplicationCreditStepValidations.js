@@ -8,32 +8,32 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
   const errors = {};
   let validated = true;
 
-  if (!data.isExtendedPaymentTerms || data.isExtendedPaymentTerms.trim().length <= 0) {
+  if (!data?.isExtendedPaymentTerms) {
     errors.isExtendedPaymentTerms = 'Please select any one option';
     validated = false;
   }
   if (
-    data.isExtendedPaymentTerms === 'yes' &&
+    data.isExtendedPaymentTerms &&
     (!data.extendedPaymentTermsDetails || data.extendedPaymentTermsDetails.trim().length <= 0)
   ) {
     errors.extendedPaymentTermsDetails = 'Please provide details';
     validated = false;
   }
-  if (!data.isPassedOverdueAmount || data.isPassedOverdueAmount.trim().length <= 0) {
+  if (!data?.isPassedOverdueAmount) {
     errors.isPassedOverdueAmount = 'Please select any one option';
     validated = false;
   }
   if (
-    data.isPassedOverdueAmount === 'yes' &&
+    data.isPassedOverdueAmount &&
     (!data.passedOverdueDetails || data.passedOverdueDetails.trim().length <= 0)
   ) {
     errors.passedOverdueDetails = 'Please provide details';
     validated = false;
   }
-  if (!data.creditLimit || data.creditLimit.trim().length <= 0) {
+  if (!data.creditLimit || data?.creditLimit.toString().trim().length <= 0) {
     errors.creditLimit = 'Please enter credit limit amount';
     validated = false;
-  } else if (!data.creditLimit.match(NUMBER_REGEX)) {
+  } else if (!data?.creditLimit.toString().match(NUMBER_REGEX)) {
     errors.creditLimit = 'Please enter valid credit limit amount';
     validated = false;
   } else if (parseInt(data.creditLimit, 10) === 0) {
@@ -46,13 +46,12 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
 
     const finalData = {
       stepper: 'credit-limit',
-      applicationId: editApplicationData.applicationId,
-      entityType: editApplicationData.companyStep.entityType[0].value,
+      applicationId: editApplicationData?._id,
+      entityType: editApplicationData.company?.entityType[0]?.value,
       ...data,
-      isExtendedPaymentTerms: isExtendedPaymentTerms === 'yes',
-      isPassedOverdueAmount: isPassedOverdueAmount === 'no',
+      isExtendedPaymentTerms,
+      isPassedOverdueAmount,
     };
-
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));
     } catch (e) {
@@ -60,6 +59,6 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
     }
     validated = true;
   }
-  dispatch(updateEditApplicationData('creditLimitStep', { errors }));
+  dispatch(updateEditApplicationData('creditLimit', { errors }));
   return validated;
 };

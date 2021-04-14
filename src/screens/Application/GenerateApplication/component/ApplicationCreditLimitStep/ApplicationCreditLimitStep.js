@@ -15,16 +15,24 @@ const ApplicationCreditLimitStep = () => {
     passedOverdueDetails,
     creditLimit,
     errors,
-  } = useSelector(({ application }) => application.editApplication.creditLimitStep);
+  } = useSelector(({ application }) => application.editApplication?.creditLimit);
 
   const updateSingleCompanyState = useCallback((name, value) => {
-    dispatch(updateEditApplicationField('creditLimitStep', name, value));
+    dispatch(updateEditApplicationField('creditLimit', name, value));
   }, []);
 
   const handleInputChange = useCallback(
     e => {
       const { name, value } = e.target;
       updateSingleCompanyState(name, value);
+    },
+    [updateSingleCompanyState]
+  );
+
+  const handleRadioChange = useCallback(
+    e => {
+      const { name, value } = e.target;
+      updateSingleCompanyState(name, value === 'yes');
     },
     [updateSingleCompanyState]
   );
@@ -40,19 +48,19 @@ const ApplicationCreditLimitStep = () => {
           name="isExtendedPaymentTerms"
           label="Yes"
           value="yes"
-          checked={isExtendedPaymentTerms === 'yes'}
-          onChange={handleInputChange}
+          checked={isExtendedPaymentTerms}
+          onChange={handleRadioChange}
         />
         <RadioButton
           id="any-extended-pay-no"
           name="isExtendedPaymentTerms"
           label="No"
           value="no"
-          checked={isExtendedPaymentTerms === 'no'}
-          onChange={handleInputChange}
+          checked={!isExtendedPaymentTerms}
+          onChange={handleRadioChange}
         />
-        {errors.isExtendedPaymentTerms && (
-          <div className="ui-state-error">{errors.isExtendedPaymentTerms}</div>
+        {errors?.isExtendedPaymentTerms && (
+          <div className="ui-state-error">{errors?.isExtendedPaymentTerms}</div>
         )}
       </div>
       <div className="if-yes-row">
@@ -64,8 +72,8 @@ const ApplicationCreditLimitStep = () => {
           value={extendedPaymentTermsDetails}
           onChange={handleInputChange}
         />
-        {errors.extendedPaymentTermsDetails && (
-          <div className="ui-state-error">{errors.extendedPaymentTermsDetails}</div>
+        {errors?.extendedPaymentTermsDetails && (
+          <div className="ui-state-error">{errors?.extendedPaymentTermsDetails}</div>
         )}
       </div>
 
@@ -78,19 +86,19 @@ const ApplicationCreditLimitStep = () => {
           name="isPassedOverdueAmount"
           label="Yes"
           value="yes"
-          checked={isPassedOverdueAmount === 'yes'}
-          onChange={handleInputChange}
+          checked={isPassedOverdueAmount}
+          onChange={handleRadioChange}
         />
         <RadioButton
           id="passed-max-period-no"
           name="isPassedOverdueAmount"
           label="No"
           value="no"
-          checked={isPassedOverdueAmount === 'no'}
-          onChange={handleInputChange}
+          checked={!isPassedOverdueAmount}
+          onChange={handleRadioChange}
         />
-        {errors.isPassedOverdueAmount && (
-          <div className="ui-state-error">{errors.isPassedOverdueAmount}</div>
+        {errors?.isPassedOverdueAmount && (
+          <div className="ui-state-error">{errors?.isPassedOverdueAmount}</div>
         )}
       </div>
 
@@ -103,8 +111,8 @@ const ApplicationCreditLimitStep = () => {
           value={passedOverdueDetails}
           onChange={handleInputChange}
         />
-        {errors.passedOverdueDetails && (
-          <div className="ui-state-error">{errors.passedOverdueDetails}</div>
+        {errors?.passedOverdueDetails && (
+          <div className="ui-state-error">{errors?.passedOverdueDetails}</div>
         )}
       </div>
 
@@ -122,7 +130,7 @@ const ApplicationCreditLimitStep = () => {
           onChange={handleInputChange}
         />
       </div>
-      {errors.creditLimit && <div className="ui-state-error">{errors.creditLimit}</div>}
+      {errors?.creditLimit && <div className="ui-state-error">{errors?.creditLimit}</div>}
     </>
   );
 };

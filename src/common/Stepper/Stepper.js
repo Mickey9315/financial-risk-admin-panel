@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import './Stepper.scss';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+
 import Button from '../Button/Button';
 import { getLabelFromValues } from '../../helpers/entityiTypeHelper';
 import { entityTypeMapperObjectForPersonStep } from '../../helpers/Mappers';
-import { getApplicationDetail } from '../../screens/Application/redux/ApplicationAction';
+// import { getApplicationDetail } from '../../screens/Application/redux/ApplicationAction';
 import { errorNotification } from '../Toast';
 
 const Stepper = props => {
@@ -34,14 +35,6 @@ const Stepper = props => {
       setActiveStep(prevState => prevState + 1);
     }
   }, [steps, activeStep, setActiveStep, nextClick]);
-  const dispatch = useDispatch();
-  const editApplication = useSelector(({ application }) => application.editApplication);
-
-  useEffect(() => {
-    if (editApplication && editApplication.applicationId) {
-      dispatch(getApplicationDetail(editApplication.applicationId));
-    }
-  }, [editApplication.applicationId]);
 
   useEffect(() => {
     if (stepIndex !== activeStep) {
@@ -52,8 +45,8 @@ const Stepper = props => {
   const applicationDetail = useSelector(({ application }) => application.editApplication);
 
   const entityType = useMemo(
-    () => applicationDetail?.companyStep?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
-    [applicationDetail.companyStep?.entityType]
+    () => applicationDetail?.company?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
+    [applicationDetail.company?.entityType]
   );
   return (
     <div className={className} {...restProps}>
@@ -79,7 +72,7 @@ const Stepper = props => {
       <div className="step-content">{children}</div>
       <div className="stepper-buttons-row">
         <div>
-          {steps[activeStep].text === 'Person' && (
+          {steps?.[activeStep]?.text === 'Person' && (
             <Button
               buttonType="secondary"
               title={getLabelFromValues(
@@ -100,14 +93,14 @@ const Stepper = props => {
           {activeStep > 0 && (
             <Button
               buttonType="outlined-primary"
-              title={`Back to ${steps[activeStep - 1].text}`}
+              title={`Back to ${steps?.[activeStep - 1]?.text}`}
               onClick={onClickBackButton}
             />
           )}
           <Button
             className="ml-15"
             buttonType="primary"
-            title={`Save${activeStep !== steps.length - 1 ? ' and Next' : ''}`}
+            title={`Save${activeStep !== steps?.length - 1 ? ' and Next' : ''}`}
             onClick={onClickNextButton}
           />
         </div>
