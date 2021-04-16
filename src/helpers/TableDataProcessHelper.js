@@ -11,17 +11,21 @@ export const processTableDataByType = ({ header, row, actions }) => {
     case 'date':
       return moment(currentData).format('DD-MMM-YYYY');
     case 'modal':
-      return (
-        <div
-          className="link"
-          onClick={e => {
-            e.stopPropagation();
-            handleDrawerState(header, currentData, row);
-          }}
-        >
-          {currentData?.value}
-        </div>
-      );
+      if (currentData?.value) {
+        return (
+          <div
+            className="link"
+            onClick={e => {
+              e.stopPropagation();
+              handleDrawerState(header, currentData, row);
+            }}
+          >
+            {currentData?.value}
+          </div>
+        );
+      }
+      return '-';
+
     case 'boolean':
       return (
         <div className="table-checkbox">

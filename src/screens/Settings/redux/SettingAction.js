@@ -92,11 +92,21 @@ export const updateDocumentFieldStatus = (name, value) => {
 
 export const addNewSettingDocType = (data, cb) => {
   return async dispatch => {
-    const response = await SettingDocumentTypeApiServices.addNewDocumentType(data);
-    if (response.data.status === 'SUCCESS') {
-      successNotification(response.data.message);
-      cb();
-      dispatch(resetAddDocType());
+    try {
+      const response = await SettingDocumentTypeApiServices.addNewDocumentType(data);
+      if (response.data.status === 'SUCCESS') {
+        successNotification('New document type added successfully');
+        cb();
+        dispatch(resetAddDocType());
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification(e.response.data.message);
+        }
+      }
     }
   };
 };
@@ -113,7 +123,7 @@ export const getDocumentTypeDetailsById = id => {
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
-          errorNotification('Internal server error');
+          errorNotification(e.response.data.message);
         }
       }
     }

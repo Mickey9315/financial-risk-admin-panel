@@ -168,7 +168,7 @@ const Table = props => {
 
   useEffect(() => {
     onChangeRowSelection(selectedRowData);
-  }, [selectedRowData]);
+  }, [selectedRowData, onChangeRowSelection]);
 
   return (
     <>
@@ -301,7 +301,7 @@ function Row(props) {
 
   const onRowSelected = useCallback(() => {
     onRowSelectedDataChange(data);
-  }, [onRowSelectedDataChange]);
+  }, [onRowSelectedDataChange, data]);
 
   return (
     <>
@@ -324,20 +324,24 @@ function Row(props) {
               return null;
             case 'priority':
               return (
+                <td data-tip={value} data-delay-show="100" align={align}>
+                  <span className={`task-priority-${value}`}>{value || '-'}</span>
+                </td>
+              );
+            case 'isCompleted':
+              return (
                 <td
-                  data-tip={
-                    data?.name?.props?.className === 'link' || data?.isCompleted ? '' : value
-                  }
+                  data-tip={data?.[key]?.props?.className === 'table-checkbox' ? '' : value}
                   data-delay-show="100"
                   align={align}
                 >
-                  <span className={`task-priority-${value}`}>{value || '-'}</span>
+                  {value || '-'}
                 </td>
               );
             default:
               return (
                 <td
-                  data-tip={data?.name?.props?.className === 'link' ? '' : value}
+                  data-tip={data?.[key]?.props?.className === 'link' ? '' : value}
                   data-delay-show="100"
                   align={align}
                 >

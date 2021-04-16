@@ -212,7 +212,9 @@ const DebtorsList = () => {
     return () => dispatch(resetPageData());
   }, []);
 
-  const onClickViewDebtor = useCallback(id => history.replace(`debtors/view/${id}`), [history]);
+  const onClickViewDebtor = useCallback(id => history.replace(`debtors/debtor/view/${id}`), [
+    history,
+  ]);
 
   return (
     <>

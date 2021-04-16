@@ -30,7 +30,7 @@ const initialDebtorDocumentState = {
   description: '',
   fileData: '',
   isPublic: false,
-  documentType: [],
+  documentType: '',
 };
 
 const DEBTOR_DOCUMENT_REDUCER_ACTIONS = {
@@ -178,9 +178,13 @@ const DebtorsDocumentsTab = () => {
   );
 
   const onClickUploadDocument = useCallback(async () => {
-    if (selectedDebtorDocument.documentType.length === 0) {
+    if (!selectedDebtorDocument.documentType) {
       errorNotification('Please select document type');
-    } else if (!selectedDebtorDocument.description) {
+    }
+    if (!fileData) {
+      errorNotification('Please select file to upload');
+    }
+    if (!selectedDebtorDocument.description) {
       errorNotification('Description is required');
     } else {
       const formData = new FormData();
@@ -206,7 +210,34 @@ const DebtorsDocumentsTab = () => {
   }, [selectedDebtorDocument, fileData, dispatchSelectedDebtorDocument, toggleUploadModel]);
 
   const onUploadClick = e => {
-    e.persist();
+    //  e.persist();
+    // if (e.target.files && e.target.files.length > 0) {
+    //   const fileExtension = ['jpeg', 'jpg', 'png'];
+    //   const mimeType = [
+    //     'image/jpeg',
+    //     'image/jpg',
+    //     'image/png',
+    //     'application/msword',
+    //     'application/vnd.ms-excel',
+    //     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    //     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    //     'application/vnd.ms-excel.sheet.macroEnabled.12',
+    //   ];
+    //   const checkExtension =
+    //     fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+    //   const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+    //   if (!(checkExtension || checkMimeTypes)) {
+    //     errorNotification('Only image and document type file allowed');
+    //     return;
+    //   }
+    //   const checkFileSize = e.target.files[0].size > 4194304;
+    //   if (checkFileSize) {
+    //     errorNotification('File size should be less than 4 mb');
+    //     return;
+    //   }
+    //   setFileData(e.target.files[0]);
+    // }
+    // e.persist();
     if (e.target.files && e.target.files.length > 0) {
       const fileExtension = ['jpeg', 'jpg', 'png'];
       const mimeType = [
@@ -219,19 +250,24 @@ const DebtorsDocumentsTab = () => {
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'application/vnd.ms-excel.sheet.macroEnabled.12',
       ];
+
       const checkExtension =
         fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
       const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+
       if (!(checkExtension || checkMimeTypes)) {
-        errorNotification('Only image and document types file allowed');
+        errorNotification('Only image and document type file allowed');
+        return false;
       }
       const checkFileSize = e.target.files[0].size > 4194304;
       if (checkFileSize) {
         errorNotification('File size should be less than 4 mb');
-      } else {
-        setFileData(e.target.files[0]);
+        return false;
       }
+      setFileData(e.target.files[0]);
+      return true;
     }
+    return false;
   };
 
   const onCloseUploadDocumentButton = useCallback(() => {
@@ -452,7 +488,7 @@ const DebtorsDocumentsTab = () => {
             <span>Please upload your documents here</span>
             <FileUpload
               isProfile={false}
-              fileName={fileData.name || 'Browse'}
+              fileName={fileData?.name || 'Browse...'}
               className="document-upload-input"
               handleChange={onUploadClick}
             />

@@ -97,6 +97,7 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameListData = {}, isRe
       }
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getDebtorsColumnNameList());
       } else {
         const response = await DebtorsApiServices.updateDebtorsColumnNameList(data);
         if (response && response.data && response.data.status === 'SUCCESS') {
@@ -425,6 +426,7 @@ export const saveDebtorDocumentsColumnListName = ({
 
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getDebtorDocumentsColumnNamesList());
       } else {
         const response = await DebtorsDocumentApiServices.updateDebtorDocumentColumnListName(data);
 
@@ -628,6 +630,7 @@ export const saveDebtorTaskColumnNameListSelection = ({
 
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getDebtorTaskColumnList());
       } else {
         const response = await DebtorTaskApiService.updateDebtorTaskColumnNameList(data);
 
@@ -898,6 +901,7 @@ export const saveDebtorApplicationColumnNameList = ({
       }
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getDebtorApplicationColumnNameList());
       } else {
         const response = await DebtorApplicationApiServices.updateDebtorApplicationColumnNameList(
           data
@@ -1007,6 +1011,7 @@ export const saveDebtorCreditLimitColumnNameList = ({
       }
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getCreditLimitColumnsNameList());
       } else {
         const response = await DebtorCreditLimitApiServices.updateDebtorCreditLimitColumnNameList(
           data
@@ -1119,6 +1124,7 @@ export const saveDebtorStakeHolderColumnNameList = ({
       }
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getDebtorStakeHolderColumnNameList());
       } else {
         const response = await DebtorStakeHolderApiServices.updateDebtorStakeHolderColumnNameList(
           data

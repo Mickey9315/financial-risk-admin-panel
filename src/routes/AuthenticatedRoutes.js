@@ -59,7 +59,7 @@ export const AllAuthenticatedRoutes = () => {
         component={GenerateApplication}
       />
       <AuthenticatedRoute exact path="/debtors" component={DebtorsList} />
-      <AuthenticatedRoute exact path="/debtors/:action/:id" component={ViewDebtor} />
+      <AuthenticatedRoute exact path="/debtors/debtor/:action/:id" component={ViewDebtor} />
       <AuthenticatedRoute exact path="/claims" component={null} />
       <AuthenticatedRoute exact path="/over-dues" component={null} />
       <AuthenticatedRoute exact path="/reports" component={null} />
@@ -70,7 +70,7 @@ export const AllAuthenticatedRoutes = () => {
       <AuthenticatedRoute exact path="/clients/client/:action/:id" component={ViewClient} />
       <AuthenticatedRoute exact path="/insurer" component={InsurerList} />
       <AuthenticatedRoute exact path="/insurer/:action/:id" component={ViewInsurer} />
-      {/* <AuthenticatedRoute exact path="/insurer" component={ViewInsurer} /> */}
+      <AuthenticatedRoute exact path="/insurer" component={ViewInsurer} />
     </Dashboard>
   );
 };
