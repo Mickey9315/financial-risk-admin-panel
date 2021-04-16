@@ -44,6 +44,23 @@ export const APPLICATION_URLS = {
     UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
     APPLICATION_DELETE_DOCUMENT: `${BASE_URL}document/`,
   },
+
+  // View Application
+  VIEW_APPLICATION: {
+    APPLICATION_TASK: {
+      GET_TASK_LIST: `${BASE_URL}task/`,
+      ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
+      ENTITY_DROP_DOWN_DATA: `${BASE_URL}task/entity-list/`,
+      GET_APPLICATION_TASK_DETAIL: `${BASE_URL}task/details/`,
+      SAVE_NEW_TASK: `${BASE_URL}task/`,
+    },
+    APPLICATION_MODULES: {
+      GET_MODULE_LIST: `${BASE_URL}application/modules/`,
+    },
+    APPLICATION_NOTES: {
+      GET_NOTES_LIST: `${BASE_URL}note/`,
+    },
+  },
 };
 
 export const ORGANISATION_MODULE_URLS = {

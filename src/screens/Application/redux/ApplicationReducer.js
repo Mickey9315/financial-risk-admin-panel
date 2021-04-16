@@ -108,6 +108,25 @@ const initialApplicationList = {
       data: [],
     },
   },
+
+  viewApplication: {
+    applicationDetail: [],
+    task: {
+      taskList: [],
+      addTask: [],
+    },
+    applicationModulesList: {
+      documents: [],
+      logs: [],
+    },
+    notes: {
+      noteList: [],
+    },
+    dropDownData: {
+      assigneeList: [],
+      entityList: [],
+    },
+  },
 };
 
 export const application = (state = initialApplicationList, action) => {
@@ -351,6 +370,138 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+
+    // View Application
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_ACTION:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          applicationDetail: action.data,
+        },
+      };
+
+    // application task
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.APPLICATION_TASK_LIST_ACTION:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          task: {
+            ...state.viewApplication.task,
+            taskList: action.data,
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+      .ASSIGNEE_DROP_DOWN_DATA_ACTION: {
+      const assigneeList = action.data.map(data => ({
+        label: data.name,
+        value: data._id,
+        name: 'assigneeId',
+      }));
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          dropDownData: {
+            ...state.viewApplication.dropDownData,
+            assigneeList,
+          },
+        },
+      };
+    }
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+      .ENTITY_DROP_DOWN_DATA_ACTION: {
+      const entityList = action.data.map(data => ({
+        label: data.applicationId || data.name,
+        value: data._id,
+        name: 'entityId',
+      }));
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          task: {
+            ...state.viewApplication.task,
+            addTask: {
+              ...state.viewApplication.task.addTask,
+              entityId: [],
+            },
+          },
+          dropDownData: {
+            ...state.viewApplication.dropDownData,
+            entityList,
+          },
+        },
+      };
+    }
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.UPDATE_TASK_FIELD_STATUS:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          task: {
+            ...state.viewApplication.task,
+            addTask: {
+              ...state.viewApplication.task.addTask,
+              [action.name]: action.value,
+            },
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.RESET_ADD_TASK_STATE_ACTION:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          task: {
+            ...state.viewApplication.task,
+            addTask: [],
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+      .GET_APPLICATION_TASK_DETAILS_ACTION:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          task: {
+            ...state.viewApplication.task,
+            addTask: action.data,
+          },
+        },
+      };
+
+    // Application Module
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+      .APPLICATION_MODULE_LIST_DATA:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          applicationModulesList: action.data,
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_NOTES.APPLICATION_NOTES_LIST_DATA:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          notes: {
+            ...state.viewApplication.notes,
+            noteList: action.data,
+          },
+        },
+      };
 
     default:
       return state;

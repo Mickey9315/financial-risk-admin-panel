@@ -150,10 +150,10 @@
   border-radius: 5px;
 }
 
-.guidelines-title {
+.blockers-title {
   margin-bottom: 7px;
   font: $subtitle $font-medium;
-  color: $primary-color;
+  color:$secondary-color;
 }
 
 .current-business-address-title {
@@ -194,4 +194,9 @@
 
 .application-filter-modal .form-title {
   width: 175px;
+}
+
+.accordion-body-container.application-active-accordion-scroll.active-accordion{
+  max-height: 60vh;
+  overflow: auto!important;
 }

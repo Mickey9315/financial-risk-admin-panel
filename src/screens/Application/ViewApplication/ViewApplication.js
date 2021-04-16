@@ -1,364 +1,295 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
 import './ViewApplication.scss';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
+import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
+import PropTypes from 'prop-types';
 import Accordion from '../../../common/Accordion/Accordion';
-import AccordionItem from '../../../common/Accordion/AccordionItem';
-import Checkbox from '../../../common/Checkbox/Checkbox';
-import Button from '../../../common/Button/Button';
+import { getApplicationDetailById, resetApplicationDetail } from '../redux/ApplicationAction';
+import TableApiService from '../../../common/Table/TableApiService';
+import Drawer from '../../../common/Drawer/Drawer';
+import ApplicationReportAccordion from './component/ApplicationReportAccordion';
+import ApplicationTaskAccordion from './component/ApplicationTaskAccordion';
+import ApplicationNotesAccordion from './component/ApplicationNotesAccordion';
+import ApplicationAlertsAccordion from './component/ApplicationAlertsAccordion';
+import ApplicationDocumentsAccordion from './component/ApplicationDocumentsAccordion';
+import ApplicationLogsAccordion from './component/ApplicationLogsAccordion';
+import { errorNotification } from '../../../common/Toast';
+
+export const DRAWER_ACTIONS = {
+  SHOW_DRAWER: 'SHOW_DRAWER',
+  HIDE_DRAWER: 'HIDE_DRAWER',
+};
+
+const drawerInitialState = {
+  visible: false,
+  data: [],
+};
+
+const drawerReducer = (state, action) => {
+  switch (action.type) {
+    case DRAWER_ACTIONS.SHOW_DRAWER:
+      return {
+        visible: true,
+        data: action.data,
+      };
+    case DRAWER_ACTIONS.HIDE_DRAWER:
+      return { ...drawerInitialState };
+
+    default:
+      return state;
+  }
+};
 
 const ViewApplication = () => {
   const history = useHistory();
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const applicationDetail = useSelector(
+    ({ application }) => application?.viewApplication?.applicationDetail || []
+  );
+
+  const { status } = useMemo(() => applicationDetail, [applicationDetail]);
+
+  /** *
+   * status checker
+   * ** */
+  if (status) {
+    if (status[0].value === 'DRAFT') {
+      history.push('/applications/application/generate');
+    }
+  }
+
+  useEffect(() => {
+    dispatch(getApplicationDetailById(id));
+    return () => dispatch(resetApplicationDetail());
+  }, []);
+
+  // end status checker
+
+  const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
+  const handleDrawerState = useCallback(async (idDrawer, headers) => {
+    try {
+      const response = await TableApiService.tableActions({
+        url: headers[0].request.url,
+        method: headers[0].request.method,
+        id: idDrawer,
+      });
+
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.SHOW_DRAWER,
+        data: response.data.data,
+      });
+    } catch (e) {
+      errorNotification('Something went wrong.');
+    }
+  }, []);
+  const closeDrawer = useCallback(() => {
+    dispatchDrawerState({
+      type: DRAWER_ACTIONS.HIDE_DRAWER,
+    });
+  }, []);
+
   const backToApplicationList = () => {
     history.replace('/applications');
   };
-  const applicationDetails = [
-    {
-      title: 'Application ID',
-      value: 'DE1-8D8A3B0EEBA250B-61',
-      type: 'text',
-    },
-    {
-      title: 'Credit Limit',
-      value: '$0000',
-      type: 'text',
-    },
-    {
-      title: 'Client Name',
-      value: 'A B Plastics Pty Ltd',
-      type: 'link',
-    },
-    {
-      title: 'Debtor Name',
-      value: 'Alfred Construction Pty Limited',
-      type: 'link',
-    },
-    {
-      title: 'ABN',
-      value: '012340123401234',
-      type: 'text',
-    },
-    {
-      title: 'Entity Name',
-      value: 'Lorem ipsum',
-      type: 'text',
-    },
-    {
-      title: 'Entity Type',
-      value: 'Lorem ipsum',
-      type: 'text',
-    },
-    {
-      title: 'Trading Name',
-      value: 'Lorem ipsum',
-      type: 'text',
-    },
-    {
-      title: 'Phone Number',
-      value: '12345678',
-      type: 'text',
-    },
-    {
-      title: 'Outstanding Amount',
-      value: '$0000',
-      type: 'text',
-    },
-    {
-      title: 'Policy Name',
-      value: 'Lorem ipsum',
-      type: 'link',
-    },
-    {
-      title: 'Trading Name',
-      value: 'Lorem ipsum',
-      type: 'text',
-    },
-  ];
-  const guidelines = [
-    {
-      value:
-        'Limit must be within the Excess and Discretionary Limit - Check our CRM Database to confirm',
-    },
-    {
-      value: 'Confirm the correct legal entity and company status (Must be registered)- Check ASIC',
-    },
-    {
-      value: 'No Nil credit limits issued by other insurers in our database - TCR Portal',
-    },
-    {
-      value: 'ABR check to confirm GST registration - ABN Lookup',
-    },
-    {
-      value: 'Make sure the company has been incorporated for at least 12 months - ASIC',
-    },
-    {
-      value: 'No court actions or legal or collection activity present above $5,000',
-    },
-    {
-      value: 'No adverse against director/s, owner/s or Shareholders',
-    },
-    {
-      value: 'No related party registered charges',
-    },
-    {
-      value: 'Sole Traders must be registered for GST - Check ASIC or ABN Lookup',
-    },
-    {
-      value: 'Monitor for 12 Months on Equifax or D&B or Creditor Watch',
-    },
-  ];
+  const applicationDetails = useMemo(
+    () => [
+      {
+        title: 'Application ID',
+        value: applicationDetail?.applicationId,
+        name: '_id',
+        type: 'text',
+      },
+      {
+        title: 'Credit Limit',
+        value: applicationDetail?.creditLimit,
+        name: 'creditLimit',
+        type: 'text',
+      },
+      {
+        title: 'Client Name',
+        value: applicationDetail?.clientId?.[0],
+        name: 'clientId',
+        type: 'link',
+      },
+      {
+        title: 'Debtor Name',
+        value: applicationDetail?.debtorId?.[0],
+        name: 'debtorId',
+        type: 'link',
+      },
+      {
+        title: 'ABN',
+        value: applicationDetail?.abn,
+        name: 'abn',
+        type: 'text',
+      },
+      {
+        title: 'Entity Name',
+        value: applicationDetail?.entityName,
+        name: 'entityName',
+        type: 'text',
+      },
+      {
+        title: 'Entity Type',
+        value: applicationDetail?.entityType,
+        name: 'entityType',
+        type: 'text',
+      },
+      {
+        title: 'Trading Name',
+        value: applicationDetail?.tradingName,
+        name: 'tradingName',
+        type: 'text',
+      },
+    ],
+    [applicationDetail]
+  );
+  const blockers = applicationDetails?.blockers;
   return (
     <>
-      <div className="breadcrumb mt-10">
-        <span onClick={backToApplicationList}>Application List</span>
-        <span className="material-icons-round">navigate_next</span>
-        <span>View Application</span>
-      </div>
-      <div className="view-application-container">
-        <div className="view-application-details-left">
-          <div className="common-white-container">
-            <div className="">Status</div>
-            <div className="view-application-status">
-              <ReactSelect placeholder="Status" searchable={false} />
-            </div>
-            <div className="application-details-grid">
-              {applicationDetails.map(detail => (
-                <div>
-                  <div className="font-field mb-5">{detail.title}</div>
-                  {detail.type === 'text' && <div className="detail">{detail.value}</div>}
-                  {detail.type === 'link' && (
-                    <a href="http://www.google.com" className="detail">
-                      {detail.value}
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="guidelines-title">Guidelines</div>
-
-            {guidelines.map(guideline => (
-              <div className="guideline">{guideline.value}</div>
-            ))}
-
-            <div className="current-business-address-title">Current Business Address</div>
-            <div className="current-business-address">
-              <div className="font-field mr-15">Address</div>
-              <div className="font-primary">Lorem ipsum</div>
-            </div>
-            <div className="view-application-question">
-              Any extended payment terms outside your policy standard terms?
-            </div>
-            <div className="view-application-answer">
-              Lorem ipsum dolor sit amet, consetetur sadipscing
-            </div>
-            <div className="view-application-question">
-              Any overdue amounts passed your maximum extension period / Credit period?
-            </div>
-            <div className="view-application-answer">
-              Lorem ipsum dolor sit amet, consetetur sadipscing
-            </div>
+      {status && status[0].value !== 'DRAFT' && (
+        <>
+          <div className="breadcrumb mt-10">
+            <span onClick={backToApplicationList}>Application List</span>
+            <span className="material-icons-round">navigate_next</span>
+            <span>View Application</span>
           </div>
-        </div>
-        <div className="view-application-details-right">
-          <div className="common-white-container">
-            <Accordion className="view-application-accordion">
-              <AccordionItem header="Reports" suffix="expand_more">
-                <div className="common-accordion-item-content-box">
-                  <div className="report-row">
-                    <span className="title">Title:</span>
-                    <span className="details">Lorem ipsum dolor sit amet, consetetur</span>
-                    <span className="title">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-                    <span className="title">Link:</span>
-                    <a
-                      className="details"
-                      href="http://www.google.com"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Lorem ipsum
-                    </a>
-                  </div>
+          <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
+          <div className="view-application-container">
+            <div className="view-application-details-left">
+              <div className="common-white-container">
+                <div className="">Status</div>
+                <div className="view-application-status">
+                  <ReactSelect
+                    placeholder="Status"
+                    searchable={false}
+                    values={applicationDetail?.status || []}
+                    options={applicationDetail?.applicationStatus || []}
+                    disabled={!applicationDetail?.isAllowToUpdate}
+                  />
                 </div>
-              </AccordionItem>
-              <AccordionItem header="Tasks" count="04" suffix="expand_more">
-                <Button buttonType="primary-1" title="Add Task" className="add-task-button" />
-                <div className="common-accordion-item-content-box">
-                  <div className="d-flex align-center just-bet">
-                    <div className="tag red-tag">Really High</div>
-                    <Checkbox />
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-                <div className="common-accordion-item-content-box">
-                  <div className="d-flex align-center just-bet">
-                    <div className="tag secondary-tag">High</div>
-                    <Checkbox />
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-                <div className="common-accordion-item-content-box">
-                  <div className="d-flex align-center just-bet">
-                    <div className="tag alert-blue-tag">Medium</div>
-                    <Checkbox />
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-                <div className="common-accordion-item-content-box">
-                  <div className="d-flex align-center just-bet">
-                    <div className="tag primary-tag">Low</div>
-                    <Checkbox />
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-              </AccordionItem>
-              <AccordionItem header="Note" suffix="expand_more">
-                <Button buttonType="primary-1" title="Add Note" className="add-note-button" />
-                <div className="common-accordion-item-content-box">
-                  <div className="alert-title-row">
-                    <div className="alert-title">Title of Note</div>
-                    <span className="material-icons-round font-placeholder">more_vert</span>
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-              </AccordionItem>
-              <AccordionItem header="Alerts" count="04" suffix="expand_more">
-                <div className="common-accordion-item-content-box alert">
-                  <div className="alert-title-row">
-                    <div className="alert-title">Title of Note</div>
-                    <span className="material-icons-round font-placeholder">more_vert</span>
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-                <div className="common-accordion-item-content-box high-alert">
-                  <div className="note-title-row">
-                    <div className="note-title">Title of Note</div>
-                    <span className="material-icons-round font-placeholder">more_vert</span>
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-              </AccordionItem>
-              <AccordionItem header="Documents" suffix="expand_more">
-                <div className="common-accordion-item-content-box">
-                  <div className="document-title-row">
-                    <div className="document-title">Title of Document</div>
-                    <span className="material-icons-round font-placeholder">more_vert</span>
-                  </div>
-                  <div className="date-owner-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Owner:</span>
-                    <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">
-                    Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                    invidunt ut labore et.
-                  </div>
-                </div>
-              </AccordionItem>
-              <AccordionItem header="Logs" suffix="expand_more">
-                <div className="common-accordion-item-content-box">
-                  <div className="date-time-row">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">15-Dec-2020</span>
-
-                    <span className="title">Time:</span>
-                    <span className="details">04:50PM</span>
-                  </div>
-                  <div className="d-flex">
-                    <div className="font-field">Title:</div>
-                    <div className="font-primary ml-10">
-                      Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                      invidunt ut labore et.
+                <div className="application-details-grid">
+                  {applicationDetails.map(detail => (
+                    <div>
+                      <div className="font-field mb-5">{detail.title}</div>
+                      {detail.type === 'text' && (
+                        <div className="detail">{detail.value || '-'}</div>
+                      )}
+                      {detail.type === 'link' && (
+                        <div
+                          style={{
+                            textDecoration: 'underline',
+                            cursor: 'pointer',
+                          }}
+                          className="detail"
+                          onClick={() => {
+                            handleDrawerState(
+                              detail.value._id,
+                              applicationDetail.headers.filter(
+                                header => header.name === detail.name
+                              )
+                            );
+                          }}
+                        >
+                          {detail.value.value || '-'}
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  ))}
                 </div>
-              </AccordionItem>
-            </Accordion>
-          </div>
-        </div>
-      </div>
+                {blockers && (
+                  <>
+                    <div className="blockers-title">Blockers</div>
+
+                    {blockers.map(blocker => (
+                      <div className="guideline">{blocker.value}</div>
+                    ))}
+                  </>
+                )}
+                <div className="current-business-address-title">Current Business Address</div>
+                <div className="current-business-address">
+                  <div className="font-field mr-15">Address</div>
+                  <div className="font-primary">{applicationDetail?.address || '-'}</div>
+                </div>
+                <div className="view-application-question">
+                  Any extended payment terms outside your policy standard terms?
+                </div>
+                <div className="view-application-answer">
+                  {applicationDetail?.isExtendedPaymentTerms
+                    ? applicationDetail?.extendedPaymentTermsDetails
+                    : ' No'}
+                </div>
+                <div className="view-application-question">
+                  Any overdue amounts passed your maximum extension period / Credit period?
+                </div>
+                <div className="view-application-answer">
+                  {applicationDetail?.isPassedOverdueAmount
+                    ? applicationDetail?.passedOverdueDetails
+                    : ' No'}
+                </div>
+              </div>
+            </div>
+            {/* {status[0].value !== 'DRAFT' && ( */}
+            <div className="view-application-details-right">
+              <div className="common-white-container">
+                <Accordion className="view-application-accordion">
+                  <ApplicationReportAccordion />
+                  <ApplicationTaskAccordion applicationId={id} />
+                  <ApplicationNotesAccordion applicationId={id} />
+                  <ApplicationAlertsAccordion />
+                  <ApplicationDocumentsAccordion applicationId={id} />
+                  <ApplicationLogsAccordion />
+                </Accordion>
+              </div>
+            </div>
+            {/* )} */}
+          </div>{' '}
+        </>
+      )}
     </>
   );
 };
 
-export default ViewApplication;
+export default React.memo(ViewApplication);
+
+function TableLinkDrawer(props) {
+  const { drawerState, closeDrawer } = props;
+  const checkValue = row => {
+    switch (row.type) {
+      case 'dollar':
+        return row.value ? `$ ${row.value}` : '-';
+      case 'percent':
+        return row.value ? `${row.value} %` : '-';
+      case 'date':
+        return row.value ? moment(row.value).format('DD-MMM-YYYY') : '-';
+      default:
+        return row.value || '-';
+    }
+  };
+
+  return (
+    <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
+      <div className="contacts-grid">
+        {drawerState.data.map(row => (
+          <>
+            <div className="title">{row.label}</div>
+            <div>{checkValue(row)}</div>
+          </>
+        ))}
+      </div>
+    </Drawer>
+  );
+}
+
+TableLinkDrawer.propTypes = {
+  drawerState: PropTypes.shape({
+    visible: PropTypes.bool.isRequired,
+    data: PropTypes.array.isRequired,
+  }).isRequired,
+  closeDrawer: PropTypes.func.isRequired,
+};
+
+TableLinkDrawer.defaultProps = {};

@@ -120,25 +120,28 @@
   background-color: $background-color !important;
 }
 .task-priority-URGENT{
-  padding: 5px;
-  background: #FEEBEB 0% 0% no-repeat padding-box;
+  width: max-content;
+  padding: 5px 12px;
   border-radius: 5px;
+  background: #FEEBEB 0% 0% no-repeat padding-box;
   opacity: 1;
   color:$error-color !important;
   font-size: 12px;
 }
 .task-priority-LOW{
-  padding: 5px;
-  background: #E2E9F0 0% 0% no-repeat padding-box;
+  width: max-content;
+  padding: 5px 12px;
   border-radius: 5px;
+  background: #E2E9F0 0% 0% no-repeat padding-box;
   opacity: 1;
   color:$primary-color !important;
   font-size: 12px;
 }
 .task-priority-HIGH{
-  padding: 5px 10px;
-  background: #FDF0E4 0% 0% no-repeat padding-box;
+  width: max-content;
+  padding: 5px 12px;
   border-radius: 5px;
+  background: #FDF0E4 0% 0% no-repeat padding-box;
   opacity: 1;
   color:$secondary-color !important;
   font-size: 12px;

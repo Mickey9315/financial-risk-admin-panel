@@ -17,6 +17,7 @@ import Settings from '../screens/Settings/Settings';
 import DebtorsList from '../screens/Debtors/DebtorsList/DebtorsList';
 import ViewDebtor from '../screens/Debtors/ViewDebtor/ViewDebtor';
 import MyWorkEditTask from '../screens/MyWork/MyWorkTasks/MyWorkEditTask/MyWorkEditTask';
+import ViewApplication from '../screens/Application/ViewApplication/ViewApplication';
 
 export const AuthenticatedRoute = ({ component, ...options }) => {
   const isLoggedIn = getAuthTokenLocalStorage();
@@ -57,6 +58,11 @@ export const AllAuthenticatedRoutes = () => {
         exact
         path="/applications/application/:action/"
         component={GenerateApplication}
+      />
+      <AuthenticatedRoute
+        exact
+        path="/applications/detail/:action/:id"
+        component={ViewApplication}
       />
       <AuthenticatedRoute exact path="/debtors" component={DebtorsList} />
       <AuthenticatedRoute exact path="/debtors/debtor/:action/:id" component={ViewDebtor} />

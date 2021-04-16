@@ -7,6 +7,7 @@ import {
 } from './ApplicationReduxConstants';
 import ApplicationCompanyStepApiServices from '../services/ApplicationCompanyStepApiServices';
 import ApplicationDocumentStepApiServices from '../services/ApplicationDocumentStepApiServices';
+import ApplicationViewApiServices from '../services/ApplicationViewApiServices';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -558,4 +559,299 @@ export const deleteApplicationDocumentAction = async (appDocId, cb) => {
       }
     }
   }
+};
+
+// View Application
+
+export const getApplicationDetailById = applicationId => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationApiServices.getApplicationDetail(applicationId);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const resetApplicationDetail = () => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_ACTION,
+      data: [],
+    });
+  };
+};
+
+// Application Task
+
+export const getApplicationTaskList = id => {
+  return async dispatch => {
+    try {
+      const data = {
+        requestedEntityId: id,
+        columnFor: 'application-task',
+      };
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getApplicationTaskListData(
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .APPLICATION_TASK_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getAssigneeDropDownData = () => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getAssigneeDropDownData();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .ASSIGNEE_DROP_DOWN_DATA_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const getApplicationTaskEntityDropDownData = params => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(
+        params
+      );
+      if (response.data.status === 'SUCCESS' && response.data.data) {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .ENTITY_DROP_DOWN_DATA_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const updateApplicationTaskStateFields = (name, value) => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.UPDATE_TASK_FIELD_STATUS,
+      name,
+      value,
+    });
+  };
+};
+
+export const saveApplicationTaskData = (data, backToTask) => {
+  return async () => {
+    try {
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.saveNewTask(
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response.data.message);
+        backToTask();
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const getApplicationTaskDetail = id => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getApplicationTaskDetailById(
+        id
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .GET_APPLICATION_TASK_DETAILS_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const updateApplicationTaskData = (id, data, cb) => {
+  return async () => {
+    try {
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.updateTask(
+        id,
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response.data.message);
+        cb();
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const deleteApplicationTaskAction = (taskId, cb) => {
+  return async () => {
+    try {
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.deleteTask(
+        taskId
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification('Task deleted successfully.');
+        if (cb) {
+          cb();
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+// Application modules
+export const getApplicationModuleList = id => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationModulesApiServices.getApplicationModulesListData(
+        id
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+              .APPLICATION_MODULE_LIST_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const getApplicationNotesList = id => {
+  return async dispatch => {
+    try {
+      const data = {
+        noteFor: 'application',
+      };
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.getApplicationNotesListData(
+        id,
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_NOTES
+              .APPLICATION_NOTES_LIST_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
 };

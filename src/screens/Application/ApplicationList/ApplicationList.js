@@ -78,7 +78,6 @@ const ApplicationList = () => {
   } = useMemo(() => filter, [filter]);
 
   useEffect(() => {
-    dispatch(getApplicationsListByFilter());
     dispatch(getApplicationFilter());
   }, []);
   const handleStartDateChange = useCallback(
@@ -409,6 +408,10 @@ const ApplicationList = () => {
     return foundValue ? [foundValue] : [];
   }, [applicationStatus]);
 
+  const viewApplicationOnSelectRecord = useCallback(_id => {
+    history.push(`/applications/detail/view/${_id}`);
+  }, []);
+
   return (
     <>
       <div className="page-header">
@@ -440,7 +443,7 @@ const ApplicationList = () => {
               tableClass="main-list-table"
               data={docs}
               headers={headers}
-              recordSelected={() => console.log('Record selected')}
+              recordSelected={viewApplicationOnSelectRecord}
               recordActionClick={() => console.log('Record action clicked')}
               rowClass="cursor-pointer"
               haveActions
