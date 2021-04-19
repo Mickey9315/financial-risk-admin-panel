@@ -287,6 +287,11 @@ export const changeEditApplicationFieldValue = (name, value) => {
   };
 };
 
+export const resetEditApplicationFieldValue = {
+  type:
+    APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION.APPLICATION_COMPANY_EDIT_APPLICATION_RESET_DATA,
+};
+
 export const updateEditApplicationData = (stepName, data) => {
   return dispatch => {
     dispatch({

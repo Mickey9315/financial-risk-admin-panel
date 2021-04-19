@@ -7,24 +7,23 @@ import { NUMBER_REGEX } from '../../../../../../constants/RegexConstants';
 export const applicationCreditStepValidations = (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = true;
-
-  if (!data?.isExtendedPaymentTerms) {
+  if (data?.isExtendedPaymentTerms === '') {
     errors.isExtendedPaymentTerms = 'Please select any one option';
     validated = false;
   }
   if (
-    data.isExtendedPaymentTerms &&
+    data.isExtendedPaymentTerms === true &&
     (!data.extendedPaymentTermsDetails || data.extendedPaymentTermsDetails.trim().length <= 0)
   ) {
     errors.extendedPaymentTermsDetails = 'Please provide details';
     validated = false;
   }
-  if (!data?.isPassedOverdueAmount) {
+  if (data?.isPassedOverdueAmount === '') {
     errors.isPassedOverdueAmount = 'Please select any one option';
     validated = false;
   }
   if (
-    data.isPassedOverdueAmount &&
+    data.isPassedOverdueAmount === true &&
     (!data.passedOverdueDetails || data.passedOverdueDetails.trim().length <= 0)
   ) {
     errors.passedOverdueDetails = 'Please provide details';

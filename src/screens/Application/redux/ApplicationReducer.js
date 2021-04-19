@@ -224,6 +224,15 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
     case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+      .APPLICATION_COMPANY_EDIT_APPLICATION_RESET_DATA: {
+      return {
+        ...state,
+        editApplication: {
+          ...initialApplicationList.editApplication,
+        },
+      };
+    }
+    case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
       .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA: {
       return {
         ...state,

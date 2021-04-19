@@ -12,6 +12,7 @@ import {
   addPersonDetail,
   changeEditApplicationFieldValue,
   getApplicationDetail,
+  resetEditApplicationFieldValue,
 } from '../redux/ApplicationAction';
 import { applicationCreditStepValidations } from './component/ApplicationCreditLimitStep/validations/ApplicationCreditStepValidations';
 import { applicationPersonStepValidation } from './component/ApplicationPersonStep/validations/ApplicationPersonStepValidations';
@@ -65,6 +66,12 @@ const GenerateApplication = () => {
 
   const onChangeIndex = useCallback(newIndex => {
     dispatch(changeEditApplicationFieldValue('applicationStage', newIndex));
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetEditApplicationFieldValue);
+    };
   }, []);
 
   useEffect(() => {
