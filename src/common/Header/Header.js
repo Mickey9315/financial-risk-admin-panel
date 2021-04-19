@@ -248,9 +248,9 @@ const Header = () => {
   };
 
   const [notificationDrawer, setNotificationDrawer] = useState(false);
-  // const openNotificationDrawer = useCallback(value =>
-  //   setNotificationDrawer(value !== undefined ? value : e => !e)
-  // );
+  const openNotificationDrawer = useCallback(value =>
+    setNotificationDrawer(value !== undefined ? value : e => !e)
+  );
   const NotiDrawerHeader = () => {
     return (
       <div className="notification-drawer-title">
@@ -299,7 +299,7 @@ const Header = () => {
           title="notifications_active"
           buttonType="outlined-bg"
           className="notification"
-          onClick={() => {}}
+          onClick={openNotificationDrawer}
         />
         <img className="user-dp" src={profilePictureUrl || dummy} onClick={toggleUserSettings} />
         {showUserSettings && (

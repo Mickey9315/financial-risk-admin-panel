@@ -826,6 +826,8 @@ export const getApplicationModuleList = id => {
   };
 };
 
+// Notes
+
 export const getApplicationNotesList = id => {
   return async dispatch => {
     try {
@@ -843,6 +845,94 @@ export const getApplicationNotesList = id => {
               .APPLICATION_NOTES_LIST_DATA,
           data: response.data.data,
         });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const addApplicationNoteAction = (entityId, noteData) => {
+  return async dispatch => {
+    try {
+      const { description, isPublic } = noteData;
+      const data = {
+        noteFor: 'application',
+        entityId,
+        isPublic,
+        description,
+      };
+
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.addApplicationNote(
+        data
+      );
+
+      if (response.data.status === 'SUCCESS') {
+        await dispatch(getApplicationNotesList(entityId));
+        successNotification('Note added successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const updateApplicationNoteAction = (entityId, noteData) => {
+  return async dispatch => {
+    try {
+      const { noteId, description, isPublic } = noteData;
+      const data = {
+        noteFor: 'application',
+        entityId,
+        isPublic,
+        description,
+      };
+
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.updateApplicationNote(
+        noteId,
+        data
+      );
+
+      if (response.data.status === 'SUCCESS') {
+        await dispatch(getApplicationNotesList(entityId));
+        successNotification('Note updated successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const deleteApplicationNoteAction = (noteId, cb) => {
+  return async () => {
+    try {
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.deleteApplicationNote(
+        noteId
+      );
+
+      if (response.data.status === 'SUCCESS') {
+        successNotification('Note deleted successfully.');
+        if (cb) {
+          cb();
+        }
       }
     } catch (e) {
       if (e.response && e.response.data) {

@@ -23,6 +23,7 @@ import Checkbox from '../../common/Checkbox/Checkbox';
 import { errorNotification } from '../../common/Toast';
 import { SIDEBAR_NAMES } from '../../constants/SidebarConstants';
 import UserPrivilegeWrapper from '../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';
 
 const initialFilterState = {
   priority: '',
@@ -225,7 +226,7 @@ const MyWork = () => {
       TASK_FILTER_REDUCER_ACTIONS={TASK_FILTER_REDUCER_ACTIONS}
       onSelectTaskRecord={onSelectTaskRecord}
     />,
-    // <MyWorkNotifications />,
+    <MyWorkNotifications />,
   ];
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const tabActive = index => {

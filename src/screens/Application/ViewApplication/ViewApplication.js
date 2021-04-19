@@ -57,7 +57,7 @@ const ViewApplication = () => {
    * ** */
   if (status) {
     if (status[0].value === 'DRAFT') {
-      history.push('/applications/application/generate');
+      history.push(`/applications/application/generate/?applicationId=${id}`);
     }
   }
 
@@ -232,7 +232,6 @@ const ViewApplication = () => {
                 </div>
               </div>
             </div>
-            {/* {status[0].value !== 'DRAFT' && ( */}
             <div className="view-application-details-right">
               <div className="common-white-container">
                 <Accordion className="view-application-accordion">
@@ -245,7 +244,6 @@ const ViewApplication = () => {
                 </Accordion>
               </div>
             </div>
-            {/* )} */}
           </div>{' '}
         </>
       )}

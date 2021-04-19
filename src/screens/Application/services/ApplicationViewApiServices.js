@@ -43,6 +43,17 @@ const ApplicationViewApiServices = {
         `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_NOTES.GET_NOTES_LIST}${id}`,
         { params }
       ),
+    addApplicationNote: data =>
+      ApiService.postData(APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_NOTES.GET_NOTES_LIST, data),
+    updateApplicationNote: (id, data) =>
+      ApiService.putData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_NOTES.GET_NOTES_LIST}${id}`,
+        data
+      ),
+    deleteApplicationNote: id =>
+      ApiService.deleteData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_NOTES.GET_NOTES_LIST}${id}`
+      ),
   },
 };
 export default ApplicationViewApiServices;

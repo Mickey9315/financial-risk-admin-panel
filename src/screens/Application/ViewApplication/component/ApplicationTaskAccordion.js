@@ -139,6 +139,7 @@ const ApplicationTaskAccordion = props => {
     editTaskModal,
     showConfirmModal,
     toggleConfirmationModal,
+    getTaskList,
   ]);
 
   const onCloseAddTaskClick = useCallback(() => {
@@ -468,7 +469,11 @@ const ApplicationTaskAccordion = props => {
         <AccordionItem
           accordionBodyClass="application-active-accordion-scroll"
           header="Tasks"
-          count="04"
+          count={
+            applicationTaskList?.docs?.length < 10
+              ? `0${applicationTaskList?.docs?.length}`
+              : applicationTaskList?.docs?.length
+          }
           suffix="expand_more"
         >
           <Button
@@ -477,7 +482,7 @@ const ApplicationTaskAccordion = props => {
             className="add-task-button"
             onClick={onAddTaskClick}
           />
-          {applicationTaskList.docs &&
+          {applicationTaskList?.docs?.length > 0 ? (
             applicationTaskList.docs.map(task => (
               <div className="common-accordion-item-content-box" key={task._id}>
                 <div className="d-flex align-center just-bet">
@@ -508,7 +513,10 @@ const ApplicationTaskAccordion = props => {
                 <div className="font-field">Description:</div>
                 <div className="font-primary">{task.description || '-'}</div>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="no-data-available">Nothing To Show</div>
+          )}
         </AccordionItem>
       )}
       {addTaskModal && (
