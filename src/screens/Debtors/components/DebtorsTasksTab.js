@@ -19,6 +19,7 @@ import { MY_WORK_REDUX_CONSTANTS } from '../../MyWork/redux/MyWorkReduxConstants
 import {
   changeDebtorTaskColumnNameListStatus,
   getAssigneeDropDownData,
+  getDebtorDefaultEntityDropDownData,
   getDebtorTaskColumnList,
   getDebtorTaskDetail,
   getDebtorTaskListData,
@@ -61,7 +62,9 @@ const DebtorTaskTab = () => {
   const { page, pages, total, limit, docs, headers } = useMemo(() => debtorTaskListData, [
     debtorTaskListData,
   ]);
-  const { assigneeList, entityList } = useMemo(() => taskDropDownData, [taskDropDownData]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(() => taskDropDownData, [
+    taskDropDownData,
+  ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
@@ -148,8 +151,6 @@ const DebtorTaskTab = () => {
     dispatch(changeDebtorTaskColumnNameListStatus(data));
   }, []);
 
-  const [entityCall, setEntityCall] = useState(false);
-
   const INPUTS = useMemo(
     () => [
       {
@@ -218,6 +219,7 @@ const DebtorTaskTab = () => {
   );
 
   const [addTaskModal, setAddTaskModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   const toggleAddTaskModal = useCallback(
     value => setAddTaskModal(value !== undefined ? value : e => !e),
@@ -248,17 +250,16 @@ const DebtorTaskTab = () => {
       try {
         handleSelectInputChange(data);
         const params = { entityName: data[0].value };
-        if (data[0].value) {
-          if (data[0].value && entityCall) {
-            dispatch(getEntityDropDownData(params));
-          }
-          setEntityCall(true);
+        if (data[0].value && !isEdit) {
+          dispatch(getEntityDropDownData(params));
+          updateAddTaskState('entityId', []);
         }
+        setIsEdit(false);
       } catch (e) {
         /**/
       }
     },
-    [handleSelectInputChange, addTaskState]
+    [handleSelectInputChange, addTaskState, updateAddTaskState, isEdit, setIsEdit]
   );
 
   const handleDateChange = useCallback(
@@ -267,16 +268,6 @@ const DebtorTaskTab = () => {
     },
     [updateAddTaskState]
   );
-
-  const getAssigneeSelectedValue = useMemo(() => {
-    const assigneeSelected = addTaskState?.assigneeId[0]?.value
-      ? addTaskState.assigneeId[0]
-      : assigneeList.find(e => {
-          return e.value === _id;
-        });
-    // handleSelectInputChange(assigneeSelected);
-    return (assigneeSelected && [assigneeSelected]) || [];
-  }, [addTaskState, _id, assigneeList, handleSelectInputChange]);
 
   const onCloseAddTask = useCallback(() => {
     dispatch({
@@ -305,7 +296,7 @@ const DebtorTaskTab = () => {
           return addTaskState.entityType || [];
         }
         case 'entityId': {
-          return addTaskState.entityId;
+          return addTaskState.entityId || [];
         }
         default:
           return [];
@@ -329,7 +320,7 @@ const DebtorTaskTab = () => {
       title: addTaskState.title.trim(),
       // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState.dueDate || new Date().toISOString(),
-      assigneeId: addTaskState?.assigneeId[0]?.value || getAssigneeSelectedValue[0].value,
+      assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'debtor-task',
     };
     if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority[0].value;
@@ -350,18 +341,12 @@ const DebtorTaskTab = () => {
         errorNotification('Something went wrong please add again');
       }
     }
-  }, [
-    addTaskState,
-    toggleAddTaskModal,
-    getAssigneeSelectedValue,
-    callBackOnTaskAdd,
-    callBackOnTaskEdit,
-  ]);
+  }, [addTaskState, toggleAddTaskModal, callBackOnTaskAdd, callBackOnTaskEdit]);
 
   const getComponentFromType = useCallback(
     input => {
       let component = null;
-      let selectedValues = getSelectedValues(input.name);
+      const selectedValues = getSelectedValues(input.name);
       switch (input.type) {
         case 'text':
           component = (
@@ -398,9 +383,6 @@ const DebtorTaskTab = () => {
           let handleOnChange = handleSelectInputChange;
           if (input.name === 'entityType') {
             handleOnChange = handleEntityTypeSelectInputChange;
-          }
-          if (input.name === 'assigneeId') {
-            selectedValues = getAssigneeSelectedValue;
           }
           component = (
             <>
@@ -451,7 +433,7 @@ const DebtorTaskTab = () => {
       }
       return <>{component}</>;
     },
-    [INPUTS, addTaskState, updateAddTaskState, entityList, getAssigneeSelectedValue]
+    [INPUTS, addTaskState, updateAddTaskState, entityList]
   );
 
   const addTaskModalButton = useMemo(
@@ -537,10 +519,11 @@ const DebtorTaskTab = () => {
   const onSelectTaskRecord = useCallback(
     // eslint-disable-next-line no-shadow
     id => {
+      setIsEdit(true);
       dispatch(getDebtorTaskDetail(id));
       toggleEditTaskModal();
     },
-    [toggleEditTaskModal]
+    [toggleEditTaskModal, setIsEdit]
   );
 
   const checkIfEnterKeyPressed = e => {
@@ -556,6 +539,36 @@ const DebtorTaskTab = () => {
       }
     }
   };
+
+  const setDefaultValuesForAddTask = useCallback(() => {
+    dispatch(
+      updateAddTaskStateFields(
+        'assigneeId',
+        assigneeList && assigneeList.filter(e => e.value === _id)
+      )
+    );
+    dispatch(
+      updateAddTaskStateFields(
+        'entityId',
+        defaultEntityList && defaultEntityList.filter(e => e.value === id)
+      )
+    );
+    dispatch(
+      updateAddTaskStateFields(
+        'entityType',
+        entityTypeData && entityTypeData.filter(e => e.value === 'client')
+      )
+    );
+  }, [assigneeList, defaultEntityList, entityTypeData]);
+
+  const onClickAddTask = useCallback(() => {
+    setDefaultValuesForAddTask();
+    toggleAddTaskModal();
+  }, [setDefaultValuesForAddTask, toggleAddTaskModal]);
+
+  useEffect(() => {
+    dispatch(getDebtorDefaultEntityDropDownData({ entityName: 'debtor' }));
+  }, []);
 
   return (
     <>
@@ -582,7 +595,7 @@ const DebtorTaskTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="success" title="Add" onClick={toggleAddTaskModal} />
+          <Button buttonType="success" title="Add" onClick={onClickAddTask} />
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

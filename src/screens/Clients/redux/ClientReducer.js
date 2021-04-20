@@ -50,6 +50,7 @@ const initialClientListState = {
     dropDownData: {
       assigneeList: [],
       entityList: [],
+      defaultEntityList: [],
     },
   },
 };
@@ -399,9 +400,8 @@ export const clientManagement = (state = initialClientListState, action) => {
     }
 
     case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION: {
-      // TODO application id change to id
       const entityList = action.data.map(data => ({
-        label: data._id || data.name,
+        label: data.name || data.applicationId,
         value: data._id,
         name: 'entityId',
       }));
@@ -409,13 +409,27 @@ export const clientManagement = (state = initialClientListState, action) => {
         ...state,
         task: {
           ...state.task,
-          addTask: {
-            ...state.task.addTask,
-            entityId: [],
-          },
           dropDownData: {
             ...state.task.dropDownData,
             entityList,
+          },
+        },
+      };
+    }
+
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION: {
+      const defaultEntityList = action.data.map(data => ({
+        label: data.name || data.applicationId,
+        value: data._id,
+        name: 'entityId',
+      }));
+      return {
+        ...state,
+        task: {
+          ...state.task,
+          dropDownData: {
+            ...state.task.dropDownData,
+            defaultEntityList,
           },
         },
       };

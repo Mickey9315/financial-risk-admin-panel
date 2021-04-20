@@ -9,6 +9,7 @@ import Button from '../../../../common/Button/Button';
 import Checkbox from '../../../../common/Checkbox/Checkbox';
 import {
   deleteApplicationTaskAction,
+  getApplicationTaskDefaultEntityDropDownData,
   getApplicationTaskDetail,
   getApplicationTaskEntityDropDownData,
   getApplicationTaskList,
@@ -70,7 +71,7 @@ const ApplicationTaskAccordion = props => {
   );
 
   // edit task
-  const [entityCall, setEntityCall] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState('');
 
   const [showActionMenu, setShowActionMenu] = useState(false);
@@ -107,7 +108,9 @@ const ApplicationTaskAccordion = props => {
     ({ application }) => application?.viewApplication?.dropDownData || []
   );
 
-  const { assigneeList, entityList } = useMemo(() => taskDropDownData, [taskDropDownData]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(() => taskDropDownData, [
+    taskDropDownData,
+  ]);
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
 
   const [addTaskModal, setAddTaskModal] = useState(false);
@@ -155,9 +158,8 @@ const ApplicationTaskAccordion = props => {
       type:
         APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.RESET_ADD_TASK_STATE_ACTION,
     });
-    setEntityCall(false);
     toggleEditTaskModal();
-  }, [toggleEditTaskModal, setEntityCall]);
+  }, [toggleEditTaskModal]);
 
   const onAddTaskClick = useCallback(() => {
     dispatch(
@@ -169,7 +171,7 @@ const ApplicationTaskAccordion = props => {
     dispatch(
       updateApplicationTaskStateFields(
         'entityId',
-        entityList && entityList.filter(e => e.value === applicationId)
+        defaultEntityList && defaultEntityList.filter(e => e.value === applicationId)
       )
     );
     dispatch(
@@ -179,13 +181,14 @@ const ApplicationTaskAccordion = props => {
       )
     );
     toggleAddTaskModal();
-  }, [assigneeList, _id, entityList, applicationId, toggleAddTaskModal]);
+  }, [assigneeList, _id, defaultEntityList, applicationId, toggleAddTaskModal]);
 
   const onEditTaskClick = useCallback(() => {
     setShowActionMenu(!showActionMenu);
     dispatch(getApplicationTaskDetail(currentTaskId));
+    setIsEdit(true);
     toggleEditTaskModal();
-  }, [toggleEditTaskModal, setShowActionMenu, showActionMenu, currentTaskId]);
+  }, [toggleEditTaskModal, setShowActionMenu, showActionMenu, currentTaskId, setIsEdit]);
 
   const INPUTS = useMemo(
     () => [
@@ -271,17 +274,16 @@ const ApplicationTaskAccordion = props => {
       try {
         handleSelectInputChange(data);
         const params = { entityName: data[0]?.value };
-        if (data[0]?.value && entityCall) {
+        if (data[0].value && !isEdit) {
           dispatch(getApplicationTaskEntityDropDownData(params));
+          updateAddTaskState('entityId', []);
         }
-        if (!entityCall) {
-          setEntityCall(true);
-        }
+        setIsEdit(false);
       } catch (e) {
         /**/
       }
     },
-    [handleSelectInputChange, addTaskState, entityCall, setEntityCall]
+    [handleSelectInputChange, updateAddTaskState, isEdit, setIsEdit]
   );
 
   const handleDateChange = useCallback(
@@ -459,7 +461,7 @@ const ApplicationTaskAccordion = props => {
 
   useEffect(() => {
     dispatch(getAssigneeDropDownData());
-    dispatch(getApplicationTaskEntityDropDownData({ entityName: 'application' }));
+    dispatch(getApplicationTaskDefaultEntityDropDownData({ entityName: 'application' }));
     getTaskList();
   }, []);
 

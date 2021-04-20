@@ -702,6 +702,31 @@ export const getEntityDropDownData = params => {
   };
 };
 
+export const getDebtorDefaultEntityDropDownData = params => {
+  return async dispatch => {
+    try {
+      const response = await DebtorTaskApiService.getEntityDropDownData(params);
+      if (response.data.status === 'SUCCESS' && response.data.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
 export const updateAddTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({

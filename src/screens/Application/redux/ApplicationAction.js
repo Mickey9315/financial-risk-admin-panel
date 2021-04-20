@@ -688,6 +688,35 @@ export const getApplicationTaskEntityDropDownData = params => {
   };
 };
 
+export const getApplicationTaskDefaultEntityDropDownData = params => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(
+        params
+      );
+      if (response.data.status === 'SUCCESS' && response.data.data) {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
 export const updateApplicationTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({

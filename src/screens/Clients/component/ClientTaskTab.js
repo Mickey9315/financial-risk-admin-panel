@@ -16,6 +16,7 @@ import {
   getClientTaskColumnList,
   getClientTaskDetail,
   getClientTaskListData,
+  getDefaultEntityDropDownData,
   getEntityDropDownData,
   saveClientTaskColumnNameListSelection,
   saveTaskData,
@@ -59,7 +60,9 @@ const ClientTaskTab = () => {
   const { page, pages, total, limit, docs, headers } = useMemo(() => clientTaskListData, [
     clientTaskListData,
   ]);
-  const { assigneeList, entityList } = useMemo(() => taskDropDownData, [taskDropDownData]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(() => taskDropDownData, [
+    taskDropDownData,
+  ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
@@ -146,8 +149,6 @@ const ClientTaskTab = () => {
     dispatch(changeClientTaskColumnNameListStatus(data));
   }, []);
 
-  const [entityCall, setEntityCall] = useState(false);
-
   const INPUTS = useMemo(
     () => [
       {
@@ -216,6 +217,7 @@ const ClientTaskTab = () => {
   );
 
   const [addTaskModal, setAddTaskModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   const toggleAddTaskModal = useCallback(
     value => setAddTaskModal(value !== undefined ? value : e => !e),
@@ -246,17 +248,16 @@ const ClientTaskTab = () => {
       try {
         handleSelectInputChange(data);
         const params = { entityName: data[0].value };
-        if (data[0].value) {
-          if (data[0].value && entityCall) {
-            dispatch(getEntityDropDownData(params));
-          }
-          setEntityCall(true);
+        if (data[0].value && !isEdit) {
+          dispatch(getEntityDropDownData(params));
+          updateAddTaskState('entityId', []);
         }
+        setIsEdit(false);
       } catch (e) {
         /**/
       }
     },
-    [handleSelectInputChange, addTaskState]
+    [handleSelectInputChange, addTaskState, updateAddTaskState, isEdit, setIsEdit]
   );
 
   const handleDateChange = useCallback(
@@ -265,16 +266,6 @@ const ClientTaskTab = () => {
     },
     [updateAddTaskState]
   );
-
-  const getAssigneeSelectedValue = useMemo(() => {
-    const assigneeSelected = addTaskState?.assigneeId[0]?.value
-      ? addTaskState.assigneeId[0]
-      : assigneeList.find(e => {
-          return e.value === _id;
-        });
-    // handleSelectInputChange(assigneeSelected);
-    return (assigneeSelected && [assigneeSelected]) || [];
-  }, [addTaskState, _id, assigneeList, handleSelectInputChange]);
 
   const onCloseAddTask = useCallback(() => {
     dispatch({
@@ -327,7 +318,7 @@ const ClientTaskTab = () => {
       title: addTaskState.title.trim(),
       // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState.dueDate || new Date().toISOString(),
-      assigneeId: addTaskState?.assigneeId[0]?.value || getAssigneeSelectedValue[0].value,
+      assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'client-task',
     };
     if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority[0].value;
@@ -348,18 +339,12 @@ const ClientTaskTab = () => {
         errorNotification('Something went wrong please add again');
       }
     }
-  }, [
-    addTaskState,
-    toggleAddTaskModal,
-    getAssigneeSelectedValue,
-    callBackOnTaskAdd,
-    callBackOnTaskEdit,
-  ]);
+  }, [addTaskState, toggleAddTaskModal, callBackOnTaskAdd, callBackOnTaskEdit]);
 
   const getComponentFromType = useCallback(
     input => {
       let component = null;
-      let selectedValues = getSelectedValues(input.name);
+      const selectedValues = getSelectedValues(input.name);
       switch (input.type) {
         case 'text':
           component = (
@@ -396,9 +381,6 @@ const ClientTaskTab = () => {
           let handleOnChange = handleSelectInputChange;
           if (input.name === 'entityType') {
             handleOnChange = handleEntityTypeSelectInputChange;
-          }
-          if (input.name === 'assigneeId') {
-            selectedValues = getAssigneeSelectedValue;
           }
           component = (
             <>
@@ -449,7 +431,7 @@ const ClientTaskTab = () => {
       }
       return <>{component}</>;
     },
-    [INPUTS, addTaskState, updateAddTaskState, entityList, getAssigneeSelectedValue]
+    [INPUTS, addTaskState, updateAddTaskState, entityList]
   );
 
   const addTaskModalButton = useMemo(
@@ -535,10 +517,11 @@ const ClientTaskTab = () => {
   const onSelectTaskRecord = useCallback(
     // eslint-disable-next-line no-shadow
     id => {
+      setIsEdit(true);
       dispatch(getClientTaskDetail(id));
       toggleEditTaskModal();
     },
-    [toggleEditTaskModal]
+    [toggleEditTaskModal, setIsEdit]
   );
 
   const checkIfEnterKeyPressed = e => {
@@ -554,6 +537,36 @@ const ClientTaskTab = () => {
       }
     }
   };
+
+  const setDefaultValuesForAddTask = useCallback(() => {
+    dispatch(
+      updateAddTaskStateFields(
+        'assigneeId',
+        assigneeList && assigneeList.filter(e => e.value === _id)
+      )
+    );
+    dispatch(
+      updateAddTaskStateFields(
+        'entityId',
+        defaultEntityList && defaultEntityList.filter(e => e.value === id)
+      )
+    );
+    dispatch(
+      updateAddTaskStateFields(
+        'entityType',
+        entityTypeData && entityTypeData.filter(e => e.value === 'client')
+      )
+    );
+  }, [assigneeList, defaultEntityList, entityTypeData]);
+
+  const onClickAddTask = useCallback(() => {
+    setDefaultValuesForAddTask();
+    toggleAddTaskModal();
+  }, [setDefaultValuesForAddTask, toggleAddTaskModal]);
+
+  useEffect(() => {
+    dispatch(getDefaultEntityDropDownData({ entityName: 'client' }));
+  }, []);
 
   return (
     <>
@@ -580,7 +593,7 @@ const ClientTaskTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="success" title="Add" onClick={toggleAddTaskModal} />
+          <Button buttonType="success" title="Add" onClick={onClickAddTask} />
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

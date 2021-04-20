@@ -126,6 +126,7 @@ const initialApplicationList = {
     dropDownData: {
       assigneeList: [],
       entityList: [],
+      defaultEntityList: [],
     },
   },
 };
@@ -427,7 +428,7 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
       .ENTITY_DROP_DOWN_DATA_ACTION: {
       const entityList = action.data.map(data => ({
-        label: data.applicationId || data.name,
+        label: data.name || data.applicationId,
         value: data._id,
         name: 'entityId',
       }));
@@ -435,16 +436,28 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         viewApplication: {
           ...state.viewApplication,
-          task: {
-            ...state.viewApplication.task,
-            addTask: {
-              ...state.viewApplication.task.addTask,
-              entityId: [],
-            },
-          },
           dropDownData: {
             ...state.viewApplication.dropDownData,
             entityList,
+          },
+        },
+      };
+    }
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+      .DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION: {
+      const defaultEntityList = action.data.map(data => ({
+        label: data.name || data.applicationId,
+        value: data._id,
+        name: 'entityId',
+      }));
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          dropDownData: {
+            ...state.viewApplication.dropDownData,
+            defaultEntityList,
           },
         },
       };
