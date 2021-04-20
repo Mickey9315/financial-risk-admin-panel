@@ -153,7 +153,6 @@ const ApplicationNotesAccordion = props => {
   }, [selectedApplicationNote, toggleModifyNotes]);
 
   const onEditNoteClick = useCallback(() => {
-    console.log('clicked');
     setShowActionMenu(!showActionMenu);
     const { _id, description, isPublic } = editNoteDetails;
     const data = {
@@ -162,7 +161,6 @@ const ApplicationNotesAccordion = props => {
       isPublic,
       type: NOTE_ACTIONS.EDIT,
     };
-    console.log(data);
     dispatchSelectedApplicationNote({
       type: APPLICATION_NOTE_REDUCER_ACTIONS.UPDATE_DATA,
       data,

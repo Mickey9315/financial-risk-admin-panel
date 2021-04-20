@@ -86,7 +86,7 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
       isActive: typeof isActive === 'string' ? isActive === 'Active' : isActive,
       abn,
       acn,
-      entityName: entityName[0]?.value,
+      entityName: entityName[0]?.label,
       tradingName,
       contactNumber: phoneNumber,
       outstandingAmount,

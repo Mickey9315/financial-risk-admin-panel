@@ -39,7 +39,7 @@ const APPLICATION_FILTER_REDUCER_ACTIONS = {
   RESET_STATE: 'RESET_STATE',
 };
 
-function filterReducer(state, action) {
+function filterReducer(state = initialFilterState, action) {
   switch (action.type) {
     case APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
       return {
@@ -112,7 +112,7 @@ const ApplicationList = () => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'entity',
-        value: event[0].value,
+        value: event?.[0]?.value,
       });
     },
     [dispatchFilter]
@@ -122,7 +122,7 @@ const ApplicationList = () => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'clientId',
-        value: event[0].value,
+        value: event?.[0]?.value,
       });
     },
     [dispatchFilter]
@@ -132,7 +132,7 @@ const ApplicationList = () => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'debtorId',
-        value: event[0].value,
+        value: event?.[0]?.value,
       });
     },
     [dispatchFilter]
@@ -142,7 +142,7 @@ const ApplicationList = () => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'applicationStatus',
-        value: event[0].value,
+        value: event?.[0]?.value,
       });
     },
     [dispatchFilter]
@@ -191,10 +191,11 @@ const ApplicationList = () => {
             minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
           maxCreditLimit:
             maxCreditLimit && maxCreditLimit.trim().length > 0 ? maxCreditLimit : undefined,
-          ...params,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
+          ...params,
         };
+        console.log(data);
         dispatch(getApplicationsListByFilter(data));
         if (cb && typeof cb === 'function') {
           cb();
@@ -212,7 +213,7 @@ const ApplicationList = () => {
       maxCreditLimit,
       startDate,
       endDate,
-      filter,
+      resetFilterDates,
     ]
   );
 
@@ -221,14 +222,14 @@ const ApplicationList = () => {
     newLimit => {
       getApplicationsByFilter({ page: 1, limit: newLimit });
     },
-    [dispatch, getApplicationsByFilter]
+    [getApplicationsByFilter]
   );
   // on pagination changed
   const pageActionClick = useCallback(
     newPage => {
       getApplicationsByFilter({ page: newPage, limit });
     },
-    [dispatch, getApplicationsByFilter, limit]
+    [getApplicationsByFilter, limit]
   );
 
   const [filterModal, setFilterModal] = React.useState(false);
@@ -238,18 +239,26 @@ const ApplicationList = () => {
   );
   const onClickApplyFilter = useCallback(() => {
     getApplicationsByFilter({ page: 1 }, toggleFilterModal);
-  }, [getApplicationsByFilter]);
+  }, [getApplicationsByFilter, toggleFilterModal]);
+
+  const onClickResetFilter = useCallback(() => {
+    dispatchFilter({
+      type: APPLICATION_FILTER_REDUCER_ACTIONS.RESET_STATE,
+    });
+    onClickApplyFilter();
+  }, [dispatchFilter]);
 
   const filterModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
+        onClick: () => onClickResetFilter(),
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
-      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
+      { title: 'Apply', buttonType: 'primary', onClick: () => onClickApplyFilter() },
     ],
-    [toggleFilterModal, onClickApplyFilter]
+    [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = useCallback(
@@ -259,13 +268,13 @@ const ApplicationList = () => {
   const onClickSaveColumnSelection = useCallback(async () => {
     await dispatch(saveApplicationColumnNameList({ applicationColumnNameList }));
     toggleCustomField();
-  }, [dispatch, toggleCustomField, applicationColumnNameList]);
+  }, [toggleCustomField, applicationColumnNameList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveApplicationColumnNameList({ isReset: true }));
     dispatch(getApplicationColumnNameList());
     toggleCustomField();
-  }, [dispatch, toggleCustomField]);
+  }, [toggleCustomField]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -285,13 +294,10 @@ const ApplicationList = () => {
     [applicationColumnNameList]
   );
 
-  const onChangeSelectedColumn = useCallback(
-    (type, name, value) => {
-      const data = { type, name, value };
-      dispatch(changeApplicationColumnNameList(data));
-    },
-    [dispatch]
-  );
+  const onChangeSelectedColumn = useCallback((type, name, value) => {
+    const data = { type, name, value };
+    dispatch(changeApplicationColumnNameList(data));
+  }, []);
 
   const {
     page: paramPage,
@@ -385,28 +391,28 @@ const ApplicationList = () => {
 
   const entityTypeSelectedValue = useMemo(() => {
     const foundValue = dropdownData.entityType.find(e => {
-      return e._id === entity;
+      return e.value === entity;
     });
     return foundValue ? [foundValue] : [];
-  }, [entity]);
+  }, [entity, dropdownData]);
   const clientIdSelectedValue = useMemo(() => {
     const foundValue = dropdownData.clients.find(e => {
-      return e._id === clientId;
+      return e.value === clientId;
     });
     return foundValue ? [foundValue] : [];
-  }, [clientId]);
+  }, [clientId, dropdownData]);
   const debtorIdSelectedValue = useMemo(() => {
     const foundValue = dropdownData.debtors.find(e => {
-      return e._id === debtorId;
+      return e.value === debtorId;
     });
     return foundValue ? [foundValue] : [];
-  }, [debtorId]);
+  }, [debtorId, dropdownData]);
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData.applicationStatus.find(e => {
-      return e._id === applicationStatus;
+      return e.value === applicationStatus;
     });
     return foundValue ? [foundValue] : [];
-  }, [applicationStatus]);
+  }, [applicationStatus, dropdownData]);
 
   const viewApplicationOnSelectRecord = useCallback(_id => {
     history.push(`/applications/detail/view/${_id}`);
@@ -444,7 +450,6 @@ const ApplicationList = () => {
               data={docs}
               headers={headers}
               recordSelected={viewApplicationOnSelectRecord}
-              recordActionClick={() => console.log('Record action clicked')}
               rowClass="cursor-pointer"
               haveActions
             />

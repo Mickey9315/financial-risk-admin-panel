@@ -332,6 +332,17 @@ const ApplicationCompanyStep = () => {
     [companyState, updateCompanyState, dispatchDrawerState]
   );
 
+  const handleEntityChange = useCallback(event => {
+    const { name, value } = event.target;
+    const data = [
+      {
+        label: value,
+        value,
+      },
+    ];
+    dispatch(updateEditApplicationField('company', name, data));
+  }, []);
+
   const handleToggleDropdown = useCallback(
     value =>
       dispatchDrawerState({
@@ -391,9 +402,11 @@ const ApplicationCompanyStep = () => {
           component = (
             <Input
               type="text"
+              name={input.name}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              // value={companyState?.entityName?.[0]?.label}
+              value={companyState?.entityName?.[0]?.label}
+              onChange={handleEntityChange}
             />
           );
           break;

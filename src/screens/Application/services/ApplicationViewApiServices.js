@@ -36,6 +36,21 @@ const ApplicationViewApiServices = {
       ApiService.getData(
         `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_MODULES.GET_MODULE_LIST}${id}`
       ),
+    getDocumentTypeListData: params =>
+      ApiService.getData(
+        APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_MODULES.GET_DOCUMENT_TYPE_LIST_URL,
+        { params }
+      ),
+    uploadDocument: (data, config) =>
+      ApiService.postData(
+        APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_MODULES.UPLOAD_DOCUMENT_URL,
+        data,
+        config
+      ),
+    deleteApplicationDocument: id =>
+      ApiService.deleteData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_MODULES.DELETE_DOCUMENT_URL}${id}`
+      ),
   },
   applicationNotesApiServices: {
     getApplicationNotesListData: (id, params) =>

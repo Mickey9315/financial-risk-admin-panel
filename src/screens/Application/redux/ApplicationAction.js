@@ -209,7 +209,6 @@ export const getApplicationCompanyDataFromDebtor = async (id, params) => {
     }
     return null;
   } catch (e) {
-    console.log(e);
     if (e.response.data.status === 'ERROR') {
       if (e.response.data.messageCode === 'APPLICATION_ALREADY_EXISTS') {
         errorNotification('Application already exist with this debtor');
@@ -495,7 +494,6 @@ export const getDocumentTypeList = () => {
 };
 
 export const getApplicationDocumentDataList = (id, params = { page: 1, limit: 15 }) => {
-  // console.log('getApplicationDocumentDataList', id);
   return async dispatch => {
     try {
       const updateParams = {
@@ -829,6 +827,84 @@ export const getApplicationModuleList = id => {
       }
     }
   };
+};
+
+export const getViewApplicationDocumentTypeList = () => {
+  return async dispatch => {
+    try {
+      const params = {
+        listFor: 'application',
+      };
+      const response = await ApplicationViewApiServices.applicationModulesApiServices.getDocumentTypeListData(
+        params
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+              .VIEW_APPLICATION_DOCUMENT_TYPE_LIST_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const viewApplicationUploadDocument = (data, config) => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationModulesApiServices.uploadDocument(
+        data,
+        config
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+              .VIEW_APPLICATION_UPLOAD_DOCUMENT_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const deleteViewApplicationDocumentAction = async (appDocId, cb) => {
+  try {
+    const response = await ApplicationViewApiServices.applicationModulesApiServices.deleteApplicationDocument(
+      appDocId
+    );
+    if (response.data.status === 'SUCCESS') {
+      successNotification('Application document deleted successfully.');
+      if (cb) {
+        cb();
+      }
+    }
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else {
+        errorNotification('Internal server error');
+      }
+    }
+  }
 };
 
 // Notes

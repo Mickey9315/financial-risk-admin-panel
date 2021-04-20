@@ -118,6 +118,7 @@ const initialApplicationList = {
     applicationModulesList: {
       documents: [],
       logs: [],
+      viewApplicationDocumentType: [],
     },
     notes: {
       noteList: [],
@@ -163,9 +164,9 @@ export const application = (state = initialApplicationList, action) => {
       const dropdownData = { ...state.applicationFilterList.dropdownData };
       Object.entries(action.data).forEach(([key, value]) => {
         dropdownData[key] = value.data.map(entity => ({
-          label: entity.name,
+          label: entity.name || entity.label,
           name: value.field,
-          value: entity._id,
+          value: entity._id || entity.value,
         }));
       });
       const applicationFilterList = {
@@ -496,10 +497,40 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         viewApplication: {
           ...state.viewApplication,
-          applicationModulesList: action.data,
+          applicationModulesList: {
+            ...state.viewApplication.applicationModulesList,
+            ...action.data,
+          },
         },
       };
 
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+      .VIEW_APPLICATION_DOCUMENT_TYPE_LIST_DATA:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          applicationModulesList: {
+            ...state.viewApplication.applicationModulesList,
+            viewApplicationDocumentType: action.data,
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+      .VIEW_APPLICATION_UPLOAD_DOCUMENT_DATA:
+      return {
+        ...state,
+        viewApplication: {
+          ...state.viewApplication,
+          applicationModulesList: {
+            ...state.viewApplication.applicationModulesList,
+            documents: [...state.viewApplication.applicationModulesList.documents, action.data],
+          },
+        },
+      };
+
+    // notes
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_NOTES.APPLICATION_NOTES_LIST_DATA:
       return {
         ...state,

@@ -56,6 +56,9 @@ export const APPLICATION_URLS = {
     },
     APPLICATION_MODULES: {
       GET_MODULE_LIST: `${BASE_URL}application/modules/`,
+      GET_DOCUMENT_TYPE_LIST_URL: `${BASE_URL}settings/document-type/`,
+      UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
+      DELETE_DOCUMENT_URL: `${BASE_URL}document/`,
     },
     APPLICATION_NOTES: {
       GET_NOTES_LIST: `${BASE_URL}note/`,
