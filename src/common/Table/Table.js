@@ -173,7 +173,7 @@ const Table = props => {
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
-      <ReactTooltip effect="float" />
+      <ReactTooltip type="dark" effect="float" />
       <table className={tableClassName}>
         <thead>
           {showCheckbox && (
@@ -324,28 +324,32 @@ function Row(props) {
               return null;
             case 'priority':
               return (
-                <td data-tip={value} data-delay-show="100" align={align}>
-                  <span className={`task-priority-${value}`}>{value || '-'}</span>
+                <td align={align}>
+                  <span title={value} data-delay-show="100" className={`task-priority-${value}`}>
+                    {value || '-'}
+                  </span>
                 </td>
               );
             case 'isCompleted':
               return (
-                <td
-                  data-tip={data?.[key]?.props?.className === 'table-checkbox' ? '' : value}
-                  data-delay-show="100"
-                  align={align}
-                >
-                  {value || '-'}
+                <td align={align}>
+                  <span
+                    title={data?.[key]?.props?.className === 'table-checkbox' ? '' : value}
+                    data-delay-show="100"
+                  >
+                    {value || '-'}
+                  </span>
                 </td>
               );
             default:
               return (
-                <td
-                  data-tip={data?.[key]?.props?.className === 'link' ? '' : value}
-                  data-delay-show="100"
-                  align={align}
-                >
-                  {value || '-'}
+                <td align={align}>
+                  <span
+                    title={data?.[key]?.props?.className === 'link' ? '' : value}
+                    data-delay-show="100"
+                  >
+                    {value || '-'}
+                  </span>
                 </td>
               );
           }
@@ -386,7 +390,7 @@ function Row(props) {
             <span className="material-icons-round">edit</span> Edit
           </div>
           <div className="menu-name" onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.DELETE_ROW)}>
-            <span className="material-icons-round">delete</span> Delete
+            <span className="material-icons-round">delete_outline</span> Delete
           </div>
         </DropdownMenu>
       )}

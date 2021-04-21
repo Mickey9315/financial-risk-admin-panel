@@ -285,7 +285,7 @@ const ApplicationNotesAccordion = props => {
             <span className="material-icons-round">edit</span> Edit
           </div>
           <div className="menu-name" onClick={onDeleteNoteClick}>
-            <span className="material-icons-round">delete</span> Delete
+            <span className="material-icons-round">delete_outline</span> Delete
           </div>
         </DropdownMenu>
       )}

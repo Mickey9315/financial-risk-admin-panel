@@ -258,7 +258,10 @@ const ClientDocumentsTab = () => {
   const deleteDocumentAction = useMemo(
     () => [
       data => (
-        <span className="material-icons-round font-danger" onClick={() => deleteDocument(data)}>
+        <span
+          className="material-icons-round font-danger cursor-pointer"
+          onClick={() => deleteDocument(data)}
+        >
           delete_outline
         </span>
       ),

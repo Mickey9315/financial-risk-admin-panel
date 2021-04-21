@@ -84,7 +84,7 @@ const MyWorkNotifications = () => {
                 <div className="notification-detail-row">
                   <span className="font-field">{notification.notification}</span>
                   <span className="notification-time">{notification.time}</span>
-                  <span className="material-icons-round">delete</span>
+                  <span className="material-icons-round">delete_outline</span>
                 </div>
               </div>
             ))}

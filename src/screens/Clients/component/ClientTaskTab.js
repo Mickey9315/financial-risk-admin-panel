@@ -469,7 +469,7 @@ const ClientTaskTab = () => {
     () => [
       data => (
         <span
-          className="material-icons-round font-danger"
+          className="material-icons-round font-danger cursor-pointer"
           onClick={e => {
             e.stopPropagation();
             deleteTask(data);

@@ -26,13 +26,16 @@
     justify-content: flex-start;
     border: 0.063rem solid #E7ECF2;
     height: 32px;
-    width: 180px;
+    width: 100%;
     button{
       border: none;
       color: #B2B9BF;
       background: none;
     }
     p{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       color: #B2B9BF;
     }
 

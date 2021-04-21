@@ -58,7 +58,7 @@ const Pagination = props => {
           values={recordLimit}
           placeholder="Select"
           className="no-per-page-select"
-          dropdownPosition="top"
+          dropdownPosition="auto"
           searchable={false}
         />
         <span className="ml-10">
