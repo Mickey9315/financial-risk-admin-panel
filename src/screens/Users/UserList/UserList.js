@@ -29,7 +29,7 @@ import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivi
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialFilterState = {
-  role: [],
+  role: '',
   startDate: null,
   endDate: null,
 };
@@ -105,7 +105,7 @@ const UserList = () => {
         const data = {
           page: page || 1,
           limit: limit || 15,
-          role: role && role.length > 0 && role[0].label ? role[0].label : undefined,
+          role: role && role.trim().length > 0 ? role : undefined,
           startDate: startDate || undefined,
           endDate: endDate || undefined,
           ...params,
@@ -116,7 +116,7 @@ const UserList = () => {
         }
       }
     },
-    [page, limit, role, startDate, endDate, filter]
+    [page, limit, role, startDate, endDate, resetFilterDates]
   );
 
   const handleFilterChange = useCallback(
@@ -136,14 +136,14 @@ const UserList = () => {
     newLimit => {
       getUserManagementByFilter({ page: 1, limit: newLimit });
     },
-    [dispatch, getUserManagementByFilter]
+    [getUserManagementByFilter]
   );
 
   const pageActionClick = useCallback(
     newPage => {
       getUserManagementByFilter({ page: newPage, limit });
     },
-    [dispatch, limit, getUserManagementByFilter]
+    [limit, getUserManagementByFilter]
   );
 
   const [filterModal, setFilterModal] = useState(false);
@@ -154,7 +154,7 @@ const UserList = () => {
 
   const onClickApplyFilter = useCallback(() => {
     getUserManagementByFilter({ page: 1 }, toggleFilterModal);
-  }, [getUserManagementByFilter]);
+  }, [getUserManagementByFilter, toggleFilterModal]);
 
   const onClickResetFilterUserList = useCallback(() => {
     dispatchFilter({ type: USER_FILTER_REDUCER_ACTIONS.RESET_STATE });
@@ -171,7 +171,7 @@ const UserList = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
-    [toggleFilterModal, onClickApplyFilter]
+    [toggleFilterModal, onClickApplyFilter, onClickResetFilterUserList]
   );
   const [customFieldModal, setCustomFieldModal] = useState(false);
 
@@ -184,14 +184,14 @@ const UserList = () => {
     await dispatch(saveUserColumnListName({ userColumnList }));
     getUserManagementByFilter();
     toggleCustomField();
-  }, [dispatch, toggleCustomField, userColumnList]);
+  }, [toggleCustomField, userColumnList, getUserManagementByFilter]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveUserColumnListName({ isReset: true }));
     getUserManagementByFilter();
     dispatch(getUserColumnListName());
     toggleCustomField();
-  }, [dispatch, toggleCustomField]);
+  }, [dispatch, toggleCustomField, getUserManagementByFilter]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -214,13 +214,10 @@ const UserList = () => {
     history.push('/users/user/add/new');
   }, [history]);
 
-  const onChangeSelectedColumn = useCallback(
-    (type, name, value) => {
-      const data = { type, name, value };
-      dispatch(changeUserColumnListStatus(data));
-    },
-    [dispatch]
-  );
+  const onChangeSelectedColumn = useCallback((type, name, value) => {
+    const data = { type, name, value };
+    dispatch(changeUserColumnListStatus(data));
+  }, []);
 
   const onSelectUserRecord = useCallback(
     id => {
@@ -233,29 +230,32 @@ const UserList = () => {
     value => setDeleteModal(value !== undefined ? value : e => !e),
     [setDeleteModal]
   );
-  const deleteUserButtons = [
-    { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal(false) },
-    {
-      title: 'Delete',
-      buttonType: 'danger',
-      onClick: async () => {
-        try {
-          toggleConfirmationModal(false);
-          const data = {
-            page: page || 1,
-            limit: limit || 15,
-            role: role && role.trim().length > 0 ? role : undefined,
-            startDate: startDate || undefined,
-            endDate: endDate || undefined,
-          };
-          await dispatch(deleteUserDetails(deleteId, data));
-          setDeleteId(null);
-        } catch (e) {
-          /**/
-        }
+  const deleteUserButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal(false) },
+      {
+        title: 'Delete',
+        buttonType: 'danger',
+        onClick: async () => {
+          try {
+            toggleConfirmationModal(false);
+            const data = {
+              page: page || 1,
+              limit: limit || 15,
+              role: role && role?.length > 0 ? role.trim() : undefined,
+              startDate: startDate || undefined,
+              endDate: endDate || undefined,
+            };
+            await dispatch(deleteUserDetails(deleteId, data));
+            setDeleteId(null);
+          } catch (e) {
+            /**/
+          }
+        },
       },
-    },
-  ];
+    ],
+    [toggleConfirmationModal, setDeleteId, page, limit, role, startDate, endDate]
+  );
   const onSelectUserRecordActionClick = useCallback(
     async (type, id) => {
       if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
@@ -265,7 +265,7 @@ const UserList = () => {
         toggleConfirmationModal();
       }
     },
-    [history]
+    [history, setDeleteId, toggleConfirmationModal]
   );
 
   const {
@@ -305,7 +305,7 @@ const UserList = () => {
     const params = {
       page: page || 1,
       limit: limit || 15,
-      role: role && role.length > 0 && role[0].label ? role[0].label : undefined,
+      role: role && role?.length > 0 ? role.trim() : undefined,
       startDate: startDate ? new Date(startDate).toISOString() : undefined,
       endDate: endDate ? new Date(endDate).toISOString() : undefined,
     };

@@ -25,9 +25,10 @@ const DebtorsStakeHolderTab = () => {
   const debtorStakeHolderColumnNameListData = useSelector(
     ({ debtorsManagement }) => debtorsManagement.stakeHolder.columnList
   );
-  const { total, headers, pages, docs, page, limit } = useMemo(() => debtorStakeHolderListData, [
-    debtorStakeHolderListData,
-  ]);
+  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
+    () => debtorStakeHolderListData,
+    [debtorStakeHolderListData]
+  );
 
   const getDebtorStakeHolderList = useCallback(
     (params = {}, cb) => {
@@ -148,7 +149,7 @@ const DebtorsStakeHolderTab = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {docs ? (
+      {!isLoading && docs ? (
         docs.length > 0 ? (
           <>
             <div className="tab-table-container">

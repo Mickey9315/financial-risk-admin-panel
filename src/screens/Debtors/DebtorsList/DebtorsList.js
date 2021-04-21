@@ -49,9 +49,10 @@ const DebtorsList = () => {
   const debtorsColumnNameListData = useSelector(
     ({ debtorsManagement }) => debtorsManagement.debtorsColumnNameList
   );
-  const { docs, headers, page, pages, limit, total } = useMemo(() => debtorListWithPageData, [
-    debtorListWithPageData,
-  ]);
+  const { docs, headers, page, pages, limit, total, isLoading } = useMemo(
+    () => debtorListWithPageData,
+    [debtorListWithPageData]
+  );
 
   const debtorDropDownData = useSelector(({ debtorsManagement }) => debtorsManagement.dropdownData);
 
@@ -237,29 +238,34 @@ const DebtorsList = () => {
           />
         </div>
       </div>
-      {docs ? (
-        <>
-          <div className="common-list-container">
-            <Table
-              align="left"
-              valign="center"
-              tableClass="main-list-table"
-              data={docs}
-              headers={headers}
-              recordSelected={onClickViewDebtor}
-              rowClass="cursor-pointer"
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {!isLoading && docs ? (
+        docs.length > 0 ? (
+          <>
+            <div className="common-list-container">
+              <Table
+                align="left"
+                valign="center"
+                tableClass="main-list-table"
+                data={docs}
+                headers={headers}
+                recordSelected={onClickViewDebtor}
+                rowClass="cursor-pointer"
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
         <Loader />
       )}

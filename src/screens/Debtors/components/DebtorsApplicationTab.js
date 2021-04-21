@@ -25,9 +25,10 @@ const DebtorsApplicationTab = () => {
   const debtorApplicationColumnNameListData = useSelector(
     ({ debtorsManagement }) => debtorsManagement.application.columnList
   );
-  const { total, headers, pages, docs, page, limit } = useMemo(() => debtorApplicationListData, [
-    debtorApplicationListData,
-  ]);
+  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
+    () => debtorApplicationListData,
+    [debtorApplicationListData]
+  );
 
   const getDebtorApplicationList = useCallback(
     (params = {}, cb) => {
@@ -148,7 +149,7 @@ const DebtorsApplicationTab = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {docs ? (
+      {!isLoading && docs ? (
         docs.length > 0 ? (
           <>
             <div className="tab-table-container">

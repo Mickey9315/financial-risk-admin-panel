@@ -59,9 +59,10 @@ const DebtorTaskTab = () => {
     ({ debtorsManagement }) => debtorsManagement.task.dropDownData
   );
 
-  const { page, pages, total, limit, docs, headers } = useMemo(() => debtorTaskListData, [
-    debtorTaskListData,
-  ]);
+  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(
+    () => debtorTaskListData,
+    [debtorTaskListData]
+  );
   const { assigneeList, entityList, defaultEntityList } = useMemo(() => taskDropDownData, [
     taskDropDownData,
   ]);
@@ -599,7 +600,7 @@ const DebtorTaskTab = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {docs ? (
+      {!isLoading && docs ? (
         docs.length > 0 ? (
           <>
             <div className="tab-table-container">

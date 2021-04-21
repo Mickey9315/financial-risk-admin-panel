@@ -77,7 +77,7 @@ const DebtorsNotesTab = () => {
     [setModifyNoteModal]
   );
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => debtorsNotesList, [
+  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(() => debtorsNotesList, [
     debtorsNotesList,
   ]);
 
@@ -283,30 +283,35 @@ const DebtorsNotesTab = () => {
           <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
         </div>
       </div>
-      {docs ? (
-        <>
-          <div className="tab-table-container">
-            <Table
-              align="left"
-              valign="center"
-              data={docs}
-              tableClass="white-header-table"
-              headers={headers}
-              recordActionClick={onSelectUserRecordActionClick}
-              refreshData={getDebtorNotesList}
-              haveActions
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {!isLoading && docs ? (
+        docs.length > 0 ? (
+          <>
+            <div className="tab-table-container">
+              <Table
+                align="left"
+                valign="center"
+                data={docs}
+                tableClass="white-header-table"
+                headers={headers}
+                recordActionClick={onSelectUserRecordActionClick}
+                refreshData={getDebtorNotesList}
+                haveActions
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
         <Loader />
       )}

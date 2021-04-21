@@ -18,12 +18,16 @@ export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
       const response = await DebtorsApiServices.getAllDebtorsList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.DEBTORS_LIST_USER_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -238,12 +242,16 @@ export const getDebtorsNotesListDataAction = (id, params = { page: 1, limit: 15 
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.NOTES.DEBTORS_NOTES_LIST_USER_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.NOTES.FETCH_DEBTOR_NOTES_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.NOTES.FETCH_DEBTOR_NOTES_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -347,12 +355,16 @@ export const getDebtorDocumentsListData = (id, params = { page: 1, limit: 15 }) 
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENTS_LIST_USER_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.FETCH_DEBTOR_DOCUMENTS_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.FETCH_DEBTOR_DOCUMENTS_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -552,12 +564,16 @@ export const getDebtorTaskListData = (params, id) => {
       const response = await DebtorTaskApiService.getDebtorTaskListData(data);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.TASK.DEBTOR_TASK_LIST_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.TASK.FETCH_DEBTOR_TASK_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.TASK.FETCH_DEBTOR_TASK_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -848,12 +864,16 @@ export const getDebtorApplicationListData = (id, param) => {
       const response = await DebtorApplicationApiServices.getApplicationListData(id, params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_LIST_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.APPLICATION.FETCH_DEBTOR_APPLICATION_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.APPLICATION.FETCH_DEBTOR_APPLICATION_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -958,12 +978,16 @@ export const getDebtorCreditLimitData = (id, data) => {
       const response = await DebtorCreditLimitApiServices.getDebtorCreditLimitList(id, data);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.DEBTOR_CREDIT_LIMIT_LIST_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.FETCH_DEBTOR_CREDIT_LIMIT_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.FETCH_DEBTOR_CREDIT_LIMIT_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -1071,12 +1095,16 @@ export const getDebtorStakeHolderListData = (id, param) => {
       const response = await DebtorStakeHolderApiServices.getStakeHolderListData(id, params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_LIST_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_FAILURE,
+          data: null,
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {

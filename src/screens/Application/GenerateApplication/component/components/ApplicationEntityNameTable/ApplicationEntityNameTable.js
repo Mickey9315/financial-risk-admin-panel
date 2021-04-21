@@ -24,7 +24,7 @@ const ApplicationEntityNameTable = props => {
               </div>
             </td>
             <td>
-              {row.state} / {row.postCode}
+              {typeof row.state === 'string' && row.state} / {row.postCode}
             </td>
             <td>{row.status}</td>
             <td>{row.abn}</td>

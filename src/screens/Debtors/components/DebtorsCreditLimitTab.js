@@ -25,9 +25,10 @@ const DebtorsCreditLimitTab = () => {
   const debtorCreditLimitColumnNameList = useSelector(
     ({ debtorsManagement }) => debtorsManagement.creditLimit.columnList
   );
-  const { total, headers, pages, docs, page, limit } = useMemo(() => debtorCreditLimitData, [
-    debtorCreditLimitData,
-  ]);
+  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
+    () => debtorCreditLimitData,
+    [debtorCreditLimitData]
+  );
 
   const getCreditLimitList = useCallback(
     (params = {}, cb) => {
@@ -148,7 +149,7 @@ const DebtorsCreditLimitTab = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {docs ? (
+      {!isLoading && docs ? (
         docs.length > 0 ? (
           <>
             <div className="tab-table-container">
