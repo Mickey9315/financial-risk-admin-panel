@@ -68,12 +68,22 @@ const ApplicationCompanyStep = () => {
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const [stateValue, setStateValue] = useState([]);
+  const [isAusOrNew, setIsAusOrNew] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [wipeOutDetails, setWipeOutDetails] = useState(false);
   const toggleConfirmationModal = useCallback(
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
     [setShowConfirmModal]
   );
+
+  useEffect(() => {
+    if (
+      companyState?.country?.[0]?.value === 'AUS' ||
+      companyState?.country?.[0]?.value === 'NZL'
+    ) {
+      setIsAusOrNew(true);
+    }
+  }, [companyState]);
 
   const changeEntityType = useMemo(
     () => [
@@ -94,6 +104,7 @@ const ApplicationCompanyStep = () => {
     ],
     [toggleConfirmationModal, wipeOutDetails]
   );
+
   const INPUTS = useMemo(
     () => [
       {
@@ -210,8 +221,8 @@ const ApplicationCompanyStep = () => {
       },
       {
         label: 'State*',
-        placeholder: 'Select',
-        type: 'select',
+        placeholder: isAusOrNew ? 'Select' : 'Enter State',
+        type: isAusOrNew ? 'select' : 'text',
         name: 'state',
         data: stateValue,
       },
@@ -223,7 +234,7 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
     ],
-    [debtors, streetType, entityType, stateValue]
+    [debtors, streetType, entityType, stateValue, isAusOrNew]
   );
 
   const updateSingleCompanyState = useCallback(
@@ -252,15 +263,24 @@ const ApplicationCompanyStep = () => {
     data => {
       updateSingleCompanyState(data[0]?.name, data);
       if (data[0]?.name === 'country') {
-        if (data[0]?.value === 'AUS') {
-          setStateValue(australianStates);
-        } else if (data[0]?.value === 'NZL') {
-          setStateValue(newZealandStates);
-        } else {
-          dispatch(updateEditApplicationField('company', 'state', []));
+        let showDropDownInput = true;
+
+        switch (data[0]?.value) {
+          case 'AUS':
+            dispatch(updateEditApplicationField('company', 'state', []));
+            setStateValue(australianStates);
+            break;
+          case 'NZL':
+            dispatch(updateEditApplicationField('company', 'state', []));
+            setStateValue(newZealandStates);
+            break;
+          default:
+            showDropDownInput = false;
+            dispatch(updateEditApplicationField('company', 'state', []));
+            break;
         }
-      }
-      if (data[0]?.name === 'entityType' && partners.length !== 0) {
+        setIsAusOrNew(showDropDownInput);
+      } else if (data[0]?.name === 'entityType' && partners.length !== 0) {
         setShowConfirmModal(true);
       } else {
         dispatch(updateEditApplicationField('company', data[0]?.name, data));
@@ -272,6 +292,7 @@ const ApplicationCompanyStep = () => {
       setStateValue,
       newZealandStates,
       australianStates,
+      setIsAusOrNew,
     ]
   );
 
@@ -374,6 +395,7 @@ const ApplicationCompanyStep = () => {
   const getComponentFromType = useCallback(
     input => {
       let component = null;
+
       switch (input.type) {
         case 'text':
           component = (
@@ -381,7 +403,12 @@ const ApplicationCompanyStep = () => {
               type="text"
               name={input.name}
               placeholder={input.placeholder}
-              value={companyState[input.name]}
+              value={
+                input.name === 'state'
+                  ? (!isAusOrNew && companyState?.[input.name]?.[0]?.label) ||
+                    companyState[input.name]
+                  : companyState[input.name]
+              }
               onChange={handleTextInputChange}
             />
           );
@@ -442,7 +469,13 @@ const ApplicationCompanyStep = () => {
         </>
       );
     },
-    [companyState, handleDebtorSelectChange, handleSelectInputChange, handleTextInputChange]
+    [
+      companyState,
+      handleDebtorSelectChange,
+      handleSelectInputChange,
+      handleTextInputChange,
+      isAusOrNew,
+    ]
   );
 
   useEffect(() => {

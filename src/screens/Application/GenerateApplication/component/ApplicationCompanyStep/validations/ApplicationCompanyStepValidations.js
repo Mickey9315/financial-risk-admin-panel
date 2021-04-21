@@ -53,7 +53,6 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     errors.postCode = 'Post code should be number';
   }
   if (validated) {
-    console.log(validated);
     const {
       clientId,
       postCode,
@@ -99,7 +98,7 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
         streetName,
         streetType: streetType?.[0]?.value,
         suburb,
-        state: state?.[0].value,
+        state: state?.[0].value || state,
         country: { name: country?.[0]?.label, code: country?.[0]?.value },
         postCode,
       },

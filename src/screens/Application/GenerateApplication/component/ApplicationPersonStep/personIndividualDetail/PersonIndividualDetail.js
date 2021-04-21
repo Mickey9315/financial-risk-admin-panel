@@ -69,6 +69,17 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
     ({ application }) => application.applicationFilterList.dropdownData.companyEntityType
   );
   const [stateValue, setStateValue] = useState([]);
+  const [isAusOrNew, setIsAusOrNew] = useState(false);
+
+  useEffect(() => {
+    if (
+      partners?.[index]?.country?.[0]?.value === 'AUS' ||
+      partners?.[index]?.country?.[0]?.value === 'NZL'
+    ) {
+      setIsAusOrNew(true);
+    }
+  }, [partners[index].country]);
+
   useEffect(() => {
     dispatch(getApplicationFilter());
     dispatch(getApplicationCompanyDropDownData());
@@ -268,8 +279,8 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       },
       {
         label: 'State*',
-        placeholder: 'Select',
-        type: 'select',
+        placeholder: isAusOrNew ? 'Select' : 'Enter State',
+        type: isAusOrNew ? 'select' : 'text',
         name: 'state',
         data: stateValue,
       },
@@ -299,7 +310,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         name: 'email',
       },
     ],
-    [stateValue]
+    [stateValue, isAusOrNew]
   );
 
   const handleTextInputChange = useCallback(
@@ -314,13 +325,23 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
     data => {
       updateSinglePersonState(data[0]?.name, data);
       if (data[0]?.name === 'country') {
-        if (data[0]?.value === 'AUS') {
-          setStateValue(australianStates);
-        } else if (data[0]?.value === 'NZL') {
-          setStateValue(newZealandStates);
-        } else {
-          updateSinglePersonState('state', []);
+        let showDropDownInput = true;
+
+        switch (data[0]?.value) {
+          case 'AUS':
+            updateSinglePersonState('state', []);
+            setStateValue(australianStates);
+            break;
+          case 'NZL':
+            updateSinglePersonState('state', []);
+            setStateValue(newZealandStates);
+            break;
+          default:
+            showDropDownInput = false;
+            updateSinglePersonState('state', []);
+            break;
         }
+        setIsAusOrNew(showDropDownInput);
       }
     },
     [updateSinglePersonState, setStateValue, australianStates, newZealandStates]
@@ -421,7 +442,12 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               type="text"
               placeholder={input.placeholder}
               name={input.name}
-              value={partners[index][input.name]}
+              value={
+                input.name === 'state'
+                  ? (!isAusOrNew && partners?.[index]?.[input.name]?.[0]?.label) ||
+                    partners[index][input.name]
+                  : partners[index][input.name]
+              }
               onChange={handleTextInputChange}
               disabled={partners[index].isDisabled || false}
             />
@@ -578,6 +604,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       handleSelectInputChange,
       handleEmailChange,
       handleTextInputChange,
+      isAusOrNew,
     ]
   );
   const deletePartner = e => {
