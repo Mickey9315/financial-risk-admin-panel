@@ -16,6 +16,7 @@ import { errorNotification } from '../../../../../common/Toast';
 import Loader from '../../../../../common/Loader/Loader';
 import ApplicationEntityNameTable from '../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import Modal from '../../../../../common/Modal/Modal';
+import IconButton from '../../../../../common/IconButton/IconButton';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -71,6 +72,10 @@ const ApplicationCompanyStep = () => {
   const [isAusOrNew, setIsAusOrNew] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [wipeOutDetails, setWipeOutDetails] = useState(false);
+
+  const [searchedEntityNameValue, setSearchedEntityNameValue] = useState('');
+  console.log(searchedEntityNameValue);
+
   const toggleConfirmationModal = useCallback(
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
     [setShowConfirmModal]
@@ -337,7 +342,7 @@ const ApplicationCompanyStep = () => {
 
   const handleEntityNameSearch = useCallback(
     async e => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && e.target.value.trim().length > 0) {
         if (!companyState.clientId || companyState.clientId.length === 0) {
           errorNotification('Please select client before continue');
           return;
@@ -346,12 +351,24 @@ const ApplicationCompanyStep = () => {
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
+        setSearchedEntityNameValue(e.target.value.toString());
         const params = { clientId: companyState.clientId[0].value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
-    [companyState, updateCompanyState, dispatchDrawerState]
+    [companyState, updateCompanyState, dispatchDrawerState, setSearchedEntityNameValue]
   );
+
+  const retryEntityNameRequest = useCallback(() => {
+    if (searchedEntityNameValue.trim().length > 0) {
+      if (!companyState.clientId || companyState.clientId.length === 0) {
+        errorNotification('Please select client before continue');
+        return;
+      }
+      const params = { clientId: companyState.clientId[0].value };
+      dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
+    }
+  }, [searchedEntityNameValue, companyState]);
 
   const handleEntityChange = useCallback(event => {
     const { name, value } = event.target;
@@ -388,8 +405,9 @@ const ApplicationCompanyStep = () => {
         /**/
       }
       handleToggleDropdown(false);
+      setSearchedEntityNameValue('');
     },
-    [companyState, updateCompanyState]
+    [companyState, updateCompanyState, setSearchedEntityNameValue, handleToggleDropdown]
   );
 
   const getComponentFromType = useCallback(
@@ -507,10 +525,26 @@ const ApplicationCompanyStep = () => {
           {entityNameSearchDropDownData.isLoading ? (
             <Loader />
           ) : (
-            <ApplicationEntityNameTable
-              data={entityNameSearchDropDownData.data}
-              handleEntityNameSelect={handleEntityNameSelect}
-            />
+            !entityNameSearchDropDownData.error && (
+              <ApplicationEntityNameTable
+                data={entityNameSearchDropDownData.data}
+                handleEntityNameSelect={handleEntityNameSelect}
+              />
+            )
+          )}
+          {entityNameSearchDropDownData.error && (
+            <>
+              <div className="application-entity-name-modal-retry-button">
+                it looks like requested data is to large to load. Please try again...
+              </div>
+              <div className="application-entity-name-modal-retry-button">
+                <IconButton
+                  buttonType="primary"
+                  title="refresh"
+                  onClick={() => retryEntityNameRequest()}
+                />
+              </div>
+            </>
           )}
         </Modal>
       )}

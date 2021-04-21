@@ -243,6 +243,7 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
         type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
         data: {
           isLoading: true,
+          error: false,
           data: [],
         },
       });
@@ -256,7 +257,19 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
           type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
           data: {
             isLoading: false,
+            error: false,
             data: response.data.data,
+          },
+        });
+      }
+
+      if (response === 'err') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
+          data: {
+            isLoading: false,
+            error: true,
+            data: [],
           },
         });
       }

@@ -25,3 +25,13 @@
     }
   }
 }
+
+.application-entity-name-modal-retry-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+  font: $subtitle $font-regular;
+  color: $primary-color;
+}

@@ -105,6 +105,7 @@ const initialApplicationList = {
     },
     entityNameSearch: {
       isLoading: false,
+      error: false,
       data: [],
     },
   },

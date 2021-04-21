@@ -15,6 +15,9 @@ const ApplicationCompanyStepApiServices = {
   searchApplicationCompanyEntityName: (searchText, params) =>
     ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_ENTITY_TYPE}${searchText}`, {
       params,
-    }),
+      timeout: 20000,
+    })
+      .then(res => res)
+      .catch(() => 'err'),
 };
 export default ApplicationCompanyStepApiServices;
