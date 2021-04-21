@@ -1,10 +1,15 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import '../Settings.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../../common/Input/Input';
 import Button from '../../../common/Button/Button';
 import Loader from '../../../common/Loader/Loader';
-import { getOrganizationDetails } from '../redux/SettingAction';
+import {
+  changeOrganizationDetails,
+  getOrganizationDetails,
+  updateOrganizationDetails,
+} from '../redux/SettingAction';
+import { errorNotification } from '../../../common/Toast';
 
 const SettingsOrganizationDetailsTab = () => {
   const organizationDetail = useSelector(
@@ -15,57 +20,114 @@ const SettingsOrganizationDetailsTab = () => {
     dispatch(getOrganizationDetails());
   }, []);
   const { isLoading } = useMemo(() => organizationDetail, [organizationDetail]);
+
+  const [isEdit, setIsEdit] = useState(false);
+
   const settingsOrganizationDetails = [
     {
       title: 'Company Name',
+      name: 'name',
+      errorName: 'company name',
       placeholder: 'Enter company name',
       value: organizationDetail?.name,
     },
     {
       title: 'Website',
+      name: 'website',
+      errorName: 'website',
       placeholder: 'Enter website',
       value: organizationDetail?.website,
     },
     {
       title: 'Contact',
+      name: 'contactNumber',
+      errorName: 'contact number',
       placeholder: 'Enter contact',
       value: organizationDetail?.contactNumber,
     },
     {
       title: 'Location',
+      name: 'address',
+      errorName: 'location',
       placeholder: 'Enter location',
       value: organizationDetail?.address,
     },
     {
-      title: 'Risk Analyst',
-      placeholder: 'Enter risk analyst',
-      value: organizationDetail?.riskAnalyst,
-    },
-    {
-      title: 'Service Manager',
-      placeholder: 'Enter service manager',
-      value: organizationDetail?.serviceManager,
+      title: 'Email',
+      name: 'email',
+      errorName: 'email',
+      placeholder: 'Enter email',
+      value: organizationDetail?.email,
     },
   ];
 
+  const onChangeOrganization = e => {
+    const { name, value } = e.target;
+    dispatch(changeOrganizationDetails({ name, value }));
+  };
+
+  const [errorElementList, setErrorElementList] = useState([]);
+
+  const onSaveOrganizationDetails = useCallback(async () => {
+    let checkCondition = false;
+    let tempArray = [];
+    settingsOrganizationDetails.forEach((record, index) => {
+      if (record.value.toString().trim().length === 0) {
+        tempArray = tempArray.concat([index]);
+        checkCondition = true;
+        errorNotification('No value should be blank');
+      }
+    });
+    setErrorElementList(tempArray);
+    if (!checkCondition) {
+      dispatch(updateOrganizationDetails({ ...organizationDetail }));
+      setErrorElementList([]);
+      setIsEdit(false);
+    }
+  }, [setIsEdit, organizationDetail]);
+
+  const onCancelEdit = useCallback(() => {
+    if (errorElementList.length <= 0) setIsEdit(false);
+    dispatch(getOrganizationDetails());
+  }, [setIsEdit]);
+
   return (
     <>
+      <div className="d-flex just-end mt-15">
+        {!isEdit && <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />}
+        {isEdit && (
+          <div className="buttons-row">
+            <Button buttonType="primary" title="Save" onClick={onSaveOrganizationDetails} />
+            <Button buttonType="danger" title="Cancel" onClick={onCancelEdit} />
+          </div>
+        )}
+      </div>
       <div className="common-white-container settings-organization-details">
         {!isLoading ? (
           <div className="settings-organization-details-row">
-            {settingsOrganizationDetails.map(detail => (
+            {settingsOrganizationDetails.map((detail, index) => (
               <>
                 <span>{detail.title}</span>
-                <Input type="text" placeholder={detail.placeholder} value={detail?.value} />
+                <div>
+                  <Input
+                    type="text"
+                    name={detail.name}
+                    placeholder={isEdit ? detail.placeholder : '-'}
+                    onChange={e => onChangeOrganization(e)}
+                    value={detail?.value}
+                    disabled={!isEdit}
+                    borderClass={`${!isEdit && 'disabled-control'}`}
+                  />
+                  {errorElementList.includes(index) && (
+                    <div className="settings-no-value-error">Please enter {detail.errorName}.</div>
+                  )}
+                </div>
               </>
             ))}
           </div>
         ) : (
           <Loader />
         )}
-      </div>
-      <div className="d-flex just-end mt-15">
-        <Button buttonType="primary" title="Edit" />
       </div>
     </>
   );

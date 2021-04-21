@@ -404,6 +404,7 @@ const ClientTaskTab = () => {
               <div className="date-picker-container">
                 <DatePicker
                   placeholderText={input.placeholder}
+                  dateFormat="dd/MM/yyyy"
                   value={
                     addTaskState[input.name]
                       ? new Date(addTaskState[input.name]).toLocaleDateString()

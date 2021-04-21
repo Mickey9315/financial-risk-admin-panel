@@ -69,8 +69,13 @@
 textarea {
   padding: 2px 5px 2px 8px;
   font: $subtitle $font-regular;
-  color: $field-color !important;
+  color: $field-color;
   background-color: #ffffff;
   border: 0.063rem solid #E7ECF2;
   border-radius: 0.313rem;
+  resize: none;
+}
+
+textarea:focus {
+  outline: none;
 }

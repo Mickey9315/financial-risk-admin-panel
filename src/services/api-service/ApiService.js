@@ -31,7 +31,7 @@ instance.interceptors.response.use(
     if (error.response.status === 401) {
       clearAuthToken();
       errorNotification('For security purposes you have been logged out, you need to re login');
-      // window.location.href = '/login';
+      window.location.href = '/login';
       return false;
     }
     if (error.response.status === 403) {

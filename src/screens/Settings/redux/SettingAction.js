@@ -48,15 +48,37 @@ export const fetchOrgDetailSuccess = data => ({
   data,
 });
 
+export const updateOrgDetails = data => ({
+  type:
+    SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+      .UPDATE_ORGANIZATION_DETAILS,
+  data,
+});
+
 export const fetchApiIntegrationSuccess = data => ({
   type: SETTING_REDUX_CONSTANTS.API_INTEGRATION.FETCH_API_INTEGRATION_SUCCESS,
   data,
+});
+
+export const updateApiIntegration = data => ({
+  type: SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION.UPDATE_API_INTEGRATION_DATA,
+  apiName: data.apiName,
 });
 
 export const fetchAuditLogList = data => ({
   type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_SUCCESS,
   data,
 });
+
+export const resetAuditLog = () => ({
+  type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.RESET_AUDIT_LOG_LIST_DATA,
+});
+
+export const getAuditUserList = data => ({
+  type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.GET_AUDIT_USER_TYPE_LIST_DATA,
+  data,
+});
+
 export const getSettingDocumentTypeList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
@@ -178,12 +200,44 @@ export const getApiIntegration = data => {
     try {
       const response = await SettingApiIntegrationService.getApiIntegrationDetails(data);
       if (response.data.status === 'SUCCESS') {
-        dispatch(fetchApiIntegrationSuccess(response.data.data));
+        dispatch(fetchApiIntegrationSuccess(response.data.data.integration));
       }
     } catch (e) {
       if (e.response && e.response.data) {
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
+export const changeApiIntegrationDetails = data => {
+  return async dispatch => {
+    dispatch({
+      type:
+        SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION.CHANGE_API_INTEGRATION_DATA,
+      data,
+    });
+  };
+};
+
+export const updateApiIntegrationDetails = data => {
+  return async dispatch => {
+    try {
+      const response = await SettingApiIntegrationService.updateApiIntegrationDetails(data);
+      if (response.data.status === 'SUCCESS') {
+        successNotification('API integration details updated successfully');
+        dispatch(updateApiIntegration(data));
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification(e.response.data.message);
         } else {
           errorNotification('Internal server error');
         }
@@ -211,6 +265,39 @@ export const getOrganizationDetails = data => {
   };
 };
 
+export const changeOrganizationDetails = data => {
+  return async dispatch => {
+    dispatch({
+      type:
+        SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+          .CHANGE_ORGANIZATION_DETAILS,
+      data,
+    });
+  };
+};
+
+export const updateOrganizationDetails = data => {
+  return async dispatch => {
+    try {
+      const response = await SettingOrganizationDetailsApiService.updateOrganizationDetails(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch(updateOrgDetails(response.data.data));
+        successNotification('Organization details updated successfully.');
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification(e.response.data.message);
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
+  };
+};
+
 export const getAuditLogsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
@@ -226,6 +313,112 @@ export const getAuditLogsList = (params = { page: 1, limit: 15 }) => {
         } else {
           errorNotification('Internal server error');
         }
+      }
+    }
+  };
+};
+
+export const getAuditLogColumnNameList = () => {
+  return async dispatch => {
+    try {
+      const response = await SettingAuditLogApiService.getAuditLogColumnNameList();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification(e.response.data.message);
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const changeAuditLogColumnListStatus = data => {
+  return async dispatch => {
+    dispatch({
+      type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.UPDATE_AUDIT_LOG_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+
+export const saveAuditLogColumnNameList = ({ auditLogColumnList = {}, isReset = false }) => {
+  return async dispatch => {
+    try {
+      let data = {
+        isReset: true,
+        columns: [],
+      };
+
+      if (!isReset) {
+        const defaultFields = auditLogColumnList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = auditLogColumnList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          isReset: false,
+          columns: [...defaultFields, ...customFields],
+        };
+      }
+      if (!isReset && data.columns.length < 1) {
+        errorNotification('Please select at least one column to continue.');
+        dispatch(getAuditLogColumnNameList());
+      } else {
+        const response = await SettingAuditLogApiService.updateAuditLogColumnNameList(data);
+        if (response && response.data && response.data.status === 'SUCCESS') {
+          successNotification('Columns updated successfully.');
+        }
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
+      }
+    }
+  };
+};
+
+export const resetAuditLogList = () => {
+  return async dispatch => {
+    dispatch(resetAuditLog());
+  };
+};
+
+export const getAuditUserName = () => {
+  return async dispatch => {
+    try {
+      const response = await SettingAuditLogApiService.getAuditUserNameList();
+      if (response.data.status === 'SUCCESS') {
+        dispatch(getAuditUserList(response.data.data));
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        throw Error();
       }
     }
   };

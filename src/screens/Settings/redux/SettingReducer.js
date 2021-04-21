@@ -18,6 +18,23 @@ const initialSettingState = {
     error: null,
   },
   apiIntegration: {
+    integration: {
+      rss: {
+        accessToken: '',
+      },
+      abn: {
+        guid: '',
+      },
+      illion: {
+        password: '',
+        subscriberId: '',
+        userId: '',
+      },
+      equifax: {
+        username: '',
+        password: '',
+      },
+    },
     isLoading: true,
     error: null,
   },
@@ -31,6 +48,8 @@ const initialSettingState = {
     isLoading: true,
     error: null,
   },
+  userNameList: [],
+  auditLogColumnNameList: {},
 };
 
 export const settingReducer = (state = initialSettingState, action) => {
@@ -95,20 +114,54 @@ export const settingReducer = (state = initialSettingState, action) => {
         addDocumentType: action.data,
       };
 
+    case SETTING_REDUX_CONSTANTS.API_INTEGRATION.FETCH_API_INTEGRATION_SUCCESS:
+      return {
+        ...state,
+        apiIntegration: {
+          ...state.apiIntegration,
+          integration: {
+            ...state.apiIntegration.integration,
+            ...action.data,
+          },
+          isLoading: false,
+        },
+      };
+
+    case SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION.CHANGE_API_INTEGRATION_DATA:
+    case SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION.UPDATE_API_INTEGRATION_DATA:
+      return {
+        ...state,
+        apiIntegration: {
+          ...state.apiIntegration,
+          integration: {
+            ...state.apiIntegration.integration,
+            [action.data.apiName]: {
+              ...state.apiIntegration.integration[action.data.apiName],
+              [action.data.name]: action.data.value,
+            },
+          },
+        },
+      };
+
     case SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.FETCH_ORGANIZATION_DETAILS_SUCCESS:
       return {
         ...state,
         organizationDetails: {
+          ...state.organizationDetails,
           ...action.data,
           isLoading: false,
         },
       };
 
-    case SETTING_REDUX_CONSTANTS.API_INTEGRATION.FETCH_API_INTEGRATION_SUCCESS:
+    case SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+      .CHANGE_ORGANIZATION_DETAILS:
+    case SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+      .UPDATE_ORGANIZATION_DETAILS:
       return {
         ...state,
-        apiIntegration: {
-          ...action.data,
+        organizationDetails: {
+          ...state.organizationDetails,
+          [action.data.name]: action.data.value,
           isLoading: false,
         },
       };
@@ -120,6 +173,52 @@ export const settingReducer = (state = initialSettingState, action) => {
           ...action.data,
           isLoading: false,
           error: null,
+        },
+      };
+
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        auditLogColumnNameList: {
+          ...action.data,
+        },
+      };
+
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.UPDATE_AUDIT_LOG_COLUMN_LIST_ACTION: {
+      const columnList = {
+        ...state.auditLogColumnNameList,
+      };
+
+      const { type, name, value } = action.data;
+
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
+        e.name === name
+          ? {
+              ...e,
+              isChecked: value,
+            }
+          : e
+      );
+      return {
+        ...state,
+        auditLogColumnNameList: {
+          ...columnList,
+        },
+      };
+    }
+
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.GET_AUDIT_USER_TYPE_LIST_DATA:
+      return {
+        ...state,
+        userNameList: [...state.userNameList, ...action.data],
+      };
+
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.RESET_AUDIT_LOG_LIST_DATA:
+      return {
+        ...state,
+        auditLogList: {
+          page: 1,
+          limit: 15,
         },
       };
 

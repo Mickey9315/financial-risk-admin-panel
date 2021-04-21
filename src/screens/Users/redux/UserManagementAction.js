@@ -99,7 +99,6 @@ export const saveUserColumnListName = ({ userColumnList = {}, isReset = false })
         isReset: true,
         columns: [],
       };
-
       if (!isReset) {
         const defaultColumns = userColumnList.defaultFields
           .filter(e => e.isChecked)
@@ -115,7 +114,6 @@ export const saveUserColumnListName = ({ userColumnList = {}, isReset = false })
         errorNotification('Please select at least one column to continue.');
       } else {
         const response = await UserManagementApiService.updateUserColumnListName(data);
-
         if (response && response.data && response.data.status === 'SUCCESS') {
           successNotification('Columns updated successfully.');
         }
@@ -164,7 +162,6 @@ export const getSelectedUserData = id => {
   return async dispatch => {
     try {
       const response = await UserManagementApiService.getSelectedUserData(id);
-      console.log('getSelectedUserData', response);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,

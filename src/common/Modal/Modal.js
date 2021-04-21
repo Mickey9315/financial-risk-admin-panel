@@ -33,7 +33,7 @@ const Modal = props => {
           <div className={`d-flex align-center ${closeIcon ? 'just-bet' : 'just-center'}`}>
             <div>
               {headerIcon && (
-                <div className="d-flex just-center">
+                <div className="d-flex just-center align-center">
                   <span className="material-icons-round mr-5">{headerIcon}</span>
                   {header}
                 </div>

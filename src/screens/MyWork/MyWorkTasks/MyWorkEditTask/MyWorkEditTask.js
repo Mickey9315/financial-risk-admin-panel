@@ -268,6 +268,7 @@ const MyWorkAddTask = () => {
               <span>{input.label}</span>
               <div className="date-picker-container">
                 <DatePicker
+                  dateFormat="dd/MM/yyyy"
                   placeholderText={input.placeholder}
                   value={
                     taskDetails[input.name]

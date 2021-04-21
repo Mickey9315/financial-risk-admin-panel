@@ -103,7 +103,7 @@ const AddUser = () => {
       const data = {
         target: {
           name: 'role',
-          value: e[0].value,
+          value: e?.[0]?.value,
         },
       };
 
@@ -139,7 +139,6 @@ const AddUser = () => {
       dispatch(changeUserManageAccess({ name, value: 'read' }));
       dispatch(changeUserManageAccess({ name, value: 'write' }));
       dispatch(changeUserManageAccess({ name, value }));
-      console.log('here if');
     } else {
       dispatch(changeUserManageAccess({ name, value }));
     }

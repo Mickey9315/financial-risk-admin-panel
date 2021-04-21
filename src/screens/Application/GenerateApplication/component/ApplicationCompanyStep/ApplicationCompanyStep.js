@@ -447,6 +447,7 @@ const ApplicationCompanyStep = () => {
 
   useEffect(() => {
     dispatch(getApplicationCompanyDropDownData());
+    return () => dispatch(updateEditApplicationData('companyStep', { errors: {} }));
   }, []);
 
   return (

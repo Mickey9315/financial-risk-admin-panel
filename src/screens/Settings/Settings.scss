@@ -33,6 +33,10 @@
     font: $h5 $font-medium;
     color: $secondary-color;
   }
+
+  textarea {
+    width: 100%;
+  }
 }
 
 .settings-row:first-child {
@@ -52,13 +56,19 @@
   display: grid;
   grid-template-columns: repeat(3, 100px minmax(100px,350px));
   gap: 10px;
-  align-items: baseline;
+  align-items: center;
   margin: 15px 30px 0 0;
 
-  textarea {
+  .rss-access-token, textarea {
     grid-column: 2/ 7;
-    resize: none;
+    $font:$subtitle $font-regular;
+    color: $field-color;
+    word-break: break-all;
   }
+}
+
+.equifax-row-container {
+  grid-template-columns: repeat(2, 80px minmax(150px, 400px));
 }
 
 .settings-row-input-title {
@@ -97,4 +107,21 @@
 .settings-audit-log-list-container {
   max-height: calc(100vh - 315px);
   overflow-y: auto;
+}
+
+.abn-guid-input {
+  grid-column: 2/5;
+}
+
+.settings-equifax-username {
+  grid-column: 2/3;
+}
+
+.settings-equifax-password {
+  grid-column: 5/7;
+}
+
+.settings-no-value-error {
+  font: $subtitle $font-regular;
+  color: $error-color;
 }

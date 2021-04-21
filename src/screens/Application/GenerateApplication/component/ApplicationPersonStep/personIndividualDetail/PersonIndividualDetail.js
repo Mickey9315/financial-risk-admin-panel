@@ -521,6 +521,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           component = (
             <div className="date-picker-container">
               <DatePicker
+                dateFormat="dd/MM/yyyy"
                 placeholderText={input.placeholder}
                 value={
                   partners[index].dateOfBirth

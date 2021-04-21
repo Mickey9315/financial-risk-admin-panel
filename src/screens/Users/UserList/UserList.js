@@ -410,6 +410,7 @@ const UserList = () => {
                 selected={startDate}
                 onChange={handleStartDateChange}
                 placeholderText="From Date"
+                dateFormat="dd/MM/yyyy"
               />
               <span className="material-icons-round">event_available</span>
             </div>
@@ -419,6 +420,7 @@ const UserList = () => {
                 selected={endDate}
                 onChange={handleEndDateChange}
                 placeholderText="To Date"
+                dateFormat="dd/MM/yyyy"
               />
               <span className="material-icons-round">event_available</span>
             </div>
