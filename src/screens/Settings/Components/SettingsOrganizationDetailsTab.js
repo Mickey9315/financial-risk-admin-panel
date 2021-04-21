@@ -87,8 +87,11 @@ const SettingsOrganizationDetailsTab = () => {
   }, [setIsEdit, organizationDetail]);
 
   const onCancelEdit = useCallback(() => {
-    if (errorElementList.length <= 0) setIsEdit(false);
-    dispatch(getOrganizationDetails());
+    if (errorElementList.length <= 0) {
+      setIsEdit(false);
+      dispatch(getOrganizationDetails());
+      setErrorElementList([]);
+    }
   }, [setIsEdit]);
 
   return (

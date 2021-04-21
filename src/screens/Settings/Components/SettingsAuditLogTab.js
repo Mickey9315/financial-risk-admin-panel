@@ -33,7 +33,6 @@ const SettingsAuditLogTab = () => {
     [auditLogColumnList]
   );
   const dispatch = useDispatch();
-
   const { isLoading, total, pages, page, limit, docs, headers } = useMemo(() => getAuditLogList, [
     getAuditLogList,
   ]);
@@ -302,7 +301,6 @@ const SettingsAuditLogTab = () => {
     ],
     [toggleFilterModal, onClickApplyFilter]
   );
-
   const userNameOptions = useMemo(() => {
     return userNameList.map(e => ({
       label: e.name,
@@ -364,6 +362,27 @@ const SettingsAuditLogTab = () => {
     },
   ];
 
+  const entityTypeSelectedValue = useMemo(() => {
+    const selectedEntityType = entityTypeOptions.find(e => {
+      return e.value === entityType;
+    });
+    return selectedEntityType ? [selectedEntityType] : [];
+  }, [filter, entityType]);
+
+  const userNameSelectedValue = useMemo(() => {
+    const selectedUserName = userNameList.find(e => {
+      return e._id === userRefId;
+    });
+    return selectedUserName ? [{ label: selectedUserName.name, value: selectedUserName._id }] : [];
+  }, [filter, userRefId]);
+
+  const actionTypeSelectedValue = useMemo(() => {
+    const selectedActiontype = actionTypeOptions.find(e => {
+      return e.value === actionType;
+    });
+    return selectedActiontype ? [selectedActiontype] : [];
+  }, [filter, actionType]);
+
   return (
     <>
       <div className="settings-title-row">
@@ -418,6 +437,7 @@ const SettingsAuditLogTab = () => {
               className="filter-select"
               placeholder="Select module"
               name="entityType"
+              values={entityTypeSelectedValue}
               options={entityTypeOptions}
               onChange={handleEntityTypeFilterChange}
               searchable={false}
@@ -430,6 +450,7 @@ const SettingsAuditLogTab = () => {
               placeholder="Select user name"
               name="userRefId"
               options={userNameOptions}
+              values={userNameSelectedValue}
               onChange={handleUserNameFilterChange}
               searchable={false}
             />
@@ -440,6 +461,7 @@ const SettingsAuditLogTab = () => {
               className="filter-select"
               placeholder="Select action type"
               name="actionType"
+              values={actionTypeSelectedValue}
               options={actionTypeOptions}
               onChange={handleActionTypeFilterChange}
               searchable={false}

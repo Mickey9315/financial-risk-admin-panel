@@ -26,11 +26,30 @@
   }
 
   span {
-    position: absolute;
+    //position: absolute;
     right: 5px;
     font-size: 24px;
     color: $placeholder-color;
     z-index: 1;
+  }
+  .react-datepicker__header{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: space-between;
+    .react-datepicker__header__dropdown{
+      padding-top: inherit;
+      .react-datepicker__year-read-view, .react-datepicker__month-read-view{
+        display: flex;
+        flex-direction: row-reverse;
+      }
+      .react-datepicker__year-dropdown, .react-datepicker__month-dropdown, .react-datepicker__month-year-dropdown{
+        z-index: 2!important;
+      }
+      .react-datepicker__navigation{
+        top : 0
+      }
+    }
   }
 }
 

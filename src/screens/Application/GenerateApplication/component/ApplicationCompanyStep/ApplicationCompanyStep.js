@@ -420,7 +420,7 @@ const ApplicationCompanyStep = () => {
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              searchable={false}
+              searchable
               values={companyState[input.name]}
               onChange={handleOnChange}
             />

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import ReactSelect from 'react-dropdown-select';
 import DatePicker from 'react-datepicker';
@@ -460,7 +459,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               values={
                 (partners && partners[index][input.name] && partners[index][input.name]) || []
               }
-              searchable={false}
+              searchable
               onChange={handleSelectInputChange}
               disabled={partners[index].isDisabled || false}
             />
@@ -523,13 +522,13 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               <DatePicker
                 dateFormat="dd/MM/yyyy"
                 placeholderText={input.placeholder}
-                value={
-                  partners[index].dateOfBirth
-                    ? moment(partners[index].dateOfBirth).format('MM/DD/YYYY')
-                    : ''
-                }
-                onChange={date => onChangeDate(input.name, moment(date).format('MM/DD/YYYY'))}
+                selected={partners[index].dateOfBirth && new Date(partners[index].dateOfBirth)}
+                onChange={date => onChangeDate(input.name, date)}
                 disabled={partners[index].isDisabled || false}
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
+                maxDate={new Date()}
               />
               <span className="material-icons-round">event_available</span>
             </div>
