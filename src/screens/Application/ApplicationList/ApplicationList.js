@@ -550,6 +550,9 @@ const ApplicationList = () => {
                 selected={startDate}
                 onChange={handleStartDateChange}
                 placeholderText="From Date"
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
                 dateFormat="dd/MM/yyyy"
               />
               <span className="material-icons-round">event_available</span>
@@ -560,6 +563,9 @@ const ApplicationList = () => {
                 selected={endDate}
                 onChange={handleEndDateChange}
                 placeholderText="To Date"
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
                 dateFormat="dd/MM/yyyy"
               />
               <span className="material-icons-round">event_available</span>

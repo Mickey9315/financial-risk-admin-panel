@@ -407,6 +407,9 @@ const DebtorTaskTab = () => {
               <div className="date-picker-container">
                 <DatePicker
                   dateFormat="dd/MM/yyyy"
+                  showMonthDropdown
+                  showYearDropdown
+                  scrollableYearDropdown
                   placeholderText={input.placeholder}
                   value={
                     addTaskState[input.name]

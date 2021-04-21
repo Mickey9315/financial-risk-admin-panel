@@ -473,6 +473,9 @@ const SettingsAuditLogTab = () => {
               <DatePicker
                 className="filter-date-picker"
                 selected={startDate}
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
                 onChange={handleStartDateChange}
                 placeholderText="From Date"
                 dateFormat="dd/MM/yyyy"
@@ -483,6 +486,9 @@ const SettingsAuditLogTab = () => {
               <DatePicker
                 className="filter-date-picker"
                 selected={endDate}
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
                 onChange={handleEndDateChange}
                 placeholderText="To Date"
                 dateFormat="dd/MM/yyyy"

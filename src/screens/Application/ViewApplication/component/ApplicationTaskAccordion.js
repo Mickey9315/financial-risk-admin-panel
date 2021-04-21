@@ -396,6 +396,9 @@ const ApplicationTaskAccordion = props => {
               <div className="date-picker-container">
                 <DatePicker
                   placeholderText={input.placeholder}
+                  showMonthDropdown
+                  showYearDropdown
+                  scrollableYearDropdown
                   value={
                     addTaskState[input.name]
                       ? new Date(addTaskState[input.name]).toLocaleDateString()

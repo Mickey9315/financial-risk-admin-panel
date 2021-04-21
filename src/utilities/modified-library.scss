@@ -58,7 +58,7 @@
 }
 
 .react-dropdown-select-option-remove {
-  display: flex!important;
+  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   height: 14px !important;
@@ -99,6 +99,10 @@
   z-index: 10;
 }
 
+.date-picker-container .material-icons-round {
+  position: absolute;
+}
+
 .react-datepicker__header {
   border: none;
   background-color: white;
@@ -109,6 +113,53 @@
   font-family: $font-regular;
   font-size: 14px;
   color: $field-color;
+}
+
+.date-picker-container .react-datepicker__header .react-datepicker__header__dropdown span {
+  font-family: $font-regular;
+  font-size: 14px;
+  color: $field-color;
+}
+
+.react-datepicker__month-read-view--down-arrow, .react-datepicker__year-read-view--down-arrow {
+  margin-bottom: -7px;
+  border-top-width: 5px;
+  border-left-width: 5px;
+  border-right-width: 5px;
+  border-top-color: $field-color;
+}
+
+.date-picker-container .react-datepicker__header .react-datepicker__header__dropdown span:before {
+  display: none;
+}
+
+.react-datepicker__year-dropdown, .react-datepicker__month-dropdown, .react-datepicker__month-year-dropdown {
+  padding: 10px 0;
+  font-family: $font-regular;
+  font-size: 14px;
+  color: $field-color;
+  background-color: white;
+}
+
+.react-datepicker__year-option, .react-datepicker__month-option, .react-datepicker__month-year-option {
+  display: flex;
+  align-items: center;
+  height: 25px;
+  padding-left: 10px;
+}
+
+.react-datepicker__month-dropdown {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.react-datepicker__month-option--selected {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.react-datepicker__year-option:hover, .react-datepicker__month-option:hover, .react-datepicker__month-year-option:hover {
+  background-color: $border-color;
 }
 
 .react-datepicker__month-container {
@@ -157,8 +208,8 @@
 }
 
 .react-datepicker__day--today {
-  background-color: $secondary-color!important;
-  color: white!important;
+  background-color: $secondary-color !important;
+  color: white !important;
   border-radius: .3rem !important;
 
   &:hover {

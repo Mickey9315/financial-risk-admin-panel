@@ -218,6 +218,9 @@ const ViewClient = () => {
         <span>Inception Date</span>
         <div className="date-picker-container">
           <DatePicker
+            showMonthDropdown
+            showYearDropdown
+            scrollableYearDropdown
             dateFormat="dd/MM/yyyy"
             placeholderText="Select date"
             selected={new Date(viewClientData.inceptionDate)}
@@ -227,6 +230,9 @@ const ViewClient = () => {
         <span>Expiry Date</span>
         <div className="date-picker-container">
           <DatePicker
+            showMonthDropdown
+            showYearDropdown
+            scrollableYearDropdown
             dateFormat="dd/MM/yyyy"
             placeholderText="Select date"
             selected={new Date(viewClientData.expiryDate)}

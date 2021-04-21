@@ -405,6 +405,9 @@ const ClientTaskTab = () => {
                 <DatePicker
                   placeholderText={input.placeholder}
                   dateFormat="dd/MM/yyyy"
+                  showMonthDropdown
+                  showYearDropdown
+                  scrollableYearDropdown
                   value={
                     addTaskState[input.name]
                       ? new Date(addTaskState[input.name]).toLocaleDateString()

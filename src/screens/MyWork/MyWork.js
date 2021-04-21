@@ -357,7 +357,13 @@ const MyWork = () => {
             </>
           ) : (
             <div className="date-picker-container">
-              <DatePicker placeholderText="Select date..." dateFormat="dd/MM/yyyy" />
+              <DatePicker
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
+                placeholderText="Select date..."
+                dateFormat="dd/MM/yyyy"
+              />
               <span className="material-icons-round">event_available</span>
             </div>
           )}
@@ -400,6 +406,9 @@ const MyWork = () => {
             <div className="date-picker-container filter-date-picker-container mr-15">
               <DatePicker
                 dateFormat="dd/MM/yyyy"
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
                 className="filter-date-picker"
                 selected={startDate}
                 onChange={handleStartDateChange}
@@ -410,6 +419,9 @@ const MyWork = () => {
             <div className="date-picker-container filter-date-picker-container">
               <DatePicker
                 dateFormat="dd/MM/yyyy"
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
                 className="filter-date-picker"
                 selected={endDate}
                 onChange={handleEndDateChange}
