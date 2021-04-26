@@ -48,14 +48,20 @@ const SettingsDocumentTypeTab = () => {
     [setShowConfirmModal]
   );
 
-  const documentTypeListData = useSelector(({ settingReducer }) => settingReducer.documentType);
-  const documentTypeAddData = useSelector(({ settingReducer }) => settingReducer.addDocumentType);
+  const documentTypeListData = useSelector(
+    ({ settingReducer }) => settingReducer?.documentType ?? {}
+  );
+  const documentTypeAddData = useSelector(
+    ({ settingReducer }) => settingReducer?.addDocumentType ?? {}
+  );
 
   const { isLoading, error, total, pages, page, limit, docs, headers } = useMemo(
-    () => documentTypeListData,
+    () => documentTypeListData ?? {},
     [documentTypeListData]
   );
-  const { documentTitle, documentFor } = useMemo(() => documentTypeAddData, [documentTypeAddData]);
+  const { documentTitle, documentFor } = useMemo(() => documentTypeAddData ?? {}, [
+    documentTypeAddData,
+  ]);
 
   const [docId, setDocId] = useState(null);
 
@@ -94,15 +100,14 @@ const SettingsDocumentTypeTab = () => {
 
   const handleDocumentTypeChange = useCallback(
     e => {
-      updateDocumentFields('documentTitle', e.target.value);
+      updateDocumentFields('documentTitle', e?.target?.value ?? '');
     },
     [updateDocumentFields]
   );
 
   const handleDocumentForChange = useCallback(
     data => {
-      console.log(data[0]);
-      updateDocumentFields(data[0]?.name, data);
+      updateDocumentFields(data[0]?.name ?? '', data);
     },
     [updateDocumentFields]
   );
@@ -128,24 +133,26 @@ const SettingsDocumentTypeTab = () => {
   }, [toggleConfirmationModal, getSettingDocumentTypeListByFilter]);
 
   const addNewDocumentType = useCallback(() => {
-    if (!documentTitle || documentTitle.trim().length < 0) {
+    if (!documentTitle || (documentTitle?.trim()?.length ?? -1) < 0) {
       errorNotification('Enter Document Type');
     }
-    if (!documentFor || !documentFor[0].value) {
+    if (!documentFor || !documentFor?.[0]?.value) {
       errorNotification('Enter Document For');
     } else {
       try {
         if (openEditDocModal) {
-          console.log(docId, { documentTitle, documentFor: documentFor[0].value });
           dispatch(
-            updateSettingDocType(docId, { documentTitle, documentFor: documentFor[0].value }, () =>
-              callBackOnAdd()
+            updateSettingDocType(
+              docId,
+              { documentTitle, documentFor: documentFor?.[0]?.value ?? '' },
+              () => callBackOnAdd()
             )
           );
         } else {
           dispatch(
-            addNewSettingDocType({ documentTitle, documentFor: documentFor[0].value }, () =>
-              callBackOnAdd()
+            addNewSettingDocType(
+              { documentTitle, documentFor: documentFor?.[0]?.value ?? '' },
+              () => callBackOnAdd()
             )
           );
         }
@@ -231,8 +238,8 @@ const SettingsDocumentTypeTab = () => {
 
   useEffect(() => {
     const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
+      page: paramPage ?? 1,
+      limit: paramLimit ?? 15,
     };
 
     getSettingDocumentTypeListByFilter(params);
@@ -240,15 +247,15 @@ const SettingsDocumentTypeTab = () => {
 
   useEffect(() => {
     const params = {
-      page: page || 1,
-      limit: limit || 15,
+      page: page ?? 1,
+      limit: limit ?? 15,
     };
     const url = Object.entries(params)
-      .filter(arr => arr[1] !== undefined)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
+      ?.filter(arr => arr[1] !== undefined)
+      ?.map(([k, v]) => `${k}=${v}`)
+      ?.join('&');
 
-    history.replace(`${history.location.pathname}?${url}`);
+    history.replace(`${history?.location?.pathname}?${url}`);
   }, [history, total, pages, page, limit]);
 
   useEffect(() => {

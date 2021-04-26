@@ -58,7 +58,7 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         documentType: {
-          ...state.documentType,
+          ...state?.documentType,
           isLoading: true,
         },
       };
@@ -67,7 +67,7 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         documentType: {
-          ...action.data,
+          ...action?.data,
           isLoading: false,
           error: null,
         },
@@ -77,9 +77,9 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         documentType: {
-          ...action.data,
+          ...action?.data,
           isLoading: false,
-          error: action.error,
+          error: action?.error,
         },
       };
 
@@ -87,7 +87,7 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         documentType: {
-          ...state.documentType,
+          ...state?.documentType,
           page: 1,
           limit: 15,
         },
@@ -97,8 +97,8 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         addDocumentType: {
-          ...state.addDocumentType,
-          [`${action.name}`]: action.value,
+          ...state?.addDocumentType,
+          [`${action?.name}`]: action?.value,
         },
       };
 
@@ -111,17 +111,17 @@ export const settingReducer = (state = initialSettingState, action) => {
     case SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.EDIT_DOCUMENT_TYPE.GET_DOCTYPE_DETAIL:
       return {
         ...state,
-        addDocumentType: action.data,
+        addDocumentType: action?.data,
       };
 
     case SETTING_REDUX_CONSTANTS.API_INTEGRATION.FETCH_API_INTEGRATION_SUCCESS:
       return {
         ...state,
         apiIntegration: {
-          ...state.apiIntegration,
+          ...state?.apiIntegration,
           integration: {
-            ...state.apiIntegration.integration,
-            ...action.data,
+            ...state?.apiIntegration?.integration,
+            ...action?.data,
           },
           isLoading: false,
         },
@@ -132,12 +132,12 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         apiIntegration: {
-          ...state.apiIntegration,
+          ...state?.apiIntegration,
           integration: {
-            ...state.apiIntegration.integration,
-            [action.data.apiName]: {
-              ...state.apiIntegration.integration[action.data.apiName],
-              [action.data.name]: action.data.value,
+            ...state?.apiIntegration?.integration,
+            [action?.data?.apiName]: {
+              ...state?.apiIntegration?.integration[action?.data?.apiName],
+              [action?.data?.name]: action?.data?.value,
             },
           },
         },
@@ -147,8 +147,8 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         organizationDetails: {
-          ...state.organizationDetails,
-          ...action.data,
+          ...state?.organizationDetails,
+          ...action?.data,
           isLoading: false,
         },
       };
@@ -160,8 +160,8 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         organizationDetails: {
-          ...state.organizationDetails,
-          [action.data.name]: action.data.value,
+          ...state?.organizationDetails,
+          [action?.data?.name]: action?.data?.value,
           isLoading: false,
         },
       };
@@ -170,7 +170,7 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         auditLogList: {
-          ...action.data,
+          ...action?.data,
           isLoading: false,
           error: null,
         },
@@ -180,19 +180,19 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         auditLogColumnNameList: {
-          ...action.data,
+          ...action?.data,
         },
       };
 
     case SETTING_REDUX_CONSTANTS.AUDIT_LOG.UPDATE_AUDIT_LOG_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.auditLogColumnNameList,
+        ...state?.auditLogColumnNameList,
       };
 
-      const { type, name, value } = action.data;
+      const { type, name, value } = action?.data ?? {};
 
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
-        e.name === name
+      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+        e?.name === name
           ? {
               ...e,
               isChecked: value,
@@ -210,7 +210,7 @@ export const settingReducer = (state = initialSettingState, action) => {
     case SETTING_REDUX_CONSTANTS.AUDIT_LOG.GET_AUDIT_USER_TYPE_LIST_DATA:
       return {
         ...state,
-        userNameList: [...state.userNameList, ...action.data],
+        userNameList: [...state?.userNameList, ...action?.data],
       };
 
     case SETTING_REDUX_CONSTANTS.AUDIT_LOG.RESET_AUDIT_LOG_LIST_DATA:

@@ -11,17 +11,16 @@ import {
 } from '../redux/SettingAction';
 
 const SettingsApiIntegrationTab = () => {
-  const apiIntegrationDetails = useSelector(
-    ({ settingReducer }) => settingReducer.apiIntegration.integration
-  );
-  const isLoading = useSelector(({ settingReducer }) => settingReducer.apiIntegration.isLoading);
   const dispatch = useDispatch();
+  const apiIntegrationData = useSelector(
+    ({ settingReducer }) => settingReducer?.apiIntegration ?? {}
+  );
+  const apiIntegrationDetails = useMemo(() => apiIntegrationData?.integration ?? {}, [
+    apiIntegrationData,
+  ]);
+  const isLoading = useMemo(() => apiIntegrationData?.isLoading ?? false, [apiIntegrationData]);
   const [errorElementList, setErrorElementList] = useState([]);
-  useEffect(() => {
-    dispatch(getApiIntegration());
-    setErrorElementList([]);
-  }, []);
-  const { equifax, illion, rss, abn } = useMemo(() => apiIntegrationDetails, [
+  const { equifax, illion, rss, abn } = useMemo(() => apiIntegrationDetails ?? {}, [
     apiIntegrationDetails,
   ]);
 
@@ -110,7 +109,7 @@ const SettingsApiIntegrationTab = () => {
 
   const onInputValueChange = useCallback((row, e) => {
     const { name, value } = e.target;
-    const apiName = row.name;
+    const apiName = row?.name;
     dispatch(changeApiIntegrationDetails({ name, value, apiName }));
   }, []);
 
@@ -120,15 +119,15 @@ const SettingsApiIntegrationTab = () => {
       let tempArray = [];
 
       row.inputs.forEach((input, i) => {
-        if (input.value.toString().trim().length === 0) {
-          tempArray = tempArray.concat([i]);
+        if ((input?.value?.toString()?.trim()?.length ?? -1) === 0) {
+          tempArray = tempArray?.concat([i]) ?? [];
           checkCondition = true;
         }
       });
       setErrorElementList(tempArray);
 
       if (!checkCondition) {
-        const apiName = row.name;
+        const apiName = row?.name;
         await dispatch(updateApiIntegrationDetails({ apiName, ...apiIntegrationDetails[apiName] }));
         setErrorElementList([]);
         setIsEditItemIndex(-1);
@@ -141,6 +140,11 @@ const SettingsApiIntegrationTab = () => {
     if (errorElementList.length <= 0) setIsEditItemIndex(-1);
     dispatch(getApiIntegration());
   }, [setIsEditItemIndex, errorElementList]);
+
+  useEffect(() => {
+    dispatch(getApiIntegration());
+    setErrorElementList([]);
+  }, []);
 
   return (
     <>

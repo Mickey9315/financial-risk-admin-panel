@@ -39,13 +39,10 @@ const MyWorkAddTask = () => {
     history.push('/my-work');
   }, []);
 
-  const addTaskState = useSelector(({ myWorkReducer }) => myWorkReducer.task.addTask);
-  const { assigneeList, entityList } = useSelector(
-    ({ myWorkReducer }) => myWorkReducer.task.dropDownData
-  );
-
-  const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
-  const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
+  const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
+  const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
+  const addTaskState = useMemo(() => taskData?.addTask ?? {}, [taskData]);
+  const { assigneeList, entityList } = useMemo(() => taskData?.dropDownData ?? {}, [taskData]);
 
   const INPUTS = useMemo(
     () => [
@@ -113,7 +110,7 @@ const MyWorkAddTask = () => {
 
   const handleTextInputChange = useCallback(
     e => {
-      const { name, value } = e.target;
+      const { name, value } = e?.target ?? {};
       updateAddTaskState(name, value);
     },
     [updateAddTaskState]
@@ -121,7 +118,7 @@ const MyWorkAddTask = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateAddTaskState(data[0]?.name, data);
+      updateAddTaskState(data[0]?.name ?? '', data);
     },
     [updateAddTaskState]
   );
@@ -130,7 +127,7 @@ const MyWorkAddTask = () => {
     data => {
       try {
         handleSelectInputChange(data);
-        const params = { entityName: data[0]?.value };
+        const params = { entityName: data[0]?.value ?? '' };
         if (data[0]?.value) {
           dispatch(getEntityDropDownData(params));
         }
@@ -150,19 +147,20 @@ const MyWorkAddTask = () => {
 
   const getAssigneeSelectedValue = useMemo(() => {
     const assigneeSelected = addTaskState?.assigneeId[0]?.value
-      ? assigneeList.find(e => {
-          return e.value === addTaskState?.assigneeId[0]?.value;
+      ? assigneeList?.find(e => {
+          return e?.value === addTaskState?.assigneeId[0]?.value;
         })
-      : assigneeList.find(e => {
-          return e.value === _id;
+      : assigneeList?.find(e => {
+          return e?.value === userId;
         });
     return (assigneeSelected && [assigneeSelected]) || [];
-  }, [addTaskState, _id, assigneeList]);
+  }, [addTaskState, userId, assigneeList]);
 
   useEffect(() => {
-    const result = assigneeList.find(e => {
-      return e.value === _id;
-    });
+    const result =
+      assigneeList?.find(e => {
+        return e?.value === userId;
+      }) ?? [];
     handleSelectInputChange([result]);
   }, []);
 
@@ -180,13 +178,13 @@ const MyWorkAddTask = () => {
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'task',
+      priority: addTaskState?.priority[0]?.value ?? undefined,
+      entityType: addTaskState?.entityType[0]?.value ?? undefined,
+      entityId: addTaskState?.entityId[0]?.value ?? undefined,
+      description: addTaskState?.description?.trim() ?? undefined,
     };
-    if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority[0]?.value;
-    if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType[0]?.value;
-    if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0]?.value;
-    if (addTaskState?.description) data.description = addTaskState?.description?.trim();
 
-    if (!data.title && data.title.length === 0) {
+    if (!data?.title && (data?.title?.length ?? -1) === 0) {
       errorNotification('Please add title');
     } else {
       try {

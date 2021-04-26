@@ -56,14 +56,16 @@ function filterReducer(state, action) {
 const UserList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const userListWithPageData = useSelector(({ userManagementList }) => userManagementList);
-  const userColumnList = useSelector(({ userManagementColumnList }) => userManagementColumnList);
+  const userListWithPageData = useSelector(({ userManagementList }) => userManagementList ?? {});
+  const userColumnList = useSelector(
+    ({ userManagementColumnList }) => userManagementColumnList ?? []
+  );
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const [deleteId, setDeleteId] = useState(null);
-  const { role, startDate, endDate } = useMemo(() => filter, [filter]);
+  const { role, startDate, endDate } = useMemo(() => filter ?? {}, [filter]);
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
-    () => userListWithPageData,
+    () => userListWithPageData ?? {},
     [userListWithPageData]
   );
   const handleStartDateChange = useCallback(
@@ -95,19 +97,19 @@ const UserList = () => {
 
   const getUserManagementByFilter = useCallback(
     (params = {}, cb) => {
-      if (moment(startDate).isAfter(endDate)) {
+      if (moment(startDate)?.isAfter(endDate)) {
         errorNotification('From date should be greater than to date');
         resetFilterDates();
-      } else if (moment(endDate).isBefore(startDate)) {
+      } else if (moment(endDate)?.isBefore(startDate)) {
         errorNotification('To Date should be smaller than from date');
         resetFilterDates();
       } else {
         const data = {
-          page: page || 1,
-          limit: limit || 15,
-          role: role && role.trim().length > 0 ? role : undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
+          page: page ?? 1,
+          limit: limit ?? 15,
+          role: (role?.trim()?.length ?? -1) > 0 ? role : undefined,
+          startDate: startDate ?? undefined,
+          endDate: endDate ?? undefined,
           ...params,
         };
         dispatch(getUserManagementListByFilter(data));
@@ -121,7 +123,7 @@ const UserList = () => {
 
   const handleFilterChange = useCallback(
     event => {
-      if (event && event[0] && event[0].value) {
+      if (event?.[0]?.value) {
         dispatchFilter({
           type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
           name: 'role',
@@ -283,7 +285,7 @@ const UserList = () => {
     };
 
     const filters = {
-      role: paramRole && paramRole.trim().length > 0 ? paramRole : undefined,
+      role: paramRole?.trim()?.length > 0 ?? false ? paramRole : undefined,
       startDate: paramStartDate ? new Date(paramStartDate) : undefined,
       endDate: paramEndDate ? new Date(paramEndDate) : undefined,
     };
@@ -299,27 +301,27 @@ const UserList = () => {
     getUserManagementByFilter({ ...params, ...filters });
     dispatch(getUserColumnListName());
     return () => dispatch(resetPageData());
-  }, []);
+  }, [paramRole]);
 
   useEffect(() => {
     const params = {
       page: page || 1,
       limit: limit || 15,
-      role: role && role?.length > 0 ? role.trim() : undefined,
-      startDate: startDate ? new Date(startDate).toISOString() : undefined,
-      endDate: endDate ? new Date(endDate).toISOString() : undefined,
+      role: role?.length > 0 ?? false ? role?.trim() : undefined,
+      startDate: startDate ? new Date(startDate)?.toISOString() : undefined,
+      endDate: endDate ? new Date(endDate)?.toISOString() : undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
 
-    history.replace(`${history.location.pathname}?${url}`);
+    history.replace(`${history?.location?.pathname}?${url}`);
   }, [history, total, pages, page, limit, role, startDate, endDate]);
 
   const userRoleSelectedValue = useMemo(() => {
     const foundValue = USER_ROLES.find(e => {
-      return e.value === role;
+      return (e?.value ?? '') === role;
     });
     return foundValue ? [foundValue] : [];
   }, [role]);

@@ -39,8 +39,8 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
-          taskList: action.data,
+          ...state?.task,
+          taskList: action?.data,
         },
       };
 
@@ -48,26 +48,26 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           addTask: {
-            ...state.task.addTask,
-            [action.name]: action.value,
+            ...state?.task?.addTask,
+            [action?.name]: action?.value,
           },
         },
       };
 
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_ACTION: {
-      const assigneeList = action.data.map(data => ({
-        label: data.name,
-        value: data._id,
+      const assigneeList = action?.data?.map(data => ({
+        label: data?.name,
+        value: data?._id,
         name: 'assigneeId',
       }));
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           dropDownData: {
-            ...state.task.dropDownData,
+            ...state?.task?.dropDownData,
             assigneeList,
           },
         },
@@ -75,25 +75,25 @@ export const myWorkReducer = (state = initialMyWork, action) => {
     }
 
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION: {
-      const entityList = action.data.map(data => ({
-        label: data.applicationId || data.name,
-        value: data._id,
+      const entityList = action?.data?.map(data => ({
+        label: data?.applicationId || data?.name,
+        value: data?._id,
         name: 'entityId',
       }));
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           addTask: {
-            ...state.task.addTask,
+            ...state?.task?.addTask,
             entityId: [],
           },
           taskDetail: {
-            ...state.task.taskDetail,
+            ...state?.task?.taskDetail,
             entityId: [],
           },
           dropDownData: {
-            ...state.task.dropDownData,
+            ...state?.task?.dropDownData,
             entityList,
           },
         },
@@ -104,7 +104,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           addTask: {
             title: '',
             description: '',
@@ -122,9 +122,9 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           taskList: {
-            ...state.task.taskList,
+            ...state?.task?.taskList,
             page: 1,
             limit: 15,
           },
@@ -136,40 +136,40 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
-          columnList: action.data,
+          ...state?.task,
+          columnList: action?.data,
         },
       };
 
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_TASK_COLUMN_NAME_LIST_ACTION: {
       const columnList = {
-        ...state.task.columnList,
+        ...state?.task?.columnList,
       };
-      const { type, name, value } = action.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
-        e.name === name ? { ...e, isChecked: value } : e
+      const { type, name, value } = action?.data;
+      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+        e?.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           columnList,
         },
       };
     }
 
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_FOR_FILTER: {
-      const assigneeList = action.data.map(data => ({
-        label: data.name,
-        value: data._id,
+      const assigneeList = action?.data?.map(data => ({
+        label: data?.name,
+        value: data?._id,
         name: 'assigneeId',
       }));
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           filterDropDownData: {
-            ...state.task.filterDropDownData,
+            ...state?.task?.filterDropDownData,
             assigneeList,
           },
         },
@@ -180,10 +180,10 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           taskDetail: {
-            defaultEntityId: action.data.entityId,
-            ...action.data,
+            defaultEntityId: action?.data?.entityId,
+            ...action?.data,
           },
         },
       };
@@ -192,10 +192,10 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           taskDetail: {
-            ...state.task.taskDetail,
-            [action.name]: action.value,
+            ...state?.task?.taskDetail,
+            [action?.name]: action?.value,
           },
         },
       };
@@ -204,7 +204,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           taskDetail: {},
         },
       };

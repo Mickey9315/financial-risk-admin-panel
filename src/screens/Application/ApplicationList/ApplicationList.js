@@ -44,7 +44,7 @@ function filterReducer(state = initialFilterState, action) {
     case APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
       return {
         ...state,
-        [`${action.name}`]: action.value,
+        [`${action?.name}`]: action?.value,
       };
     case APPLICATION_FILTER_REDUCER_ACTIONS.RESET_STATE:
       return { ...initialFilterState };
@@ -56,16 +56,20 @@ function filterReducer(state = initialFilterState, action) {
 const ApplicationList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const applicationListWithPageData = useSelector(({ application }) => application.applicationList);
+  const applicationListWithPageData = useSelector(
+    ({ application }) => application?.applicationList ?? {}
+  );
   const applicationColumnNameList = useSelector(
-    ({ application }) => application.applicationColumnNameList
+    ({ application }) => application?.applicationColumnNameList ?? []
   );
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => applicationListWithPageData,
     [applicationListWithPageData]
   );
 
-  const { dropdownData } = useSelector(({ application }) => application.applicationFilterList);
+  const { dropdownData } = useSelector(
+    ({ application }) => application?.applicationFilterList ?? {}
+  );
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const {
     entity,
@@ -76,7 +80,7 @@ const ApplicationList = () => {
     maxCreditLimit,
     startDate,
     endDate,
-  } = useMemo(() => filter, [filter]);
+  } = useMemo(() => filter ?? {}, [filter]);
 
   useEffect(() => {
     dispatch(getApplicationFilter());
@@ -153,7 +157,7 @@ const ApplicationList = () => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'minCreditLimit',
-        value: event.target.value,
+        value: event?.target?.value,
       });
     },
     [dispatchFilter]
@@ -163,7 +167,7 @@ const ApplicationList = () => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'maxCreditLimit',
-        value: event.target.value,
+        value: event?.target?.value,
       });
     },
     [dispatchFilter]
@@ -171,26 +175,24 @@ const ApplicationList = () => {
 
   const getApplicationsByFilter = useCallback(
     (params = {}, cb) => {
-      if (moment(startDate).isAfter(endDate)) {
+      if (moment(startDate)?.isAfter(endDate)) {
         errorNotification('From date should be greater than to date');
         resetFilterDates();
-      } else if (moment(endDate).isBefore(startDate)) {
+      } else if (moment(endDate)?.isBefore(startDate)) {
         errorNotification('To Date should be smaller than from date');
         resetFilterDates();
       } else {
         const data = {
-          page: page || 1,
-          limit: limit || 10,
-          entityType: entity && entity.trim().length > 0 ? entity : undefined,
-          clientId: clientId && clientId.trim().length > 0 ? clientId : undefined,
-          debtorId: debtorId && debtorId.trim().length > 0 ? debtorId : undefined,
-          status: status && status.trim().length > 0 ? status : undefined,
-          minCreditLimit:
-            minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
-          maxCreditLimit:
-            maxCreditLimit && maxCreditLimit.trim().length > 0 ? maxCreditLimit : undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
+          page: page ?? 1,
+          limit: limit ?? 10,
+          entityType: (entity?.trim()?.length ?? -1) > 0 ? entity : undefined,
+          clientId: (clientId?.trim()?.length ?? -1) > 0 ? clientId : undefined,
+          debtorId: (debtorId?.trim()?.length ?? -1) > 0 ? debtorId : undefined,
+          status: (status?.trim()?.length ?? -1) > 0 ? status : undefined,
+          minCreditLimit: (minCreditLimit?.trim()?.length ?? -1) > 0 ? minCreditLimit : undefined,
+          maxCreditLimit: (maxCreditLimit?.trim()?.length ?? -1) > 0 ? maxCreditLimit : undefined,
+          startDate: startDate ?? undefined,
+          endDate: endDate ?? undefined,
           ...params,
         };
         dispatch(getApplicationsListByFilter(data));
@@ -317,22 +319,18 @@ const ApplicationList = () => {
       limit: paramLimit || 15,
     };
     const filters = {
-      entityType: paramEntity && paramEntity.trim().length > 0 ? paramEntity : undefined,
-      clientId: paramClientId && paramClientId.trim().length > 0 ? paramClientId : undefined,
-      debtorId: paramDebtorId && paramDebtorId.trim().length > 0 ? paramDebtorId : undefined,
-      status: paramStatus && paramStatus.trim().length > 0 ? paramStatus : undefined,
+      entityType: (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : undefined,
+      clientId: (paramClientId?.trim()?.length ?? -1) > 0 ? paramClientId : undefined,
+      debtorId: (paramDebtorId?.trim()?.length ?? -1) > 0 ? paramDebtorId : undefined,
+      status: (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : undefined,
       minCreditLimit:
-        paramMinCreditLimit && paramMinCreditLimit.trim().length > 0
-          ? paramMinCreditLimit
-          : undefined,
+        (paramMinCreditLimit?.trim()?.length ?? -1) > 0 ? paramMinCreditLimit : undefined,
       maxCreditLimit:
-        paramMaxCreditLimit && paramMaxCreditLimit.trim().length > 0
-          ? paramMaxCreditLimit
-          : undefined,
+        (paramMaxCreditLimit?.trim()?.length ?? -1) > 0 ? paramMaxCreditLimit : undefined,
       startDate: paramStartDate ? new Date(paramStartDate) : undefined,
       endDate: paramEndDate ? new Date(paramEndDate) : undefined,
     };
-    Object.entries(filters).forEach(([name, value]) => {
+    Object.entries(filters)?.forEach(([name, value]) => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
@@ -352,22 +350,20 @@ const ApplicationList = () => {
     const params = {
       page: page || 1,
       limit: limit || 15,
-      entityType: entity && entity.trim().length > 0 ? entity : undefined,
-      clientId: clientId && clientId.trim().length > 0 ? clientId : undefined,
-      debtorId: debtorId && debtorId.trim().length > 0 ? debtorId : undefined,
-      status: status && status.trim().length > 0 ? status : undefined,
-      minCreditLimit:
-        minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
-      maxCreditLimit:
-        maxCreditLimit && maxCreditLimit.trim().length > 0 ? maxCreditLimit : undefined,
-      startDate: startDate ? new Date(startDate).toISOString() : undefined,
-      endDate: endDate ? new Date(endDate).toISOString() : undefined,
+      entityType: (entity?.trim()?.length ?? -1) > 0 ? entity : undefined,
+      clientId: (clientId?.trim()?.length ?? -1) > 0 ? clientId : undefined,
+      debtorId: (debtorId?.trim()?.length ?? -1) > 0 ? debtorId : undefined,
+      status: (status?.trim()?.length ?? -1) > 0 ? status : undefined,
+      minCreditLimit: (minCreditLimit?.trim()?.length ?? -1) > 0 ? minCreditLimit : undefined,
+      maxCreditLimit: (maxCreditLimit?.trim()?.length ?? -1) > 0 ? maxCreditLimit : undefined,
+      startDate: startDate ? new Date(startDate)?.toISOString() : undefined,
+      endDate: endDate ? new Date(endDate)?.toISOString() : undefined,
     };
     const url = Object.entries(params)
-      .filter(arr => arr[1] !== undefined)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-    history.replace(`${history.location.pathname}?${url}`);
+      ?.filter(arr => arr[1] !== undefined)
+      ?.map(([k, v]) => `${k}=${v}`)
+      ?.join('&');
+    history.replace(`${history?.location?.pathname}?${url}`);
   }, [
     history,
     total,
@@ -385,26 +381,26 @@ const ApplicationList = () => {
   ]);
 
   const entityTypeSelectedValue = useMemo(() => {
-    const foundValue = dropdownData.entityType.find(e => {
-      return e.value === entity;
+    const foundValue = dropdownData?.entityType?.find(e => {
+      return (e?.value ?? '') === entity;
     });
     return foundValue ? [foundValue] : [];
   }, [entity, dropdownData]);
   const clientIdSelectedValue = useMemo(() => {
-    const foundValue = dropdownData.clients.find(e => {
-      return e.value === clientId;
+    const foundValue = dropdownData?.clients?.find(e => {
+      return (e?.value ?? '') === clientId;
     });
     return foundValue ? [foundValue] : [];
   }, [clientId, dropdownData]);
   const debtorIdSelectedValue = useMemo(() => {
-    const foundValue = dropdownData.debtors.find(e => {
-      return e.value === debtorId;
+    const foundValue = dropdownData?.debtors?.find(e => {
+      return (e?.value ?? '') === debtorId;
     });
     return foundValue ? [foundValue] : [];
   }, [debtorId, dropdownData]);
   const applicationStatusSelectedValue = useMemo(() => {
-    const foundValue = dropdownData.applicationStatus.find(e => {
-      return e.value === status;
+    const foundValue = dropdownData?.applicationStatus?.find(e => {
+      return (e?.value ?? '') === status;
     });
     return foundValue ? [foundValue] : [];
   }, [status, dropdownData]);
@@ -437,7 +433,7 @@ const ApplicationList = () => {
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {!isLoading && docs ? (
-        docs.length > 0 ? (
+        docs?.length > 0 ? (
           <>
             <div className="common-list-container">
               <Table
@@ -480,7 +476,7 @@ const ApplicationList = () => {
               className="filter-select"
               placeholder="Select"
               name="role"
-              options={dropdownData.entityType}
+              options={dropdownData?.entityType}
               values={entityTypeSelectedValue}
               onChange={handleEntityTypeFilterChange}
               searchable={false}
@@ -492,7 +488,7 @@ const ApplicationList = () => {
               className="filter-select"
               placeholder="Select"
               name="role"
-              options={dropdownData.clients}
+              options={dropdownData?.clients}
               values={clientIdSelectedValue}
               onChange={handleClientIdFilterChange}
               searchable={false}
@@ -504,7 +500,7 @@ const ApplicationList = () => {
               className="filter-select"
               placeholder="Select"
               name="role"
-              options={dropdownData.debtors}
+              options={dropdownData?.debtors}
               values={debtorIdSelectedValue}
               onChange={handleDebtorIdFilterChange}
               searchable={false}
@@ -516,7 +512,7 @@ const ApplicationList = () => {
               className="filter-select"
               placeholder="Select"
               name="role"
-              options={dropdownData.applicationStatus}
+              options={dropdownData?.applicationStatus}
               values={applicationStatusSelectedValue}
               onChange={handleApplicationStatusFilterChange}
               searchable={false}

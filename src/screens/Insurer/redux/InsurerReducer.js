@@ -38,22 +38,22 @@ export const insurer = (state = initialInsurer, action) => {
     case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_ACTION:
       return {
         ...state,
-        insurerList: action.data,
+        insurerList: action?.data,
       };
 
     case INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_COLUMN_LIST_ACTION:
       return {
         ...state,
-        insurerColumnNameList: action.data,
+        insurerColumnNameList: action?.data,
       };
 
     case INSURER_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_INSURER_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.insurerColumnNameList,
+        ...state?.insurerColumnNameList,
       };
-      const { type, name, value } = action.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
-        e.name === name ? { ...e, isChecked: value } : e
+      const { type, name, value } = action?.data;
+      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+        e?.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
@@ -63,36 +63,36 @@ export const insurer = (state = initialInsurer, action) => {
     case INSURER_VIEW_REDUX_CONSTANT.VIEW_INSURER_DATA:
       return {
         ...state,
-        insurerViewData: action.data,
+        insurerViewData: action?.data,
       };
     case INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_LIST_USER_ACTION:
       return {
         ...state,
         contact: {
-          ...state.contact,
-          contactList: action.data,
+          ...state?.contact,
+          contactList: action?.data,
         },
       };
     case INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_COLUMN_LIST_ACTION:
       return {
         ...state,
         contact: {
-          ...state.contact,
-          columnList: action.data,
+          ...state?.contact,
+          columnList: action?.data,
         },
       };
     case INSURER_VIEW_REDUX_CONSTANT.CONTACT.UPDATE_INSURER_CONTACT_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.contact.columnList,
+        ...state?.contact?.columnList,
       };
-      const { type, name, value } = action.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
-        e.name === name ? { ...e, isChecked: value } : e
+      const { type, name, value } = action?.data;
+      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+        e?.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         contact: {
-          ...state.contact,
+          ...state?.contact,
           columnList,
         },
       };
@@ -101,28 +101,28 @@ export const insurer = (state = initialInsurer, action) => {
       return {
         ...state,
         policies: {
-          ...state.policies,
-          policiesList: action.data,
+          ...state?.policies,
+          policiesList: action?.data,
         },
       };
     case INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_COLUMN_LIST_ACTION:
       return {
         ...state,
         policies: {
-          ...state.policies,
-          columnList: action.data,
+          ...state?.policies,
+          columnList: action?.data,
         },
       };
 
     case INSURER_VIEW_REDUX_CONSTANT.POLICIES.UPDATE_POLICIES_CONTACT_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.policies.columnList,
+        ...state?.policies?.columnList,
       };
 
-      const { type, name, value } = action.data;
+      const { type, name, value } = action?.data;
 
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
-        e.name === name
+      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+        e?.name === name
           ? {
               ...e,
               isChecked: value,
@@ -132,27 +132,27 @@ export const insurer = (state = initialInsurer, action) => {
       return {
         ...state,
         policies: {
-          ...state.policies,
+          ...state?.policies,
           columnList,
         },
       };
     }
 
     case INSURER_VIEW_REDUX_CONSTANT.MATRIX.INSURER_MATRIX_GET_DATA:
-      return { ...state, matrix: action.data };
+      return { ...state, matrix: action?.data };
 
     case INSURER_CRM_REDUX_CONSTANTS.INSURER_GET_LIST_FROM_CRM_ACTION:
       return {
         ...state,
-        syncInsurerWithCRM: action.data,
+        syncInsurerWithCRM: action?.data,
       };
 
     case INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICY_SYNC_LIST_BY_SEARCH: {
       return {
         ...state,
         policies: {
-          ...state.policies,
-          policySyncList: action.data,
+          ...state?.policies,
+          policySyncList: action?.data,
         },
       };
     }
@@ -161,7 +161,7 @@ export const insurer = (state = initialInsurer, action) => {
       return {
         ...state,
         insurerList: {
-          ...state.insurerList,
+          ...state?.insurerList,
           page: 1,
           limit: 15,
         },

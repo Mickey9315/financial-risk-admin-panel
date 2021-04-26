@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-dropdown-select';
@@ -63,23 +63,27 @@ const MyWork = () => {
   const history = useHistory();
   const myWorkTabs = ['Tasks', 'Notifications'];
 
-  const taskListData = useSelector(({ myWorkReducer }) => myWorkReducer.task.taskList);
-  const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData, [taskListData]);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
+  const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
+  const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? [], [
+    taskListData,
+  ]);
 
-  const taskColumnListData = useSelector(({ myWorkReducer }) => myWorkReducer.task.columnList);
-  const { assigneeList } = useSelector(
-    ({ myWorkReducer }) => myWorkReducer.task.filterDropDownData
-  );
+  const taskColumnListData = useMemo(() => taskData?.columnList ?? [], [taskData]);
+  const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const { priority, isCompleted, startDate, endDate, assigneeId } = useMemo(() => filter, [filter]);
+  const { priority, isCompleted, startDate, endDate, assigneeId } = useMemo(() => filter ?? {}, [
+    filter,
+  ]);
 
   const handlePriorityFilterChange = useCallback(
     event => {
       dispatchFilter({
         type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'priority',
-        value: event[0].value,
+        value: event?.[0]?.value,
       });
     },
     [dispatchFilter]
@@ -89,7 +93,7 @@ const MyWork = () => {
       dispatchFilter({
         type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'assigneeId',
-        value: event[0].value,
+        value: event?.[0]?.value,
       });
     },
     [dispatchFilter]
@@ -129,29 +133,33 @@ const MyWork = () => {
   }, [handleStartDateChange, handleEndDateChange]);
 
   const getTaskList = useCallback(
-    (params = {}, cb) => {
-      if (moment(startDate).isAfter(endDate)) {
+    async (params = {}, cb) => {
+      if (moment(startDate)?.isAfter(endDate)) {
         errorNotification('End date should be after Start date');
         resetFilterDates();
       }
-      if (moment(endDate).isBefore(startDate)) {
+      if (moment(endDate)?.isBefore(startDate)) {
         errorNotification('Start date should be before End date');
         resetFilterDates();
       } else {
         const data = {
-          page: page || 1,
-          limit: limit || 15,
-          priority: priority && priority?.length > 0 ? priority : undefined,
-          isCompleted: isCompleted && isCompleted ? isCompleted : undefined,
-          assigneeId: assigneeId && assigneeId?.length > 0 ? assigneeId : undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
+          page: page ?? 1,
+          limit: limit ?? 15,
+          priority: priority && (priority?.length ?? -1) > 0 ? priority : undefined,
+          isCompleted: isCompleted ?? undefined,
+          assigneeId: (assigneeId?.length ?? -1) > 0 ? assigneeId : undefined,
+          startDate: startDate ?? undefined,
+          endDate: endDate ?? undefined,
           columnFor: 'task',
           ...params,
         };
-        dispatch(getTaskListByFilter(data));
-        if (cb && typeof cb === 'function') {
-          cb();
+        try {
+          await dispatch(getTaskListByFilter(data));
+          if (cb && typeof cb === 'function') {
+            cb();
+          }
+        } catch (e) {
+          /**/
         }
       }
     },
@@ -173,16 +181,18 @@ const MyWork = () => {
   );
 
   const prioritySelectedValues = useMemo(() => {
-    const foundValue = priorityListData.find(e => {
-      return e.value === priority;
-    });
+    const foundValue =
+      priorityListData?.find(e => {
+        return (e?.value ?? '') === priority;
+      }) ?? undefined;
     return foundValue ? [foundValue] : [];
   }, [priority, priorityListData]);
 
   const assigneeSelectedValues = useMemo(() => {
-    const foundValue = assigneeList.find(e => {
-      return e.value === assigneeId;
-    });
+    const foundValue =
+      assigneeList?.find(e => {
+        return (e?.value ?? '') === assigneeId;
+      }) ?? undefined;
     return foundValue ? [foundValue] : [];
   }, [assigneeId, assigneeList]);
 
@@ -195,20 +205,20 @@ const MyWork = () => {
 
   useEffect(() => {
     const params = {
-      page: page || 1,
-      limit: limit || 15,
-      priority: priority && priority?.length > 0 ? priority : undefined,
-      isCompleted: isCompleted && isCompleted ? isCompleted : undefined,
-      assigneeId: assigneeId && assigneeId?.length > 0 ? assigneeId : undefined,
-      startDate: startDate ? new Date(startDate).toUTCString() : undefined,
-      endDate: endDate ? new Date(endDate).toUTCString() : undefined,
+      page: page ?? 1,
+      limit: limit ?? 15,
+      priority: priority?.length > 0 ?? -1 ? priority : undefined,
+      isCompleted: isCompleted ?? undefined,
+      assigneeId: assigneeId?.length > 0 ?? -1 ? assigneeId : undefined,
+      startDate: startDate ? new Date(startDate)?.toUTCString() : undefined,
+      endDate: endDate ? new Date(endDate)?.toUTCString() : undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
 
-    history.push(`${history.location.pathname}?${url}`);
+    history.push(`${history?.location?.pathname}?${url}`);
   }, [history, total, pages, page, limit, priority, isCompleted, assigneeId, startDate, endDate]);
 
   const myWorkTabContent = [
@@ -228,10 +238,14 @@ const MyWork = () => {
     />,
     <MyWorkNotifications />,
   ];
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const tabActive = index => {
-    setActiveTabIndex(index);
-  };
+
+  const tabActive = useCallback(
+    index => {
+      setActiveTabIndex(index);
+    },
+    [setActiveTabIndex]
+  );
+
   const addTask = useCallback(() => {
     history.push('/my-work/add');
   }, [history]);

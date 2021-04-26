@@ -69,7 +69,7 @@ const ClientTaskTab = () => {
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
 
   const getClientTaskList = useCallback(
-    (params = {}, cb) => {
+    async (params = {}, cb) => {
       const data = {
         page: page || 1,
         limit: limit || 15,
@@ -77,7 +77,11 @@ const ClientTaskTab = () => {
         columnFor: 'client-task',
         ...params,
       };
-      dispatch(getClientTaskListData(data, id));
+      try {
+        await dispatch(getClientTaskListData(data, id));
+      } catch (e) {
+        /**/
+      }
       if (cb && typeof cb === 'function') {
         cb();
       }
