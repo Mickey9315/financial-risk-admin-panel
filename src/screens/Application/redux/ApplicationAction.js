@@ -12,24 +12,30 @@ import ApplicationViewApiServices from '../services/ApplicationViewApiServices';
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST,
+        data: [],
+      });
+
       const response = await ApplicationApiServices.getApplicationListByFilter(params);
 
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST,
+          type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_SUCCESS,
           data: response.data.data,
         });
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_FAILURE,
+          data: [],
+        });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        } else {
           errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
     }
   };
@@ -96,10 +102,10 @@ export const saveApplicationColumnNameList = ({
       }
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
+        dispatch(getApplicationColumnNameList());
       } else {
         const response = await ApplicationApiServices.updateApplicationColumnNameList(data);
         if (response.data.status === 'SUCCESS') {
-          dispatch(getApplicationsListByFilter());
           successNotification('Columns updated successfully');
         }
       }
@@ -231,7 +237,17 @@ export const getApplicationCompanyDataFromABNOrACN = async (id, params) => {
     }
     return null;
   } catch (e) {
-    errorNotification('Internal server error');
+    if (e.response && e.response.data) {
+      if (e.response.data.status === 'ERROR') {
+        errorNotification(e.response.data.message);
+      } else if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        errorNotification('Internal server error');
+      } else {
+        errorNotification('It seems like server is down, Please try again later.');
+      }
+    }
     throw Error();
   }
 };
@@ -244,6 +260,7 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
         data: {
           isLoading: true,
           error: false,
+          errorMessage: '',
           data: [],
         },
       });
@@ -258,18 +275,8 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
           data: {
             isLoading: false,
             error: false,
+            errorMessage: '',
             data: response.data.data,
-          },
-        });
-      }
-
-      if (response === 'err') {
-        dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
-          data: {
-            isLoading: false,
-            error: true,
-            data: [],
           },
         });
       }
@@ -280,8 +287,26 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else {
-          errorNotification('It seems like server is down, Please try again later.');
+          dispatch({
+            type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
+            data: {
+              isLoading: false,
+              error: true,
+              errorMessage: e.response.data.message || 'Please try again later.',
+              data: [],
+            },
+          });
         }
+      } else {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA,
+          data: {
+            isLoading: false,
+            error: true,
+            errorMessage: 'ABR lookup facing trouble to found searched data. Please try again...',
+            data: [],
+          },
+        });
       }
     }
   };
@@ -466,7 +491,9 @@ export const saveApplicationStepDataToBackend = data => {
       }
     } catch (e) {
       if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
+        if (e.response.data.message) {
+          errorNotification(e.response.data.message);
+        } else if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
@@ -475,7 +502,6 @@ export const saveApplicationStepDataToBackend = data => {
         } else if (e.response.data.messageCode === 'APPLICATION_ALREADY_EXISTS') {
           errorNotification('Application already exist');
         }
-        throw Error();
       }
     }
   };

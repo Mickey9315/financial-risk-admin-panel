@@ -18,7 +18,7 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     validated = false;
     errors.acn = 'Please enter valid ACN number before continue';
   }
-  if (!data.entityName || data.entityName.length <= 0) {
+  if (!data.entityName || data.entityName?.[0]?.value?.length <= 0) {
     validated = false;
     errors.entityName = 'Please enter entity name';
   }

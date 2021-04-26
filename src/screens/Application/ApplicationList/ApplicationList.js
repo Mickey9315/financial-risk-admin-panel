@@ -27,7 +27,7 @@ const initialFilterState = {
   entity: '',
   clientId: '',
   debtorId: '',
-  applicationStatus: '',
+  status: '',
   minCreditLimit: '',
   maxCreditLimit: '',
   startDate: null,
@@ -60,9 +60,10 @@ const ApplicationList = () => {
   const applicationColumnNameList = useSelector(
     ({ application }) => application.applicationColumnNameList
   );
-  const { total, pages, page, limit, docs, headers } = useMemo(() => applicationListWithPageData, [
-    applicationListWithPageData,
-  ]);
+  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
+    () => applicationListWithPageData,
+    [applicationListWithPageData]
+  );
 
   const { dropdownData } = useSelector(({ application }) => application.applicationFilterList);
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
@@ -70,7 +71,7 @@ const ApplicationList = () => {
     entity,
     clientId,
     debtorId,
-    applicationStatus,
+    status,
     minCreditLimit,
     maxCreditLimit,
     startDate,
@@ -141,7 +142,7 @@ const ApplicationList = () => {
     event => {
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'applicationStatus',
+        name: 'status',
         value: event?.[0]?.value,
       });
     },
@@ -183,10 +184,7 @@ const ApplicationList = () => {
           entityType: entity && entity.trim().length > 0 ? entity : undefined,
           clientId: clientId && clientId.trim().length > 0 ? clientId : undefined,
           debtorId: debtorId && debtorId.trim().length > 0 ? debtorId : undefined,
-          applicationStatus:
-            applicationStatus && applicationStatus.trim().length > 0
-              ? applicationStatus
-              : undefined,
+          status: status && status.trim().length > 0 ? status : undefined,
           minCreditLimit:
             minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
           maxCreditLimit:
@@ -195,7 +193,6 @@ const ApplicationList = () => {
           endDate: endDate || undefined,
           ...params,
         };
-        console.log(data);
         dispatch(getApplicationsListByFilter(data));
         if (cb && typeof cb === 'function') {
           cb();
@@ -208,7 +205,7 @@ const ApplicationList = () => {
       entity,
       clientId,
       debtorId,
-      applicationStatus,
+      status,
       minCreditLimit,
       maxCreditLimit,
       startDate,
@@ -267,14 +264,16 @@ const ApplicationList = () => {
   );
   const onClickSaveColumnSelection = useCallback(async () => {
     await dispatch(saveApplicationColumnNameList({ applicationColumnNameList }));
+    getApplicationsByFilter();
     toggleCustomField();
-  }, [toggleCustomField, applicationColumnNameList]);
+  }, [toggleCustomField, applicationColumnNameList, getApplicationsByFilter]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveApplicationColumnNameList({ isReset: true }));
     dispatch(getApplicationColumnNameList());
+    getApplicationsByFilter();
     toggleCustomField();
-  }, [toggleCustomField]);
+  }, [toggleCustomField, getApplicationsByFilter]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -305,7 +304,7 @@ const ApplicationList = () => {
     entityType: paramEntity,
     clientId: paramClientId,
     debtorId: paramDebtorId,
-    applicationStatus: paramApplicationStatus,
+    status: paramStatus,
     minCreditLimit: paramMinCreditLimit,
     maxCreditLimit: paramMaxCreditLimit,
     startDate: paramStartDate,
@@ -321,10 +320,7 @@ const ApplicationList = () => {
       entityType: paramEntity && paramEntity.trim().length > 0 ? paramEntity : undefined,
       clientId: paramClientId && paramClientId.trim().length > 0 ? paramClientId : undefined,
       debtorId: paramDebtorId && paramDebtorId.trim().length > 0 ? paramDebtorId : undefined,
-      applicationStatus:
-        paramApplicationStatus && paramApplicationStatus.trim().length > 0
-          ? paramApplicationStatus
-          : undefined,
+      status: paramStatus && paramStatus.trim().length > 0 ? paramStatus : undefined,
       minCreditLimit:
         paramMinCreditLimit && paramMinCreditLimit.trim().length > 0
           ? paramMinCreditLimit
@@ -359,8 +355,7 @@ const ApplicationList = () => {
       entityType: entity && entity.trim().length > 0 ? entity : undefined,
       clientId: clientId && clientId.trim().length > 0 ? clientId : undefined,
       debtorId: debtorId && debtorId.trim().length > 0 ? debtorId : undefined,
-      applicationStatus:
-        applicationStatus && applicationStatus.trim().length > 0 ? applicationStatus : undefined,
+      status: status && status.trim().length > 0 ? status : undefined,
       minCreditLimit:
         minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
       maxCreditLimit:
@@ -382,7 +377,7 @@ const ApplicationList = () => {
     entity,
     clientId,
     debtorId,
-    applicationStatus,
+    status,
     minCreditLimit,
     maxCreditLimit,
     startDate,
@@ -409,10 +404,10 @@ const ApplicationList = () => {
   }, [debtorId, dropdownData]);
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData.applicationStatus.find(e => {
-      return e.value === applicationStatus;
+      return e.value === status;
     });
     return foundValue ? [foundValue] : [];
-  }, [applicationStatus, dropdownData]);
+  }, [status, dropdownData]);
 
   const viewApplicationOnSelectRecord = useCallback(_id => {
     history.push(`/applications/detail/view/${_id}`);
@@ -440,30 +435,35 @@ const ApplicationList = () => {
           <Button title="Generate" buttonType="success" onClick={generateApplicationClick} />
         </div>
       </div>
-      {docs ? (
-        <>
-          <div className="common-list-container">
-            <Table
-              align="left"
-              valign="center"
-              tableClass="main-list-table"
-              data={docs}
-              headers={headers}
-              recordSelected={viewApplicationOnSelectRecord}
-              rowClass="cursor-pointer"
-              haveActions
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {!isLoading && docs ? (
+        docs.length > 0 ? (
+          <>
+            <div className="common-list-container">
+              <Table
+                align="left"
+                valign="center"
+                tableClass="main-list-table"
+                data={docs}
+                headers={headers}
+                recordSelected={viewApplicationOnSelectRecord}
+                rowClass="cursor-pointer"
+                haveActions
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
         <Loader />
       )}

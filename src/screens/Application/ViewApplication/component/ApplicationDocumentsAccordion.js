@@ -119,43 +119,62 @@ const ApplicationDocumentsAccordion = props => {
     },
     [dispatchSelectedApplicationDocuments]
   );
-  const onUploadClick = e => {
-    if (e.target.files && e.target.files.length > 0) {
-      const fileExtension = ['jpeg', 'jpg', 'png'];
-      const mimeType = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'application/msword',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel.sheet.macroEnabled.12',
-      ];
+  const onUploadClick = useCallback(
+    e => {
+      // e.persist();
+      if (e.target.files && e.target.files.length > 0) {
+        const fileExtension = [
+          'jpeg',
+          'jpg',
+          'png',
+          'bmp',
+          'gif',
+          'tex',
+          'xls',
+          'xlsx',
+          'doc',
+          'docx',
+          'odt',
+          'txt',
+          'pdf',
+          'png',
+          'pptx',
+          'ppt',
+          'rtf',
+        ];
+        const mimeType = [
+          'image/jpeg',
+          'image/png',
+          'application/pdf',
+          'image/bmp',
+          'image/gif',
+          'application/x-tex',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.oasis.opendocument.text',
+          'text/plain',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+          'application/vnd.ms-powerpoint',
+          'application/rtf',
+        ];
+        const checkExtension =
+          fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+        const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+        const checkFileSize = e.target.files[0].size > 4194304;
 
-      const checkExtension =
-        fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
-      const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-
-      if (!(checkExtension || checkMimeTypes)) {
-        errorNotification('Only image and document type file allowed');
-        return false;
+        if (!(checkExtension || checkMimeTypes)) {
+          errorNotification('Only image and document type files are allowed');
+        } else if (checkFileSize) {
+          errorNotification('File size should be less than 4 mb');
+        } else {
+          setFileData(e.target.files[0]);
+        }
       }
-      const checkFileSize = e.target.files[0].size > 4194304;
-      if (checkFileSize) {
-        errorNotification('File size should be less than 4 mb');
-        return false;
-      }
-      setFileData(e.target.files[0]);
-      dispatchSelectedApplicationDocuments({
-        type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
-        name: 'fileData',
-        value: e.target.files[0],
-      });
-      return true;
-    }
-    return false;
-  };
+    },
+    [setFileData]
+  );
 
   const onCloseUploadDocumentButton = useCallback(() => {
     dispatchSelectedApplicationDocuments({
@@ -163,7 +182,7 @@ const ApplicationDocumentsAccordion = props => {
     });
     setFileData('');
     toggleUploadModel();
-  }, [toggleUploadModel, dispatchSelectedApplicationDocuments]);
+  }, [toggleUploadModel, dispatchSelectedApplicationDocuments, setFileData]);
 
   const onClickUploadDocument = useCallback(async () => {
     if (selectedApplicationDocuments.documentType.length === 0) {

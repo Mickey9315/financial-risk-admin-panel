@@ -12,6 +12,8 @@ const initialApplicationList = {
     page: 1,
     pages: 1,
     headers: [],
+    isLoading: true,
+    error: null,
   },
   applicationColumnNameList: {},
 
@@ -106,6 +108,7 @@ const initialApplicationList = {
     entityNameSearch: {
       isLoading: false,
       error: false,
+      errorMessage: '',
       data: [],
     },
   },
@@ -137,7 +140,31 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST:
       return {
         ...state,
-        applicationList: action.data,
+        applicationList: {
+          ...state.applicationList,
+          isLoading: true,
+          error: null,
+        },
+      };
+    case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_SUCCESS:
+      return {
+        ...state,
+        applicationList: {
+          ...state.applicationList,
+          ...action.data,
+          isLoading: false,
+          error: null,
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_FAILURE:
+      return {
+        ...state,
+        applicationList: {
+          ...state.applicationList,
+          isLoading: false,
+          error: true,
+        },
       };
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS:
       return {

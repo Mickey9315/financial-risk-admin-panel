@@ -183,6 +183,8 @@ const DebtorsDocumentsTab = () => {
       errorNotification('Please select document type');
     } else if (!selectedDebtorDocument.description) {
       errorNotification('Description is required');
+    } else if (!fileData) {
+      errorNotification('Select document to upload');
     } else {
       const formData = new FormData();
       formData.append('description', selectedDebtorDocument.description);
@@ -190,7 +192,7 @@ const DebtorsDocumentsTab = () => {
       formData.append('documentType', selectedDebtorDocument.documentType);
       formData.append('document', fileData);
       formData.append('entityId', id);
-      formData.append('documentFor', 'client');
+      formData.append('documentFor', 'debtor');
       const config = {
         headers: {
           'content-type': 'multipart/form-data',
@@ -204,36 +206,71 @@ const DebtorsDocumentsTab = () => {
       setFileData('');
       toggleUploadModel();
     }
-  }, [selectedDebtorDocument, fileData, dispatchSelectedDebtorDocument, toggleUploadModel, id]);
+  }, [
+    selectedDebtorDocument,
+    fileData,
+    dispatchSelectedDebtorDocument,
+    toggleUploadModel,
+    id,
+    setFileData,
+  ]);
 
-  const onUploadClick = e => {
-    e.persist();
-    if (e.target.files && e.target.files.length > 0) {
-      const fileExtension = ['jpeg', 'jpg', 'png'];
-      const mimeType = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'application/msword',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel.sheet.macroEnabled.12',
-      ];
-      const checkExtension =
-        fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
-      const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-      if (!(checkExtension || checkMimeTypes)) {
-        errorNotification('Only image and document types file allowed');
+  const onUploadClick = useCallback(
+    e => {
+      // e.persist();
+      if (e.target.files && e.target.files.length > 0) {
+        const fileExtension = [
+          'jpeg',
+          'jpg',
+          'png',
+          'bmp',
+          'gif',
+          'tex',
+          'xls',
+          'xlsx',
+          'doc',
+          'docx',
+          'odt',
+          'txt',
+          'pdf',
+          'png',
+          'pptx',
+          'ppt',
+          'rtf',
+        ];
+        const mimeType = [
+          'image/jpeg',
+          'image/png',
+          'application/pdf',
+          'image/bmp',
+          'image/gif',
+          'application/x-tex',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.oasis.opendocument.text',
+          'text/plain',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+          'application/vnd.ms-powerpoint',
+          'application/rtf',
+        ];
+        const checkExtension =
+          fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+        const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+        const checkFileSize = e.target.files[0].size > 4194304;
+
+        if (!(checkExtension || checkMimeTypes)) {
+          errorNotification('Only image and document type files are allowed');
+        } else if (checkFileSize) {
+          errorNotification('File size should be less than 4 mb');
+        } else {
+          setFileData(e.target.files[0]);
+        }
       }
-      const checkFileSize = e.target.files[0].size > 4194304;
-      if (checkFileSize) {
-        errorNotification('File size should be less than 4 mb');
-      } else {
-        setFileData(e.target.files[0]);
-      }
-    }
-  };
+    },
+    [setFileData]
+  );
 
   const onCloseUploadDocumentButton = useCallback(() => {
     dispatchSelectedDebtorDocument({
@@ -241,7 +278,7 @@ const DebtorsDocumentsTab = () => {
     });
     setFileData('');
     toggleUploadModel();
-  }, [toggleUploadModel, dispatchSelectedDebtorDocument]);
+  }, [toggleUploadModel, dispatchSelectedDebtorDocument, setFileData]);
 
   const uploadDocumentButton = useMemo(
     () => [
@@ -462,7 +499,6 @@ const DebtorsDocumentsTab = () => {
             <FileUpload
               isProfile={false}
               fileName={fileData?.name || 'Browse...'}
-              className="document-upload-input"
               handleChange={onUploadClick}
             />
             <span>Description</span>

@@ -69,7 +69,8 @@ const ApplicationCreditLimitStep = () => {
           type="text"
           placeholder="Details"
           name="extendedPaymentTermsDetails"
-          value={extendedPaymentTermsDetails}
+          value={isExtendedPaymentTerms ? extendedPaymentTermsDetails : ''}
+          disabled={!isExtendedPaymentTerms}
           onChange={handleInputChange}
         />
         {errors?.extendedPaymentTermsDetails && (
@@ -108,7 +109,8 @@ const ApplicationCreditLimitStep = () => {
           type="text"
           placeholder="Details"
           name="passedOverdueDetails"
-          value={passedOverdueDetails}
+          value={isPassedOverdueAmount ? passedOverdueDetails : ''}
+          disabled={!passedOverdueDetails}
           onChange={handleInputChange}
         />
         {errors?.passedOverdueDetails && (

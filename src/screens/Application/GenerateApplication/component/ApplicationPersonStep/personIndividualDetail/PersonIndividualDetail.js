@@ -23,6 +23,7 @@ import Loader from '../../../../../../common/Loader/Loader';
 import ApplicationEntityNameTable from '../../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import Modal from '../../../../../../common/Modal/Modal';
 import { errorNotification, successNotification } from '../../../../../../common/Toast';
+import IconButton from '../../../../../../common/IconButton/IconButton';
 
 const drawerInitialState = {
   visible: false,
@@ -70,6 +71,10 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   );
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
+
+  const [searchedEntityNameValue, setSearchedEntityNameValue] = useState(''); // retry ABN lookup
+
+  console.log(partners.length);
 
   useEffect(() => {
     if (
@@ -379,8 +384,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         /**/
       }
       handleToggleDropdown(false);
+      setSearchedEntityNameValue('');
     },
-    [companyState, updatePersonState, handleToggleDropdown]
+    [companyState, updatePersonState, handleToggleDropdown, setSearchedEntityNameValue]
   );
 
   const handleEntityNameSearch = useCallback(
@@ -390,20 +396,37 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
+        setSearchedEntityNameValue(e.target.value.toString());
         const params = { clientId: companyState.clientId[0].value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
-    [companyState, dispatchDrawerState, updatePersonState]
+    [companyState, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
   );
+
+  const retryEntityNameRequest = useCallback(() => {
+    if (searchedEntityNameValue.trim().length > 0) {
+      if (!companyState.clientId || companyState.clientId.length === 0) {
+        errorNotification('Please select client before continue');
+        return;
+      }
+      const params = { clientId: companyState.clientId[0].value };
+      dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
+    }
+  }, [searchedEntityNameValue, companyState]);
+
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
-      if (e.key === 'Enter') {
-        const params = { clientId: companyState.clientId[0].value };
-        const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
-        if (response) {
-          updatePersonState(response);
+      try {
+        if (e.key === 'Enter') {
+          const params = { clientId: companyState.clientId[0].value };
+          const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
+          if (response) {
+            updatePersonState(response);
+          }
         }
+      } catch {
+        /**/
       }
     },
     [companyState, updatePersonState]
@@ -428,6 +451,21 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       const email = e.target.name;
       const { value } = e.target;
       updateSinglePersonState(email, value);
+    },
+    [updateSinglePersonState]
+  );
+
+  const handleEntityChange = useCallback(
+    event => {
+      const { name, value } = event.target;
+      console.log(name, value);
+      const data = [
+        {
+          label: value,
+          value,
+        },
+      ];
+      updateSinglePersonState(name, data);
     },
     [updateSinglePersonState]
   );
@@ -472,6 +510,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               placeholder={input.placeholder}
               value={partners[index][input.name]}
               onKeyDown={handleSearchTextInputKeyDown}
+              onChange={handleTextInputChange}
               disabled={partners[index].isDisabled || false}
             />
           );
@@ -506,10 +545,12 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           component = (
             <Input
               type="text"
+              name={input.name}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              /* value={partners?.[index]?.entityName?.[0]?.label} */
+              value={partners?.[index]?.entityName?.[0]?.label}
               disabled={partners[index].isDisabled || false}
+              onChange={handleEntityChange}
             />
           );
           break;
@@ -605,19 +646,30 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       handleEmailChange,
       handleTextInputChange,
       isAusOrNew,
+      handleEntityChange,
     ]
   );
   const deletePartner = e => {
     e.stopPropagation();
-    if (index <= 1 && entityTypeFromCompany === 'PARTNERSHIP') {
+    if (partners.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
       errorNotification('You can not remove partner');
-    } else if (index < 1) {
+    } else if (partners.length <= 1) {
       errorNotification('You can not remove every partner');
     } else {
       dispatch(removePersonDetail(index));
     }
     successNotification('Partner deleted successfully');
   };
+
+  const getSuffixItem = useMemo(() => {
+    if (partners.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
+      return '';
+    }
+    if (partners.length <= 1) {
+      return '';
+    }
+    return 'delete_outline';
+  }, [partners, entityTypeFromCompany]);
 
   return (
     <>
@@ -632,10 +684,26 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           {entityNameSearchDropDownData.isLoading ? (
             <Loader />
           ) : (
-            <ApplicationEntityNameTable
-              data={entityNameSearchDropDownData.data}
-              handleEntityNameSelect={handleEntityNameSelect}
-            />
+            !entityNameSearchDropDownData.error && (
+              <ApplicationEntityNameTable
+                data={entityNameSearchDropDownData.data}
+                handleEntityNameSelect={handleEntityNameSelect}
+              />
+            )
+          )}
+          {entityNameSearchDropDownData.error && (
+            <>
+              <div className="application-entity-name-modal-retry-button">
+                {entityNameSearchDropDownData?.errorMessage}
+              </div>
+              <div className="application-entity-name-modal-retry-button">
+                <IconButton
+                  buttonType="primary"
+                  title="refresh"
+                  onClick={() => retryEntityNameRequest()}
+                />
+              </div>
+            </>
           )}
         </Modal>
       )}
@@ -643,7 +711,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         className="application-person-step-accordion"
         header={itemHeader || 'Director Details'}
         prefix="expand_more"
-        suffix="delete_outline"
+        suffix={getSuffixItem}
         suffixClass="material-icons-round font-danger cursor-pointer"
         suffixClick={e => deletePartner(e)}
       >

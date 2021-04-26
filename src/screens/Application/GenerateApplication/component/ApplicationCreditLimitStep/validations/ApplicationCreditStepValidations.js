@@ -34,15 +34,23 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
   }
 
   if (validated) {
-    const { isExtendedPaymentTerms, isPassedOverdueAmount } = data;
+    const {
+      isExtendedPaymentTerms,
+      isPassedOverdueAmount,
+      extendedPaymentTermsDetails,
+      passedOverdueDetails,
+      creditLimit,
+    } = data;
 
     const finalData = {
       stepper: 'credit-limit',
       applicationId: editApplicationData?._id,
       entityType: editApplicationData.company?.entityType[0]?.value,
-      ...data,
       isExtendedPaymentTerms,
+      extendedPaymentTermsDetails: isExtendedPaymentTerms ? extendedPaymentTermsDetails : '',
       isPassedOverdueAmount,
+      passedOverdueDetails: isPassedOverdueAmount ? passedOverdueDetails : '',
+      creditLimit,
     };
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));

@@ -74,7 +74,6 @@ const ApplicationCompanyStep = () => {
   const [wipeOutDetails, setWipeOutDetails] = useState(false);
 
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState('');
-  console.log(searchedEntityNameValue);
 
   const toggleConfirmationModal = useCallback(
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
@@ -324,17 +323,21 @@ const ApplicationCompanyStep = () => {
 
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
-      if (e.key === 'Enter') {
-        if (!companyState.clientId || companyState.clientId.length === 0) {
-          errorNotification('Please select clientId before continue');
-          return;
-        }
-        const params = { clientId: companyState.clientId[0].value };
-        const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
+      try {
+        if (e.key === 'Enter') {
+          if (!companyState.clientId || companyState.clientId.length === 0) {
+            errorNotification('Please select clientId before continue');
+            return;
+          }
+          const params = { clientId: companyState.clientId[0].value };
+          const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
 
-        if (response) {
-          updateCompanyState(response);
+          if (response) {
+            updateCompanyState(response);
+          }
         }
+      } catch {
+        /**/
       }
     },
     [companyState, updateCompanyState]
@@ -535,7 +538,7 @@ const ApplicationCompanyStep = () => {
           {entityNameSearchDropDownData.error && (
             <>
               <div className="application-entity-name-modal-retry-button">
-                it looks like requested data is to large to load. Please try again...
+                {entityNameSearchDropDownData?.errorMessage}
               </div>
               <div className="application-entity-name-modal-retry-button">
                 <IconButton

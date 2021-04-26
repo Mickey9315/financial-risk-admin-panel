@@ -181,6 +181,8 @@ const ClientDocumentsTab = () => {
       errorNotification('Please select document type');
     } else if (!selectedClientDocument.description) {
       errorNotification('Description is required');
+    } else if (!fileData) {
+      errorNotification('Select document to upload');
     } else {
       const formData = new FormData();
       formData.append('description', selectedClientDocument.description);
@@ -202,47 +204,82 @@ const ClientDocumentsTab = () => {
       setFileData('');
       toggleUploadModel();
     }
-  }, [selectedClientDocument, fileData, dispatchSelectedClientDocument, toggleUploadModel]);
+  }, [
+    selectedClientDocument,
+    fileData,
+    setFileData,
+    dispatchSelectedClientDocument,
+    toggleUploadModel,
+  ]);
 
-  const onUploadClick = e => {
-    e.persist();
-    if (e.target.files && e.target.files.length > 0) {
-      const fileExtension = ['jpeg', 'jpg', 'png'];
-      const mimeType = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'application/msword',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel.sheet.macroEnabled.12',
-      ];
-      const checkExtension =
-        fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
-      const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-      if (!(checkExtension || checkMimeTypes)) {
-        errorNotification('Only image and document types file allowed');
+  const onUploadClick = useCallback(
+    e => {
+      // e.persist();
+      if (e.target.files && e.target.files.length > 0) {
+        const fileExtension = [
+          'jpeg',
+          'jpg',
+          'png',
+          'bmp',
+          'gif',
+          'tex',
+          'xls',
+          'xlsx',
+          'doc',
+          'docx',
+          'odt',
+          'txt',
+          'pdf',
+          'png',
+          'pptx',
+          'ppt',
+          'rtf',
+        ];
+        const mimeType = [
+          'image/jpeg',
+          'image/png',
+          'application/pdf',
+          'image/bmp',
+          'image/gif',
+          'application/x-tex',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.oasis.opendocument.text',
+          'text/plain',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+          'application/vnd.ms-powerpoint',
+          'application/rtf',
+        ];
+        const checkExtension =
+          fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+        const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+        const checkFileSize = e.target.files[0].size > 4194304;
+
+        if (!(checkExtension || checkMimeTypes)) {
+          errorNotification('Only image and document type files are allowed');
+        } else if (checkFileSize) {
+          errorNotification('File size should be less than 4 mb');
+        } else {
+          setFileData(e.target.files[0]);
+        }
       }
-      const checkFileSize = e.target.files[0].size > 4194304;
-      if (checkFileSize) {
-        errorNotification('File size should be less than 4 mb');
-      } else {
-        setFileData(e.target.files[0]);
-      }
-    }
-  };
+    },
+    [setFileData]
+  );
 
   const onCloseUploadDocumentButton = useCallback(() => {
     dispatchSelectedClientDocument({
       type: CLIENT_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
     });
+    setFileData('');
     toggleUploadModel();
-  }, [toggleUploadModel, dispatchSelectedClientDocument]);
+  }, [toggleUploadModel, dispatchSelectedClientDocument, setFileData]);
 
   const uploadDocumentButton = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseUploadDocumentButton() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onCloseUploadDocumentButton },
       { title: 'Upload', buttonType: 'primary', onClick: onClickUploadDocument },
     ],
     [onCloseUploadDocumentButton, onClickUploadDocument]

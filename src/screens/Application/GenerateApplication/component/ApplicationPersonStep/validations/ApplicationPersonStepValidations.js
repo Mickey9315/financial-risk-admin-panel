@@ -189,6 +189,8 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
     } catch (e) {
       /**/
     }
+  } else {
+    errorNotification('Please fill the details.');
   }
 
   return validated;
