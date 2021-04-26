@@ -4,9 +4,10 @@ import {
   saveAuthTokenLocalStorage,
   saveTokenToSession,
 } from '../../../../helpers/LocalStorageHelper';
+import { getLoggedUserDetails } from '../../../../common/Header/redux/HeaderAction';
 
 export const loginUser = ({ email, password }, rememberMe) => {
-  return async () => {
+  return async dispatch => {
     try {
       const data = { userId: email.toLowerCase().trim(), password: password.trim() };
       const response = await AuthApiService.loginUser(data);
@@ -21,6 +22,8 @@ export const loginUser = ({ email, password }, rememberMe) => {
         }
 
         successNotification('Login successfully.');
+
+        await dispatch(getLoggedUserDetails());
       }
     } catch (e) {
       if (e.response && e.response.data) {

@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import {
   organizationModulesList,
   selectedUserData,
@@ -46,10 +48,20 @@ const rootReducer = (state, action) => {
     Object.keys(state).forEach(key => {
       emptyState[key] = null;
     });
+
+    storage.removeItem('persist:root');
     return emptyState;
   }
 
   return appReducer(state, action);
 };
 
-export default rootReducer;
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['loggedUserProfile'],
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export default persistedReducer;

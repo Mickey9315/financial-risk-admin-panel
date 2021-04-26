@@ -1,6 +1,6 @@
 import { Redirect, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { getAuthTokenLocalStorage } from '../helpers/LocalStorageHelper';
+import { useSelector } from 'react-redux';
 import Dashboard from '../common/Dashboard/Dashboard';
 import UserList from '../screens/Users/UserList/UserList';
 import AddUser from '../screens/Users/AddUser/AddUser';
@@ -20,15 +20,16 @@ import MyWorkEditTask from '../screens/MyWork/MyWorkTasks/MyWorkEditTask/MyWorkE
 import ViewApplication from '../screens/Application/ViewApplication/ViewApplication';
 
 export const AuthenticatedRoute = ({ component, ...options }) => {
-  const isLoggedIn = getAuthTokenLocalStorage();
+  const loggedUserDetails = useSelector(({ loggedUserProfile }) => loggedUserProfile);
 
-  if (!isLoggedIn) {
+  if (!loggedUserDetails.email) {
     return (
       <Route {...options}>
         <Redirect to="/login" />
       </Route>
     );
   }
+
   if (!component) {
     return (
       <Route {...options}>

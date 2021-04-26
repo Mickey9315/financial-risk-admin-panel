@@ -1,13 +1,13 @@
-import React, { useRef, useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './Header.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  changePassword,
-  logoutUser,
-  getLoggedUserDetails,
-  updateUserProfile,
   changeEditProfileData,
+  changePassword,
+  getLoggedUserDetails,
+  logoutUser,
+  updateUserProfile,
   uploadProfilePicture,
 } from './redux/HeaderAction';
 import dummy from '../../assets/images/dummy.svg';
@@ -97,6 +97,7 @@ const Header = () => {
 
   const onLogoutClick = async () => {
     try {
+      console.log('1000000000000');
       await dispatch(logoutUser());
       history.replace('/login');
       toggleUserSettings(false);
@@ -212,8 +213,10 @@ const Header = () => {
   };
 
   const headerTitle = useMemo(
-    () => SIDEBAR_URLS.find(item => history.location.pathname.includes(item.url)).title,
-    [history.location.pathname]
+    () =>
+      SIDEBAR_URLS.find(item => history?.location?.pathname?.includes(item?.url ?? ''))?.title ??
+      '',
+    [history?.location?.pathname]
   );
 
   useEffect(() => {
