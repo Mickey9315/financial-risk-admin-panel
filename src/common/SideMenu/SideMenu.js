@@ -9,8 +9,10 @@ const SideMenu = () => {
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
 
   const userAccessibleMenu = useMemo(() => {
-    let accessibleModules = userPrivilegesData.filter(module => module.accessTypes.length > 0);
-    accessibleModules = SIDEBAR_URLS.filter(e => accessibleModules.some(f => e.name === f.name));
+    let accessibleModules =
+      userPrivilegesData?.filter(module => module.accessTypes.length > 0) ?? [];
+    accessibleModules =
+      SIDEBAR_URLS.filter(e => accessibleModules?.some(f => e.name === f.name)) ?? [];
 
     return accessibleModules;
   }, [userPrivilegesData]);
