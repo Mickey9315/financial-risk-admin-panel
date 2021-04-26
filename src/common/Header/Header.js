@@ -97,7 +97,7 @@ const Header = () => {
 
   const onLogoutClick = async () => {
     try {
-      await logoutUser();
+      await dispatch(logoutUser());
       history.replace('/login');
       toggleUserSettings(false);
     } catch (e) {

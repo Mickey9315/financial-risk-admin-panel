@@ -1,4 +1,3 @@
-import { LOGIN_REDUX_CONSTANTS } from './LoginReduxConstants';
 import AuthApiService from '../../services/AuthApiService';
 import { errorNotification, successNotification } from '../../../../common/Toast';
 import {
@@ -7,17 +6,12 @@ import {
 } from '../../../../helpers/LocalStorageHelper';
 
 export const loginUser = ({ email, password }, rememberMe) => {
-  return async dispatch => {
+  return async () => {
     try {
       const data = { userId: email.toLowerCase().trim(), password: password.trim() };
       const response = await AuthApiService.loginUser(data);
 
       if (response.data.status === 'SUCCESS') {
-        dispatch({
-          type: LOGIN_REDUX_CONSTANTS.LOGIN_USER_ACTION,
-          data: response.data.data,
-        });
-
         const { token } = response.data.data;
 
         if (rememberMe) {

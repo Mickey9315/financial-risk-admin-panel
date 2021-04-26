@@ -2,6 +2,7 @@ import HeaderApiService from '../services/HeaderApiService';
 import { errorNotification, successNotification } from '../../Toast';
 import { clearAuthToken } from '../../../helpers/LocalStorageHelper';
 import { EDIT_PROFILE_CONSTANT } from './HeaderConstants';
+import { LOGIN_REDUX_CONSTANTS } from '../../../screens/auth/login/redux/LoginReduxConstants';
 
 export const changePassword = async (oldPassword, newPassword) => {
   try {
@@ -136,24 +137,29 @@ export const uploadProfilePicture = (data, config) => {
     }
   };
 };
-export const logoutUser = async () => {
-  try {
-    const response = await HeaderApiService.logoutUser();
+export const logoutUser = () => {
+  return async dispatch => {
+    try {
+      const response = await HeaderApiService.logoutUser();
 
-    if (response.data.status === 'SUCCESS') {
-      clearAuthToken();
-      successNotification('Logged out successfully.');
-    }
-  } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-        errorNotification('Internal server error');
-      } else {
-        errorNotification('Please try again later.');
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
+        });
+        clearAuthToken();
+        successNotification('Logged out successfully.');
       }
-      throw Error();
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          errorNotification('Please try again later.');
+        }
+        throw Error();
+      }
     }
-  }
+  };
 };

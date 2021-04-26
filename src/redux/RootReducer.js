@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { loggedUser } from '../screens/auth/login/redux/LoginReducer';
 import {
   organizationModulesList,
   selectedUserData,
@@ -20,9 +19,9 @@ import { loggedUserProfile } from '../common/Header/redux/HeaderReducer';
 import { myWorkReducer } from '../screens/MyWork/redux/MyWorkReducer';
 import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 import { settingReducer } from '../screens/Settings/redux/SettingReducer';
+import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
 
-const rootReducer = combineReducers({
-  loggedUser,
+const appReducer = combineReducers({
   userPrivileges,
   userManagementColumnList,
   userManagementList,
@@ -40,4 +39,17 @@ const rootReducer = combineReducers({
   myWorkReducer,
   settingReducer,
 });
+
+const rootReducer = (state, action) => {
+  if (action.type === LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION) {
+    const emptyState = {};
+    Object.keys(state).forEach(key => {
+      emptyState[key] = null;
+    });
+    return emptyState;
+  }
+
+  return appReducer(state, action);
+};
+
 export default rootReducer;
