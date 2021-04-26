@@ -8,10 +8,11 @@ const Drawer = props => {
   const drawerMenuRef = useRef();
   useOnClickOutside(drawerMenuRef, () => closeDrawer());
 
-  const drawerClasses = `drawer-container ${drawerState && 'drawer-opened'} ${className}`;
+  const drawerClasses = `drawer-container ${drawerState ? 'drawer-opened' : ''} ${className}`;
+
   return (
     <>
-      <div className={drawerState && 'drawer-overlay'} />
+      <div className={drawerState ? 'drawer-overlay' : ''} />
       <div className={drawerClasses} {...restProps} ref={drawerMenuRef}>
         <div className="drawer-wrapper">
           <div className="drawer-header-container">
@@ -32,7 +33,7 @@ const Drawer = props => {
 };
 
 Drawer.propTypes = {
-  header: PropTypes.element,
+  header: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
   className: PropTypes.string,
   children: PropTypes.element,
   drawerState: PropTypes.bool,

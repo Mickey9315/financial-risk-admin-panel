@@ -49,13 +49,8 @@ const Modal = props => {
         </div>
         <div className={dialogBodyClass}>{children}</div>
         <div className="modal-footer">
-          {buttons.map(e => (
-            <Button
-              key={Math.random.toString()}
-              type="button"
-              className="modal-footer-buttons"
-              {...e}
-            />
+          {buttons.map((e, index) => (
+            <Button key={index.toString()} type="button" className="modal-footer-buttons" {...e} />
           ))}
         </div>
       </div>
@@ -73,7 +68,7 @@ Modal.propTypes = {
   hideModal: PropTypes.func,
   closeIcon: PropTypes.string,
   closeClassName: PropTypes.string,
-  children: PropTypes.element,
+  children: PropTypes.node,
 };
 
 Modal.defaultProps = {

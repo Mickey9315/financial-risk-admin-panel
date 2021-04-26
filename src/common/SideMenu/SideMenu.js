@@ -24,7 +24,7 @@ const SideMenu = () => {
       </div>
       <div className="menu-container">
         {userAccessibleMenu.map(item => (
-          <NavLink className="menu" to={item.url} replace>
+          <NavLink key={item.url} className="menu" to={item.url} replace>
             <span className="material-icons-round">{item.icon}</span>
             {item.label}
           </NavLink>

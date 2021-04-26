@@ -41,7 +41,7 @@ export const AuthenticatedRoute = ({ component, ...options }) => {
   return <Route {...options} component={component} />;
 };
 AuthenticatedRoute.propTypes = {
-  component: PropTypes.func,
+  component: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };
 AuthenticatedRoute.defaultProps = {
   component: null,

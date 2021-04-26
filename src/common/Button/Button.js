@@ -14,7 +14,7 @@ const Button = props => {
 };
 
 Button.propTypes = {
-  title: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
   buttonType: PropTypes.oneOf([
     'primary',
     'secondary',

@@ -19,8 +19,9 @@ const CustomFieldModal = props => {
       <div className="custom-field-content">
         <div>
           <div className="custom-field-title">Default Fields</div>
-          {defaultFields.map(data => (
+          {defaultFields.map((data, index) => (
             <Checkbox
+              key={data.label + index.toString()}
               title={data.label}
               name={data.name}
               checked={data.isChecked}
@@ -30,8 +31,9 @@ const CustomFieldModal = props => {
         </div>
         <div>
           <div className="custom-field-title">Custom Fields</div>
-          {customFields.map(data => (
+          {customFields.map((data, index) => (
             <Checkbox
+              key={data.label + index.toString()}
               title={data.label}
               checked={data.isChecked}
               onChange={e => onChangeSelectedColumn('customFields', data.name, e.target.checked)}

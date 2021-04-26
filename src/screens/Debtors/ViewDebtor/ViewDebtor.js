@@ -297,7 +297,7 @@ const ViewInsurer = () => {
                 value={debtorData[input.name]}
                 onChange={handleOnTextChange}
                 disabled={action === 'view' || !input.isEditable}
-                borderClass={(action === 'view' || !input.isEditable) && 'disabled-control'}
+                borderClass={action === 'view' || !input.isEditable ? 'disabled-control' : ''}
               />
             </div>
           );

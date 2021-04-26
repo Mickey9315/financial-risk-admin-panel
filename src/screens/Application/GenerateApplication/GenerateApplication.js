@@ -135,7 +135,6 @@ const GenerateApplication = () => {
         steps={steps}
         stepIndex={applicationStage}
         onChangeIndex={onChangeIndex}
-        canGoNext
         nextClick={onNextClick}
         addStepClick={addStepClick}
       >

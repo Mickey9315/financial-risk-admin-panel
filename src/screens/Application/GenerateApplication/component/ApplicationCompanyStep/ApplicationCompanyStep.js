@@ -479,7 +479,7 @@ const ApplicationCompanyStep = () => {
           return null;
       }
       return (
-        <>
+        <React.Fragment key={input.label}>
           <span>{input.label}</span>
           <div>
             {component}
@@ -487,7 +487,7 @@ const ApplicationCompanyStep = () => {
               <div className="ui-state-error">{companyState?.errors?.[input.name]}</div>
             )}
           </div>
-        </>
+        </React.Fragment>
       );
     },
     [

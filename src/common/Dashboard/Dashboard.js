@@ -26,7 +26,7 @@ const Dashboard = props => {
 };
 
 Dashboard.propTypes = {
-  children: PropTypes.element,
+  children: PropTypes.node,
 };
 
 Dashboard.defaultProps = {

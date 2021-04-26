@@ -176,34 +176,40 @@ const Table = props => {
       <ReactTooltip type="dark" effect="float" />
       <table className={tableClassName}>
         <thead>
-          {showCheckbox && (
-            <th width={10} align={align} valign={valign}>
-              <Checkbox
-                className="crm-checkbox-list"
-                checked={tableData.length !== 0 && selectedRowData.length === tableData.length}
-                onChange={onSelectAllRow}
-              />
-            </th>
-          )}
-          {headers.length > 0 &&
-            headers.map(heading => (
-              <th
-                align={data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align}
-                valign={valign}
-                className={`${headerClass} ${
-                  heading.type === 'boolean' && 'table-checkbox-header'
-                }  `}
-              >
-                {heading.label}
+          <tr>
+            {showCheckbox && (
+              <th width={10} align={align} valign={valign}>
+                <Checkbox
+                  className="crm-checkbox-list"
+                  checked={tableData.length !== 0 && selectedRowData.length === tableData.length}
+                  onChange={onSelectAllRow}
+                />
               </th>
-            ))}
-          {(haveActions || extraColumns.length > 0) && (
-            <th style={{ position: 'sticky', right: 0 }} />
-          )}
+            )}
+            {headers.length > 0 &&
+              headers.map(heading => (
+                <th
+                  key={heading.label}
+                  align={
+                    data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align
+                  }
+                  valign={valign}
+                  className={`${headerClass} ${
+                    heading.type === 'boolean' ? 'table-checkbox-header' : ''
+                  }  `}
+                >
+                  {heading.label}
+                </th>
+              ))}
+            {(haveActions || extraColumns.length > 0) && (
+              <th style={{ position: 'sticky', right: 0 }} />
+            )}
+          </tr>
         </thead>
         <tbody>
-          {tableData.map(e => (
+          {tableData.map((e, index) => (
             <Row
+              key={index.toString()}
               data={e}
               align={align}
               valign={valign}
@@ -318,23 +324,29 @@ function Row(props) {
             <Checkbox className="crm-checkbox-list" checked={isSelected} onChange={onRowSelected} />
           </td>
         )}
-        {Object.entries(data).map(([key, value]) => {
+        {Object.entries(data).map(([key, value], index) => {
           switch (key) {
             case 'id':
               return null;
             case 'priority':
               return (
-                <td align={align}>
-                  <span title={value} data-delay-show="100" className={`task-priority-${value}`}>
+                <td key={index.toString()} align={align}>
+                  <span
+                    title={value || ''}
+                    data-delay-show="100"
+                    className={`task-priority-${value}`}
+                  >
                     {value || '-'}
                   </span>
                 </td>
               );
             case 'isCompleted':
               return (
-                <td align={align}>
+                <td key={index.toString()} align={align}>
                   <span
-                    title={data?.[key]?.props?.className === 'table-checkbox' ? '' : value}
+                    title={
+                      (data?.[key]?.props?.className ?? '') === 'table-checkbox' ? '' : value || ''
+                    }
                     data-delay-show="100"
                   >
                     {value || '-'}
@@ -343,9 +355,9 @@ function Row(props) {
               );
             default:
               return (
-                <td align={align}>
+                <td key={index.toString()} align={align}>
                   <span
-                    title={data?.[key]?.props?.className === 'link' ? '' : value}
+                    title={(data?.[key]?.props?.className ?? '') === 'link' ? '' : value || ''}
                     data-delay-show="100"
                   >
                     {value || '-'}
@@ -358,7 +370,7 @@ function Row(props) {
           <td
             align="right"
             valign={valign}
-            className={`fixed-action-menu ${showActionMenu && 'fixed-action-menu-clicked'}`}
+            className={`fixed-action-menu ${showActionMenu ? 'fixed-action-menu-clicked' : ''}`}
           >
             <span
               className="material-icons-round cursor-pointer table-action"
@@ -368,8 +380,9 @@ function Row(props) {
             </span>
           </td>
         )}
-        {extraColumns.map(element => (
+        {extraColumns.map((element, index) => (
           <td
+            key={index.toString()}
             width={10}
             align={align}
             valign={valign}
@@ -401,7 +414,7 @@ function Row(props) {
 Row.propTypes = {
   align: PropTypes.oneOf(['left', 'center', 'right']),
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
-  data: PropTypes.oneOf([PropTypes.object]),
+  data: PropTypes.object,
   extraColumns: PropTypes.arrayOf(PropTypes.element),
   rowClass: PropTypes.string,
   recordSelected: PropTypes.func,

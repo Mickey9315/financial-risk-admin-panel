@@ -289,7 +289,7 @@ const AddUser = () => {
               value={name}
               onChange={onChangeUserData}
               disabled={action === 'view'}
-              borderClass={action === 'view' && 'disabled-control'}
+              borderClass={action === 'view' ? 'disabled-control' : ''}
             />
           </div>
           <div className="common-detail-field">
@@ -301,7 +301,7 @@ const AddUser = () => {
               value={email}
               onChange={onChangeUserData}
               disabled={action === 'view'}
-              borderClass={action === 'view' && 'disabled-control'}
+              borderClass={action === 'view' ? 'disabled-control' : ''}
             />
           </div>
           <div className="common-detail-field">
@@ -327,7 +327,7 @@ const AddUser = () => {
               placeholder="1234567890"
               onChange={onChangeUserData}
               disabled={action === 'view'}
-              borderClass={action === 'view' && 'disabled-control'}
+              borderClass={action === 'view' ? 'disabled-control' : ''}
             />
           </div>
           <div className="common-detail-field">
@@ -339,7 +339,7 @@ const AddUser = () => {
               placeholder={action === 'view' ? 'No credit limit added' : 'Enter credit limit'}
               onChange={onChangeUserData}
               disabled={action === 'view'}
-              borderClass={action === 'view' && 'disabled-control'}
+              borderClass={action === 'view' ? 'disabled-control' : ''}
             />
           </div>
           {(role === 'riskAnalyst' || role === 'serviceManager') && (
@@ -365,10 +365,11 @@ const AddUser = () => {
       </div>
       <div className="module-container">
         {filteredOrganisationList.map(module => (
-          <div className="module">
+          <div key={module.label} className="module">
             <div className="module-title">{module.label}</div>
             {USER_MODULE_ACCESS.map(access => (
               <Checkbox
+                key={access.label}
                 disabled={action === 'view'}
                 title={access.label}
                 name={access.value}
