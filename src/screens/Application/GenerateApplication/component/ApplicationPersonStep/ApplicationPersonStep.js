@@ -6,7 +6,7 @@ import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDet
 import { addPersonDetail } from '../../../redux/ApplicationAction';
 
 const ApplicationPersonStep = () => {
-  const personState = useSelector(({ application }) => application.editApplication.partners);
+  const personState = useSelector(({ application }) => application.editApplication?.partners);
   const entityType = useSelector(
     ({ application }) => application.editApplication.company.entityType
   );

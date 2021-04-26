@@ -708,6 +708,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         </Modal>
       )}
       <AccordionItem
+        index={index}
         className="application-person-step-accordion"
         header={itemHeader || 'Director Details'}
         prefix="expand_more"
