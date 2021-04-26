@@ -22,6 +22,7 @@ import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
 
 const appReducer = combineReducers({
+  loggedUserProfile,
   userPrivileges,
   userManagementColumnList,
   userManagementList,
@@ -31,7 +32,6 @@ const appReducer = combineReducers({
   userManagementClientList,
   clientManagementColumnList,
   clientManagementFilterList,
-  loggedUserProfile,
   syncClientWithCrm,
   application,
   insurer,
