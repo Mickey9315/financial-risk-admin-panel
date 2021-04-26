@@ -126,13 +126,13 @@ const DebtorsDocumentsTab = () => {
   );
 
   const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList.docs;
-    return finalData.map(e => ({
+    const finalData = documentTypeList;
+    return finalData?.map(e => ({
       name: 'documentType',
       label: e.documentTitle,
       value: e._id,
     }));
-  }, [documentTypeList.docs]);
+  }, [documentTypeList]);
 
   const getDebtorsDocumentsList = useCallback(
     (params = {}, cb) => {

@@ -56,7 +56,7 @@ export const APPLICATION_URLS = {
     },
     APPLICATION_MODULES: {
       GET_MODULE_LIST: `${BASE_URL}application/modules/`,
-      GET_DOCUMENT_TYPE_LIST_URL: `${BASE_URL}settings/document-type/`,
+      GET_DOCUMENT_TYPE_LIST_URL: `${BASE_URL}settings/document-type-list/`,
       UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
       DELETE_DOCUMENT_URL: `${BASE_URL}document/`,
     },
@@ -109,7 +109,7 @@ export const CLIENT_URLS = {
   DOCUMENTS: {
     DOCUMENTS_LIST: `${BASE_URL}document/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}document/column-name/`,
-    GET_DOCUMENT_TYPE_URL: `${BASE_URL}settings/document-type/`,
+    GET_DOCUMENT_TYPE_URL: `${BASE_URL}settings/document-type-list/`,
     UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
     DOWNLOAD_DOCUMENTS_URL: `${BASE_URL}document/download`,
   },
@@ -167,7 +167,7 @@ export const DEBTORS_URLS = {
   DOCUMENTS: {
     DOCUMENTS_LIST: `${BASE_URL}document/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}document/column-name/`,
-    GET_DOCUMENT_TYPE_URL: `${BASE_URL}settings/document-type/`,
+    GET_DOCUMENT_TYPE_URL: `${BASE_URL}settings/document-type-list/`,
     UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
     DOWNLOAD_DOCUMENTS_URL: `${BASE_URL}document/download`,
   },

@@ -110,7 +110,7 @@ const ClientDocumentsTab = () => {
     ({ clientManagement }) => clientManagement.documents.documentsList
   );
   const documentTypeList = useSelector(
-    ({ clientManagement }) => clientManagement.documents.documentTypeList
+    ({ clientManagement }) => clientManagement?.documents?.documentTypeList
   );
   const clientDocumentsColumnList = useSelector(
     ({ clientManagement }) => clientManagement.documents.columnList
@@ -125,13 +125,13 @@ const ClientDocumentsTab = () => {
   );
 
   const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList.docs;
-    return finalData.map(e => ({
+    const finalData = documentTypeList;
+    return finalData?.map(e => ({
       name: 'documentType',
       label: e.documentTitle,
       value: e._id,
     }));
-  }, [documentTypeList.docs]);
+  }, [documentTypeList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveClientDocumentsColumnListName({ isReset: true }));

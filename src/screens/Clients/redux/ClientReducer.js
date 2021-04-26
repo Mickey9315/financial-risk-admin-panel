@@ -31,7 +31,7 @@ const initialClientListState = {
   documents: {
     documentsList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
     columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    documentTypeList: [],
     uploadDocumentData: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
   },
   task: {
