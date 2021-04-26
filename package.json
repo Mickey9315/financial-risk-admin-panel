@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.6.3",
     "axios": "^0.21.1",
     "env-cmd": "^10.1.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "moment-range": "^4.0.2",
     "prettier": "^2.2.1",
