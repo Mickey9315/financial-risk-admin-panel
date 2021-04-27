@@ -22,7 +22,7 @@ import ViewApplication from '../screens/Application/ViewApplication/ViewApplicat
 export const AuthenticatedRoute = ({ component, ...options }) => {
   const loggedUserDetails = useSelector(({ loggedUserProfile }) => loggedUserProfile);
 
-  if (!loggedUserDetails.email) {
+  if (!loggedUserDetails?.email) {
     return (
       <Route {...options}>
         <Redirect to="/login" />
@@ -30,7 +30,7 @@ export const AuthenticatedRoute = ({ component, ...options }) => {
     );
   }
 
-  if (!component) {
+  if (loggedUserDetails?.email && !component) {
     return (
       <Route {...options}>
         <Redirect to="/dashboard" />

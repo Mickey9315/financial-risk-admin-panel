@@ -1,4 +1,3 @@
-import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import {
   INSURER_COLUMN_LIST_REDUX_CONSTANTS,
   INSURER_CRM_REDUX_CONSTANTS,
@@ -167,10 +166,6 @@ export const insurer = (state = initialInsurer, action) => {
         },
       };
     }
-
-    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
-      return null;
-
     default:
       return state;
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './LoginScreen.scss';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -10,6 +10,8 @@ import Checkbox from '../../../common/Checkbox/Checkbox';
 import { loginUser } from './redux/LoginAction';
 import { errorNotification } from '../../../common/Toast';
 import { checkForEmail, replaceHiddenCharacters } from '../../../helpers/ValidationHelper';
+import { LOGIN_REDUX_CONSTANTS } from './redux/LoginReduxConstants';
+import { clearAuthToken } from '../../../helpers/LocalStorageHelper';
 
 function LoginScreen() {
   const history = useHistory();
@@ -50,6 +52,13 @@ function LoginScreen() {
   const onChangeRememberUser = e => {
     setRememberUser(e.target.checked);
   };
+
+  useEffect(() => {
+    dispatch({
+      type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
+    });
+    clearAuthToken();
+  }, []);
 
   return (
     <AuthScreenContainer>

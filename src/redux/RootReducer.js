@@ -48,8 +48,6 @@ const rootReducer = (state, action) => {
     Object.keys(state).forEach(key => {
       emptyState[key] = null;
     });
-
-    storage.removeItem('persist:root');
     return emptyState;
   }
 

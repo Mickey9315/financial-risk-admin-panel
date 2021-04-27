@@ -1,4 +1,3 @@
-import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import {
   CLIENT_ADD_FROM_CRM_REDUX_CONSTANT,
   CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
@@ -466,9 +465,6 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
 
-    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
-      return null;
-
     default:
       return state;
   }
@@ -496,9 +492,6 @@ export const clientManagementColumnList = (state = [], action) => {
 
       return temp;
     }
-    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
-      return null;
-
     default:
       return state;
   }

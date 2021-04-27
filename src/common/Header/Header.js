@@ -97,7 +97,6 @@ const Header = () => {
 
   const onLogoutClick = async () => {
     try {
-      console.log('1000000000000');
       await dispatch(logoutUser());
       history.replace('/login');
       toggleUserSettings(false);

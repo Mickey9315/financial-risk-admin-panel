@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import LoginScreen from '../screens/auth/login/LoginScreen';
 import ForgotPassword from '../screens/auth/forgotPassword/ForgotPassword';
 import { saveTokenFromLocalStorageToSession } from '../helpers/LocalStorageHelper';
@@ -11,8 +10,6 @@ import ForbiddenAccessPage from '../common/ForbiddenAccessPage/ForbiddenAccessPa
 import SetPassword from '../screens/auth/setPassword/SetPassword';
 
 function Routes() {
-  const loggedUserDetails = useSelector(({ loggedUserProfile }) => loggedUserProfile);
-
   useEffect(() => {
     saveTokenFromLocalStorageToSession();
   }, []);
@@ -20,22 +17,15 @@ function Routes() {
   return (
     <Router>
       <Switch>
-        {!loggedUserDetails?.email ? (
-          <>
-            <Route exact path="/login" component={LoginScreen} />
-            <Route exact path="/forgot-password" component={ForgotPassword} />
-            <Route exact path="/set-password" component={SetPassword} />
-            <Route exact path="/reset-password" component={ResetPassword} />
-            <Route exact path="/verify-otp" component={VerifyOtp} />
-            <Route exact path="/verify-otp" component={VerifyOtp} />
-            <Route exact path="/forbidden-access" component={ForbiddenAccessPage} />
-          </>
-        ) : (
-          <>
-            <AuthenticatedRoute exact path="/" />
-            <AllAuthenticatedRoutes />
-          </>
-        )}
+        <Route exact path="/login" component={LoginScreen} />
+        <Route exact path="/forgot-password" component={ForgotPassword} />
+        <Route exact path="/set-password" component={SetPassword} />
+        <Route exact path="/reset-password" component={ResetPassword} />
+        <Route exact path="/verify-otp" component={VerifyOtp} />
+        <Route exact path="/verify-otp" component={VerifyOtp} />
+        <Route exact path="/forbidden-access" component={ForbiddenAccessPage} />
+        <AuthenticatedRoute exact path="/" />
+        <AllAuthenticatedRoutes />
       </Switch>
     </Router>
   );

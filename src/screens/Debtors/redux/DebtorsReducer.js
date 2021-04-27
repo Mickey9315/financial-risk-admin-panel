@@ -3,7 +3,6 @@ import {
   DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
   DEBTORS_REDUX_CONSTANTS,
 } from './DebtorsReduxConstants';
-import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 
 const initialDebtorState = {
   debtorsList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: true, error: null },
@@ -630,10 +629,6 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
     }
-
-    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
-      return null;
-
     default:
       return state;
   }

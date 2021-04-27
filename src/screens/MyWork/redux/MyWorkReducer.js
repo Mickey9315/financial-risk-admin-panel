@@ -1,5 +1,4 @@
 import { MY_WORK_REDUX_CONSTANTS } from './MyWorkReduxConstants';
-import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 
 const initialMyWork = {
   task: {
@@ -208,10 +207,6 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           taskDetail: {},
         },
       };
-
-    case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
-      return null;
-
     default:
       return state;
   }
