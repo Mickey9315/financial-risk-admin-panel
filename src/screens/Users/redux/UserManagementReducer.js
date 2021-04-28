@@ -9,8 +9,8 @@ import {
 
 const initialUserManagementListState = {
   docs: [],
-  total: 0,
-  limit: 0,
+  total: 1,
+  limit: 15,
   page: 1,
   pages: 1,
   isLoading: true,
@@ -31,10 +31,13 @@ export const userManagementList = (state = initialUserManagementListState, actio
         docs: null,
         error: action.error,
       };
-    case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_PAGE_DATA: {
+    case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_USERLIST_PAGINATION_DATA: {
       return {
-        page: 1,
-        limit: 15,
+        ...state,
+        page: action.page,
+        total: action.total,
+        limit: action.limit,
+        pages: action.pages,
       };
     }
     default:

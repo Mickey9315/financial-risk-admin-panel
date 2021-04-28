@@ -17,6 +17,7 @@ import {
   getClientFilter,
   getClientList,
   getListFromCrm,
+  resetClientListPaginationData,
   saveClientColumnListName,
 } from '../redux/ClientAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -57,12 +58,16 @@ function filterReducer(state, action) {
 const ClientList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const clientListWithPageData = useSelector(({ clientManagement }) => clientManagement.clientList);
-  const clientColumnList = useSelector(
-    ({ clientManagementColumnList }) => clientManagementColumnList
+  const clientListWithPageData = useSelector(
+    ({ clientManagement }) => clientManagement?.clientList ?? {}
   );
-  const filterList = useSelector(({ clientManagementFilterList }) => clientManagementFilterList);
-  const syncListFromCrm = useSelector(({ syncClientWithCrm }) => syncClientWithCrm);
+  const clientColumnList = useSelector(
+    ({ clientManagementColumnList }) => clientManagementColumnList ?? []
+  );
+  const filterList = useSelector(
+    ({ clientManagementFilterList }) => clientManagementFilterList ?? {}
+  );
+  const syncListFromCrm = useSelector(({ syncClientWithCrm }) => syncClientWithCrm ?? []);
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
@@ -71,7 +76,6 @@ const ClientList = () => {
   ]);
   const [crmIds, setCrmIds] = useState([]);
   useEffect(() => {
-    dispatch(getClientList());
     dispatch(getClientFilter());
   }, []);
 
@@ -85,18 +89,18 @@ const ClientList = () => {
   } = useQueryParams();
 
   const riskAnalystFilterListData = useMemo(() => {
-    const finalData = filterList.riskAnalystList;
+    const finalData = filterList?.riskAnalystList;
 
-    return finalData.map(e => ({
+    return finalData?.map(e => ({
       label: e.name,
       value: e._id,
     }));
   }, [filterList]);
 
   const serviceManagerFilterListData = useMemo(() => {
-    const finalData = filterList.serviceManagerList;
+    const finalData = filterList?.serviceManagerList;
 
-    return finalData.map(e => ({
+    return finalData?.map(e => ({
       label: e.name,
       value: e._id,
     }));
@@ -131,26 +135,25 @@ const ClientList = () => {
   }, [handleStartDateChange, handleEndDateChange]);
 
   const getClientListByFilter = useCallback(
-    (params = {}, cb) => {
-      if (moment(startDate).isAfter(endDate)) {
+    async (params = {}, cb) => {
+      if (moment(startDate)?.isAfter(endDate)) {
         errorNotification('From date should be greater than to date');
         resetFilterDates();
-      } else if (moment(endDate).isBefore(startDate)) {
+      } else if (moment(endDate)?.isBefore(startDate)) {
         errorNotification('To Date should be smaller than from date');
         resetFilterDates();
       } else {
         const data = {
-          page: page || 1,
-          limit: limit || 15,
-          riskAnalystId:
-            riskAnalystId && riskAnalystId.trim().length > 0 ? riskAnalystId : undefined,
+          page: page ?? 1,
+          limit: limit ?? 15,
+          riskAnalystId: (riskAnalystId?.trim()?.length ?? -1) > 0 ? riskAnalystId : undefined,
           serviceManagerId:
-            serviceManagerId && serviceManagerId.trim().length > 0 ? serviceManagerId : undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
+            (serviceManagerId?.trim()?.length ?? -1) > 0 ? serviceManagerId : undefined,
+          startDate: startDate ?? undefined,
+          endDate: endDate ?? undefined,
           ...params,
         };
-        dispatch(getClientList(data));
+        await dispatch(getClientList(data));
         if (cb && typeof cb === 'function') {
           cb();
         }
@@ -161,17 +164,14 @@ const ClientList = () => {
 
   useEffect(() => {
     const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
+      page: paramPage ?? page ?? 1,
+      limit: paramLimit ?? limit ?? 15,
     };
 
     const filters = {
-      riskAnalystId:
-        paramRiskAnalyst && paramRiskAnalyst.trim().length > 0 ? paramRiskAnalyst : undefined,
+      riskAnalystId: (paramRiskAnalyst?.trim()?.length ?? -1) > 0 ? paramRiskAnalyst : undefined,
       serviceManagerId:
-        paramServiceManager && paramServiceManager.trim().length > 0
-          ? paramServiceManager
-          : undefined,
+        (paramServiceManager?.trim()?.length ?? -1) > 0 ? paramServiceManager : undefined,
       startDate: paramStartDate ? new Date(paramStartDate) : undefined,
       endDate: paramEndDate ? new Date(paramEndDate) : undefined,
     };
@@ -190,11 +190,10 @@ const ClientList = () => {
 
   useEffect(() => {
     const params = {
-      page: page || 1,
-      limit: limit || 15,
-      riskAnalystId: riskAnalystId && riskAnalystId.trim().length > 0 ? riskAnalystId : undefined,
-      serviceManagerId:
-        serviceManagerId && serviceManagerId.trim().length > 0 ? serviceManagerId : undefined,
+      page: page ?? 1,
+      limit: limit ?? 15,
+      riskAnalystId: (riskAnalystId?.trim()?.length ?? -1) > 0 ? riskAnalystId : undefined,
+      serviceManagerId: (serviceManagerId?.trim()?.length ?? -1) > 0 ? serviceManagerId : undefined,
       startDate: startDate ? new Date(startDate).toISOString() : undefined,
       endDate: endDate ? new Date(endDate).toISOString() : undefined,
     };
@@ -203,7 +202,7 @@ const ClientList = () => {
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
 
-    history.replace(`${history.location.pathname}?${url}`);
+    history.replace(`${history?.location?.pathname}?${url}`);
   }, [history, total, pages, page, limit, riskAnalystId, serviceManagerId, startDate, endDate]);
 
   const pageActionClick = useCallback(
@@ -225,8 +224,8 @@ const ClientList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getClientListByFilter({ page: 1 }, toggleFilterModal);
-  }, [getClientListByFilter]);
+    getClientListByFilter({ page, limit }, toggleFilterModal);
+  }, [getClientListByFilter, page, limit]);
 
   const onClickResetFilterClientList = useCallback(() => {
     dispatchFilter({ type: CLIENT_FILTER_REDUCER_ACTIONS.RESET_STATE });
@@ -243,7 +242,7 @@ const ClientList = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
-    [toggleFilterModal, onClickApplyFilter]
+    [toggleFilterModal, onClickApplyFilter, toggleFilterModal]
   );
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = useCallback(
@@ -352,9 +351,9 @@ const ClientList = () => {
 
   const checkIfEnterKeyPressed = e => {
     if (e.key === 'Enter') {
-      const searchKeyword = searchInputRef.current.value;
-      if (searchKeyword.trim().toString().length !== 0) {
-        dispatch(getListFromCrm(searchKeyword.trim().toString()));
+      const searchKeyword = searchInputRef?.current?.value;
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
         setSearchClients(true);
       } else {
         errorNotification('Please enter any value than press enter');
@@ -388,28 +387,28 @@ const ClientList = () => {
   );
 
   const clientRiskAnalystSelectedValue = useMemo(() => {
-    const foundValue = filterList.riskAnalystList.find(e => {
+    const foundValue = filterList?.riskAnalystList?.find(e => {
       return e._id === riskAnalystId;
     });
     return foundValue
       ? [
           {
-            label: foundValue.name,
-            value: foundValue._id,
+            label: foundValue?.name,
+            value: foundValue?._id,
           },
         ]
       : [];
   }, [filterList, riskAnalystId]);
 
   const clientServiceManagerSelectedValue = useMemo(() => {
-    const foundValue = filterList.serviceManagerList.find(e => {
+    const foundValue = filterList?.serviceManagerList?.find(e => {
       return e._id === serviceManagerId;
     });
     return foundValue
       ? [
           {
-            label: foundValue.name,
-            value: foundValue._id,
+            label: foundValue?.name,
+            value: foundValue?._id,
           },
         ]
       : [];
@@ -426,13 +425,16 @@ const ClientList = () => {
 
   const selectAllClientsFromCrm = e => {
     if (e.target.checked) {
-      const arr = syncListFromCrm.map(crm => crm.crmId.toString());
+      const arr = syncListFromCrm?.map(crm => crm?.crmId?.toString());
       setCrmIds(arr);
     } else {
       setCrmIds([]);
     }
   };
 
+  useEffect(() => {
+    return dispatch(resetClientListPaginationData(page, pages, total, limit));
+  }, []);
   return (
     <>
       <div className="page-header">
@@ -589,8 +591,8 @@ const ClientList = () => {
                         <Checkbox
                           title={crm.name}
                           className="crm-checkbox-list"
-                          checked={crmIds.includes(crm.crmId.toString())}
-                          onChange={() => selectClientFromCrm(crm.crmId.toString())}
+                          checked={crmIds?.includes(crm?.crmId?.toString())}
+                          onChange={() => selectClientFromCrm(crm?.crmId?.toString())}
                         />
                       ))}
                     </div>

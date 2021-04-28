@@ -11,7 +11,7 @@ import {
   getInsurerColumnNameList,
   getInsurerListByFilter,
   getListFromCrm,
-  resetPageData,
+  resetInsurerListPaginationData,
   saveInsurerColumnListName,
 } from '../redux/InsurerAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -30,8 +30,8 @@ const InsurerList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const insurerListWithPageData = useSelector(({ insurer }) => insurer.insurerList);
-  const insurerColumnList = useSelector(({ insurer }) => insurer.insurerColumnNameList);
+  const insurerListWithPageData = useSelector(({ insurer }) => insurer?.insurerList ?? {});
+  const insurerColumnList = useSelector(({ insurer }) => insurer?.insurerColumnNameList ?? {});
   const { total, pages, page, limit, docs, headers } = useMemo(() => insurerListWithPageData, [
     insurerListWithPageData,
   ]);
@@ -41,8 +41,8 @@ const InsurerList = () => {
   const getInsurerList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getInsurerListByFilter(data));
@@ -117,33 +117,33 @@ const InsurerList = () => {
 
   useEffect(() => {
     const params = {
-      page: page || 1,
-      limit: limit || 15,
+      page: page ?? 1,
+      limit: limit ?? 15,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
 
-    history.replace(`${history.location.pathname}?${url}`);
+    history.replace(`${history?.location?.pathname}?${url}`);
   }, [total, pages, page, limit]);
 
   useEffect(() => {
     const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
+      page: paramPage ?? page ?? 1,
+      limit: paramLimit ?? limit ?? 15,
     };
 
     getInsurerList({ ...params });
     dispatch(getInsurerColumnNameList());
-    return () => dispatch(resetPageData());
+    return dispatch(resetInsurerListPaginationData(page, pages, limit, total));
   }, []);
 
   /** *
    * CRM Feature
    * * */
 
-  const syncListFromCrm = useSelector(({ insurer }) => insurer.syncInsurerWithCRM);
+  const syncListFromCrm = useSelector(({ insurer }) => insurer?.syncInsurerWithCRM);
   const [addFromCRM, setAddFromCRM] = useState(false);
   const [crmIds, setCrmIds] = useState([]);
   const [searchInsurers, setSearchInsurers] = useState(false);
@@ -194,9 +194,9 @@ const InsurerList = () => {
   const checkIfEnterKeyPressed = useCallback(
     e => {
       if (e.key === 'Enter') {
-        const searchKeyword = searchInputRef.current.value;
-        if (searchKeyword.trim().toString().length !== 0) {
-          dispatch(getListFromCrm(searchKeyword.trim().toString()));
+        const searchKeyword = searchInputRef?.current?.value;
+        if (searchKeyword?.trim()?.toString()?.length !== 0) {
+          dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
           setSearchInsurers(true);
         } else {
           errorNotification('Please enter any value than press enter');
@@ -209,8 +209,8 @@ const InsurerList = () => {
   const selectInsurerFromCrm = useCallback(
     crmId => {
       let arr = [...crmIds];
-      if (arr.includes(crmId)) {
-        arr = arr.filter(e => e !== crmId);
+      if (arr?.includes(crmId)) {
+        arr = arr?.filter(e => e !== crmId);
       } else {
         arr = [...arr, crmId];
       }
@@ -288,13 +288,13 @@ const InsurerList = () => {
             <>
               {/* <Checkbox title="Name" className="check-all-crmList" /> */}
               <div className="crm-checkbox-list-container">
-                {syncListFromCrm && syncListFromCrm.length > 0 ? (
-                  syncListFromCrm.map(crm => (
+                {syncListFromCrm && syncListFromCrm?.length > 0 ? (
+                  syncListFromCrm?.map(crm => (
                     <Checkbox
-                      title={crm.name}
+                      title={crm?.name}
                       className="crm-checkbox-list"
-                      checked={crmIds.includes(crm.crmId.toString())}
-                      onChange={() => selectInsurerFromCrm(crm.crmId.toString())}
+                      checked={crmIds?.includes(crm?.crmId?.toString())}
+                      onChange={() => selectInsurerFromCrm(crm?.crmId?.toString())}
                     />
                   ))
                 ) : (

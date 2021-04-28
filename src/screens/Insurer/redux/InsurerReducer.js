@@ -8,8 +8,8 @@ import {
 const initialInsurer = {
   insurerList: {
     docs: [],
-    total: 0,
-    limit: 0,
+    total: 1,
+    limit: 15,
     page: 1,
     pages: 1,
     headers: [],
@@ -38,6 +38,18 @@ export const insurer = (state = initialInsurer, action) => {
       return {
         ...state,
         insurerList: action?.data,
+      };
+
+    case INSURER_REDUX_CONSTANTS.RESET_INSURER_LIST_PAGINATION_DATA:
+      return {
+        ...state,
+        insurerList: {
+          ...state.insurerList,
+          page: action.page,
+          limit: action.limit,
+          total: action.total,
+          pages: action.pages,
+        },
       };
 
     case INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_COLUMN_LIST_ACTION:

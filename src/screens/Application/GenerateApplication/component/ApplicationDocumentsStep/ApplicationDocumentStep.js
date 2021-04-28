@@ -93,40 +93,67 @@ const ApplicationDocumentStep = () => {
     }));
   }, [documentTypeList]);
 
-  const onUploadClick = e => {
-    e.persist();
-    if (e.target.files && e.target.files.length > 0) {
-      const fileExtension = ['jpeg', 'jpg', 'png'];
-      const mimeType = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'application/msword',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel.sheet.macroEnabled.12',
-      ];
-      const checkExtension =
-        fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
-      const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-      if (!(checkExtension || checkMimeTypes)) {
-        errorNotification('Only image and document types file allowed');
-        setFileData('');
+  const onUploadClick = useCallback(
+    e => {
+      // e.persist();
+      if (e.target.files && e.target.files.length > 0) {
+        const fileExtension = [
+          'jpeg',
+          'jpg',
+          'png',
+          'bmp',
+          'gif',
+          'tex',
+          'xls',
+          'xlsx',
+          'doc',
+          'docx',
+          'odt',
+          'txt',
+          'pdf',
+          'png',
+          'pptx',
+          'ppt',
+          'rtf',
+        ];
+        const mimeType = [
+          'image/jpeg',
+          'image/png',
+          'application/pdf',
+          'image/bmp',
+          'image/gif',
+          'application/x-tex',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.oasis.opendocument.text',
+          'text/plain',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+          'application/vnd.ms-powerpoint',
+          'application/rtf',
+        ];
+        const checkExtension =
+          fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+        const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+        const checkFileSize = e.target.files[0].size > 4194304;
+
+        if (!(checkExtension || checkMimeTypes)) {
+          errorNotification('Only image and document type files are allowed');
+        } else if (checkFileSize) {
+          errorNotification('File size should be less than 4 mb');
+        } else {
+          setFileData(e.target.files[0]);
+          dispatchSelectedApplicationDocuments({
+            type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
+            name: 'fileData',
+            value: e.target.files[0],
+          });
+        }
       }
-      const checkFileSize = e.target.files[0].size > 4194304;
-      if (checkFileSize) {
-        errorNotification('File size should be less than 4 mb');
-      } else {
-        setFileData(e.target.files[0]);
-        dispatchSelectedApplicationDocuments({
-          type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
-          name: 'fileData',
-          value: e.target.files[0],
-        });
-      }
-    }
-  };
+    },
+    [setFileData]
+  );
 
   const onCloseUploadDocumentButton = useCallback(() => {
     dispatchSelectedApplicationDocuments({
@@ -146,17 +173,17 @@ const ApplicationDocumentStep = () => {
   const onClickUploadDocument = useCallback(async () => {
     if (selectedApplicationDocuments.documentType.length === 0) {
       errorNotification('Please select document type');
-    } else if (!selectedApplicationDocuments.fileData) {
-      errorNotification('Please select any document');
     } else if (!selectedApplicationDocuments.description) {
       errorNotification('Description is required');
+    } else if (!fileData) {
+      errorNotification('Select document to upload');
     } else {
       const formData = new FormData();
       formData.append('description', selectedApplicationDocuments.description);
       formData.append('isPublic', selectedApplicationDocuments.isPublic);
       formData.append('documentType', selectedApplicationDocuments.documentType);
       formData.append('document', selectedApplicationDocuments.fileData);
-      formData.append('entityId', editApplication._id);
+      formData.append('entityId', editApplication?._id);
       formData.append('documentFor', 'application');
       const config = {
         headers: {
@@ -167,14 +194,17 @@ const ApplicationDocumentStep = () => {
       dispatchSelectedApplicationDocuments({
         type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
       });
+      getApplicationDocumentDataList();
       setFileData('');
       toggleUploadModel();
     }
   }, [
     selectedApplicationDocuments,
+    fileData,
     dispatchSelectedApplicationDocuments,
     toggleUploadModel,
-    editApplication._id,
+    editApplication?.id,
+    setFileData,
   ]);
 
   const uploadDocumentButton = useMemo(

@@ -350,10 +350,14 @@ export const deleteUserDetails = (id, params) => {
   };
 };
 
-export const resetPageData = () => {
+export const resetUserListPaginationData = (page, limit, pages, total) => {
   return async dispatch => {
     dispatch({
-      type: USER_MANAGEMENT_REDUX_CONSTANTS.RESET_PAGE_DATA,
+      type: USER_MANAGEMENT_REDUX_CONSTANTS.RESET_USERLIST_PAGINATION_DATA,
+      page,
+      limit,
+      pages,
+      total,
     });
   };
 };

@@ -385,7 +385,6 @@ export const getListFromCrm = data => {
         } else if (e.response.data.status === 'ERROR') {
           errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
     }
   };
@@ -462,10 +461,14 @@ export const getPolicySyncListForCRM = (id, data) => {
   };
 };
 
-export const resetPageData = () => {
+export const resetInsurerListPaginationData = (page, limit, pages, total) => {
   return async dispatch => {
     dispatch({
-      type: INSURER_REDUX_CONSTANTS.RESET_PAGE_DATA,
+      type: INSURER_REDUX_CONSTANTS.RESET_INSURER_LIST_PAGINATION_DATA,
+      page,
+      total,
+      pages,
+      limit,
     });
   };
 };

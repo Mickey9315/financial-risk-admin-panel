@@ -27,11 +27,12 @@ export const processTableDataByType = ({ header, row, actions }) => {
       return '-';
 
     case 'boolean':
+      console.log(currentData);
       return (
         <div className="table-checkbox">
           <Checkbox
             title={null}
-            checked={currentData.value || currentData}
+            checked={currentData?.value ?? currentData}
             onChange={e => handleCheckBoxState(e.target.checked, header, currentData, row)}
           />
         </div>

@@ -16,7 +16,7 @@ import {
   deleteUserDetails,
   getUserColumnListName,
   getUserManagementListByFilter,
-  resetPageData,
+  resetUserListPaginationData,
   saveUserColumnListName,
 } from '../redux/UserManagementAction';
 import Modal from '../../../common/Modal/Modal';
@@ -242,8 +242,8 @@ const UserList = () => {
           try {
             toggleConfirmationModal(false);
             const data = {
-              page: page || 1,
-              limit: limit || 15,
+              page: page ?? 1,
+              limit: limit ?? 15,
               role: role && role?.length > 0 ? role.trim() : undefined,
               startDate: startDate || undefined,
               endDate: endDate || undefined,
@@ -280,8 +280,8 @@ const UserList = () => {
 
   useEffect(() => {
     const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
+      page: paramPage ?? page ?? 1,
+      limit: paramLimit ?? limit ?? 15,
     };
 
     const filters = {
@@ -300,13 +300,13 @@ const UserList = () => {
 
     getUserManagementByFilter({ ...params, ...filters });
     dispatch(getUserColumnListName());
-    return () => dispatch(resetPageData());
-  }, [paramRole]);
+    return dispatch(resetUserListPaginationData(page, limit, pages, total));
+  }, []);
 
   useEffect(() => {
     const params = {
-      page: page || 1,
-      limit: limit || 15,
+      page: page ?? 1,
+      limit: limit ?? 15,
       role: role?.length > 0 ?? false ? role?.trim() : undefined,
       startDate: startDate ? new Date(startDate)?.toISOString() : undefined,
       endDate: endDate ? new Date(endDate)?.toISOString() : undefined,

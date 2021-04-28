@@ -49,14 +49,16 @@ const DebtorTaskTab = () => {
   const dispatch = useDispatch();
   const searchInputRef = useRef();
   const debtorTaskListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.task.taskList
+    ({ debtorsManagement }) => debtorsManagement?.task?.taskList ?? {}
   );
   const debtorTaskColumnNameListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.task.columnList
+    ({ debtorsManagement }) => debtorsManagement?.task?.columnList ?? {}
   );
-  const addTaskState = useSelector(({ debtorsManagement }) => debtorsManagement.task.addTask);
+  const addTaskState = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
+  );
   const taskDropDownData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.task.dropDownData
+    ({ debtorsManagement }) => debtorsManagement?.task?.dropDownData ?? {}
   );
 
   const { page, pages, total, limit, docs, headers, isLoading } = useMemo(
@@ -68,11 +70,11 @@ const DebtorTaskTab = () => {
   ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
-  const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
+  const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
 
   const getDebtorTaskList = useCallback(
-    (params = {}, cb) => {
+    async (params = {}, cb) => {
       const data = {
         page: page || 1,
         limit: limit || 15,
@@ -80,7 +82,7 @@ const DebtorTaskTab = () => {
         columnFor: 'debtor-task',
         ...params,
       };
-      dispatch(getDebtorTaskListData(data, id));
+      await dispatch(getDebtorTaskListData(data, id));
       if (cb && typeof cb === 'function') {
         cb();
       }
@@ -144,7 +146,7 @@ const DebtorTaskTab = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseCustomFieldModal },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [toggleCustomField]
+    [onClickResetDefaultColumnSelection, onCloseCustomFieldModal, onClickSaveColumnSelection]
   );
 
   const onChangeSelectedColumn = useCallback((type, name, value) => {
@@ -288,16 +290,16 @@ const DebtorTaskTab = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return addTaskState.assigneeId || [];
+          return addTaskState?.assigneeId || [];
         }
         case 'priority': {
-          return addTaskState.priority || [];
+          return addTaskState?.priority || [];
         }
         case 'entityType': {
-          return addTaskState.entityType || [];
+          return addTaskState?.entityType || [];
         }
         case 'entityId': {
-          return addTaskState.entityId || [];
+          return addTaskState?.entityId || [];
         }
         default:
           return [];
@@ -318,9 +320,9 @@ const DebtorTaskTab = () => {
 
   const onSaveTask = useCallback(() => {
     const data = {
-      title: addTaskState.title.trim(),
+      title: addTaskState?.title?.trim(),
       // priority: addTaskState?.priority[0]?.value,
-      dueDate: addTaskState.dueDate || new Date().toISOString(),
+      dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'debtor-task',
     };
@@ -329,7 +331,7 @@ const DebtorTaskTab = () => {
     if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0].value;
     if (addTaskState?.description) data.description = addTaskState?.description.trim();
 
-    if (!data.title && data.title.length === 0) {
+    if (!data?.title && data?.title?.length === 0) {
       errorNotification('Please add title');
     } else {
       try {
@@ -561,7 +563,7 @@ const DebtorTaskTab = () => {
     dispatch(
       updateAddTaskStateFields(
         'entityType',
-        entityTypeData && entityTypeData.filter(e => e.value === 'client')
+        entityTypeData && entityTypeData.filter(e => e.value === 'debtor')
       )
     );
   }, [assigneeList, defaultEntityList, entityTypeData]);

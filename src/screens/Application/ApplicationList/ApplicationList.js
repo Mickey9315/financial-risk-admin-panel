@@ -16,6 +16,7 @@ import {
   getApplicationsListByFilter,
   saveApplicationColumnNameList,
   getApplicationFilter,
+  resetApplicationListPaginationData,
 } from '../redux/ApplicationAction';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -58,6 +59,19 @@ function filterReducer(state = initialFilterState, action) {
 const ApplicationList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const {
+    page: paramPage,
+    limit: paramLimit,
+    entityType: paramEntity,
+    clientId: paramClientId,
+    debtorId: paramDebtorId,
+    status: paramStatus,
+    minCreditLimit: paramMinCreditLimit,
+    maxCreditLimit: paramMaxCreditLimit,
+    startDate: paramStartDate,
+    endDate: paramEndDate,
+  } = useQueryParams();
+
   const applicationListWithPageData = useSelector(
     ({ application }) => application?.applicationList ?? {}
   );
@@ -247,7 +261,7 @@ const ApplicationList = () => {
   );
   const onClickApplyFilter = useCallback(() => {
     getApplicationsByFilter({ page, limit }, toggleFilterModal);
-  }, [getApplicationsByFilter, toggleFilterModal]);
+  }, [getApplicationsByFilter, toggleFilterModal, page, limit]);
 
   const onClickResetFilter = useCallback(() => {
     dispatchFilter({
@@ -332,23 +346,10 @@ const ApplicationList = () => {
     dispatch(changeApplicationColumnNameList(data));
   }, []);
 
-  const {
-    page: paramPage,
-    limit: paramLimit,
-    entityType: paramEntity,
-    clientId: paramClientId,
-    debtorId: paramDebtorId,
-    status: paramStatus,
-    minCreditLimit: paramMinCreditLimit,
-    maxCreditLimit: paramMaxCreditLimit,
-    startDate: paramStartDate,
-    endDate: paramEndDate,
-  } = useQueryParams();
-
   useEffect(() => {
     const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
+      page: paramPage ?? page ?? 1,
+      limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
       entityType: (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : undefined,
@@ -380,8 +381,8 @@ const ApplicationList = () => {
   // for params in url
   useEffect(() => {
     const params = {
-      page: page || 1,
-      limit: limit || 15,
+      page: page ?? 1,
+      limit: limit ?? 15,
       entityType: (entity?.trim()?.length ?? -1) > 0 ? entity : undefined,
       clientId: (clientId?.trim()?.length ?? -1) > 0 ? clientId : undefined,
       debtorId: (debtorId?.trim()?.length ?? -1) > 0 ? debtorId : undefined,
@@ -395,7 +396,7 @@ const ApplicationList = () => {
       ?.filter(arr => arr[1] !== undefined)
       ?.map(([k, v]) => `${k}=${v}`)
       ?.join('&');
-    history.replace(`${history?.location?.pathname}?${url}`);
+    history.push(`${history?.location?.pathname}?${url}`);
   }, [
     history,
     total,
@@ -439,6 +440,10 @@ const ApplicationList = () => {
 
   const viewApplicationOnSelectRecord = useCallback(_id => {
     history.push(`/applications/detail/view/${_id}`);
+  }, []);
+
+  useEffect(() => {
+    return dispatch(resetApplicationListPaginationData(page, pages, total, limit));
   }, []);
 
   return (

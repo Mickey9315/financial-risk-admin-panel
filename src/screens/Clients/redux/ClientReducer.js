@@ -6,7 +6,7 @@ import {
 } from './ClientReduxConstants';
 
 const initialClientListState = {
-  clientList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: true, error: null },
+  clientList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   selectedClient: null,
   creditLimit: {
     creditLimitList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
@@ -78,6 +78,15 @@ export const clientManagement = (state = initialClientListState, action) => {
       return {
         ...state,
         clientList: action?.data,
+      };
+
+    case CLIENT_REDUX_CONSTANTS.RESET_CLIENT_LIST_PAGINATION_DATA:
+      return {
+        ...state,
+        page: action.page,
+        pages: action.pages,
+        total: action.total,
+        limit: action.limit,
       };
 
     case CLIENT_REDUX_CONSTANTS.SELECTED_CLIENT_DATA:
@@ -474,6 +483,7 @@ export const clientManagementColumnList = (state = [], action) => {
   switch (action.type) {
     case CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_COLUMN_LIST_ACTION:
       return action?.data;
+
     case CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_CLIENT_MANAGEMENT_COLUMN_LIST_ACTION: {
       const temp = {
         ...state,

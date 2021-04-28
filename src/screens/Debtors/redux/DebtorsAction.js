@@ -124,10 +124,14 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameListData = {}, isRe
   };
 };
 
-export const resetPageData = () => {
+export const resetDebtorListPaginationData = (page, pages, total, limit) => {
   return async dispatch => {
     dispatch({
-      type: DEBTORS_REDUX_CONSTANTS.DEBTOR_LIST_RESET_PAGE_DATA,
+      type: DEBTORS_REDUX_CONSTANTS.DEBTOR_LIST_RESET_PAGINATION_DATA,
+      page,
+      pages,
+      total,
+      limit,
     });
   };
 };

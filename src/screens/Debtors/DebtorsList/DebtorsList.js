@@ -11,7 +11,7 @@ import {
   getDebtorDropdownData,
   getDebtorsColumnNameList,
   getDebtorsList,
-  resetPageData,
+  resetDebtorListPaginationData,
   saveDebtorsColumnListName,
 } from '../redux/DebtorsAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -54,7 +54,9 @@ const DebtorsList = () => {
     [debtorListWithPageData]
   );
 
-  const debtorDropDownData = useSelector(({ debtorsManagement }) => debtorsManagement.dropdownData);
+  const debtorDropDownData = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
+  );
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { entityType } = useMemo(() => filter, [filter]);
@@ -73,9 +75,9 @@ const DebtorsList = () => {
   const getDebtorsListByFilter = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
-        entityType: entityType && entityType.trim().length > 0 ? entityType : undefined,
+        page: page ?? 1,
+        limit: limit ?? 15,
+        entityType: (entityType?.trim()?.length ?? -1) > 0 ? entityType : undefined,
         ...params,
       };
       dispatch(getDebtorsList(data));
@@ -147,17 +149,18 @@ const DebtorsList = () => {
     value => setFilterModal(value !== undefined ? value : e => !e),
     [setFilterModal]
   );
+
+  const onClickApplyFilter = useCallback(() => {
+    getDebtorsListByFilter({}, toggleFilterModal);
+  }, [getDebtorsListByFilter]);
+
   const onClickResetFilter = useCallback(() => {
     dispatchFilter({
       type: DEBTORS_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
-    getDebtorsListByFilter();
-    toggleFilterModal();
-  }, [dispatch]);
+    onClickApplyFilter();
+  }, [dispatchFilter]);
 
-  const onClickApplyFilter = useCallback(() => {
-    getDebtorsListByFilter({ page: 1 }, toggleFilterModal);
-  }, [getDebtorsListByFilter]);
   const filterModalButtons = useMemo(
     () => [
       {
@@ -179,26 +182,26 @@ const DebtorsList = () => {
 
   useEffect(() => {
     const params = {
-      page: page || 1,
-      limit: limit || 15,
-      entityType: entityType && entityType.trim().length > 0 ? entityType : undefined,
+      page: page ?? 1,
+      limit: limit ?? 15,
+      entityType: (entityType?.trim()?.length ?? -1) > 0 ? entityType : undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
       .map(([k, v]) => `${k}=${v}`)
       .join('&');
 
-    history.replace(`${history.location.pathname}?${url}`);
+    history.replace(`${history?.location?.pathname}?${url}`);
   }, [history, total, pages, page, limit, entityType]);
 
   const { page: paramPage, limit: paramLimit, entityType: paramEntity } = useQueryParams();
   useEffect(() => {
     const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
+      page: paramPage ?? page ?? 1,
+      limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
-      entityType: paramEntity && paramEntity.trim().length > 0 ? paramEntity : undefined,
+      entityType: (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : undefined,
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
@@ -210,12 +213,15 @@ const DebtorsList = () => {
     getDebtorsListByFilter({ ...params, ...filters });
     dispatch(getDebtorsColumnNameList());
     dispatch(getDebtorDropdownData());
-    return () => dispatch(resetPageData());
   }, []);
 
   const onClickViewDebtor = useCallback(id => history.replace(`debtors/debtor/view/${id}`), [
     history,
   ]);
+
+  useEffect(() => {
+    return dispatch(resetDebtorListPaginationData(page, pages, total, limit));
+  }, []);
 
   return (
     <>

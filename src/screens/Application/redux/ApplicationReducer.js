@@ -68,7 +68,7 @@ const initialApplicationList = {
       errors: {},
     },
     documents: {
-      documentTypeList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+      documentTypeList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
       uploadDocumentApplicationData: [],
     },
     partners: [],
@@ -138,15 +138,6 @@ const initialApplicationList = {
 
 export const application = (state = initialApplicationList, action) => {
   switch (action.type) {
-    case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST:
-      return {
-        ...state,
-        applicationList: {
-          ...state.applicationList,
-          isLoading: true,
-          error: null,
-        },
-      };
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_SUCCESS:
       return {
         ...state,
@@ -165,6 +156,17 @@ export const application = (state = initialApplicationList, action) => {
           ...state.applicationList,
           isLoading: false,
           error: true,
+        },
+      };
+    case APPLICATION_REDUX_CONSTANTS.RESET_APPLICATION_LIST_PAGINATION_DATA:
+      return {
+        ...state,
+        applicationList: {
+          ...state?.applicationList,
+          page: action.page,
+          pages: action.pages,
+          total: action.total,
+          limit: action.limit,
         },
       };
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS:

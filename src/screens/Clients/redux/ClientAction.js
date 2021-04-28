@@ -40,6 +40,19 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
   };
 };
 
+// reseting clientlist pagination
+export const resetClientListPaginationData = (page, pages, total, limit) => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.RESET_CLIENT_LIST_PAGINATION_DATA,
+      page,
+      pages,
+      total,
+      limit,
+    });
+  };
+};
+
 export const getClientById = id => {
   return async dispatch => {
     try {
@@ -107,6 +120,7 @@ export const getClientColumnListName = () => {
     }
   };
 };
+
 // for filter of client list
 export const getClientFilter = () => {
   return async dispatch => {

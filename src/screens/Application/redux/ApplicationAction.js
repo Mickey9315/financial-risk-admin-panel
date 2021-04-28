@@ -12,11 +12,6 @@ import ApplicationViewApiServices from '../services/ApplicationViewApiServices';
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      dispatch({
-        type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST,
-        data: [],
-      });
-
       const response = await ApplicationApiServices.getApplicationListByFilter(params);
 
       if (response.data.status === 'SUCCESS') {
@@ -29,7 +24,6 @@ export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => 
       if (e.response && e.response.data) {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_FAILURE,
-          data: [],
         });
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
@@ -38,6 +32,18 @@ export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => 
         }
       }
     }
+  };
+};
+
+export const resetApplicationListPaginationData = (page, pages, total, limit) => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.RESET_APPLICATION_LIST_PAGINATION_DATA,
+      page,
+      pages,
+      total,
+      limit,
+    });
   };
 };
 

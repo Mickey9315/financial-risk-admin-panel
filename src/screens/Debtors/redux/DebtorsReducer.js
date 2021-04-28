@@ -5,7 +5,7 @@ import {
 } from './DebtorsReduxConstants';
 
 const initialDebtorState = {
-  debtorsList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: true, error: null },
+  debtorsList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   notes: {
     notesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: true, error: null },
   },
@@ -123,13 +123,15 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         debtorsColumnNameList: temp,
       };
-    case DEBTORS_REDUX_CONSTANTS.DEBTOR_LIST_RESET_PAGE_DATA:
+    case DEBTORS_REDUX_CONSTANTS.DEBTOR_LIST_RESET_PAGINATION_DATA:
       return {
         ...state,
         debtorsList: {
           ...state.debtorsList,
-          page: 1,
-          limit: 15,
+          page: action.page,
+          pages: action.pages,
+          total: action.total,
+          limit: action.limit,
         },
       };
     case DEBTORS_REDUX_CONSTANTS.SELECTED_DEBTORS_DATA:
