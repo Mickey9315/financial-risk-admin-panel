@@ -37,6 +37,12 @@ function LoginScreen() {
     }
   };
 
+  const onEnterKeyPress = async e => {
+    if (e.keyCode === 13) {
+      await onClickLogin();
+    }
+  };
+
   const onChangeEmail = e => {
     const emailText = e.target.value;
 
@@ -70,6 +76,7 @@ function LoginScreen() {
         placeholder="Enter email or number"
         value={email}
         onChange={onChangeEmail}
+        onKeyDown={onEnterKeyPress}
       />
 
       <div className="login-field-name">Password</div>
@@ -80,6 +87,7 @@ function LoginScreen() {
         placeholder="Enter password"
         value={password}
         onChange={onChangePassword}
+        onKeyDown={onEnterKeyPress}
       />
       <div className="login-action-row">
         <Checkbox title="Remember me" checked={rememberUser} onChange={onChangeRememberUser} />

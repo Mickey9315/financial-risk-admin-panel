@@ -45,6 +45,12 @@ function ResetPassword() {
     }
   };
 
+  const onEnterKeyPress = async e => {
+    if (e.keyCode === 13) {
+      await onClickResetPassword();
+    }
+  };
+
   return (
     <AuthScreenContainer>
       <div className="login-field-name">New Password</div>
@@ -55,6 +61,7 @@ function ResetPassword() {
         placeholder="Enter New password"
         value={password}
         onChange={onChangePassword}
+        onKeyDown={onEnterKeyPress}
       />
       <div className="login-field-name">Re Enter password</div>
       <BigInput
@@ -64,6 +71,7 @@ function ResetPassword() {
         placeholder="Re Enter password"
         value={confirmPassword}
         onChange={onChangeConfirmPassword}
+        onKeyDown={onEnterKeyPress}
       />
       <div className="login-action-row">
         <div />

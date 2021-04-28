@@ -42,6 +42,12 @@ function SetPassword() {
     }
   };
 
+  const onEnterKeyPress = async e => {
+    if (e.keyCode === 13) {
+      await onClickSetPassword();
+    }
+  };
+
   return (
     <AuthScreenContainer>
       <div className="login-field-name">Set Password</div>
@@ -52,6 +58,7 @@ function SetPassword() {
         placeholder="Enter New password"
         value={makePassword}
         onChange={onChangePassword}
+        onKeyDown={onEnterKeyPress}
       />
       <div className="login-field-name">Re Enter password</div>
       <BigInput
@@ -61,6 +68,7 @@ function SetPassword() {
         placeholder="Re Enter password"
         value={confirmPassword}
         onChange={onChangeConfirmPassword}
+        onKeyDown={onEnterKeyPress}
       />
       <Button
         title="Set Password"

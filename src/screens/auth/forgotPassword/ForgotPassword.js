@@ -34,6 +34,12 @@ function ForgotPassword() {
     }
   };
 
+  const onEnterKeyPress = async e => {
+    if (e.keyCode === 13) {
+      await onClickForgotPassword();
+    }
+  };
+
   return (
     <AuthScreenContainer>
       <div className="login-field-name">Email or Number</div>
@@ -44,6 +50,7 @@ function ForgotPassword() {
         placeholder="Enter email or number"
         value={email}
         onChange={onChangeEmail}
+        onKeyDown={onEnterKeyPress}
       />
       <div className="login-action-row">
         <div />

@@ -40,6 +40,12 @@ function VerifyOtp() {
     }
   };
 
+  const onEnterKeyPress = async e => {
+    if (e.keyCode === 13) {
+      await onClickVerifyOTP();
+    }
+  };
+
   return (
     <AuthScreenContainer>
       <div className="login-field-name disabled">Email or Number</div>
@@ -53,7 +59,7 @@ function VerifyOtp() {
         disabled
       />
       <div className="login-field-name">Enter OTP</div>
-      <div className="code-container">
+      <div className="code-container" onKeyDown={onEnterKeyPress}>
         <OtpInput
           value={otp}
           isInputNum
