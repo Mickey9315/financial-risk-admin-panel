@@ -1,17 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 
-const ApplicationLogsAccordion = () => {
+const ApplicationLogsAccordion = props => {
   const applicationLogsList = useSelector(
     ({ application }) => application?.viewApplication?.applicationModulesList?.logs || []
   );
 
+  const { index } = props;
+
   return (
     <>
       {applicationLogsList !== undefined && (
-        <AccordionItem header="Logs" suffix="expand_more">
+        <AccordionItem index={index} header="Logs" suffix="expand_more">
           {applicationLogsList &&
             applicationLogsList.map(log => (
               <div className="common-accordion-item-content-box" key={log._id}>
@@ -35,3 +38,7 @@ const ApplicationLogsAccordion = () => {
 };
 
 export default React.memo(ApplicationLogsAccordion);
+
+ApplicationLogsAccordion.propTypes = {
+  index: PropTypes.number.isRequired,
+};

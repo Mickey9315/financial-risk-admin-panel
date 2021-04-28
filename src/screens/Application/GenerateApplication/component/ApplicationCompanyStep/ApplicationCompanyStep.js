@@ -72,6 +72,7 @@ const ApplicationCompanyStep = () => {
   const [isAusOrNew, setIsAusOrNew] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [wipeOutDetails, setWipeOutDetails] = useState(false);
+  const [selectedDebtorId, setSelectedDebtorId] = useState('');
 
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState('');
 
@@ -89,6 +90,10 @@ const ApplicationCompanyStep = () => {
     }
   }, [companyState]);
 
+  useEffect(() => {
+    setSelectedDebtorId(companyState?.debtorId?.[0]?.value);
+  }, [companyState?.debtorId]);
+
   const changeEntityType = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
@@ -97,7 +102,7 @@ const ApplicationCompanyStep = () => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            await dispatch(wipeOutPersonsAsEntityChange([]));
+            await dispatch(wipeOutPersonsAsEntityChange(selectedDebtorId, []));
             setWipeOutDetails(true);
             toggleConfirmationModal();
           } catch (e) {
@@ -106,7 +111,7 @@ const ApplicationCompanyStep = () => {
         },
       },
     ],
-    [toggleConfirmationModal, wipeOutDetails]
+    [toggleConfirmationModal, wipeOutDetails, selectedDebtorId]
   );
 
   const INPUTS = useMemo(

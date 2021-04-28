@@ -54,12 +54,10 @@ function applicationNoteReducer(state, action) {
 
 const ApplicationNotesAccordion = props => {
   const dispatch = useDispatch();
-  const { applicationId } = props;
+  const { applicationId, index } = props;
 
   const [currentNoteId, setCurrentNoteId] = useState('');
   const [editNoteDetails, setEditNoteDetails] = useState([]);
-
-  console.log(currentNoteId);
 
   const applicationNoteList = useSelector(
     ({ application }) => application?.viewApplication?.notes?.noteList?.docs || []
@@ -210,6 +208,7 @@ const ApplicationNotesAccordion = props => {
     <>
       {applicationNoteList !== undefined && (
         <AccordionItem
+          index={index}
           header="Note"
           count={
             applicationNoteList?.length < 10
@@ -302,4 +301,5 @@ export default React.memo(ApplicationNotesAccordion);
 
 ApplicationNotesAccordion.propTypes = {
   applicationId: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 };

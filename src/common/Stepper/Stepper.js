@@ -10,6 +10,13 @@ import { entityTypeMapperObjectForPersonStep } from '../../helpers/Mappers';
 import { errorNotification } from '../Toast';
 
 const Stepper = props => {
+  const applicationDetail = useSelector(({ application }) => application.editApplication);
+
+  const entityType = useMemo(
+    () => applicationDetail?.company?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
+    [applicationDetail.company?.entityType]
+  );
+
   const {
     steps,
     stepIndex,
@@ -42,12 +49,6 @@ const Stepper = props => {
     }
   }, [stepIndex]);
 
-  const applicationDetail = useSelector(({ application }) => application.editApplication);
-
-  const entityType = useMemo(
-    () => applicationDetail?.company?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
-    [applicationDetail.company?.entityType]
-  );
   return (
     <div className={className} {...restProps}>
       <div className="stepper-container">
@@ -73,7 +74,7 @@ const Stepper = props => {
       <div className="step-content">{children}</div>
       <div className="stepper-buttons-row">
         <div>
-          {steps?.[activeStep]?.text === 'Person' && (
+          {steps?.[activeStep]?.name === 'partners' && (
             <Button
               buttonType="secondary"
               title={getLabelFromValues(

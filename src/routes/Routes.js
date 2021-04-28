@@ -22,7 +22,6 @@ function Routes() {
         <Route exact path="/set-password" component={SetPassword} />
         <Route exact path="/reset-password" component={ResetPassword} />
         <Route exact path="/verify-otp" component={VerifyOtp} />
-        <Route exact path="/verify-otp" component={VerifyOtp} />
         <Route exact path="/forbidden-access" component={ForbiddenAccessPage} />
         <AuthenticatedRoute exact path="/" />
         <AllAuthenticatedRoutes />

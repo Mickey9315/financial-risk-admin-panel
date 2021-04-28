@@ -1,8 +1,10 @@
+import PropTypes from 'prop-types';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 
-const ApplicationReportAccordion = () => {
+const ApplicationReportAccordion = props => {
+  const { index } = props;
   return (
-    <AccordionItem header="Reports" suffix="expand_more">
+    <AccordionItem index={index} header="Reports" suffix="expand_more">
       <div className="common-accordion-item-content-box">
         <div className="report-row">
           <span className="title">Title:</span>
@@ -19,3 +21,7 @@ const ApplicationReportAccordion = () => {
   );
 };
 export default ApplicationReportAccordion;
+
+ApplicationReportAccordion.propTypes = {
+  index: PropTypes.number.isRequired,
+};

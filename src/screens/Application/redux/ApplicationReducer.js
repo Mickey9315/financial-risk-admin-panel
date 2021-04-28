@@ -7,8 +7,8 @@ import {
 const initialApplicationList = {
   applicationList: {
     docs: [],
-    total: 0,
-    limit: 0,
+    total: 1,
+    limit: 15,
     page: 1,
     pages: 1,
     headers: [],
@@ -16,6 +16,7 @@ const initialApplicationList = {
     error: null,
   },
   applicationColumnNameList: {},
+  applicationDefaultColumnNameList: {},
 
   applicationFilterList: {
     dropdownData: {
@@ -175,6 +176,11 @@ export const application = (state = initialApplicationList, action) => {
       return {
         ...state,
         applicationColumnNameList: action.data,
+      };
+    case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        applicationDefaultColumnNameList: action.data,
       };
     case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_APPLICATION_COLUMN_LIST_ACTION: {
       const columnList = {

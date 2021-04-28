@@ -16,5 +16,7 @@ const ApplicationCompanyStepApiServices = {
     ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_ENTITY_TYPE}${searchText}`, {
       params,
     }),
+  deleteApplicationCompanyEntityTypeData: params =>
+    ApiService.deleteData(`${APPLICATION_URLS.COMPANY.DELETE_APPLICATION_ENTITY_TYPE}`, { params }),
 };
 export default ApplicationCompanyStepApiServices;

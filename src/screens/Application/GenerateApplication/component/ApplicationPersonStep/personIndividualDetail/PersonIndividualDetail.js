@@ -74,8 +74,6 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
 
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState(''); // retry ABN lookup
 
-  console.log(partners.length);
-
   useEffect(() => {
     if (
       partners?.[index]?.country?.[0]?.value === 'AUS' ||
@@ -666,6 +664,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       return '';
     }
     if (partners.length <= 1) {
+      return '';
+    }
+    if (partners?.[index]?.isDisabled) {
       return '';
     }
     return 'delete_outline';

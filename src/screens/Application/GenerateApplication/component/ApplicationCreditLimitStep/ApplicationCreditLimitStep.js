@@ -110,7 +110,7 @@ const ApplicationCreditLimitStep = () => {
           placeholder="Details"
           name="passedOverdueDetails"
           value={isPassedOverdueAmount ? passedOverdueDetails : ''}
-          disabled={!passedOverdueDetails}
+          disabled={!isPassedOverdueAmount}
           onChange={handleInputChange}
         />
         {errors?.passedOverdueDetails && (

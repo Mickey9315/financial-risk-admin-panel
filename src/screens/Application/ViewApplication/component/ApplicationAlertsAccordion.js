@@ -1,8 +1,10 @@
+import PropTypes from 'prop-types';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 
-const ApplicationAlertsAccordion = () => {
+const ApplicationAlertsAccordion = props => {
+  const { index } = props;
   return (
-    <AccordionItem header="Alerts" count="04" suffix="expand_more">
+    <AccordionItem index={index} header="Alerts" count="04" suffix="expand_more">
       <div className="common-accordion-item-content-box alert">
         <div className="alert-title-row">
           <div className="alert-title">Title of Note</div>
@@ -43,3 +45,7 @@ const ApplicationAlertsAccordion = () => {
   );
 };
 export default ApplicationAlertsAccordion;
+
+ApplicationAlertsAccordion.propTypes = {
+  index: PropTypes.number.isRequired,
+};

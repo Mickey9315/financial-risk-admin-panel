@@ -235,12 +235,12 @@ const ViewApplication = () => {
             <div className="view-application-details-right">
               <div className="common-white-container">
                 <Accordion className="view-application-accordion">
-                  <ApplicationReportAccordion />
-                  <ApplicationTaskAccordion applicationId={id} />
-                  <ApplicationNotesAccordion applicationId={id} />
-                  <ApplicationAlertsAccordion />
-                  <ApplicationDocumentsAccordion applicationId={id} />
-                  <ApplicationLogsAccordion />
+                  <ApplicationReportAccordion index={0} />
+                  <ApplicationTaskAccordion applicationId={id} index={1} />
+                  <ApplicationNotesAccordion applicationId={id} index={2} />
+                  <ApplicationAlertsAccordion index={3} />
+                  <ApplicationDocumentsAccordion applicationId={id} index={4} />
+                  <ApplicationLogsAccordion index={5} />
                 </Accordion>
               </div>
             </div>

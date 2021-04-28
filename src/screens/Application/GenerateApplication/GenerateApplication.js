@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Stepper from '../../../common/Stepper/Stepper';
@@ -60,9 +60,43 @@ const GenerateApplication = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { applicationStage, ...editApplicationData } = useSelector(
-    ({ application }) => application.editApplication
+    ({ application }) => application?.editApplication
   );
   const { applicationId } = useQueryParams();
+
+  // for stepper components
+  const FILTERED_STEP_COMPONENT = useMemo(() => {
+    let finalSteps = STEP_COMPONENT;
+    if (
+      editApplicationData?.company?.entityType?.[0]?.value !== 'PARTNERSHIP' &&
+      editApplicationData?.company?.entityType?.[0]?.value !== 'TRUST'
+    ) {
+      finalSteps = finalSteps.filter(step => step?.type?.name !== 'ApplicationPersonStep');
+    }
+    return finalSteps;
+  }, [editApplicationData?.company?.entityType, STEP_COMPONENT]);
+
+  // for stepper headings
+
+  const FILTERED_STEPS = useMemo(() => {
+    let finalSteps = [...steps];
+    const entityType = editApplicationData?.company?.entityType?.[0]?.value ?? '';
+
+    if (!['PARTNERSHIP', 'TRUST'].includes(entityType)) {
+      finalSteps = finalSteps.filter(step => step?.text !== 'Person');
+    } else {
+      finalSteps = finalSteps.map(step => {
+        if (step.text === 'Person')
+          return {
+            ...step,
+            text: editApplicationData?.company?.entityType?.[0]?.label ?? '',
+          };
+        return step;
+      });
+    }
+
+    return finalSteps;
+  }, [editApplicationData?.company?.entityType, steps]);
 
   const onChangeIndex = useCallback(newIndex => {
     dispatch(changeEditApplicationFieldValue('applicationStage', newIndex));
@@ -103,23 +137,23 @@ const GenerateApplication = () => {
   }, []);
 
   const onNextClick = useCallback(() => {
-    const data = editApplicationData[steps[applicationStage].name];
-    switch (applicationStage) {
-      case 0:
+    const data = editApplicationData[FILTERED_STEPS[applicationStage].name];
+    switch (FILTERED_STEPS[applicationStage].name) {
+      case 'company':
         return applicationCompanyStepValidations(dispatch, data, editApplicationData);
-      case 1:
+      case 'partners':
         return applicationPersonStepValidation(dispatch, data, editApplicationData);
-      case 2:
+      case 'creditLimit':
         return applicationCreditStepValidations(dispatch, data, editApplicationData);
-      case 3:
+      case 'documents':
         return applicationDocumentsStepValidations(dispatch, data, editApplicationData);
-      case 4:
+      case 'confirmationStep':
         return applicationConfirmationStepValidations(dispatch, data, editApplicationData, history);
 
       default:
         return false;
     }
-  }, [editApplicationData, applicationStage]);
+  }, [editApplicationData, applicationStage, FILTERED_STEPS]);
 
   return (
     <>
@@ -132,13 +166,13 @@ const GenerateApplication = () => {
       </div>
       <Stepper
         className="mt-10"
-        steps={steps}
+        steps={FILTERED_STEPS}
         stepIndex={applicationStage}
         onChangeIndex={onChangeIndex}
         nextClick={onNextClick}
         addStepClick={addStepClick}
       >
-        {STEP_COMPONENT[applicationStage]}
+        {FILTERED_STEP_COMPONENT[applicationStage]}
       </Stepper>
     </>
   );

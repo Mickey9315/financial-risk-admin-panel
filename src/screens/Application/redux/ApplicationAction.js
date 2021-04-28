@@ -51,6 +51,10 @@ export const getApplicationColumnNameList = () => {
           type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       if (e.response && e.response.data) {
@@ -99,15 +103,18 @@ export const saveApplicationColumnNameList = ({
           columns: [...defaultFields, ...customFields],
           columnFor: 'application',
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-        dispatch(getApplicationColumnNameList());
-      } else {
-        const response = await ApplicationApiServices.updateApplicationColumnNameList(data);
-        if (response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await ApplicationApiServices.updateApplicationColumnNameList(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_DEFAULT_COLUMN_LIST_ACTION,
+          data: applicationColumnNameList,
+        });
+        successNotification('Columns updated successfully');
       }
     } catch (e) {
       if (e.response && e.response.data) {
@@ -118,8 +125,8 @@ export const saveApplicationColumnNameList = ({
         } else if (e.response.data.status === 'ERROR') {
           errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
+      throw Error();
     }
   };
 };
@@ -405,12 +412,30 @@ export const removePersonDetail = index => {
     });
   };
 };
-export const wipeOutPersonsAsEntityChange = data => {
-  return dispatch => {
-    dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.PERSON.WIPE_OUT_PERSON_STEP_DATA,
-      data,
-    });
+export const wipeOutPersonsAsEntityChange = (debtor, data) => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationCompanyStepApiServices.deleteApplicationCompanyEntityTypeData(
+        { debtorId: debtor }
+      );
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.PERSON.WIPE_OUT_PERSON_STEP_DATA,
+          data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+        if (e.response.data.message) {
+          errorNotification(e.response.data.message);
+        } else {
+          errorNotification('Internal server error');
+        }
+      }
+    }
   };
 };
 

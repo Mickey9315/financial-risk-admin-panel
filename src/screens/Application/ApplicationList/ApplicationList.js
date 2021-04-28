@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ReactSelect from 'react-dropdown-select';
@@ -22,6 +23,7 @@ import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
 import '../ViewApplication/ViewApplication.scss';
+import { APPLICATION_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/ApplicationReduxConstants';
 
 const initialFilterState = {
   entity: '',
@@ -60,7 +62,10 @@ const ApplicationList = () => {
     ({ application }) => application?.applicationList ?? {}
   );
   const applicationColumnNameList = useSelector(
-    ({ application }) => application?.applicationColumnNameList ?? []
+    ({ application }) => application?.applicationColumnNameList ?? {}
+  );
+  const applicationDefaultColumnNameList = useSelector(
+    ({ application }) => application?.applicationDefaultColumnNameList ?? {}
   );
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => applicationListWithPageData,
@@ -174,7 +179,7 @@ const ApplicationList = () => {
   );
 
   const getApplicationsByFilter = useCallback(
-    (params = {}, cb) => {
+    async (params = {}, cb) => {
       if (moment(startDate)?.isAfter(endDate)) {
         errorNotification('From date should be greater than to date');
         resetFilterDates();
@@ -184,7 +189,7 @@ const ApplicationList = () => {
       } else {
         const data = {
           page: page ?? 1,
-          limit: limit ?? 10,
+          limit: limit ?? 15,
           entityType: (entity?.trim()?.length ?? -1) > 0 ? entity : undefined,
           clientId: (clientId?.trim()?.length ?? -1) > 0 ? clientId : undefined,
           debtorId: (debtorId?.trim()?.length ?? -1) > 0 ? debtorId : undefined,
@@ -195,9 +200,13 @@ const ApplicationList = () => {
           endDate: endDate ?? undefined,
           ...params,
         };
-        dispatch(getApplicationsListByFilter(data));
-        if (cb && typeof cb === 'function') {
-          cb();
+        try {
+          await dispatch(getApplicationsListByFilter(data));
+          if (cb && typeof cb === 'function') {
+            cb();
+          }
+        } catch (e) {
+          /**/
         }
       }
     },
@@ -237,7 +246,7 @@ const ApplicationList = () => {
     [setFilterModal]
   );
   const onClickApplyFilter = useCallback(() => {
-    getApplicationsByFilter({ page: 1 }, toggleFilterModal);
+    getApplicationsByFilter({ page, limit }, toggleFilterModal);
   }, [getApplicationsByFilter, toggleFilterModal]);
 
   const onClickResetFilter = useCallback(() => {
@@ -252,10 +261,10 @@ const ApplicationList = () => {
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
-        onClick: () => onClickResetFilter(),
+        onClick: onClickResetFilter,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
-      { title: 'Apply', buttonType: 'primary', onClick: () => onClickApplyFilter() },
+      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
@@ -265,10 +274,25 @@ const ApplicationList = () => {
     [setCustomFieldModal]
   );
   const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveApplicationColumnNameList({ applicationColumnNameList }));
-    getApplicationsByFilter();
-    toggleCustomField();
-  }, [toggleCustomField, applicationColumnNameList, getApplicationsByFilter]);
+    try {
+      const isBothEqual = _.isEqual(applicationColumnNameList, applicationDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveApplicationColumnNameList({ applicationColumnNameList }));
+        getApplicationsByFilter();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    toggleCustomField,
+    applicationColumnNameList,
+    getApplicationsByFilter,
+    applicationDefaultColumnNameList,
+  ]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveApplicationColumnNameList({ isReset: true }));
@@ -277,6 +301,14 @@ const ApplicationList = () => {
     toggleCustomField();
   }, [toggleCustomField, getApplicationsByFilter]);
 
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_COLUMN_LIST_ACTION,
+      data: applicationDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [toggleCustomField]);
+
   const customFieldsModalButtons = useMemo(
     () => [
       {
@@ -284,7 +316,7 @@ const ApplicationList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]

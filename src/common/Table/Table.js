@@ -249,7 +249,7 @@ Table.propTypes = {
 Table.defaultProps = {
   tableClass: '',
   align: 'left',
-  valign: 'left',
+  valign: 'center',
   headers: [],
   headerClass: '',
   data: [],
@@ -415,7 +415,7 @@ Row.propTypes = {
   align: PropTypes.oneOf(['left', 'center', 'right']),
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   data: PropTypes.object,
-  extraColumns: PropTypes.arrayOf(PropTypes.element),
+  extraColumns: PropTypes.arrayOf(PropTypes.func),
   rowClass: PropTypes.string,
   recordSelected: PropTypes.func,
   haveActions: PropTypes.bool,

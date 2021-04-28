@@ -195,12 +195,7 @@ export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = 
       } else {
         const response = await MyWorkApiServices.saveColumnNameList(data);
         if (response && response.data && response.data.status === 'SUCCESS') {
-          try {
-            await dispatch(getTaskListByFilter());
-            successNotification('Columns updated successfully.');
-          } catch (e) {
-            /**/
-          }
+          successNotification('Columns updated successfully.');
         }
       }
     } catch (e) {

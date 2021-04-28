@@ -27,7 +27,7 @@ import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';
 
 const initialFilterState = {
   priority: '',
-  isCompleted: false,
+  isCompleted: null,
   startDate: null,
   endDate: null,
   assigneeId: '',
@@ -98,13 +98,16 @@ const MyWork = () => {
     },
     [dispatchFilter]
   );
-  const handleIsCompletedFilterChange = useCallback(() => {
-    dispatchFilter({
-      type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-      name: 'isCompleted',
-      value: !isCompleted,
-    });
-  }, [dispatchFilter, isCompleted]);
+  const handleIsCompletedFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'isCompleted',
+        value: event.target.checked,
+      });
+    },
+    [dispatchFilter, isCompleted]
+  );
 
   const handleStartDateChange = useCallback(
     date => {
@@ -264,19 +267,15 @@ const MyWork = () => {
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveTaskListColumnListName({ isReset: true }));
     dispatch(getTaskListColumnList());
-    await dispatchFilter({
-      type: TASK_FILTER_REDUCER_ACTIONS.RESET_STATE,
-    });
+    getTaskList();
     toggleCustomField();
-  }, [toggleCustomField, dispatchFilter]);
+  }, [toggleCustomField, getTaskList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     await dispatch(saveTaskListColumnListName({ taskColumnListData }));
-    await dispatchFilter({
-      type: TASK_FILTER_REDUCER_ACTIONS.RESET_STATE,
-    });
+    getTaskList();
     toggleCustomField();
-  }, [toggleCustomField, dispatchFilter, taskColumnListData]);
+  }, [toggleCustomField, taskColumnListData, getTaskList]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -312,16 +311,15 @@ const MyWork = () => {
   }, [toggleFilterModal]);
 
   const applyFilterOnClick = useCallback(() => {
-    getTaskList({ page: 1 }, toggleFilterModal);
-  }, [getTaskList]);
+    getTaskList({ page, limit }, toggleFilterModal);
+  }, [getTaskList, toggleFilterModal]);
 
   const resetFilterOnClick = useCallback(() => {
     dispatchFilter({
       type: TASK_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
-    toggleFilterModal();
-    getTaskList();
-  }, [dispatchFilter, toggleFilterModal]);
+    applyFilterOnClick();
+  }, [dispatchFilter]);
 
   const filterModalButtons = useMemo(
     () => [
@@ -333,7 +331,7 @@ const MyWork = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: closeFilterOnClick },
       { title: 'Apply', buttonType: 'primary', onClick: applyFilterOnClick },
     ],
-    [toggleFilterModal, applyFilterOnClick]
+    [toggleFilterModal, applyFilterOnClick, resetFilterOnClick, applyFilterOnClick]
   );
 
   useEffect(() => {
@@ -413,7 +411,7 @@ const MyWork = () => {
           </div>
           <div className="filter-modal-row">
             <div className="form-title">Completed Task</div>
-            <Checkbox checked={isCompleted} onChange={handleIsCompletedFilterChange} />
+            <Checkbox checked={isCompleted} onChange={e => handleIsCompletedFilterChange(e)} />
           </div>
           <div className="filter-modal-row">
             <div className="form-title">Due Date</div>

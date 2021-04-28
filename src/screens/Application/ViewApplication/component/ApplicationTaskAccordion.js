@@ -41,7 +41,7 @@ const entityTypeData = [
 
 const ApplicationTaskAccordion = props => {
   const dispatch = useDispatch();
-  const { applicationId } = props;
+  const { applicationId, index } = props;
 
   const applicationTaskList = useSelector(
     ({ application }) => application?.viewApplication?.task?.taskList || []
@@ -472,6 +472,7 @@ const ApplicationTaskAccordion = props => {
     <>
       {applicationTaskList !== undefined && (
         <AccordionItem
+          index={index}
           accordionBodyClass="application-active-accordion-scroll"
           header="Tasks"
           count={
@@ -571,4 +572,5 @@ export default React.memo(ApplicationTaskAccordion);
 
 ApplicationTaskAccordion.propTypes = {
   applicationId: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 };

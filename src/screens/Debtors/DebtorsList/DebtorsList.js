@@ -44,10 +44,10 @@ const DebtorsList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const debtorListWithPageData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.debtorsList
+    ({ debtorsManagement }) => debtorsManagement?.debtorsList ?? {}
   );
   const debtorsColumnNameListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.debtorsColumnNameList
+    ({ debtorsManagement }) => debtorsManagement?.debtorsColumnNameList ?? {}
   );
   const { docs, headers, page, pages, limit, total, isLoading } = useMemo(
     () => debtorListWithPageData,
@@ -100,7 +100,7 @@ const DebtorsList = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => debtorsColumnNameListData || { defaultFields: [], customFields: [] },
+    () => debtorsColumnNameListData ?? { defaultFields: [], customFields: [] },
     [debtorsColumnNameListData]
   );
 

@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import moment from 'moment';
 import PropTypes from 'prop-types';
-// import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import moment from 'moment';
 import ReactSelect from 'react-dropdown-select';
 import {
@@ -52,7 +50,7 @@ function applicationDocumentReducer(state, action) {
 
 const ApplicationDocumentsAccordion = props => {
   const dispatch = useDispatch();
-  const { applicationId } = props;
+  const { applicationId, index } = props;
   const [fileData, setFileData] = useState('');
 
   const applicationDocsList = useSelector(
@@ -81,7 +79,7 @@ const ApplicationDocumentsAccordion = props => {
   ]);
 
   const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList?.docs || [];
+    const finalData = documentTypeList || [];
     return finalData.map(e => ({
       name: 'documentType',
       label: e.documentTitle,
@@ -278,7 +276,7 @@ const ApplicationDocumentsAccordion = props => {
   return (
     <>
       {applicationDocsList !== undefined && (
-        <AccordionItem header="Documents" suffix="expand_more">
+        <AccordionItem index={index} header="Documents" suffix="expand_more">
           <IconButton
             buttonType="primary-1"
             title="cloud_upload"
@@ -370,4 +368,5 @@ export default React.memo(ApplicationDocumentsAccordion);
 
 ApplicationDocumentsAccordion.propTypes = {
   applicationId: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 };
