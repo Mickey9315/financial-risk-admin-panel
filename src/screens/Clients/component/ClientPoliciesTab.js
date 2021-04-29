@@ -34,7 +34,7 @@ const ClientPoliciesTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => clientPoliciesColumnList || { defaultFields: [], customFields: [] },
+    () => clientPoliciesColumnList ?? { defaultFields: [], customFields: [] },
     [clientPoliciesColumnList]
   );
 
@@ -82,8 +82,8 @@ const ClientPoliciesTab = () => {
   const getClientPoliciesList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getClientPoliciesListData(id, data));

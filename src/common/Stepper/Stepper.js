@@ -13,7 +13,7 @@ const Stepper = props => {
   const applicationDetail = useSelector(({ application }) => application.editApplication);
 
   const entityType = useMemo(
-    () => applicationDetail?.company?.entityType[0]?.value || 'PROPRIETARY_LIMITED',
+    () => applicationDetail?.company?.entityType[0]?.value ?? 'PROPRIETARY_LIMITED',
     [applicationDetail.company?.entityType]
   );
 

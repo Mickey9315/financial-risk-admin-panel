@@ -379,7 +379,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
 
     case DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION: {
       const entityList = action?.data?.map(data => ({
-        label: data?.name || data?.applicationId,
+        label: data?.name ?? data?.applicationId,
         value: data?._id,
         name: 'entityId',
       }));
@@ -397,7 +397,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
 
     case DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION: {
       const defaultEntityList = action?.data?.map(data => ({
-        label: data?.name || data?.applicationId,
+        label: data?.name ?? data?.applicationId,
         value: data?._id,
         name: 'entityId',
       }));

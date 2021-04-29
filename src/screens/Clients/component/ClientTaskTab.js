@@ -73,8 +73,8 @@ const ClientTaskTab = () => {
   const getClientTaskList = useCallback(
     async (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         isCompleted: isCompletedChecked && isCompletedChecked ? isCompletedChecked : undefined,
         columnFor: 'client-task',
         ...params,
@@ -106,7 +106,7 @@ const ClientTaskTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => clientTaskColumnNameListData || { defaultFields: [], customFields: [] },
+    () => clientTaskColumnNameListData ?? { defaultFields: [], customFields: [] },
     [clientTaskColumnNameListData]
   );
   const [customFieldModal, setCustomFieldModal] = useState(false);
@@ -291,16 +291,16 @@ const ClientTaskTab = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return addTaskState?.assigneeId || [];
+          return addTaskState?.assigneeId ?? [];
         }
         case 'priority': {
-          return addTaskState?.priority || [];
+          return addTaskState?.priority ?? [];
         }
         case 'entityType': {
-          return addTaskState?.entityType || [];
+          return addTaskState?.entityType ?? [];
         }
         case 'entityId': {
-          return addTaskState?.entityId || [];
+          return addTaskState?.entityId ?? [];
         }
         default:
           return [];
@@ -323,7 +323,7 @@ const ClientTaskTab = () => {
     const data = {
       title: addTaskState?.title?.trim(),
       // priority: addTaskState?.priority[0]?.value,
-      dueDate: addTaskState?.dueDate || new Date().toISOString(),
+      dueDate: addTaskState?.dueDate ?? new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'client-task',
     };

@@ -15,8 +15,8 @@ const FileUpload = props => {
   };
 
   return (
-    <div className={className || 'user-dp-upload'}>
-      {isProfile ? <img className="user-dp" src={profilePictureUrl || dummy} /> : ''}
+    <div className={className ?? 'user-dp-upload'}>
+      {isProfile ? <img className="user-dp" src={profilePictureUrl ?? dummy} /> : ''}
       <IconButton title="cloud_upload" className="user-dp-upload" onClick={handleClick} />
       <input
         type="file"

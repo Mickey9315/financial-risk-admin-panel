@@ -337,7 +337,7 @@ const ApplicationList = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => applicationColumnNameList || { defaultFields: [], customFields: [] },
+    () => applicationColumnNameList ?? { defaultFields: [], customFields: [] },
     [applicationColumnNameList]
   );
 

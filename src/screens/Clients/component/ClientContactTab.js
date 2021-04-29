@@ -32,7 +32,7 @@ const ClientContactsTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => clientContactColumnList || { defaultFields: [], customFields: [] },
+    () => clientContactColumnList ?? { defaultFields: [], customFields: [] },
     [clientContactColumnList]
   );
   const [pageLimit, setPageLimit] = useState('');
@@ -80,8 +80,8 @@ const ClientContactsTab = () => {
   const getClientContactsList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getClientContactListData(id, data));

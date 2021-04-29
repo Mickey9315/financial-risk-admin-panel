@@ -155,16 +155,16 @@ const MyWorkAddTask = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return taskDetails.assigneeId || [];
+          return taskDetails.assigneeId ?? [];
         }
         case 'priority': {
-          return taskDetails.priority || [];
+          return taskDetails.priority ?? [];
         }
         case 'entityType': {
-          return taskDetails.entityType || [];
+          return taskDetails.entityType ?? [];
         }
         case 'entityId': {
-          return taskDetails.entityId || [];
+          return taskDetails.entityId ?? [];
         }
         default:
           return [];
@@ -183,7 +183,7 @@ const MyWorkAddTask = () => {
   const onSaveTask = useCallback(() => {
     const data = {
       title: taskDetails.title.trim(),
-      dueDate: taskDetails.dueDate || new Date().toISOString(),
+      dueDate: taskDetails.dueDate ?? new Date().toISOString(),
       assigneeId: taskDetails.assigneeId[0].value,
       taskFrom: 'task',
     };

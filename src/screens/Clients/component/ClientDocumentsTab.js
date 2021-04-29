@@ -120,7 +120,7 @@ const ClientDocumentsTab = () => {
   ]);
 
   const { defaultFields, customFields } = useMemo(
-    () => clientDocumentsColumnList || { defaultFields: [], customFields: [] },
+    () => clientDocumentsColumnList ?? { defaultFields: [], customFields: [] },
     [clientDocumentsColumnList]
   );
 
@@ -164,8 +164,8 @@ const ClientDocumentsTab = () => {
   const getClientDocumentsList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getClientDocumentsListData(id, data));
@@ -491,7 +491,7 @@ const ClientDocumentsTab = () => {
             <span>Please upload your documents here</span>
             <FileUpload
               isProfile={false}
-              fileName={fileData?.name || 'Browse'}
+              fileName={fileData?.name ?? 'Browse'}
               handleChange={onUploadClick}
             />
             <span>Description</span>

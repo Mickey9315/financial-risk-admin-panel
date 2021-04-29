@@ -38,8 +38,8 @@ const MyWorkTasks = props => {
 
   const getTaskListOnRefresh = useCallback(() => {
     const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
+      page: paramPage ?? 1,
+      limit: paramLimit ?? 15,
     };
     const filters = {
       priority: paramPriority && paramPriority.trim().length > 0 ? paramPriority : undefined,

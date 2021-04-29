@@ -305,7 +305,7 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
             data: {
               isLoading: false,
               error: true,
-              errorMessage: e.response.data.message || 'Please try again later.',
+              errorMessage: e.response.data.message ?? 'Please try again later.',
               data: [],
             },
           });

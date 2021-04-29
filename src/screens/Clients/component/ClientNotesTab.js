@@ -84,8 +84,8 @@ const ClientNotesTab = () => {
   const getClientNotesList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getClientNotesListDataAction(id, data));

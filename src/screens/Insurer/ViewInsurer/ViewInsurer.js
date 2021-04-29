@@ -66,7 +66,7 @@ const ViewInsurer = () => {
             <span className="common-detail-title">Name</span>
             <Input
               type="text"
-              value={name || '-'}
+              value={name ?? '-'}
               name="name"
               placeholder="Please enter name"
               disabled
@@ -91,7 +91,7 @@ const ViewInsurer = () => {
             <Input
               type="text"
               name="contactNumber"
-              value={contactNumber || '-'}
+              value={contactNumber ?? '-'}
               placeholder="1234567890"
               disabled
               borderClass="disabled-control"
@@ -102,7 +102,7 @@ const ViewInsurer = () => {
             <Input
               type="email"
               name="email"
-              value={email || '-'}
+              value={email ?? '-'}
               placeholder="abc@xyz.com"
               disabled
               borderClass="disabled-control"
@@ -113,7 +113,7 @@ const ViewInsurer = () => {
             <Input
               name="website"
               type="text"
-              value={website || '-'}
+              value={website ?? '-'}
               placeholder="www.trad.com"
               disabled
               borderClass="disabled-control"

@@ -31,8 +31,8 @@ const InsurerContactTab = () => {
   const getInsurerContactsList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getInsurerContactListData(id, data));
@@ -58,7 +58,7 @@ const InsurerContactTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => insurerContactColumnList || { defaultFields: [], customFields: [] },
+    () => insurerContactColumnList ?? { defaultFields: [], customFields: [] },
     [insurerContactColumnList]
   );
 

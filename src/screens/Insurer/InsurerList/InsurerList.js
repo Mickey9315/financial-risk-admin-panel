@@ -99,7 +99,7 @@ const InsurerList = () => {
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
   const { defaultFields, customFields } = useMemo(
-    () => insurerColumnList || { defaultFields: [], customFields: [] },
+    () => insurerColumnList ?? { defaultFields: [], customFields: [] },
     [insurerColumnList]
   );
 

@@ -153,7 +153,7 @@ const MyWorkAddTask = () => {
       : assigneeList?.find(e => {
           return e?.value === userId;
         });
-    return (assigneeSelected && [assigneeSelected]) || [];
+    return (assigneeSelected && [assigneeSelected]) ?? [];
   }, [addTaskState, userId, assigneeList]);
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const MyWorkAddTask = () => {
     const data = {
       title: addTaskState?.title?.trim(),
       // priority: addTaskState?.priority[0]?.value,
-      dueDate: addTaskState?.dueDate || new Date().toISOString(),
+      dueDate: addTaskState?.dueDate ?? new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'task',
       priority: addTaskState?.priority[0]?.value ?? undefined,
@@ -223,7 +223,7 @@ const MyWorkAddTask = () => {
                 options={input.data}
                 // searchable
                 // changed from value to values
-                values={addTaskState[input.name] || []}
+                values={addTaskState[input.name] ?? []}
                 onChange={handleSelectInputChange}
               />
             </>

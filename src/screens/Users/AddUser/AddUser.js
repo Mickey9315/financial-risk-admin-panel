@@ -37,7 +37,7 @@ const AddUser = () => {
   const [modalData, setModalData] = useState(null);
 
   const filteredOrganisationList = useMemo(
-    () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) || [],
+    () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) ?? [],
     [selectedUser]
   );
 
@@ -76,12 +76,12 @@ const AddUser = () => {
       const { name, role, email, contactNumber, maxCreditLimit, clientIds } = selectedUser;
 
       return {
-        name: name || '',
-        role: role || '',
-        email: email || '',
-        clientIds: clientIds || [],
-        contactNumber: contactNumber || '',
-        maxCreditLimit: maxCreditLimit || '',
+        name: name ?? '',
+        role: role ?? '',
+        email: email ?? '',
+        clientIds: clientIds ?? [],
+        contactNumber: contactNumber ?? '',
+        maxCreditLimit: maxCreditLimit ?? '',
       };
     }
     return { name: '', role: '', email: '', contactNumber: '', maxCreditLimit: '', clientIds: [] };

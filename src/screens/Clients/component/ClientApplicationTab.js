@@ -32,8 +32,8 @@ const ClientApplicationTab = () => {
   const getClientApplicationList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getClientApplicationListData(id, data));
@@ -90,7 +90,7 @@ const ClientApplicationTab = () => {
   }, [toggleCustomField, dispatch, clientApplicationColumnNameListData]);
 
   const { defaultFields, customFields } = useMemo(
-    () => clientApplicationColumnNameListData || { defaultFields: [], customFields: [] },
+    () => clientApplicationColumnNameListData ?? { defaultFields: [], customFields: [] },
     [clientApplicationColumnNameListData]
   );
 

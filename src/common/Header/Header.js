@@ -48,11 +48,11 @@ const Header = () => {
       // eslint-disable-next-line no-shadow
       const { name, email, contactNumber, profilePictureUrl, changed } = loggedUserDetail;
       return {
-        name: name || '',
-        email: email || '',
-        contactNumber: contactNumber || '',
-        profilePictureUrl: profilePictureUrl || '',
-        changed: changed || false,
+        name: name ?? '',
+        email: email ?? '',
+        contactNumber: contactNumber ?? '',
+        profilePictureUrl: profilePictureUrl ?? '',
+        changed: changed ?? false,
       };
     }
     return { name: '', email: '', contactNumber: '', profilePictureUrl: '', changed: false };
@@ -303,7 +303,7 @@ const Header = () => {
           className="notification"
           onClick={openNotificationDrawer}
         />
-        <img className="user-dp" src={profilePictureUrl || dummy} onClick={toggleUserSettings} />
+        <img className="user-dp" src={profilePictureUrl ?? dummy} onClick={toggleUserSettings} />
         {showUserSettings && (
           <div ref={userSettingsRef} className="user-settings">
             <div onClick={toggleEditProfileModal}>
@@ -380,7 +380,7 @@ const Header = () => {
             <div className="edit-profile-grid">
               <div className="form-title">Profile Avatar</div>
               {!isEditProfileButton ? (
-                <img className="user-dp" src={profilePictureUrl || dummy} />
+                <img className="user-dp" src={profilePictureUrl ?? dummy} />
               ) : (
                 <FileUpload
                   profilePictureUrl={profilePictureUrl}

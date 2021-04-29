@@ -485,7 +485,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
                   : partners[index][input.name]
               }
               onChange={handleTextInputChange}
-              disabled={partners[index].isDisabled || false}
+              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -496,7 +496,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               placeholder={input.placeholder}
               name={input.name}
               onChange={handleEmailChange}
-              disabled={partners[index].isDisabled || false}
+              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -509,7 +509,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               value={partners[index][input.name]}
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
-              disabled={partners[index].isDisabled || false}
+              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -520,11 +520,11 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               name={input.name}
               options={input.data}
               values={
-                (partners && partners[index][input.name] && partners[index][input.name]) || []
+                (partners && partners[index][input.name] && partners[index][input.name]) ?? []
               }
               searchable
               onChange={handleSelectInputChange}
-              disabled={partners[index].isDisabled || false}
+              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -535,7 +535,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               name={input.name}
               title={input.label}
               onChange={handleCheckBoxEvent}
-              disabled={partners[index].isDisabled || false}
+              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -547,7 +547,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
               value={partners?.[index]?.entityName?.[0]?.label}
-              disabled={partners[index].isDisabled || false}
+              disabled={partners[index].isDisabled ?? false}
               onChange={handleEntityChange}
             />
           );
@@ -564,7 +564,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
                   checked={partners[index].type === radio.value}
                   label={radio.label}
                   onChange={handleRadioButton}
-                  disabled={partners[index].isDisabled || false}
+                  disabled={partners[index].isDisabled ?? false}
                 />
               ))}
             </div>
@@ -589,7 +589,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
                 placeholderText={input.placeholder}
                 selected={partners[index].dateOfBirth && new Date(partners[index].dateOfBirth)}
                 onChange={date => onChangeDate(input.name, date)}
-                disabled={partners[index].isDisabled || false}
+                disabled={partners[index].isDisabled ?? false}
                 showMonthDropdown
                 showYearDropdown
                 scrollableYearDropdown
@@ -711,7 +711,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       <AccordionItem
         index={index}
         className="application-person-step-accordion"
-        header={itemHeader || 'Director Details'}
+        header={itemHeader ?? 'Director Details'}
         prefix="expand_more"
         suffix={getSuffixItem}
         suffixClass="material-icons-round font-danger cursor-pointer"

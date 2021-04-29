@@ -431,7 +431,7 @@ const ApplicationCompanyStep = () => {
               placeholder={input.placeholder}
               value={
                 input.name === 'state'
-                  ? (!isAusOrNew && companyState?.[input.name]?.[0]?.label) ||
+                  ? (!isAusOrNew && companyState?.[input.name]?.[0]?.label) ??
                     companyState[input.name]
                   : companyState[input.name]
               }

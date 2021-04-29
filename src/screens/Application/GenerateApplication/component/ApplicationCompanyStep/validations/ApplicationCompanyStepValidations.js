@@ -98,11 +98,11 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
         streetName,
         streetType: streetType?.[0]?.value,
         suburb,
-        state: state?.[0].value || state,
+        state: state?.[0].value ?? state,
         country: { name: country?.[0]?.label, code: country?.[0]?.value },
         postCode,
       },
-      applicationId: editApplicationData?._id || '',
+      applicationId: editApplicationData?._id ?? '',
     };
 
     try {

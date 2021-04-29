@@ -32,8 +32,8 @@ const ClientCreditLimitTab = () => {
   const getCreditLimitList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getClientCreditLimitData(id, data));
@@ -90,7 +90,7 @@ const ClientCreditLimitTab = () => {
   }, [toggleCustomField, dispatch, clientCreditLimitColumnNameList]);
 
   const { defaultFields, customFields } = useMemo(
-    () => clientCreditLimitColumnNameList || { defaultFields: [], customFields: [] },
+    () => clientCreditLimitColumnNameList ?? { defaultFields: [], customFields: [] },
     [clientCreditLimitColumnNameList]
   );
 

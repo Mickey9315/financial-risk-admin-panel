@@ -75,7 +75,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
 
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION: {
       const entityList = action?.data?.map(data => ({
-        label: data?.applicationId || data?.name,
+        label: data?.applicationId ?? data?.name ?? '',
         value: data?._id,
         name: 'entityId',
       }));

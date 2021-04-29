@@ -65,9 +65,9 @@ const Table = props => {
   const handleDrawerState = useCallback(async (header, currentData, row) => {
     try {
       const response = await TableApiService.tableActions({
-        url: header.request.url || header.request[currentData.type],
+        url: header.request.url ?? header.request[currentData.type],
         method: header.request.method,
-        id: currentData.id || currentData._id || row._id,
+        id: currentData.id ?? currentData._id ?? row._id,
       });
 
       dispatchDrawerState({
@@ -85,7 +85,7 @@ const Table = props => {
         const response = await TableApiService.tableActions({
           url: header.request.url,
           method: header.request.method,
-          id: currentData.id || row._id,
+          id: currentData.id ?? row._id,
           data: {
             [`${header.name}`]: value,
           },
@@ -205,7 +205,7 @@ const Table = props => {
                   {heading.label}
                 </th>
               ))}
-            {(haveActions || extraColumns.length > 0) && (
+            {(haveActions ?? extraColumns.length > 0) && (
               <th style={{ position: 'sticky', right: 0 }} />
             )}
           </tr>
@@ -336,11 +336,11 @@ function Row(props) {
               return (
                 <td key={index.toString()} align={align}>
                   <span
-                    title={value || ''}
+                    title={value ?? ''}
                     data-delay-show="100"
                     className={`task-priority-${value}`}
                   >
-                    {value || '-'}
+                    {value ?? '-'}
                   </span>
                 </td>
               );
@@ -349,11 +349,11 @@ function Row(props) {
                 <td key={index.toString()} align={align}>
                   <span
                     title={
-                      (data?.[key]?.props?.className ?? '') === 'table-checkbox' ? '' : value || ''
+                      (data?.[key]?.props?.className ?? '') === 'table-checkbox' ? '' : value ?? ''
                     }
                     data-delay-show="100"
                   >
-                    {value || '-'}
+                    {value ?? '-'}
                   </span>
                 </td>
               );
@@ -364,11 +364,11 @@ function Row(props) {
                     title={
                       ['link', 'table-checkbox'].includes(data?.[key]?.props?.className ?? '')
                         ? ''
-                        : value || ''
+                        : value ?? ''
                     }
                     data-delay-show="100"
                   >
-                    {value || '-'}
+                    {value ?? '-'}
                   </span>
                 </td>
               );
@@ -452,22 +452,22 @@ function TableLinkDrawer(props) {
   const checkValue = row => {
     switch (row.type) {
       case 'dollar':
-        return row.value ? `$ ${row.value}` : '-';
+        return row?.value ? `$ ${row?.value}` : '-';
       case 'percent':
-        return row.value ? `${row.value} %` : '-';
+        return row?.value ? `${row?.value} %` : '-';
       case 'date':
-        return row.value ? moment(row.value).format('DD-MMM-YYYY') : '-';
+        return row?.value ? moment(row?.value)?.format('DD-MMM-YYYY') : '-';
       default:
-        return row.value || '-';
+        return row?.value ?? '-';
     }
   };
 
   return (
-    <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
+    <Drawer header="Contact Details" drawerState={drawerState?.visible} closeDrawer={closeDrawer}>
       <div className="contacts-grid">
-        {drawerState.data.map(row => (
+        {drawerState?.data?.map(row => (
           <>
-            <div className="title">{row.label}</div>
+            <div className="title">{row?.label}</div>
             <div>{checkValue(row)}</div>
           </>
         ))}

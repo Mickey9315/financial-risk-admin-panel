@@ -208,7 +208,7 @@ const UserList = () => {
     [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
   const { defaultFields, customFields } = useMemo(
-    () => userColumnList || { defaultFields: [], customFields: [] },
+    () => userColumnList ?? { defaultFields: [], customFields: [] },
     [userColumnList]
   );
 
@@ -245,8 +245,8 @@ const UserList = () => {
               page: page ?? 1,
               limit: limit ?? 15,
               role: role && role?.length > 0 ? role.trim() : undefined,
-              startDate: startDate || undefined,
-              endDate: endDate || undefined,
+              startDate: startDate ?? undefined,
+              endDate: endDate ?? undefined,
             };
             await dispatch(deleteUserDetails(deleteId, data));
             setDeleteId(null);

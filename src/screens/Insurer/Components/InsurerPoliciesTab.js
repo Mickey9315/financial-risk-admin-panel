@@ -45,8 +45,8 @@ const InsurerPoliciesTab = () => {
   const getInsurerPoliciesList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page || 1,
-        limit: limit || 15,
+        page: page ?? 1,
+        limit: limit ?? 15,
         ...params,
       };
       dispatch(getInsurerPoliciesListData(id, data));
@@ -58,7 +58,7 @@ const InsurerPoliciesTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => insurerPoliciesColumnList || { defaultFields: [], customFields: [] },
+    () => insurerPoliciesColumnList ?? { defaultFields: [], customFields: [] },
     [insurerPoliciesColumnList]
   );
 

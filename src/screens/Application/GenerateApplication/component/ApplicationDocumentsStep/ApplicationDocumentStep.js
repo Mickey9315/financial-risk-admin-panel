@@ -85,7 +85,7 @@ const ApplicationDocumentStep = () => {
   );
 
   const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList?.docs || [];
+    const finalData = documentTypeList?.docs ?? [];
     return finalData.map(e => ({
       name: 'documentType',
       label: e.documentTitle,
@@ -342,7 +342,7 @@ const ApplicationDocumentStep = () => {
             <span>Please upload your documents here</span>
             <FileUpload
               isProfile={false}
-              fileName={fileData.name || 'Browse'}
+              fileName={fileData.name ?? 'Browse'}
               handleChange={onUploadClick}
             />
             <span>Description</span>

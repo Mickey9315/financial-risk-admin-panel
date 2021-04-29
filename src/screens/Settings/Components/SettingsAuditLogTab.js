@@ -29,7 +29,7 @@ const SettingsAuditLogTab = () => {
   );
   const { userNameList } = useSelector(({ settingReducer }) => settingReducer);
   const { defaultFields, customFields } = useMemo(
-    () => auditLogColumnList || { defaultFields: [], customFields: [] },
+    () => auditLogColumnList ?? { defaultFields: [], customFields: [] },
     [auditLogColumnList]
   );
   const dispatch = useDispatch();
@@ -133,12 +133,12 @@ const SettingsAuditLogTab = () => {
         resetFilterDates();
       } else {
         const data = {
-          page: page || 1,
-          limit: limit || 15,
+          page: page ?? 1,
+          limit: limit ?? 15,
           entityType: entityType && entityType.trim().length > 0 ? entityType : undefined,
           userRefId: userRefId && userRefId.trim().length > 0 ? userRefId : undefined,
           actionType: actionType && actionType.trim().length > 0 ? actionType : undefined,
-          startDate: startDate || undefined,
+          startDate: startDate ?? undefined,
           endDate: endDate || undefined,
           ...params,
         };

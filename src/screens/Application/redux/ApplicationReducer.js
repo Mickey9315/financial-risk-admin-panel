@@ -201,9 +201,9 @@ export const application = (state = initialApplicationList, action) => {
       const dropdownData = { ...state.applicationFilterList.dropdownData };
       Object.entries(action.data).forEach(([key, value]) => {
         dropdownData[key] = value.data.map(entity => ({
-          label: entity.name || entity.label,
+          label: entity.name ?? entity.label,
           name: value.field,
-          value: entity._id || entity.value,
+          value: entity._id ?? entity.value,
         }));
       });
       const applicationFilterList = {
@@ -464,7 +464,7 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
       .ENTITY_DROP_DOWN_DATA_ACTION: {
       const entityList = action.data.map(data => ({
-        label: data.name || data.applicationId,
+        label: data.name ?? data.applicationId,
         value: data._id,
         name: 'entityId',
       }));
@@ -483,7 +483,7 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
       .DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION: {
       const defaultEntityList = action.data.map(data => ({
-        label: data.name || data.applicationId,
+        label: data.name ?? data.applicationId,
         value: data._id,
         name: 'entityId',
       }));

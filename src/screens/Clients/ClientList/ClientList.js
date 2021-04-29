@@ -279,7 +279,7 @@ const ClientList = () => {
   }, []);
 
   const { defaultFields, customFields } = useMemo(
-    () => clientColumnList || { defaultFields: [], customFields: [] },
+    () => clientColumnList ?? { defaultFields: [], customFields: [] },
     [clientColumnList]
   );
 

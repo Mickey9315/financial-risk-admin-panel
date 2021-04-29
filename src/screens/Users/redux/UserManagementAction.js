@@ -291,7 +291,7 @@ export const updateUserDetails = (id, data) => {
         ...data,
         clientIds: data.clientIds ? data.clientIds.map(e => e.value) : [],
         _id: undefined,
-        maxCreditLimit: data.maxCreditLimit || 0,
+        maxCreditLimit: data.maxCreditLimit ?? 0,
       };
 
       const response = await UserManagementApiService.updateUser(id, finalData);

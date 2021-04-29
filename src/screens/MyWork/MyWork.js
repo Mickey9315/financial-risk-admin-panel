@@ -291,7 +291,7 @@ const MyWork = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => taskColumnListData || { defaultFields: [], customFields: [] },
+    () => taskColumnListData ?? { defaultFields: [], customFields: [] },
     [taskColumnListData]
   );
   const onChangeSelectedColumn = useCallback((type, name, value) => {
