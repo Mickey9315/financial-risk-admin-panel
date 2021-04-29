@@ -9,6 +9,7 @@ import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
 import Checkbox from '../Checkbox/Checkbox';
 import DropdownMenu from '../DropdownMenu/DropdownMenu';
+import { successNotification } from '../Toast';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -81,7 +82,7 @@ const Table = props => {
   const handleCheckBoxState = useCallback(
     async (value, header, currentData, row) => {
       try {
-        await TableApiService.tableActions({
+        const response = await TableApiService.tableActions({
           url: header.request.url,
           method: header.request.method,
           id: currentData.id || row._id,
@@ -89,7 +90,10 @@ const Table = props => {
             [`${header.name}`]: value,
           },
         });
-        refreshData();
+        if (response.data.status === 'SUCCESS') {
+          successNotification(response?.data?.message ?? 'Success');
+          refreshData();
+        }
       } catch (e) {
         /**/
       }
@@ -357,7 +361,11 @@ function Row(props) {
               return (
                 <td key={index.toString()} align={align}>
                   <span
-                    title={(data?.[key]?.props?.className ?? '') === 'link' ? '' : value || ''}
+                    title={
+                      ['link', 'table-checkbox'].includes(data?.[key]?.props?.className ?? '')
+                        ? ''
+                        : value || ''
+                    }
                     data-delay-show="100"
                   >
                     {value || '-'}

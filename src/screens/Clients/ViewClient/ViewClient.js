@@ -70,12 +70,14 @@ const ViewClient = () => {
     'Documents',
     'Notes',
   ];
-  const viewClientData = useSelector(({ clientManagement }) => clientManagement.selectedClient);
+  const viewClientData = useSelector(
+    ({ clientManagement }) => clientManagement?.selectedClient ?? null
+  );
 
   const riskAnalysts = useMemo(
     () =>
       viewClientData
-        ? viewClientData.riskAnalystList.map(e => ({
+        ? viewClientData?.riskAnalystList?.map(e => ({
             label: e.name,
             value: e._id,
             name: 'riskAnalystId',
@@ -87,7 +89,7 @@ const ViewClient = () => {
   const serviceManagers = useMemo(
     () =>
       viewClientData
-        ? viewClientData.serviceManagerList.map(e => ({
+        ? viewClientData?.serviceManagerList?.map(e => ({
             label: e.name,
             value: e._id,
             name: 'serviceManagerId',
@@ -172,23 +174,28 @@ const ViewClient = () => {
           type="text"
           readOnly
           placeholder="Enter Name"
-          value={viewClientData.name ? viewClientData.name : ''}
+          value={viewClientData?.name ? viewClientData?.name : ''}
         />
         <span>Address</span>
         <Input
           type="text"
           readOnly
           placeholder="Enter Address"
-          value={viewClientData.address.city}
+          value={viewClientData?.address?.city}
         />
         <span>Phone</span>
-        <Input type="text" readOnly placeholder="1234567890" value={viewClientData.contactNumber} />
+        <Input
+          type="text"
+          readOnly
+          placeholder="1234567890"
+          value={viewClientData?.contactNumber}
+        />
         <span>ABN</span>
-        <Input type="number" readOnly placeholder="1234567890" value={viewClientData.abn} />
+        <Input type="number" readOnly placeholder="1234567890" value={viewClientData?.abn} />
         <span>ACN</span>
-        <Input type="number" readOnly placeholder="1234567890" value={viewClientData.acn} />
+        <Input type="number" readOnly placeholder="1234567890" value={viewClientData?.acn} />
         <span>Referred By</span>
-        <Input type="text" readOnly placeholder="Referred By" value={viewClientData.referredBy} />
+        <Input type="text" readOnly placeholder="Referred By" value={viewClientData?.referredBy} />
         <span>Risk Person</span>
         <ReactSelect
           placeholder="Select"
@@ -208,11 +215,16 @@ const ViewClient = () => {
           searchable={false}
         />
         <span>IBIS Sector</span>
-        <Input type="text" readOnly placeholder="IBIS Secto" value={viewClientData.sector} />
+        <Input type="text" readOnly placeholder="IBIS Secto" value={viewClientData?.sector} />
         <span>Sales Person</span>
-        <Input type="text" readOnly placeholder="Sales Person" value={viewClientData.salesPerson} />
+        <Input
+          type="text"
+          readOnly
+          placeholder="Sales Person"
+          value={viewClientData?.salesPerson}
+        />
         <span>Website</span>
-        <Input type="text" readOnly placeholder="Website" value={viewClientData.website} />
+        <Input type="text" readOnly placeholder="Website" value={viewClientData?.website} />
         <span>Trading As</span>
         <Input type="text" readOnly placeholder="Trading As" />
         <span>Inception Date</span>
@@ -223,7 +235,7 @@ const ViewClient = () => {
             scrollableYearDropdown
             dateFormat="dd/MM/yyyy"
             placeholderText="Select date"
-            selected={new Date(viewClientData.inceptionDate)}
+            selected={new Date(viewClientData?.inceptionDate)}
             disabled
           />
         </div>
@@ -235,7 +247,7 @@ const ViewClient = () => {
             scrollableYearDropdown
             dateFormat="dd/MM/yyyy"
             placeholderText="Select date"
-            selected={new Date(viewClientData.expiryDate)}
+            selected={new Date(viewClientData?.expiryDate)}
             disabled
           />
         </div>

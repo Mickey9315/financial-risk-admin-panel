@@ -174,7 +174,7 @@ const DebtorsList = () => {
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
   const entityTypeSelectedValue = useMemo(() => {
-    const foundValue = debtorDropDownData.entityType.find(e => {
+    const foundValue = debtorDropDownData?.entityType?.find(e => {
       return e.value === entityType;
     });
     return foundValue ? [foundValue] : [];

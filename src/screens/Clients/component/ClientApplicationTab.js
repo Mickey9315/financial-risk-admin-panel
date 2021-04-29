@@ -20,10 +20,10 @@ const ClientApplicationTab = () => {
   const dispatch = useDispatch();
   const searchInputRef = useRef();
   const clientApplicationListData = useSelector(
-    ({ clientManagement }) => clientManagement.application.applicationList
+    ({ clientManagement }) => clientManagement?.application?.applicationList ?? {}
   );
   const clientApplicationColumnNameListData = useSelector(
-    ({ clientManagement }) => clientManagement.application.columnList
+    ({ clientManagement }) => clientManagement?.application?.columnList ?? {}
   );
   const { total, headers, pages, docs, page, limit } = useMemo(() => clientApplicationListData, [
     clientApplicationListData,
@@ -104,7 +104,7 @@ const ClientApplicationTab = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
 
   useEffect(() => {
@@ -113,12 +113,12 @@ const ClientApplicationTab = () => {
   }, []);
 
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
       getClientApplicationList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getClientApplicationList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getClientApplicationList({ search: searchKeyword?.trim()?.toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }

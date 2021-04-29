@@ -20,7 +20,7 @@ export const userManagementList = (state = initialUserManagementListState, actio
   switch (action.type) {
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS:
       return {
-        ...action.data,
+        ...action?.data,
         isLoading: false,
         error: null,
       };
@@ -29,15 +29,15 @@ export const userManagementList = (state = initialUserManagementListState, actio
         ...state,
         isLoading: false,
         docs: null,
-        error: action.error,
+        error: action?.error,
       };
     case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_USERLIST_PAGINATION_DATA: {
       return {
         ...state,
-        page: action.page,
-        total: action.total,
-        limit: action.limit,
-        pages: action.pages,
+        page: action?.page,
+        total: action?.total,
+        limit: action?.limit,
+        pages: action?.pages,
       };
     }
     default:
@@ -48,24 +48,24 @@ export const userManagementList = (state = initialUserManagementListState, actio
 export const userPrivileges = (state = [], action) => {
   switch (action.type) {
     case USER_MANAGEMENT_REDUX_CONSTANTS.PRIVILEGES.GET_ALL_USER_PRIVILEGES:
-      return action.data;
+      return action?.data;
     default:
       return state;
   }
 };
 
 export const userManagementColumnList = (state = [], action) => {
-  switch (action.type) {
+  switch (action?.type) {
     case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION:
-      return action.data;
+      return action?.data;
     case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_USER_MANAGEMENT_COLUMN_LIST_ACTION:
       const temp = {
         ...state,
       };
 
-      const { type, name, value } = action.data;
+      const { type, name, value } = action?.data;
 
-      temp[`${type}`] = temp[`${type}`].map(e =>
+      temp[`${type}`] = temp?.[`${type}`]?.map(e =>
         e.name === name
           ? {
               ...e,
@@ -81,25 +81,25 @@ export const userManagementColumnList = (state = [], action) => {
 };
 
 export const selectedUserData = (state = null, action) => {
-  switch (action.type) {
+  switch (action?.type) {
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION:
-      return action.data;
+      return action?.data;
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION:
       return {
         ...state,
-        [`${action.data.name}`]: action.data.value,
+        [`${action?.data?.name}`]: action?.data?.value,
       };
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_CHANGE_MANAGE_ACCESS_USER_ACTION:
-      if (state && state.moduleAccess) {
-        let moduleAccess = [...state.moduleAccess];
-        moduleAccess = moduleAccess.map(e => {
-          if (e.name === action.data.name) {
-            let accessTypes = [...e.accessTypes];
+      if (state && state?.moduleAccess) {
+        let moduleAccess = [...state?.moduleAccess];
+        moduleAccess = moduleAccess?.map(e => {
+          if (e.name === action?.data?.name) {
+            let accessTypes = [...e?.accessTypes];
 
-            if (accessTypes.includes(action.data.value)) {
-              accessTypes = accessTypes.filter(f => f !== action.data.value);
+            if (accessTypes?.includes(action?.data?.value)) {
+              accessTypes = accessTypes?.filter(f => f !== action?.data?.value);
             } else {
-              accessTypes.push(action.data.value);
+              accessTypes.push(action?.data?.value);
             }
             return {
               ...e,
@@ -123,9 +123,9 @@ export const selectedUserData = (state = null, action) => {
 };
 
 export const organizationModulesList = (state = [], action) => {
-  switch (action.type) {
+  switch (action?.type) {
     case ORGANISATION_MODULE_REDUX_CONSTANTS.GET_ORGANISATION_MODULE_REDUX_ACTION:
-      return action.data;
+      return action?.data;
     default:
       return state;
   }
@@ -137,9 +137,9 @@ const initialUserManagementClientListState = {
 };
 
 export const userManagementClientList = (state = initialUserManagementClientListState, action) => {
-  switch (action.type) {
+  switch (action?.type) {
     case USER_MANAGEMENT_CLIENT_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_CLIENT_LIST_ACTION:
-      return action.data;
+      return action?.data;
     default:
       return state;
   }

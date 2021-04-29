@@ -44,11 +44,11 @@ export const insurer = (state = initialInsurer, action) => {
       return {
         ...state,
         insurerList: {
-          ...state.insurerList,
-          page: action.page,
-          limit: action.limit,
-          total: action.total,
-          pages: action.pages,
+          ...state?.insurerList,
+          page: action?.page,
+          limit: action?.limit,
+          total: action?.total,
+          pages: action?.pages,
         },
       };
 
@@ -63,7 +63,7 @@ export const insurer = (state = initialInsurer, action) => {
         ...state?.insurerColumnNameList,
       };
       const { type, name, value } = action?.data;
-      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
         e?.name === name ? { ...e, isChecked: value } : e
       );
       return {
@@ -97,7 +97,7 @@ export const insurer = (state = initialInsurer, action) => {
         ...state?.contact?.columnList,
       };
       const { type, name, value } = action?.data;
-      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
         e?.name === name ? { ...e, isChecked: value } : e
       );
       return {
@@ -132,7 +132,7 @@ export const insurer = (state = initialInsurer, action) => {
 
       const { type, name, value } = action?.data;
 
-      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
         e?.name === name
           ? {
               ...e,
@@ -164,17 +164,6 @@ export const insurer = (state = initialInsurer, action) => {
         policies: {
           ...state?.policies,
           policySyncList: action?.data,
-        },
-      };
-    }
-
-    case INSURER_REDUX_CONSTANTS.RESET_PAGE_DATA: {
-      return {
-        ...state,
-        insurerList: {
-          ...state?.insurerList,
-          page: 1,
-          limit: 15,
         },
       };
     }

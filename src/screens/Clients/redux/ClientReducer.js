@@ -83,10 +83,10 @@ export const clientManagement = (state = initialClientListState, action) => {
     case CLIENT_REDUX_CONSTANTS.RESET_CLIENT_LIST_PAGINATION_DATA:
       return {
         ...state,
-        page: action.page,
-        pages: action.pages,
-        total: action.total,
-        limit: action.limit,
+        page: action?.page,
+        pages: action?.pages,
+        total: action?.total,
+        limit: action?.limit,
       };
 
     case CLIENT_REDUX_CONSTANTS.SELECTED_CLIENT_DATA:

@@ -20,10 +20,10 @@ const DebtorsApplicationTab = () => {
   const dispatch = useDispatch();
   const searchInputRef = useRef();
   const debtorApplicationListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.application.applicationList
+    ({ debtorsManagement }) => debtorsManagement?.application?.applicationList ?? {}
   );
   const debtorApplicationColumnNameListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.application.columnList
+    ({ debtorsManagement }) => debtorsManagement?.application?.columnList ?? {}
   );
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
     () => debtorApplicationListData,
@@ -105,7 +105,7 @@ const DebtorsApplicationTab = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
 
   useEffect(() => {
@@ -114,12 +114,12 @@ const DebtorsApplicationTab = () => {
   }, []);
 
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
       getDebtorApplicationList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getDebtorApplicationList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getDebtorApplicationList({ search: searchKeyword?.trim()?.toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }

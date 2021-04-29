@@ -107,13 +107,13 @@ const ClientDocumentsTab = () => {
   }, []);
 
   const clientDocumentsList = useSelector(
-    ({ clientManagement }) => clientManagement.documents.documentsList
+    ({ clientManagement }) => clientManagement?.documents?.documentsList ?? {}
   );
   const documentTypeList = useSelector(
-    ({ clientManagement }) => clientManagement?.documents?.documentTypeList
+    ({ clientManagement }) => clientManagement?.documents?.documentTypeList ?? []
   );
   const clientDocumentsColumnList = useSelector(
-    ({ clientManagement }) => clientManagement.documents.columnList
+    ({ clientManagement }) => clientManagement?.documents?.columnList ?? {}
   );
   const { total, pages, page, limit, docs, headers } = useMemo(() => clientDocumentsList, [
     clientDocumentsList,
@@ -177,17 +177,17 @@ const ClientDocumentsTab = () => {
   );
 
   const onClickUploadDocument = useCallback(async () => {
-    if (selectedClientDocument.documentType.length === 0) {
+    if (selectedClientDocument?.documentType?.length === 0) {
       errorNotification('Please select document type');
-    } else if (!selectedClientDocument.description) {
+    } else if (!selectedClientDocument?.description) {
       errorNotification('Description is required');
     } else if (!fileData) {
       errorNotification('Select document to upload');
     } else {
       const formData = new FormData();
-      formData.append('description', selectedClientDocument.description);
-      formData.append('isPublic', selectedClientDocument.isPublic);
-      formData.append('documentType', selectedClientDocument.documentType);
+      formData.append('description', selectedClientDocument?.description);
+      formData.append('isPublic', selectedClientDocument?.isPublic);
+      formData.append('documentType', selectedClientDocument?.documentType);
       formData.append('document', fileData);
       formData.append('entityId', id);
       formData.append('documentFor', 'client');
@@ -318,7 +318,7 @@ const ClientDocumentsTab = () => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            await dispatch(deleteClientDocumentAction(deleteDocumentData.id, () => callBack()));
+            await dispatch(deleteClientDocumentAction(deleteDocumentData?.id, () => callBack()));
           } catch (e) {
             /**/
           }
@@ -329,9 +329,9 @@ const ClientDocumentsTab = () => {
   );
 
   const onClickDownloadButton = useCallback(async () => {
-    if (clientDocumentsList.docs.length !== 0) {
-      if (selectedCheckBoxData.length !== 0) {
-        const docsToDownload = selectedCheckBoxData.map(e => e.id);
+    if (clientDocumentsList?.docs?.length !== 0) {
+      if (selectedCheckBoxData?.length !== 0) {
+        const docsToDownload = selectedCheckBoxData?.map(e => e.id);
         const res = await downloadDocuments(docsToDownload);
         downloadAll(res);
       } else {
@@ -350,12 +350,12 @@ const ClientDocumentsTab = () => {
   );
 
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
       getClientDocumentsList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getClientDocumentsList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getClientDocumentsList({ search: searchKeyword?.trim()?.toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }
@@ -491,7 +491,7 @@ const ClientDocumentsTab = () => {
             <span>Please upload your documents here</span>
             <FileUpload
               isProfile={false}
-              fileName={fileData.name || 'Browse'}
+              fileName={fileData?.name || 'Browse'}
               handleChange={onUploadClick}
             />
             <span>Description</span>

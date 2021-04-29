@@ -24,11 +24,11 @@ const ClientContactsTab = () => {
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
   const clientContactList = useSelector(
-    ({ clientManagement }) => clientManagement.contact.contactList
+    ({ clientManagement }) => clientManagement?.contact?.contactList ?? {}
   );
 
   const clientContactColumnList = useSelector(
-    ({ clientManagement }) => clientManagement.contact.columnList
+    ({ clientManagement }) => clientManagement?.contact?.columnList ?? {}
   );
 
   const { defaultFields, customFields } = useMemo(

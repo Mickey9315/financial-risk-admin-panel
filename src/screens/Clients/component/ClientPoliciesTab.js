@@ -26,11 +26,11 @@ const ClientPoliciesTab = () => {
   const toggleCustomField = () => setCustomFieldModal(e => !e);
   const [pageLimit, setPageLimit] = useState('');
   const clientPoliciesList = useSelector(
-    ({ clientManagement }) => clientManagement.policies.policiesList
+    ({ clientManagement }) => clientManagement?.policies?.policiesList ?? {}
   );
 
   const clientPoliciesColumnList = useSelector(
-    ({ clientManagement }) => clientManagement.policies.columnList
+    ({ clientManagement }) => clientManagement?.policies?.columnList ?? {}
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -94,12 +94,12 @@ const ClientPoliciesTab = () => {
     [page, limit]
   );
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
       getClientPoliciesList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getClientPoliciesList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getClientPoliciesList({ search: searchKeyword?.trim()?.toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }

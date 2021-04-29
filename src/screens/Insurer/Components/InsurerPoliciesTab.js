@@ -31,14 +31,16 @@ const InsurerPoliciesTab = () => {
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
     [setCustomFieldModal]
   );
-  const insurerPoliciesList = useSelector(({ insurer }) => insurer.policies.policiesList);
+  const insurerPoliciesList = useSelector(({ insurer }) => insurer?.policies?.policiesList ?? {});
   const { total, pages, page, limit, docs, headers } = useMemo(() => insurerPoliciesList, [
     insurerPoliciesList,
   ]);
 
-  const insurerPoliciesColumnList = useSelector(({ insurer }) => insurer.policies.columnList);
+  const insurerPoliciesColumnList = useSelector(
+    ({ insurer }) => insurer?.policies?.columnList ?? {}
+  );
 
-  const syncListFromCrm = useSelector(({ insurer }) => insurer.policies.policySyncList);
+  const syncListFromCrm = useSelector(({ insurer }) => insurer?.policies?.policySyncList ?? []);
 
   const getInsurerPoliciesList = useCallback(
     (params = {}, cb) => {
@@ -133,12 +135,12 @@ const InsurerPoliciesTab = () => {
     const data = {
       clientIds: crmIds,
     };
-    if (data.clientIds.length > 0) {
+    if (data?.clientIds?.length > 0) {
       toggleSyncWithCRM();
       InsurerPoliciesApiServices.syncInsurerPolicyList(id, data)
         .then(res => {
           if (res.data.status === 'SUCCESS') {
-            successNotification(res.data.message);
+            successNotification(res?.data?.message ?? 'Success');
             getInsurerPoliciesList();
           }
         })
@@ -160,12 +162,12 @@ const InsurerPoliciesTab = () => {
 
   const checkIfEnterKeyPressed = useCallback(
     e => {
-      const searchKeyword = searchInputRef.current.value;
-      if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+      const searchKeyword = searchInputRef?.current?.value;
+      if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
         getInsurerPoliciesList();
       } else if (e.key === 'Enter') {
-        if (searchKeyword.trim().toString().length !== 0) {
-          getInsurerPoliciesList({ search: searchKeyword.trim().toString() });
+        if (searchKeyword?.trim()?.toString()?.length !== 0) {
+          getInsurerPoliciesList({ search: searchKeyword?.trim()?.toString() });
         } else {
           errorNotification('Please enter any value than press enter');
         }
@@ -177,9 +179,9 @@ const InsurerPoliciesTab = () => {
   const checkIfEnterKeyPressedForPolicy = useCallback(
     e => {
       if (e.key === 'Enter') {
-        const searchKeyword = searchInputRef.current.value;
-        if (searchKeyword.trim().toString().length !== 0) {
-          dispatch(getPolicySyncListForCRM(id, searchKeyword.trim().toString()));
+        const searchKeyword = searchInputRef?.current?.value;
+        if (searchKeyword?.trim()?.toString()?.length !== 0) {
+          dispatch(getPolicySyncListForCRM(id, searchKeyword?.trim()?.toString()));
           setSearchPolicies(true);
         } else {
           errorNotification('Please enter any value than press enter');
@@ -192,9 +194,9 @@ const InsurerPoliciesTab = () => {
   const selectPolicyFromCRMList = useCallback(
     crmId => {
       let arr = [...crmIds];
-      if (arr.includes(crmId)) {
-        arr = arr.filter(e => e !== crmId);
-      } else if (crmIds.length < 10) {
+      if (arr?.includes(crmId)) {
+        arr = arr?.filter(e => e !== crmId);
+      } else if (crmIds?.length < 10) {
         arr = [...arr, crmId];
       } else {
         errorNotification('Maximum 10 policies can be synced at a time');
@@ -289,13 +291,13 @@ const InsurerPoliciesTab = () => {
           {searchPolicies && (
             <>
               <div className="crm-checkbox-list-container">
-                {syncListFromCrm && syncListFromCrm.length > 0 ? (
-                  syncListFromCrm.map(crm => (
+                {syncListFromCrm && syncListFromCrm?.length > 0 ? (
+                  syncListFromCrm?.map(crm => (
                     <Checkbox
-                      title={crm.name}
+                      title={crm?.name}
                       className="crm-checkbox-list"
-                      checked={crmIds.includes(crm._id.toString())}
-                      onChange={() => selectPolicyFromCRMList(crm._id.toString())}
+                      checked={crmIds?.includes(crm?._id?.toString())}
+                      onChange={() => selectPolicyFromCRMList(crm?._id?.toString())}
                     />
                   ))
                 ) : (

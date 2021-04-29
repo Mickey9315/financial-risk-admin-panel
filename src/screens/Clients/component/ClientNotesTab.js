@@ -73,7 +73,9 @@ const ClientNotesTab = () => {
     [setModifyNoteModal]
   );
 
-  const clientNotesList = useSelector(({ clientManagement }) => clientManagement.notes.notesList);
+  const clientNotesList = useSelector(
+    ({ clientManagement }) => clientManagement?.notes?.notesList ?? {}
+  );
 
   const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList, [
     clientNotesList,
@@ -103,13 +105,13 @@ const ClientNotesTab = () => {
 
   const addOrUpdateNote = useCallback(async () => {
     const noteData = {
-      description: selectedClientNote.description,
-      isPublic: selectedClientNote.isPublic,
+      description: selectedClientNote?.description,
+      isPublic: selectedClientNote?.isPublic,
     };
-    if (selectedClientNote.type === NOTE_ACTIONS.ADD) {
+    if (selectedClientNote?.type === NOTE_ACTIONS.ADD) {
       await dispatch(addClientNoteAction(id, noteData));
     } else {
-      noteData.noteId = selectedClientNote.noteId;
+      noteData.noteId = selectedClientNote?.noteId;
       await dispatch(updateClientNoteAction(id, noteData));
     }
     dispatchSelectedClientNote({
@@ -129,7 +131,7 @@ const ClientNotesTab = () => {
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
       {
-        title: `${selectedClientNote.type === 'EDIT' ? 'Edit' : 'Add'} `,
+        title: `${selectedClientNote?.type === 'EDIT' ? 'Edit' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
       },
@@ -149,12 +151,12 @@ const ClientNotesTab = () => {
     [setShowConfirmModal]
   );
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (e.target.value.trim().toString().length === 1) {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (e?.target?.value?.trim()?.toString()?.length === 1) {
       getClientNotesList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getClientNotesList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getClientNotesList({ search: searchKeyword?.trim()?.toString() });
       } else {
         getClientNotesList();
         errorNotification('Please enter any value than press enter');
@@ -233,7 +235,7 @@ const ClientNotesTab = () => {
     <>
       {modifyNoteModal && (
         <Modal
-          header={`${selectedClientNote.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
+          header={`${selectedClientNote?.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
           className="add-to-crm-modal"
           buttons={addToCRMButtons}
           hideModal={toggleModifyNotes}
@@ -245,14 +247,14 @@ const ClientNotesTab = () => {
               placeholder="Note description"
               name="description"
               type="text"
-              value={selectedClientNote.description}
+              value={selectedClientNote?.description}
               onChange={onChangeSelectedNoteInput}
             />
             <span>Private/Public</span>
             <Switch
               id="selected-note"
               name="isPublic"
-              checked={selectedClientNote.isPublic}
+              checked={selectedClientNote?.isPublic}
               onChange={onChangeSelectedNoteSwitch}
             />
           </div>

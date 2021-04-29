@@ -69,7 +69,7 @@ const DebtorsNotesTab = () => {
   );
 
   const debtorsNotesList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.notes.notesList
+    ({ debtorsManagement }) => debtorsManagement?.notes?.notesList ?? {}
   );
 
   const toggleModifyNotes = useCallback(
@@ -82,13 +82,13 @@ const DebtorsNotesTab = () => {
   ]);
 
   const getDebtorNotesList = useCallback(
-    (params = {}, cb) => {
+    async (params = {}, cb) => {
       const data = {
         page: page || 1,
         limit: limit || 15,
         ...params,
       };
-      dispatch(getDebtorsNotesListDataAction(id, data));
+      await dispatch(getDebtorsNotesListDataAction(id, data));
       if (cb && typeof cb === 'function') {
         cb();
       }
@@ -140,12 +140,12 @@ const DebtorsNotesTab = () => {
   }, []);
 
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (e.target.value.trim().toString().length === 1) {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (e?.target?.value?.trim()?.toString().length === 1) {
       getDebtorNotesList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getDebtorNotesList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getDebtorNotesList({ search: searchKeyword?.trim()?.toString() });
       } else {
         getDebtorNotesList();
         errorNotification('Please enter any value than press enter');
@@ -162,14 +162,14 @@ const DebtorsNotesTab = () => {
 
   const addOrUpdateNote = useCallback(async () => {
     const noteData = {
-      description: selectedDebtorsNote.description,
-      isPublic: selectedDebtorsNote.isPublic,
+      description: selectedDebtorsNote?.description,
+      isPublic: selectedDebtorsNote?.isPublic,
     };
-    if (selectedDebtorsNote.type === NOTE_ACTIONS.ADD) {
+    if (selectedDebtorsNote?.type === NOTE_ACTIONS.ADD) {
       // await dispatch(addClientNoteAction(id, noteData));
       await dispatch(addDebtorsNoteAction(id, noteData));
     } else {
-      noteData.noteId = selectedDebtorsNote.noteId;
+      noteData.noteId = selectedDebtorsNote?.noteId;
       await dispatch(updateDebtorsNoteAction(id, noteData));
     }
     dispatchSelectedDebtorsNote({
@@ -182,7 +182,7 @@ const DebtorsNotesTab = () => {
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
       {
-        title: `${selectedDebtorsNote.type === 'EDIT' ? 'Edit' : 'Add'} `,
+        title: `${selectedDebtorsNote?.type === 'EDIT' ? 'Edit' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
       },
@@ -237,7 +237,7 @@ const DebtorsNotesTab = () => {
     <>
       {modifyNoteModal && (
         <Modal
-          header={`${selectedDebtorsNote.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
+          header={`${selectedDebtorsNote?.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
           className="add-to-crm-modal"
           buttons={addToCRMButtons}
           hideModal={toggleModifyNotes}
@@ -249,14 +249,14 @@ const DebtorsNotesTab = () => {
               placeholder="Note description"
               name="description"
               type="text"
-              value={selectedDebtorsNote.description}
+              value={selectedDebtorsNote?.description}
               onChange={onChangeSelectedNoteInput}
             />
             <span>Private/Public</span>
             <Switch
               id="selected-note"
               name="isPublic"
-              checked={selectedDebtorsNote.isPublic}
+              checked={selectedDebtorsNote?.isPublic}
               onChange={onChangeSelectedNoteSwitch}
             />
           </div>

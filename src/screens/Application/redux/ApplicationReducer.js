@@ -518,9 +518,9 @@ export const application = (state = initialApplicationList, action) => {
       return {
         ...state,
         viewApplication: {
-          ...state.viewApplication,
+          ...state?.viewApplication,
           task: {
-            ...state.viewApplication.task,
+            ...state?.viewApplication?.task,
             addTask: [],
           },
         },

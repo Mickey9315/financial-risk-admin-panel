@@ -23,8 +23,8 @@ const InsurerContactTab = () => {
   const searchInputRef = useRef();
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const insurerContactListData = useSelector(({ insurer }) => insurer.contact.contactList);
-  const insurerContactColumnList = useSelector(({ insurer }) => insurer.contact.columnList);
+  const insurerContactListData = useSelector(({ insurer }) => insurer?.contact?.contactList ?? {});
+  const insurerContactColumnList = useSelector(({ insurer }) => insurer?.contact?.columnList ?? {});
   const { docs, headers, pages, page, total, limit } = useMemo(() => insurerContactListData, [
     insurerContactListData,
   ]);
@@ -101,12 +101,12 @@ const InsurerContactTab = () => {
 
   const checkIfEnterKeyPressed = useCallback(
     e => {
-      const searchKeyword = searchInputRef.current.value;
-      if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+      const searchKeyword = searchInputRef?.current?.value;
+      if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
         getInsurerContactsList();
       } else if (e.key === 'Enter') {
-        if (searchKeyword.trim().toString().length !== 0) {
-          getInsurerContactsList({ search: searchKeyword.trim().toString() });
+        if (searchKeyword?.trim()?.toString()?.length !== 0) {
+          getInsurerContactsList({ search: searchKeyword?.trim()?.toString() });
         } else {
           errorNotification('Please enter any value than press enter');
         }

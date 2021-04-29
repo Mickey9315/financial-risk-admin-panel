@@ -107,13 +107,13 @@ const DebtorsDocumentsTab = () => {
   }, []);
 
   const debtorsDocumentsList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.documents.documentsList
+    ({ debtorsManagement }) => debtorsManagement?.documents?.documentsList ?? {}
   );
   const documentTypeList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.documents.documentTypeList
+    ({ debtorsManagement }) => debtorsManagement?.documents?.documentTypeList ?? []
   );
   const debtorsDocumentsColumnList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.documents.columnList
+    ({ debtorsManagement }) => debtorsManagement?.documents?.columnList ?? {}
   );
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => debtorsDocumentsList,
@@ -126,11 +126,11 @@ const DebtorsDocumentsTab = () => {
   );
 
   const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList;
+    const finalData = documentTypeList || [];
     return finalData?.map(e => ({
       name: 'documentType',
-      label: e.documentTitle,
-      value: e._id,
+      label: e?.documentTitle,
+      value: e?._id,
     }));
   }, [documentTypeList]);
 
@@ -179,17 +179,17 @@ const DebtorsDocumentsTab = () => {
   );
 
   const onClickUploadDocument = useCallback(async () => {
-    if (selectedDebtorDocument.documentType.length === 0) {
+    if (selectedDebtorDocument?.documentType?.length === 0) {
       errorNotification('Please select document type');
-    } else if (!selectedDebtorDocument.description) {
+    } else if (!selectedDebtorDocument?.description) {
       errorNotification('Description is required');
     } else if (!fileData) {
       errorNotification('Select document to upload');
     } else {
       const formData = new FormData();
-      formData.append('description', selectedDebtorDocument.description);
-      formData.append('isPublic', selectedDebtorDocument.isPublic);
-      formData.append('documentType', selectedDebtorDocument.documentType);
+      formData.append('description', selectedDebtorDocument?.description);
+      formData.append('isPublic', selectedDebtorDocument?.isPublic);
+      formData.append('documentType', selectedDebtorDocument?.documentType);
       formData.append('document', fileData);
       formData.append('entityId', id);
       formData.append('documentFor', 'debtor');
@@ -331,9 +331,9 @@ const DebtorsDocumentsTab = () => {
   );
 
   const onClickDownloadButton = useCallback(async () => {
-    if (debtorsDocumentsList.docs.length !== 0) {
-      if (selectedCheckBoxData.length !== 0) {
-        const docsToDownload = selectedCheckBoxData.map(e => e.id);
+    if (debtorsDocumentsList?.docs?.length !== 0) {
+      if (selectedCheckBoxData?.length !== 0) {
+        const docsToDownload = selectedCheckBoxData?.map(e => e.id);
         const res = await downloadDocuments(docsToDownload);
         downloadAll(res);
       } else {
@@ -352,12 +352,12 @@ const DebtorsDocumentsTab = () => {
   );
 
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
       getDebtorsDocumentsList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getDebtorsDocumentsList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getDebtorsDocumentsList({ search: searchKeyword?.trim()?.toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }

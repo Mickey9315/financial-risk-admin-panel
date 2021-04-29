@@ -27,7 +27,6 @@ export const processTableDataByType = ({ header, row, actions }) => {
       return '-';
 
     case 'boolean':
-      console.log(currentData);
       return (
         <div className="table-checkbox">
           <Checkbox

@@ -92,30 +92,25 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
     case DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_SUCCESS:
       return {
         ...state,
-        debtorsList: { ...state.debtorsList, ...action.data, isLoading: false, error: null },
+        debtorsList: { ...state?.debtorsList, ...action?.data, isLoading: false, error: null },
       };
     case DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_FAILURE:
       return {
         ...state,
-        debtorsList: { ...state.clientList, isLoading: false, error: action.error },
-      };
-    case DEBTORS_REDUX_CONSTANTS.DEBTORS_LIST_USER_ACTION:
-      return {
-        ...state,
-        debtorsList: action.data,
+        debtorsList: { ...state?.clientList, isLoading: false, error: action.error },
       };
     case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION:
       return {
         ...state,
-        debtorsColumnNameList: action.data,
+        debtorsColumnNameList: action?.data,
       };
     case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION:
       // eslint-disable-next-line no-case-declarations
       const temp = {
-        ...state.debtorsColumnNameList,
+        ...state?.debtorsColumnNameList,
       };
       // eslint-disable-next-line no-case-declarations
-      const { name, type, value } = action.data;
+      const { name, type, value } = action?.data;
       temp[`${type}`] = temp[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
@@ -127,23 +122,23 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         debtorsList: {
-          ...state.debtorsList,
-          page: action.page,
-          pages: action.pages,
-          total: action.total,
-          limit: action.limit,
+          ...state?.debtorsList,
+          page: action?.page,
+          pages: action?.pages,
+          total: action?.total,
+          limit: action?.limit,
         },
       };
     case DEBTORS_REDUX_CONSTANTS.SELECTED_DEBTORS_DATA:
       return {
         ...state,
-        selectedDebtorData: action.data,
+        selectedDebtorData: action?.data,
       };
     case DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS: {
       const dropdownData = {};
       // eslint-disable-next-line no-shadow
-      Object.entries(action.data).forEach(([key, value]) => {
-        dropdownData[key] = value.map(entity => ({
+      Object.entries(action?.data).forEach(([key, value]) => {
+        dropdownData[key] = value?.map(entity => ({
           label: entity.name,
           name: key,
           value: entity._id,
@@ -158,8 +153,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         selectedDebtorData: {
-          ...state.selectedDebtorData,
-          [`${action.name}`]: action.value,
+          ...state?.selectedDebtorData,
+          [`${action.name}`]: action?.value,
         },
       };
 
@@ -169,10 +164,10 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         notes: {
-          ...state.notes,
+          ...state?.notes,
           notesList: {
-            ...state.notes.notesList,
-            ...action.data,
+            ...state?.notes?.notesList,
+            ...action?.data,
             isLoading: false,
             error: null,
           },
@@ -182,11 +177,11 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         notes: {
-          ...state.notes,
+          ...state?.notes,
           notesList: {
-            ...state.notes.notesList,
+            ...state?.notes?.notesList,
             isLoading: false,
-            error: action.data,
+            error: action?.data,
           },
         },
       };
@@ -194,8 +189,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         notes: {
-          ...state.notes,
-          notesList: action.data,
+          ...state?.notes,
+          notesList: action?.data,
         },
       };
 
@@ -205,10 +200,10 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         documents: {
-          ...state.documents,
+          ...state?.documents,
           documentsList: {
-            ...state.documents.documentsList,
-            ...action.data,
+            ...state?.documents?.documentsList,
+            ...action?.data,
             isLoading: false,
             error: null,
           },
@@ -218,11 +213,11 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         documents: {
-          ...state.documents,
+          ...state?.documents,
           documentsList: {
-            ...state.documents.documentsList,
+            ...state?.documents?.documentsList,
             isLoading: false,
-            error: action.data,
+            error: action?.data,
           },
         },
       };
@@ -230,8 +225,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         documents: {
-          ...state.documents,
-          documentsList: action.data,
+          ...state?.documents,
+          documentsList: action?.data,
         },
       };
 
@@ -239,19 +234,19 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         documents: {
-          ...state.documents,
-          columnList: action.data,
+          ...state?.documents,
+          columnList: action?.data,
         },
       };
     }
 
     case DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPDATE_DEBTOR_DOCUMENTS_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.documents.columnList,
+        ...state?.documents?.columnList,
       };
 
       // eslint-disable-next-line no-shadow
-      const { type, name, value } = action.data;
+      const { type, name, value } = action?.data;
 
       columnList[`${type}`] = columnList[`${type}`].map(e =>
         e.name === name
@@ -264,7 +259,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         documents: {
-          ...state.documents,
+          ...state?.documents,
           columnList,
         },
       };
@@ -274,8 +269,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         documents: {
-          ...state.documents,
-          documentTypeList: action.data,
+          ...state?.documents,
+          documentTypeList: action?.data,
         },
       };
     }
@@ -284,8 +279,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         documents: {
-          ...state.documents,
-          uploadDocumentData: action.data,
+          ...state?.documents,
+          uploadDocumentData: action?.data,
         },
       };
     }
@@ -296,10 +291,10 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           taskList: {
-            ...state.task.taskList,
-            ...action.data,
+            ...state?.task?.taskList,
+            ...action?.data,
             isLoading: false,
             error: null,
           },
@@ -309,11 +304,11 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           taskList: {
-            ...state.task.taskList,
+            ...state?.task?.taskList,
             isLoading: false,
-            error: action.data,
+            error: action?.data,
           },
         },
       };
@@ -321,8 +316,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
-          taskList: action.data,
+          ...state?.task,
+          taskList: action?.data,
         },
       };
 
@@ -330,24 +325,24 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
-          columnList: action.data,
+          ...state?.task,
+          columnList: action?.data,
         },
       };
 
     case DEBTORS_REDUX_CONSTANTS.TASK.UPDATE_DEBTOR_TASK_COLUMN_NAME_LIST_ACTION: {
       const columnList = {
-        ...state.task.columnList,
+        ...state?.task?.columnList,
       };
       // eslint-disable-next-line no-shadow
-      const { name, type, value } = action.data;
+      const { name, type, value } = action?.data;
       columnList[`${type}`] = columnList[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           columnList,
         },
       };
@@ -356,26 +351,26 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           addTask: {
-            ...state.task.addTask,
-            [action.name]: action.value,
+            ...state?.task?.addTask,
+            [action?.name]: action?.value,
           },
         },
       };
 
     case DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.ASSIGNEE_DROP_DOWN_DATA_ACTION: {
-      const assigneeList = action.data.map(data => ({
-        label: data.name,
-        value: data._id,
+      const assigneeList = action?.data?.map(data => ({
+        label: data?.name,
+        value: data?._id,
         name: 'assigneeId',
       }));
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           dropDownData: {
-            ...state.task.dropDownData,
+            ...state?.task?.dropDownData,
             assigneeList,
           },
         },
@@ -383,17 +378,17 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
     }
 
     case DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION: {
-      const entityList = action.data.map(data => ({
-        label: data.name || data.applicationId,
-        value: data._id,
+      const entityList = action?.data?.map(data => ({
+        label: data?.name || data?.applicationId,
+        value: data?._id,
         name: 'entityId',
       }));
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           dropDownData: {
-            ...state.task.dropDownData,
+            ...state?.task?.dropDownData,
             entityList,
           },
         },
@@ -401,17 +396,17 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
     }
 
     case DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION: {
-      const defaultEntityList = action.data.map(data => ({
-        label: data.name || data.applicationId,
-        value: data._id,
+      const defaultEntityList = action?.data?.map(data => ({
+        label: data?.name || data?.applicationId,
+        value: data?._id,
         name: 'entityId',
       }));
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           dropDownData: {
-            ...state.task.dropDownData,
+            ...state?.task?.dropDownData,
             defaultEntityList,
           },
         },
@@ -422,7 +417,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
+          ...state?.task,
           addTask: {
             title: '',
             description: '',
@@ -440,8 +435,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         task: {
-          ...state.task,
-          addTask: action.data,
+          ...state?.task,
+          addTask: action?.data,
         },
       };
 
@@ -451,10 +446,10 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         application: {
-          ...state.application,
+          ...state?.application,
           applicationList: {
-            ...state.application.applicationList,
-            ...action.data,
+            ...state?.application?.applicationList,
+            ...action?.data,
             isLoading: false,
             error: null,
           },
@@ -464,11 +459,11 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         application: {
-          ...state.application,
+          ...state?.application,
           applicationList: {
-            ...state.application.applicationList,
+            ...state?.application?.applicationList,
             isLoading: false,
-            error: action.data,
+            error: action?.data,
           },
         },
       };
@@ -476,8 +471,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         application: {
-          ...state.application,
-          applicationList: action.data,
+          ...state?.application,
+          applicationList: action?.data,
         },
       };
     }
@@ -485,24 +480,24 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         application: {
-          ...state.application,
-          columnList: action.data,
+          ...state?.application,
+          columnList: action?.data,
         },
       };
     }
     case DEBTORS_REDUX_CONSTANTS.APPLICATION.UPDATE_DEBTOR_APPLICATION_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.application.columnList,
+        ...state?.application?.columnList,
       };
       // eslint-disable-next-line no-shadow
-      const { name, type, value } = action.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
+      const { name, type, value } = action?.data;
+      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         application: {
-          ...state.application,
+          ...state?.application,
           columnList,
         },
       };
@@ -513,10 +508,10 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         creditLimit: {
-          ...state.creditLimit,
+          ...state?.creditLimit,
           creditLimitList: {
-            ...state.creditLimit.creditLimitList,
-            ...action.data,
+            ...state?.creditLimit?.creditLimitList,
+            ...action?.data,
             isLoading: false,
             error: null,
           },
@@ -526,11 +521,11 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         creditLimit: {
-          ...state.creditLimit,
+          ...state?.creditLimit,
           creditLimitList: {
-            ...state.creditLimit.creditLimitList,
+            ...state?.creditLimit?.creditLimitList,
             isLoading: false,
-            error: action.data,
+            error: action?.data,
           },
         },
       };
@@ -538,8 +533,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         creditLimit: {
-          ...state.creditLimit,
-          creditLimitList: action.data,
+          ...state?.creditLimit,
+          creditLimitList: action?.data,
         },
       };
     }
@@ -547,24 +542,24 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         creditLimit: {
-          ...state.creditLimit,
-          columnList: action.data,
+          ...state?.creditLimit,
+          columnList: action?.data,
         },
       };
     }
     case DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.UPDATE_DEBTOR_CREDIT_LIMIT_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.creditLimit.columnList,
+        ...state?.creditLimit?.columnList,
       };
       // eslint-disable-next-line no-shadow
-      const { type, name, value } = action.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
+      const { type, name, value } = action?.data;
+      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         creditLimit: {
-          ...state.creditLimit,
+          ...state?.creditLimit,
           columnList,
         },
       };
@@ -575,10 +570,10 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         stakeHolder: {
-          ...state.stakeHolder,
+          ...state?.stakeHolder,
           stakeHolderList: {
-            ...state.stakeHolder.stakeHolderList,
-            ...action.data,
+            ...state?.stakeHolder?.stakeHolderList,
+            ...action?.data,
             isLoading: false,
             error: null,
           },
@@ -588,11 +583,11 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         stakeHolder: {
-          ...state.stakeHolder,
+          ...state?.stakeHolder,
           stakeHolderList: {
-            ...state.stakeHolder.stakeHolderList,
+            ...state?.stakeHolder?.stakeHolderList,
             isLoading: false,
-            error: action.data,
+            error: action?.data,
           },
         },
       };
@@ -600,8 +595,8 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         stakeHolder: {
-          ...state.stakeHolder,
-          stakeHolderList: action.data,
+          ...state?.stakeHolder,
+          stakeHolderList: action?.data,
         },
       };
     }
@@ -609,24 +604,24 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         stakeHolder: {
-          ...state.stakeHolder,
-          columnList: action.data,
+          ...state?.stakeHolder,
+          columnList: action?.data,
         },
       };
     }
     case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.UPDATE_DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION: {
       const columnList = {
-        ...state.stakeHolder.columnList,
+        ...state?.stakeHolder?.columnList,
       };
       // eslint-disable-next-line no-shadow
-      const { name, type, value } = action.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
+      const { name, type, value } = action?.data;
+      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         stakeHolder: {
-          ...state.stakeHolder,
+          ...state?.stakeHolder,
           columnList,
         },
       };

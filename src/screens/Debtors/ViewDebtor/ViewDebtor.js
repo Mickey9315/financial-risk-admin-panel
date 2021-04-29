@@ -45,7 +45,7 @@ const ViewInsurer = () => {
 
   const tabs = [
     'Credit Limits',
-    'Stakeholder',
+    // 'Stakeholder',
     'Application',
     'Overdues',
     'Claims',
@@ -54,8 +54,12 @@ const ViewInsurer = () => {
     'Notes',
     'Reports',
   ];
-  const debtorData = useSelector(({ debtorsManagement }) => debtorsManagement.selectedDebtorData);
-  const dropdownData = useSelector(({ debtorsManagement }) => debtorsManagement.dropdownData);
+  const debtorData = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.selectedDebtorData ?? {}
+  );
+  const dropdownData = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
+  );
 
   const INPUTS = useMemo(
     () => [
@@ -136,7 +140,7 @@ const ViewInsurer = () => {
         placeholder: 'Street Type',
         type: 'select',
         name: 'streetType',
-        data: dropdownData?.streetType || [],
+        data: dropdownData?.streetType ?? [],
       },
       {
         isEditable: true,
@@ -294,7 +298,7 @@ const ViewInsurer = () => {
                 type="text"
                 name={input.name}
                 placeholder={action === 'view' ? '-' : input.placeholder}
-                value={debtorData[input.name]}
+                value={debtorData?.[input.name]}
                 onChange={handleOnTextChange}
                 disabled={action === 'view' || !input.isEditable}
                 borderClass={action === 'view' || !input.isEditable ? 'disabled-control' : ''}
@@ -370,13 +374,13 @@ const ViewInsurer = () => {
       <div className="common-white-container">
         {activeTabIndex === 0 && <DebtorsCreditLimitTab />}
         {/* {activeTabIndex === 1 && <DebtorsStakeHolderTab />} */}
-        {activeTabIndex === 2 && <DebtorsApplicationTab />}
-        {activeTabIndex === 3 && <DebtorsOverduesTab />}
-        {activeTabIndex === 4 && <DebtorsClaimsTab />}
-        {activeTabIndex === 5 && <DebtorsTasksTab />}
-        {activeTabIndex === 6 && <DebtorsDocumentsTab />}
-        {activeTabIndex === 7 && <DebtorsNotesTab />}
-        {activeTabIndex === 8 && <DebtorsReportsTab />}
+        {activeTabIndex === 1 && <DebtorsApplicationTab />}
+        {activeTabIndex === 2 && <DebtorsOverduesTab />}
+        {activeTabIndex === 3 && <DebtorsClaimsTab />}
+        {activeTabIndex === 4 && <DebtorsTasksTab />}
+        {activeTabIndex === 5 && <DebtorsDocumentsTab />}
+        {activeTabIndex === 6 && <DebtorsNotesTab />}
+        {activeTabIndex === 7 && <DebtorsReportsTab />}
       </div>
     </>
   );

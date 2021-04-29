@@ -48,13 +48,15 @@ const ClientTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const clientTaskListData = useSelector(({ clientManagement }) => clientManagement.task.taskList);
-  const clientTaskColumnNameListData = useSelector(
-    ({ clientManagement }) => clientManagement.task.columnList
+  const clientTaskListData = useSelector(
+    ({ clientManagement }) => clientManagement?.task?.taskList ?? {}
   );
-  const addTaskState = useSelector(({ clientManagement }) => clientManagement.task.addTask);
+  const clientTaskColumnNameListData = useSelector(
+    ({ clientManagement }) => clientManagement?.task?.columnList ?? {}
+  );
+  const addTaskState = useSelector(({ clientManagement }) => clientManagement?.task?.addTask ?? {});
   const taskDropDownData = useSelector(
-    ({ clientManagement }) => clientManagement.task.dropDownData
+    ({ clientManagement }) => clientManagement?.task?.dropDownData ?? {}
   );
 
   const { page, pages, total, limit, docs, headers } = useMemo(() => clientTaskListData, [
@@ -65,7 +67,7 @@ const ClientTaskTab = () => {
   ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
-  const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile);
+  const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
 
   const getClientTaskList = useCallback(
@@ -145,7 +147,7 @@ const ClientTaskTab = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseCustomFieldModal },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [toggleCustomField]
+    [onClickResetDefaultColumnSelection, onCloseCustomFieldModal, onClickSaveColumnSelection]
   );
 
   const onChangeSelectedColumn = useCallback((type, name, value) => {
@@ -167,14 +169,14 @@ const ClientTaskTab = () => {
         placeholder: 'Select Assignee',
         type: 'select',
         name: 'assigneeId',
-        data: assigneeList,
+        data: assigneeList ?? [],
       },
       {
         label: 'Priority',
         placeholder: 'Select Priority',
         type: 'select',
         name: 'priority',
-        data: priorityData,
+        data: priorityData ?? [],
       },
       {
         label: 'Due Date',
@@ -188,7 +190,7 @@ const ClientTaskTab = () => {
         placeholder: 'Select Task For',
         type: 'select',
         name: 'entityType',
-        data: entityTypeData,
+        data: entityTypeData ?? [],
       },
       {
         type: 'blank',
@@ -198,7 +200,7 @@ const ClientTaskTab = () => {
         placeholder: 'Select Entity',
         type: 'search',
         name: 'entityId',
-        data: entityList,
+        data: entityList ?? [],
       },
       {
         type: 'blank',
@@ -289,16 +291,16 @@ const ClientTaskTab = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return addTaskState.assigneeId || [];
+          return addTaskState?.assigneeId || [];
         }
         case 'priority': {
-          return addTaskState.priority || [];
+          return addTaskState?.priority || [];
         }
         case 'entityType': {
-          return addTaskState.entityType || [];
+          return addTaskState?.entityType || [];
         }
         case 'entityId': {
-          return addTaskState.entityId;
+          return addTaskState?.entityId || [];
         }
         default:
           return [];
@@ -319,23 +321,23 @@ const ClientTaskTab = () => {
 
   const onSaveTask = useCallback(() => {
     const data = {
-      title: addTaskState.title.trim(),
+      title: addTaskState?.title?.trim(),
       // priority: addTaskState?.priority[0]?.value,
-      dueDate: addTaskState.dueDate || new Date().toISOString(),
+      dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'client-task',
     };
-    if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority[0].value;
-    if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType[0].value;
-    if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0].value;
-    if (addTaskState?.description) data.description = addTaskState?.description.trim();
+    if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority?.[0]?.value;
+    if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType?.[0]?.value;
+    if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId?.[0]?.value;
+    if (addTaskState?.description) data.description = addTaskState?.description?.trim();
 
-    if (!data.title && data.title.length === 0) {
+    if (!data?.title && data?.title?.length === 0) {
       errorNotification('Please add title');
     } else {
       try {
         if (editTaskModal) {
-          dispatch(updateTaskData(addTaskState._id, data, callBackOnTaskEdit));
+          dispatch(updateTaskData(addTaskState?._id, data, callBackOnTaskEdit));
         } else {
           dispatch(saveTaskData(data, callBackOnTaskAdd));
         }
@@ -358,7 +360,7 @@ const ClientTaskTab = () => {
                 type="text"
                 name={input.name}
                 placeholder={input.placeholder}
-                value={addTaskState[input.name]}
+                value={addTaskState?.[input.name]}
                 onChange={handleTextInputChange}
               />
             </>
@@ -413,8 +415,8 @@ const ClientTaskTab = () => {
                   showYearDropdown
                   scrollableYearDropdown
                   value={
-                    addTaskState[input.name]
-                      ? new Date(addTaskState[input.name]).toLocaleDateString()
+                    addTaskState?.[input.name]
+                      ? new Date(addTaskState?.[input.name])?.toLocaleDateString()
                       : new Date().toLocaleDateString()
                   }
                   onChange={date => handleDateChange(input.name, new Date(date).toISOString())}
@@ -503,7 +505,7 @@ const ClientTaskTab = () => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            await dispatch(deleteTaskAction(deleteTaskData.id, () => callBack()));
+            await dispatch(deleteTaskAction(deleteTaskData?.id, () => callBack()));
           } catch (e) {
             /**/
           }
@@ -533,13 +535,13 @@ const ClientTaskTab = () => {
   );
 
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef.current.value;
+    const searchKeyword = searchInputRef?.current?.value;
     console.log(searchKeyword);
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
       getClientTaskList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getClientTaskList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getClientTaskList({ search: searchKeyword?.trim()?.toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }
@@ -550,19 +552,19 @@ const ClientTaskTab = () => {
     dispatch(
       updateAddTaskStateFields(
         'assigneeId',
-        assigneeList && assigneeList.filter(e => e.value === _id)
+        assigneeList && assigneeList?.filter(e => e.value === _id)
       )
     );
     dispatch(
       updateAddTaskStateFields(
         'entityId',
-        defaultEntityList && defaultEntityList.filter(e => e.value === id)
+        defaultEntityList && defaultEntityList?.filter(e => e.value === id)
       )
     );
     dispatch(
       updateAddTaskStateFields(
         'entityType',
-        entityTypeData && entityTypeData.filter(e => e.value === 'client')
+        entityTypeData && entityTypeData?.filter(e => e.value === 'client')
       )
     );
   }, [assigneeList, defaultEntityList, entityTypeData]);
@@ -659,7 +661,7 @@ const ClientTaskTab = () => {
           hideModal={toggleAddTaskModal}
         >
           <div className="common-white-container my-work-add-task-container">
-            {INPUTS.map(getComponentFromType)}
+            {INPUTS?.map(getComponentFromType)}
           </div>
         </Modal>
       )}
@@ -671,7 +673,7 @@ const ClientTaskTab = () => {
           hideModal={toggleEditTaskModal}
         >
           <div className="common-white-container my-work-add-task-container">
-            {INPUTS.map(getComponentFromType)}
+            {INPUTS?.map(getComponentFromType)}
           </div>
         </Modal>
       )}

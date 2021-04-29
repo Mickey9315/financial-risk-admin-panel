@@ -10,7 +10,7 @@ const InsurerMatrixTab = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const { priceRange: matrixReportData, generalGuideLines: matrixGuidelinesData } = useSelector(
-    ({ insurer }) => insurer.matrix
+    ({ insurer }) => insurer?.matrix ?? {}
   );
   useEffect(() => {
     dispatch(getInsurerMatrixData(id));
@@ -22,9 +22,9 @@ const InsurerMatrixTab = () => {
         <div className="matrix-table">
           <div className="matrix-level header">Level</div>
           <div className="matrix-australia header">Information Sourced / Guidelines</div>
-          {matrixReportData.map(report => (
+          {matrixReportData?.map(report => (
             <>
-              <div className="matrix-level">{report.level}</div>
+              <div className="matrix-level">{report?.level}</div>
               <div className="matrix-australia matrix-detail-container">
                 <div className="country-name">
                   <div>
@@ -33,7 +33,7 @@ const InsurerMatrixTab = () => {
                   Australia
                 </div>
                 <div className="matrix-detail-grid">
-                  {report.australianCompanies && (
+                  {report?.australianCompanies && (
                     <div>
                       <div className="matrix-detail-title">Companies</div>
                       {report.australianCompanies.map(auIllion => (
@@ -45,16 +45,16 @@ const InsurerMatrixTab = () => {
                     </div>
                   )}
 
-                  {report.australianReports &&
-                    report.australianReports.map(auReport => (
+                  {report?.australianReports &&
+                    report?.australianReports?.map(auReport => (
                       <div className="au-report-container mb-10">
                         <span className="material-icons-round">arrow_circle_up</span>
                         <div className="font-field">{auReport}</div>
                       </div>
                     ))}
 
-                  {report.australianIndividuals &&
-                    report.australianIndividuals.map(auEquifax => (
+                  {report?.australianIndividuals &&
+                    report?.australianIndividuals?.map(auEquifax => (
                       <div>
                         <div className="matrix-detail-title">Individuals</div>
                         <div className="au-equifax-report-container">
@@ -67,7 +67,7 @@ const InsurerMatrixTab = () => {
               </div>
 
               <div className="matrix-new-zealand">
-                {report.newZealand.length > 0 && (
+                {report?.newZealand?.length > 0 && (
                   <div className="matrix-detail-container">
                     <div className="country-name">
                       <div>
@@ -76,7 +76,7 @@ const InsurerMatrixTab = () => {
                       New Zealand
                     </div>
 
-                    {report.newZealand.map(nzIllion => (
+                    {report?.newZealand?.map(nzIllion => (
                       <div className="matrix-detail-report-container mb-10">
                         <span className="material-icons-round">arrow_circle_up</span>
                         <div className="font-field">
@@ -87,13 +87,13 @@ const InsurerMatrixTab = () => {
                   </div>
                 )}
               </div>
-              {report.commonGuideLines.length > 0 && (
+              {report?.commonGuideLines?.length > 0 && (
                 <div className="matrix-guidelines matrix-detail-container">
                   <div className="report-guideline-title">
                     <span className="material-icons-round">screen_search_desktop</span>
                     Guidelines
                   </div>
-                  {report.commonGuideLines.map(guideline => (
+                  {report?.commonGuideLines?.map(guideline => (
                     <div className="matrix-detail-report-container">
                       <span className="material-icons-round">arrow_circle_up</span>
                       <div className="font-field">{guideline}</div>
@@ -112,7 +112,7 @@ const InsurerMatrixTab = () => {
       <div className="matrix-guidelines-title">Guidelines</div>
       {matrixGuidelinesData ? (
         <div className="matrix-guidelines-container">
-          {matrixGuidelinesData.map(guideline => (
+          {matrixGuidelinesData?.map(guideline => (
             <div>
               <span className="material-icons-round">arrow_circle_up</span>
               {guideline}

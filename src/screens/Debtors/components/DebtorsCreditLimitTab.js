@@ -20,10 +20,10 @@ const DebtorsCreditLimitTab = () => {
   const dispatch = useDispatch();
   const searchInputRef = useRef();
   const debtorCreditLimitData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.creditLimit.creditLimitList
+    ({ debtorsManagement }) => debtorsManagement?.creditLimit?.creditLimitList ?? {}
   );
   const debtorCreditLimitColumnNameList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement.creditLimit.columnList
+    ({ debtorsManagement }) => debtorsManagement?.creditLimit?.columnList ?? {}
   );
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
     () => debtorCreditLimitData,
@@ -105,7 +105,7 @@ const DebtorsCreditLimitTab = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
 
   useEffect(() => {
@@ -115,11 +115,11 @@ const DebtorsCreditLimitTab = () => {
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef.current.value;
-    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
       getCreditLimitList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword.trim().toString().length !== 0) {
-        getCreditLimitList({ search: searchKeyword.trim().toString() });
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        getCreditLimitList({ search: searchKeyword?.trim()?.toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }
