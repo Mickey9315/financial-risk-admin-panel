@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import Tooltip from 'rc-tooltip';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import Button from '../../../../common/Button/Button';
 import {
@@ -226,8 +227,7 @@ const ApplicationNotesAccordion = props => {
           {applicationNoteList?.length > 0 ? (
             applicationNoteList.map(note => (
               <div className="common-accordion-item-content-box" key={note._id}>
-                <div className="alert-title-row">
-                  <div className="alert-title">{note.title || ''}</div>
+                <div className="note-title-row just-end">
                   <span
                     className="material-icons-round font-placeholder just-end"
                     onClick={e => onClickActionToggleButton(e, note)}
@@ -240,10 +240,14 @@ const ApplicationNotesAccordion = props => {
                   <span className="details">{moment(note.createdAt).format('DD-MMM-YYYY')}</span>
 
                   <span className="title">Owner:</span>
-                  <span className="details">{note.createdById || '-'}</span>
+                  <Tooltip overlay={note.createdById || 'No owner name added'} placement="left">
+                    <span className="details">{note.createdById || '-'}</span>
+                  </Tooltip>
                 </div>
-                <div className="font-field">Description:</div>
-                <div className="font-primary">{note.description || '-'}</div>
+                <div className="font-field">Note Description:</div>
+                <div className="view-application-accordion-description">
+                  {note.description || '-'}
+                </div>
               </div>
             ))
           ) : (
@@ -279,7 +283,11 @@ const ApplicationNotesAccordion = props => {
         </Modal>
       )}
       {showActionMenu && (
-        <DropdownMenu style={menuPosition} toggleMenu={setShowActionMenu}>
+        <DropdownMenu
+          style={menuPosition}
+          menuClass="view-application-accordion-dropdown"
+          toggleMenu={setShowActionMenu}
+        >
           <div className="menu-name" onClick={onEditNoteClick}>
             <span className="material-icons-round">edit</span> Edit
           </div>

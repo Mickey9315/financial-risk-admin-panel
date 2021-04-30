@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import Tooltip from 'rc-tooltip';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 
 const ApplicationReportAccordion = props => {
@@ -8,7 +9,12 @@ const ApplicationReportAccordion = props => {
       <div className="common-accordion-item-content-box">
         <div className="report-row">
           <span className="title">Title:</span>
-          <span className="details">Lorem ipsum dolor sit amet, consetetur</span>
+          <Tooltip
+            overlay={'Lorem ipsum dolor sit amet, consetetur' || 'No report title added'}
+            placement="left"
+          >
+            <span className="details">Lorem ipsum dolor sit amet, consetetur</span>
+          </Tooltip>
           <span className="title">Date:</span>
           <span className="details">15-Dec-2020</span>
           <span className="title">Link:</span>

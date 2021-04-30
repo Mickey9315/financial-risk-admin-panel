@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import Tooltip from 'rc-tooltip';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 
 const ApplicationAlertsAccordion = props => {
@@ -7,7 +8,10 @@ const ApplicationAlertsAccordion = props => {
     <AccordionItem index={index} header="Alerts" count="04" suffix="expand_more">
       <div className="common-accordion-item-content-box alert">
         <div className="alert-title-row">
-          <div className="alert-title">Title of Note</div>
+          <Tooltip overlay={<span>Title of Alert</span>} placement="left">
+            <div className="alert-title">Title of Alert</div>
+          </Tooltip>
+
           <span className="material-icons-round font-placeholder">more_vert</span>
         </div>
         <div className="date-owner-row">
@@ -17,8 +21,8 @@ const ApplicationAlertsAccordion = props => {
           <span className="title">Owner:</span>
           <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
         </div>
-        <div className="font-field">Description:</div>
-        <div className="font-primary">
+        <div className="font-field">Alert Description:</div>
+        <div className="view-application-accordion-description">
           Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor invidunt ut
           labore et.
         </div>

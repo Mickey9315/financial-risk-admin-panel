@@ -55,7 +55,7 @@ function SetPassword() {
         prefix="lock_open"
         prefixClass="login-input-icon"
         type="password"
-        placeholder="Enter New password"
+        placeholder="Enter new password"
         value={makePassword}
         onChange={onChangePassword}
         onKeyDown={onEnterKeyPress}
@@ -65,7 +65,7 @@ function SetPassword() {
         prefix="lock_open"
         prefixClass="login-input-icon"
         type="password"
-        placeholder="Re Enter password"
+        placeholder="Re enter Password"
         value={confirmPassword}
         onChange={onChangeConfirmPassword}
         onKeyDown={onEnterKeyPress}

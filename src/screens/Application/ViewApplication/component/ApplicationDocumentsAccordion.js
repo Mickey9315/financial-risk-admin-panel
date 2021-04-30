@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import ReactSelect from 'react-dropdown-select';
+import Tooltip from 'rc-tooltip';
 import {
   deleteViewApplicationDocumentAction,
   getApplicationModuleList,
@@ -287,7 +288,9 @@ const ApplicationDocumentsAccordion = props => {
             applicationDocsList.map(doc => (
               <div className="common-accordion-item-content-box">
                 <div className="document-title-row">
-                  <div className="document-title">{doc.documentTypeId || '-'}</div>
+                  <Tooltip overlay={doc.documentTypeId || 'No document title set'} placement="left">
+                    <div className="document-title">{doc.documentTypeId || '-'}</div>
+                  </Tooltip>
                   <span
                     className="material-icons-round font-danger cursor-pointer"
                     onClick={() => deleteDocument(doc._id)}
@@ -302,8 +305,10 @@ const ApplicationDocumentsAccordion = props => {
                   <span className="title">Owner:</span>
                   <span className="details">{doc.uploadById || '-'}</span>
                 </div>
-                <div className="font-field">Description:</div>
-                <div className="font-primary">{doc.description || '-'}</div>
+                <div className="font-field">Document Description:</div>
+                <div className="view-application-accordion-description">
+                  {doc.description || '-'}
+                </div>
               </div>
             ))}
         </AccordionItem>
@@ -330,7 +335,7 @@ const ApplicationDocumentsAccordion = props => {
               fileName={fileData.name || 'Browse'}
               handleChange={onUploadClick}
             />
-            <span>Description</span>
+            <span>Document Description:</span>
             <Input
               prefixClass="font-placeholder"
               placeholder="Document description"

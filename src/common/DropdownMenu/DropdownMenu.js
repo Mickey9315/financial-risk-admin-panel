@@ -7,13 +7,14 @@ import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 const menuRoot = document.getElementById('menu-root');
 
 const DropdownMenu = props => {
-  const { children, toggleMenu, ...restProps } = props;
+  const { children, toggleMenu, menuClass, ...restProps } = props;
+  const dropdownClass = `dropdown-menu ${menuClass}`;
   const actionMenuRef = useRef();
   useOnClickOutside(actionMenuRef, () => toggleMenu(false));
 
   return ReactDOM.createPortal(
     <div className="dropdown-menu-overlay">
-      <div className="dropdown-menu" ref={actionMenuRef} {...restProps}>
+      <div className={dropdownClass} ref={actionMenuRef} {...restProps}>
         {children}
       </div>
     </div>,
@@ -24,11 +25,13 @@ const DropdownMenu = props => {
 DropdownMenu.propTypes = {
   children: PropTypes.element,
   toggleMenu: PropTypes.func,
+  menuClass: PropTypes.string,
 };
 
 DropdownMenu.defaultProps = {
   children: null,
   toggleMenu: () => {},
+  menuClass: '',
 };
 
 export default DropdownMenu;

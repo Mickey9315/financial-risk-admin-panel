@@ -42,8 +42,16 @@
   border-radius: 5px;
 
   .note-title, .alert-title, .document-title {
+    max-width: 70%;
     font: $subtitle $font-medium;
     color: $secondary-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu-name {
+    font: $subtitle!important;
   }
 }
 
@@ -96,6 +104,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .material-icons-round {
     width: 10px;
     cursor: pointer;
@@ -165,7 +174,7 @@
 .current-business-address-title {
   margin: 10px 0;
   font: $subtitle $font-medium;
-  color: $secondary-color;
+  color: $primary-color;
 }
 
 .current-business-address {
@@ -205,4 +214,14 @@
 .accordion-body-container.application-active-accordion-scroll.active-accordion{
   max-height: 60vh;
   overflow: auto!important;
+}
+
+.view-application-accordion-description {
+  color: $primary-color;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.view-application-accordion-dropdown .menu-name {
+  font-size: $subtitle!important;
 }

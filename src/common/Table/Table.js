@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import './Table.scss';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import ReactTooltip from 'react-tooltip';
-import '../../../node_modules/react-tooltip/dist/index';
+import Tooltip from 'rc-tooltip';
+import 'rc-tooltip/assets/bootstrap.css';
 import Drawer from '../Drawer/Drawer';
 import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
@@ -177,7 +177,6 @@ const Table = props => {
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
-      <ReactTooltip type="dark" effect="float" />
       <table className={tableClassName}>
         <thead>
           <tr>
@@ -335,41 +334,35 @@ function Row(props) {
             case 'priority':
               return (
                 <td key={index.toString()} align={align}>
-                  <span
-                    title={value ?? ''}
-                    data-delay-show="100"
-                    className={`task-priority-${value}`}
-                  >
-                    {value ?? '-'}
-                  </span>
+                  <Tooltip overlay={<span>{value || 'No value'}</span>} placement="top">
+                    <span title={value ?? ''} className={`task-priority-${value}`}>
+                      {value ?? '-'}
+                    </span>
+                  </Tooltip>
                 </td>
               );
             case 'isCompleted':
               return (
                 <td key={index.toString()} align={align}>
-                  <span
-                    title={
-                      (data?.[key]?.props?.className ?? '') === 'table-checkbox' ? '' : value ?? ''
-                    }
-                    data-delay-show="100"
-                  >
-                    {value ?? '-'}
-                  </span>
+                  {data?.[key]?.props?.className !== 'table-checkbox' ? (
+                    <Tooltip overlay={<span>{value ?? 'No value'}</span>} placement="top">
+                      {value ?? '-'}
+                    </Tooltip>
+                  ) : (
+                    value ?? '-'
+                  )}
                 </td>
               );
             default:
               return (
                 <td key={index.toString()} align={align}>
-                  <span
-                    title={
-                      ['link', 'table-checkbox'].includes(data?.[key]?.props?.className ?? '')
-                        ? ''
-                        : value ?? ''
-                    }
-                    data-delay-show="100"
-                  >
-                    {value ?? '-'}
-                  </span>
+                  {data?.[key]?.props?.className !== 'table-checkbox' ? (
+                    <Tooltip overlay={<span>{value ?? 'No value'}</span>} placement="top">
+                      <span>{value ?? '-'}</span>
+                    </Tooltip>
+                  ) : (
+                    value ?? '-'
+                  )}
                 </td>
               );
           }

@@ -17,13 +17,14 @@
 .common-switch + label:after {
   content: '';
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
+  top: 0px;
+  left: 0px;
+  width: 24px;
+  height: 24px;
   background: #fff;
+  border: 1px solid $border-color;
   border-radius: 50%;
-  transition: 0.2s;
+  transition: 0.5s;
 }
 
 .common-switch:checked + label {
@@ -31,7 +32,8 @@
 }
 
 .common-switch:checked + label:after {
-  left: calc(100% - 2px);
+  left: 100%;
+  border: 1px solid $primary-color;
   transform: translateX(-100%);
 }
 

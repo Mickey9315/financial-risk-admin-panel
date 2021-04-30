@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import ReactSelect from 'react-dropdown-select';
 import DatePicker from 'react-datepicker';
+import Tooltip from 'rc-tooltip';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import Button from '../../../../common/Button/Button';
 import Checkbox from '../../../../common/Checkbox/Checkbox';
@@ -491,10 +492,11 @@ const ApplicationTaskAccordion = props => {
           {applicationTaskList?.docs?.length > 0 ? (
             applicationTaskList.docs.map(task => (
               <div className="common-accordion-item-content-box" key={task._id}>
-                <div className="d-flex align-center just-bet">
-                  <div className="document-title-row">
+                <div className="document-title-row">
+                  <Tooltip overlay={task.title || 'No task title set'} placement="left">
                     <div className="document-title">{task.title || '-'}</div>
-                  </div>
+                  </Tooltip>
+
                   <div className="d-flex">
                     <Checkbox
                       checked={task.isCompleted}
@@ -514,10 +516,14 @@ const ApplicationTaskAccordion = props => {
                   <span className="details">{moment(task.createdAt).format('DD-MMM-YYYY')}</span>
 
                   <span className="title">Owner:</span>
-                  <span className="details">{task.createdById}</span>
+                  <Tooltip overlay={task.createdById || 'No owner name added'} placement="left">
+                    <span className="details">{task.createdById}</span>
+                  </Tooltip>
                 </div>
                 <div className="font-field">Description:</div>
-                <div className="font-primary">{task.description || '-'}</div>
+                <div className="view-application-accordion-description">
+                  {task.description || '-'}
+                </div>
               </div>
             ))
           ) : (
@@ -550,7 +556,11 @@ const ApplicationTaskAccordion = props => {
         </Modal>
       )}
       {showActionMenu && (
-        <DropdownMenu style={menuPosition} toggleMenu={setShowActionMenu}>
+        <DropdownMenu
+          style={menuPosition}
+          toggleMenu={setShowActionMenu}
+          menuClass="view-application-accordion-dropdown"
+        >
           <div className="menu-name" onClick={onEditTaskClick}>
             <span className="material-icons-round">edit</span> Edit
           </div>

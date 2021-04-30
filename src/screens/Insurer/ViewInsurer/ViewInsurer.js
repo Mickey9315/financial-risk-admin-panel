@@ -108,16 +108,17 @@ const ViewInsurer = () => {
               borderClass="disabled-control"
             />
           </div>
-          <div className="common-detail-field">
+          <div className="common-detail-field view-insurer-website">
             <span className="common-detail-title">Website</span>
-            <Input
+            <a
+              href={website ?? ''}
+              target="_blank"
+              rel="noreferrer"
               name="website"
-              type="text"
-              value={website ?? '-'}
-              placeholder="www.trad.com"
-              disabled
-              borderClass="disabled-control"
-            />
+              placeholder="No value"
+            >
+              {website ?? '-'}
+            </a>
           </div>
         </div>
       </div>
