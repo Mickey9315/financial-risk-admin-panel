@@ -9,33 +9,33 @@ const initialClientListState = {
   clientList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   selectedClient: null,
   creditLimit: {
-    creditLimitList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    creditLimitList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   application: {
-    applicationList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    applicationList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   contact: {
-    contactList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    contactList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   policies: {
-    policiesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    policiesList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   notes: {
-    notesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    notesList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   documents: {
-    documentsList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    documentsList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
     documentTypeList: [],
-    uploadDocumentData: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    uploadDocumentData: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   task: {
-    taskList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    taskList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
     addTask: {
       title: '',
       description: '',

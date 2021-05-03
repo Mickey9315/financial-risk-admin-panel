@@ -18,12 +18,12 @@ const initialInsurer = {
   insurerViewData: {},
   syncInsurerWithCRM: [],
   contact: {
-    contactList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    contactList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   policies: {
-    policiesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    policiesList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
     policySyncList: [],
   },
   matrix: {

@@ -14,8 +14,9 @@ const ApplicationCreditLimitStep = () => {
     isPassedOverdueAmount,
     passedOverdueDetails,
     creditLimit,
+    note,
     errors,
-  } = useSelector(({ application }) => application.editApplication?.creditLimit);
+  } = useSelector(({ application }) => application.editApplication?.creditLimit ?? {});
 
   const updateSingleCompanyState = useCallback((name, value) => {
     dispatch(updateEditApplicationField('creditLimit', name, value));
@@ -39,6 +40,21 @@ const ApplicationCreditLimitStep = () => {
 
   return (
     <>
+      <div className="f-14 font-secondary mb-10">
+        Credit Limit Required covering 3 months of sales
+      </div>
+
+      <div className="credit-limit-amount">
+        <span className="font-primary mr-15">Amount*</span>
+        <Input
+          type="text"
+          name="creditLimit"
+          placeholder="$00000"
+          value={creditLimit}
+          onChange={handleInputChange}
+        />
+      </div>
+      {errors?.creditLimit && <div className="ui-state-error">{errors?.creditLimit}</div>}
       <div>
         <div className="f-14 font-primary mb-10">
           Any extended payment terms outside your policy standard terms? *
@@ -117,22 +133,17 @@ const ApplicationCreditLimitStep = () => {
           <div className="ui-state-error">{errors?.passedOverdueDetails}</div>
         )}
       </div>
-
-      <div className="f-14 font-secondary mb-10">
-        Credit Limit Required covering 3 months of sales
-      </div>
-
-      <div className="credit-limit-amount">
-        <span className="font-primary mr-15">Amount*</span>
-        <Input
-          type="text"
-          name="creditLimit"
-          placeholder="$00000"
-          value={creditLimit}
+      <div className="if-yes-row">
+        <span className="font-primary mr-15">Note</span>
+        <textarea
+          rows={5}
+          name="note"
           onChange={handleInputChange}
+          placeholder="Note details here"
+          value={note}
         />
+        {errors?.note && <div className="ui-state-error">{errors?.note}</div>}
       </div>
-      {errors?.creditLimit && <div className="ui-state-error">{errors?.creditLimit}</div>}
     </>
   );
 };

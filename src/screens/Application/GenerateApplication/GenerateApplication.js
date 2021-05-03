@@ -60,19 +60,20 @@ const GenerateApplication = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { applicationStage, ...editApplicationData } = useSelector(
-    ({ application }) => application?.editApplication
+    ({ application }) => application?.editApplication ?? {}
   );
   const { applicationId } = useQueryParams();
 
   // for stepper components
   const FILTERED_STEP_COMPONENT = useMemo(() => {
-    let finalSteps = STEP_COMPONENT;
+    let finalSteps = [...STEP_COMPONENT];
     if (
-      editApplicationData?.company?.entityType?.[0]?.value !== 'PARTNERSHIP' &&
-      editApplicationData?.company?.entityType?.[0]?.value !== 'TRUST'
+      !['PARTNERSHIP', 'TRUST'].includes(editApplicationData?.company?.entityType?.[0]?.value ?? '')
     ) {
-      finalSteps = finalSteps.filter(step => step?.type?.name !== 'ApplicationPersonStep');
+      delete finalSteps[1];
+      finalSteps = finalSteps.filter(step => step);
     }
+
     return finalSteps;
   }, [editApplicationData?.company?.entityType, STEP_COMPONENT]);
 
@@ -83,7 +84,8 @@ const GenerateApplication = () => {
     const entityType = editApplicationData?.company?.entityType?.[0]?.value ?? '';
 
     if (!['PARTNERSHIP', 'TRUST'].includes(entityType)) {
-      finalSteps = finalSteps.filter(step => step?.text !== 'Person');
+      delete finalSteps[1];
+      finalSteps = finalSteps.filter(step => step);
     } else {
       finalSteps = finalSteps.map(step => {
         if (step.text === 'Person')
@@ -115,9 +117,9 @@ const GenerateApplication = () => {
   }, [applicationId]);
 
   useEffect(() => {
-    if (editApplicationData && editApplicationData._id) {
+    if (editApplicationData && editApplicationData?._id) {
       const params = {
-        applicationId: editApplicationData._id,
+        applicationId: editApplicationData?._id,
       };
       const url = Object.entries(params)
         .filter(arr => arr[1] !== undefined)
@@ -126,7 +128,7 @@ const GenerateApplication = () => {
 
       history.replace(`${history.location.pathname}?${url}`);
     }
-  }, [editApplicationData._id, history]);
+  }, [editApplicationData?._id, history]);
 
   const backToApplication = useCallback(() => {
     history.replace('/applications');
@@ -137,7 +139,7 @@ const GenerateApplication = () => {
   }, []);
 
   const onNextClick = useCallback(() => {
-    const data = editApplicationData[FILTERED_STEPS[applicationStage].name];
+    const data = editApplicationData?.[FILTERED_STEPS?.[applicationStage]?.name];
     switch (FILTERED_STEPS[applicationStage].name) {
       case 'company':
         return applicationCompanyStepValidations(dispatch, data, editApplicationData);

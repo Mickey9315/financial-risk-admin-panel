@@ -1205,3 +1205,258 @@ export const saveDebtorStakeHolderColumnNameList = ({
     }
   };
 };
+
+export const changeStakeHolderPersonType = personType => {
+  return dispatch => {
+    dispatch({
+      type:
+        DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+          .CHANGE_DEBTOR_STAKE_HOLDER_PERSON_TYPE,
+      personType,
+    });
+  };
+};
+
+export const updateStakeHolderDetail = (name, value) => {
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_FIELDS,
+      name,
+      value,
+    });
+  };
+};
+
+export const getStakeHolderDropDownData = () => {
+  return async dispatch => {
+    try {
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDropdownData();
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else if (e.response.data.status === 'ERROR') {
+          errorNotification(
+            e.response.data.message || 'It seems like server is down, Please try again later.'
+          );
+        }
+      }
+      throw Error();
+    }
+  };
+};
+
+export const getStakeHolderCompanyDataFromABNorACN = async (id, params) => {
+  try {
+    const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderCompanyDataFromABNorACN(
+      id,
+      params
+    );
+
+    if (response.data.status === 'SUCCESS') {
+      return response.data.data;
+    }
+    return null;
+  } catch (e) {
+    if (e.response && e.response.data) {
+      if (e.response.data.status === 'ERROR') {
+        errorNotification(e.response.data.message);
+      } else if (e.response.data.status === undefined) {
+        errorNotification('It seems like server is down, Please try again later.');
+      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        errorNotification('Internal server error');
+      } else {
+        errorNotification('It seems like server is down, Please try again later.');
+      }
+    }
+    throw Error();
+  }
+};
+
+export const updateStakeHolderDataOnValueSelected = data => {
+  return dispatch => {
+    dispatch({
+      type:
+        DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_COMPANY_ALL_DATA,
+      data,
+    });
+  };
+};
+
+export const searchStakeHolderCompanyEntityName = (searchText, params) => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+        data: {
+          isLoading: true,
+          error: false,
+          errorMessage: '',
+          data: [],
+        },
+      });
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.searchStakeHolderCompanyEntityName(
+        searchText,
+        params
+      );
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+          data: {
+            isLoading: false,
+            error: false,
+            errorMessage: '',
+            data: response.data.data,
+          },
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          dispatch({
+            type:
+              DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+            data: {
+              isLoading: false,
+              error: true,
+              errorMessage: e.response.data.message ?? 'Please try again later.',
+              data: [],
+            },
+          });
+        }
+      } else {
+        dispatch({
+          type:
+            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+          data: {
+            isLoading: false,
+            error: true,
+            errorMessage: 'ABR lookup facing trouble to found searched data. Please try again...',
+            data: [],
+          },
+        });
+      }
+    }
+  };
+};
+
+export const addNewStakeHolder = (id, data, cb) => {
+  return async dispatch => {
+    try {
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.addNewStakeHolder(
+        id,
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Added Successfully');
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
+        });
+        cb();
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === 'ERROR') {
+          errorNotification(e.response.data.message);
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+      }
+    }
+  };
+};
+
+export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
+  return async dispatch => {
+    try {
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.updateStakeHolder(
+        debtorId,
+        stakeHolderId,
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Updated Successfully');
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
+        });
+        cb();
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === 'ERROR') {
+          errorNotification(e.response.data.message);
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+      }
+    }
+  };
+};
+
+export const deleteStakeHolderDetails = (stakeHolderId, cb) => {
+  return async () => {
+    try {
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.deleteStakeHolder(
+        stakeHolderId
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Deleted Successfully');
+        cb();
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === 'ERROR') {
+          errorNotification(e.response.data.message);
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+      }
+    }
+  };
+};
+
+export const getStakeHolderDetails = id => {
+  return async dispatch => {
+    try {
+      console.log(id);
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDetails(id);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKE_HOLDER_DETAILS,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response.data.status === 'ERROR') {
+          errorNotification(e.response.data.message);
+        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          errorNotification('It seems like server is down, Please try again later.');
+        }
+      }
+    }
+  };
+};

@@ -6,22 +6,25 @@ import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDet
 import { addPersonDetail } from '../../../redux/ApplicationAction';
 
 const ApplicationPersonStep = () => {
-  const personState = useSelector(({ application }) => application.editApplication?.partners);
+  const personState = useSelector(
+    ({ application }) => application?.editApplication?.partners ?? []
+  );
   const entityType = useSelector(
-    ({ application }) => application.editApplication.company.entityType
+    ({ application }) => application?.editApplication?.company?.entityType ?? []
   );
 
-  const entityTypeFromCompany = entityType?.[0]?.value;
+  const entityTypeFromCompany = entityType?.[0]?.value ?? '';
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (personState?.length < 1 && entityTypeFromCompany === 'SOLE_TRADER') {
-      dispatch(addPersonDetail('individual'));
-    } else if (entityTypeFromCompany === 'PARTNERSHIP' && personState?.length <= 1) {
-      dispatch(addPersonDetail('individual'));
-    } else if (personState?.length < 1) {
+    if (personState?.length < 1 && ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany)) {
       dispatch(addPersonDetail('individual'));
     }
+    // else if (entityTypeFromCompany === 'PARTNERSHIP' && personState?.length <= 1) {
+    //   dispatch(addPersonDetail('individual'));
+    // } else if (personState?.length < 1) {
+    //   dispatch(addPersonDetail('individual'));
+    // }
   }, []);
 
   const hasRadio = useMemo(() => ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany), [
@@ -77,9 +80,7 @@ const ApplicationPersonStep = () => {
 
   return (
     <>
-      <Accordion>
-        {personState && personState ? personState.map(getAccordionAccordingEntityType) : ''}
-      </Accordion>
+      <Accordion>{personState ? personState?.map(getAccordionAccordingEntityType) : ''}</Accordion>
     </>
   );
 };

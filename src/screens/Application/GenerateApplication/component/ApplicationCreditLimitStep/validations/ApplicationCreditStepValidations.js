@@ -40,6 +40,7 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
       extendedPaymentTermsDetails,
       passedOverdueDetails,
       creditLimit,
+      note,
     } = data;
 
     const finalData = {
@@ -51,6 +52,7 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
       isPassedOverdueAmount,
       passedOverdueDetails: isPassedOverdueAmount ? passedOverdueDetails : '',
       creditLimit,
+      note,
     };
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));

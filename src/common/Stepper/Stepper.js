@@ -6,11 +6,9 @@ import { useSelector } from 'react-redux';
 import Button from '../Button/Button';
 import { getLabelFromValues } from '../../helpers/entityiTypeHelper';
 import { entityTypeMapperObjectForPersonStep } from '../../helpers/Mappers';
-// import { getApplicationDetail } from '../../screens/Application/redux/ApplicationAction';
-import { errorNotification } from '../Toast';
 
 const Stepper = props => {
-  const applicationDetail = useSelector(({ application }) => application.editApplication);
+  const applicationDetail = useSelector(({ application }) => application?.editApplication ?? {});
 
   const entityType = useMemo(
     () => applicationDetail?.company?.entityType[0]?.value ?? 'PROPRIETARY_LIMITED',
@@ -77,16 +75,9 @@ const Stepper = props => {
           {steps?.[activeStep]?.name === 'partners' && (
             <Button
               buttonType="secondary"
-              title={getLabelFromValues(
-                entityType && entityType,
-                entityTypeMapperObjectForPersonStep
-              )}
+              title={getLabelFromValues(entityType, entityTypeMapperObjectForPersonStep)}
               onClick={() => {
-                if (entityType !== 'SOLE_TRADER') {
-                  addStepClick();
-                } else if (entityType === 'SOLE_TRADER') {
-                  errorNotification('Can not add more than one sole trader');
-                }
+                addStepClick();
               }}
             />
           )}

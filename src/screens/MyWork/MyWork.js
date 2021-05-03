@@ -66,9 +66,10 @@ const MyWork = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
-  const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? [], [
-    taskListData,
-  ]);
+  const { total, pages, page, limit, headers, docs, isLoading } = useMemo(
+    () => taskListData ?? [],
+    [taskListData]
+  );
 
   const taskColumnListData = useMemo(() => taskData?.columnList ?? [], [taskData]);
   const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
@@ -238,6 +239,7 @@ const MyWork = () => {
       dispatchFilter={dispatchFilter}
       TASK_FILTER_REDUCER_ACTIONS={TASK_FILTER_REDUCER_ACTIONS}
       onSelectTaskRecord={onSelectTaskRecord}
+      isLoading={isLoading}
     />,
     <MyWorkNotifications />,
   ];

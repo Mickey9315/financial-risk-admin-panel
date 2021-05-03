@@ -25,6 +25,19 @@ import DebtorsDocumentsTab from '../components/DebtorsDocumentsTab';
 import DebtorsNotesTab from '../components/DebtorsNotesTab';
 import DebtorsReportsTab from '../components/DebtorsReportsTab';
 import DebtorsTasksTab from '../components/DebtorsTasksTab';
+import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderTab';
+
+const VIEW_DEBTOR_TABS = [
+  <DebtorsCreditLimitTab />,
+  <DebtorsStakeHolderTab />,
+  <DebtorsApplicationTab />,
+  <DebtorsOverduesTab />,
+  <DebtorsClaimsTab />,
+  <DebtorsTasksTab />,
+  <DebtorsDocumentsTab />,
+  <DebtorsNotesTab />,
+  <DebtorsReportsTab />,
+];
 
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -45,7 +58,7 @@ const ViewInsurer = () => {
 
   const tabs = [
     'Credit Limits',
-    // 'Stakeholder',
+    'Stakeholder',
     'Application',
     'Overdues',
     'Claims',
@@ -371,17 +384,7 @@ const ViewInsurer = () => {
         <Loader />
       )}
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
-      <div className="common-white-container">
-        {activeTabIndex === 0 && <DebtorsCreditLimitTab />}
-        {/* {activeTabIndex === 1 && <DebtorsStakeHolderTab />} */}
-        {activeTabIndex === 1 && <DebtorsApplicationTab />}
-        {activeTabIndex === 2 && <DebtorsOverduesTab />}
-        {activeTabIndex === 3 && <DebtorsClaimsTab />}
-        {activeTabIndex === 4 && <DebtorsTasksTab />}
-        {activeTabIndex === 5 && <DebtorsDocumentsTab />}
-        {activeTabIndex === 6 && <DebtorsNotesTab />}
-        {activeTabIndex === 7 && <DebtorsReportsTab />}
-      </div>
+      <div className="common-white-container">{VIEW_DEBTOR_TABS[activeTabIndex]}</div>
     </>
   );
 };

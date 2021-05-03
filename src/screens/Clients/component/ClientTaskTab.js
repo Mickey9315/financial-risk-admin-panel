@@ -323,7 +323,7 @@ const ClientTaskTab = () => {
     const data = {
       title: addTaskState?.title?.trim(),
       // priority: addTaskState?.priority[0]?.value,
-      dueDate: addTaskState?.dueDate ?? new Date().toISOString(),
+      dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId[0]?.value,
       taskFrom: 'client-task',
     };

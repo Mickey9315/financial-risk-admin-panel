@@ -52,8 +52,10 @@ const drawerReducer = (state, action) => {
 const ApplicationCompanyStep = () => {
   const dispatch = useDispatch();
 
-  const companyState = useSelector(({ application }) => application.editApplication.company);
-  const { partners } = useSelector(({ application }) => application.editApplication);
+  const companyState = useSelector(
+    ({ application }) => application?.editApplication?.company ?? {}
+  );
+  const { partners } = useSelector(({ application }) => application?.editApplication ?? {});
   const {
     clients,
     debtors,
@@ -62,9 +64,9 @@ const ApplicationCompanyStep = () => {
     newZealandStates,
     entityType,
     countryList,
-  } = useSelector(({ application }) => application.companyData.dropdownData);
+  } = useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
   const entityNameSearchDropDownData = useSelector(
-    ({ application }) => application.companyData.entityNameSearch
+    ({ application }) => application?.companyData?.entityNameSearch ?? {}
   );
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -308,12 +310,12 @@ const ApplicationCompanyStep = () => {
   const handleDebtorSelectChange = useCallback(
     async data => {
       try {
-        if (!companyState.clientId || companyState.clientId.length === 0) {
+        if (!companyState?.clientId || companyState?.clientId?.length === 0) {
           errorNotification('Please select client before continue');
           return;
         }
         handleSelectInputChange(data);
-        const params = { clientId: companyState.clientId[0].value };
+        const params = { clientId: companyState?.clientId[0]?.value };
         const response = await getApplicationCompanyDataFromDebtor(data[0].value, params);
 
         if (response) {
@@ -330,11 +332,11 @@ const ApplicationCompanyStep = () => {
     async e => {
       try {
         if (e.key === 'Enter') {
-          if (!companyState.clientId || companyState.clientId.length === 0) {
+          if (!companyState?.clientId || companyState?.clientId?.length === 0) {
             errorNotification('Please select clientId before continue');
             return;
           }
-          const params = { clientId: companyState.clientId[0].value };
+          const params = { clientId: companyState?.clientId?.[0]?.value };
           const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
 
           if (response) {
@@ -351,7 +353,7 @@ const ApplicationCompanyStep = () => {
   const handleEntityNameSearch = useCallback(
     async e => {
       if (e.key === 'Enter' && e.target.value.trim().length > 0) {
-        if (!companyState.clientId || companyState.clientId.length === 0) {
+        if (!companyState?.clientId || companyState?.clientId?.length === 0) {
           errorNotification('Please select client before continue');
           return;
         }
@@ -360,7 +362,7 @@ const ApplicationCompanyStep = () => {
           data: null,
         });
         setSearchedEntityNameValue(e.target.value.toString());
-        const params = { clientId: companyState.clientId[0].value };
+        const params = { clientId: companyState?.clientId?.[0]?.value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
@@ -369,11 +371,11 @@ const ApplicationCompanyStep = () => {
 
   const retryEntityNameRequest = useCallback(() => {
     if (searchedEntityNameValue.trim().length > 0) {
-      if (!companyState.clientId || companyState.clientId.length === 0) {
+      if (!companyState?.clientId || companyState?.clientId?.length === 0) {
         errorNotification('Please select client before continue');
         return;
       }
-      const params = { clientId: companyState.clientId[0].value };
+      const params = { clientId: companyState?.clientId[0]?.value };
       dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
     }
   }, [searchedEntityNameValue, companyState]);
@@ -403,7 +405,7 @@ const ApplicationCompanyStep = () => {
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: companyState.clientId[0].value };
+        const params = { clientId: companyState?.clientId?.[0]?.value };
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
 
         if (response) {
@@ -432,8 +434,8 @@ const ApplicationCompanyStep = () => {
               value={
                 input.name === 'state'
                   ? (!isAusOrNew && companyState?.[input.name]?.[0]?.label) ??
-                    companyState[input.name]
-                  : companyState[input.name]
+                    companyState?.[input.name]
+                  : companyState?.[input.name]
               }
               onChange={handleTextInputChange}
             />
@@ -445,7 +447,7 @@ const ApplicationCompanyStep = () => {
               type="text"
               name={input.name}
               placeholder={input.placeholder}
-              value={companyState[input.name]}
+              value={companyState?.[input.name]}
               onChange={handleTextInputChange}
               onKeyDown={handleSearchTextInputKeyDown}
             />
@@ -474,7 +476,7 @@ const ApplicationCompanyStep = () => {
               name={input.name}
               options={input.data}
               searchable
-              values={companyState[input.name]}
+              values={companyState?.[input.name]}
               onChange={handleOnChange}
             />
           );
@@ -530,17 +532,17 @@ const ApplicationCompanyStep = () => {
           closeIcon="cancel"
           closeClassName="font-secondary"
         >
-          {entityNameSearchDropDownData.isLoading ? (
+          {entityNameSearchDropDownData?.isLoading ? (
             <Loader />
           ) : (
-            !entityNameSearchDropDownData.error && (
+            !entityNameSearchDropDownData?.error && (
               <ApplicationEntityNameTable
-                data={entityNameSearchDropDownData.data}
+                data={entityNameSearchDropDownData?.data}
                 handleEntityNameSelect={handleEntityNameSelect}
               />
             )
           )}
-          {entityNameSearchDropDownData.error && (
+          {entityNameSearchDropDownData?.error && (
             <>
               <div className="application-entity-name-modal-retry-button">
                 {entityNameSearchDropDownData?.errorMessage}

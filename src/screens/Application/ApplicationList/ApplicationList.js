@@ -321,7 +321,7 @@ const ApplicationList = () => {
       data: applicationDefaultColumnNameList,
     });
     toggleCustomField();
-  }, [toggleCustomField]);
+  }, [toggleCustomField, applicationDefaultColumnNameList]);
 
   const customFieldsModalButtons = useMemo(
     () => [

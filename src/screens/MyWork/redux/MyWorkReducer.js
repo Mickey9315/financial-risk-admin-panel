@@ -9,6 +9,7 @@ const initialMyWork = {
       page: 1,
       pages: 1,
       headers: [],
+      isLoading: true,
     },
     addTask: {
       title: '',
@@ -39,7 +40,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         ...state,
         task: {
           ...state?.task,
-          taskList: action?.data,
+          taskList: { ...action?.data, isLoading: false },
         },
       };
 

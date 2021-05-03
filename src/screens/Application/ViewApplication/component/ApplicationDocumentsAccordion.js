@@ -169,10 +169,15 @@ const ApplicationDocumentsAccordion = props => {
           errorNotification('File size should be less than 4 mb');
         } else {
           setFileData(e.target.files[0]);
+          dispatchSelectedApplicationDocuments({
+            type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
+            name: 'fileData',
+            value: e.target.files[0],
+          });
         }
       }
     },
-    [setFileData]
+    [setFileData, dispatchSelectedApplicationDocuments]
   );
 
   const onCloseUploadDocumentButton = useCallback(() => {
@@ -187,7 +192,7 @@ const ApplicationDocumentsAccordion = props => {
     if (selectedApplicationDocuments.documentType.length === 0) {
       errorNotification('Please select document type');
     } else if (!selectedApplicationDocuments.fileData) {
-      errorNotification('Please select any document');
+      errorNotification('Please select document to upload');
     } else if (!selectedApplicationDocuments.description) {
       errorNotification('Description is required');
     } else {

@@ -7,7 +7,7 @@ import {
 const initialDebtorState = {
   debtorsList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   notes: {
-    notesList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: true, error: null },
+    notesList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   },
   debtorsColumnNameList: {},
   selectedDebtorData: {},
@@ -26,13 +26,13 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
     documentTypeList: [],
-    uploadDocumentData: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    uploadDocumentData: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   task: {
-    taskList: { docs: [], total: 0, limit: 0, page: 1, pages: 1, isLoading: true, error: null },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    taskList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
     addTask: {
       title: '',
       description: '',
@@ -59,7 +59,7 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   creditLimit: {
     creditLimitList: {
@@ -71,7 +71,7 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   stakeHolder: {
     stakeHolderList: {
@@ -83,7 +83,45 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 0, limit: 0, page: 1, pages: 1 },
+    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    stakeHolderDetails: {
+      type: 'individual',
+      abn: '',
+      acn: '',
+      entityType: '',
+      entityName: '',
+      tradingName: '',
+      title: '',
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      dateOfBirth: '',
+      driverLicenceNumber: '',
+      phoneNumber: '',
+      mobileNumber: '',
+      email: '',
+      allowToCheckCreditHistory: false,
+      property: '',
+      unitNumber: '',
+      streetNumber: '',
+      streetName: '',
+      streetType: '',
+      suburb: '',
+      state: '',
+      country: '',
+      postCode: '',
+      errors: {},
+    },
+    entityNameSearch: {},
+    stakeHolderDropDownData: {
+      clients: [],
+      debtors: [],
+      streetType: [],
+      australianStates: [],
+      newZealandStates: [],
+      entityType: [],
+      countryList: [],
+    },
   },
 };
 
@@ -626,6 +664,123 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
     }
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+      .CHANGE_DEBTOR_STAKE_HOLDER_PERSON_TYPE:
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          stakeHolderDetails: {
+            ...state?.stakeHolder?.stakeHolderDetails,
+            type: action.personType,
+          },
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_FIELDS:
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          stakeHolderDetails: {
+            ...state?.stakeHolder?.stakeHolderDetails,
+            [action?.name]: action?.value,
+          },
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+      .UPDATE_STAKE_HOLDER_COMPANY_ALL_DATA:
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          stakeHolderDetails: {
+            ...state?.stakeHolder?.stakeHolderDetails,
+            tradingName: action?.data?.tradingName ?? '',
+            entityType: action?.data?.entityType ?? '',
+            entityName: action?.data?.entityName ?? '',
+            abn: action?.data?.abn ?? '',
+            acn: action?.data?.acn ?? '',
+          },
+        },
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA:
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          entityNameSearch: action?.data,
+        },
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKE_HOLDER_DETAILS:
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          stakeHolderDetails: {
+            ...state?.stakeHolder?.stakeHolderDetails,
+            ...action?.data,
+          },
+        },
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE:
+      return {
+        ...state,
+        stakeHolder: {
+          ...state.stakeHolder,
+          stakeHolderDetails: {
+            type: 'individual',
+            abn: '',
+            acn: '',
+            entityType: '',
+            entityName: '',
+            tradingName: '',
+            title: '',
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            dateOfBirth: '',
+            driverLicenceNumber: '',
+            phoneNumber: '',
+            mobileNumber: '',
+            email: '',
+            allowToCheckCreditHistory: false,
+            property: '',
+            unitNumber: '',
+            streetNumber: '',
+            streetName: '',
+            streetType: '',
+            suburb: '',
+            state: '',
+            country: '',
+            postCode: '',
+            errors: {},
+          },
+          entityNameSearch: {},
+        },
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA: {
+      const dropDownData = { ...state?.stakeHolder?.stakeHolderDropDownData };
+      // eslint-disable-next-line no-shadow
+      Object.entries(action?.data)?.forEach(([key, value]) => {
+        dropDownData[key] = value.data.map(entity => ({
+          label: entity.name,
+          name: value.field,
+          value: entity._id,
+        }));
+      });
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          stakeHolderDropDownData: { ...dropDownData },
+        },
+      };
+    }
+
     default:
       return state;
   }

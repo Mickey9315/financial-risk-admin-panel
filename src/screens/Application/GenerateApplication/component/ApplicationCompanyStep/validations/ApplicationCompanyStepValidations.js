@@ -39,6 +39,10 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     validated = false;
     errors.streetNumber = 'Street number should be number';
   }
+  if (!data.streetType || data?.streetType?.length === 0) {
+    validated = false;
+    errors.streetType = 'Please select street type before continue';
+  }
   if (!data.state || data.state.length === 0) {
     validated = false;
     errors.state = 'Please select state before continue';

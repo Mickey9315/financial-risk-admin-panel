@@ -8,6 +8,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import { deleteTaskAction, resetPageData } from '../redux/MyWorkAction';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Modal from '../../../common/Modal/Modal';
+import Loader from '../../../common/Loader/Loader';
 
 const MyWorkTasks = props => {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const MyWorkTasks = props => {
     dispatchFilter,
     TASK_FILTER_REDUCER_ACTIONS,
     onSelectTaskRecord,
+    isLoading,
   } = props;
 
   const {
@@ -130,36 +132,39 @@ const MyWorkTasks = props => {
 
   return (
     <>
-      {docs.length ? (
-        <>
-          <div className="common-list-container" style={{ maxHeight: 'calc(100vh - 15.75rem)' }}>
-            <Table
-              align="left"
-              valign="center"
-              tableClass="main-list-table"
-              data={docs}
-              headers={headers}
-              rowClass="cursor-pointer task-row"
-              extraColumns={deleteTaskColumn}
-              refreshData={getTaskListOnRefresh}
-              recordSelected={onSelectTaskRecord}
-              // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {!isLoading && docs ? (
+        docs.length > 0 ? (
+          <>
+            <div className="common-list-container" style={{ maxHeight: 'calc(100vh - 15.75rem)' }}>
+              <Table
+                align="left"
+                valign="center"
+                tableClass="main-list-table"
+                data={docs}
+                headers={headers}
+                rowClass="cursor-pointer task-row"
+                extraColumns={deleteTaskColumn}
+                refreshData={getTaskListOnRefresh}
+                recordSelected={onSelectTaskRecord}
+                // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-data-available">No data available</div>
+        )
       ) : (
-        <>
-          <center>No Record Found</center>
-        </>
+        <Loader />
       )}
       {showConfirmModal && (
         <Modal header="Delete Task" buttons={deleteTaskButtons} hideModal={toggleConfirmationModal}>
@@ -176,6 +181,7 @@ MyWorkTasks.defaultProps = {
   page: 1,
   limit: 15,
   headers: [],
+  isLoading: true,
   pageActionClick: () => {},
   onSelectLimit: () => {},
   getTaskList: () => {},
@@ -185,6 +191,7 @@ MyWorkTasks.defaultProps = {
   onSelectTaskRecord: () => {},
 };
 MyWorkTasks.propTypes = {
+  isLoading: propTypes.bool,
   docs: propTypes.object,
   total: propTypes.number,
   pages: propTypes.number,

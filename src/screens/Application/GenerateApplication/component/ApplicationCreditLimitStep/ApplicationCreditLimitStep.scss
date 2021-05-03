@@ -14,6 +14,14 @@
   }
 }
 
+textarea {
+  width: 100%;
+  grid-column: 2/ 7;
+  $font:$subtitle $font-regular;
+  color: $field-color;
+  word-break: break-all;
+}
+
 .credit-limit-amount {
   display: flex;
   align-items: center;

@@ -198,6 +198,15 @@ export const DEBTORS_URLS = {
     STAKE_HOLDER_LIST: `${BASE_URL}debtor/stakeholder/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
+    STAKE_HOLDER_CRUD: {
+      GET_STAKE_HOLDER_DETAIL: `${BASE_URL}debtor/stakeholder-details/`,
+      DROP_DOWN_DATA_URL: `${BASE_URL}application/entity-list/`,
+      SEARCH_APPLICATION_BY_DEBTOR_DETAILS: `${BASE_URL}debtor/details/`,
+      SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
+      SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}application/search-entity-list/`,
+      SAVE_NEW_STAKE_HOLDER: `${BASE_URL}debtor/stakeholder/`,
+      DELETE_STAKE_HOLDER: `${BASE_URL}debtor/stakeholder/`,
+    },
   },
 };
 

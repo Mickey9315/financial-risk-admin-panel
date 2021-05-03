@@ -8,14 +8,14 @@ const ApplicationEntityNameTable = props => {
   return (
     <table className="table-class">
       <thead>
-        {headers.map(column => (
+        {headers?.map(column => (
           <th width={10} style={{ backgroundColor: 'white' }}>
             {column}
           </th>
         ))}
       </thead>
       <tbody>
-        {data.map(row => (
+        {data?.map(row => (
           <tr>
             <td>
               <div className="link" onClick={() => handleEntityNameSelect(row)}>
@@ -23,8 +23,7 @@ const ApplicationEntityNameTable = props => {
               </div>
             </td>
             <td>
-              {typeof row.state === 'string' ? row.state : '-'}
-              {'/'}
+              {typeof row.state === 'string' ? row.state : '-'}/
               {typeof row.postCode === 'string' ? row.postCode : '-'}
             </td>
             <td>{typeof row.status === 'string' ? row.status : '-'}</td>

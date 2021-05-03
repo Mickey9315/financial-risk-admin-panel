@@ -56,18 +56,20 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
     },
     [index]
   );
-  const companyState = useSelector(({ application }) => application.editApplication.company);
+  const companyState = useSelector(
+    ({ application }) => application?.editApplication?.company ?? {}
+  );
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const entityNameSearchDropDownData = useSelector(
-    ({ application }) => application.companyData.entityNameSearch
+    ({ application }) => application?.companyData?.entityNameSearch ?? {}
   );
-  const partners = useSelector(({ application }) => application.editApplication.partners);
+  const partners = useSelector(({ application }) => application?.editApplication?.partners ?? []);
 
   const { streetType, australianStates, countryList, newZealandStates } = useSelector(
-    ({ application }) => application.companyData.dropdownData
+    ({ application }) => application?.companyData?.dropdownData ?? {}
   );
   const companyEntityType = useSelector(
-    ({ application }) => application.applicationFilterList.dropdownData.companyEntityType
+    ({ application }) => application?.applicationFilterList?.dropdownData?.companyEntityType ?? []
   );
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
@@ -81,7 +83,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
     ) {
       setIsAusOrNew(true);
     }
-  }, [partners[index].country]);
+  }, [partners?.[index]?.country]);
 
   useEffect(() => {
     dispatch(getApplicationFilter());
@@ -133,7 +135,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       placeholder: 'Select',
       type: 'select',
       name: 'entityType',
-      data: companyEntityType,
+      data: companyEntityType ?? [],
     },
     {
       label: 'Entity Name*',
@@ -178,7 +180,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: 'Select',
         type: 'select',
         name: 'title',
-        data: titleDropDown,
+        data: titleDropDown || [],
       },
       {
         label: 'First Name*',
@@ -258,7 +260,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: 'Select',
         type: 'select',
         name: 'streetType',
-        data: streetType,
+        data: streetType || [],
       },
       {
         label: 'Suburb*',
@@ -272,7 +274,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: 'Select',
         type: 'select',
         name: 'country',
-        data: countryList,
+        data: countryList || [],
       },
       {
         label: 'Postcode*',
@@ -285,7 +287,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: isAusOrNew ? 'Select' : 'Enter State',
         type: isAusOrNew ? 'select' : 'text',
         name: 'state',
-        data: stateValue,
+        data: stateValue || [],
       },
       {
         label: 'Contact Details',
@@ -372,7 +374,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: companyState.clientId[0].value };
+        const params = { clientId: companyState?.clientId?.[0]?.value };
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
         if (response) {
           updatePersonState(response);
@@ -395,7 +397,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           data: null,
         });
         setSearchedEntityNameValue(e.target.value.toString());
-        const params = { clientId: companyState.clientId[0].value };
+        const params = { clientId: companyState?.clientId?.[0]?.value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
@@ -403,12 +405,12 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   );
 
   const retryEntityNameRequest = useCallback(() => {
-    if (searchedEntityNameValue.trim().length > 0) {
-      if (!companyState.clientId || companyState.clientId.length === 0) {
+    if (searchedEntityNameValue?.trim()?.length > 0) {
+      if (!companyState?.clientId || companyState?.clientId?.length === 0) {
         errorNotification('Please select client before continue');
         return;
       }
-      const params = { clientId: companyState.clientId[0].value };
+      const params = { clientId: companyState?.clientId?.[0]?.value };
       dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
     }
   }, [searchedEntityNameValue, companyState]);
@@ -417,7 +419,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
     async e => {
       try {
         if (e.key === 'Enter') {
-          const params = { clientId: companyState.clientId[0].value };
+          const params = { clientId: companyState?.clientId?.[0]?.value };
           const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
           if (response) {
             updatePersonState(response);
@@ -481,11 +483,10 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               value={
                 input.name === 'state'
                   ? (!isAusOrNew && partners?.[index]?.[input.name]?.[0]?.label) ||
-                    partners[index][input.name]
-                  : partners[index][input.name]
+                    partners?.[index]?.[input.name]
+                  : partners?.[index]?.[input.name]
               }
               onChange={handleTextInputChange}
-              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -496,7 +497,6 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               placeholder={input.placeholder}
               name={input.name}
               onChange={handleEmailChange}
-              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -506,10 +506,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               type="text"
               name={input.name}
               placeholder={input.placeholder}
-              value={partners[index][input.name]}
+              value={partners?.[index]?.[input.name]}
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
-              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -519,12 +518,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              values={
-                (partners && partners[index][input.name] && partners[index][input.name]) ?? []
-              }
+              values={(partners && partners?.[index][input.name]) || []}
               searchable
               onChange={handleSelectInputChange}
-              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -535,7 +531,6 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               name={input.name}
               title={input.label}
               onChange={handleCheckBoxEvent}
-              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -547,7 +542,6 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
               value={partners?.[index]?.entityName?.[0]?.label}
-              disabled={partners[index].isDisabled ?? false}
               onChange={handleEntityChange}
             />
           );
@@ -561,10 +555,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
                   id={radio.id + index.toString()}
                   name={radio.name}
                   value={radio.value}
-                  checked={partners[index].type === radio.value}
+                  checked={partners?.[index]?.type === radio.value}
                   label={radio.label}
                   onChange={handleRadioButton}
-                  disabled={partners[index].isDisabled ?? false}
                 />
               ))}
             </div>
@@ -587,9 +580,10 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               <DatePicker
                 dateFormat="dd/MM/yyyy"
                 placeholderText={input.placeholder}
-                selected={partners[index].dateOfBirth && new Date(partners[index].dateOfBirth)}
+                selected={
+                  partners?.[index]?.dateOfBirth && new Date(partners?.[index]?.dateOfBirth)
+                }
                 onChange={date => onChangeDate(input.name, date)}
-                disabled={partners[index].isDisabled ?? false}
                 showMonthDropdown
                 showYearDropdown
                 scrollableYearDropdown
@@ -608,8 +602,8 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           {component}
           {partners && partners[index] ? (
             <div className="ui-state-error">
-              {partners && partners[index] && partners[index]?.errors
-                ? partners[index]?.errors?.[input?.name]
+              {partners && partners?.[index] && partners?.[index]?.errors
+                ? partners?.[index]?.errors?.[input?.name]
                 : ''}
             </div>
           ) : (
@@ -649,9 +643,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   );
   const deletePartner = e => {
     e.stopPropagation();
-    if (partners.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
+    if (partners?.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
       errorNotification('You can not remove partner');
-    } else if (partners.length <= 1) {
+    } else if (partners?.length <= 1) {
       errorNotification('You can not remove every partner');
     } else {
       dispatch(removePersonDetail(index));
@@ -660,13 +654,10 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   };
 
   const getSuffixItem = useMemo(() => {
-    if (partners.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
+    if (partners?.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
       return '';
     }
-    if (partners.length <= 1) {
-      return '';
-    }
-    if (partners?.[index]?.isDisabled) {
+    if (partners?.length <= 1) {
       return '';
     }
     return 'delete_outline';
@@ -682,17 +673,17 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           closeIcon="cancel"
           closeClassName="font-secondary"
         >
-          {entityNameSearchDropDownData.isLoading ? (
+          {entityNameSearchDropDownData?.isLoading ? (
             <Loader />
           ) : (
-            !entityNameSearchDropDownData.error && (
+            !entityNameSearchDropDownData?.error && (
               <ApplicationEntityNameTable
-                data={entityNameSearchDropDownData.data}
+                data={entityNameSearchDropDownData?.data}
                 handleEntityNameSelect={handleEntityNameSelect}
               />
             )
           )}
-          {entityNameSearchDropDownData.error && (
+          {entityNameSearchDropDownData?.error && (
             <>
               <div className="application-entity-name-modal-retry-button">
                 {entityNameSearchDropDownData?.errorMessage}
@@ -719,8 +710,8 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       >
         <div className="application-person-step-accordion-item">
           {hasRadio && INPUTS.map(getComponentFromType)}
-          {partners[index] &&
-            (hasRadio && partners[index].type === 'company'
+          {partners?.[index] &&
+            (hasRadio && partners?.[index]?.type === 'company'
               ? COMPANY_INPUT.map(getComponentFromType)
               : INDIVIDUAL_INPUT.map(getComponentFromType))}
         </div>
