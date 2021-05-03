@@ -477,7 +477,11 @@ const ApplicationTaskAccordion = props => {
             applicationTaskList.docs.map(task => (
               <div className="common-accordion-item-content-box" key={task._id}>
                 <div className="document-title-row">
-                  <Tooltip overlay={task.title || 'No task title set'} placement="left">
+                  <Tooltip
+                    overlayClassName="tooltip-left-class"
+                    overlay={task.title || 'No task title set'}
+                    placement="left"
+                  >
                     <div className="document-title">{task.title || '-'}</div>
                   </Tooltip>
 
@@ -500,7 +504,11 @@ const ApplicationTaskAccordion = props => {
                   <span className="details">{moment(task.createdAt).format('DD-MMM-YYYY')}</span>
 
                   <span className="title">Owner:</span>
-                  <Tooltip overlay={task.createdById || 'No owner name added'} placement="left">
+                  <Tooltip
+                    overlayClassName="tooltip-left-class"
+                    overlay={task.createdById || 'No owner name added'}
+                    placement="left"
+                  >
                     <span className="details">{task.createdById}</span>
                   </Tooltip>
                 </div>

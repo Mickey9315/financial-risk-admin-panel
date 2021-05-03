@@ -8,7 +8,11 @@ const ApplicationAlertsAccordion = props => {
     <AccordionItem index={index} header="Alerts" count="04" suffix="expand_more">
       <div className="common-accordion-item-content-box alert">
         <div className="alert-title-row">
-          <Tooltip overlay={<span>Title of Alert</span>} placement="left">
+          <Tooltip
+            overlayClassName="tooltip-left-class"
+            overlay={<span>Title of Alert</span>}
+            placement="left"
+          >
             <div className="alert-title">Title of Alert</div>
           </Tooltip>
 

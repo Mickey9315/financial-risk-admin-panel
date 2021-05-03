@@ -293,7 +293,11 @@ const ApplicationDocumentsAccordion = props => {
             applicationDocsList.map(doc => (
               <div className="common-accordion-item-content-box">
                 <div className="document-title-row">
-                  <Tooltip overlay={doc.documentTypeId || 'No document title set'} placement="left">
+                  <Tooltip
+                    overlayClassName="tooltip-left-class"
+                    overlay={doc.documentTypeId || 'No document title set'}
+                    placement="left"
+                  >
                     <div className="document-title">{doc.documentTypeId || '-'}</div>
                   </Tooltip>
                   <span

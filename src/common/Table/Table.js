@@ -334,7 +334,11 @@ function Row(props) {
             case 'priority':
               return (
                 <td key={index.toString()} align={align}>
-                  <Tooltip overlay={<span>{value || 'No value'}</span>} placement="top">
+                  <Tooltip
+                    overlayClassName="tooltip-top-class"
+                    overlay={<span>{value || 'No value'}</span>}
+                    placement="topLeft"
+                  >
                     <span title={value ?? ''} className={`task-priority-${value}`}>
                       {value ?? '-'}
                     </span>
@@ -345,7 +349,11 @@ function Row(props) {
               return (
                 <td key={index.toString()} align={align}>
                   {data?.[key]?.props?.className !== 'table-checkbox' ? (
-                    <Tooltip overlay={<span>{value ?? 'No value'}</span>} placement="top">
+                    <Tooltip
+                      overlayClassName="tooltip-top-class"
+                      overlay={<span>{value ?? 'No value'}</span>}
+                      placement="topLeft"
+                    >
                       {value ?? '-'}
                     </Tooltip>
                   ) : (
@@ -357,7 +365,11 @@ function Row(props) {
               return (
                 <td key={index.toString()} align={align}>
                   {data?.[key]?.props?.className !== 'table-checkbox' ? (
-                    <Tooltip overlay={<span>{value ?? 'No value'}</span>} placement="top">
+                    <Tooltip
+                      overlayClassName="tooltip-top-class"
+                      overlay={<span>{value ?? 'No value'}</span>}
+                      placement="topLeft"
+                    >
                       <span>{value ?? '-'}</span>
                     </Tooltip>
                   ) : (

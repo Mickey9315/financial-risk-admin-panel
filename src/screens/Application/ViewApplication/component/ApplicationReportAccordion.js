@@ -10,6 +10,7 @@ const ApplicationReportAccordion = props => {
         <div className="report-row">
           <span className="title">Title:</span>
           <Tooltip
+            overlayClassName="tooltip-left-class"
             overlay={'Lorem ipsum dolor sit amet, consetetur' || 'No report title added'}
             placement="left"
           >

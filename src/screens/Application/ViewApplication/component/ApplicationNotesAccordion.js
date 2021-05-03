@@ -240,7 +240,11 @@ const ApplicationNotesAccordion = props => {
                   <span className="details">{moment(note.createdAt).format('DD-MMM-YYYY')}</span>
 
                   <span className="title">Owner:</span>
-                  <Tooltip overlay={note.createdById || 'No owner name added'} placement="left">
+                  <Tooltip
+                    overlayClassName="tooltip-left-class"
+                    overlay={note.createdById || 'No owner name added'}
+                    placement="left"
+                  >
                     <span className="details">{note.createdById || '-'}</span>
                   </Tooltip>
                 </div>
