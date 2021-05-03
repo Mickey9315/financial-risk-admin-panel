@@ -63,7 +63,7 @@ const AccordionItem = props => {
         ref={content}
         className={`${accordionBodyClassName} ${activeAccordion && 'active-accordion'}`}
       >
-        {children !== null ? children : <div className="no-data-available">No data available</div>}
+        {children !== null ? children : <div className="no-record-found">No record found</div>}
       </div>
     </div>
   );

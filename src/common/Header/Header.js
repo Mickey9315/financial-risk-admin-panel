@@ -20,6 +20,7 @@ import { SIDEBAR_URLS } from '../../constants/SidebarConstants';
 import FileUpload from './component/FileUpload';
 import Drawer from '../Drawer/Drawer';
 import Checkbox from '../Checkbox/Checkbox';
+import { SESSION_VARIABLES } from '../../constants/SessionStorage';
 
 const Header = () => {
   const history = useHistory();
@@ -219,11 +220,7 @@ const Header = () => {
   );
 
   useEffect(() => {
-    try {
-      dispatch(getLoggedUserDetails());
-    } catch (e) {
-      /**/
-    }
+    if (SESSION_VARIABLES.USER_TOKEN) dispatch(getLoggedUserDetails());
   }, []);
 
   const handleChange = e => {

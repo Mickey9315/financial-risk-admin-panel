@@ -5,13 +5,14 @@ import { useDispatch } from 'react-redux';
 import SideMenu from '../SideMenu/SideMenu';
 import Header from '../Header/Header';
 import { getAllUserPrivileges } from '../../screens/Users/redux/UserManagementAction';
+import { SESSION_VARIABLES } from '../../constants/SessionStorage';
 
 const Dashboard = props => {
   const { children } = props;
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllUserPrivileges());
+    if (SESSION_VARIABLES.USER_TOKEN) dispatch(getAllUserPrivileges());
   }, []);
 
   return (

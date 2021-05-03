@@ -26,10 +26,12 @@ export const saveTokenFromLocalStorageToSession = () => {
 };
 
 export const getAuthTokenLocalStorage = () => {
-  const tokenFromSession = sessionStorage.getItem(AUTH_TOKEN);
   if (SESSION_VARIABLES.USER_TOKEN) {
     return SESSION_VARIABLES.USER_TOKEN;
   }
+
+  const tokenFromSession = sessionStorage.getItem(AUTH_TOKEN);
+
   if (tokenFromSession) {
     SESSION_VARIABLES.USER_TOKEN = tokenFromSession;
     return tokenFromSession;

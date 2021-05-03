@@ -465,7 +465,7 @@ const DebtorsDocumentsTab = () => {
             />
           </>
         ) : (
-          <div className="no-data-available">No data available</div>
+          <div className="no-record-found">No record found</div>
         )
       ) : (
         <Loader />

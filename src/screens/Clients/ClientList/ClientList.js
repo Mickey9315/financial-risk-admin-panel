@@ -483,7 +483,7 @@ const ClientList = () => {
             />
           </>
         ) : (
-          <div className="no-data-available">No data available</div>
+          <div className="no-record-found">No record found</div>
         )
       ) : (
         <Loader />
@@ -602,7 +602,7 @@ const ClientList = () => {
                     </div>
                   </>
                 ) : (
-                  <div className="no-data-available">No data available</div>
+                  <div className="no-record-found">No record found</div>
                 )
               ) : (
                 <Loader />

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { useEffect } from 'react';
+import history from './History';
 import LoginScreen from '../screens/auth/login/LoginScreen';
 import ForgotPassword from '../screens/auth/forgotPassword/ForgotPassword';
 import { saveTokenFromLocalStorageToSession } from '../helpers/LocalStorageHelper';
@@ -15,7 +16,7 @@ function Routes() {
   }, []);
 
   return (
-    <Router>
+    <Router history={history}>
       <Switch>
         <Route exact path="/login" component={LoginScreen} />
         <Route exact path="/forgot-password" component={ForgotPassword} />

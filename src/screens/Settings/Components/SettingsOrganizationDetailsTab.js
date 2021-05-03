@@ -97,7 +97,9 @@ const SettingsOrganizationDetailsTab = () => {
   return (
     <>
       <div className="d-flex just-end mt-15">
-        {!isEdit && <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />}
+        {!isLoading && !isEdit && (
+          <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />
+        )}
         {isEdit && (
           <div className="buttons-row">
             <Button buttonType="primary" title="Save" onClick={onSaveOrganizationDetails} />

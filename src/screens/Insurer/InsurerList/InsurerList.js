@@ -32,9 +32,10 @@ const InsurerList = () => {
   const searchInputRef = useRef();
   const insurerListWithPageData = useSelector(({ insurer }) => insurer?.insurerList ?? {});
   const insurerColumnList = useSelector(({ insurer }) => insurer?.insurerColumnNameList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(() => insurerListWithPageData, [
-    insurerListWithPageData,
-  ]);
+  const { total, pages, page, limit, isLoading, docs, headers } = useMemo(
+    () => insurerListWithPageData,
+    [insurerListWithPageData]
+  );
 
   const { page: paramPage, limit: paramLimit } = useQueryParams();
 
@@ -223,41 +224,48 @@ const InsurerList = () => {
     <>
       <div className="page-header">
         <div className="page-header-name">Insurer List</div>
-        <div className="page-header-button-container">
-          <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            className="mr-10"
-            buttonTitle="Click to select custom fields"
-            onClick={() => toggleCustomField()}
-          />
-          <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
-        </div>
-      </div>
-      {docs ? (
-        <>
-          <div className="common-list-container">
-            <Table
-              align="left"
-              valign="center"
-              tableClass="main-list-table"
-              data={docs}
-              headers={headers}
-              recordSelected={onSelectInsurerRecord}
-              recordActionClick={() => {}}
-              rowClass="cursor-pointer"
+        {!isLoading && docs && (
+          <div className="page-header-button-container">
+            <IconButton
+              buttonType="primary"
+              title="format_line_spacing"
+              className="mr-10"
+              buttonTitle="Click to select custom fields"
+              onClick={() => toggleCustomField()}
             />
+            <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
           </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+        )}
+      </div>
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {!isLoading && docs ? (
+        docs.length > 0 ? (
+          <>
+            <div className="common-list-container">
+              <Table
+                align="left"
+                valign="center"
+                tableClass="main-list-table"
+                data={docs}
+                headers={headers}
+                recordSelected={onSelectInsurerRecord}
+                recordActionClick={() => {}}
+                rowClass="cursor-pointer"
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
+            />
+          </>
+        ) : (
+          <div className="no-record-found">No record found</div>
+        )
       ) : (
         <Loader />
       )}
@@ -298,7 +306,7 @@ const InsurerList = () => {
                     />
                   ))
                 ) : (
-                  <div className="no-data-available">No data available</div>
+                  <div className="no-record-found">No record found</div>
                 )}
               </div>
             </>

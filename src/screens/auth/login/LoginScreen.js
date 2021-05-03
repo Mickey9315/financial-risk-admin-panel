@@ -11,7 +11,7 @@ import { loginUser } from './redux/LoginAction';
 import { errorNotification } from '../../../common/Toast';
 import { checkForEmail, replaceHiddenCharacters } from '../../../helpers/ValidationHelper';
 import { LOGIN_REDUX_CONSTANTS } from './redux/LoginReduxConstants';
-import { clearAuthToken } from '../../../helpers/LocalStorageHelper';
+import { getAuthTokenLocalStorage } from '../../../helpers/LocalStorageHelper';
 
 function LoginScreen() {
   const history = useHistory();
@@ -60,10 +60,15 @@ function LoginScreen() {
   };
 
   useEffect(() => {
-    dispatch({
-      type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
-    });
-    clearAuthToken();
+    const token = getAuthTokenLocalStorage();
+
+    if (token) {
+      history.replace('/dashboard');
+    } else {
+      dispatch({
+        type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
+      });
+    }
   }, []);
 
   return (

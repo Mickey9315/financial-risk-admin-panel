@@ -1,7 +1,10 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-import { clearAuthToken, getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
+import { store } from '../../redux/store';
+import history from '../../routes/History';
+import { getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
 import { errorNotification } from '../../common/Toast';
+import { LOGIN_REDUX_CONSTANTS } from '../../screens/auth/login/redux/LoginReduxConstants';
 
 const instance = axios.create({
   timeout: 10000,
@@ -28,15 +31,20 @@ instance.interceptors.response.use(
     return response;
   },
   error => {
-    if (error.response.status === 401) {
-      clearAuthToken();
-      errorNotification('For security purposes you have been logged out, you need to re login');
-      window.location.href = '/login';
-      return false;
-    }
-    if (error.response.status === 403) {
-      window.location.href = '/forbidden-access';
-      return false;
+    const statusCode = error?.response?.status ?? 0;
+    switch (statusCode) {
+      case 401:
+        store.dispatch({
+          type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
+        });
+        history.replace('/login');
+        errorNotification('For security purposes you have been logged out, you need to re login');
+        return false;
+      case 403:
+        history.replace('/forbidden-access');
+        return false;
+      default:
+        break;
     }
     return Promise.reject(error);
   }

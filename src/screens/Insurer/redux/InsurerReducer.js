@@ -13,6 +13,7 @@ const initialInsurer = {
     page: 1,
     pages: 1,
     headers: [],
+    isLoading: true,
   },
   insurerColumnNameList: {},
   insurerViewData: {},
@@ -37,7 +38,10 @@ export const insurer = (state = initialInsurer, action) => {
     case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_ACTION:
       return {
         ...state,
-        insurerList: action?.data,
+        insurerList: {
+          ...action?.data,
+          isLoading: false,
+        },
       };
 
     case INSURER_REDUX_CONSTANTS.RESET_INSURER_LIST_PAGINATION_DATA:

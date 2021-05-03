@@ -255,7 +255,7 @@ const ApplicationNotesAccordion = props => {
               </div>
             ))
           ) : (
-            <div className="no-data-available">Nothing To Show</div>
+            <div className="no-record-found">Nothing To Show</div>
           )}
         </AccordionItem>
       )}

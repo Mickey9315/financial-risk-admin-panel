@@ -259,7 +259,7 @@ const InsurerPoliciesTab = () => {
             />
           </>
         ) : (
-          <div className="no-data-available">No data available</div>
+          <div className="no-record-found">No record found</div>
         )
       ) : (
         <Loader />
@@ -301,7 +301,7 @@ const InsurerPoliciesTab = () => {
                     />
                   ))
                 ) : (
-                  <div className="no-data-available">No data available</div>
+                  <div className="no-record-found">No record found</div>
                 )}
               </div>
             </>

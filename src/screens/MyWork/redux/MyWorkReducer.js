@@ -40,7 +40,10 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         ...state,
         task: {
           ...state?.task,
-          taskList: { ...action?.data, isLoading: false },
+          taskList: {
+            ...action?.data,
+            isLoading: false,
+          },
         },
       };
 

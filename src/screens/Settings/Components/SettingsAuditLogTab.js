@@ -387,18 +387,20 @@ const SettingsAuditLogTab = () => {
     <>
       <div className="settings-title-row">
         <div className="title">Audit Logs List</div>
-        <div className="buttons-row">
-          <IconButton
-            buttonType="secondary"
-            title="filter_list"
-            onClick={() => toggleFilterModal()}
-          />
-          <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            onClick={() => toggleCustomField()}
-          />
-        </div>
+        {!isLoading && docs && (
+          <div className="buttons-row">
+            <IconButton
+              buttonType="secondary"
+              title="filter_list"
+              onClick={() => toggleFilterModal()}
+            />
+            <IconButton
+              buttonType="primary"
+              title="format_line_spacing"
+              onClick={() => toggleCustomField()}
+            />
+          </div>
+        )}
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {!isLoading && docs ? (
@@ -418,7 +420,7 @@ const SettingsAuditLogTab = () => {
             />
           </>
         ) : (
-          <div className="no-data-available">No data available</div>
+          <div className="no-record-found">No record found</div>
         )
       ) : (
         <Loader />

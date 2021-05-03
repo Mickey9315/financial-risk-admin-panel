@@ -22,6 +22,7 @@ import { myWorkReducer } from '../screens/MyWork/redux/MyWorkReducer';
 import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
+import { clearAuthToken } from '../helpers/LocalStorageHelper';
 
 const appReducer = combineReducers({
   loggedUserProfile,
@@ -44,6 +45,7 @@ const appReducer = combineReducers({
 
 const rootReducer = (state, action) => {
   if (action.type === LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION) {
+    clearAuthToken();
     const emptyState = {};
     Object.keys(state).forEach(key => {
       emptyState[key] = null;

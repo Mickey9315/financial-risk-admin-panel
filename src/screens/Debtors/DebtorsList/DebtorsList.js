@@ -227,22 +227,24 @@ const DebtorsList = () => {
     <>
       <div className="page-header">
         <div className="page-header-name">Debtor List</div>
-        <div className="page-header-button-container">
-          <IconButton
-            buttonType="secondary"
-            title="filter_list"
-            className="mr-10"
-            buttonTitle="Click to apply filters on user list"
-            onClick={() => toggleFilterModal()}
-          />
-          <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            className="mr-10"
-            buttonTitle="Click to select custom fields"
-            onClick={() => toggleCustomField()}
-          />
-        </div>
+        {!isLoading && docs && (
+          <div className="page-header-button-container">
+            <IconButton
+              buttonType="secondary"
+              title="filter_list"
+              className="mr-10"
+              buttonTitle="Click to apply filters on user list"
+              onClick={() => toggleFilterModal()}
+            />
+            <IconButton
+              buttonType="primary"
+              title="format_line_spacing"
+              className="mr-10"
+              buttonTitle="Click to select custom fields"
+              onClick={() => toggleCustomField()}
+            />
+          </div>
+        )}
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {!isLoading && docs ? (
@@ -270,7 +272,7 @@ const DebtorsList = () => {
             />
           </>
         ) : (
-          <div className="no-data-available">No data available</div>
+          <div className="no-record-found">No record found</div>
         )
       ) : (
         <Loader />

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -6,37 +6,38 @@ import BigInput from '../../../common/BigInput/BigInput';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
-import {
-  changeClientCreditLimitColumnListStatus,
-  getClientCreditLimitData,
-  getCreditLimitColumnsNameList,
-  saveClientCreditLimitColumnNameList,
-} from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
+import {
+  changeDebtorStakeHolderColumnListStatus,
+  getDebtorStakeHolderColumnNameList,
+  getDebtorStakeHolderListData,
+  saveDebtorStakeHolderColumnNameList,
+} from '../redux/DebtorsAction';
 
-const ClientCreditLimitTab = () => {
+const DebtorsStakeHolderTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const clientCreditLimitData = useSelector(
-    ({ clientManagement }) => clientManagement?.creditLimit?.creditLimitList ?? {}
+  const debtorStakeHolderListData = useSelector(
+    ({ debtorsManagement }) => debtorsManagement.stakeHolder.stakeHolderList
   );
-  const clientCreditLimitColumnNameList = useSelector(
-    ({ clientManagement }) => clientManagement?.creditLimit?.columnList ?? {}
+  const debtorStakeHolderColumnNameListData = useSelector(
+    ({ debtorsManagement }) => debtorsManagement.stakeHolder.columnList
   );
-  const { total, headers, pages, docs, page, limit } = useMemo(() => clientCreditLimitData, [
-    clientCreditLimitData,
-  ]);
+  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
+    () => debtorStakeHolderListData,
+    [debtorStakeHolderListData]
+  );
 
-  const getCreditLimitList = useCallback(
+  const getDebtorStakeHolderList = useCallback(
     (params = {}, cb) => {
       const data = {
-        page: page ?? 1,
-        limit: limit ?? 15,
+        page: page || 1,
+        limit: limit || 15,
         ...params,
       };
-      dispatch(getClientCreditLimitData(id, data));
+      dispatch(getDebtorStakeHolderListData(id, data));
       if (cb && typeof cb === 'function') {
         cb();
       }
@@ -46,33 +47,33 @@ const ClientCreditLimitTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getCreditLimitList({ page, limit: newLimit });
+      getDebtorStakeHolderList({ page, limit: newLimit });
     },
-    [getCreditLimitList]
+    [getDebtorStakeHolderList]
   );
 
   const pageActionClick = useCallback(
     newPage => {
-      getCreditLimitList({ page: newPage, limit });
+      getDebtorStakeHolderList({ page: newPage, limit });
     },
-    [limit, getCreditLimitList]
+    [limit, getDebtorStakeHolderList]
   );
 
-  const [customFieldModal, setCustomFieldModal] = React.useState(false);
+  const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
-      dispatch(changeClientCreditLimitColumnListStatus(data));
+      dispatch(changeDebtorStakeHolderColumnListStatus(data));
     },
     [dispatch]
   );
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveClientCreditLimitColumnNameList({ isReset: true }));
-      getCreditLimitList();
+      await dispatch(saveDebtorStakeHolderColumnNameList({ isReset: true }));
+      getDebtorStakeHolderList();
     } catch (e) {
       /**/
     }
@@ -81,17 +82,17 @@ const ClientCreditLimitTab = () => {
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveClientCreditLimitColumnNameList({ clientCreditLimitColumnNameList }));
-      getCreditLimitList();
+      await dispatch(saveDebtorStakeHolderColumnNameList({ debtorStakeHolderColumnNameListData }));
+      getDebtorStakeHolderList();
     } catch (e) {
       /**/
     }
     toggleCustomField();
-  }, [toggleCustomField, dispatch, clientCreditLimitColumnNameList]);
+  }, [toggleCustomField, dispatch, debtorStakeHolderColumnNameListData]);
 
   const { defaultFields, customFields } = useMemo(
-    () => clientCreditLimitColumnNameList ?? { defaultFields: [], customFields: [] },
-    [clientCreditLimitColumnNameList]
+    () => debtorStakeHolderColumnNameListData || { defaultFields: [], customFields: [] },
+    [debtorStakeHolderColumnNameListData]
   );
 
   const buttons = useMemo(
@@ -104,21 +105,21 @@ const ClientCreditLimitTab = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [toggleCustomField, onClickSaveColumnSelection]
   );
 
   useEffect(() => {
-    getCreditLimitList();
-    dispatch(getCreditLimitColumnsNameList());
+    getDebtorStakeHolderList();
+    dispatch(getDebtorStakeHolderColumnNameList());
   }, []);
 
   const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef?.current?.value;
-    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
-      getCreditLimitList();
+    const searchKeyword = searchInputRef.current.value;
+    if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
+      getDebtorStakeHolderList();
     } else if (e.key === 'Enter') {
-      if (searchKeyword?.trim()?.toString()?.length !== 0) {
-        getCreditLimitList({ search: searchKeyword?.trim()?.toString() });
+      if (searchKeyword.trim().toString().length !== 0) {
+        getDebtorStakeHolderList({ search: searchKeyword.trim().toString() });
       } else {
         errorNotification('Please enter any value than press enter');
       }
@@ -128,7 +129,7 @@ const ClientCreditLimitTab = () => {
   return (
     <>
       <div className="tab-content-header-row">
-        <div className="tab-content-header">Credit Limit</div>
+        <div className="tab-content-header">Stake Holder</div>
         <div className="buttons-row">
           <BigInput
             ref={searchInputRef}
@@ -148,7 +149,7 @@ const ClientCreditLimitTab = () => {
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {docs ? (
+      {!isLoading && docs ? (
         docs.length > 0 ? (
           <>
             <div className="tab-table-container">
@@ -189,4 +190,4 @@ const ClientCreditLimitTab = () => {
   );
 };
 
-export default ClientCreditLimitTab;
+export default DebtorsStakeHolderTab;

@@ -1,6 +1,5 @@
 import HeaderApiService from '../services/HeaderApiService';
 import { errorNotification, successNotification } from '../../Toast';
-import { clearAuthToken } from '../../../helpers/LocalStorageHelper';
 import { EDIT_PROFILE_CONSTANT } from './HeaderConstants';
 import { LOGIN_REDUX_CONSTANTS } from '../../../screens/auth/login/redux/LoginReduxConstants';
 
@@ -146,7 +145,6 @@ export const logoutUser = () => {
         dispatch({
           type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
         });
-        clearAuthToken();
         successNotification('Logged out successfully.');
       }
     } catch (e) {

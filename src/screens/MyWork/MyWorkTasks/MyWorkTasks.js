@@ -19,13 +19,13 @@ const MyWorkTasks = props => {
     limit,
     headers,
     docs,
+    isLoading,
     pageActionClick,
     onSelectLimit,
     getTaskList,
     dispatchFilter,
     TASK_FILTER_REDUCER_ACTIONS,
     onSelectTaskRecord,
-    isLoading,
   } = props;
 
   const {
@@ -160,7 +160,9 @@ const MyWorkTasks = props => {
             />
           </>
         ) : (
-          <div className="no-data-available">No data available</div>
+          <>
+            <div className="no-record-found">No Record Found</div>
+          </>
         )
       ) : (
         <Loader />
@@ -191,12 +193,12 @@ MyWorkTasks.defaultProps = {
 };
 MyWorkTasks.propTypes = {
   isLoading: propTypes.bool,
-  docs: propTypes.object,
+  docs: propTypes.array,
   total: propTypes.number,
   pages: propTypes.number,
   page: propTypes.number,
   limit: propTypes.number,
-  headers: propTypes.object,
+  headers: propTypes.array,
   pageActionClick: propTypes.func,
   onSelectLimit: propTypes.func,
   getTaskList: propTypes.func,

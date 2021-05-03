@@ -265,7 +265,7 @@ const SettingsDocumentTypeTab = () => {
     <>
       <div className="settings-title-row">
         <div className="title">Document Type List</div>
-        <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />
+        {!isLoading && <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />}
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {!isLoading ? (
@@ -294,7 +294,7 @@ const SettingsDocumentTypeTab = () => {
             />
           </>
         ) : (
-          <div className="no-data-available">{error}</div>
+          <div className="no-record-found">{error}</div>
         )
       ) : (
         <Loader />

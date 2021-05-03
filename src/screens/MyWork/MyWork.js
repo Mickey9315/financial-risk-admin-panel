@@ -218,6 +218,7 @@ const MyWork = () => {
   const myWorkTabContent = [
     <MyWorkTasks
       docs={docs}
+      isLoading={isLoading}
       headers={headers}
       page={page}
       pages={pages}
@@ -229,7 +230,6 @@ const MyWork = () => {
       dispatchFilter={dispatchFilter}
       TASK_FILTER_REDUCER_ACTIONS={TASK_FILTER_REDUCER_ACTIONS}
       onSelectTaskRecord={onSelectTaskRecord}
-      isLoading={isLoading}
     />,
     <MyWorkNotifications />,
   ];
@@ -350,7 +350,7 @@ const MyWork = () => {
           className="my-work-tab"
         />
         <div className="d-flex">
-          {activeTabIndex === 0 ? (
+          {activeTabIndex === 0 && !isLoading && docs && (
             <>
               <IconButton
                 buttonType="secondary"
@@ -368,7 +368,7 @@ const MyWork = () => {
               />
               <Button buttonType="success" title="Add" onClick={addTask} />
             </>
-          ) : (
+          {activeTabIndex === 1 && (
             <div className="date-picker-container">
               <DatePicker
                 showMonthDropdown
