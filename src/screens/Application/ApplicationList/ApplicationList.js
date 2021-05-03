@@ -438,8 +438,13 @@ const ApplicationList = () => {
     return foundValue ? [foundValue] : [];
   }, [status, dropdownData]);
 
-  const viewApplicationOnSelectRecord = useCallback(_id => {
-    history.push(`/applications/detail/view/${_id}`);
+  // eslint-disable-next-line no-shadow
+  const viewApplicationOnSelectRecord = useCallback((id, data) => {
+    if (data?.status === 'DRAFT') {
+      history.push(`/applications/application/generate/?applicationId=${id}`);
+    } else {
+      history.push(`/applications/detail/view/${id}`);
+    }
   }, []);
 
   useEffect(() => {

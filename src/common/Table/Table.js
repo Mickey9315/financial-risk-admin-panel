@@ -315,7 +315,7 @@ function Row(props) {
   return (
     <>
       <tr
-        onClick={() => recordSelected(data.id)}
+        onClick={() => recordSelected(data.id, data)}
         className={
           data?.isCompleted?.props?.children?.props?.checked
             ? `completedTask ${rowClass}`

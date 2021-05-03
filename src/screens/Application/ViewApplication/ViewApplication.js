@@ -47,26 +47,13 @@ const ViewApplication = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const applicationDetail = useSelector(
-    ({ application }) => application?.viewApplication?.applicationDetail || []
+    ({ application }) => application?.viewApplication?.applicationDetail ?? {}
   );
-
-  const { status } = useMemo(() => applicationDetail, [applicationDetail]);
-
-  /** *
-   * status checker
-   * ** */
-  if (status) {
-    if (status[0].value === 'DRAFT') {
-      history.push(`/applications/application/generate/?applicationId=${id}`);
-    }
-  }
 
   useEffect(() => {
     dispatch(getApplicationDetailById(id));
     return () => dispatch(resetApplicationDetail());
   }, []);
-
-  // end status checker
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const handleDrawerState = useCallback(async (idDrawer, headers) => {
@@ -150,103 +137,97 @@ const ViewApplication = () => {
   const blockers = applicationDetails?.blockers;
   return (
     <>
-      {status && status[0].value !== 'DRAFT' && (
-        <>
-          <div className="breadcrumb mt-10">
-            <span onClick={backToApplicationList}>Application List</span>
-            <span className="material-icons-round">navigate_next</span>
-            <span>View Application</span>
-          </div>
-          <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
-          <div className="view-application-container">
-            <div className="view-application-details-left">
-              <div className="common-white-container">
-                <div className="">Status</div>
-                <div className="view-application-status">
-                  <ReactSelect
-                    placeholder="Status"
-                    searchable={false}
-                    values={applicationDetail?.status || []}
-                    options={applicationDetail?.applicationStatus || []}
-                    disabled={!applicationDetail?.isAllowToUpdate}
-                  />
-                </div>
-                <div className="application-details-grid">
-                  {applicationDetails.map(detail => (
-                    <div>
-                      <div className="font-field mb-5">{detail.title}</div>
-                      {detail.type === 'text' && (
-                        <div className="detail">{detail.value || '-'}</div>
-                      )}
-                      {detail.type === 'link' && (
-                        <div
-                          style={{
-                            textDecoration: 'underline',
-                            cursor: 'pointer',
-                          }}
-                          className="detail"
-                          onClick={() => {
-                            handleDrawerState(
-                              detail.value._id,
-                              applicationDetail.headers.filter(
-                                header => header.name === detail.name
-                              )
-                            );
-                          }}
-                        >
-                          {detail.value.value || '-'}
-                        </div>
-                      )}
+      <div className="breadcrumb mt-10">
+        <span onClick={backToApplicationList}>Application List</span>
+        <span className="material-icons-round">navigate_next</span>
+        <span>View Application</span>
+      </div>
+      <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
+      <div className="view-application-container">
+        <div className="view-application-details-left">
+          <div className="common-white-container">
+            <div className="">Status</div>
+            <div className="view-application-status">
+              <ReactSelect
+                placeholder="Status"
+                searchable={false}
+                values={applicationDetail?.status || []}
+                options={applicationDetail?.applicationStatus || []}
+                disabled={!applicationDetail?.isAllowToUpdate}
+              />
+            </div>
+            <div className="application-details-grid">
+              {applicationDetails?.map(detail => (
+                <div>
+                  <div className="font-field mb-5">{detail?.title}</div>
+                  {detail?.type === 'text' && <div className="detail">{detail?.value || '-'}</div>}
+                  {detail?.type === 'link' && (
+                    <div
+                      style={{
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                      }}
+                      className="detail"
+                      onClick={() => {
+                        handleDrawerState(
+                          detail?.value._id,
+                          applicationDetail?.headers?.filter(
+                            header => header?.name === detail?.name
+                          )
+                        );
+                      }}
+                    >
+                      {detail?.value?.value || '-'}
                     </div>
-                  ))}
+                  )}
                 </div>
-                {blockers && (
-                  <>
-                    <div className="blockers-title">Blockers</div>
+              ))}
+            </div>
+            {blockers && (
+              <>
+                <div className="blockers-title">Blockers</div>
 
-                    {blockers.map(blocker => (
-                      <div className="guideline">{blocker.value}</div>
-                    ))}
-                  </>
-                )}
-                <div className="current-business-address-title">Current Business Address</div>
-                <div className="current-business-address">
-                  <div className="font-field mr-15">Address</div>
-                  <div className="font-primary">{applicationDetail?.address || '-'}</div>
-                </div>
-                <div className="view-application-question">
-                  Any extended payment terms outside your policy standard terms?
-                </div>
-                <div className="view-application-answer">
-                  {applicationDetail?.isExtendedPaymentTerms
-                    ? applicationDetail?.extendedPaymentTermsDetails
-                    : ' No'}
-                </div>
-                <div className="view-application-question">
-                  Any overdue amounts passed your maximum extension period / Credit period?
-                </div>
-                <div className="view-application-answer">
-                  {applicationDetail?.isPassedOverdueAmount
-                    ? applicationDetail?.passedOverdueDetails
-                    : ' No'}
-                </div>
-              </div>
+                {blockers?.map(blocker => (
+                  <div className="guideline">{blocker?.value}</div>
+                ))}
+              </>
+            )}
+            <div className="current-business-address-title">Current Business Address</div>
+            <div className="current-business-address">
+              <div className="font-field mr-15">Address</div>
+              <div className="font-primary">{applicationDetail?.address || '-'}</div>
             </div>
-            <div className="view-application-details-right">
-              <div className="common-white-container">
-                <Accordion className="view-application-accordion">
-                  <ApplicationReportAccordion index={0} />
-                  <ApplicationTaskAccordion applicationId={id} index={1} />
-                  <ApplicationNotesAccordion applicationId={id} index={2} />
-                  <ApplicationAlertsAccordion index={3} />
-                  <ApplicationDocumentsAccordion applicationId={id} index={4} />
-                  <ApplicationLogsAccordion index={5} />
-                </Accordion>
-              </div>
+            <div className="view-application-question">
+              Any extended payment terms outside your policy standard terms?
             </div>
-          </div>{' '}
-        </>
-      )}
+            <div className="view-application-answer">
+              {applicationDetail?.isExtendedPaymentTerms
+                ? applicationDetail?.extendedPaymentTermsDetails
+                : ' No'}
+            </div>
+            <div className="view-application-question">
+              Any overdue amounts passed your maximum extension period / Credit period?
+            </div>
+            <div className="view-application-answer">
+              {applicationDetail?.isPassedOverdueAmount
+                ? applicationDetail?.passedOverdueDetails
+                : ' No'}
+            </div>
+          </div>
+        </div>
+        <div className="view-application-details-right">
+          <div className="common-white-container">
+            <Accordion className="view-application-accordion">
+              <ApplicationReportAccordion index={0} />
+              <ApplicationTaskAccordion applicationId={id} index={1} />
+              <ApplicationNotesAccordion applicationId={id} index={2} />
+              <ApplicationAlertsAccordion index={3} />
+              <ApplicationDocumentsAccordion applicationId={id} index={4} />
+              <ApplicationLogsAccordion index={5} />
+            </Accordion>
+          </div>
+        </div>
+      </div>{' '}
     </>
   );
 };

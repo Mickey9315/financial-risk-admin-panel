@@ -116,7 +116,7 @@ const initialApplicationList = {
   },
 
   viewApplication: {
-    applicationDetail: [],
+    applicationDetail: {},
     task: {
       taskList: [],
       addTask: [],
