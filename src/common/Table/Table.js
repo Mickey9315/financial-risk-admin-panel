@@ -204,7 +204,7 @@ const Table = props => {
                   {heading.label}
                 </th>
               ))}
-            {(haveActions ?? extraColumns.length > 0) && (
+            {(haveActions || extraColumns.length > 0) && (
               <th style={{ position: 'sticky', right: 0 }} />
             )}
           </tr>
