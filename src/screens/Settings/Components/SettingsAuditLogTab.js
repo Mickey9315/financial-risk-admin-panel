@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import IconButton from '../../../common/IconButton/IconButton';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Table from '../../../common/Table/Table';
@@ -90,7 +90,7 @@ const SettingsAuditLogTab = () => {
       dispatchFilter({
         type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'entityType',
-        value: event[0].value,
+        value: event?.value,
       });
     },
     [dispatchFilter]
@@ -101,7 +101,7 @@ const SettingsAuditLogTab = () => {
       dispatchFilter({
         type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'userRefId',
-        value: event[0].value,
+        value: event?.value,
       });
     },
     [dispatchFilter]
@@ -112,7 +112,7 @@ const SettingsAuditLogTab = () => {
       dispatchFilter({
         type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'actionType',
-        value: event[0].value,
+        value: event?.value,
       });
     },
     [dispatchFilter]
@@ -434,37 +434,40 @@ const SettingsAuditLogTab = () => {
           <div className="filter-modal-row">
             <div className="form-title">Module</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select module"
               name="entityType"
-              values={entityTypeSelectedValue}
+              value={entityTypeSelectedValue}
               options={entityTypeOptions}
               onChange={handleEntityTypeFilterChange}
-              searchable={false}
+              isSearchable={false}
             />
           </div>
           <div className="filter-modal-row">
             <div className="form-title">User Name</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select user name"
               name="userRefId"
               options={userNameOptions}
-              values={userNameSelectedValue}
+              value={userNameSelectedValue}
               onChange={handleUserNameFilterChange}
-              searchable={false}
+              isSearchable={false}
             />
           </div>
           <div className="filter-modal-row">
             <div className="form-title">Action Type</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select action type"
               name="actionType"
-              values={actionTypeSelectedValue}
+              value={actionTypeSelectedValue}
               options={actionTypeOptions}
               onChange={handleActionTypeFilterChange}
-              searchable={false}
+              isSearchable={false}
             />
           </div>
           <div className="filter-modal-row">

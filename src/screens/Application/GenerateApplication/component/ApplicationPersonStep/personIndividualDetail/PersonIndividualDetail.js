@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -78,8 +78,8 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
 
   useEffect(() => {
     if (
-      partners?.[index]?.country?.[0]?.value === 'AUS' ||
-      partners?.[index]?.country?.[0]?.value === 'NZL'
+      partners?.[index]?.country?.value === 'AUS' ||
+      partners?.[index]?.country?.value === 'NZL'
     ) {
       setIsAusOrNew(true);
     }
@@ -328,11 +328,11 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSinglePersonState(data[0]?.name, data);
-      if (data[0]?.name === 'country') {
+      updateSinglePersonState(data?.name, data);
+      if (data?.name === 'country') {
         let showDropDownInput = true;
 
-        switch (data[0]?.value) {
+        switch (data?.value) {
           case 'AUS':
             updateSinglePersonState('state', []);
             setStateValue(australianStates);
@@ -374,7 +374,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: companyState?.clientId?.[0]?.value };
+        const params = { clientId: companyState?.clientId?.value };
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
         if (response) {
           updatePersonState(response);
@@ -397,7 +397,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
           data: null,
         });
         setSearchedEntityNameValue(e.target.value.toString());
-        const params = { clientId: companyState?.clientId?.[0]?.value };
+        const params = { clientId: companyState?.clientId?.value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
@@ -410,7 +410,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         errorNotification('Please select client before continue');
         return;
       }
-      const params = { clientId: companyState?.clientId?.[0]?.value };
+      const params = { clientId: companyState?.clientId?.value };
       dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
     }
   }, [searchedEntityNameValue, companyState]);
@@ -419,7 +419,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
     async e => {
       try {
         if (e.key === 'Enter') {
-          const params = { clientId: companyState?.clientId?.[0]?.value };
+          const params = { clientId: companyState?.clientId?.value };
           const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
           if (response) {
             updatePersonState(response);
@@ -458,7 +458,6 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   const handleEntityChange = useCallback(
     event => {
       const { name, value } = event.target;
-      console.log(name, value);
       const data = [
         {
           label: value,
@@ -482,11 +481,12 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               name={input.name}
               value={
                 input.name === 'state'
-                  ? (!isAusOrNew && partners?.[index]?.[input.name]?.[0]?.label) ||
+                  ? (!isAusOrNew && partners?.[index]?.[input.name]?.label) ||
                     partners?.[index]?.[input.name]
                   : partners?.[index]?.[input.name]
               }
               onChange={handleTextInputChange}
+              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -515,11 +515,13 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         case 'select':
           component = (
             <ReactSelect
+              className="react-select-container"
+              classNamePrefix="react-select"
+              isSearchable
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              values={(partners && partners?.[index][input.name]) || []}
-              searchable
+              value={(partners && partners[index][input.name] && partners[index][input.name]) ?? []}
               onChange={handleSelectInputChange}
             />
           );
@@ -541,7 +543,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               name={input.name}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              value={partners?.[index]?.entityName?.[0]?.label}
+              value={partners?.[index]?.entityName?.label}
               onChange={handleEntityChange}
             />
           );
@@ -658,6 +660,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       return '';
     }
     if (partners?.length <= 1) {
+      return '';
+    }
+    if (partners?.[index]?.isDisabled) {
       return '';
     }
     return 'delete_outline';

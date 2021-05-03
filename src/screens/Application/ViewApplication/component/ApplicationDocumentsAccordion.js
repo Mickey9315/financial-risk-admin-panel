@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import Tooltip from 'rc-tooltip';
 import {
   deleteViewApplicationDocumentAction,
@@ -92,8 +92,8 @@ const ApplicationDocumentsAccordion = props => {
     newValue => {
       dispatchSelectedApplicationDocuments({
         type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
-        name: newValue[0].name,
-        value: newValue[0].value,
+        name: newValue.name,
+        value: newValue,
       });
     },
     [dispatchSelectedApplicationDocuments]
@@ -189,7 +189,7 @@ const ApplicationDocumentsAccordion = props => {
   }, [toggleUploadModel, dispatchSelectedApplicationDocuments, setFileData]);
 
   const onClickUploadDocument = useCallback(async () => {
-    if (selectedApplicationDocuments.documentType.length === 0) {
+    if (selectedApplicationDocuments.documentType.length <= 0) {
       errorNotification('Please select document type');
     } else if (!selectedApplicationDocuments.fileData) {
       errorNotification('Please select document to upload');
@@ -199,7 +199,7 @@ const ApplicationDocumentsAccordion = props => {
       const formData = new FormData();
       formData.append('description', selectedApplicationDocuments.description);
       formData.append('isPublic', selectedApplicationDocuments.isPublic);
-      formData.append('documentType', selectedApplicationDocuments.documentType);
+      formData.append('documentType', selectedApplicationDocuments.documentType.value);
       formData.append('document', selectedApplicationDocuments.fileData);
       formData.append('entityId', applicationId);
       formData.append('documentFor', 'application');
@@ -328,11 +328,13 @@ const ApplicationDocumentsAccordion = props => {
           <div className="document-upload-popup-container">
             <span>Document Type</span>
             <ReactSelect
+              className="react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               options={documentTypeOptions}
               value={documentType}
               onChange={handleDocumentChange}
-              searchable={false}
+              isSearchable={false}
             />
             <span>Please upload your documents here</span>
             <FileUpload

@@ -32,24 +32,7 @@
   color: $primary-color;
 }
 
-.select-client-list-container {
-  display: flex;
-  align-items: center;
-  min-height: 2rem!important;
-  padding: .125rem .5rem!important;
-  background-color: #ffffff!important;
-  border: 0.063rem solid $border-color!important;
-  border-radius: 0.313rem!important;
-}
 
-.select-client-list-container:hover, .select-client-list-container:focus, .select-client-list-container:focus-within {
-  border: 0.063rem solid $border-color!important;
-  box-shadow: unset!important;
-}
-
-.select-client-list-container.disabled-control {
-  border: 0!important;
-}
 
 .module-container {
   display: grid;

@@ -12,12 +12,13 @@
   }
 }
 
-.react-dropdown-select.no-per-page-select {
-  height: 35px;
+.pagination-container  .react-select__control {
+  height: 35px!important;
   width: 80px!important;
-  .react-dropdown-select-content {
-    font: $title $font-medium;
+  .react-select__value-container {
+    font: $title $font-medium!important;
   }
+
 }
 
 .records-per-page-container {
@@ -45,7 +46,8 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  width: 2.188rem;
+  min-width: 2.188rem;
+  padding: 0 10px;
   cursor: pointer;
 
   span {

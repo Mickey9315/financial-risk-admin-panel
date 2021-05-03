@@ -13,18 +13,13 @@ const ApplicationPersonStep = () => {
     ({ application }) => application?.editApplication?.company?.entityType ?? []
   );
 
-  const entityTypeFromCompany = entityType?.[0]?.value ?? '';
+  const entityTypeFromCompany = entityType?.value;
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (personState?.length < 1 && ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany)) {
       dispatch(addPersonDetail('individual'));
     }
-    // else if (entityTypeFromCompany === 'PARTNERSHIP' && personState?.length <= 1) {
-    //   dispatch(addPersonDetail('individual'));
-    // } else if (personState?.length < 1) {
-    //   dispatch(addPersonDetail('individual'));
-    // }
   }, []);
 
   const hasRadio = useMemo(() => ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany), [

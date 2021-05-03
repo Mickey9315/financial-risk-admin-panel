@@ -1,9 +1,9 @@
 /* eslint-disable no-shadow */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Checkbox from '../../../common/Checkbox/Checkbox';
@@ -35,6 +35,7 @@ const AddUser = () => {
   const { action, id } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState(null);
+  const prevUserRoleData = useRef(null);
 
   const filteredOrganisationList = useMemo(
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) ?? [],
@@ -89,6 +90,7 @@ const AddUser = () => {
 
   const onChangeUserData = useCallback(e => {
     const { name, value } = e.target;
+
     dispatch(changeUserData({ name, value }));
   }, []);
 
@@ -98,18 +100,30 @@ const AddUser = () => {
 
   const onChangeUserRole = useCallback(
     e => {
-      clientSelected([]);
+      const value = e?.value ?? '';
+      if (prevUserRoleData?.current === null) {
+        prevUserRoleData.current = {
+          role: userRoleSelectedValue,
+          clientIds,
+        };
+      }
+
+      if (value === prevUserRoleData?.current?.role?.[0]?.value) {
+        clientSelected(prevUserRoleData.current.clientIds);
+      } else {
+        clientSelected([]);
+      }
 
       const data = {
         target: {
           name: 'role',
-          value: e?.[0]?.value,
+          value,
         },
       };
 
       onChangeUserData(data);
     },
-    [onChangeUserData, clientSelected]
+    [onChangeUserData, clientSelected, prevUserRoleData?.current, clientIds, userRoleSelectedValue]
   );
 
   const onChangeUserAccess = useCallback((module, access) => {
@@ -239,12 +253,6 @@ const AddUser = () => {
     }
   }, [action]);
 
-  const userRoleSelectedValue = useMemo(() => {
-    const foundValue = USER_ROLES.find(e => {
-      return e.value === role;
-    });
-    return foundValue ? [foundValue] : [];
-  }, [role]);
   return (
     <>
       {showModal && (
@@ -307,13 +315,14 @@ const AddUser = () => {
           <div className="common-detail-field">
             <span className="common-detail-title">Role</span>
             <ReactSelect
+              className={`react-select-container ${action === 'view' && 'disabled-control'}`}
+              classNamePrefix="react-select"
               placeholder={action === 'view' ? '' : 'Select'}
               name="role"
               options={USER_ROLES}
-              values={userRoleSelectedValue}
+              value={userRoleSelectedValue}
               onChange={onChangeUserRole}
-              disabled={action === 'view'}
-              className={action === 'view' && 'disabled-control'}
+              isDisabled={action === 'view'}
               dropdownHandle={action !== 'view'}
               searchable={false}
             />
@@ -342,18 +351,17 @@ const AddUser = () => {
               borderClass={action === 'view' ? 'disabled-control' : ''}
             />
           </div>
-          {(role === 'riskAnalyst' || role === 'serviceManager') && (
+          {role !== 'superAdmin' && (
             <div className="common-detail-field user-select-client">
               <span className="common-detail-title">Select Client</span>
               <ReactSelect
-                multi
-                values={clientIds}
+                isMulti
+                value={clientIds}
                 onChange={clientSelected}
                 options={clients}
-                disabled={action === 'view' || role === 'superAdmin'}
-                className={`select-client-list-container ${
-                  action === 'view' && 'disabled-control'
-                }`}
+                isDisabled={action === 'view' || role === 'superAdmin'}
+                className="react-select-container isMulti-react-select"
+                classNamePrefix="react-select"
                 color="#003A78"
                 placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
                 dropdownHandle={false}

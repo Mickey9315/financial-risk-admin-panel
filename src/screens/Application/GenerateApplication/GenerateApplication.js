@@ -140,7 +140,7 @@ const GenerateApplication = () => {
 
   const onNextClick = useCallback(() => {
     const data = editApplicationData?.[FILTERED_STEPS?.[applicationStage]?.name];
-    switch (FILTERED_STEPS[applicationStage].name) {
+    switch (FILTERED_STEPS?.[applicationStage]?.name) {
       case 'company':
         return applicationCompanyStepValidations(dispatch, data, editApplicationData);
       case 'partners':

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import './debtorTabs.scss';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -30,7 +30,7 @@ const initialDebtorDocumentState = {
   description: '',
   fileData: '',
   isPublic: false,
-  documentType: '',
+  documentType: [],
 };
 
 const DEBTOR_DOCUMENT_REDUCER_ACTIONS = {
@@ -179,7 +179,7 @@ const DebtorsDocumentsTab = () => {
   );
 
   const onClickUploadDocument = useCallback(async () => {
-    if (selectedDebtorDocument?.documentType?.length === 0) {
+    if (selectedDebtorDocument?.documentType?.length <= 0) {
       errorNotification('Please select document type');
     } else if (!selectedDebtorDocument?.description) {
       errorNotification('Description is required');
@@ -189,7 +189,7 @@ const DebtorsDocumentsTab = () => {
       const formData = new FormData();
       formData.append('description', selectedDebtorDocument?.description);
       formData.append('isPublic', selectedDebtorDocument?.isPublic);
-      formData.append('documentType', selectedDebtorDocument?.documentType);
+      formData.append('documentType', selectedDebtorDocument?.documentType.value);
       formData.append('document', fileData);
       formData.append('entityId', id);
       formData.append('documentFor', 'debtor');
@@ -387,8 +387,8 @@ const DebtorsDocumentsTab = () => {
     newValue => {
       dispatchSelectedDebtorDocument({
         type: DEBTOR_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
-        name: newValue[0].name,
-        value: newValue[0].value,
+        name: newValue.name,
+        value: newValue,
       });
     },
     [getDebtorsDocumentsList]
@@ -489,11 +489,13 @@ const DebtorsDocumentsTab = () => {
           <div className="document-upload-popup-container">
             <span>Document Type</span>
             <ReactSelect
+              className="react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               options={documentTypeOptions}
               value={documentType}
               onChange={handleDocumentChange}
-              searchable={false}
+              isSearchable={false}
             />
             <span>Please upload your documents here</span>
             <FileUpload

@@ -710,7 +710,7 @@ export const getAssigneeDropDownData = () => {
         dispatch({
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-              .ASSIGNEE_DROP_DOWN_DATA_ACTION,
+              .APPLICATION_TASK_ASSIGNEE_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -739,7 +739,7 @@ export const getApplicationTaskEntityDropDownData = params => {
         dispatch({
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-              .ENTITY_DROP_DOWN_DATA_ACTION,
+              .APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -768,7 +768,7 @@ export const getApplicationTaskDefaultEntityDropDownData = params => {
         dispatch({
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-              .DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION,
+              .DEFAULT_APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -790,7 +790,9 @@ export const getApplicationTaskDefaultEntityDropDownData = params => {
 export const updateApplicationTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.UPDATE_TASK_FIELD_STATUS,
+      type:
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+          .APPLICATION_UPDATE_TASK_FIELD_STATUS,
       name,
       value,
     });
@@ -805,6 +807,7 @@ export const saveApplicationTaskData = (data, backToTask) => {
       );
       if (response.data.status === 'SUCCESS') {
         successNotification(response.data.message);
+        console.log('done');
         backToTask();
       }
     } catch (e) {
@@ -971,9 +974,12 @@ export const viewApplicationUploadDocument = (data, config) => {
               .VIEW_APPLICATION_UPLOAD_DOCUMENT_DATA,
           data: response.data.data,
         });
+        successNotification(response.data.message || 'SUCCESS');
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        errorNotification(e.response.data.message || 'Error');
+
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {

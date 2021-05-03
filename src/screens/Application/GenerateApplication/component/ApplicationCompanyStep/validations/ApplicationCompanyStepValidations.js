@@ -18,7 +18,7 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     validated = false;
     errors.acn = 'Please enter valid ACN number before continue';
   }
-  if (!data.entityName || data.entityName?.[0]?.value?.length <= 0) {
+  if (!data.entityName || data.entityName?.value?.length <= 0) {
     validated = false;
     errors.entityName = 'Please enter entity name';
   }
@@ -80,30 +80,30 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
       wipeOutDetails,
     } = data;
 
-    delete country[0].name;
+    delete country?.name;
 
     const finalData = {
       stepper: 'company',
-      clientId: clientId[0]?.value,
-      debtorId: debtorId[0]?.value,
+      clientId: clientId?.value,
+      debtorId: debtorId?.value,
       isActive: typeof isActive === 'string' ? isActive === 'Active' : isActive,
       abn,
       acn,
-      entityName: entityName[0]?.label,
+      entityName: entityName?.label,
       tradingName,
       contactNumber: phoneNumber,
       outstandingAmount,
-      entityType: entityType[0]?.value,
+      entityType: entityType?.value,
       wipeOutDetails,
       address: {
         property,
         unitNumber,
         streetNumber,
         streetName,
-        streetType: streetType?.[0]?.value,
+        streetType: streetType?.value,
         suburb,
-        state: state?.[0].value ?? state,
-        country: { name: country?.[0]?.label, code: country?.[0]?.value },
+        state: state.value ?? state,
+        country: { name: country?.label, code: country?.value },
         postCode,
       },
       applicationId: editApplicationData?._id ?? '',

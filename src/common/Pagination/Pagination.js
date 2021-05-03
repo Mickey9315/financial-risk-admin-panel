@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './Pagination.scss';
 import PropTypes from 'prop-types';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 
 const noPerPage = [
   { label: '5', value: 5 },
@@ -31,7 +31,7 @@ const Pagination = props => {
   const onLastClick = () => pageActionClick(pages);
   const onChangeLimit = e => {
     setRecordLimit(e);
-    onSelectLimit(e[0].value);
+    onSelectLimit(e.value);
   };
 
   useEffect(() => {
@@ -55,11 +55,13 @@ const Pagination = props => {
         <ReactSelect
           options={noPerPage}
           onChange={onChangeLimit}
-          values={recordLimit}
+          value={recordLimit}
           placeholder="Select"
-          className="no-per-page-select"
+          className="no-per-page-select react-select-container"
+          classNamePrefix="react-select"
           dropdownPosition="auto"
-          searchable={false}
+          isSearchable={false}
+          menuPlacement="auto"
         />
         <span className="ml-10">
           {' '}

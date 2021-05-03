@@ -46,7 +46,7 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
     const finalData = {
       stepper: 'credit-limit',
       applicationId: editApplicationData?._id,
-      entityType: editApplicationData.company?.entityType[0]?.value,
+      entityType: editApplicationData.company?.entityType?.value,
       isExtendedPaymentTerms,
       extendedPaymentTermsDetails: isExtendedPaymentTerms ? extendedPaymentTermsDetails : '',
       isPassedOverdueAmount,

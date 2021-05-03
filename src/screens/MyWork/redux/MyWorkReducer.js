@@ -4,8 +4,8 @@ const initialMyWork = {
   task: {
     taskList: {
       docs: [],
-      total: 0,
-      limit: 0,
+      total: 1,
+      limit: 15,
       page: 1,
       pages: 1,
       headers: [],
@@ -22,7 +22,7 @@ const initialMyWork = {
       taskFrom: 'task',
     },
     taskDetail: {},
-    dropDownData: {
+    myWorkDropDownData: {
       assigneeList: [],
       entityList: [],
     },
@@ -44,7 +44,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         },
       };
 
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_ADD_TASK_FIELD_ACTION:
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.MY_WORK_UPDATE_ADD_TASK_FIELD_ACTION:
       return {
         ...state,
         task: {
@@ -56,7 +56,8 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         },
       };
 
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_ACTION: {
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+      .MY_WORK_ASSIGNEE_DROP_DOWN_DATA_ACTION: {
       const assigneeList = action?.data?.map(data => ({
         label: data?.name,
         value: data?._id,
@@ -66,20 +67,46 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         ...state,
         task: {
           ...state?.task,
-          dropDownData: {
-            ...state?.task?.dropDownData,
+          myWorkDropDownData: {
+            ...state?.task?.myWorkDropDownData,
             assigneeList,
           },
         },
       };
     }
 
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION: {
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+      .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION: {
       const entityList = action?.data?.map(data => ({
         label: data?.applicationId ?? data?.name ?? '',
         value: data?._id,
         name: 'entityId',
       }));
+      console.log(82, entityList);
+      return {
+        ...state,
+        task: {
+          ...state?.task,
+          myWorkDropDownData: {
+            ...state?.task?.myWorkDropDownData,
+            entityList,
+          },
+        },
+      };
+    }
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_UPDATE_ENTITY_ID:
+      return {
+        ...state,
+        task: {
+          ...state?.task,
+          taskDetail: {
+            ...state?.task?.taskDetail,
+            entityId: [],
+          },
+        },
+      };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_ADD_TASK_ENTITY_ID:
       return {
         ...state,
         task: {
@@ -88,17 +115,8 @@ export const myWorkReducer = (state = initialMyWork, action) => {
             ...state?.task?.addTask,
             entityId: [],
           },
-          taskDetail: {
-            ...state?.task?.taskDetail,
-            entityId: [],
-          },
-          dropDownData: {
-            ...state?.task?.dropDownData,
-            entityList,
-          },
         },
       };
-    }
 
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION:
       return {
@@ -118,15 +136,17 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         },
       };
 
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_PAGE_DATA: {
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_PAGINATION_DATA: {
       return {
         ...state,
         task: {
           ...state?.task,
           taskList: {
             ...state?.task?.taskList,
-            page: 1,
-            limit: 15,
+            page: action?.page,
+            limit: action?.limit,
+            pages: action?.pages,
+            total: action?.total,
           },
         },
       };

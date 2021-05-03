@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import './ViewClient.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Tab from '../../../common/Tab/Tab';
@@ -71,7 +71,7 @@ const ViewClient = () => {
     'Notes',
   ];
   const viewClientData = useSelector(
-    ({ clientManagement }) => clientManagement?.selectedClient ?? null
+    ({ clientManagement }) => clientManagement?.selectedClient || {}
   );
 
   const riskAnalysts = useMemo(
@@ -119,15 +119,18 @@ const ViewClient = () => {
         value: viewClientData?.serviceManagerId?._id ?? null,
       },
     });
-  }, [viewClientData]);
+  }, []);
 
   const onChangeAssignee = useCallback(
     event => {
-      const { name, value } = event[0];
+      const { label, name, value } = event;
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
         name,
-        value,
+        value: {
+          label,
+          value,
+        },
       });
 
       const data = {};
@@ -174,72 +177,81 @@ const ViewClient = () => {
           type="text"
           readOnly
           placeholder="No name added"
-          value={viewClientData?.name ? viewClientData.name : ''}
+          value={viewClientData?.name ?? ''}
         />
         <span>Address</span>
         <Input
           type="text"
           readOnly
           placeholder="No address added"
-          value={viewClientData?.address?.city}
+          value={viewClientData?.address?.city ?? ''}
         />
         <span>Phone</span>
         <Input
           type="text"
           readOnly
           placeholder="No phone number added"
-          value={viewClientData?.contactNumber}
+          value={viewClientData?.contactNumber ?? ''}
         />
         <span>ABN</span>
         <Input
           type="number"
           readOnly
           placeholder="No ABN number added"
-          value={viewClientData?.abn}
+          value={viewClientData?.abn ?? ''}
         />
         <span>ACN</span>
         <Input
           type="number"
           readOnly
           placeholder="No ACN number added"
-          value={viewClientData?.acn}
+          value={viewClientData?.acn ?? ''}
         />
         <span>Referred By</span>
-        <Input type="text" readOnly placeholder="N/A" value={viewClientData?.referredBy} />
+        <Input type="text" readOnly placeholder="N/A" value={viewClientData?.referredBy ?? ''} />
         <span>Risk Person</span>
         <ReactSelect
+          className="react-select-container"
+          classNamePrefix="react-select"
           placeholder="Select"
           name="riskAnalystId"
           options={riskAnalysts}
-          values={[riskAnalystId]}
+          value={riskAnalystId}
           onChange={onChangeAssignee}
-          searchable={false}
+          isSearchable
         />
         <span>Service Person</span>
         <ReactSelect
+          className="react-select-container"
+          classNamePrefix="react-select"
           placeholder="Select"
           name="serviceManagerId"
           options={serviceManagers}
-          values={[serviceManagerId]}
+          value={serviceManagerId}
           onChange={onChangeAssignee}
-          searchable={false}
+          isSearchable
         />
         <span>IBIS Sector</span>
         <Input
           type="text"
           readOnly
           placeholder="No IBIS sector added"
-          value={viewClientData?.sector}
+          value={viewClientData?.sector ?? ''}
         />
         <span>Sales Person</span>
         <Input
           type="text"
           readOnly
           placeholder="No sales person added"
-          value={viewClientData?.salesPerson}
+          value={viewClientData?.salesPerson ?? ''}
         />
         <span>Website</span>
-        <Input type="text" readOnly placeholder="No website added" value={viewClientData?.website} />
+        <Input
+          type="text"
+          readOnly
+          placeholder="No website added"
+          value={viewClientData?.website ?? ''}
+        />
         <span>Trading As</span>
         <Input type="text" readOnly placeholder="N/A" />
         <span>Inception Date</span>
@@ -250,7 +262,7 @@ const ViewClient = () => {
             scrollableYearDropdown
             dateFormat="dd/MM/yyyy"
             placeholderText="No inception date added"
-            selected={new Date(viewClientData?.inceptionDate)}
+            selected={new Date(viewClientData?.inceptionDate ?? null)}
             disabled
           />
         </div>
@@ -262,7 +274,7 @@ const ViewClient = () => {
             scrollableYearDropdown
             dateFormat="dd/MM/yyyy"
             placeholderText="No expiry date added"
-            selected={new Date(viewClientData?.expiryDate)}
+            selected={new Date(viewClientData?.expiryDate ?? null)}
             disabled
           />
         </div>

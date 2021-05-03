@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import '../Settings.scss';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Button from '../../../common/Button/Button';
@@ -107,7 +107,7 @@ const SettingsDocumentTypeTab = () => {
 
   const handleDocumentForChange = useCallback(
     data => {
-      updateDocumentFields(data[0]?.name ?? '', data);
+      updateDocumentFields(data?.name ?? '', data);
     },
     [updateDocumentFields]
   );
@@ -136,7 +136,7 @@ const SettingsDocumentTypeTab = () => {
     if (!documentTitle || (documentTitle?.trim()?.length ?? -1) < 0) {
       errorNotification('Enter Document Type');
     }
-    if (!documentFor || !documentFor?.[0]?.value) {
+    if (!documentFor || !documentFor?.value) {
       errorNotification('Enter Document For');
     } else {
       try {
@@ -144,15 +144,14 @@ const SettingsDocumentTypeTab = () => {
           dispatch(
             updateSettingDocType(
               docId,
-              { documentTitle, documentFor: documentFor?.[0]?.value ?? '' },
+              { documentTitle, documentFor: documentFor?.value ?? '' },
               () => callBackOnAdd()
             )
           );
         } else {
           dispatch(
-            addNewSettingDocType(
-              { documentTitle, documentFor: documentFor?.[0]?.value ?? '' },
-              () => callBackOnAdd()
+            addNewSettingDocType({ documentTitle, documentFor: documentFor?.value ?? '' }, () =>
+              callBackOnAdd()
             )
           );
         }
@@ -317,11 +316,13 @@ const SettingsDocumentTypeTab = () => {
             />
             <span>Document For</span>
             <ReactSelect
+              className="react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               name="Document For"
               searchable={false}
               options={documentForOptions}
-              values={documentFor}
+              value={documentFor}
               onChange={handleDocumentForChange}
             />
           </div>

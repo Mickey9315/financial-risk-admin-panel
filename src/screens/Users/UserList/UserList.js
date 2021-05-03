@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import './UserList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
@@ -123,11 +123,11 @@ const UserList = () => {
 
   const handleFilterChange = useCallback(
     event => {
-      if (event?.[0]?.value) {
+      if (event?.value) {
         dispatchFilter({
           type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
           name: 'role',
-          value: event[0].value,
+          value: event.value,
         });
       }
     },
@@ -330,25 +330,27 @@ const UserList = () => {
     <>
       <div className="page-header">
         <div className="page-header-name">User List</div>
-        <div className="page-header-button-container">
-          <IconButton
-            buttonType="secondary"
-            title="filter_list"
-            className="mr-10"
-            buttonTitle="Click to apply filters on user list"
-            onClick={() => toggleFilterModal()}
-          />
-          <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            className="mr-10"
-            buttonTitle="Click to select custom fields"
-            onClick={() => toggleCustomField()}
-          />
-          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-            <Button title="Add User" buttonType="success" onClick={openAddUser} />
-          </UserPrivilegeWrapper>
-        </div>
+        {!isLoading && docs && (
+          <div className="page-header-button-container">
+            <IconButton
+              buttonType="secondary"
+              title="filter_list"
+              className="mr-10"
+              buttonTitle="Click to apply filters on user list"
+              onClick={() => toggleFilterModal()}
+            />
+            <IconButton
+              buttonType="primary"
+              title="format_line_spacing"
+              className="mr-10"
+              buttonTitle="Click to select custom fields"
+              onClick={() => toggleCustomField()}
+            />
+            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+              <Button title="Add User" buttonType="success" onClick={openAddUser} />
+            </UserPrivilegeWrapper>
+          </div>
+        )}
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {!isLoading && docs ? (
@@ -395,7 +397,8 @@ const UserList = () => {
           <div className="filter-modal-row">
             <div className="form-title">Role</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               name="role"
               options={USER_ROLES}

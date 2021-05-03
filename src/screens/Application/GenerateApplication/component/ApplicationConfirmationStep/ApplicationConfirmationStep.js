@@ -13,7 +13,7 @@ const ApplicationConfirmationStep = () => {
   // const editApplication = useSelector(({ application }) => application.editApplication);
 
   const { company, creditLimit, partners, documents } = useSelector(
-    ({ application }) => application.editApplication
+    ({ application }) => application?.editApplication ?? {}
   );
 
   // const { applicationId } = useQueryParams();
@@ -397,7 +397,7 @@ const ApplicationConfirmationStep = () => {
           return (
             <>
               <span>{detail?.title}</span>
-              <span className="detail-value">{detail?.value[0]?.label}</span>
+              <span className="detail-value">{detail?.value?.label}</span>
             </>
           );
         case 'ifYesText':

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import Tab from '../../../common/Tab/Tab';
 import './DebtorsTabs.scss';
 import {
@@ -218,7 +218,7 @@ const ViewInsurer = () => {
 
   const handleOnSelectInputChange = useCallback(
     data => {
-      handleOnChange(data[0]?.name, data);
+      handleOnChange(data?.name, data);
     },
     [handleOnChange]
   );
@@ -291,7 +291,7 @@ const ViewInsurer = () => {
     if (debtorData?.streetNumber) finalData.address.streetNumber = debtorData?.streetNumber?.trim();
     if (debtorData?.streetName) finalData.address.streetName = debtorData?.streetName?.trim();
     if (debtorData?.streetType)
-      finalData.address.streetType = debtorData?.streetType[0]?.value?.trim();
+      finalData.address.streetType = debtorData?.streetType?.value?.trim();
     if (debtorData?.suburb) finalData.address.suburb = debtorData?.suburb?.trim();
     if (debtorData?.postCode) finalData.address.postCode = debtorData?.postCode?.trim();
 
@@ -324,17 +324,18 @@ const ViewInsurer = () => {
             <div className="common-detail-field">
               <div className="common-detail-title">{input.label}</div>
               <ReactSelect
+                className={`select-client-list-container react-select-container ${
+                  (action === 'view' || !input.isEditable) && 'disabled-control'
+                }`}
+                classNamePrefix="react-select"
                 type="text"
                 name={input.name}
                 placeholder={action === 'view' ? '-' : input.placeholder}
                 options={input.data}
-                values={getSelectedValues}
-                searchable={false}
+                value={getSelectedValues}
+                isSearchable={false}
                 onChange={handleOnSelectInputChange}
-                disabled={action === 'view' || !input.isEditable}
-                className={`select-client-list-container ${
-                  (action === 'view' || !input.isEditable) && 'disabled-control'
-                }`}
+                isDisabled={action === 'view' || !input.isEditable}
                 dropdownHandle={action !== 'view' && input.isEditable}
               />
             </div>

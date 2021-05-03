@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import Input from '../../../../../common/Input/Input';
 import './ApplicationCompanyStep.scss';
 import {
@@ -84,16 +84,13 @@ const ApplicationCompanyStep = () => {
   );
 
   useEffect(() => {
-    if (
-      companyState?.country?.[0]?.value === 'AUS' ||
-      companyState?.country?.[0]?.value === 'NZL'
-    ) {
+    if (companyState?.country?.value === 'AUS' || companyState?.country?.value === 'NZL') {
       setIsAusOrNew(true);
     }
   }, [companyState]);
 
   useEffect(() => {
-    setSelectedDebtorId(companyState?.debtorId?.[0]?.value);
+    setSelectedDebtorId(companyState?.debtorId?.value);
   }, [companyState?.debtorId]);
 
   const changeEntityType = useMemo(
@@ -272,11 +269,11 @@ const ApplicationCompanyStep = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSingleCompanyState(data[0]?.name, data);
-      if (data[0]?.name === 'country') {
+      updateSingleCompanyState(data?.name, data);
+      if (data?.name === 'country') {
         let showDropDownInput = true;
 
-        switch (data[0]?.value) {
+        switch (data?.value) {
           case 'AUS':
             dispatch(updateEditApplicationField('company', 'state', []));
             setStateValue(australianStates);
@@ -291,10 +288,10 @@ const ApplicationCompanyStep = () => {
             break;
         }
         setIsAusOrNew(showDropDownInput);
-      } else if (data[0]?.name === 'entityType' && partners.length !== 0) {
+      } else if (data?.name === 'entityType' && partners.length !== 0) {
         setShowConfirmModal(true);
       } else {
-        dispatch(updateEditApplicationField('company', data[0]?.name, data));
+        dispatch(updateEditApplicationField('company', data?.name, data));
       }
     },
     [
@@ -315,8 +312,8 @@ const ApplicationCompanyStep = () => {
           return;
         }
         handleSelectInputChange(data);
-        const params = { clientId: companyState?.clientId[0]?.value };
-        const response = await getApplicationCompanyDataFromDebtor(data[0].value, params);
+        const params = { clientId: companyState?.clientId?.value };
+        const response = await getApplicationCompanyDataFromDebtor(data?.value, params);
 
         if (response) {
           updateCompanyState(response);
@@ -336,7 +333,7 @@ const ApplicationCompanyStep = () => {
             errorNotification('Please select clientId before continue');
             return;
           }
-          const params = { clientId: companyState?.clientId?.[0]?.value };
+          const params = { clientId: companyState?.clientId?.value };
           const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
 
           if (response) {
@@ -362,7 +359,7 @@ const ApplicationCompanyStep = () => {
           data: null,
         });
         setSearchedEntityNameValue(e.target.value.toString());
-        const params = { clientId: companyState?.clientId?.[0]?.value };
+        const params = { clientId: companyState?.clientId?.value };
         dispatch(searchApplicationCompanyEntityName(e.target.value, params));
       }
     },
@@ -375,7 +372,7 @@ const ApplicationCompanyStep = () => {
         errorNotification('Please select client before continue');
         return;
       }
-      const params = { clientId: companyState?.clientId[0]?.value };
+      const params = { clientId: companyState?.clientId?.value };
       dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
     }
   }, [searchedEntityNameValue, companyState]);
@@ -405,7 +402,7 @@ const ApplicationCompanyStep = () => {
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: companyState?.clientId?.[0]?.value };
+        const params = { clientId: companyState?.clientId?.value };
         const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
 
         if (response) {
@@ -432,10 +429,9 @@ const ApplicationCompanyStep = () => {
               name={input.name}
               placeholder={input.placeholder}
               value={
-                input.name === 'state'
-                  ? (!isAusOrNew && companyState?.[input.name]?.[0]?.label) ??
-                    companyState?.[input.name]
-                  : companyState?.[input.name]
+                input?.name === 'state'
+                  ? (!isAusOrNew && companyState?.[input.name]?.label) ?? companyState[input?.name]
+                  : companyState[input?.name]
               }
               onChange={handleTextInputChange}
             />
@@ -460,7 +456,7 @@ const ApplicationCompanyStep = () => {
               name={input.name}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              value={companyState?.entityName?.[0]?.label}
+              value={companyState?.entityName?.label}
               onChange={handleEntityChange}
             />
           );
@@ -472,11 +468,13 @@ const ApplicationCompanyStep = () => {
           }
           component = (
             <ReactSelect
+              className="react-select-container"
+              classNamePrefix="react-select"
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              searchable
-              values={companyState?.[input.name]}
+              isSearchable
+              value={companyState?.[input?.name]}
               onChange={handleOnChange}
             />
           );

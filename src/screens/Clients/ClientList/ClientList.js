@@ -3,7 +3,7 @@ import './ClientList.scss';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import moment from 'moment';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
@@ -363,11 +363,11 @@ const ClientList = () => {
 
   const handleRiskAanalystFilterChange = useCallback(
     event => {
-      if (event && event[0] && event[0].value) {
+      if (event && event.value) {
         dispatchFilter({
           type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
           name: 'riskAnalystId',
-          value: event[0].value,
+          value: event.value,
         });
       }
     },
@@ -375,11 +375,11 @@ const ClientList = () => {
   );
   const handleServiceManagerFilterChange = useCallback(
     event => {
-      if (event && event[0] && event[0].value) {
+      if (event && event.value) {
         dispatchFilter({
           type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
           name: 'serviceManagerId',
-          value: event[0].value,
+          value: event.value,
         });
       }
     },
@@ -439,21 +439,23 @@ const ClientList = () => {
     <>
       <div className="page-header">
         <div className="page-header-name">Client List</div>
-        <div className="page-header-button-container">
-          <IconButton
-            buttonType="secondary"
-            title="filter_list"
-            className="mr-10"
-            onClick={toggleFilterModal}
-          />
-          <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            className="mr-10"
-            onClick={() => toggleCustomField()}
-          />
-          <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
-        </div>
+        {!isLoading && docs && (
+          <div className="page-header-button-container">
+            <IconButton
+              buttonType="secondary"
+              title="filter_list"
+              className="mr-10"
+              onClick={toggleFilterModal}
+            />
+            <IconButton
+              buttonType="primary"
+              title="format_line_spacing"
+              className="mr-10"
+              onClick={() => toggleCustomField()}
+            />
+            <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
+          </div>
+        )}
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {!isLoading && docs ? (
@@ -498,25 +500,27 @@ const ClientList = () => {
           <div className="filter-modal-row">
             <div className="form-title client-filter-title">Service Manager Name</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               name="serviceManagerId"
               options={serviceManagerFilterListData}
-              values={clientServiceManagerSelectedValue}
+              value={clientServiceManagerSelectedValue}
               onChange={handleServiceManagerFilterChange}
-              searchable={false}
+              isSearchable={false}
             />
           </div>
           <div className="filter-modal-row">
             <div className="form-title client-filter-title">Risk Analyst Name</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               name="riskAnalystId"
               options={riskAnalystFilterListData}
-              values={clientRiskAnalystSelectedValue}
+              value={clientRiskAnalystSelectedValue}
               onChange={handleRiskAanalystFilterChange}
-              searchable={false}
+              isSearchable={false}
             />
           </div>
           <div className="filter-modal-row">

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import IconButton from '../../../common/IconButton/IconButton';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -66,7 +66,7 @@ const DebtorsList = () => {
       dispatchFilter({
         type: DEBTORS_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'entityType',
-        value: event[0].value,
+        value: event.value,
       });
     },
     [dispatchFilter]
@@ -177,7 +177,7 @@ const DebtorsList = () => {
     const foundValue = debtorDropDownData?.entityType?.find(e => {
       return e.value === entityType;
     });
-    return foundValue ? [foundValue] : [];
+    return foundValue || '';
   }, [entityType, debtorDropDownData]);
 
   useEffect(() => {
@@ -287,20 +287,21 @@ const DebtorsList = () => {
       {filterModal && (
         <Modal
           headerIcon="filter_list"
-          header="filter"
+          header="Filter"
           buttons={filterModalButtons}
           className="filter-modal application-filter-modal"
         >
           <div className="filter-modal-row">
             <div className="form-title">Entity Type</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               name="role"
               options={debtorDropDownData?.entityType}
-              values={entityTypeSelectedValue}
+              value={entityTypeSelectedValue}
               onChange={handleEntityTypeFilterChange}
-              searchable={false}
+              isSearchable={false}
             />
           </div>
         </Modal>

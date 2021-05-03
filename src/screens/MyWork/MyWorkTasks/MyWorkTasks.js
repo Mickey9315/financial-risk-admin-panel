@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 // import Loader from '../../../common/Loader/Loader';
-import { deleteTaskAction, resetPageData } from '../redux/MyWorkAction';
+import { deleteTaskAction, resetMyWorkPaginationData } from '../redux/MyWorkAction';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Modal from '../../../common/Modal/Modal';
 import Loader from '../../../common/Loader/Loader';
@@ -40,14 +40,13 @@ const MyWorkTasks = props => {
 
   const getTaskListOnRefresh = useCallback(() => {
     const params = {
-      page: paramPage ?? 1,
-      limit: paramLimit ?? 15,
+      page: paramPage ?? page ?? 1,
+      limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
-      priority: paramPriority && paramPriority.trim().length > 0 ? paramPriority : undefined,
-      isCompleted: paramIsCompleted && paramIsCompleted ? paramIsCompleted : undefined,
-      assigneeId:
-        paramAssigneeId && paramAssigneeId.trim().length > 0 ? paramAssigneeId : undefined,
+      priority: (paramPriority?.trim()?.length ?? -1) > 0 ? paramPriority : undefined,
+      isCompleted: paramIsCompleted || undefined,
+      assigneeId: (paramAssigneeId?.trim()?.length ?? -1) > 0 ? paramAssigneeId : undefined,
       startDate: paramStartDate ? new Date(paramStartDate) : undefined,
       endDate: paramEndDate ? new Date(paramEndDate) : undefined,
     };
@@ -115,7 +114,7 @@ const MyWorkTasks = props => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            await dispatch(deleteTaskAction(deleteTaskData.id, () => callBack()));
+            await dispatch(deleteTaskAction(deleteTaskData?.id, () => callBack()));
           } catch (e) {
             /**/
           }
@@ -127,7 +126,7 @@ const MyWorkTasks = props => {
 
   useEffect(() => {
     getTaskListOnRefresh();
-    return () => dispatch(resetPageData());
+    return dispatch(resetMyWorkPaginationData(page, pages, limit, total));
   }, []);
 
   return (

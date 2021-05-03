@@ -381,7 +381,7 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
     }
-    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.UPDATE_ADD_TASK_FIELD_ACTION:
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_UPDATE_ADD_TASK_FIELD_ACTION:
       return {
         ...state,
         task: {
@@ -393,7 +393,7 @@ export const clientManagement = (state = initialClientListState, action) => {
         },
       };
 
-    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ASSIGNEE_DROP_DOWN_DATA_ACTION: {
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_ASSIGNEE_DROP_DOWN_DATA_ACTION: {
       const assigneeList = action?.data?.map(data => ({
         label: data?.name,
         value: data?._id,
@@ -411,7 +411,7 @@ export const clientManagement = (state = initialClientListState, action) => {
       };
     }
 
-    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION: {
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_ENTITY_DROP_DOWN_DATA_ACTION: {
       const entityList = action?.data?.map(data => ({
         label: data?.name ?? data?.applicationId,
         value: data?._id,
@@ -429,7 +429,7 @@ export const clientManagement = (state = initialClientListState, action) => {
       };
     }
 
-    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION: {
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_CLIENT_ENTITY_DROP_DOWN_DATA_ACTION: {
       const defaultEntityList = action?.data?.map(data => ({
         label: data?.name ?? data?.applicationId,
         value: data?._id,
@@ -441,13 +441,14 @@ export const clientManagement = (state = initialClientListState, action) => {
           ...state?.task,
           dropDownData: {
             ...state?.task?.dropDownData,
+            entityList: defaultEntityList,
             defaultEntityList,
           },
         },
       };
     }
 
-    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION:
+    case CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_RESET_ADD_TASK_STATE_ACTION:
       return {
         ...state,
         task: {

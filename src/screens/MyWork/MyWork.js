@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import Tab from '../../common/Tab/Tab';
@@ -84,7 +84,7 @@ const MyWork = () => {
       dispatchFilter({
         type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'priority',
-        value: event?.[0]?.value,
+        value: event?.value,
       });
     },
     [dispatchFilter]
@@ -94,7 +94,7 @@ const MyWork = () => {
       dispatchFilter({
         type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'assigneeId',
-        value: event?.[0]?.value,
+        value: event?.value,
       });
     },
     [dispatchFilter]
@@ -149,8 +149,8 @@ const MyWork = () => {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          priority: priority && (priority?.length ?? -1) > 0 ? priority : undefined,
-          isCompleted: isCompleted ?? undefined,
+          priority: (priority?.length ?? -1) > 0 ? priority : undefined,
+          isCompleted: isCompleted || undefined,
           assigneeId: (assigneeId?.length ?? -1) > 0 ? assigneeId : undefined,
           startDate: startDate ?? undefined,
           endDate: endDate ?? undefined,
@@ -179,26 +179,16 @@ const MyWork = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getTaskList({ page: 1, limit: newLimit });
+      getTaskList({ page, limit: newLimit });
     },
-    [getTaskList]
+    [getTaskList, page]
   );
 
-  const prioritySelectedValues = useMemo(() => {
-    const foundValue =
-      priorityListData?.find(e => {
-        return (e?.value ?? '') === priority;
-      }) ?? undefined;
-    return foundValue ? [foundValue] : [];
-  }, [priority, priorityListData]);
-
-  const assigneeSelectedValues = useMemo(() => {
-    const foundValue =
-      assigneeList?.find(e => {
-        return (e?.value ?? '') === assigneeId;
-      }) ?? undefined;
-    return foundValue ? [foundValue] : [];
-  }, [assigneeId, assigneeList]);
+  const getSelectedValue = useMemo(() => {
+    const selectedPriority = priorityListData?.filter(e => e?.value === priority) ?? {};
+    const selectedAssignee = assigneeList?.filter(e => e?.value === assigneeId) ?? {};
+    return { selectedPriority, selectedAssignee };
+  }, [priorityListData, assigneeList, priority, assigneeId]);
 
   const onSelectTaskRecord = useCallback(
     id => {
@@ -212,7 +202,7 @@ const MyWork = () => {
       page: page ?? 1,
       limit: limit ?? 15,
       priority: priority?.length > 0 ?? -1 ? priority : undefined,
-      isCompleted: isCompleted ?? undefined,
+      isCompleted: isCompleted || undefined,
       assigneeId: assigneeId?.length > 0 ?? -1 ? assigneeId : undefined,
       startDate: startDate ? new Date(startDate)?.toUTCString() : undefined,
       endDate: endDate ? new Date(endDate)?.toUTCString() : undefined,
@@ -267,16 +257,25 @@ const MyWork = () => {
   }, [toggleCustomField]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveTaskListColumnListName({ isReset: true }));
-    dispatch(getTaskListColumnList());
-    getTaskList();
+    try {
+      await dispatch(saveTaskListColumnListName({ isReset: true }));
+      dispatch(getTaskListColumnList());
+      getTaskList();
+    } catch (e) {
+      /**/
+    }
     toggleCustomField();
   }, [toggleCustomField, getTaskList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveTaskListColumnListName({ taskColumnListData }));
-    getTaskList();
-    toggleCustomField();
+    try {
+      await dispatch(saveTaskListColumnListName({ taskColumnListData }));
+      dispatch(getTaskListColumnList());
+      getTaskList();
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
   }, [toggleCustomField, taskColumnListData, getTaskList]);
 
   const customFieldsModalButtons = useMemo(
@@ -314,7 +313,7 @@ const MyWork = () => {
 
   const applyFilterOnClick = useCallback(() => {
     getTaskList({ page, limit }, toggleFilterModal);
-  }, [getTaskList, toggleFilterModal]);
+  }, [getTaskList, page, limit, toggleFilterModal]);
 
   const resetFilterOnClick = useCallback(() => {
     dispatchFilter({
@@ -333,7 +332,7 @@ const MyWork = () => {
       { title: 'Close', buttonType: 'primary-1', onClick: closeFilterOnClick },
       { title: 'Apply', buttonType: 'primary', onClick: applyFilterOnClick },
     ],
-    [toggleFilterModal, applyFilterOnClick, resetFilterOnClick, applyFilterOnClick]
+    [resetFilterOnClick, toggleFilterModal, applyFilterOnClick, applyFilterOnClick]
   );
 
   useEffect(() => {
@@ -402,13 +401,14 @@ const MyWork = () => {
           <div className="filter-modal-row">
             <div className="form-title">Priority</div>
             <ReactSelect
-              className="filter-select"
+              className="filter-select react-select-container"
+              classNamePrefix="react-select"
               placeholder="Select"
               name="role"
               options={priorityListData}
-              values={prioritySelectedValues}
+              value={getSelectedValue?.selectedPriority ?? {}}
               onChange={handlePriorityFilterChange}
-              searchable={false}
+              isSearchable={false}
             />
           </div>
           <div className="filter-modal-row">
@@ -448,13 +448,14 @@ const MyWork = () => {
             <div className="filter-modal-row">
               <div className="form-title">Assignee</div>
               <ReactSelect
-                className="filter-select"
+                className="filter-select react-select-container"
+                classNamePrefix="react-select"
                 placeholder="Select"
                 name="role"
                 options={assigneeList}
-                values={assigneeSelectedValues}
+                value={getSelectedValue?.selectedAssignee ?? {}}
                 onChange={handleAssigneeFilterChange}
-                searchable={false}
+                isSearchable={false}
               />
             </div>
           </UserPrivilegeWrapper>

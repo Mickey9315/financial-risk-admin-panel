@@ -23,9 +23,9 @@ code {
   font-family: $font-regular;
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder, textarea::placeholder, .react-select__placeholder {
   font: $subtitle $font-regular;
-  color: $placeholder-color;
+  color: $placeholder-color!important;
 }
 
 input:-webkit-autofill,

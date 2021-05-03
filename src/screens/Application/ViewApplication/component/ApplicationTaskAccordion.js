@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import Tooltip from 'rc-tooltip';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
@@ -72,7 +72,6 @@ const ApplicationTaskAccordion = props => {
   );
 
   // edit task
-  const [isEdit, setIsEdit] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState('');
 
   const [showActionMenu, setShowActionMenu] = useState(false);
@@ -102,16 +101,14 @@ const ApplicationTaskAccordion = props => {
 
   // Add New Task
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile || []);
-  const addTaskState = useSelector(
-    ({ application }) => application?.viewApplication?.task?.addTask || []
+  const { entityType, ...addTaskState } = useSelector(
+    ({ application }) => application?.viewApplication?.task?.addTask || {}
   );
   const taskDropDownData = useSelector(
-    ({ application }) => application?.viewApplication?.dropDownData || []
+    ({ application }) => application?.viewApplication?.dropDownData || {}
   );
 
-  const { assigneeList, entityList, defaultEntityList } = useMemo(() => taskDropDownData, [
-    taskDropDownData,
-  ]);
+  const { assigneeList, entityList } = useMemo(() => taskDropDownData, [taskDropDownData]);
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
 
   const [addTaskModal, setAddTaskModal] = useState(false);
@@ -130,7 +127,8 @@ const ApplicationTaskAccordion = props => {
   const backToTaskList = useCallback(() => {
     dispatch({
       type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.RESET_ADD_TASK_STATE_ACTION,
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -149,7 +147,8 @@ const ApplicationTaskAccordion = props => {
   const onCloseAddTaskClick = useCallback(() => {
     dispatch({
       type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.RESET_ADD_TASK_STATE_ACTION,
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     toggleAddTaskModal();
   }, [toggleAddTaskModal]);
@@ -157,7 +156,8 @@ const ApplicationTaskAccordion = props => {
   const onCloseEditTaskClick = useCallback(() => {
     dispatch({
       type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.RESET_ADD_TASK_STATE_ACTION,
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     toggleEditTaskModal();
   }, [toggleEditTaskModal]);
@@ -166,30 +166,29 @@ const ApplicationTaskAccordion = props => {
     dispatch(
       updateApplicationTaskStateFields(
         'assigneeId',
-        assigneeList && assigneeList.filter(e => e.value === _id)
+        assigneeList?.find(e => e.value === _id)
       )
     );
     dispatch(
       updateApplicationTaskStateFields(
         'entityId',
-        defaultEntityList && defaultEntityList.filter(e => e.value === applicationId)
+        entityList?.find(e => e.value === applicationId)
       )
     );
     dispatch(
       updateApplicationTaskStateFields(
         'entityType',
-        entityTypeData && entityTypeData.filter(e => e.value === 'application')
+        entityTypeData?.find(e => e.value === 'application')
       )
     );
     toggleAddTaskModal();
-  }, [assigneeList, _id, defaultEntityList, applicationId, toggleAddTaskModal]);
+  }, [assigneeList, _id, entityList, applicationId, toggleAddTaskModal]);
 
   const onEditTaskClick = useCallback(() => {
     setShowActionMenu(!showActionMenu);
     dispatch(getApplicationTaskDetail(currentTaskId));
-    setIsEdit(true);
     toggleEditTaskModal();
-  }, [toggleEditTaskModal, setShowActionMenu, showActionMenu, currentTaskId, setIsEdit]);
+  }, [toggleEditTaskModal, setShowActionMenu, showActionMenu, currentTaskId]);
 
   const INPUTS = useMemo(
     () => [
@@ -265,26 +264,14 @@ const ApplicationTaskAccordion = props => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateAddTaskState(data[0]?.name, data);
-    },
-    [updateAddTaskState]
-  );
-
-  const handleEntityTypeSelectInputChange = useCallback(
-    data => {
-      try {
-        handleSelectInputChange(data);
-        const params = { entityName: data[0]?.value };
-        if (data[0].value && !isEdit) {
-          dispatch(getApplicationTaskEntityDropDownData(params));
-          updateAddTaskState('entityId', []);
-        }
-        setIsEdit(false);
-      } catch (e) {
-        /**/
+      console.log(data);
+      updateAddTaskState(data?.name, data);
+      if (data?.name === 'entityType') {
+        updateAddTaskState('entityId', []);
+        dispatch(getApplicationTaskEntityDropDownData({ entityName: data?.value }));
       }
     },
-    [handleSelectInputChange, updateAddTaskState, isEdit, setIsEdit]
+    [updateAddTaskState]
   );
 
   const handleDateChange = useCallback(
@@ -307,7 +294,7 @@ const ApplicationTaskAccordion = props => {
           return addTaskState?.priority || [];
         }
         case 'entityType': {
-          return addTaskState?.entityType || [];
+          return entityType || [];
         }
         case 'entityId': {
           return addTaskState?.entityId || [];
@@ -325,15 +312,14 @@ const ApplicationTaskAccordion = props => {
   const onSaveTaskClick = useCallback(() => {
     const data = {
       title: addTaskState?.title?.trim() || '',
-      // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
-      assigneeId: addTaskState?.assigneeId[0]?.value,
+      assigneeId: addTaskState?.assigneeId?.value,
       taskFrom: 'application',
+      priority: addTaskState?.priority?.value ?? undefined,
+      entityType: entityType?.value ?? undefined,
+      entityId: addTaskState?.entityId?.value ?? undefined,
+      description: addTaskState?.description?.trim() ?? undefined,
     };
-    if (addTaskState?.priority?.[0]?.value) data.priority = addTaskState.priority[0].value;
-    if (addTaskState?.entityType?.[0]?.value) data.entityType = addTaskState.entityType[0].value;
-    if (addTaskState?.entityId?.[0]?.value) data.entityId = addTaskState.entityId[0].value;
-    if (addTaskState?.description) data.description = addTaskState.description.trim();
 
     if (!data.title && data.title.length === 0) {
       errorNotification('Please add title');
@@ -348,7 +334,7 @@ const ApplicationTaskAccordion = props => {
         errorNotification('Something went wrong please add again');
       }
     }
-  }, [addTaskState]);
+  }, [currentTaskId, addTaskState, backToTaskList, editTaskModal]);
 
   const getComponentFromType = useCallback(
     input => {
@@ -371,20 +357,18 @@ const ApplicationTaskAccordion = props => {
           break;
 
         case 'select': {
-          let handleOnChange = handleSelectInputChange;
-          if (input.name === 'entityType') {
-            handleOnChange = handleEntityTypeSelectInputChange;
-          }
           component = (
             <>
               <span>{input.label}</span>
               <ReactSelect
+                className="react-select-container"
+                classNamePrefix="react-select"
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
-                searchable={false}
-                values={selectedValues}
-                onChange={handleOnChange}
+                isSearchable={false}
+                value={selectedValues}
+                onChange={handleSelectInputChange}
               />
             </>
           );

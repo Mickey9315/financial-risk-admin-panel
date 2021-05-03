@@ -767,9 +767,11 @@ export const uploadDocument = (data, config) => {
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_CLIENT_ACTION,
           data: response.data.data,
         });
+        successNotification(response.data.message || 'Success');
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        errorNotification(e.response.data.message || 'error');
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -1152,7 +1154,7 @@ export const getAssigneeDropDownData = () => {
       const response = await ClientTaskApiService.getAssigneeDropDownData();
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ASSIGNEE_DROP_DOWN_DATA_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_ASSIGNEE_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -1177,7 +1179,7 @@ export const getEntityDropDownData = params => {
       const response = await ClientTaskApiService.getEntityDropDownData(params);
       if (response.data.status === 'SUCCESS' && response.data.data) {
         dispatch({
-          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -1202,7 +1204,7 @@ export const getDefaultEntityDropDownData = params => {
       const response = await ClientTaskApiService.getEntityDropDownData(params);
       if (response.data.status === 'SUCCESS' && response.data.data) {
         dispatch({
-          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_CLIENT_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -1224,7 +1226,7 @@ export const getDefaultEntityDropDownData = params => {
 export const updateAddTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({
-      type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.UPDATE_ADD_TASK_FIELD_ACTION,
+      type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_UPDATE_ADD_TASK_FIELD_ACTION,
       name,
       value,
     });
@@ -1237,7 +1239,7 @@ export const saveTaskData = (data, cb) => {
       const response = await ClientTaskApiService.saveNewTask(data);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_RESET_ADD_TASK_STATE_ACTION,
         });
         cb();
       }
@@ -1310,7 +1312,7 @@ export const updateTaskData = (id, data, cb) => {
       if (response.data.status === 'SUCCESS') {
         successNotification(response.data.message);
         dispatch({
-          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_RESET_ADD_TASK_STATE_ACTION,
         });
         cb();
       }

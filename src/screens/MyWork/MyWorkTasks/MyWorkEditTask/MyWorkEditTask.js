@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import '../MyWorkAddTask/MyWorkAddTask.scss';
 import { useHistory, useParams } from 'react-router-dom';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../../../common/Button/Button';
@@ -11,6 +11,8 @@ import {
   getAssigneeDropDownData,
   getEntityDropDownData,
   getTaskById,
+  removeUpdateTaskEntityId,
+  // removeUpdateTaskEntityId,
   updateEditTaskStateFields,
 } from '../../redux/MyWorkAction';
 import { errorNotification } from '../../../../common/Toast';
@@ -41,11 +43,14 @@ const MyWorkAddTask = () => {
     history.push('/my-work');
   }, []);
 
-  const taskDetails = useSelector(({ myWorkReducer }) => myWorkReducer.task.taskDetail);
-  const { assigneeList, entityList } = useSelector(
-    ({ myWorkReducer }) => myWorkReducer.task.dropDownData
+  const { entityType, ...taskDetails } = useSelector(
+    ({ myWorkReducer }) => myWorkReducer?.task?.taskDetail ?? {}
   );
-  const [entityCall, setEntityCall] = useState(false);
+  const dropDownData = useSelector(
+    ({ myWorkReducer }) => myWorkReducer?.task?.myWorkDropDownData ?? {}
+  );
+
+  const { assigneeList, entityList } = useMemo(() => dropDownData, [dropDownData]);
 
   const INPUTS = useMemo(
     () => [
@@ -90,7 +95,7 @@ const MyWorkAddTask = () => {
       {
         label: 'Entity Labels',
         placeholder: 'Select Entity',
-        type: 'search',
+        type: 'select',
         name: 'entityId',
         data: entityList,
       },
@@ -121,28 +126,20 @@ const MyWorkAddTask = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateEditTaskState(data[0]?.name, data);
+      if (data?.name === 'entityType') {
+        dispatch(removeUpdateTaskEntityId());
+      }
+      updateEditTaskState(data?.name, data);
     },
     [updateEditTaskState]
   );
 
-  const handleEntityTypeSelectInputChange = useCallback(
-    data => {
-      try {
-        handleSelectInputChange(data);
-        const params = { entityName: data[0]?.value };
-        if (data[0]?.value) {
-          if (data[0]?.value && entityCall) {
-            dispatch(getEntityDropDownData(params));
-          }
-          setEntityCall(true);
-        }
-      } catch (e) {
-        /**/
-      }
-    },
-    [handleSelectInputChange, taskDetails]
-  );
+  useEffect(() => {
+    if (entityType?.[0]?.value ?? entityType?.value)
+      dispatch(getEntityDropDownData({ entityName: entityType?.[0]?.value ?? entityType?.value }));
+  }, [entityType]);
+
+  console.log(entityList);
 
   const handleDateChange = useCallback(
     (name, value) => {
@@ -155,22 +152,22 @@ const MyWorkAddTask = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return taskDetails.assigneeId ?? [];
+          return taskDetails?.assigneeId ?? [];
         }
         case 'priority': {
-          return taskDetails.priority ?? [];
+          return taskDetails?.priority ?? [];
         }
         case 'entityType': {
-          return taskDetails.entityType ?? [];
+          return entityType ?? [];
         }
         case 'entityId': {
-          return taskDetails.entityId ?? [];
+          return taskDetails?.entityId ?? [];
         }
         default:
           return [];
       }
     },
-    [taskDetails, assigneeList, priorityData, entityList, entityTypeData]
+    [taskDetails, entityType]
   );
 
   const onCloseEditTask = useCallback(() => {
@@ -182,30 +179,26 @@ const MyWorkAddTask = () => {
 
   const onSaveTask = useCallback(() => {
     const data = {
-      title: taskDetails.title.trim(),
-      dueDate: taskDetails.dueDate ?? new Date().toISOString(),
-      assigneeId: taskDetails.assigneeId[0].value,
+      title: taskDetails?.title?.trim() ?? '',
+      dueDate: taskDetails?.dueDate || new Date().toISOString(),
+      assigneeId: taskDetails?.assigneeId?.value ?? '',
       taskFrom: 'task',
+      priority: taskDetails?.priority?.value ?? undefined,
+      entityType: entityType?.value ?? undefined,
+      entityId: taskDetails?.entityId?.value ?? undefined,
+      description: taskDetails?.description?.trim() ?? undefined,
     };
-    if (taskDetails.priority && taskDetails.priority[0].value)
-      data.priority = taskDetails.priority[0].value;
-    if (taskDetails.entityType && taskDetails.entityType[0].value)
-      data.entityType = taskDetails.entityType[0].value;
-    if (taskDetails.entityId.length > 0 && taskDetails.entityId[0].value)
-      data.entityId = taskDetails.entityId[0].value;
-    if (taskDetails.description && taskDetails.description)
-      data.description = taskDetails?.description.trim();
 
-    if (!data.title && data.title.length === 0) {
+    if (!data?.title && data?.title?.length === 0) {
       errorNotification('Please add title');
     } else {
       try {
         dispatch(editTaskData(id, data, backToTaskList));
       } catch (e) {
-        errorNotification('Something went wrong please add again');
+        errorNotification('Failed to add try again');
       }
     }
-  }, [taskDetails]);
+  }, [taskDetails, id, backToTaskList]);
 
   const getComponentFromType = useCallback(
     input => {
@@ -220,43 +213,26 @@ const MyWorkAddTask = () => {
                 type="text"
                 name={input.name}
                 placeholder={input.placeholder}
-                value={taskDetails[input.name]}
+                value={taskDetails?.[input.name]}
                 onChange={handleTextInputChange}
               />
             </>
           );
           break;
-        case 'search':
-          component = (
-            <>
-              <span>{input.label}</span>
-              <ReactSelect
-                placeholder={input.placeholder}
-                name={input.name}
-                options={input.data}
-                values={selectedValues}
-                onChange={handleSelectInputChange}
-              />
-            </>
-          );
-
-          break;
 
         case 'select': {
-          let handleOnChange = handleSelectInputChange;
-          if (input.name === 'entityType') {
-            handleOnChange = handleEntityTypeSelectInputChange;
-          }
           component = (
             <>
               <span>{input.label}</span>
               <ReactSelect
+                className="react-select-container"
+                classNamePrefix="react-select"
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
-                searchable={false}
-                values={selectedValues}
-                onChange={handleOnChange}
+                isSearchale={false}
+                value={input.name === 'entityType' ? entityType : selectedValues || []}
+                onChange={handleSelectInputChange}
               />
             </>
           );
@@ -274,8 +250,8 @@ const MyWorkAddTask = () => {
                   scrollableYearDropdown
                   placeholderText={input.placeholder}
                   value={
-                    taskDetails[input.name]
-                      ? new Date(taskDetails[input.name]).toLocaleDateString()
+                    taskDetails?.[input.name]
+                      ? new Date(taskDetails?.[input.name]).toLocaleDateString()
                       : new Date().toLocaleDateString()
                   }
                   onChange={date => handleDateChange(input.name, new Date(date).toISOString())}
@@ -303,12 +279,13 @@ const MyWorkAddTask = () => {
     [
       INPUTS,
       taskDetails,
-      updateEditTaskState,
-      entityList,
+      handleTextInputChange,
+      entityType,
+      handleSelectInputChange,
+      handleDateChange,
       selectedValuesForDropDown,
+      entityList,
       assigneeList,
-      priorityData,
-      handleEntityTypeSelectInputChange,
     ]
   );
   useEffect(() => {

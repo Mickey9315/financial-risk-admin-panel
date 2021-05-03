@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
@@ -15,11 +15,9 @@ import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
 import { deleteTaskAction } from '../../MyWork/redux/MyWorkAction';
-import { MY_WORK_REDUX_CONSTANTS } from '../../MyWork/redux/MyWorkReduxConstants';
 import {
   changeDebtorTaskColumnNameListStatus,
   getAssigneeDropDownData,
-  getDebtorDefaultEntityDropDownData,
   getDebtorTaskColumnList,
   getDebtorTaskDetail,
   getDebtorTaskListData,
@@ -29,6 +27,7 @@ import {
   updateAddTaskStateFields,
   updateTaskData,
 } from '../redux/DebtorsAction';
+import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -54,7 +53,7 @@ const DebtorTaskTab = () => {
   const debtorTaskColumnNameListData = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.columnList ?? {}
   );
-  const addTaskState = useSelector(
+  const { entityType, ...addTaskState }= useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
   );
   const taskDropDownData = useSelector(
@@ -78,7 +77,7 @@ const DebtorTaskTab = () => {
       const data = {
         page: page || 1,
         limit: limit || 15,
-        isCompleted: isCompletedChecked && isCompletedChecked ? isCompletedChecked : undefined,
+        isCompleted: isCompletedChecked || undefined,
         columnFor: 'debtor-task',
         ...params,
       };
@@ -197,7 +196,7 @@ const DebtorTaskTab = () => {
       {
         label: 'Entity Labels',
         placeholder: 'Select Entity',
-        type: 'search',
+        type: 'select',
         name: 'entityId',
         data: entityList,
       },
@@ -222,7 +221,6 @@ const DebtorTaskTab = () => {
   );
 
   const [addTaskModal, setAddTaskModal] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
 
   const toggleAddTaskModal = useCallback(
     value => setAddTaskModal(value !== undefined ? value : e => !e),
@@ -243,26 +241,13 @@ const DebtorTaskTab = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateAddTaskState(data[0]?.name, data);
-    },
-    [updateAddTaskState]
-  );
-
-  const handleEntityTypeSelectInputChange = useCallback(
-    data => {
-      try {
-        handleSelectInputChange(data);
-        const params = { entityName: data[0].value };
-        if (data[0].value && !isEdit) {
-          dispatch(getEntityDropDownData(params));
-          updateAddTaskState('entityId', []);
-        }
-        setIsEdit(false);
-      } catch (e) {
-        /**/
+      updateAddTaskState(data?.name, data);
+      if (data?.name === 'entityType') {
+        dispatch(getEntityDropDownData({ entityName: data?.value }));
+        updateAddTaskState('entityId', []);
       }
     },
-    [handleSelectInputChange, addTaskState, updateAddTaskState, isEdit, setIsEdit]
+    [updateAddTaskState]
   );
 
   const handleDateChange = useCallback(
@@ -274,14 +259,14 @@ const DebtorTaskTab = () => {
 
   const onCloseAddTask = useCallback(() => {
     dispatch({
-      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
+      type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
     });
     toggleAddTaskModal();
   }, [toggleAddTaskModal]);
 
   const onCloseEditTask = useCallback(() => {
     dispatch({
-      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
+      type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
     });
     toggleEditTaskModal();
   }, [toggleEditTaskModal]);
@@ -290,19 +275,19 @@ const DebtorTaskTab = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return addTaskState?.assigneeId || [];
+          return addTaskState?.assigneeId || {};
         }
         case 'priority': {
-          return addTaskState?.priority || [];
+          return addTaskState?.priority || {};
         }
         case 'entityType': {
-          return addTaskState?.entityType || [];
+          return entityType || {};
         }
         case 'entityId': {
-          return addTaskState?.entityId || [];
+          return addTaskState?.entityId || {};
         }
         default:
-          return [];
+          return {};
       }
     },
     [addTaskState, assigneeList, priorityData, entityList, entityTypeData]
@@ -323,20 +308,20 @@ const DebtorTaskTab = () => {
       title: addTaskState?.title?.trim(),
       // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
-      assigneeId: addTaskState?.assigneeId[0]?.value,
+      assigneeId: addTaskState?.assigneeId?.value,
       taskFrom: 'debtor-task',
+      priority: addTaskState?.priority?.value ?? undefined,
+      entityType: entityType?.value ?? undefined,
+      entityId: addTaskState?.entityId?.value ?? undefined,
+      description: addTaskState?.description?.trim() ?? undefined,
     };
-    if (addTaskState?.priority[0]?.value) data.priority = addTaskState?.priority[0].value;
-    if (addTaskState?.entityType[0]?.value) data.entityType = addTaskState?.entityType[0].value;
-    if (addTaskState?.entityId[0]?.value) data.entityId = addTaskState?.entityId[0].value;
-    if (addTaskState?.description) data.description = addTaskState?.description.trim();
 
     if (!data?.title && data?.title?.length === 0) {
       errorNotification('Please add title');
     } else {
       try {
         if (editTaskModal) {
-          dispatch(updateTaskData(addTaskState._id, data, callBackOnTaskEdit));
+          dispatch(updateTaskData(addTaskState?._id, data, callBackOnTaskEdit));
         } else {
           dispatch(saveTaskData(data, callBackOnTaskAdd));
         }
@@ -365,37 +350,20 @@ const DebtorTaskTab = () => {
             </>
           );
           break;
-        case 'search':
+
+        case 'select': {
+          const handleOnChange = handleSelectInputChange;
           component = (
             <>
               <span>{input.label}</span>
               <ReactSelect
+                className="react-select-container"
+                classNamePrefix="react-select"
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
                 isSearchable={false}
-                values={selectedValues}
-                onChange={handleSelectInputChange}
-              />
-            </>
-          );
-
-          break;
-
-        case 'select': {
-          let handleOnChange = handleSelectInputChange;
-          if (input.name === 'entityType') {
-            handleOnChange = handleEntityTypeSelectInputChange;
-          }
-          component = (
-            <>
-              <span>{input.label}</span>
-              <ReactSelect
-                placeholder={input.placeholder}
-                name={input.name}
-                options={input.data}
-                searchable={false}
-                values={selectedValues}
+                value={selectedValues}
                 onChange={handleOnChange}
               />
             </>
@@ -526,11 +494,10 @@ const DebtorTaskTab = () => {
   const onSelectTaskRecord = useCallback(
     // eslint-disable-next-line no-shadow
     id => {
-      setIsEdit(true);
       dispatch(getDebtorTaskDetail(id));
       toggleEditTaskModal();
     },
-    [toggleEditTaskModal, setIsEdit]
+    [toggleEditTaskModal]
   );
 
   const checkIfEnterKeyPressed = e => {
@@ -551,22 +518,22 @@ const DebtorTaskTab = () => {
     dispatch(
       updateAddTaskStateFields(
         'assigneeId',
-        assigneeList && assigneeList.filter(e => e.value === _id)
+        assigneeList?.find(e => e.value === _id)
       )
     );
     dispatch(
       updateAddTaskStateFields(
         'entityId',
-        defaultEntityList && defaultEntityList.filter(e => e.value === id)
+        entityList?.find(e => e.value === id)
       )
     );
     dispatch(
       updateAddTaskStateFields(
         'entityType',
-        entityTypeData && entityTypeData.filter(e => e.value === 'debtor')
+        entityTypeData?.find(e => e.value === 'debtor')
       )
     );
-  }, [assigneeList, defaultEntityList, entityTypeData]);
+  }, [assigneeList, defaultEntityList, entityTypeData, entityList]);
 
   const onClickAddTask = useCallback(() => {
     setDefaultValuesForAddTask();
@@ -574,7 +541,7 @@ const DebtorTaskTab = () => {
   }, [setDefaultValuesForAddTask, toggleAddTaskModal]);
 
   useEffect(() => {
-    dispatch(getDebtorDefaultEntityDropDownData({ entityName: 'debtor' }));
+    dispatch(getEntityDropDownData({ entityName: 'debtor' }));
   }, []);
 
   return (

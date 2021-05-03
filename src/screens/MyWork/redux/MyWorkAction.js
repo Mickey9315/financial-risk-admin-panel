@@ -2,7 +2,7 @@ import MyWorkApiServices from '../services/MyWorkApiServices';
 import { MY_WORK_REDUX_CONSTANTS } from './MyWorkReduxConstants';
 import { errorNotification, successNotification } from '../../../common/Toast';
 
-export const getTaskListByFilter = (params = { page: 1, limit: 15 }) => {
+export const getTaskListByFilter = (params = {}) => {
   return async dispatch => {
     const param = {
       ...params,
@@ -37,7 +37,9 @@ export const getAssigneeDropDownData = () => {
       const response = await MyWorkApiServices.getAssigneeDropDownData();
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_ACTION,
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+              .MY_WORK_ASSIGNEE_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -62,7 +64,9 @@ export const getEntityDropDownData = params => {
       const response = await MyWorkApiServices.getEntityDropDownData(params);
       if (response.data.status === 'SUCCESS' && response.data.data) {
         dispatch({
-          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION,
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+              .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
         // } else {
@@ -86,10 +90,28 @@ export const getEntityDropDownData = params => {
   };
 };
 
+export const removeUpdateTaskEntityId = () => {
+  return dispatch => {
+    dispatch({
+      type:
+        MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_UPDATE_ENTITY_ID,
+    });
+  };
+};
+
+export const removeAddTaskEntityId = () => {
+  return dispatch => {
+    dispatch({
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_ADD_TASK_ENTITY_ID,
+    });
+  };
+};
+
 export const updateAddTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({
-      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_ADD_TASK_FIELD_ACTION,
+      type:
+        MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.MY_WORK_UPDATE_ADD_TASK_FIELD_ACTION,
       name,
       value,
     });
@@ -122,10 +144,14 @@ export const saveTaskData = (data, backToTask) => {
   };
 };
 
-export const resetPageData = () => {
+export const resetMyWorkPaginationData = (page, pages, limit, total) => {
   return async dispatch => {
     dispatch({
-      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_PAGE_DATA,
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_PAGINATION_DATA,
+      page,
+      pages,
+      limit,
+      total,
     });
   };
 };
@@ -169,7 +195,7 @@ export const changeTaskListColumnStatus = data => {
 };
 
 export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = false }) => {
-  return async dispatch => {
+  return async () => {
     try {
       let data = {
         isReset: true,
@@ -191,7 +217,7 @@ export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = 
       }
       if (!isReset && data.columns.length < 1) {
         errorNotification('Please select at least one column to continue.');
-        dispatch(getTaskListColumnList());
+        throw Error();
       } else {
         const response = await MyWorkApiServices.saveColumnNameList(data);
         if (response && response.data && response.data.status === 'SUCCESS') {
@@ -200,6 +226,7 @@ export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = 
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        errorNotification(e.response.data.message ?? 'Success');
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
@@ -207,8 +234,8 @@ export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = 
         } else if (e.response.data.status === 'ERROR') {
           errorNotification('It seems like server is down, Please try again later.');
         }
-        throw Error();
       }
+      throw Error();
     }
   };
 };

@@ -499,9 +499,11 @@ export const uploadDocument = (data, config) => {
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DEBTOR_ACTION,
           data: response.data.data,
         });
+        successNotification(response.data.message || 'Success');
       }
     } catch (e) {
       if (e.response && e.response.data) {
+        errorNotification(e.response.data.message || 'Error');
         if (e.response.data.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
         } else {
@@ -678,7 +680,7 @@ export const getAssigneeDropDownData = () => {
       const response = await DebtorTaskApiService.getAssigneeDropDownData();
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.ASSIGNEE_DROP_DOWN_DATA_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ASSIGNEE_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -703,7 +705,7 @@ export const getEntityDropDownData = params => {
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
       if (response.data.status === 'SUCCESS' && response.data.data) {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.ENTITY_DROP_DOWN_DATA_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -728,7 +730,9 @@ export const getDebtorDefaultEntityDropDownData = params => {
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
       if (response.data.status === 'SUCCESS' && response.data.data) {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION,
+          type:
+            DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK
+              .DEBTOR_DEFAULT_DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -750,7 +754,7 @@ export const getDebtorDefaultEntityDropDownData = params => {
 export const updateAddTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({
-      type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.UPDATE_ADD_TASK_FIELD_ACTION,
+      type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_UPDATE_ADD_TASK_FIELD_ACTION,
       name,
       value,
     });
@@ -763,7 +767,7 @@ export const saveTaskData = (data, cb) => {
       const response = await DebtorTaskApiService.saveNewTask(data);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
         cb();
       }
@@ -838,7 +842,7 @@ export const updateTaskData = (id, data, cb) => {
       if (response.data.status === 'SUCCESS') {
         successNotification(response.data.message);
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.RESET_ADD_TASK_STATE_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
         cb();
       }

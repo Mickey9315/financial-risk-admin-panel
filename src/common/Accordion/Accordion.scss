@@ -6,7 +6,6 @@
 
 .accordion-item {
   margin-bottom: 10px;
- // background-color: $background-color;
   border-radius: 5px;
 }
 
@@ -46,11 +45,14 @@
   border-radius: 5px;
   overflow: hidden;
   transition: all .5s ease-in-out;
+
+  >*:first-child {
+    margin-top: 10px;
+  }
 }
 
 .active-accordion {
   max-height: 2000px;
-  margin-top: 10px;
 }
 
 .accordion-body-container.active-accordion {

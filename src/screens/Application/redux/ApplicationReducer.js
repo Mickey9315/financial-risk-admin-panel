@@ -119,7 +119,7 @@ const initialApplicationList = {
     applicationDetail: {},
     task: {
       taskList: [],
-      addTask: [],
+      addTask: {},
     },
     applicationModulesList: {
       documents: [],
@@ -184,6 +184,11 @@ export const application = (state = initialApplicationList, action) => {
       return {
         ...state,
         applicationDefaultColumnNameList: action?.data,
+      };
+    case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        applicationDefaultColumnNameList: action.data,
       };
     case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_APPLICATION_COLUMN_LIST_ACTION: {
       const columnList = {
@@ -444,7 +449,7 @@ export const application = (state = initialApplicationList, action) => {
       };
 
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-      .ASSIGNEE_DROP_DOWN_DATA_ACTION: {
+      .APPLICATION_TASK_ASSIGNEE_DROP_DOWN_DATA_ACTION: {
       const assigneeList = action?.data?.map(data => ({
         label: data.name,
         value: data._id,
@@ -463,7 +468,7 @@ export const application = (state = initialApplicationList, action) => {
     }
 
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-      .ENTITY_DROP_DOWN_DATA_ACTION: {
+      .APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION: {
       const entityList = action?.data?.map(data => ({
         label: data.name ?? data.applicationId,
         value: data._id,
@@ -482,7 +487,7 @@ export const application = (state = initialApplicationList, action) => {
     }
 
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-      .DEFAULT_ENTITY_DROP_DOWN_DATA_ACTION: {
+      .DEFAULT_APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION: {
       const defaultEntityList = action?.data?.map(data => ({
         label: data.name ?? data.applicationId,
         value: data._id,
@@ -494,13 +499,15 @@ export const application = (state = initialApplicationList, action) => {
           ...state?.viewApplication,
           dropDownData: {
             ...state?.viewApplication?.dropDownData,
+            entityList: defaultEntityList,
             defaultEntityList,
           },
         },
       };
     }
 
-    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.UPDATE_TASK_FIELD_STATUS:
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+      .APPLICATION_UPDATE_TASK_FIELD_STATUS:
       return {
         ...state,
         viewApplication: {
@@ -515,14 +522,15 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
 
-    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.RESET_ADD_TASK_STATE_ACTION:
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+      .APPLICATION_RESET_ADD_TASK_STATE_ACTION:
       return {
         ...state,
         viewApplication: {
           ...state?.viewApplication,
           task: {
             ...state?.viewApplication?.task,
-            addTask: [],
+            addTask: {},
           },
         },
       };
