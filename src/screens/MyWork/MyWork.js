@@ -368,6 +368,7 @@ const MyWork = () => {
               />
               <Button buttonType="success" title="Add" onClick={addTask} />
             </>
+          )}
           {activeTabIndex === 1 && (
             <div className="date-picker-container">
               <DatePicker
