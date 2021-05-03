@@ -41,6 +41,28 @@ const AddUser = () => {
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) ?? [],
     [selectedUser]
   );
+  const { name, role, email, contactNumber, maxCreditLimit, clientIds } = useMemo(() => {
+    if (selectedUser) {
+      // eslint-disable-next-line no-shadow
+      const { name, role, email, contactNumber, maxCreditLimit, clientIds } = selectedUser;
+
+      return {
+        name: name || '',
+        role: role || '',
+        email: email || '',
+        clientIds: clientIds || [],
+        contactNumber: contactNumber || '',
+        maxCreditLimit: maxCreditLimit || '',
+      };
+    }
+    return { name: '', role: '', email: '', contactNumber: '', maxCreditLimit: '', clientIds: [] };
+  }, [selectedUser]);
+  const userRoleSelectedValue = useMemo(() => {
+    const foundValue = USER_ROLES.find(e => {
+      return e.value === role;
+    });
+    return foundValue ? [foundValue] : [];
+  }, [role]);
 
   useEffect(() => {
     dispatch(getAllOrganisationModulesList());
@@ -71,23 +93,7 @@ const AddUser = () => {
     history.replace('/users');
   }, [history]);
 
-  const { name, role, email, contactNumber, maxCreditLimit, clientIds } = useMemo(() => {
-    if (selectedUser) {
-      // eslint-disable-next-line no-shadow
-      const { name, role, email, contactNumber, maxCreditLimit, clientIds } = selectedUser;
-
-      return {
-        name: name ?? '',
-        role: role ?? '',
-        email: email ?? '',
-        clientIds: clientIds ?? [],
-        contactNumber: contactNumber ?? '',
-        maxCreditLimit: maxCreditLimit ?? '',
-      };
-    }
-    return { name: '', role: '', email: '', contactNumber: '', maxCreditLimit: '', clientIds: [] };
-  }, [selectedUser]);
-
+  // const [storeSelectedClient, setStoreSelectedClient] = useState([]);
   const onChangeUserData = useCallback(e => {
     const { name, value } = e.target;
 
@@ -95,6 +101,7 @@ const AddUser = () => {
   }, []);
 
   const clientSelected = useCallback(value => {
+    //   setStoreSelectedClient([value]);
     dispatch(changeUserData({ name: 'clientIds', value }));
   }, []);
 

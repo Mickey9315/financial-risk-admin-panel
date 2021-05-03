@@ -185,11 +185,6 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         applicationDefaultColumnNameList: action?.data,
       };
-    case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_DEFAULT_COLUMN_LIST_ACTION:
-      return {
-        ...state,
-        applicationDefaultColumnNameList: action.data,
-      };
     case APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_APPLICATION_COLUMN_LIST_ACTION: {
       const columnList = {
         ...state?.applicationColumnNameList,
