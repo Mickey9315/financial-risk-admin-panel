@@ -16,6 +16,7 @@ import ApplicationAlertsAccordion from './component/ApplicationAlertsAccordion';
 import ApplicationDocumentsAccordion from './component/ApplicationDocumentsAccordion';
 import ApplicationLogsAccordion from './component/ApplicationLogsAccordion';
 import { errorNotification } from '../../../common/Toast';
+import Loader from '../../../common/Loader/Loader';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -46,8 +47,8 @@ const ViewApplication = () => {
   const history = useHistory();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const applicationDetail = useSelector(
-    ({ application }) => application?.viewApplication?.applicationDetail ?? {}
+  const { applicationDetail, isLoading } = useSelector(
+    ({ application }) => application?.viewApplication ?? {}
   );
 
   useEffect(() => {
@@ -135,8 +136,11 @@ const ViewApplication = () => {
     [applicationDetail]
   );
   const blockers = applicationDetails?.blockers;
+
   return (
     <>
+      {!isLoading ? (
+        <>
           <div className="breadcrumb mt-10">
             <span onClick={backToApplicationList}>Application List</span>
             <span className="material-icons-round">navigate_next</span>
@@ -232,6 +236,10 @@ const ViewApplication = () => {
               </div>
             </div>
           </div>
+        </>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 };

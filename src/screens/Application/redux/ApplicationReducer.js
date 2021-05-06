@@ -116,6 +116,7 @@ const initialApplicationList = {
   },
 
   viewApplication: {
+    isLoading: true,
     applicationDetail: {},
     task: {
       taskList: [],
@@ -426,6 +427,7 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         viewApplication: {
           ...state?.viewApplication,
+          isLoading: false,
           applicationDetail: action?.data,
         },
       };
