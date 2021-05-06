@@ -4,6 +4,7 @@ import { errorNotification, successNotification } from '../../../common/Toast';
 import SettingOrganizationDetailsApiService from '../services/SettingOrganizationDetailsApiService';
 import SettingApiIntegrationService from '../services/SettingApiIntegrationService';
 import SettingAuditLogApiService from '../services/SettingAuditLogApiService';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 export const fetchDocRequest = () => ({
   type: SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.FETCH_DOCUMENT_TYPE_LIST_REQUEST,
@@ -82,20 +83,13 @@ export const getAuditUserList = data => ({
 export const getSettingDocumentTypeList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      // dispatch(fetchDocRequest());
       const response = await SettingDocumentTypeApiServices.getDocumentListData(params);
       if (response.data.status === 'SUCCESS') {
         dispatch(fetchDocSuccess(response.data.data));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch(fetchDocFailure(e));
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch(fetchDocFailure(e?.message));
+      displayErrors(e);
     }
   };
 };
@@ -117,18 +111,12 @@ export const addNewSettingDocType = (data, cb) => {
     try {
       const response = await SettingDocumentTypeApiServices.addNewDocumentType(data);
       if (response.data.status === 'SUCCESS') {
-        successNotification('New document type added successfully');
+        successNotification(response?.data?.message || 'New document type added successfully');
         cb();
         dispatch(resetAddDocType());
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification(e.response.data.message);
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -141,13 +129,7 @@ export const getDocumentTypeDetailsById = id => {
         dispatch(getDocTypeById(response.data.data));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification(e.response.data.message);
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -157,18 +139,12 @@ export const updateSettingDocType = (id, data, cb) => {
     try {
       const response = await SettingDocumentTypeApiServices.editDocumentTypeById(id, data);
       if (response.data.status === 'SUCCESS') {
-        successNotification('Document type updated successfully');
+        successNotification(response?.data?.message || 'Document type updated successfully');
         dispatch(resetAddDocType());
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -178,19 +154,13 @@ export const deleteSettingDocumentType = (id, cb) => {
     try {
       const response = await SettingDocumentTypeApiServices.deleteDocumentType(id);
       if (response.data.status === 'SUCCESS') {
-        successNotification('Document type deleted successfully.');
+        successNotification(response?.data?.message || 'Document type deleted successfully.');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -203,13 +173,7 @@ export const getApiIntegration = data => {
         dispatch(fetchApiIntegrationSuccess(response.data.data.integration));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -229,19 +193,13 @@ export const updateApiIntegrationDetails = data => {
     try {
       const response = await SettingApiIntegrationService.updateApiIntegrationDetails(data);
       if (response.data.status === 'SUCCESS') {
-        successNotification('API integration details updated successfully');
+        successNotification(
+          response?.data?.message || 'API integration details updated successfully'
+        );
         dispatch(updateApiIntegration(data));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification(e.response.data.message);
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -254,13 +212,7 @@ export const getOrganizationDetails = data => {
         dispatch(fetchOrgDetailSuccess(response.data.data));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -282,18 +234,12 @@ export const updateOrganizationDetails = data => {
       const response = await SettingOrganizationDetailsApiService.updateOrganizationDetails(data);
       if (response.data.status === 'SUCCESS') {
         dispatch(updateOrgDetails(response.data.data));
-        successNotification('Organization details updated successfully.');
+        successNotification(
+          response?.data?.message || 'Organization details updated successfully.'
+        );
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification(e.response.data.message);
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -306,14 +252,7 @@ export const getAuditLogsList = (params = { page: 1, limit: 15 }) => {
         dispatch(fetchAuditLogList(response.data.data));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch(fetchDocFailure(e));
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -329,16 +268,7 @@ export const getAuditLogColumnNameList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification(e.response.data.message);
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -378,20 +308,11 @@ export const saveAuditLogColumnNameList = ({ auditLogColumnList = {}, isReset = 
       } else {
         const response = await SettingAuditLogApiService.updateAuditLogColumnNameList(data);
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully.');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -410,16 +331,7 @@ export const getAuditUserName = () => {
         dispatch(getAuditUserList(response.data.data));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };

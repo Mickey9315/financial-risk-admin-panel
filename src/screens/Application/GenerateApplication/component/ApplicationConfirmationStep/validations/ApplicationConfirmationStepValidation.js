@@ -14,7 +14,7 @@ export const applicationConfirmationStepValidations = (
     };
     try {
       dispatch(saveApplicationStepDataToBackend(finalData));
-      history.replace('/applications?page=1&limit=15');
+      history.replace('/applications');
     } catch (e) {
       /**/
     }

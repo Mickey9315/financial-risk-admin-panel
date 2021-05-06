@@ -23,11 +23,11 @@ import Modal from '../../../common/Modal/Modal';
 import { errorNotification } from '../../../common/Toast';
 
 const SettingsAuditLogTab = () => {
-  const getAuditLogList = useSelector(({ settingReducer }) => settingReducer.auditLogList);
+  const getAuditLogList = useSelector(({ settingReducer }) => settingReducer?.auditLogList ?? {});
   const auditLogColumnList = useSelector(
-    ({ settingReducer }) => settingReducer.auditLogColumnNameList
+    ({ settingReducer }) => settingReducer?.auditLogColumnNameList ?? {}
   );
-  const { userNameList } = useSelector(({ settingReducer }) => settingReducer);
+  const { userNameList } = useSelector(({ settingReducer }) => settingReducer ?? []);
   const { defaultFields, customFields } = useMemo(
     () => auditLogColumnList ?? { defaultFields: [], customFields: [] },
     [auditLogColumnList]
@@ -125,11 +125,8 @@ const SettingsAuditLogTab = () => {
 
   const getAuditLogListByFilter = useCallback(
     (params = {}, cb) => {
-      if (moment(startDate).isAfter(endDate)) {
-        errorNotification('From date should be greater than to date');
-        resetFilterDates();
-      } else if (moment(endDate).isBefore(startDate)) {
-        errorNotification('To Date should be smaller than from date');
+      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+        errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
@@ -302,7 +299,7 @@ const SettingsAuditLogTab = () => {
     [toggleFilterModal, onClickApplyFilter]
   );
   const userNameOptions = useMemo(() => {
-    return userNameList.map(e => ({
+    return userNameList?.map(e => ({
       label: e.name,
       value: e._id,
     }));
@@ -370,7 +367,7 @@ const SettingsAuditLogTab = () => {
   }, [filter, entityType]);
 
   const userNameSelectedValue = useMemo(() => {
-    const selectedUserName = userNameList.find(e => {
+    const selectedUserName = userNameList?.find(e => {
       return e._id === userRefId;
     });
     return selectedUserName ? [{ label: selectedUserName.name, value: selectedUserName._id }] : [];

@@ -3,6 +3,7 @@ import './InsurerList.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import 'react-datepicker/dist/react-datepicker.css';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import Table /* TABLE_ROW_ACTIONS */ from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -22,7 +23,10 @@ import Modal from '../../../common/Modal/Modal';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import { errorNotification, successNotification } from '../../../common/Toast';
-import { INSURER_CRM_REDUX_CONSTANTS } from '../redux/InsurerReduxConstants';
+import {
+  INSURER_COLUMN_LIST_REDUX_CONSTANTS,
+  INSURER_CRM_REDUX_CONSTANTS,
+} from '../redux/InsurerReduxConstants';
 import InsurerApiService from '../services/InsurerApiService';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 
@@ -31,7 +35,9 @@ const InsurerList = () => {
   const dispatch = useDispatch();
   const searchInputRef = useRef();
   const insurerListWithPageData = useSelector(({ insurer }) => insurer?.insurerList ?? {});
-  const insurerColumnList = useSelector(({ insurer }) => insurer?.insurerColumnNameList ?? {});
+  const { insurerColumnNameList, insurerDefaultColumnNameList } = useSelector(
+    ({ insurer }) => insurer ?? {}
+  );
   const { total, pages, page, limit, isLoading, docs, headers } = useMemo(
     () => insurerListWithPageData,
     [insurerListWithPageData]
@@ -75,17 +81,35 @@ const InsurerList = () => {
   );
 
   const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveInsurerColumnListName({ insurerColumnList }));
-    getInsurerList();
-    toggleCustomField();
-  }, [toggleCustomField, insurerColumnList, getInsurerList]);
+    try {
+      const isBothEqual = _.isEqual(insurerColumnNameList, insurerDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveInsurerColumnListName({ insurerColumnNameList }));
+        getInsurerList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [toggleCustomField, insurerColumnNameList, getInsurerList, insurerDefaultColumnNameList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveInsurerColumnListName({ isReset: true }));
-    getInsurerList();
     dispatch(getInsurerColumnNameList());
+    getInsurerList();
     toggleCustomField();
   }, [toggleCustomField, getInsurerList]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_COLUMN_LIST_ACTION,
+      data: insurerDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [insurerDefaultColumnNameList, toggleCustomField]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -94,14 +118,14 @@ const InsurerList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
   const { defaultFields, customFields } = useMemo(
-    () => insurerColumnList ?? { defaultFields: [], customFields: [] },
-    [insurerColumnList]
+    () => insurerColumnNameList ?? { defaultFields: [], customFields: [] },
+    [insurerColumnNameList]
   );
 
   const onChangeSelectedColumn = useCallback((type, name, value) => {

@@ -1,7 +1,8 @@
 import HeaderApiService from '../services/HeaderApiService';
-import { errorNotification, successNotification } from '../../Toast';
+import { successNotification } from '../../Toast';
 import { EDIT_PROFILE_CONSTANT } from './HeaderConstants';
 import { LOGIN_REDUX_CONSTANTS } from '../../../screens/auth/login/redux/LoginReduxConstants';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 export const changePassword = async (oldPassword, newPassword) => {
   try {
@@ -9,45 +10,11 @@ export const changePassword = async (oldPassword, newPassword) => {
     const response = await HeaderApiService.changePassword(data);
 
     if (response.data.status === 'SUCCESS') {
-      successNotification('Password changed successfully.');
+      successNotification(response?.data?.message || 'Password changed successfully.');
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-        errorNotification('Internal server error');
-      } else if (e.response.data.status === 'ERROR') {
-        if (e.response.data.messageCode) {
-          switch (e.response.data.messageCode) {
-            case 'WRONG_CURRENT_PASSWORD':
-              errorNotification('Please enter correct current password');
-              break;
-            case 'SAME_OLD_PASSWORD':
-              errorNotification("You can't set set last used password");
-              break;
-            default:
-              break;
-          }
-        } else {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      } else if (e.response.data.status === 'BAD_REQUEST') {
-        if (e.response.data.messageCode) {
-          switch (e.response.data.messageCode) {
-            case 'SAME_OLD_PASSWORD':
-              errorNotification("User can't set last used password");
-              break;
-            default:
-              errorNotification(e.response.data.message);
-              break;
-          }
-        }
-      } else {
-        errorNotification('It seems like server is down, Please try again later.');
-      }
-      throw Error();
-    }
+    displayErrors(e);
+    throw Error();
   }
 };
 
@@ -62,16 +29,7 @@ export const getLoggedUserDetails = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -94,20 +52,11 @@ export const updateUserProfile = (name, contactNumber) => {
       };
       const response = await HeaderApiService.updateUserProfile(data);
       if (response.data.status === 'SUCCESS') {
-        successNotification(response.data.message);
+        successNotification(response?.data?.message || 'Profile updated successfully');
         dispatch(getLoggedUserDetails());
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -120,19 +69,10 @@ export const uploadProfilePicture = (data, config) => {
           type: EDIT_PROFILE_CONSTANT.UPDATE_USER_PROFILE_PICTURE,
           data: response.data.data,
         });
-        successNotification('Profile picture updated successfully');
+        successNotification(response?.data?.message || 'Profile picture updated successfully');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -145,19 +85,10 @@ export const logoutUser = () => {
         dispatch({
           type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
         });
-        successNotification('Logged out successfully.');
+        successNotification(response?.data?.message || 'Logged out successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else {
-          errorNotification('Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };

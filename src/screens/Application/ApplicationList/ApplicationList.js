@@ -72,20 +72,16 @@ const ApplicationList = () => {
     endDate: paramEndDate,
   } = useQueryParams();
 
+  const { applicationColumnNameList, applicationDefaultColumnNameList } = useSelector(
+    ({ application }) => application ?? {}
+  );
   const applicationListWithPageData = useSelector(
     ({ application }) => application?.applicationList ?? {}
-  );
-  const applicationColumnNameList = useSelector(
-    ({ application }) => application?.applicationColumnNameList ?? {}
-  );
-  const applicationDefaultColumnNameList = useSelector(
-    ({ application }) => application?.applicationDefaultColumnNameList ?? {}
   );
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => applicationListWithPageData,
     [applicationListWithPageData]
   );
-
   const { dropdownData } = useSelector(
     ({ application }) => application?.applicationFilterList ?? {}
   );
@@ -194,11 +190,8 @@ const ApplicationList = () => {
 
   const getApplicationsByFilter = useCallback(
     async (params = {}, cb) => {
-      if (moment(startDate)?.isAfter(endDate)) {
-        errorNotification('From date should be greater than to date');
-        resetFilterDates();
-      } else if (moment(endDate)?.isBefore(startDate)) {
-        errorNotification('To Date should be smaller than from date');
+      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+        errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {

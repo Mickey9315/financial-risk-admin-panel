@@ -221,30 +221,32 @@ const Header = () => {
 
   useEffect(() => {
     if (SESSION_VARIABLES.USER_TOKEN) dispatch(getLoggedUserDetails());
-  }, []);
+  }, [SESSION_VARIABLES.USER_TOKEN]);
 
-  const handleChange = e => {
-    e.persist();
-    if (e.target.files && e.target.files.length > 0) {
-      const fileExtension = ['jpeg', 'jpg', 'png'];
-      const mimeType = ['image/jpeg', 'image/jpg', 'image/png'];
+  const handleChange = useCallback(
+    e => {
+      e.persist();
+      if (e.target.files && e.target.files.length > 0) {
+        const fileExtension = ['jpeg', 'jpg', 'png'];
+        const mimeType = ['image/jpeg', 'image/jpg', 'image/png'];
 
-      const checkExtension =
-        fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
-      const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+        const checkExtension =
+          fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
+        const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
+        const checkFileSize = e.target.files[0].size > 4194304;
 
-      if (!(checkExtension || checkMimeTypes)) {
-        errorNotification('Only image file allowed');
+        if (!(checkExtension || checkMimeTypes)) {
+          errorNotification('Only image file allowed');
+        } else if (checkFileSize) {
+          errorNotification('File size should be less than 4 mb');
+        } else {
+          setFileName(e.target.files[0].name ? e.target.files[0].name : 'Browse...');
+          setFile(e.target.files[0]);
+        }
       }
-      const checkFileSize = e.target.files[0].size > 4194304;
-      if (checkFileSize) {
-        errorNotification('File size should be less than 4 mb');
-      } else {
-        setFileName(e.target.files[0].name ? e.target.files[0].name : 'Browse...');
-        setFile(e.target.files[0]);
-      }
-    }
-  };
+    },
+    [setFile, setFileName]
+  );
 
   const [notificationDrawer, setNotificationDrawer] = useState(false);
   const openNotificationDrawer = useCallback(value =>

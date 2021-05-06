@@ -26,7 +26,8 @@ const initialMyWork = {
       assigneeList: [],
       entityList: [],
     },
-    columnList: {},
+    taskColumnNameList: {},
+    taskDefaultColumnNameList: {},
     filterDropDownData: {
       assigneeList: [],
     },
@@ -136,6 +137,10 @@ export const myWorkReducer = (state = initialMyWork, action) => {
             dueDate: '',
             taskFrom: 'task',
           },
+          myWorkDropDownData: {
+            assigneeList: [],
+            entityList: [],
+          },
         },
       };
 
@@ -160,23 +165,31 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         ...state,
         task: {
           ...state?.task,
-          columnList: action?.data,
+          taskColumnNameList: action?.data,
+        },
+      };
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_DEFAULT_COLUMN_NAME_LIST_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state?.task,
+          taskDefaultColumnNameList: action?.data,
         },
       };
 
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_TASK_COLUMN_NAME_LIST_ACTION: {
-      const columnList = {
-        ...state?.task?.columnList,
+      const taskColumnNameList = {
+        ...state?.task?.taskColumnNameList,
       };
       const { type, name, value } = action?.data;
-      columnList[`${type}`] = columnList[`${type}`]?.map(e =>
+      taskColumnNameList[`${type}`] = taskColumnNameList[`${type}`]?.map(e =>
         e?.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         task: {
           ...state?.task,
-          columnList,
+          taskColumnNameList,
         },
       };
     }
@@ -229,6 +242,10 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         task: {
           ...state?.task,
           taskDetail: {},
+          myWorkDropDownData: {
+            assigneeList: [],
+            entityList: [],
+          },
         },
       };
     default:

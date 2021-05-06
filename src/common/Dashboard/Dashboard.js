@@ -12,8 +12,8 @@ const Dashboard = props => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (SESSION_VARIABLES.USER_TOKEN) dispatch(getAllUserPrivileges());
-  }, []);
+    dispatch(getAllUserPrivileges());
+  }, [SESSION_VARIABLES.USER_TOKEN]);
 
   return (
     <div className="dashboard-container">

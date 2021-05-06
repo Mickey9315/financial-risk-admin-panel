@@ -300,7 +300,7 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         editApplication: {
           ...state?.editApplication,
-          partners: [...state?.editApplication?.partners, action?.data],
+          partners: [...(state?.editApplication?.partners ?? []), action?.data],
         },
       };
     }

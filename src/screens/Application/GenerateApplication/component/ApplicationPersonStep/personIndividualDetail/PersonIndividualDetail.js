@@ -82,6 +82,9 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       partners?.[index]?.country?.value === 'NZL'
     ) {
       setIsAusOrNew(true);
+      setStateValue(
+        partners?.[index]?.country?.value === 'AUS' ? australianStates : newZealandStates
+      );
     }
   }, [partners?.[index]?.country]);
 
@@ -315,7 +318,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         name: 'email',
       },
     ],
-    [stateValue, isAusOrNew]
+    [stateValue, isAusOrNew, countryList, isAusOrNew, streetType]
   );
 
   const handleTextInputChange = useCallback(
@@ -458,12 +461,10 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   const handleEntityChange = useCallback(
     event => {
       const { name, value } = event.target;
-      const data = [
-        {
-          label: value,
-          value,
-        },
-      ];
+      const data = {
+        label: value,
+        value,
+      };
       updateSinglePersonState(name, data);
     },
     [updateSinglePersonState]
@@ -486,7 +487,6 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
                   : partners?.[index]?.[input.name]
               }
               onChange={handleTextInputChange}
-              disabled={partners[index].isDisabled ?? false}
             />
           );
           break;
@@ -660,9 +660,6 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       return '';
     }
     if (partners?.length <= 1) {
-      return '';
-    }
-    if (partners?.[index]?.isDisabled) {
       return '';
     }
     return 'delete_outline';

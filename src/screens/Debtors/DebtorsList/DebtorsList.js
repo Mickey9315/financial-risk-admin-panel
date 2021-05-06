@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ReactSelect from 'react-select';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -17,6 +18,8 @@ import {
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Modal from '../../../common/Modal/Modal';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
+import { errorNotification } from '../../../common/Toast';
+import { DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 
 const initialFilterState = {
   entityType: '',
@@ -46,8 +49,8 @@ const DebtorsList = () => {
   const debtorListWithPageData = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.debtorsList ?? {}
   );
-  const debtorsColumnNameListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.debtorsColumnNameList ?? {}
+  const { debtorsColumnNameList, debtorsDefaultColumnNameList } = useSelector(
+    ({ debtorsManagement }) => debtorsManagement ?? {}
   );
   const { docs, headers, page, pages, limit, total, isLoading } = useMemo(
     () => debtorListWithPageData,
@@ -102,8 +105,8 @@ const DebtorsList = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => debtorsColumnNameListData ?? { defaultFields: [], customFields: [] },
-    [debtorsColumnNameListData]
+    () => debtorsColumnNameList ?? { defaultFields: [], customFields: [] },
+    [debtorsColumnNameList]
   );
 
   const [customFieldModal, setCustomFieldModal] = useState(false);
@@ -112,16 +115,41 @@ const DebtorsList = () => {
     [setCustomFieldModal]
   );
 
-  const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveDebtorsColumnListName({ debtorsColumnNameListData }));
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
+      data: debtorsDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [dispatch, toggleCustomField, debtorsColumnNameListData]);
+  }, [debtorsDefaultColumnNameList, toggleCustomField]);
+
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      const isBothEqual = _.isEqual(debtorsColumnNameList, debtorsDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveDebtorsColumnListName({ debtorsColumnNameList }));
+        getDebtorsListByFilter();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    toggleCustomField,
+    debtorsColumnNameList,
+    getDebtorsListByFilter,
+    debtorsDefaultColumnNameList,
+  ]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveDebtorsColumnListName({ isReset: true }));
     dispatch(getDebtorsColumnNameList());
+    getDebtorsListByFilter();
     toggleCustomField();
-  }, [dispatch, toggleCustomField]);
+  }, [dispatch, toggleCustomField, getDebtorsListByFilter]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -130,10 +158,10 @@ const DebtorsList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   const onChangeSelectedColumn = useCallback(

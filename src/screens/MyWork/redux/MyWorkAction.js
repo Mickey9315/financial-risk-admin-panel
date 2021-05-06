@@ -1,6 +1,7 @@
 import MyWorkApiServices from '../services/MyWorkApiServices';
 import { MY_WORK_REDUX_CONSTANTS } from './MyWorkReduxConstants';
 import { errorNotification, successNotification } from '../../../common/Toast';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 export const getTaskListByFilter = (params = {}) => {
   return async dispatch => {
@@ -17,16 +18,7 @@ export const getTaskListByFilter = (params = {}) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -44,16 +36,7 @@ export const getAssigneeDropDownData = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -69,23 +52,9 @@ export const getEntityDropDownData = params => {
               .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
-        // } else {
-        //   dispatch({
-        //     type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ENTITY_DROP_DOWN_DATA_ACTION,
-        //     data: [],
-        //   });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -123,23 +92,14 @@ export const saveTaskData = (data, backToTask) => {
     try {
       const response = await MyWorkApiServices.saveNewTask(data);
       if (response.data.status === 'SUCCESS') {
-        successNotification(response.data.message);
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
         });
+        successNotification(response?.data?.message || 'Task created successfully');
         backToTask();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -168,18 +128,15 @@ export const getTaskListColumnList = () => {
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_COLUMN_NAME_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+              .TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -194,8 +151,8 @@ export const changeTaskListColumnStatus = data => {
   };
 };
 
-export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = false }) => {
-  return async () => {
+export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = false }) => {
+  return async dispatch => {
     try {
       let data = {
         isReset: true,
@@ -203,10 +160,10 @@ export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = 
         columnFor: 'task',
       };
       if (!isReset) {
-        const defaultFields = taskColumnListData.defaultFields
+        const defaultFields = taskColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = taskColumnListData.customFields
+        const customFields = taskColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
@@ -214,28 +171,23 @@ export const saveTaskListColumnListName = ({ taskColumnListData = {}, isReset = 
           columns: [...defaultFields, ...customFields],
           columnFor: 'task',
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-        throw Error();
-      } else {
-        const response = await MyWorkApiServices.saveColumnNameList(data);
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await MyWorkApiServices.saveColumnNameList(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+              .TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
+          data: taskColumnNameList,
+        });
+        successNotification(response?.data?.message || 'Columns updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        errorNotification(e.response.data.message ?? 'Success');
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      }
-      throw Error();
+      displayErrors(e);
     }
   };
 };
@@ -252,16 +204,7 @@ export const getTaskFilter = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -271,19 +214,13 @@ export const deleteTaskAction = (taskId, cb) => {
     try {
       const response = await MyWorkApiServices.deleteTask(taskId);
       if (response.data.status === 'SUCCESS') {
-        successNotification('Task deleted successfully.');
+        successNotification(response?.data?.message || 'Task deleted successfully.');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -299,16 +236,7 @@ export const getTaskById = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -328,23 +256,14 @@ export const editTaskData = (id, data, backToTask) => {
     try {
       const response = await MyWorkApiServices.updateTask(id, data);
       if (response.data.status === 'SUCCESS') {
-        successNotification(response.data.message);
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
         });
+        successNotification(response?.data?.message || 'Task updated successfully');
         backToTask();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };

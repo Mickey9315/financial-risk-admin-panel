@@ -13,13 +13,13 @@ import { errorNotification } from '../../../common/Toast';
 
 const SettingsOrganizationDetailsTab = () => {
   const organizationDetail = useSelector(
-    ({ settingReducer }) => settingReducer?.organizationDetails
+    ({ settingReducer }) => settingReducer?.organizationDetails ?? {}
   );
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getOrganizationDetails());
   }, []);
-  const { isLoading } = useMemo(() => organizationDetail, [organizationDetail]);
+  const { isLoading } = useMemo(() => organizationDetail ?? {}, [organizationDetail]);
 
   const [isEdit, setIsEdit] = useState(false);
 

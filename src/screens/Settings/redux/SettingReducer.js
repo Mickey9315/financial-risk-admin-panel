@@ -77,7 +77,7 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         documentType: {
-          ...action?.data,
+          ...state?.documentType,
           isLoading: false,
           error: action?.error,
         },
@@ -210,7 +210,7 @@ export const settingReducer = (state = initialSettingState, action) => {
     case SETTING_REDUX_CONSTANTS.AUDIT_LOG.GET_AUDIT_USER_TYPE_LIST_DATA:
       return {
         ...state,
-        userNameList: [...state?.userNameList, ...action?.data],
+        userNameList: [{ ...state?.userNameList }, ...action?.data],
       };
 
     case SETTING_REDUX_CONSTANTS.AUDIT_LOG.RESET_AUDIT_LOG_LIST_DATA:

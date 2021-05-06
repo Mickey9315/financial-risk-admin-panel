@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-select';
 import moment from 'moment';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
@@ -26,7 +27,10 @@ import Checkbox from '../../../common/Checkbox/Checkbox';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import ClientApiService from '../services/ClientApiService';
-import { CLIENT_ADD_FROM_CRM_REDUX_CONSTANT } from '../redux/ClientReduxConstants';
+import {
+  CLIENT_ADD_FROM_CRM_REDUX_CONSTANT,
+  CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+} from '../redux/ClientReduxConstants';
 import Loader from '../../../common/Loader/Loader';
 
 const initialFilterState = {
@@ -61,8 +65,8 @@ const ClientList = () => {
   const clientListWithPageData = useSelector(
     ({ clientManagement }) => clientManagement?.clientList ?? {}
   );
-  const clientColumnList = useSelector(
-    ({ clientManagementColumnList }) => clientManagementColumnList ?? []
+  const { clientColumnList, clientDefaultColumnList } = useSelector(
+    ({ clientManagementColumnList }) => clientManagementColumnList ?? {}
   );
   const filterList = useSelector(
     ({ clientManagementFilterList }) => clientManagementFilterList ?? {}
@@ -136,11 +140,8 @@ const ClientList = () => {
 
   const getClientListByFilter = useCallback(
     async (params = {}, cb) => {
-      if (moment(startDate)?.isAfter(endDate)) {
-        errorNotification('From date should be greater than to date');
-        resetFilterDates();
-      } else if (moment(endDate)?.isBefore(startDate)) {
-        errorNotification('To Date should be smaller than from date');
+      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+        errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
@@ -250,16 +251,36 @@ const ClientList = () => {
     [setCustomFieldModal]
   );
 
-  const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveClientColumnListName({ clientColumnList }));
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_COLUMN_LIST_ACTION,
+      data: clientDefaultColumnList,
+    });
     toggleCustomField();
-  }, [dispatch, toggleCustomField, clientColumnList]);
+  }, [clientDefaultColumnList, toggleCustomField]);
+
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      const isBothEqual = _.isEqual(clientColumnList, clientDefaultColumnList);
+      if (!isBothEqual) {
+        await dispatch(saveClientColumnListName({ clientColumnList }));
+        getClientListByFilter();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [getClientListByFilter, toggleCustomField, clientColumnList, clientDefaultColumnList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveClientColumnListName({ isReset: true }));
     dispatch(getClientColumnListName());
+    getClientListByFilter();
     toggleCustomField();
-  }, [dispatch, toggleCustomField]);
+  }, [dispatch, toggleCustomField, getClientListByFilter]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -268,15 +289,11 @@ const ClientList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
-
-  useEffect(() => {
-    dispatch(getClientColumnListName());
-  }, []);
 
   const { defaultFields, customFields } = useMemo(
     () => clientColumnList ?? { defaultFields: [], customFields: [] },
@@ -299,10 +316,6 @@ const ClientList = () => {
   );
 
   const addDataFromCrm = () => {
-    dispatch({
-      type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
-      data: [],
-    });
     const data = {
       crmIds,
     };
@@ -311,8 +324,12 @@ const ClientList = () => {
         .then(res => {
           if (res.data.status === 'SUCCESS') {
             successNotification('Client data successfully synced');
-            setAddFromCRM(e => !e);
+            setAddFromCRM(false);
             dispatch(getClientList());
+            dispatch({
+              type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
+              data: [],
+            });
           }
         })
         .catch(() => {
@@ -346,18 +363,17 @@ const ClientList = () => {
     [history]
   );
   const [searchClients, setSearchClients] = React.useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
 
   const searchInputRef = useRef();
 
-  const checkIfEnterKeyPressed = e => {
-    if (e.key === 'Enter') {
-      const searchKeyword = searchInputRef?.current?.value;
-      if (searchKeyword?.trim()?.toString()?.length !== 0) {
-        dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
-        setSearchClients(true);
-      } else {
-        errorNotification('Please enter any value than press enter');
-      }
+  const checkIfEnterKeyPressed = async () => {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length !== 0) {
+      setIsModalLoading(true);
+      await dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
+      setIsModalLoading(false);
+      setSearchClients(true);
     }
   };
 
@@ -576,38 +592,36 @@ const ClientList = () => {
             prefixClass="font-placeholder"
             placeholder="Search clients"
             type="text"
-            onKeyDown={checkIfEnterKeyPressed}
+            onChange={_.debounce(checkIfEnterKeyPressed, 1000)}
           />
-          {searchClients && (
+          {searchClients && !isModalLoading ? (
             <>
               {/* eslint-disable-next-line no-nested-ternary */}
-              {syncListFromCrm ? (
-                syncListFromCrm.length > 0 ? (
-                  <>
-                    {/* <Checkbox title="Name" className="check-all-crmList" /> */}
-                    <Checkbox
-                      title="Add All"
-                      className="check-all-crmList"
-                      onChange={e => selectAllClientsFromCrm(e)}
-                    />
-                    <div className="crm-checkbox-list-container">
-                      {syncListFromCrm.map(crm => (
-                        <Checkbox
-                          title={crm.name}
-                          className="crm-checkbox-list"
-                          checked={crmIds?.includes(crm?.crmId?.toString())}
-                          onChange={() => selectClientFromCrm(crm?.crmId?.toString())}
-                        />
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <div className="no-record-found">No record found</div>
-                )
+              {syncListFromCrm.length > 0 ? (
+                <>
+                  {/* <Checkbox title="Name" className="check-all-crmList" /> */}
+                  <Checkbox
+                    title="Add All"
+                    className="check-all-crmList"
+                    onChange={e => selectAllClientsFromCrm(e)}
+                  />
+                  <div className="crm-checkbox-list-container">
+                    {syncListFromCrm.map(crm => (
+                      <Checkbox
+                        title={crm.name}
+                        className="crm-checkbox-list"
+                        checked={crmIds?.includes(crm?.crmId?.toString())}
+                        onChange={() => selectClientFromCrm(crm?.crmId?.toString())}
+                      />
+                    ))}
+                  </div>
+                </>
               ) : (
-                <Loader />
+                <div className="no-record-found">No record found</div>
               )}
             </>
+          ) : (
+            <Loader />
           )}
         </Modal>
       )}

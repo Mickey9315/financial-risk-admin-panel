@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import ReactSelect from 'react-dropdown-select';
+import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import IconButton from '../../../../common/IconButton/IconButton';
 import BigInput from '../../../../common/BigInput/BigInput';
@@ -207,7 +207,7 @@ const DebtorsStakeHolderTab = () => {
   const [isAusOrNew, setIsAusOrNew] = useState(false);
 
   useEffect(() => {
-    if (stakeHolder?.country?.[0]?.value === 'AUS' || stakeHolder?.country?.[0]?.value === 'NZL') {
+    if (stakeHolder?.country?.value === 'AUS' || stakeHolder?.country?.value === 'NZL') {
       setIsAusOrNew(true);
     }
   }, [stakeHolder?.country]);
@@ -455,11 +455,11 @@ const DebtorsStakeHolderTab = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateStakeHolderSingleDetail(data[0]?.name, data);
-      if (data[0]?.name === 'country') {
+      updateStakeHolderSingleDetail(data?.name, data);
+      if (data?.name === 'country') {
         let showDropDownInput = true;
 
-        switch (data[0]?.value) {
+        switch (data?.value) {
           case 'AUS':
             updateStakeHolderSingleDetail('state', []);
             setStateValue(australianStates);
@@ -489,12 +489,10 @@ const DebtorsStakeHolderTab = () => {
   const handleEntityChange = useCallback(
     event => {
       const { name, value } = event.target;
-      const data = [
-        {
-          label: value,
-          value,
-        },
-      ];
+      const data = {
+        label: value,
+        value,
+      };
       updateStakeHolderSingleDetail(name, data);
     },
     [updateStakeHolderSingleDetail]
@@ -586,8 +584,7 @@ const DebtorsStakeHolderTab = () => {
               name={input.name}
               value={
                 input.name === 'state'
-                  ? (isAusOrNew && stakeHolder?.[input.name]?.[0]?.label) ||
-                    stakeHolder?.[input.name]
+                  ? (isAusOrNew && stakeHolder?.[input.name]?.label) || stakeHolder?.[input.name]
                   : stakeHolder?.[input.name]
               }
               onChange={handleTextInputChange}
@@ -620,16 +617,18 @@ const DebtorsStakeHolderTab = () => {
         case 'select':
           component = (
             <ReactSelect
+              className="react-select-container"
+              classNamePrefix="react-select"
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              values={
+              value={
                 input?.name === 'title'
-                  ? titleDropDown?.filter(title => title?.value === stakeHolder?.title) ||
+                  ? titleDropDown?.find(title => title?.value === stakeHolder?.title) ||
                     stakeHolder?.title
                   : stakeHolder?.[input.name] || []
               }
-              searchable
+              isSearchable
               onChange={handleSelectInputChange}
             />
           );
@@ -653,7 +652,7 @@ const DebtorsStakeHolderTab = () => {
               setIsEdit
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              value={stakeHolder?.entityName?.[0]?.value ?? ''}
+              value={stakeHolder?.entityName?.value ?? ''}
               onChange={handleEntityChange}
             />
           );
@@ -744,6 +743,7 @@ const DebtorsStakeHolderTab = () => {
       handleRadioButton,
       onChangeDate,
       handleEntityChange,
+      titleDropDown,
     ]
   );
 

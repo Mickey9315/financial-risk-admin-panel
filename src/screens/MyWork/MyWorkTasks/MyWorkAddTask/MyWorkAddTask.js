@@ -161,7 +161,6 @@ const MyWorkAddTask = () => {
   const onSaveTask = useCallback(() => {
     const data = {
       title: addTaskState?.title?.trim(),
-      // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId?.value,
       taskFrom: 'task',

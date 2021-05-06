@@ -57,6 +57,10 @@ const initialClientManagementClientListState = {
   riskAnalystList: [],
   serviceManagerList: [],
 };
+const initialClientManagementColumnList = {
+  clientColumnList: [],
+  clientDefaultColumnList: [],
+};
 
 export const clientManagement = (state = initialClientListState, action) => {
   switch (action.type) {
@@ -480,14 +484,22 @@ export const clientManagement = (state = initialClientListState, action) => {
   }
 };
 
-export const clientManagementColumnList = (state = [], action) => {
+export const clientManagementColumnList = (state = initialClientManagementColumnList, action) => {
   switch (action.type) {
     case CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_COLUMN_LIST_ACTION:
-      return action?.data;
+      return {
+        ...state,
+        clientColumnList: action?.data,
+      };
+    case CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        clientDefaultColumnList: action?.data,
+      };
 
     case CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_CLIENT_MANAGEMENT_COLUMN_LIST_ACTION: {
       const temp = {
-        ...state,
+        ...state?.clientColumnList,
       };
 
       const { type, name, value } = action?.data ?? {};
@@ -501,7 +513,10 @@ export const clientManagementColumnList = (state = [], action) => {
           : e
       );
 
-      return temp;
+      return {
+        ...state,
+        clientColumnList: temp,
+      };
     }
     default:
       return state;

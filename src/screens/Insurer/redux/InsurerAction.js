@@ -9,6 +9,7 @@ import {
 import InsurerContactApiServices from '../services/InsurerContactApiServices';
 import InsurerPoliciesApiServices from '../services/InsurerPoliciesApiServices';
 import InsurerMatrixApiServices from '../services/InsurerMatrixApiServices';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 export const getInsurerListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -44,6 +45,10 @@ export const getInsurerColumnNameList = () => {
           type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       if (e.response && e.response.data) {
@@ -69,7 +74,7 @@ export const changeInsurerColumnListStatus = data => {
   };
 };
 
-export const saveInsurerColumnListName = ({ insurerColumnList = {}, isReset = false }) => {
+export const saveInsurerColumnListName = ({ insurerColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
       let data = {
@@ -77,38 +82,31 @@ export const saveInsurerColumnListName = ({ insurerColumnList = {}, isReset = fa
         columns: [],
       };
       if (!isReset) {
-        const defaultFields = insurerColumnList.defaultFields
+        const defaultFields = insurerColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = insurerColumnList.customFields
+        const customFields = insurerColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
           isReset: false,
           columns: [...defaultFields, ...customFields],
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-        dispatch(getInsurerColumnNameList());
-      } else {
-        const response = await InsurerApiService.updateInsurerColumnListName(data);
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          // dispatch(getInsurerListByFilter());
-          successNotification('Columns updated successfully.');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await InsurerApiService.updateInsurerColumnListName(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_DEFAULT_COLUMN_LIST_ACTION,
+          data: insurerColumnNameList,
+        });
+        successNotification(response?.data?.message || 'Columns updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -124,16 +122,7 @@ export const getInsurerById = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -149,13 +138,7 @@ export const getInsurerContactListData = (id, params = { page: 1, limit: 15 }) =
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -171,13 +154,7 @@ export const getInsurerContactColumnNamesList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -219,20 +196,11 @@ export const saveInsurerContactColumnListName = ({
         const response = await InsurerContactApiServices.updateInsurerContactColumnNameList(data);
         dispatch(getInsurerContactColumnNamesList());
         if (response.data.status === 'SUCCESS') {
-          successNotification(response.data.message);
+          successNotification(response?.data?.message || 'Columns updated successfully');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -242,17 +210,11 @@ export const syncInsurerContactListData = id => {
     try {
       const response = await InsurerContactApiServices.syncInsurerContactList(id);
       if (response.data.status === 'SUCCESS') {
-        successNotification('Insurer contact updated successfully.');
+        successNotification(response?.data?.message || 'Insurer contact updated successfully.');
         dispatch(getInsurerContactListData(id));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -274,13 +236,7 @@ export const getInsurerPoliciesListData = (id, params = { page: 1, limit: 15 }) 
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -295,13 +251,7 @@ export const getInsurerPoliciesColumnNamesList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -347,17 +297,11 @@ export const saveInsurerPoliciesColumnListName = ({
         const response = await InsurerPoliciesApiServices.updateInsurerPoliciesColumnListName(data);
         // dispatch(getInsurerPoliciesColumnNamesList());
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully.');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -377,15 +321,7 @@ export const getListFromCrm = data => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -397,16 +333,10 @@ export const syncInsurerData = id => {
 
       if (response.data.status === 'SUCCESS') {
         dispatch(getInsurerById(id));
-        successNotification('Insurer data updated successfully.');
+        successNotification(response?.data?.message || 'Insurer data updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -422,16 +352,7 @@ export const getInsurerMatrixData = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -447,16 +368,7 @@ export const getPolicySyncListForCRM = (id, data) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };

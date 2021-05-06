@@ -10,6 +10,7 @@ const initialDebtorState = {
     notesList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   },
   debtorsColumnNameList: {},
+  debtorsDefaultColumnNameList: {},
   selectedDebtorData: {},
   dropdownData: {
     streetType: {},
@@ -135,27 +136,32 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
     case DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_FAILURE:
       return {
         ...state,
-        debtorsList: { ...state?.clientList, isLoading: false, error: action.error },
+        debtorsList: { ...state?.clientList, isLoading: false, error: null },
       };
     case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION:
       return {
         ...state,
         debtorsColumnNameList: action?.data,
       };
-    case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION:
-      // eslint-disable-next-line no-case-declarations
-      const temp = {
+    case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        debtorsDefaultColumnNameList: action?.data,
+      };
+
+    case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION: {
+      const columnList = {
         ...state?.debtorsColumnNameList,
       };
-      // eslint-disable-next-line no-case-declarations
-      const { name, type, value } = action?.data;
-      temp[`${type}`] = temp[`${type}`].map(e =>
+      const { type, name, value } = action?.data;
+      columnList[`${type}`] = columnList[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
-        debtorsColumnNameList: temp,
+        debtorsColumnNameList: columnList,
       };
+    }
     case DEBTORS_REDUX_CONSTANTS.DEBTOR_LIST_RESET_PAGINATION_DATA:
       return {
         ...state,

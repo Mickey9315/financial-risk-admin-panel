@@ -7,12 +7,10 @@ import {
   USER_MANAGEMENT_CRUD_REDUX_CONSTANTS,
   USER_MANAGEMENT_REDUX_CONSTANTS,
 } from './UserManagementReduxConstants';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
-    // dispatch({
-    //   type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST,
-    // });
     try {
       const response = await UserManagementApiService.getAllUserListByFilter(params);
       if (response.data.status === 'SUCCESS') {
@@ -22,20 +20,11 @@ export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) =
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      dispatch({
+        type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -52,16 +41,7 @@ export const getAllUserPrivileges = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -76,59 +56,52 @@ export const getUserColumnListName = () => {
           type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type:
+            USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
 
-export const saveUserColumnListName = ({ userColumnList = {}, isReset = false }) => {
-  return async () => {
+export const saveUserColumnListName = ({ userColumnNameList = {}, isReset = false }) => {
+  return async dispatch => {
     try {
       let data = {
         isReset: true,
         columns: [],
       };
       if (!isReset) {
-        const defaultColumns = userColumnList.defaultFields
+        const defaultColumns = userColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = userColumnList.customFields.filter(e => e.isChecked).map(e => e.name);
+        const customFields = userColumnNameList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
         data = {
           isReset: false,
           columns: [...defaultColumns, ...customFields],
         };
-      }
-
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await UserManagementApiService.updateUserColumnListName(data);
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await UserManagementApiService.updateUserColumnListName(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: userColumnNameList,
+        });
+        successNotification('Columns updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -169,16 +142,7 @@ export const getSelectedUserData = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -195,16 +159,7 @@ export const getAllOrganisationModulesList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -221,16 +176,7 @@ export const getAllClientList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -268,24 +214,13 @@ export const addNewUser = data => {
         dispatch(getUserManagementListByFilter());
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.messageCode === 'USER_EXISTS') {
-          errorNotification('User already exist with this email');
-        } else if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
 
 export const updateUserDetails = (id, data) => {
-  return async dispatch => {
+  return async () => {
     try {
       const finalData = {
         ...data,
@@ -298,19 +233,9 @@ export const updateUserDetails = (id, data) => {
 
       if (response.data.status === 'SUCCESS') {
         successNotification('User details updated successfully.');
-        dispatch(getUserManagementListByFilter());
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -325,27 +250,7 @@ export const deleteUserDetails = (id, params) => {
         dispatch(getUserManagementListByFilter(params));
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          if (e.response.data.messageCode) {
-            switch (e.response.data.messageCode) {
-              case 'BAD_REQUEST':
-              case 'CAN_NOT_DELETE_SELF':
-                errorNotification("You can't delete your self.");
-                break;
-              default:
-                break;
-            }
-          } else {
-            errorNotification('It seems like server is down, Please try again later.');
-          }
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };

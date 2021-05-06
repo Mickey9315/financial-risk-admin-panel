@@ -41,6 +41,7 @@ const AddUser = () => {
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) ?? [],
     [selectedUser]
   );
+
   const { name, role, email, contactNumber, maxCreditLimit, clientIds } = useMemo(() => {
     if (selectedUser) {
       // eslint-disable-next-line no-shadow
@@ -137,31 +138,44 @@ const AddUser = () => {
     const { name } = module;
     const { value } = access;
 
-    if (value === 'full-access') {
-      const hasFullAccess = module.accessTypes.includes('full-access');
-      const hasReadAccess = module.accessTypes.includes('read');
-      const hasWriteAccess = module.accessTypes.includes('write');
+    const hasFullAccess = module.accessTypes.includes('full-access');
+    const hasReadAccess = module.accessTypes.includes('read');
+    const hasWriteAccess = module.accessTypes.includes('write');
 
-      if (hasFullAccess) {
-        if (!hasReadAccess) {
-          dispatch(changeUserManageAccess({ name, value: 'read' }));
+    switch (value) {
+      case 'full-access':
+        if (hasFullAccess) {
+          if (!hasReadAccess) {
+            dispatch(changeUserManageAccess({ name, value: 'read' }));
+          }
+          if (!hasWriteAccess) {
+            dispatch(changeUserManageAccess({ name, value: 'write' }));
+          }
+        } else {
+          if (hasReadAccess) {
+            dispatch(changeUserManageAccess({ name, value: 'read' }));
+          }
+          if (hasWriteAccess) {
+            dispatch(changeUserManageAccess({ name, value: 'write' }));
+          }
         }
-        if (!hasWriteAccess) {
-          dispatch(changeUserManageAccess({ name, value: 'write' }));
-        }
-      } else {
-        if (hasReadAccess) {
-          dispatch(changeUserManageAccess({ name, value: 'read' }));
-        }
+        dispatch(changeUserManageAccess({ name, value: 'read' }));
+        dispatch(changeUserManageAccess({ name, value: 'write' }));
+        dispatch(changeUserManageAccess({ name, value }));
+        break;
+      case 'write':
         if (hasWriteAccess) {
-          dispatch(changeUserManageAccess({ name, value: 'write' }));
+          if (!hasReadAccess) {
+            dispatch(changeUserManageAccess({ name, value: 'read' }));
+          }
+        } else if (hasReadAccess) {
+          dispatch(changeUserManageAccess({ name, value: 'read' }));
         }
-      }
-      dispatch(changeUserManageAccess({ name, value: 'read' }));
-      dispatch(changeUserManageAccess({ name, value: 'write' }));
-      dispatch(changeUserManageAccess({ name, value }));
-    } else {
-      dispatch(changeUserManageAccess({ name, value }));
+        dispatch(changeUserManageAccess({ name, value: 'read' }));
+        dispatch(changeUserManageAccess({ name, value }));
+        break;
+      default:
+        dispatch(changeUserManageAccess({ name, value }));
     }
   }, []);
 
@@ -385,10 +399,21 @@ const AddUser = () => {
             {USER_MODULE_ACCESS.map(access => (
               <Checkbox
                 key={access.label}
-                disabled={action === 'view'}
+                disabled={
+                  action === 'view' ||
+                  (module?.accessTypes?.includes('full-access') &&
+                    (access.value === 'read' || access.value === 'write')) ||
+                  (module?.accessTypes?.includes('write') && access.value === 'read')
+                }
                 title={access.label}
                 name={access.value}
-                className={`${action === 'view' && 'checkbox-disabled'}`}
+                className={`${
+                  (action === 'view' ||
+                    (module?.accessTypes?.includes('full-access') &&
+                      (access.value === 'read' || access.value === 'write')) ||
+                    (module?.accessTypes?.includes('write') && access.value === 'read')) &&
+                  'checkbox-disabled'
+                }`}
                 checked={module.accessTypes.includes(access.value)}
                 onChange={() => onChangeUserAccess(module, access)}
               />

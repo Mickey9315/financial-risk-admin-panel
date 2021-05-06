@@ -139,8 +139,6 @@ const MyWorkAddTask = () => {
       dispatch(getEntityDropDownData({ entityName: entityType?.[0]?.value ?? entityType?.value }));
   }, [entityType]);
 
-  console.log(entityList);
-
   const handleDateChange = useCallback(
     (name, value) => {
       updateEditTaskState(name, value);
@@ -203,7 +201,10 @@ const MyWorkAddTask = () => {
   const getComponentFromType = useCallback(
     input => {
       let component = null;
-      const selectedValues = selectedValuesForDropDown(input.name);
+      const selectedValues =
+        selectedValuesForDropDown(input?.name)?.label === ''
+          ? []
+          : selectedValuesForDropDown(input?.name);
       switch (input.type) {
         case 'text':
           component = (

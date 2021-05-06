@@ -86,6 +86,7 @@ const ApplicationCompanyStep = () => {
   useEffect(() => {
     if (companyState?.country?.value === 'AUS' || companyState?.country?.value === 'NZL') {
       setIsAusOrNew(true);
+      setStateValue(companyState?.country?.value === 'AUS' ? australianStates : newZealandStates);
     }
   }, [companyState]);
 
@@ -288,7 +289,7 @@ const ApplicationCompanyStep = () => {
             break;
         }
         setIsAusOrNew(showDropDownInput);
-      } else if (data?.name === 'entityType' && partners.length !== 0) {
+      } else if (data?.name === 'entityType' && partners?.length !== 0) {
         setShowConfirmModal(true);
       } else {
         dispatch(updateEditApplicationField('company', data?.name, data));
@@ -379,12 +380,10 @@ const ApplicationCompanyStep = () => {
 
   const handleEntityChange = useCallback(event => {
     const { name, value } = event.target;
-    const data = [
-      {
-        label: value,
-        value,
-      },
-    ];
+    const data = {
+      label: value,
+      value,
+    };
     dispatch(updateEditApplicationField('company', name, data));
   }, []);
 

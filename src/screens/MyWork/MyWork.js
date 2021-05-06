@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-select';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 import Tab from '../../common/Tab/Tab';
 import './MyWork.scss';
 import IconButton from '../../common/IconButton/IconButton';
@@ -24,6 +25,7 @@ import { errorNotification } from '../../common/Toast';
 import { SIDEBAR_NAMES } from '../../constants/SidebarConstants';
 import UserPrivilegeWrapper from '../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';
+import { MY_WORK_REDUX_CONSTANTS } from './redux/MyWorkReduxConstants';
 
 const initialFilterState = {
   priority: '',
@@ -67,11 +69,13 @@ const MyWork = () => {
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
   const { total, pages, page, limit, headers, docs, isLoading } = useMemo(
-    () => taskListData ?? [],
+    () => taskListData ?? {},
     [taskListData]
   );
 
-  const taskColumnListData = useMemo(() => taskData?.columnList ?? [], [taskData]);
+  const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(() => taskData ?? {}, [
+    taskData,
+  ]);
   const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
@@ -138,12 +142,8 @@ const MyWork = () => {
 
   const getTaskList = useCallback(
     async (params = {}, cb) => {
-      if (moment(startDate)?.isAfter(endDate)) {
-        errorNotification('End date should be after Start date');
-        resetFilterDates();
-      }
-      if (moment(endDate)?.isBefore(startDate)) {
-        errorNotification('Start date should be before End date');
+      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+        errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
@@ -252,9 +252,12 @@ const MyWork = () => {
   );
 
   const onClickCloseColumnSelection = useCallback(async () => {
-    await dispatch(getTaskListColumnList());
+    dispatch({
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_COLUMN_NAME_LIST_ACTION,
+      data: taskDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [toggleCustomField]);
+  }, [toggleCustomField, taskDefaultColumnNameList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
@@ -269,14 +272,19 @@ const MyWork = () => {
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveTaskListColumnListName({ taskColumnListData }));
-      dispatch(getTaskListColumnList());
-      getTaskList();
+      const isBothEqual = _.isEqual(taskColumnNameList, taskDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveTaskListColumnListName({ taskColumnNameList }));
+        getTaskList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
       toggleCustomField();
     } catch (e) {
       /**/
     }
-  }, [toggleCustomField, taskColumnListData, getTaskList]);
+  }, [toggleCustomField, taskColumnNameList, getTaskList, taskDefaultColumnNameList]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -292,8 +300,8 @@ const MyWork = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => taskColumnListData ?? { defaultFields: [], customFields: [] },
-    [taskColumnListData]
+    () => taskColumnNameList ?? { defaultFields: [], customFields: [] },
+    [taskColumnNameList]
   );
   const onChangeSelectedColumn = useCallback((type, name, value) => {
     const data = { type, name, value };

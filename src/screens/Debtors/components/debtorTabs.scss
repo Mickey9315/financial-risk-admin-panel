@@ -22,7 +22,7 @@
     > span {
       color: $primary-color;
     }
-    .react-dropdown-select, .input-container, .date-picker-container {
+    .react-select-container, .input-container, .date-picker-container {
       width: 70%;
       min-width: 170px;
     }
@@ -92,7 +92,7 @@
     color: $primary-color;
   }
 
-  .react-dropdown-select, .upload-document-input {
+  .react-select-container, .upload-document-input {
     width: 180px;
   }
   .switch-container {

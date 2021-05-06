@@ -13,6 +13,7 @@ import ClientDocumentsApiService from '../services/ClientDocumentsApiService';
 import ClientCreditLimitApiService from '../services/ClientCreditLimitApiService';
 import ClientApplicationApiService from '../services/ClientApplicationApiService';
 import ClientTaskApiService from '../services/ClientTaskApiService';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -25,17 +26,11 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch({
+        type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -64,13 +59,7 @@ export const getClientById = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -81,16 +70,10 @@ export const updateSelectedClientData = (id, data) => {
       const response = await ClientApiService.updateSelectedClientData(id, data);
 
       if (response.data.status === 'SUCCESS') {
-        successNotification('Client details updated successfully');
+        successNotification(response?.data?.message || 'Client details updated successfully');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -105,18 +88,14 @@ export const getClientColumnListName = () => {
           type: CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type:
+            CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -133,16 +112,7 @@ export const getClientFilter = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -158,16 +128,7 @@ export const getListFromCrm = data => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -200,27 +161,22 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
           isReset: false,
           columns: [...defaultColumns, ...customFields],
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await ClientApiService.updateClientColumnListName(data);
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          dispatch(getClientList());
-          successNotification('Columns updated successfully.');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await ClientApiService.updateClientColumnListName(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: clientColumnList,
+        });
+        successNotification(response?.data?.message || 'Columns updated successfully');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -232,16 +188,10 @@ export const syncClientData = id => {
 
       if (response.data.status === 'SUCCESS') {
         dispatch(getClientById(id));
-        successNotification('Client data updated successfully.');
+        successNotification(response?.data?.message || 'Client data updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -262,13 +212,7 @@ export const getClientContactListData = (id, params = { page: 1, limit: 15 }) =>
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -280,16 +224,10 @@ export const syncClientContactListData = id => {
 
       if (response.data.status === 'SUCCESS') {
         dispatch(getClientContactListData(id));
-        successNotification('Client contact updated successfully.');
+        successNotification(response?.data?.message || 'Client contact updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -305,13 +243,7 @@ export const getClientContactColumnNamesList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -357,17 +289,11 @@ export const saveClientContactColumnListName = ({
         dispatch(getClientContactColumnNamesList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully.');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -393,13 +319,7 @@ export const getClientPoliciesListData = (id, params = { page: 1, limit: 15 }) =
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -415,13 +335,7 @@ export const getClientPoliciesColumnNamesList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -469,17 +383,11 @@ export const saveClientPoliciesColumnListName = ({
         dispatch(getClientPoliciesColumnNamesList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully.');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -491,16 +399,10 @@ export const syncClientPolicyListData = id => {
 
       if (response.data.status === 'SUCCESS') {
         dispatch(getClientContactListData(id));
-        successNotification('Client policies updated successfully.');
+        successNotification(response?.data?.message || 'Client policies updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -526,13 +428,7 @@ export const getClientNotesListDataAction = (id, params = { page: 1, limit: 15 }
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -552,16 +448,10 @@ export const addClientNoteAction = (entityId, noteData) => {
 
       if (response.data.status === 'SUCCESS') {
         await dispatch(getClientNotesListDataAction(entityId));
-        successNotification('Note added successfully.');
+        successNotification(response?.data?.message || 'Note added successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -581,16 +471,10 @@ export const updateClientNoteAction = (entityId, noteData) => {
 
       if (response.data.status === 'SUCCESS') {
         await dispatch(getClientNotesListDataAction(entityId));
-        successNotification('Note updated successfully.');
+        successNotification(response?.data?.message || 'Note updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -600,7 +484,7 @@ export const deleteClientNoteAction = async (noteId, cb) => {
     const response = await ClientNotesApiService.deleteClientNote(noteId);
 
     if (response.data.status === 'SUCCESS') {
-      successNotification('Note deleted successfully.');
+      successNotification(response?.data?.message || 'Note deleted successfully.');
       console.log('delete note action');
       if (cb) {
         console.log('note callback');
@@ -608,13 +492,7 @@ export const deleteClientNoteAction = async (noteId, cb) => {
       }
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else {
-        errorNotification('Internal server error');
-      }
-    }
+    displayErrors(e);
   }
 };
 
@@ -637,13 +515,7 @@ export const getClientDocumentsListData = (id, params = { page: 1, limit: 15 }) 
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -663,13 +535,7 @@ export const getClientDocumentsColumnNamesList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -717,17 +583,11 @@ export const saveClientDocumentsColumnListName = ({
         dispatch(getClientDocumentsColumnNamesList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully.');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -747,13 +607,7 @@ export const getDocumentTypeList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -767,17 +621,10 @@ export const uploadDocument = (data, config) => {
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_CLIENT_ACTION,
           data: response.data.data,
         });
-        successNotification(response.data.message || 'Success');
+        successNotification(response?.data?.message || 'Document uploaded successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        errorNotification(e.response.data.message || 'error');
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -796,13 +643,7 @@ export const downloadDocuments = async data => {
       return response;
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else {
-        errorNotification('Internal server error');
-      }
-    }
+    displayErrors(e);
   }
   return false;
 };
@@ -811,19 +652,13 @@ export const deleteClientDocumentAction = async (docId, cb) => {
   try {
     const response = await ClientDocumentsApiService.deleteClientDocument(docId);
     if (response.data.status === 'SUCCESS') {
-      successNotification('Document deleted successfully.');
+      successNotification(response?.data?.message || 'Document deleted successfully.');
       if (cb) {
         cb();
       }
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else {
-        errorNotification('Internal server error');
-      }
-    }
+    displayErrors(e);
   }
 };
 
@@ -839,13 +674,7 @@ export const getClientCreditLimitData = (id, data) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -861,13 +690,7 @@ export const getCreditLimitColumnsNameList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -911,20 +734,11 @@ export const saveClientCreditLimitColumnNameList = ({
         );
         dispatch(getCreditLimitColumnsNameList());
         if (response.data.status === 'SUCCESS') {
-          successNotification(response.data.message);
+          successNotification(response?.data?.message || 'Columns updated successfully');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -943,13 +757,7 @@ export const getClientApplicationListData = (id, param) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -968,13 +776,7 @@ export const getClientApplicationColumnNameList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1020,20 +822,11 @@ export const saveClientApplicationColumnNameList = ({
         );
         dispatch(getClientApplicationColumnNameList());
         if (response.data.status === 'SUCCESS') {
-          successNotification(response.data.message);
+          successNotification(response?.data?.message || 'Columns updated successfully');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1054,13 +847,7 @@ export const getClientTaskListData = (params, id) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1079,13 +866,7 @@ export const getClientTaskColumnList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1133,17 +914,11 @@ export const saveClientTaskColumnNameListSelection = ({
         dispatch(getClientTaskColumnList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1159,16 +934,7 @@ export const getAssigneeDropDownData = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1184,16 +950,7 @@ export const getEntityDropDownData = params => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1209,16 +966,7 @@ export const getDefaultEntityDropDownData = params => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1241,19 +989,11 @@ export const saveTaskData = (data, cb) => {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_RESET_ADD_TASK_STATE_ACTION,
         });
+        successNotification(response?.data?.message || 'Task added successfully');
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1263,19 +1003,13 @@ export const deleteTaskAction = (taskId, cb) => {
     try {
       const response = await ClientTaskApiService.deleteTask();
       if (response.data.status === 'SUCCESS') {
-        successNotification('Task deleted successfully.');
+        successNotification(response?.data?.message || 'Task deleted successfully.');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1291,16 +1025,7 @@ export const getClientTaskDetail = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1310,23 +1035,14 @@ export const updateTaskData = (id, data, cb) => {
     try {
       const response = await ClientTaskApiService.updateTask(id, data);
       if (response.data.status === 'SUCCESS') {
-        successNotification(response.data.message);
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_RESET_ADD_TASK_STATE_ACTION,
         });
+        successNotification(response?.data?.message || 'Task updated successfully');
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };

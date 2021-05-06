@@ -16,6 +16,7 @@ const initialInsurer = {
     isLoading: true,
   },
   insurerColumnNameList: {},
+  insurerDefaultColumnNameList: {},
   insurerViewData: {},
   syncInsurerWithCRM: [],
   contact: {
@@ -60,6 +61,11 @@ export const insurer = (state = initialInsurer, action) => {
       return {
         ...state,
         insurerColumnNameList: action?.data,
+      };
+    case INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        insurerDefaultColumnNameList: action?.data,
       };
 
     case INSURER_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_INSURER_COLUMN_LIST_ACTION: {

@@ -9,26 +9,26 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
   let validated = true;
 
   if (
-    data.isExtendedPaymentTerms === true &&
-    (!data.extendedPaymentTermsDetails || data.extendedPaymentTermsDetails.trim().length <= 0)
+    data?.isExtendedPaymentTerms &&
+    (!data?.extendedPaymentTermsDetails || data?.extendedPaymentTermsDetails?.trim()?.length <= 0)
   ) {
     errors.extendedPaymentTermsDetails = 'Please provide details';
     validated = false;
   }
   if (
-    data.isPassedOverdueAmount === true &&
-    (!data.passedOverdueDetails || data.passedOverdueDetails.trim().length <= 0)
+    data?.isPassedOverdueAmount &&
+    (!data?.passedOverdueDetails || data?.passedOverdueDetails?.trim()?.length <= 0)
   ) {
     errors.passedOverdueDetails = 'Please provide details';
     validated = false;
   }
-  if (!data.creditLimit || data?.creditLimit.toString().trim().length <= 0) {
+  if (!data?.creditLimit || data?.creditLimit?.toString()?.trim()?.length <= 0) {
     errors.creditLimit = 'Please enter credit limit amount';
     validated = false;
-  } else if (!data?.creditLimit.toString().match(NUMBER_REGEX)) {
+  } else if (!data?.creditLimit?.toString()?.match(NUMBER_REGEX)) {
     errors.creditLimit = 'Please enter valid credit limit amount';
     validated = false;
-  } else if (parseInt(data.creditLimit, 10) === 0) {
+  } else if (parseInt(data?.creditLimit, 10) === 0) {
     errors.creditLimit = 'Credit limit should be greater than zero';
     validated = false;
   }
@@ -46,10 +46,10 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
     const finalData = {
       stepper: 'credit-limit',
       applicationId: editApplicationData?._id,
-      entityType: editApplicationData.company?.entityType?.value,
-      isExtendedPaymentTerms,
+      entityType: editApplicationData?.company?.entityType?.value,
+      isExtendedPaymentTerms: isExtendedPaymentTerms ?? false,
       extendedPaymentTermsDetails: isExtendedPaymentTerms ? extendedPaymentTermsDetails : '',
-      isPassedOverdueAmount,
+      isPassedOverdueAmount: isPassedOverdueAmount ?? false,
       passedOverdueDetails: isPassedOverdueAmount ? passedOverdueDetails : '',
       creditLimit,
       note,

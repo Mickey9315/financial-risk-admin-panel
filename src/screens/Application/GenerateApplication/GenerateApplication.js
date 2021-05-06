@@ -67,9 +67,7 @@ const GenerateApplication = () => {
   // for stepper components
   const FILTERED_STEP_COMPONENT = useMemo(() => {
     let finalSteps = [...STEP_COMPONENT];
-    if (
-      !['PARTNERSHIP', 'TRUST'].includes(editApplicationData?.company?.entityType?.[0]?.value ?? '')
-    ) {
+    if (!['PARTNERSHIP', 'TRUST'].includes(editApplicationData?.company?.entityType?.value ?? '')) {
       delete finalSteps[1];
       finalSteps = finalSteps.filter(step => step);
     }
@@ -81,7 +79,7 @@ const GenerateApplication = () => {
 
   const FILTERED_STEPS = useMemo(() => {
     let finalSteps = [...steps];
-    const entityType = editApplicationData?.company?.entityType?.[0]?.value ?? '';
+    const entityType = editApplicationData?.company?.entityType?.value ?? '';
 
     if (!['PARTNERSHIP', 'TRUST'].includes(entityType)) {
       delete finalSteps[1];
@@ -91,7 +89,7 @@ const GenerateApplication = () => {
         if (step.text === 'Person')
           return {
             ...step,
-            text: editApplicationData?.company?.entityType?.[0]?.label ?? '',
+            text: editApplicationData?.company?.entityType?.label ?? '',
           };
         return step;
       });
@@ -139,8 +137,8 @@ const GenerateApplication = () => {
   }, []);
 
   const onNextClick = useCallback(() => {
-    const data = editApplicationData?.[FILTERED_STEPS?.[applicationStage]?.name];
-    switch (FILTERED_STEPS?.[applicationStage]?.name) {
+    const data = editApplicationData?.[FILTERED_STEPS?.[applicationStage ?? 0]?.name];
+    switch (FILTERED_STEPS?.[applicationStage ?? 0]?.name) {
       case 'company':
         return applicationCompanyStepValidations(dispatch, data, editApplicationData);
       case 'partners':
@@ -169,12 +167,12 @@ const GenerateApplication = () => {
       <Stepper
         className="mt-10"
         steps={FILTERED_STEPS}
-        stepIndex={applicationStage}
+        stepIndex={applicationStage ?? 0}
         onChangeIndex={onChangeIndex}
         nextClick={onNextClick}
         addStepClick={addStepClick}
       >
-        {FILTERED_STEP_COMPONENT[applicationStage]}
+        {FILTERED_STEP_COMPONENT[applicationStage ?? 0]}
       </Stepper>
     </>
   );

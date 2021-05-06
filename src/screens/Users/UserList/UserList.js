@@ -7,6 +7,7 @@ import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table, { TABLE_ROW_ACTIONS } from '../../../common/Table/Table';
@@ -27,6 +28,8 @@ import Loader from '../../../common/Loader/Loader';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import { saveApplicationColumnNameList } from '../../Application/redux/ApplicationAction';
+import { USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 
 const initialFilterState = {
   role: '',
@@ -57,8 +60,8 @@ const UserList = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const userListWithPageData = useSelector(({ userManagementList }) => userManagementList ?? {});
-  const userColumnList = useSelector(
-    ({ userManagementColumnList }) => userManagementColumnList ?? []
+  const { userColumnNameList, userDefaultColumnNameList } = useSelector(
+    ({ userManagementColumnList }) => userManagementColumnList ?? {}
   );
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
@@ -98,10 +101,7 @@ const UserList = () => {
   const getUserManagementByFilter = useCallback(
     (params = {}, cb) => {
       if (moment(startDate)?.isAfter(endDate)) {
-        errorNotification('From date should be greater than to date');
-        resetFilterDates();
-      } else if (moment(endDate)?.isBefore(startDate)) {
-        errorNotification('To Date should be smaller than from date');
+        errorNotification('From date should be earlier than to date');
         resetFilterDates();
       } else {
         const data = {
@@ -136,7 +136,7 @@ const UserList = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getUserManagementByFilter({ page: 1, limit: newLimit });
+      getUserManagementByFilter({ page, limit: newLimit });
     },
     [getUserManagementByFilter]
   );
@@ -155,7 +155,7 @@ const UserList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getUserManagementByFilter({ page: 1 }, toggleFilterModal);
+    getUserManagementByFilter({ page, limit }, toggleFilterModal);
   }, [getUserManagementByFilter, toggleFilterModal]);
 
   const onClickResetFilterUserList = useCallback(() => {
@@ -183,17 +183,35 @@ const UserList = () => {
   );
 
   const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveUserColumnListName({ userColumnList }));
-    getUserManagementByFilter();
-    toggleCustomField();
-  }, [toggleCustomField, userColumnList, getUserManagementByFilter]);
+    try {
+      const isBothEqual = _.isEqual(userColumnNameList, userDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveUserColumnListName({ userColumnNameList }));
+        getUserManagementByFilter();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [toggleCustomField, userColumnNameList, userDefaultColumnNameList, getUserManagementByFilter]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveUserColumnListName({ isReset: true }));
-    getUserManagementByFilter();
     dispatch(getUserColumnListName());
+    getUserManagementByFilter();
     toggleCustomField();
   }, [dispatch, toggleCustomField, getUserManagementByFilter]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION,
+      data: userDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [toggleCustomField, userDefaultColumnNameList]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -202,14 +220,14 @@ const UserList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
   const { defaultFields, customFields } = useMemo(
-    () => userColumnList ?? { defaultFields: [], customFields: [] },
-    [userColumnList]
+    () => userColumnNameList ?? { defaultFields: [], customFields: [] },
+    [userColumnNameList]
   );
 
   const openAddUser = useCallback(() => {

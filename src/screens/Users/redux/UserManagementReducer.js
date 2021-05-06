@@ -16,6 +16,11 @@ const initialUserManagementListState = {
   isLoading: true,
 };
 
+const initialUserColumnManagementState = {
+  userColumnNameList: {},
+  userDefaultColumnNameList: {},
+};
+
 export const userManagementList = (state = initialUserManagementListState, action) => {
   switch (action.type) {
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS:
@@ -54,13 +59,22 @@ export const userPrivileges = (state = [], action) => {
   }
 };
 
-export const userManagementColumnList = (state = [], action) => {
+export const userManagementColumnList = (state = initialUserColumnManagementState, action) => {
   switch (action?.type) {
     case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION:
-      return action?.data;
+      return {
+        ...state,
+        userColumnNameList: action?.data,
+      };
+
+    case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        userDefaultColumnNameList: action?.data,
+      };
     case USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_USER_MANAGEMENT_COLUMN_LIST_ACTION:
       const temp = {
-        ...state,
+        ...state?.userColumnNameList,
       };
 
       const { type, name, value } = action?.data;
@@ -74,7 +88,10 @@ export const userManagementColumnList = (state = [], action) => {
           : e
       );
 
-      return temp;
+      return {
+        ...state,
+        userColumnNameList: temp,
+      };
     default:
       return state;
   }

@@ -11,6 +11,7 @@ import DebtorTaskApiService from '../services/DebtorTaskApiServices';
 import DebtorApplicationApiServices from '../services/DebtorApplicationApiServices';
 import DebtorCreditLimitApiServices from '../services/DebtorCreditLimitApiServices';
 import DebtorStakeHolderApiServices from '../services/DebtorStakeHolderApiServices';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -23,17 +24,10 @@ export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_FAILURE,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -52,18 +46,14 @@ export const getDebtorsColumnNameList = () => {
             DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type:
+            DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -78,7 +68,7 @@ export const changeDebtorsColumnListStatus = data => {
   };
 };
 
-export const saveDebtorsColumnListName = ({ debtorsColumnNameListData = {}, isReset = false }) => {
+export const saveDebtorsColumnListName = ({ debtorsColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
       let data = {
@@ -87,10 +77,10 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameListData = {}, isRe
         columnFor: 'debtor',
       };
       if (!isReset) {
-        const defaultFields = debtorsColumnNameListData.defaultFields
+        const defaultFields = debtorsColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = debtorsColumnNameListData.customFields
+        const customFields = debtorsColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
@@ -98,28 +88,22 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameListData = {}, isRe
           isReset: false,
           columnFor: 'debtor',
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-        dispatch(getDebtorsColumnNameList());
-      } else {
-        const response = await DebtorsApiServices.updateDebtorsColumnNameList(data);
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          dispatch(getDebtorsList());
-          successNotification('Columns updated successfully.');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await DebtorsApiServices.updateDebtorsColumnNameList(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type:
+            DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: debtorsColumnNameList,
+        });
+        successNotification(response?.data?.message || 'Columns updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -147,16 +131,7 @@ export const getDebtorById = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -173,16 +148,7 @@ export const getDebtorDropdownData = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -198,7 +164,6 @@ export const changeDebtorData = (name, value) => {
 };
 
 export const OnChangeCountry = value => {
-  console.log('actionOnChange', value);
   return async dispatch => {
     dispatch({
       type:
@@ -213,21 +178,12 @@ export const updateDebtorData = (id, finalData, cb) => {
     try {
       const response = await DebtorsApiServices.updateDebtorDetailById(id, finalData);
       if (response.data.status === 'SUCCESS') {
-        successNotification('Debtor details updated successfully');
+        successNotification(response?.data?.message || 'Debtor details updated successfully');
         dispatch(getDebtorById(id));
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -251,17 +207,11 @@ export const getDebtorsNotesListDataAction = (id, params = { page: 1, limit: 15 
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.NOTES.FETCH_DEBTOR_NOTES_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.NOTES.FETCH_DEBTOR_NOTES_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -281,16 +231,10 @@ export const addDebtorsNoteAction = (entityId, noteData) => {
 
       if (response.data.status === 'SUCCESS') {
         await dispatch(getDebtorsNotesListDataAction(entityId));
-        successNotification('Note added successfully.');
+        successNotification(response?.data?.message || 'Note added successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -310,16 +254,10 @@ export const updateDebtorsNoteAction = (entityId, noteData) => {
 
       if (response.data.status === 'SUCCESS') {
         await dispatch(getDebtorsNotesListDataAction(entityId));
-        successNotification('Note updated successfully.');
+        successNotification(response?.data?.message || 'Note updated successfully.');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -329,19 +267,13 @@ export const deleteDebtorsNoteAction = async (noteId, cb) => {
     const response = await DebtorsNotesApiService.deleteDebtorsNote(noteId);
 
     if (response.data.status === 'SUCCESS') {
-      successNotification('Note deleted successfully.');
+      successNotification(response?.data?.message || 'Note deleted successfully.');
       if (cb) {
         cb();
       }
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else {
-        errorNotification('Internal server error');
-      }
-    }
+    displayErrors(e);
   }
 };
 
@@ -364,17 +296,11 @@ export const getDebtorDocumentsListData = (id, params = { page: 1, limit: 15 }) 
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.FETCH_DEBTOR_DOCUMENTS_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.FETCH_DEBTOR_DOCUMENTS_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -394,13 +320,7 @@ export const getDebtorDocumentsColumnNamesList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -449,17 +369,11 @@ export const saveDebtorDocumentsColumnListName = ({
         dispatch(getDebtorDocumentsColumnNamesList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully.');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -479,13 +393,7 @@ export const getDocumentTypeList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -499,17 +407,10 @@ export const uploadDocument = (data, config) => {
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DEBTOR_ACTION,
           data: response.data.data,
         });
-        successNotification(response.data.message || 'Success');
+        successNotification(response.data.message || 'Document uploaded successfully');
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        errorNotification(e.response.data.message || 'Error');
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -528,13 +429,7 @@ export const downloadDocuments = async data => {
       return response;
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else {
-        errorNotification('Internal server error');
-      }
-    }
+    displayErrors(e);
   }
   return false;
 };
@@ -543,19 +438,13 @@ export const deleteDebtorDocumentAction = async (docId, cb) => {
   try {
     const response = await DebtorsDocumentApiServices.deleteDebtorDocument(docId);
     if (response.data.status === 'SUCCESS') {
-      successNotification('Document deleted successfully.');
+      successNotification(response?.data?.message || 'Document deleted successfully.');
       if (cb) {
         cb();
       }
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else {
-        errorNotification('Internal server error');
-      }
-    }
+    displayErrors(e);
   }
 };
 
@@ -575,17 +464,11 @@ export const getDebtorTaskListData = (params, id) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.TASK.FETCH_DEBTOR_TASK_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.TASK.FETCH_DEBTOR_TASK_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -604,13 +487,7 @@ export const getDebtorTaskColumnList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -659,17 +536,11 @@ export const saveDebtorTaskColumnNameListSelection = ({
         dispatch(getDebtorTaskColumnList());
 
         if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification('Columns updated successfully.');
+          successNotification(response?.data?.message || 'Columns updated successfully.');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -685,16 +556,7 @@ export const getAssigneeDropDownData = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -710,16 +572,7 @@ export const getEntityDropDownData = params => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -737,16 +590,7 @@ export const getDebtorDefaultEntityDropDownData = params => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -769,19 +613,11 @@ export const saveTaskData = (data, cb) => {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
+        successNotification(response?.data?.message || 'Task created successfully');
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -791,19 +627,13 @@ export const deleteTaskAction = (taskId, cb) => {
     try {
       const response = await DebtorTaskApiService.deleteTask();
       if (response.data.status === 'SUCCESS') {
-        successNotification('Task deleted successfully.');
+        successNotification(response?.data?.message || 'Task deleted successfully.');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -812,25 +642,14 @@ export const getDebtorTaskDetail = id => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.getDebtorTaskDetailById(id);
-      console.log(response);
       if (response.data.status === 'SUCCESS') {
-        console.log(response.data.data);
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.EDIT_TASK.GET_DEBTOR_TASK_DETAILS_ACTION,
           data: response.data.data,
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -840,23 +659,14 @@ export const updateTaskData = (id, data, cb) => {
     try {
       const response = await DebtorTaskApiService.updateTask(id, data);
       if (response.data.status === 'SUCCESS') {
-        successNotification(response.data.message);
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
+        successNotification(response?.data?.message || 'Task updated successfully');
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -877,17 +687,11 @@ export const getDebtorApplicationListData = (id, param) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.APPLICATION.FETCH_DEBTOR_APPLICATION_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.APPLICATION.FETCH_DEBTOR_APPLICATION_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -908,13 +712,7 @@ export const getDebtorApplicationColumnNameList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -961,20 +759,11 @@ export const saveDebtorApplicationColumnNameList = ({
         );
         dispatch(getDebtorApplicationColumnNameList());
         if (response.data.status === 'SUCCESS') {
-          successNotification(response.data.message);
+          successNotification(response?.data?.message || 'Columns updated successfully');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -991,17 +780,7 @@ export const getDebtorCreditLimitData = (id, data) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.FETCH_DEBTOR_CREDIT_LIMIT_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1022,13 +801,7 @@ export const getCreditLimitColumnsNameList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1075,20 +848,11 @@ export const saveDebtorCreditLimitColumnNameList = ({
         );
         dispatch(getCreditLimitColumnsNameList());
         if (response.data.status === 'SUCCESS') {
-          successNotification(response.data.message);
+          successNotification(response?.data?.message || 'Columns updated successfully');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1108,17 +872,11 @@ export const getDebtorStakeHolderListData = (id, param) => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_FAILURE,
-          data: null,
-        });
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -1139,13 +897,7 @@ export const getDebtorStakeHolderColumnNameList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else {
-          errorNotification('Internal server error');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1192,20 +944,11 @@ export const saveDebtorStakeHolderColumnNameList = ({
         );
         dispatch(getDebtorStakeHolderColumnNameList());
         if (response.data.status === 'SUCCESS') {
-          successNotification(response.data.message);
+          successNotification(response?.data?.message || 'Columns updated successfully');
         }
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1243,18 +986,7 @@ export const getStakeHolderDropDownData = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification(
-            e.response.data.message || 'It seems like server is down, Please try again later.'
-          );
-        }
-      }
-      throw Error();
+      displayErrors(e);
     }
   };
 };
@@ -1269,21 +1001,10 @@ export const getStakeHolderCompanyDataFromABNorACN = async (id, params) => {
     if (response.data.status === 'SUCCESS') {
       return response.data.data;
     }
-    return null;
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === 'ERROR') {
-        errorNotification(e.response.data.message);
-      } else if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-        errorNotification('Internal server error');
-      } else {
-        errorNotification('It seems like server is down, Please try again later.');
-      }
-    }
-    throw Error();
+    displayErrors(e);
   }
+  return null;
 };
 
 export const updateStakeHolderDataOnValueSelected = data => {
@@ -1367,22 +1088,14 @@ export const addNewStakeHolder = (id, data, cb) => {
         data
       );
       if (response.data.status === 'SUCCESS') {
-        successNotification(response?.data?.message || 'Added Successfully');
+        successNotification(response?.data?.message || 'Stakeholder created successfully');
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
         });
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === 'ERROR') {
-          errorNotification(e.response.data.message);
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1396,22 +1109,14 @@ export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
         data
       );
       if (response.data.status === 'SUCCESS') {
-        successNotification(response?.data?.message || 'Updated Successfully');
+        successNotification(response?.data?.message || 'Stakeholder updated successfully');
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
         });
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === 'ERROR') {
-          errorNotification(e.response.data.message);
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1423,19 +1128,11 @@ export const deleteStakeHolderDetails = (stakeHolderId, cb) => {
         stakeHolderId
       );
       if (response.data.status === 'SUCCESS') {
-        successNotification(response?.data?.message || 'Deleted Successfully');
+        successNotification(response?.data?.message || 'Stakeholder deleted successfully');
         cb();
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === 'ERROR') {
-          errorNotification(e.response.data.message);
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
@@ -1443,7 +1140,6 @@ export const deleteStakeHolderDetails = (stakeHolderId, cb) => {
 export const getStakeHolderDetails = id => {
   return async dispatch => {
     try {
-      console.log(id);
       const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDetails(id);
       if (response.data.status === 'SUCCESS') {
         dispatch({
@@ -1452,15 +1148,7 @@ export const getStakeHolderDetails = id => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === 'ERROR') {
-          errorNotification(e.response.data.message);
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      }
+      displayErrors(e);
     }
   };
 };
