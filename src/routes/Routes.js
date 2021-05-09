@@ -1,14 +1,11 @@
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { useEffect } from 'react';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Suspense, useEffect } from 'react';
 import history from './History';
-import LoginScreen from '../screens/auth/login/LoginScreen';
-import ForgotPassword from '../screens/auth/forgotPassword/ForgotPassword';
 import { saveTokenFromLocalStorageToSession } from '../helpers/LocalStorageHelper';
-import ResetPassword from '../screens/auth/resetPassword/ResetPassword';
-import VerifyOtp from '../screens/auth/otpScreen/VerifyOtp';
-import { AllAuthenticatedRoutes, AuthenticatedRoute } from './AuthenticatedRoutes';
-import ForbiddenAccessPage from '../common/ForbiddenAccessPage/ForbiddenAccessPage';
-import SetPassword from '../screens/auth/setPassword/SetPassword';
+import Loader from '../common/Loader/Loader';
+import { AuthenticatedRoute } from './AuthenticatedRoutes';
+import { ROUTES_CONSTANTS } from './constants/RoutesConstants';
+import { NonAuthenticatedRoute } from './NonAuthenticatedRoutes';
 
 function Routes() {
   useEffect(() => {
@@ -16,18 +13,17 @@ function Routes() {
   }, []);
 
   return (
-    <Router history={history}>
-      <Switch>
-        <Route exact path="/login" component={LoginScreen} />
-        <Route exact path="/forgot-password" component={ForgotPassword} />
-        <Route exact path="/set-password" component={SetPassword} />
-        <Route exact path="/reset-password" component={ResetPassword} />
-        <Route exact path="/verify-otp" component={VerifyOtp} />
-        <Route exact path="/forbidden-access" component={ForbiddenAccessPage} />
-        <AuthenticatedRoute exact path="/" />
-        <AllAuthenticatedRoutes />
-      </Switch>
-    </Router>
+    <Suspense fallback={<Loader />}>
+      <Router history={history}>
+        <Switch>
+          {ROUTES_CONSTANTS.map(({ path, component, authenticated }) => {
+            const Component = authenticated ? AuthenticatedRoute : NonAuthenticatedRoute;
+
+            return <Component key={path} exact path={path} component={component} />;
+          })}
+        </Switch>
+      </Router>
+    </Suspense>
   );
 }
 
