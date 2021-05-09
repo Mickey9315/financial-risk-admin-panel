@@ -60,6 +60,7 @@ export const ROUTES_CONSTANTS = [
   {
     path: '/forbidden-access',
     component: ForbiddenAccessPage,
+    escapeRedirect: true,
   },
   {
     path: '/',
@@ -159,5 +160,6 @@ export const ROUTES_CONSTANTS = [
   {
     path: '*',
     component: PageNotFound,
+    escapeRedirect: true,
   },
 ];

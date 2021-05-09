@@ -16,10 +16,18 @@ function Routes() {
     <Suspense fallback={<Loader />}>
       <Router history={history}>
         <Switch>
-          {ROUTES_CONSTANTS.map(({ path, component, authenticated }) => {
+          {ROUTES_CONSTANTS.map(({ path, component, authenticated, escapeRedirect }) => {
             const Component = authenticated ? AuthenticatedRoute : NonAuthenticatedRoute;
 
-            return <Component key={path} exact path={path} component={component} />;
+            return (
+              <Component
+                key={path}
+                exact
+                path={path}
+                component={component}
+                escapeRedirect={escapeRedirect}
+              />
+            );
           })}
         </Switch>
       </Router>
