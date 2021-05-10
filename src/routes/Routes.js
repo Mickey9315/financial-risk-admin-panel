@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import { Suspense, useEffect } from 'react';
-import history from './History';
 import { saveTokenFromLocalStorageToSession } from '../helpers/LocalStorageHelper';
 import Loader from '../common/Loader/Loader';
 import { AuthenticatedRoute } from './AuthenticatedRoutes';
@@ -14,7 +13,7 @@ function Routes() {
 
   return (
     <Suspense fallback={<Loader />}>
-      <Router history={history}>
+      <Router>
         <Switch>
           {ROUTES_CONSTANTS.map(({ path, component, authenticated, escapeRedirect }) => {
             const Component = authenticated ? AuthenticatedRoute : NonAuthenticatedRoute;

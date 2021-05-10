@@ -41,7 +41,7 @@ instance.interceptors.response.use(
         errorNotification('For security purposes you have been logged out, you need to re login');
         return false;
       case 403:
-        history.replace('/forbidden-access');
+        window.location.href = '/forbidden-access';
         return false;
       default:
         break;
