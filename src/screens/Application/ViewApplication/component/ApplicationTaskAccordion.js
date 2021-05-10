@@ -133,6 +133,7 @@ const ApplicationTaskAccordion = props => {
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
     if (showConfirmModal) toggleConfirmationModal();
+
     getTaskList();
   }, [
     toggleAddTaskModal,
@@ -264,7 +265,6 @@ const ApplicationTaskAccordion = props => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      console.log(data);
       updateAddTaskState(data?.name, data);
       if (data?.name === 'entityType') {
         updateAddTaskState('entityId', []);
@@ -441,7 +441,7 @@ const ApplicationTaskAccordion = props => {
       {
         title: 'Delete',
         buttonType: 'danger',
-        onClick: () => dispatch(deleteApplicationTaskAction(currentTaskId, backToTaskList())),
+        onClick: () => dispatch(deleteApplicationTaskAction(currentTaskId, backToTaskList)),
       },
     ],
     [toggleConfirmationModal, currentTaskId, backToTaskList]

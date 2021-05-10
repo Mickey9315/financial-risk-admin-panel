@@ -17,7 +17,6 @@ import {
 } from '../redux/InsurerAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Loader from '../../../common/Loader/Loader';
-// import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Button from '../../../common/Button/Button';
 import Modal from '../../../common/Modal/Modal';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -39,7 +38,7 @@ const InsurerList = () => {
     ({ insurer }) => insurer ?? {}
   );
   const { total, pages, page, limit, isLoading, docs, headers } = useMemo(
-    () => insurerListWithPageData,
+    () => insurerListWithPageData ?? {},
     [insurerListWithPageData]
   );
 

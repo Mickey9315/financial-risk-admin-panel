@@ -77,9 +77,10 @@ const DebtorsNotesTab = () => {
     [setModifyNoteModal]
   );
 
-  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(() => debtorsNotesList, [
-    debtorsNotesList,
-  ]);
+  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
+    () => debtorsNotesList ?? {},
+    [debtorsNotesList]
+  );
 
   const getDebtorNotesList = useCallback(
     async (params = {}, cb) => {

@@ -20,8 +20,8 @@ import ClientApplicationTab from '../component/ClientApplicationTab';
 import ClientTaskTab from '../component/ClientTaskTab';
 
 const initialAssigneeState = {
-  riskAnalystId: '',
-  serviceManagerId: '',
+  riskAnalystId: [],
+  serviceManagerId: [],
 };
 
 const ASSIGNEE_REDUCER_ACTIONS = {
@@ -103,22 +103,24 @@ const ViewClient = () => {
   }, []);
 
   useEffect(() => {
-    dispatchAssignee({
-      type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-      name: 'riskAnalystId',
-      value: {
-        label: viewClientData?.riskAnalystId?.name || null,
-        value: viewClientData?.riskAnalystId?._id || null,
-      },
-    });
-    dispatchAssignee({
-      type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-      name: 'serviceManagerId',
-      value: {
-        label: viewClientData?.serviceManagerId?.name || null,
-        value: viewClientData?.serviceManagerId?._id || null,
-      },
-    });
+    if (viewClientData?.riskAnalystId && viewClientData?.serviceManagerId) {
+      dispatchAssignee({
+        type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'riskAnalystId',
+        value: {
+          label: viewClientData?.riskAnalystId?.name || '',
+          value: viewClientData?.riskAnalystId?._id || '',
+        },
+      });
+      dispatchAssignee({
+        type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'serviceManagerId',
+        value: {
+          label: viewClientData?.serviceManagerId?.name || '',
+          value: viewClientData?.serviceManagerId?._id || '',
+        },
+      });
+    }
   }, [viewClientData]);
 
   const onChangeAssignee = useCallback(

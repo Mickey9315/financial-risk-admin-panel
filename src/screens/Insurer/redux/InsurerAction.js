@@ -143,13 +143,17 @@ export const getInsurerContactListData = (id, params = { page: 1, limit: 15 }) =
   };
 };
 
-export const getInsurerContactColumnNamesList = () => {
+export const getInsurerContactColumnNameList = () => {
   return async dispatch => {
     try {
       const response = await InsurerContactApiServices.getInsurerContactColumnListName();
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+        dispatch({
+          type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_DEFAULT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
       }
@@ -168,8 +172,8 @@ export const changeInsurerContactColumnListStatus = data => {
   };
 };
 
-export const saveInsurerContactColumnListName = ({
-  insurerContactColumnList = {},
+export const saveInsurerContactColumnNameList = ({
+  insurerContactColumnNameList = {},
   isReset = false,
 }) => {
   return async dispatch => {
@@ -179,25 +183,30 @@ export const saveInsurerContactColumnListName = ({
         columns: [],
       };
       if (!isReset) {
-        const defaultFields = insurerContactColumnList.defaultFields
+        const defaultFields = insurerContactColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = insurerContactColumnList.customFields
+        const customFields = insurerContactColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
           isReset: false,
           columns: [...defaultFields, ...customFields],
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await InsurerContactApiServices.updateInsurerContactColumnNameList(data);
-        dispatch(getInsurerContactColumnNamesList());
-        if (response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+
+      const response = await InsurerContactApiServices.updateInsurerContactColumnNameList(data);
+
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully');
+        dispatch({
+          type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_DEFAULT_COLUMN_LIST_ACTION,
+          data: insurerContactColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -240,13 +249,17 @@ export const getInsurerPoliciesListData = (id, params = { page: 1, limit: 15 }) 
     }
   };
 };
-export const getInsurerPoliciesColumnNamesList = () => {
+export const getInsurerPoliciesColumnNameList = () => {
   return async dispatch => {
     try {
       const response = await InsurerPoliciesApiServices.getInsurerPoliciesColumnListName();
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+        dispatch({
+          type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_DEFAULT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
       }
@@ -265,11 +278,11 @@ export const changeInsurerPoliciesColumnListStatus = data => {
   };
 };
 
-export const saveInsurerPoliciesColumnListName = ({
-  insurerPoliciesColumnList = {},
+export const saveInsurerPoliciesColumnNameList = ({
+  insurerPoliciesColumnNameList = {},
   isReset = false,
 }) => {
-  return async () => {
+  return async dispatch => {
     try {
       let data = {
         isReset: true,
@@ -278,10 +291,10 @@ export const saveInsurerPoliciesColumnListName = ({
       };
 
       if (!isReset) {
-        const defaultColumns = insurerPoliciesColumnList.defaultFields
+        const defaultColumns = insurerPoliciesColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = insurerPoliciesColumnList.customFields
+        const customFields = insurerPoliciesColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
@@ -289,16 +302,20 @@ export const saveInsurerPoliciesColumnListName = ({
           isReset: false,
           columns: [...defaultColumns, ...customFields],
         };
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
+        }
       }
 
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await InsurerPoliciesApiServices.updateInsurerPoliciesColumnListName(data);
-        // dispatch(getInsurerPoliciesColumnNamesList());
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully.');
-        }
+      const response = await InsurerPoliciesApiServices.updateInsurerPoliciesColumnListName(data);
+
+      if (response && response.data && response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully.');
+        dispatch({
+          type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_DEFAULT_COLUMN_LIST_ACTION,
+          data: insurerPoliciesColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);

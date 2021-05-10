@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-select';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Table from '../../../common/Table/Table';
@@ -21,21 +22,23 @@ import {
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Modal from '../../../common/Modal/Modal';
 import { errorNotification } from '../../../common/Toast';
+import { SETTING_REDUX_CONSTANTS } from '../redux/SettingReduxConstants';
 
 const SettingsAuditLogTab = () => {
-  const getAuditLogList = useSelector(({ settingReducer }) => settingReducer?.auditLogList ?? {});
-  const auditLogColumnList = useSelector(
-    ({ settingReducer }) => settingReducer?.auditLogColumnNameList ?? {}
+  const { auditLogList, auditLogColumnNameList, auditLogDefaultColumnNameList } = useSelector(
+    ({ settingReducer }) => settingReducer ?? {}
   );
+
   const { userNameList } = useSelector(({ settingReducer }) => settingReducer ?? []);
   const { defaultFields, customFields } = useMemo(
-    () => auditLogColumnList ?? { defaultFields: [], customFields: [] },
-    [auditLogColumnList]
+    () => auditLogColumnNameList ?? { defaultFields: [], customFields: [] },
+    [auditLogColumnNameList]
   );
   const dispatch = useDispatch();
-  const { isLoading, total, pages, page, limit, docs, headers } = useMemo(() => getAuditLogList, [
-    getAuditLogList,
-  ]);
+  const { isLoading, total, pages, page, limit, docs, headers } = useMemo(
+    () => auditLogList ?? {},
+    [auditLogList]
+  );
   const [filterModal, setFilterModal] = useState(false);
   const AUDIT_LOG_FILTER_REDUCER_ACTIONS = {
     UPDATE_DATA: 'UPDATE_DATA',
@@ -208,32 +211,53 @@ const SettingsAuditLogTab = () => {
   }, []);
 
   const onClickSaveColumnSelection = useCallback(async () => {
-    await dispatch(saveAuditLogColumnNameList({ auditLogColumnList }));
-
-    getAuditLogListByFilter();
-    toggleCustomField();
-  }, [toggleCustomField, auditLogColumnList, getAuditLogListByFilter]);
+    try {
+      const isBothEqual = _.isEqual(auditLogColumnNameList, auditLogDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveAuditLogColumnNameList({ auditLogColumnNameList }));
+        getAuditLogListByFilter();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    toggleCustomField,
+    auditLogColumnNameList,
+    getAuditLogListByFilter,
+    auditLogDefaultColumnNameList,
+  ]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveAuditLogColumnNameList({ isReset: true }));
-    getAuditLogListByFilter();
     dispatch(getAuditLogColumnNameList());
+    getAuditLogListByFilter();
     toggleCustomField();
-  }, [toggleCustomField]);
+  }, [toggleCustomField, getAuditLogListByFilter]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_COLUMN_LIST_ACTION,
+      data: auditLogDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [auditLogDefaultColumnNameList, toggleCustomField]);
 
   const customFieldsModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
-        onClick: () => onClickResetDefaultColumnSelection(),
+        onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
-      { title: 'Save', buttonType: 'primary', onClick: () => onClickSaveColumnSelection() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
-
   const history = useHistory();
 
   useEffect(() => {

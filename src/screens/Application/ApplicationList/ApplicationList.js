@@ -79,7 +79,7 @@ const ApplicationList = () => {
     ({ application }) => application?.applicationList ?? {}
   );
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
-    () => applicationListWithPageData,
+    () => applicationListWithPageData ?? {},
     [applicationListWithPageData]
   );
   const { dropdownData } = useSelector(

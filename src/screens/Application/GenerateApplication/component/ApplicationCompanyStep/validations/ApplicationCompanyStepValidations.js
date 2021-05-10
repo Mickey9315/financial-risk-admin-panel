@@ -3,7 +3,7 @@ import {
   updateEditApplicationData,
 } from '../../../../redux/ApplicationAction';
 
-export const applicationCompanyStepValidations = (dispatch, data, editApplicationData) => {
+export const applicationCompanyStepValidations = async (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = true;
   if (!data?.abn || data?.abn?.trim()?.length <= 0) {
@@ -106,11 +106,11 @@ export const applicationCompanyStepValidations = (dispatch, data, editApplicatio
     };
 
     try {
-      dispatch(saveApplicationStepDataToBackend(finalData));
+      await dispatch(saveApplicationStepDataToBackend(finalData));
+      validated = true;
     } catch (e) {
-      /**/
+      validated = false;
     }
-    validated = true;
   }
   dispatch(updateEditApplicationData('company', { errors }));
   return validated;

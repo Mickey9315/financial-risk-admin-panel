@@ -48,7 +48,7 @@ const drawerReducer = (state, action) => {
       return state;
   }
 };
-const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCompany }) => {
+const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) => {
   const dispatch = useDispatch();
   const updateSinglePersonState = useCallback(
     (name, value) => {
@@ -93,6 +93,32 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
     dispatch(getApplicationCompanyDropDownData());
   }, []);
 
+  const {
+    type,
+    abn,
+    acn,
+    entityType,
+    entityName,
+    tradingName,
+    title,
+    firstName,
+    middleName,
+    lastName,
+    dateOfBirth,
+    driverLicenceNumber,
+    phoneNumber,
+    mobileNumber,
+    email,
+    allowToCheckCreditHistory,
+    unitNumber,
+    streetNumber,
+    streetName,
+    suburb,
+    state,
+    country,
+    postCode,
+  } = useMemo(() => partners?.[index], [partners?.[index]]);
+
   const titleDropDown = useMemo(() => {
     const finalData = ['Mr', 'Mrs', 'Ms', 'Doctor', 'Miss', 'Professor'];
 
@@ -121,51 +147,57 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
       ],
     },
   ];
-
-  const COMPANY_INPUT = [
-    {
-      type: 'blank',
-    },
-    {
-      label: 'Trading Name',
-      placeholder: 'Trading Name',
-      type: 'text',
-      name: 'tradingName',
-      data: [],
-    },
-    {
-      label: 'Entity Type*',
-      placeholder: 'Select',
-      type: 'select',
-      name: 'entityType',
-      data: companyEntityType ?? [],
-    },
-    {
-      label: 'Entity Name*',
-      placeholder: 'Enter Entity',
-      type: 'entityName',
-      name: 'entityName',
-      data: [],
-    },
-    {
-      label: 'ACN',
-      placeholder: '01234',
-      type: 'search',
-      name: 'acn',
-      data: [],
-    },
-    {
-      label: 'ABN*',
-      placeholder: '01234',
-      type: 'search',
-      name: 'abn',
-      data: [],
-    },
-    {
-      type: 'blank',
-    },
-  ];
-
+  const COMPANY_INPUT = useMemo(
+    () => [
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Trading Name',
+        placeholder: 'Trading Name',
+        type: 'text',
+        name: 'tradingName',
+        value: tradingName ?? '',
+        data: [],
+      },
+      {
+        label: 'Entity Type*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'entityType',
+        value: entityType ?? [],
+        data: companyEntityType ?? [],
+      },
+      {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'entityName',
+        name: 'entityName',
+        value: entityName?.label ?? entityName ?? '',
+        data: [],
+      },
+      {
+        label: 'ACN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
+        value: acn ?? '',
+        data: [],
+      },
+      {
+        label: 'ABN*',
+        placeholder: '01234',
+        type: 'search',
+        name: 'abn',
+        value: abn ?? '',
+        data: [],
+      },
+      {
+        type: 'blank',
+      },
+    ],
+    [type, abn, acn, entityType, entityName, tradingName, companyEntityType]
+  );
   const INDIVIDUAL_INPUT = useMemo(
     () => [
       {
@@ -183,6 +215,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: 'Select',
         type: 'select',
         name: 'title',
+        value: title || titleDropDown?.find(e => e?.value === title) || [],
         data: titleDropDown || [],
       },
       {
@@ -190,30 +223,35 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: 'Enter first name',
         type: 'text',
         name: 'firstName',
+        value: firstName ?? '',
       },
       {
         label: 'Middle Name',
         placeholder: 'Enter middle name',
         type: 'text',
         name: 'middleName',
+        value: middleName ?? '',
       },
       {
         label: 'Last Name*',
         placeholder: 'Enter last name',
         type: 'text',
         name: 'lastName',
+        value: lastName ?? '',
       },
       {
         label: 'Date of Birth*',
         placeholder: 'Select date',
         type: 'date',
         name: 'dateOfBirth',
+        value: dateOfBirth ?? '',
       },
       {
         label:
           'Do you give your consent for us to check your credit history with external credit agencies?*',
         type: 'checkbox',
         name: 'allowToCheckCreditHistory',
+        value: allowToCheckCreditHistory ?? false,
       },
       {
         label: 'Identification Details',
@@ -227,6 +265,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: 'Enter driver license number',
         type: 'text',
         name: 'driverLicenceNumber',
+        value: driverLicenceNumber ?? '',
       },
       {
         type: 'blank',
@@ -243,6 +282,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: 'Enter location',
         type: 'text',
         name: 'unitNumber',
+        value: unitNumber ?? '',
       },
       {
         label: 'Street Number*',
@@ -250,6 +290,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         type: 'text',
         name: 'streetNumber',
         data: [],
+        value: streetNumber ?? '',
       },
       {
         label: 'Street Name*',
@@ -257,6 +298,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         type: 'text',
         name: 'streetName',
         data: [],
+        value: streetName ?? '',
       },
       {
         label: 'Street Type*',
@@ -264,6 +306,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         type: 'select',
         name: 'streetType',
         data: streetType || [],
+        value: partners?.[index]?.streetType ?? [],
       },
       {
         label: 'Suburb*',
@@ -271,6 +314,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         type: 'text',
         name: 'suburb',
         data: [],
+        value: suburb ?? '',
       },
       {
         label: 'Country*',
@@ -278,12 +322,14 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         type: 'select',
         name: 'country',
         data: countryList || [],
+        value: country ?? [],
       },
       {
         label: 'Postcode*',
         placeholder: 'Enter postcode',
         type: 'text',
         name: 'postCode',
+        value: postCode ?? '',
       },
       {
         label: 'State*',
@@ -291,6 +337,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         type: isAusOrNew ? 'select' : 'text',
         name: 'state',
         data: stateValue || [],
+        value: !isAusOrNew ? state?.label : state ?? '',
       },
       {
         label: 'Contact Details',
@@ -304,21 +351,48 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         placeholder: '1234567890',
         type: 'text',
         name: 'phoneNumber',
+        value: phoneNumber ?? '',
       },
       {
         label: 'Mobile',
         placeholder: '1234567890',
         type: 'text',
         name: 'mobileNumber',
+        value: mobileNumber ?? '',
       },
       {
         label: 'Email',
         placeholder: 'Enter email address',
         type: 'email',
         name: 'email',
+        value: email ?? '',
       },
     ],
-    [stateValue, isAusOrNew, countryList, isAusOrNew, streetType]
+    [
+      isAusOrNew,
+      stateValue,
+      titleDropDown,
+      countryList,
+      title,
+      firstName,
+      middleName,
+      lastName,
+      dateOfBirth,
+      driverLicenceNumber,
+      phoneNumber,
+      mobileNumber,
+      email,
+      allowToCheckCreditHistory,
+      unitNumber,
+      streetNumber,
+      streetName,
+      suburb,
+      state,
+      country,
+      postCode,
+      partners?.[index],
+      streetType,
+    ]
   );
 
   const handleTextInputChange = useCallback(
@@ -451,9 +525,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
   );
   const handleEmailChange = useCallback(
     e => {
-      const email = e.target.name;
-      const { value } = e.target;
-      updateSinglePersonState(email, value);
+      updateSinglePersonState(e.target.name, e.target.value);
     },
     [updateSinglePersonState]
   );
@@ -480,12 +552,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               type="text"
               placeholder={input.placeholder}
               name={input.name}
-              value={
-                input.name === 'state'
-                  ? (!isAusOrNew && partners?.[index]?.[input.name]?.label) ||
-                    partners?.[index]?.[input.name]
-                  : partners?.[index]?.[input.name]
-              }
+              value={input?.value}
               onChange={handleTextInputChange}
             />
           );
@@ -496,6 +563,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               type="email"
               placeholder={input.placeholder}
               name={input.name}
+              value={input?.value}
               onChange={handleEmailChange}
             />
           );
@@ -506,7 +574,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               type="text"
               name={input.name}
               placeholder={input.placeholder}
-              value={partners?.[index]?.[input.name]}
+              value={input?.value}
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
             />
@@ -517,11 +585,11 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
             <ReactSelect
               className="react-select-container"
               classNamePrefix="react-select"
-              isSearchable
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              value={(partners && partners[index][input.name] && partners[index][input.name]) ?? []}
+              value={input?.value}
+              isSearchable
               onChange={handleSelectInputChange}
             />
           );
@@ -532,6 +600,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               className="grid-checkbox"
               name={input.name}
               title={input.label}
+              checked={input?.value}
               onChange={handleCheckBoxEvent}
             />
           );
@@ -543,7 +612,7 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
               name={input.name}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              value={partners?.[index]?.entityName?.label}
+              value={input?.value}
               onChange={handleEntityChange}
             />
           );
@@ -711,11 +780,10 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
         suffixClick={e => deletePartner(e)}
       >
         <div className="application-person-step-accordion-item">
-          {hasRadio && INPUTS.map(getComponentFromType)}
-          {partners?.[index] &&
-            (hasRadio && partners?.[index]?.type === 'company'
-              ? COMPANY_INPUT.map(getComponentFromType)
-              : INDIVIDUAL_INPUT.map(getComponentFromType))}
+          {INPUTS.map(getComponentFromType)}
+          {partners?.[index]?.type === 'company'
+            ? COMPANY_INPUT.map(getComponentFromType)
+            : INDIVIDUAL_INPUT.map(getComponentFromType)}
         </div>
       </AccordionItem>
     </>
@@ -723,12 +791,10 @@ const PersonIndividualDetail = ({ itemHeader, hasRadio, index, entityTypeFromCom
 };
 PersonIndividualDetail.propTypes = {
   itemHeader: PropTypes.string.isRequired,
-  hasRadio: PropTypes.bool,
   index: PropTypes.number.isRequired,
   entityTypeFromCompany: PropTypes.string,
 };
 PersonIndividualDetail.defaultProps = {
-  hasRadio: false,
   entityTypeFromCompany: '',
 };
 

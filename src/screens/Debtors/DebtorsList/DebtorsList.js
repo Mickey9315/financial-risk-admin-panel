@@ -53,7 +53,7 @@ const DebtorsList = () => {
     ({ debtorsManagement }) => debtorsManagement ?? {}
   );
   const { docs, headers, page, pages, limit, total, isLoading } = useMemo(
-    () => debtorListWithPageData,
+    () => debtorListWithPageData ?? {},
     [debtorListWithPageData]
   );
 
@@ -145,10 +145,14 @@ const DebtorsList = () => {
   ]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveDebtorsColumnListName({ isReset: true }));
-    dispatch(getDebtorsColumnNameList());
-    getDebtorsListByFilter();
-    toggleCustomField();
+    try {
+      await dispatch(saveDebtorsColumnListName({ isReset: true }));
+      dispatch(getDebtorsColumnNameList());
+      getDebtorsListByFilter();
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
   }, [dispatch, toggleCustomField, getDebtorsListByFilter]);
 
   const customFieldsModalButtons = useMemo(

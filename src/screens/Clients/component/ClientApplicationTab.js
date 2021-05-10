@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import BigInput from '../../../common/BigInput/BigInput';
 import Table from '../../../common/Table/Table';
@@ -14,19 +15,19 @@ import {
   getClientApplicationListData,
   saveClientApplicationColumnNameList,
 } from '../redux/ClientAction';
+import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
 
 const ClientApplicationTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const clientApplicationListData = useSelector(
-    ({ clientManagement }) => clientManagement?.application?.applicationList ?? {}
-  );
-  const clientApplicationColumnNameListData = useSelector(
-    ({ clientManagement }) => clientManagement?.application?.columnList ?? {}
-  );
-  const { total, headers, pages, docs, page, limit } = useMemo(() => clientApplicationListData, [
-    clientApplicationListData,
+  const {
+    applicationList,
+    clientApplicationColumnNameList,
+    clientApplicationDefaultColumnNameList,
+  } = useSelector(({ clientManagement }) => clientManagement?.application ?? {});
+  const { total, headers, pages, docs, page, limit } = useMemo(() => applicationList ?? {}, [
+    applicationList,
   ]);
 
   const getClientApplicationList = useCallback(
@@ -70,28 +71,47 @@ const ClientApplicationTab = () => {
   );
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    try {
-      await dispatch(saveClientApplicationColumnNameList({ isReset: true }));
-      getClientApplicationList();
-    } catch (e) {
-      /**/
-    }
+    await dispatch(saveClientApplicationColumnNameList({ isReset: true }));
+    dispatch(getClientApplicationColumnNameList());
+    getClientApplicationList();
     toggleCustomField();
-  }, [toggleCustomField, dispatch]);
+  }, [dispatch, toggleCustomField, getClientApplicationList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveClientApplicationColumnNameList({ clientApplicationColumnNameListData }));
-      getClientApplicationList();
+      const isBothEqual = _.isEqual(
+        clientApplicationColumnNameList,
+        clientApplicationDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveClientApplicationColumnNameList({ clientApplicationColumnNameList }));
+        getClientApplicationList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
+  }, [
+    toggleCustomField,
+    getClientApplicationList,
+    clientApplicationColumnNameList,
+    clientApplicationDefaultColumnNameList,
+  ]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_COLUMN_LIST_ACTION,
+      data: clientApplicationDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [toggleCustomField, dispatch, clientApplicationColumnNameListData]);
+  }, [clientApplicationDefaultColumnNameList, toggleCustomField]);
 
   const { defaultFields, customFields } = useMemo(
-    () => clientApplicationColumnNameListData ?? { defaultFields: [], customFields: [] },
-    [clientApplicationColumnNameListData]
+    () => clientApplicationColumnNameList ?? { defaultFields: [], customFields: [] },
+    [clientApplicationColumnNameList]
   );
 
   const buttons = useMemo(
@@ -101,10 +121,10 @@ const ClientApplicationTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   useEffect(() => {

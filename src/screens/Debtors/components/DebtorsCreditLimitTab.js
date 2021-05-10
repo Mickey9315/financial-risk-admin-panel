@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import BigInput from '../../../common/BigInput/BigInput';
 import Table from '../../../common/Table/Table';
@@ -14,20 +15,20 @@ import {
   getDebtorCreditLimitData,
   saveDebtorCreditLimitColumnNameList,
 } from '../redux/DebtorsAction';
+import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 
 const DebtorsCreditLimitTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const debtorCreditLimitData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.creditLimit?.creditLimitList ?? {}
-  );
-  const debtorCreditLimitColumnNameList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.creditLimit?.columnList ?? {}
-  );
+  const {
+    creditLimitList,
+    debtorsCreditLimitColumnNameList,
+    debtorsCreditLimitDefaultColumnNameList,
+  } = useSelector(({ debtorsManagement }) => debtorsManagement?.creditLimit ?? {});
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
-    () => debtorCreditLimitData,
-    [debtorCreditLimitData]
+    () => creditLimitList ?? {},
+    [creditLimitList]
   );
 
   const getCreditLimitList = useCallback(
@@ -73,26 +74,49 @@ const DebtorsCreditLimitTab = () => {
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
       await dispatch(saveDebtorCreditLimitColumnNameList({ isReset: true }));
+      dispatch(getCreditLimitColumnsNameList());
       getCreditLimitList();
+      toggleCustomField();
     } catch (e) {
       /**/
     }
-    toggleCustomField();
-  }, [toggleCustomField, dispatch]);
+  }, [toggleCustomField, getCreditLimitList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveDebtorCreditLimitColumnNameList({ debtorCreditLimitColumnNameList }));
-      getCreditLimitList();
+      const isBothEqual = _.isEqual(
+        debtorsCreditLimitColumnNameList,
+        debtorsCreditLimitDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveDebtorCreditLimitColumnNameList({ debtorsCreditLimitColumnNameList }));
+        getCreditLimitList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
+  }, [
+    toggleCustomField,
+    debtorsCreditLimitColumnNameList,
+    debtorsCreditLimitDefaultColumnNameList,
+    getCreditLimitList,
+  ]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.DEBTOR_CREDIT_LIMIT_COLUMN_LIST_ACTION,
+      data: debtorsCreditLimitDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [toggleCustomField, dispatch, debtorCreditLimitColumnNameList]);
+  }, [debtorsCreditLimitDefaultColumnNameList, toggleCustomField]);
 
   const { defaultFields, customFields } = useMemo(
-    () => debtorCreditLimitColumnNameList || { defaultFields: [], customFields: [] },
-    [debtorCreditLimitColumnNameList]
+    () => debtorsCreditLimitColumnNameList || { defaultFields: [], customFields: [] },
+    [debtorsCreditLimitColumnNameList]
   );
 
   const buttons = useMemo(
@@ -102,10 +126,10 @@ const DebtorsCreditLimitTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   useEffect(() => {

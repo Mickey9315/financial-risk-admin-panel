@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
+import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -18,7 +19,7 @@ import {
   getClientTaskListData,
   getDefaultEntityDropDownData,
   getEntityDropDownData,
-  saveClientTaskColumnNameListSelection,
+  saveClientTaskColumnNameListName,
   saveTaskData,
   updateAddTaskStateFields,
   updateTaskData,
@@ -48,24 +49,19 @@ const ClientTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const clientTaskListData = useSelector(
-    ({ clientManagement }) => clientManagement?.task?.taskList ?? {}
-  );
-  const clientTaskColumnNameListData = useSelector(
-    ({ clientManagement }) => clientManagement?.task?.columnList ?? {}
-  );
+  const {
+    taskList,
+    dropDownData,
+    clientTaskColumnNameList,
+    clientTaskDefaultColumnNameList,
+  } = useSelector(({ clientManagement }) => clientManagement?.task ?? {});
   const { entityType, ...addTaskState } = useSelector(
     ({ clientManagement }) => clientManagement?.task?.addTask ?? {}
   );
-  const taskDropDownData = useSelector(
-    ({ clientManagement }) => clientManagement?.task?.dropDownData ?? {}
-  );
 
-  const { page, pages, total, limit, docs, headers } = useMemo(() => clientTaskListData, [
-    clientTaskListData,
-  ]);
-  const { assigneeList, entityList, defaultEntityList } = useMemo(() => taskDropDownData, [
-    taskDropDownData,
+  const { page, pages, total, limit, docs, headers } = useMemo(() => taskList ?? {}, [taskList]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
+    dropDownData,
   ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
@@ -108,36 +104,47 @@ const ClientTaskTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => clientTaskColumnNameListData ?? { defaultFields: [], customFields: [] },
-    [clientTaskColumnNameListData]
+    () => clientTaskColumnNameList ?? { defaultFields: [], customFields: [] },
+    [clientTaskColumnNameList]
   );
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    try {
-      await dispatch(saveClientTaskColumnNameListSelection({ isReset: true }));
-      getClientTaskList();
-    } catch (e) {
-      /**/
-    }
+    await dispatch(saveClientTaskColumnNameListName({ isReset: true }));
+    dispatch(getClientTaskColumnList());
+    getClientTaskList();
     toggleCustomField();
-  }, [getClientTaskList, toggleCustomField]);
+  }, [toggleCustomField, getClientTaskList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveClientTaskColumnNameListSelection({ clientTaskColumnNameListData }));
-      getClientTaskList();
+      const isBothEqual = _.isEqual(clientTaskColumnNameList, clientTaskDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveClientTaskColumnNameListName({ clientTaskColumnNameList }));
+        getClientTaskList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
-    toggleCustomField();
-  }, [getClientTaskList, toggleCustomField, clientTaskColumnNameListData]);
+  }, [
+    getClientTaskList,
+    toggleCustomField,
+    clientTaskColumnNameList,
+    clientTaskDefaultColumnNameList,
+  ]);
 
-  const onCloseCustomFieldModal = useCallback(() => {
-    dispatch(getClientTaskColumnList());
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_COLUMN_NAME_LIST_ACTION,
+      data: clientTaskDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [toggleCustomField]);
+  }, [clientTaskDefaultColumnNameList, toggleCustomField]);
 
   const buttonsCustomFields = useMemo(
     () => [
@@ -146,10 +153,10 @@ const ClientTaskTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: onCloseCustomFieldModal },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, onCloseCustomFieldModal, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   const onChangeSelectedColumn = useCallback((type, name, value) => {

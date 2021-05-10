@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import './clientTabs.scss';
+import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -13,6 +14,7 @@ import {
   changeClientDocumentsColumnListStatus,
   deleteClientDocumentAction,
   downloadDocuments,
+  getClientContactColumnNamesList,
   getClientDocumentsColumnNamesList,
   getClientDocumentsListData,
   getDocumentTypeList,
@@ -25,6 +27,7 @@ import Switch from '../../../common/Switch/Switch';
 import Input from '../../../common/Input/Input';
 import FileUpload from '../../../common/Header/component/FileUpload';
 import { downloadAll } from '../../../helpers/DownloadHelper';
+import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
 
 const initialClientDocumentState = {
   description: '',
@@ -76,7 +79,6 @@ const ClientDocumentsTab = () => {
 
   const [uploadModel, setUploadModel] = useState(false);
   const [selectedCheckBoxData, setSelectedCheckBoxData] = useState([]);
-  const [pageLimit, setPageLimit] = useState('');
   const toggleUploadModel = useCallback(
     value => setUploadModel(value !== undefined ? value : e => !e),
 
@@ -106,61 +108,16 @@ const ClientDocumentsTab = () => {
     });
   }, []);
 
-  const clientDocumentsList = useSelector(
-    ({ clientManagement }) => clientManagement?.documents?.documentsList ?? {}
-  );
-  const documentTypeList = useSelector(
-    ({ clientManagement }) => clientManagement?.documents?.documentTypeList ?? []
-  );
-  const clientDocumentsColumnList = useSelector(
-    ({ clientManagement }) => clientManagement?.documents?.columnList ?? {}
-  );
-  const { total, pages, page, limit, docs, headers } = useMemo(() => clientDocumentsList, [
-    clientDocumentsList,
+  const {
+    documentsList,
+    documentTypeList,
+    clientDocumentsColumnNameList,
+    clientDocumentsDefaultColumnNameList,
+  } = useSelector(({ clientManagement }) => clientManagement?.documents ?? {});
+  const { total, pages, page, limit, docs, headers } = useMemo(() => documentsList ?? {}, [
+    documentsList,
   ]);
 
-  const { defaultFields, customFields } = useMemo(
-    () => clientDocumentsColumnList ?? { defaultFields: [], customFields: [] },
-    [clientDocumentsColumnList]
-  );
-
-  const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList;
-    return finalData?.map(e => ({
-      name: 'documentType',
-      label: e.documentTitle,
-      value: e._id,
-    }));
-  }, [documentTypeList]);
-
-  const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveClientDocumentsColumnListName({ isReset: true }));
-    dispatch(getClientDocumentsListData(id));
-    toggleCustomField();
-  }, [dispatch, toggleCustomField]);
-
-  const onClickSaveColumnSelection = useCallback(async () => {
-    try {
-      await dispatch(saveClientDocumentsColumnListName({ clientDocumentsColumnList }));
-      dispatch(getClientDocumentsListData(id, { limit: pageLimit }));
-    } catch (e) {
-      /**/
-    }
-    toggleCustomField();
-  }, [dispatch, toggleCustomField, clientDocumentsColumnList]);
-
-  const buttons = useMemo(
-    () => [
-      {
-        title: 'Reset Defaults',
-        buttonType: 'outlined-primary',
-        onClick: onClickResetDefaultColumnSelection,
-      },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
-    ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
-  );
   const getClientDocumentsList = useCallback(
     (params = {}, cb) => {
       const data = {
@@ -174,6 +131,72 @@ const ClientDocumentsTab = () => {
       }
     },
     [page, limit]
+  );
+
+  const { defaultFields, customFields } = useMemo(
+    () => clientDocumentsColumnNameList ?? { defaultFields: [], customFields: [] },
+    [clientDocumentsColumnNameList]
+  );
+
+  const documentTypeOptions = useMemo(() => {
+    const finalData = documentTypeList;
+    return finalData?.map(e => ({
+      name: 'documentType',
+      label: e.documentTitle,
+      value: e._id,
+    }));
+  }, [documentTypeList]);
+
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveClientDocumentsColumnListName({ isReset: true }));
+    dispatch(getClientContactColumnNamesList());
+    getClientDocumentsList();
+    toggleCustomField();
+  }, [dispatch, toggleCustomField, getClientDocumentsList]);
+
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      const isBothEqual = _.isEqual(
+        clientDocumentsColumnNameList,
+        clientDocumentsDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveClientDocumentsColumnListName({ clientDocumentsColumnNameList }));
+        getClientDocumentsList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    getClientDocumentsList,
+    toggleCustomField,
+    clientDocumentsColumnNameList,
+    clientDocumentsDefaultColumnNameList,
+  ]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
+      data: clientDocumentsDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [clientDocumentsDefaultColumnNameList, toggleCustomField]);
+
+  const buttons = useMemo(
+    () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: onClickResetDefaultColumnSelection,
+      },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+    ],
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   const onClickUploadDocument = useCallback(async () => {
@@ -331,7 +354,7 @@ const ClientDocumentsTab = () => {
   );
 
   const onClickDownloadButton = useCallback(async () => {
-    if (clientDocumentsList?.docs?.length !== 0) {
+    if (documentsList?.docs?.length !== 0) {
       if (selectedCheckBoxData?.length !== 0) {
         const docsToDownload = selectedCheckBoxData?.map(e => e.id);
         const res = await downloadDocuments(docsToDownload);
@@ -342,7 +365,7 @@ const ClientDocumentsTab = () => {
     } else {
       errorNotification('You have no documents to download');
     }
-  }, [clientDocumentsList, selectedCheckBoxData]);
+  }, [documentsList, selectedCheckBoxData]);
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
@@ -372,7 +395,6 @@ const ClientDocumentsTab = () => {
   );
   const onSelectLimit = useCallback(
     newLimit => {
-      setPageLimit(newLimit);
       getClientDocumentsList({ page: 1, limit: newLimit });
     },
     [getClientDocumentsList]

@@ -34,18 +34,20 @@ const Stepper = props => {
     backClick();
   }, [activeStep, setActiveStep, backClick]);
 
-  const onClickNextButton = useCallback(() => {
-    if (nextClick() && activeStep < steps.length - 1) {
+  const onClickNextButton = useCallback(async () => {
+    const result = await nextClick();
+
+    if (result && activeStep < steps.length - 1) {
       onChangeIndex(activeStep + 1);
       setActiveStep(prevState => prevState + 1);
     }
-  }, [steps, activeStep, setActiveStep, nextClick]);
+  }, [steps, activeStep, setActiveStep, onChangeIndex, nextClick]);
 
   useEffect(() => {
     if (stepIndex !== activeStep) {
       setActiveStep(stepIndex);
     }
-  }, [stepIndex]);
+  }, [stepIndex, activeStep]);
 
   return (
     <div className={className} {...restProps}>

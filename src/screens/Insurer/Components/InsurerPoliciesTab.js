@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import _ from 'lodash';
 import {
   changeInsurerPoliciesColumnListStatus,
-  getInsurerPoliciesColumnNamesList,
+  getInsurerPoliciesColumnNameList,
   getInsurerPoliciesListData,
   getPolicySyncListForCRM,
-  saveInsurerPoliciesColumnListName,
+  saveInsurerPoliciesColumnNameList,
 } from '../redux/InsurerAction';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -31,14 +32,14 @@ const InsurerPoliciesTab = () => {
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
     [setCustomFieldModal]
   );
-  const insurerPoliciesList = useSelector(({ insurer }) => insurer?.policies?.policiesList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(() => insurerPoliciesList, [
-    insurerPoliciesList,
+  const {
+    policiesList,
+    insurerPoliciesColumnNameList,
+    insurerPoliciesDefaultColumnNameList,
+  } = useSelector(({ insurer }) => insurer?.policies ?? {});
+  const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
+    policiesList,
   ]);
-
-  const insurerPoliciesColumnList = useSelector(
-    ({ insurer }) => insurer?.policies?.columnList ?? {}
-  );
 
   const syncListFromCrm = useSelector(({ insurer }) => insurer?.policies?.policySyncList ?? []);
 
@@ -58,26 +59,61 @@ const InsurerPoliciesTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => insurerPoliciesColumnList ?? { defaultFields: [], customFields: [] },
-    [insurerPoliciesColumnList]
+    () => insurerPoliciesColumnNameList ?? { defaultFields: [], customFields: [] },
+    [insurerPoliciesColumnNameList]
   );
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveInsurerPoliciesColumnListName({ insurerPoliciesColumnList }));
-      getInsurerPoliciesList();
+      const isBothEqual = _.isEqual(
+        insurerPoliciesColumnNameList,
+        insurerPoliciesDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveInsurerPoliciesColumnNameList({ insurerPoliciesColumnNameList }));
+        getInsurerPoliciesList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
-    toggleCustomField();
-  }, [dispatch, toggleCustomField, insurerPoliciesColumnList, getInsurerPoliciesList]);
+  }, [
+    toggleCustomField,
+    insurerPoliciesColumnNameList,
+    getInsurerPoliciesList,
+    insurerPoliciesDefaultColumnNameList,
+  ]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveInsurerPoliciesColumnListName({ isReset: true }));
-    dispatch(getInsurerPoliciesColumnNamesList());
+    await dispatch(saveInsurerPoliciesColumnNameList({ isReset: true }));
+    dispatch(getInsurerPoliciesColumnNameList());
     getInsurerPoliciesList();
     toggleCustomField();
-  }, [dispatch, toggleCustomField, getInsurerPoliciesList]);
+  }, [toggleCustomField, getInsurerPoliciesList]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_COLUMN_LIST_ACTION,
+      data: insurerPoliciesDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [insurerPoliciesDefaultColumnNameList, toggleCustomField]);
+
+  const customFieldsModalButtons = useMemo(
+    () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: onClickResetDefaultColumnSelection,
+      },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+    ],
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+  );
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
@@ -85,19 +121,6 @@ const InsurerPoliciesTab = () => {
       dispatch(changeInsurerPoliciesColumnListStatus(data));
     },
     [dispatch]
-  );
-
-  const buttons = useMemo(
-    () => [
-      {
-        title: 'Reset Defaults',
-        buttonType: 'outlined-primary',
-        onClick: onClickResetDefaultColumnSelection,
-      },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
-    ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
   );
 
   const onSelectLimit = useCallback(
@@ -208,7 +231,7 @@ const InsurerPoliciesTab = () => {
 
   useEffect(() => {
     getInsurerPoliciesList();
-    dispatch(getInsurerPoliciesColumnNamesList());
+    dispatch(getInsurerPoliciesColumnNameList());
   }, []);
 
   return (
@@ -269,7 +292,7 @@ const InsurerPoliciesTab = () => {
           defaultFields={defaultFields}
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={buttons}
+          buttons={customFieldsModalButtons}
           toggleCustomField={toggleCustomField}
         />
       )}

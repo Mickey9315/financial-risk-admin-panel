@@ -266,6 +266,10 @@ export const getAuditLogColumnNameList = () => {
           type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -282,7 +286,7 @@ export const changeAuditLogColumnListStatus = data => {
   };
 };
 
-export const saveAuditLogColumnNameList = ({ auditLogColumnList = {}, isReset = false }) => {
+export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
       let data = {
@@ -291,25 +295,28 @@ export const saveAuditLogColumnNameList = ({ auditLogColumnList = {}, isReset = 
       };
 
       if (!isReset) {
-        const defaultFields = auditLogColumnList.defaultFields
+        const defaultFields = auditLogColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = auditLogColumnList.customFields
+        const customFields = auditLogColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
           isReset: false,
           columns: [...defaultFields, ...customFields],
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-        dispatch(getAuditLogColumnNameList());
-      } else {
-        const response = await SettingAuditLogApiService.updateAuditLogColumnNameList(data);
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully.');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await SettingAuditLogApiService.updateAuditLogColumnNameList(data);
+      if (response && response.data && response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully.');
+        dispatch({
+          type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_DEFAULT_COLUMN_LIST_ACTION,
+          data: auditLogColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);

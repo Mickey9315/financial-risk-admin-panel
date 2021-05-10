@@ -13,7 +13,7 @@ const initialDebtorState = {
   debtorsDefaultColumnNameList: {},
   selectedDebtorData: {},
   dropdownData: {
-    streetType: {},
+    streetType: [],
     australianStates: [],
     entityType: [],
   },
@@ -27,13 +27,15 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    debtorsDocumentColumnNameList: {},
+    debtorsDocumentDefaultColumnNameList: {},
     documentTypeList: [],
     uploadDocumentData: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
   },
   task: {
     taskList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
-    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    debtorsTaskColumnNameList: {},
+    debtorsTaskDefaultColumnNameList: {},
     addTask: {
       title: '',
       description: '',
@@ -60,7 +62,8 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    debtorsApplicationColumnNameList: {},
+    debtorsApplicationDefaultColumnNameList: {},
   },
   creditLimit: {
     creditLimitList: {
@@ -72,7 +75,8 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    debtorsCreditLimitColumnNameList: {},
+    debtorsCreditLimitDefaultColumnNameList: {},
   },
   stakeHolder: {
     stakeHolderList: {
@@ -84,7 +88,8 @@ const initialDebtorState = {
       isLoading: true,
       error: null,
     },
-    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    debtorsStakeHolderColumnNameList: {},
+    debtorsStakeHolderDefaultColumnNameList: {},
     stakeHolderDetails: {
       type: 'individual',
       abn: '',
@@ -150,16 +155,16 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       };
 
     case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION: {
-      const columnList = {
+      const debtorsColumnNameList = {
         ...state?.debtorsColumnNameList,
       };
       const { type, name, value } = action?.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
+      debtorsColumnNameList[`${type}`] = debtorsColumnNameList[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
-        debtorsColumnNameList: columnList,
+        debtorsColumnNameList,
       };
     }
     case DEBTORS_REDUX_CONSTANTS.DEBTOR_LIST_RESET_PAGINATION_DATA:
@@ -179,13 +184,13 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         selectedDebtorData: action?.data,
       };
     case DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS: {
-      const dropdownData = {};
+      const dropdownData = { ...state?.dropdownData };
       // eslint-disable-next-line no-shadow
-      Object.entries(action?.data).forEach(([key, value]) => {
-        dropdownData[key] = value?.map(entity => ({
-          label: entity.name,
-          name: key,
-          value: entity._id,
+      Object.entries(action?.data)?.forEach(([key, value]) => {
+        dropdownData[key] = value?.data?.map(entity => ({
+          label: entity?.name ?? entity?.label,
+          name: value?.field,
+          value: entity?._id ?? entity?.value,
         }));
       });
       return {
@@ -279,20 +284,30 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         documents: {
           ...state?.documents,
-          columnList: action?.data,
+          debtorsDocumentColumnNameList: action?.data,
+        },
+      };
+    }
+
+    case DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION: {
+      return {
+        ...state,
+        documents: {
+          ...state?.documents,
+          debtorsDocumentDefaultColumnNameList: action?.data,
         },
       };
     }
 
     case DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPDATE_DEBTOR_DOCUMENTS_COLUMN_LIST_ACTION: {
-      const columnList = {
-        ...state?.documents?.columnList,
+      const debtorsDocumentColumnNameList = {
+        ...state?.documents?.debtorsDocumentColumnNameList,
       };
 
       // eslint-disable-next-line no-shadow
       const { type, name, value } = action?.data;
 
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
+      debtorsDocumentColumnNameList[`${type}`] = debtorsDocumentColumnNameList[`${type}`].map(e =>
         e.name === name
           ? {
               ...e,
@@ -304,7 +319,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         documents: {
           ...state?.documents,
-          columnList,
+          debtorsDocumentColumnNameList,
         },
       };
     }
@@ -370,24 +385,32 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         task: {
           ...state?.task,
-          columnList: action?.data,
+          debtorsTaskColumnNameList: action?.data,
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.TASK.DEBTOR_TASK_DEFAULT_COLUMN_NAME_LIST_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state?.task,
+          debtorsTaskDefaultColumnNameList: action?.data,
         },
       };
 
     case DEBTORS_REDUX_CONSTANTS.TASK.UPDATE_DEBTOR_TASK_COLUMN_NAME_LIST_ACTION: {
-      const columnList = {
-        ...state?.task?.columnList,
+      const debtorsTaskColumnNameList = {
+        ...state?.task?.debtorsTaskColumnNameList,
       };
       // eslint-disable-next-line no-shadow
       const { name, type, value } = action?.data;
-      columnList[`${type}`] = columnList[`${type}`].map(e =>
+      debtorsTaskColumnNameList[`${type}`] = debtorsTaskColumnNameList[`${type}`].map(e =>
         e.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         task: {
           ...state?.task,
-          columnList,
+          debtorsTaskColumnNameList,
         },
       };
     }
@@ -525,24 +548,33 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         application: {
           ...state?.application,
-          columnList: action?.data,
+          debtorsApplicationColumnNameList: action?.data,
         },
       };
     }
-    case DEBTORS_REDUX_CONSTANTS.APPLICATION.UPDATE_DEBTOR_APPLICATION_COLUMN_LIST_ACTION: {
-      const columnList = {
-        ...state?.application?.columnList,
-      };
-      // eslint-disable-next-line no-shadow
-      const { name, type, value } = action?.data;
-      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
-        e.name === name ? { ...e, isChecked: value } : e
-      );
+    case DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_DEFAULT_COLUMN_LIST_ACTION: {
       return {
         ...state,
         application: {
           ...state?.application,
-          columnList,
+          debtorsApplicationDefaultColumnNameList: action?.data,
+        },
+      };
+    }
+    case DEBTORS_REDUX_CONSTANTS.APPLICATION.UPDATE_DEBTOR_APPLICATION_COLUMN_LIST_ACTION: {
+      const debtorsApplicationColumnNameList = {
+        ...state?.application?.debtorsApplicationColumnNameList,
+      };
+      // eslint-disable-next-line no-shadow
+      const { name, type, value } = action?.data;
+      debtorsApplicationColumnNameList[`${type}`] = debtorsApplicationColumnNameList?.[
+        `${type}`
+      ]?.map(e => (e.name === name ? { ...e, isChecked: value } : e));
+      return {
+        ...state,
+        application: {
+          ...state?.application,
+          debtorsApplicationColumnNameList,
         },
       };
     }
@@ -587,24 +619,33 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         creditLimit: {
           ...state?.creditLimit,
-          columnList: action?.data,
+          debtorsCreditLimitColumnNameList: action?.data,
         },
       };
     }
-    case DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.UPDATE_DEBTOR_CREDIT_LIMIT_COLUMN_LIST_ACTION: {
-      const columnList = {
-        ...state?.creditLimit?.columnList,
-      };
-      // eslint-disable-next-line no-shadow
-      const { type, name, value } = action?.data;
-      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
-        e.name === name ? { ...e, isChecked: value } : e
-      );
+    case DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.DEBTOR_CREDIT_LIMIT_DEFAULT_COLUMN_LIST_ACTION: {
       return {
         ...state,
         creditLimit: {
           ...state?.creditLimit,
-          columnList,
+          debtorsCreditLimitDefaultColumnNameList: action?.data,
+        },
+      };
+    }
+    case DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.UPDATE_DEBTOR_CREDIT_LIMIT_COLUMN_LIST_ACTION: {
+      const debtorsCreditLimitColumnNameList = {
+        ...state?.creditLimit?.debtorsCreditLimitColumnNameList,
+      };
+      // eslint-disable-next-line no-shadow
+      const { type, name, value } = action?.data;
+      debtorsCreditLimitColumnNameList[`${type}`] = debtorsCreditLimitColumnNameList?.[
+        `${type}`
+      ]?.map(e => (e.name === name ? { ...e, isChecked: value } : e));
+      return {
+        ...state,
+        creditLimit: {
+          ...state?.creditLimit,
+          debtorsCreditLimitColumnNameList,
         },
       };
     }
@@ -649,24 +690,33 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         stakeHolder: {
           ...state?.stakeHolder,
-          columnList: action?.data,
+          debtorsStakeHolderColumnNameList: action?.data,
         },
       };
     }
-    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.UPDATE_DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION: {
-      const columnList = {
-        ...state?.stakeHolder?.columnList,
-      };
-      // eslint-disable-next-line no-shadow
-      const { name, type, value } = action?.data;
-      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
-        e.name === name ? { ...e, isChecked: value } : e
-      );
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_DEFAULT_COLUMN_LIST_ACTION: {
       return {
         ...state,
         stakeHolder: {
           ...state?.stakeHolder,
-          columnList,
+          debtorsStakeHolderDefaultColumnNameList: action?.data,
+        },
+      };
+    }
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.UPDATE_DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION: {
+      const debtorsStakeHolderColumnNameList = {
+        ...state?.stakeHolder?.debtorsStakeHolderColumnNameList,
+      };
+      // eslint-disable-next-line no-shadow
+      const { name, type, value } = action?.data;
+      debtorsStakeHolderColumnNameList[`${type}`] = debtorsStakeHolderColumnNameList?.[
+        `${type}`
+      ]?.map(e => (e.name === name ? { ...e, isChecked: value } : e));
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          debtorsStakeHolderColumnNameList,
         },
       };
     }
@@ -678,7 +728,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           ...state?.stakeHolder,
           stakeHolderDetails: {
             ...state?.stakeHolder?.stakeHolderDetails,
-            type: action.personType,
+            type: action?.personType,
           },
         },
       };
@@ -773,9 +823,9 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       // eslint-disable-next-line no-shadow
       Object.entries(action?.data)?.forEach(([key, value]) => {
         dropDownData[key] = value.data.map(entity => ({
-          label: entity.name,
+          label: entity.name ?? entity.label,
           name: value.field,
-          value: entity._id,
+          value: entity._id ?? entity.value,
         }));
       });
       return {

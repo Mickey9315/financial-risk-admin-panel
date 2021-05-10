@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import './debtorTabs.scss';
+import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
 import Pagination from '../../../common/Pagination/Pagination';
@@ -21,10 +22,12 @@ import {
   downloadDocuments,
   getDebtorDocumentsColumnNamesList,
   getDebtorDocumentsListData,
+  getDebtorsColumnNameList,
   getDocumentTypeList,
   saveDebtorDocumentsColumnListName,
   uploadDocument,
 } from '../redux/DebtorsAction';
+import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 
 const initialDebtorDocumentState = {
   description: '',
@@ -67,7 +70,7 @@ const DebtorsDocumentsTab = () => {
     debtorDocumentReducer,
     initialDebtorDocumentState
   );
-  const { documentType, isPublic, description } = useMemo(() => selectedDebtorDocument, [
+  const { documentType, isPublic, description } = useMemo(() => selectedDebtorDocument ?? {}, [
     selectedDebtorDocument,
   ]);
   const dispatch = useDispatch();
@@ -76,7 +79,6 @@ const DebtorsDocumentsTab = () => {
 
   const [uploadModel, setUploadModel] = useState(false);
   const [selectedCheckBoxData, setSelectedCheckBoxData] = useState([]);
-  const [pageLimit, setPageLimit] = useState('');
   const toggleUploadModel = useCallback(
     value => setUploadModel(value !== undefined ? value : e => !e),
 
@@ -106,23 +108,21 @@ const DebtorsDocumentsTab = () => {
     });
   }, []);
 
-  const debtorsDocumentsList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.documents?.documentsList ?? {}
-  );
-  const documentTypeList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.documents?.documentTypeList ?? []
-  );
-  const debtorsDocumentsColumnList = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.documents?.columnList ?? {}
-  );
+  const {
+    documentsList,
+    documentTypeList,
+    debtorsDocumentColumnNameList,
+    debtorsDocumentDefaultColumnNameList,
+  } = useSelector(({ debtorsManagement }) => debtorsManagement?.documents ?? {});
+
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
-    () => debtorsDocumentsList,
-    [debtorsDocumentsList]
+    () => documentsList ?? {},
+    [documentsList]
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => debtorsDocumentsColumnList || { defaultFields: [], customFields: [] },
-    [debtorsDocumentsColumnList]
+    () => debtorsDocumentColumnNameList || { defaultFields: [], customFields: [] },
+    [debtorsDocumentColumnNameList]
   );
 
   const documentTypeOptions = useMemo(() => {
@@ -150,20 +150,47 @@ const DebtorsDocumentsTab = () => {
   );
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveDebtorDocumentsColumnListName({ isReset: true }));
-    getDebtorsDocumentsList();
-    toggleCustomField();
-  }, [dispatch, toggleCustomField]);
-
-  const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveDebtorDocumentsColumnListName({ debtorsDocumentsColumnList }));
-      getDebtorsDocumentsList(page, pageLimit);
+      await dispatch(saveDebtorDocumentsColumnListName({ isReset: true }));
+      dispatch(getDebtorsColumnNameList());
+      getDebtorsDocumentsList();
+      toggleCustomField();
     } catch (e) {
       /**/
     }
+  }, [dispatch, toggleCustomField, getDebtorsDocumentsList]);
+
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      const isBothEqual = _.isEqual(
+        debtorsDocumentColumnNameList,
+        debtorsDocumentDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveDebtorDocumentsColumnListName({ debtorsDocumentColumnNameList }));
+        getDebtorsDocumentsList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    getDebtorsDocumentsList,
+    debtorsDocumentDefaultColumnNameList,
+    toggleCustomField,
+    debtorsDocumentColumnNameList,
+  ]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
+      data: debtorsDocumentDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [dispatch, toggleCustomField, debtorsDocumentsColumnList]);
+  }, [debtorsDocumentDefaultColumnNameList, toggleCustomField]);
 
   const buttons = useMemo(
     () => [
@@ -172,10 +199,10 @@ const DebtorsDocumentsTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   const onClickUploadDocument = useCallback(async () => {
@@ -333,7 +360,7 @@ const DebtorsDocumentsTab = () => {
   );
 
   const onClickDownloadButton = useCallback(async () => {
-    if (debtorsDocumentsList?.docs?.length !== 0) {
+    if (documentsList?.docs?.length !== 0) {
       if (selectedCheckBoxData?.length !== 0) {
         const docsToDownload = selectedCheckBoxData?.map(e => e.id);
         const res = await downloadDocuments(docsToDownload);
@@ -344,7 +371,7 @@ const DebtorsDocumentsTab = () => {
     } else {
       errorNotification('You have no documents to download');
     }
-  }, [debtorsDocumentsList, selectedCheckBoxData]);
+  }, [documentsList, selectedCheckBoxData]);
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
@@ -374,7 +401,6 @@ const DebtorsDocumentsTab = () => {
   );
   const onSelectLimit = useCallback(
     newLimit => {
-      setPageLimit(newLimit);
       getDebtorsDocumentsList({ page: 1, limit: newLimit });
     },
     [getDebtorsDocumentsList]

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
+import _ from 'lodash';
 import IconButton from '../../../../common/IconButton/IconButton';
 import BigInput from '../../../../common/BigInput/BigInput';
 import Table, { TABLE_ROW_ACTIONS } from '../../../../common/Table/Table';
@@ -62,15 +63,15 @@ const DebtorsStakeHolderTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const debtorStakeHolderListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderList ?? {}
-  );
-  const debtorStakeHolderColumnNameListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.columnList ?? {}
-  );
+  const {
+    stakeHolderList,
+    debtorsStakeHolderColumnNameList,
+    debtorsStakeHolderDefaultColumnNameList,
+  } = useSelector(({ debtorsManagement }) => debtorsManagement?.stakeHolder ?? {});
+
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
-    () => debtorStakeHolderListData,
-    [debtorStakeHolderListData]
+    () => stakeHolderList ?? {},
+    [stakeHolderList]
   );
 
   const getDebtorStakeHolderList = useCallback(
@@ -116,26 +117,49 @@ const DebtorsStakeHolderTab = () => {
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
       await dispatch(saveDebtorStakeHolderColumnNameList({ isReset: true }));
+      dispatch(getDebtorStakeHolderColumnNameList());
       getDebtorStakeHolderList();
+      toggleCustomField();
     } catch (e) {
       /**/
     }
-    toggleCustomField();
-  }, [toggleCustomField, dispatch]);
+  }, [toggleCustomField, getDebtorStakeHolderList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveDebtorStakeHolderColumnNameList({ debtorStakeHolderColumnNameListData }));
-      getDebtorStakeHolderList();
+      const isBothEqual = _.isEqual(
+        debtorsStakeHolderColumnNameList,
+        debtorsStakeHolderDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveDebtorStakeHolderColumnNameList({ debtorsStakeHolderColumnNameList }));
+        getDebtorStakeHolderList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
+  }, [
+    toggleCustomField,
+    debtorsStakeHolderColumnNameList,
+    debtorsStakeHolderDefaultColumnNameList,
+    getDebtorStakeHolderList,
+  ]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION,
+      data: debtorsStakeHolderDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [toggleCustomField, dispatch, debtorStakeHolderColumnNameListData]);
+  }, [debtorsStakeHolderDefaultColumnNameList, toggleCustomField]);
 
   const { defaultFields, customFields } = useMemo(
-    () => debtorStakeHolderColumnNameListData ?? { defaultFields: [], customFields: [] },
-    [debtorStakeHolderColumnNameListData]
+    () => debtorsStakeHolderColumnNameList ?? { defaultFields: [], customFields: [] },
+    [debtorsStakeHolderColumnNameList]
   );
 
   const buttons = useMemo(
@@ -145,10 +169,10 @@ const DebtorsStakeHolderTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   // Add stakeHolder
@@ -508,8 +532,7 @@ const DebtorsStakeHolderTab = () => {
     async e => {
       try {
         if (e.key === 'Enter') {
-          const params = { clientId: '607682840af39d62ef2c4941' };
-          const response = await getStakeHolderCompanyDataFromABNorACN(e.target.value, params);
+          const response = await getStakeHolderCompanyDataFromABNorACN(e.target.value);
           if (response) {
             updateStakeHolderState(response);
           }
@@ -528,9 +551,8 @@ const DebtorsStakeHolderTab = () => {
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
-        setSearchedEntityNameValue(e.target.value.toString());
-        const params = { clientId: '607682840af39d62ef2c4941' };
-        dispatch(searchStakeHolderCompanyEntityName(e.target.value, params));
+        setSearchedEntityNameValue(e?.target?.value?.toString());
+        dispatch(searchStakeHolderCompanyEntityName(e?.target?.value?.toString()));
       }
     },
     [stakeHolder, dispatchDrawerState, setSearchedEntityNameValue]
@@ -538,8 +560,7 @@ const DebtorsStakeHolderTab = () => {
 
   const retryEntityNameRequest = useCallback(() => {
     if (searchedEntityNameValue?.trim()?.length > 0) {
-      const params = { clientId: '607682840af39d62ef2c4941' };
-      dispatch(searchStakeHolderCompanyEntityName(searchedEntityNameValue, params));
+      dispatch(searchStakeHolderCompanyEntityName(searchedEntityNameValue));
     }
   }, [searchedEntityNameValue]);
 
@@ -557,8 +578,7 @@ const DebtorsStakeHolderTab = () => {
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: '607682840af39d62ef2c4941' };
-        const response = await getStakeHolderCompanyDataFromABNorACN(data.abn, params);
+        const response = await getStakeHolderCompanyDataFromABNorACN(data.abn);
         if (response) {
           updateStakeHolderState(response);
           handleToggleDropdown();
@@ -884,7 +904,7 @@ const DebtorsStakeHolderTab = () => {
               />
             </>
           ) : (
-            <div className="no-data-available">No data available</div>
+            <div className="no-record-found">No record found</div>
           ))()
       ) : (
         <Loader />

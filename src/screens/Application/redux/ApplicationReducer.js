@@ -347,7 +347,11 @@ export const application = (state = initialApplicationList, action) => {
       const partners = [...state?.editApplication?.partners];
       partners[action?.index] = {
         ...partners[action?.index],
-        ...action?.data,
+        tradingName: action?.data?.tradingName ?? '',
+        entityType: action?.data?.entityType ?? '',
+        entityName: action?.data?.entityName ?? '',
+        abn: action?.data?.abn ?? '',
+        acn: action?.data?.acn ?? '',
       };
 
       return {
@@ -362,7 +366,8 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.PERSON.CHANGE_APPLICATION_PERSON_TYPE: {
       const partners = [...state?.editApplication?.partners];
       partners[action?.index] = {
-        ...action?.data,
+        ...partners[action?.index],
+        type: action?.personType,
       };
 
       return {
@@ -421,14 +426,31 @@ export const application = (state = initialApplicationList, action) => {
     }
 
     // View Application
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_REQUEST_ACTION:
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          isLoading: true,
+        },
+      };
 
-    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_ACTION:
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_SUCCESS_ACTION:
       return {
         ...state,
         viewApplication: {
           ...state?.viewApplication,
           isLoading: false,
           applicationDetail: action?.data,
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_FAIL_ACTION:
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          isLoading: false,
         },
       };
 

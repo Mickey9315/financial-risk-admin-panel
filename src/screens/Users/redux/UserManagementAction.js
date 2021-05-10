@@ -34,7 +34,7 @@ export const getAllUserPrivileges = () => {
     try {
       const response = await UserManagementApiService.getAllUserPrivileges();
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_REDUX_CONSTANTS.PRIVILEGES.GET_ALL_USER_PRIVILEGES,
           data: response?.data?.data?.moduleAccess ?? [],

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import BigInput from '../../../common/BigInput/BigInput';
 import Table from '../../../common/Table/Table';
@@ -14,19 +15,19 @@ import {
 } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
+import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
 
 const ClientCreditLimitTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const clientCreditLimitData = useSelector(
-    ({ clientManagement }) => clientManagement?.creditLimit?.creditLimitList ?? {}
-  );
-  const clientCreditLimitColumnNameList = useSelector(
-    ({ clientManagement }) => clientManagement?.creditLimit?.columnList ?? {}
-  );
-  const { total, headers, pages, docs, page, limit } = useMemo(() => clientCreditLimitData, [
-    clientCreditLimitData,
+  const {
+    creditLimitList,
+    clientCreditLimitColumnNameList,
+    clientCreditLimitDefaultColumnNameList,
+  } = useSelector(({ clientManagement }) => clientManagement?.creditLimit ?? {});
+  const { total, headers, pages, docs, page, limit } = useMemo(() => creditLimitList ?? {}, [
+    creditLimitList,
   ]);
 
   const getCreditLimitList = useCallback(
@@ -61,33 +62,49 @@ const ClientCreditLimitTab = () => {
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
 
-  const onChangeSelectedColumn = useCallback(
-    (type, name, value) => {
-      const data = { type, name, value };
-      dispatch(changeClientCreditLimitColumnListStatus(data));
-    },
-    [dispatch]
-  );
+  const onChangeSelectedColumn = useCallback((type, name, value) => {
+    const data = { type, name, value };
+    dispatch(changeClientCreditLimitColumnListStatus(data));
+  }, []);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
-    try {
-      await dispatch(saveClientCreditLimitColumnNameList({ isReset: true }));
-      getCreditLimitList();
-    } catch (e) {
-      /**/
-    }
+    await dispatch(saveClientCreditLimitColumnNameList({ isReset: true }));
+    dispatch(getCreditLimitColumnsNameList());
+    getCreditLimitList();
     toggleCustomField();
-  }, [toggleCustomField, dispatch]);
+  }, [toggleCustomField, getCreditLimitList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveClientCreditLimitColumnNameList({ clientCreditLimitColumnNameList }));
-      getCreditLimitList();
+      const isBothEqual = _.isEqual(
+        clientCreditLimitColumnNameList,
+        clientCreditLimitDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveClientCreditLimitColumnNameList({ clientCreditLimitColumnNameList }));
+        getCreditLimitList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
+  }, [
+    toggleCustomField,
+    getCreditLimitList,
+    clientCreditLimitColumnNameList,
+    clientCreditLimitDefaultColumnNameList,
+  ]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_COLUMN_LIST_ACTION,
+      data: clientCreditLimitDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [toggleCustomField, dispatch, clientCreditLimitColumnNameList]);
+  }, [clientCreditLimitDefaultColumnNameList, toggleCustomField]);
 
   const { defaultFields, customFields } = useMemo(
     () => clientCreditLimitColumnNameList ?? { defaultFields: [], customFields: [] },
@@ -101,10 +118,10 @@ const ClientCreditLimitTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   useEffect(() => {

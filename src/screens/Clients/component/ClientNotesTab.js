@@ -77,7 +77,7 @@ const ClientNotesTab = () => {
     ({ clientManagement }) => clientManagement?.notes?.notesList ?? {}
   );
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList, [
+  const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList ?? {}, [
     clientNotesList,
   ]);
 

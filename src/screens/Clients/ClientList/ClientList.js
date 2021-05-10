@@ -75,7 +75,7 @@ const ClientList = () => {
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
-  const { docs, isLoading, headers } = useMemo(() => clientListWithPageData, [
+  const { docs, isLoading, headers } = useMemo(() => clientListWithPageData ?? {}, [
     clientListWithPageData,
   ]);
   const [crmIds, setCrmIds] = useState([]);
@@ -110,7 +110,9 @@ const ClientList = () => {
     }));
   }, [filterList]);
 
-  const { total, pages, page, limit } = clientListWithPageData;
+  const { total, pages, page, limit } = useMemo(() => clientListWithPageData ?? {}, [
+    clientListWithPageData,
+  ]);
 
   const handleStartDateChange = useCallback(
     date => {
@@ -309,22 +311,25 @@ const ClientList = () => {
   );
 
   const [addFromCRM, setAddFromCRM] = React.useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
 
   const onClickAddFromCRM = useCallback(
     value => setAddFromCRM(value !== undefined ? value : e => !e),
     [setAddFromCRM]
   );
 
-  const addDataFromCrm = () => {
+  const addDataFromCrm = useCallback(() => {
     const data = {
       crmIds,
     };
     if (data.crmIds.length > 0) {
+      setIsModalLoading(true);
       ClientApiService.updateClientListFromCrm(data)
         .then(res => {
           if (res.data.status === 'SUCCESS') {
-            successNotification('Client data successfully synced');
+            successNotification(res?.data?.message || 'Client data successfully synced');
             setAddFromCRM(false);
+            setIsModalLoading(false);
             dispatch(getClientList());
             dispatch({
               type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
@@ -338,7 +343,7 @@ const ClientList = () => {
     } else {
       errorNotification('Select at least one client to Add');
     }
-  };
+  }, [crmIds, setIsModalLoading, setAddFromCRM]);
 
   const toggleAddFromCRM = useCallback(() => {
     setCrmIds([]);
@@ -362,20 +367,17 @@ const ClientList = () => {
     },
     [history]
   );
-  const [searchClients, setSearchClients] = React.useState(false);
-  const [isModalLoading, setIsModalLoading] = useState(false);
 
   const searchInputRef = useRef();
 
-  const checkIfEnterKeyPressed = async () => {
+  const checkIfEnterKeyPressed = useCallback(async () => {
     const searchKeyword = searchInputRef?.current?.value;
     if (searchKeyword?.trim()?.toString()?.length !== 0) {
       setIsModalLoading(true);
       await dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
       setIsModalLoading(false);
-      setSearchClients(true);
     }
-  };
+  }, [searchInputRef, setIsModalLoading]);
 
   const handleRiskAanalystFilterChange = useCallback(
     event => {
@@ -594,7 +596,7 @@ const ClientList = () => {
             type="text"
             onChange={_.debounce(checkIfEnterKeyPressed, 1000)}
           />
-          {searchClients && !isModalLoading ? (
+          {!isModalLoading ? (
             <>
               {/* eslint-disable-next-line no-nested-ternary */}
               {syncListFromCrm.length > 0 ? (

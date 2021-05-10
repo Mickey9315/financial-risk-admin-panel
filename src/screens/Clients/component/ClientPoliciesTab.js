@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 import Pagination from '../../../common/Pagination/Pagination';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Table from '../../../common/Table/Table';
@@ -16,6 +17,7 @@ import {
 } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
+import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
 
 const ClientPoliciesTab = () => {
   const dispatch = useDispatch();
@@ -24,59 +26,14 @@ const ClientPoliciesTab = () => {
 
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const [pageLimit, setPageLimit] = useState('');
-  const clientPoliciesList = useSelector(
-    ({ clientManagement }) => clientManagement?.policies?.policiesList ?? {}
-  );
+  const {
+    policiesList,
+    clientPoliciesColumnNameList,
+    clientPoliciesDefaultColumnNameList,
+  } = useSelector(({ clientManagement }) => clientManagement?.policies ?? {});
 
-  const clientPoliciesColumnList = useSelector(
-    ({ clientManagement }) => clientManagement?.policies?.columnList ?? {}
-  );
-
-  const { defaultFields, customFields } = useMemo(
-    () => clientPoliciesColumnList ?? { defaultFields: [], customFields: [] },
-    [clientPoliciesColumnList]
-  );
-
-  const onClickSaveColumnSelection = useCallback(async () => {
-    try {
-      await dispatch(saveClientPoliciesColumnListName({ clientPoliciesColumnList }));
-      dispatch(getClientPoliciesListData(id, { limit: pageLimit }));
-    } catch (e) {
-      /**/
-    }
-    toggleCustomField();
-  }, [dispatch, toggleCustomField, clientPoliciesColumnList]);
-
-  const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveClientPoliciesColumnListName({ isReset: true }));
-    dispatch(getClientPoliciesListData(id, { limit: pageLimit }));
-    toggleCustomField();
-  }, [dispatch, toggleCustomField]);
-
-  const onChangeSelectedColumn = useCallback(
-    (type, name, value) => {
-      const data = { type, name, value };
-      dispatch(changeClientPoliciesColumnListStatus(data));
-    },
-    [dispatch]
-  );
-
-  const buttons = useMemo(
-    () => [
-      {
-        title: 'Reset Defaults',
-        buttonType: 'outlined-primary',
-        onClick: onClickResetDefaultColumnSelection,
-      },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
-    ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
-  );
-
-  const { total, pages, page, limit, docs, headers } = useMemo(() => clientPoliciesList, [
-    clientPoliciesList,
+  const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
+    policiesList,
   ]);
 
   const getClientPoliciesList = useCallback(
@@ -93,6 +50,72 @@ const ClientPoliciesTab = () => {
     },
     [page, limit]
   );
+
+  const { defaultFields, customFields } = useMemo(
+    () => clientPoliciesColumnNameList ?? { defaultFields: [], customFields: [] },
+    [clientPoliciesColumnNameList]
+  );
+
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      const isBothEqual = _.isEqual(
+        clientPoliciesColumnNameList,
+        clientPoliciesDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveClientPoliciesColumnListName({ clientPoliciesColumnNameList }));
+        getClientPoliciesList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    getClientPoliciesList,
+    toggleCustomField,
+    clientPoliciesColumnNameList,
+    clientPoliciesDefaultColumnNameList,
+  ]);
+
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveClientPoliciesColumnListName({ isReset: true }));
+    dispatch(getClientPoliciesColumnNamesList());
+    getClientPoliciesList();
+    toggleCustomField();
+  }, [dispatch, toggleCustomField, getClientPoliciesList]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_LIST_USER_ACTION,
+      data: clientPoliciesDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [clientPoliciesDefaultColumnNameList, toggleCustomField]);
+
+  const onChangeSelectedColumn = useCallback(
+    (type, name, value) => {
+      const data = { type, name, value };
+      dispatch(changeClientPoliciesColumnListStatus(data));
+    },
+    [dispatch]
+  );
+
+  const buttons = useMemo(
+    () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: onClickResetDefaultColumnSelection,
+      },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+    ],
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+  );
+
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;
     if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
@@ -108,7 +131,6 @@ const ClientPoliciesTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      setPageLimit(newLimit);
       getClientPoliciesList({ page: 1, limit: newLimit });
     },
     [getClientPoliciesList]

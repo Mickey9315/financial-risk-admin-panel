@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
+import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -22,7 +23,7 @@ import {
   getDebtorTaskDetail,
   getDebtorTaskListData,
   getEntityDropDownData,
-  saveDebtorTaskColumnNameListSelection,
+  saveDebtorTaskColumnNameListName,
   saveTaskData,
   updateAddTaskStateFields,
   updateTaskData,
@@ -47,25 +48,21 @@ const DebtorTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const debtorTaskListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.task?.taskList ?? {}
-  );
-  const debtorTaskColumnNameListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.task?.columnList ?? {}
-  );
-  const { entityType, ...addTaskState }= useSelector(
+  const {
+    taskList,
+    debtorsTaskColumnNameList,
+    debtorsTaskDefaultColumnNameList,
+    dropDownData,
+  } = useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
+
+  const { entityType, ...addTaskState } = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
   );
-  const taskDropDownData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.task?.dropDownData ?? {}
-  );
-
-  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(
-    () => debtorTaskListData,
-    [debtorTaskListData]
-  );
-  const { assigneeList, entityList, defaultEntityList } = useMemo(() => taskDropDownData, [
-    taskDropDownData,
+  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(() => taskList ?? {}, [
+    taskList,
+  ]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
+    dropDownData,
   ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
@@ -104,36 +101,51 @@ const DebtorTaskTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => debtorTaskColumnNameListData || { defaultFields: [], customFields: [] },
-    [debtorTaskColumnNameListData]
+    () => debtorsTaskColumnNameList || { defaultFields: [], customFields: [] },
+    [debtorsTaskColumnNameList]
   );
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveDebtorTaskColumnNameListSelection({ isReset: true }));
+      await dispatch(saveDebtorTaskColumnNameListName({ isReset: true }));
+      dispatch(getDebtorTaskColumnList());
       getDebtorTaskList();
+      toggleCustomField();
     } catch (e) {
       /**/
     }
-    toggleCustomField();
-  }, [getDebtorTaskList, toggleCustomField]);
+  }, [toggleCustomField, getDebtorTaskList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveDebtorTaskColumnNameListSelection({ debtorTaskColumnNameListData }));
-      getDebtorTaskList();
+      const isBothEqual = _.isEqual(debtorsTaskColumnNameList, debtorsTaskDefaultColumnNameList);
+      if (!isBothEqual) {
+        await dispatch(saveDebtorTaskColumnNameListName({ debtorsTaskColumnNameList }));
+        getDebtorTaskList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
-    toggleCustomField();
-  }, [getDebtorTaskList, toggleCustomField, debtorTaskColumnNameListData]);
+  }, [
+    getDebtorTaskList,
+    toggleCustomField,
+    debtorsTaskColumnNameList,
+    debtorsTaskDefaultColumnNameList,
+  ]);
 
-  const onCloseCustomFieldModal = useCallback(() => {
-    dispatch(getDebtorTaskColumnList());
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.TASK.DEBTOR_TASK_COLUMN_NAME_LIST_ACTION,
+      data: debtorsTaskDefaultColumnNameList,
+    });
     toggleCustomField();
-  }, [toggleCustomField]);
+  }, [debtorsTaskDefaultColumnNameList, toggleCustomField]);
 
   const buttonsCustomFields = useMemo(
     () => [
@@ -142,10 +154,10 @@ const DebtorTaskTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: onCloseCustomFieldModal },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, onCloseCustomFieldModal, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   const onChangeSelectedColumn = useCallback((type, name, value) => {

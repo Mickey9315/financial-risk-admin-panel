@@ -50,6 +50,7 @@ const initialSettingState = {
   },
   userNameList: [],
   auditLogColumnNameList: {},
+  auditLogDefaultColumnNameList: {},
 };
 
 export const settingReducer = (state = initialSettingState, action) => {
@@ -180,6 +181,13 @@ export const settingReducer = (state = initialSettingState, action) => {
       return {
         ...state,
         auditLogColumnNameList: {
+          ...action?.data,
+        },
+      };
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        auditLogDefaultColumnNameList: {
           ...action?.data,
         },
       };

@@ -21,11 +21,13 @@ const initialInsurer = {
   syncInsurerWithCRM: [],
   contact: {
     contactList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
-    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    insurerContactColumnNameList: {},
+    insurerContactDefaultColumnNameList: {},
   },
   policies: {
     policiesList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
-    columnList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+    insurerPoliciesColumnNameList: {},
+    insurerPoliciesDefaultColumnNameList: {},
     policySyncList: [],
   },
   matrix: {
@@ -99,22 +101,30 @@ export const insurer = (state = initialInsurer, action) => {
         ...state,
         contact: {
           ...state?.contact,
-          columnList: action?.data,
+          insurerContactColumnNameList: action?.data,
+        },
+      };
+    case INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        contact: {
+          ...state?.contact,
+          insurerContactDefaultColumnNameList: action?.data,
         },
       };
     case INSURER_VIEW_REDUX_CONSTANT.CONTACT.UPDATE_INSURER_CONTACT_COLUMN_LIST_ACTION: {
-      const columnList = {
-        ...state?.contact?.columnList,
+      const insurerContactColumnNameList = {
+        ...state?.contact?.insurerContactColumnNameList,
       };
       const { type, name, value } = action?.data;
-      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
+      insurerContactColumnNameList[`${type}`] = insurerContactColumnNameList?.[`${type}`]?.map(e =>
         e?.name === name ? { ...e, isChecked: value } : e
       );
       return {
         ...state,
         contact: {
           ...state?.contact,
-          columnList,
+          insurerContactColumnNameList,
         },
       };
     }
@@ -131,30 +141,39 @@ export const insurer = (state = initialInsurer, action) => {
         ...state,
         policies: {
           ...state?.policies,
-          columnList: action?.data,
+          insurerPoliciesColumnNameList: action?.data,
+        },
+      };
+    case INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_DEFAULT_COLUMN_LIST_ACTION:
+      return {
+        ...state,
+        policies: {
+          ...state?.policies,
+          insurerPoliciesDefaultColumnNameList: action?.data,
         },
       };
 
     case INSURER_VIEW_REDUX_CONSTANT.POLICIES.UPDATE_POLICIES_CONTACT_COLUMN_LIST_ACTION: {
-      const columnList = {
-        ...state?.policies?.columnList,
+      const insurerPoliciesColumnNameList = {
+        ...state?.policies?.insurerPoliciesColumnNameList,
       };
 
       const { type, name, value } = action?.data;
 
-      columnList[`${type}`] = columnList?.[`${type}`]?.map(e =>
-        e?.name === name
-          ? {
-              ...e,
-              isChecked: value,
-            }
-          : e
+      insurerPoliciesColumnNameList[`${type}`] = insurerPoliciesColumnNameList?.[`${type}`]?.map(
+        e =>
+          e?.name === name
+            ? {
+                ...e,
+                isChecked: value,
+              }
+            : e
       );
       return {
         ...state,
         policies: {
           ...state?.policies,
-          columnList,
+          insurerPoliciesColumnNameList,
         },
       };
     }

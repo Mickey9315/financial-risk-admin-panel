@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 import Pagination from '../../../common/Pagination/Pagination';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Table from '../../../common/Table/Table';
@@ -16,6 +17,7 @@ import {
 } from '../redux/ClientAction';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
+import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
 
 const ClientContactsTab = () => {
   const dispatch = useDispatch();
@@ -23,58 +25,14 @@ const ClientContactsTab = () => {
   const searchInputRef = useRef();
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const clientContactList = useSelector(
-    ({ clientManagement }) => clientManagement?.contact?.contactList ?? {}
-  );
+  const {
+    contactList,
+    clientContactColumnNameList,
+    clientContactDefaultColumnNameList,
+  } = useSelector(({ clientManagement }) => clientManagement?.contact ?? {});
 
-  const clientContactColumnList = useSelector(
-    ({ clientManagement }) => clientManagement?.contact?.columnList ?? {}
-  );
-
-  const { defaultFields, customFields } = useMemo(
-    () => clientContactColumnList ?? { defaultFields: [], customFields: [] },
-    [clientContactColumnList]
-  );
-  const [pageLimit, setPageLimit] = useState('');
-  const onClickSaveColumnSelection = useCallback(async () => {
-    try {
-      await dispatch(saveClientContactColumnListName({ clientContactColumnList }));
-      dispatch(getClientContactListData(id, { limit: pageLimit }));
-    } catch (e) {
-      /**/
-    }
-    toggleCustomField();
-  }, [dispatch, toggleCustomField, clientContactColumnList]);
-
-  const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveClientContactColumnListName({ isReset: true }));
-    dispatch(getClientContactListData(id, { limit: pageLimit }));
-    toggleCustomField();
-  }, [dispatch, toggleCustomField]);
-
-  const onChangeSelectedColumn = useCallback(
-    (type, name, value) => {
-      const data = { type, name, value };
-      dispatch(changeClientContactColumnListStatus(data));
-    },
-    [dispatch]
-  );
-
-  const buttons = useMemo(
-    () => [
-      {
-        title: 'Reset Defaults',
-        buttonType: 'outlined-primary',
-        onClick: onClickResetDefaultColumnSelection,
-      },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
-    ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
-  );
-
-  const { total, pages, page, limit, docs, headers } = useMemo(() => clientContactList, [
-    clientContactList,
+  const { total, pages, page, limit, docs, headers } = useMemo(() => contactList ?? {}, [
+    contactList,
   ]);
 
   const getClientContactsList = useCallback(
@@ -91,6 +49,71 @@ const ClientContactsTab = () => {
     },
     [page, limit]
   );
+
+  const { defaultFields, customFields } = useMemo(
+    () => clientContactColumnNameList ?? { defaultFields: [], customFields: [] },
+    [clientContactColumnNameList]
+  );
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      const isBothEqual = _.isEqual(
+        clientContactColumnNameList,
+        clientContactDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveClientContactColumnListName({ clientContactColumnNameList }));
+        getClientContactsList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    getClientContactsList,
+    toggleCustomField,
+    clientContactColumnNameList,
+    clientContactDefaultColumnNameList,
+  ]);
+
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveClientContactColumnListName({ isReset: true }));
+    dispatch(getClientContactColumnNamesList());
+    getClientContactsList();
+    toggleCustomField();
+  }, [dispatch, toggleCustomField, getClientContactsList]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_COLUMN_LIST_USER_ACTION,
+      data: clientContactDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [clientContactDefaultColumnNameList, toggleCustomField]);
+
+  const onChangeSelectedColumn = useCallback(
+    (type, name, value) => {
+      const data = { type, name, value };
+      dispatch(changeClientContactColumnListStatus(data));
+    },
+    [dispatch]
+  );
+
+  const buttons = useMemo(
+    () => [
+      {
+        title: 'Reset Defaults',
+        buttonType: 'outlined-primary',
+        onClick: onClickResetDefaultColumnSelection,
+      },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
+      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+    ],
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+  );
+
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef.current.value;
     if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
@@ -106,7 +129,6 @@ const ClientContactsTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      setPageLimit(newLimit);
       getClientContactsList({ page: 1, limit: newLimit });
     },
     [getClientContactsList]

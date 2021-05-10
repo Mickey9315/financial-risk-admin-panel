@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import BigInput from '../../../common/BigInput/BigInput';
 import Table from '../../../common/Table/Table';
@@ -12,22 +13,23 @@ import {
   changeDebtorApplicationColumnListStatus,
   getDebtorApplicationColumnNameList,
   getDebtorApplicationListData,
+  getDebtorsColumnNameList,
   saveDebtorApplicationColumnNameList,
 } from '../redux/DebtorsAction';
+import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 
 const DebtorsApplicationTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const debtorApplicationListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.application?.applicationList ?? {}
-  );
-  const debtorApplicationColumnNameListData = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.application?.columnList ?? {}
-  );
+  const {
+    applicationList,
+    debtorsApplicationColumnNameList,
+    debtorsApplicationDefaultColumnNameList,
+  } = useSelector(({ debtorsManagement }) => debtorsManagement?.application ?? {});
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
-    () => debtorApplicationListData,
-    [debtorApplicationListData]
+    () => applicationList ?? {},
+    [applicationList]
   );
 
   const getDebtorApplicationList = useCallback(
@@ -73,6 +75,7 @@ const DebtorsApplicationTab = () => {
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
       await dispatch(saveDebtorApplicationColumnNameList({ isReset: true }));
+      dispatch(getDebtorsColumnNameList());
       getDebtorApplicationList();
     } catch (e) {
       /**/
@@ -82,18 +85,35 @@ const DebtorsApplicationTab = () => {
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveDebtorApplicationColumnNameList({ debtorApplicationColumnNameListData }));
-      getDebtorApplicationList();
+      const isBothEqual = _.isEqual(
+        debtorsApplicationColumnNameList,
+        debtorsApplicationDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveDebtorApplicationColumnNameList({ debtorsApplicationColumnNameList }));
+        getDebtorApplicationList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
     } catch (e) {
       /**/
     }
-    toggleCustomField();
-  }, [toggleCustomField, dispatch, debtorApplicationColumnNameListData]);
+  }, [toggleCustomField, dispatch, debtorsApplicationColumnNameList]);
 
   const { defaultFields, customFields } = useMemo(
-    () => debtorApplicationColumnNameListData || { defaultFields: [], customFields: [] },
-    [debtorApplicationColumnNameListData]
+    () => debtorsApplicationColumnNameList || { defaultFields: [], customFields: [] },
+    [debtorsApplicationColumnNameList]
   );
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_COLUMN_LIST_ACTION,
+      data: debtorsApplicationDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [debtorsApplicationDefaultColumnNameList, toggleCustomField]);
 
   const buttons = useMemo(
     () => [
@@ -102,10 +122,10 @@ const DebtorsApplicationTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   useEffect(() => {

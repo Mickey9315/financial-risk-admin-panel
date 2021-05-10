@@ -158,9 +158,9 @@ export const INSURER_URLS = {
 
 export const DEBTORS_URLS = {
   DEBTORS_LIST_URL: `${BASE_URL}debtor/`,
-  DEBTORS_COLUMNS_NAME_LIST_URL: `${BASE_URL}debtor/column-name`,
+  DEBTORS_COLUMNS_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
   SELECTED_DEBTOR_DETAILS_URL: `${BASE_URL}debtor/`,
-  DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list`,
+  DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list/`,
 
   NOTES: {
     NOTES_LIST: `${BASE_URL}note/`,
@@ -200,10 +200,10 @@ export const DEBTORS_URLS = {
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
     STAKE_HOLDER_CRUD: {
       GET_STAKE_HOLDER_DETAIL: `${BASE_URL}debtor/stakeholder-details/`,
-      DROP_DOWN_DATA_URL: `${BASE_URL}application/entity-list/`,
+      DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list/`,
       SEARCH_APPLICATION_BY_DEBTOR_DETAILS: `${BASE_URL}debtor/details/`,
-      SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
-      SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}application/search-entity-list/`,
+      SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}debtor/search-entity/`,
+      SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}debtor/search-entity-list/`,
       SAVE_NEW_STAKE_HOLDER: `${BASE_URL}debtor/stakeholder/`,
       DELETE_STAKE_HOLDER: `${BASE_URL}debtor/stakeholder/`,
     },

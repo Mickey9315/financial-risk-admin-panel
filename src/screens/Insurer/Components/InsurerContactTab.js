@@ -1,14 +1,15 @@
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import {
   changeInsurerContactColumnListStatus,
-  getInsurerContactColumnNamesList,
+  getInsurerContactColumnNameList,
   getInsurerContactListData,
-  saveInsurerContactColumnListName,
+  saveInsurerContactColumnNameList,
   syncInsurerContactListData,
 } from '../redux/InsurerAction';
 import Table from '../../../common/Table/Table';
@@ -16,6 +17,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import { errorNotification } from '../../../common/Toast';
+import { INSURER_VIEW_REDUX_CONSTANT } from '../redux/InsurerReduxConstants';
 
 const InsurerContactTab = () => {
   const dispatch = useDispatch();
@@ -23,10 +25,13 @@ const InsurerContactTab = () => {
   const searchInputRef = useRef();
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const insurerContactListData = useSelector(({ insurer }) => insurer?.contact?.contactList ?? {});
-  const insurerContactColumnList = useSelector(({ insurer }) => insurer?.contact?.columnList ?? {});
-  const { docs, headers, pages, page, total, limit } = useMemo(() => insurerContactListData, [
-    insurerContactListData,
+  const {
+    contactList,
+    insurerContactColumnNameList,
+    insurerContactDefaultColumnNameList,
+  } = useSelector(({ insurer }) => insurer?.contact ?? {});
+  const { docs, headers, pages, page, total, limit } = useMemo(() => contactList ?? {}, [
+    contactList,
   ]);
   const getInsurerContactsList = useCallback(
     (params = {}, cb) => {
@@ -58,25 +63,9 @@ const InsurerContactTab = () => {
   );
 
   const { defaultFields, customFields } = useMemo(
-    () => insurerContactColumnList ?? { defaultFields: [], customFields: [] },
-    [insurerContactColumnList]
+    () => insurerContactColumnNameList ?? { defaultFields: [], customFields: [] },
+    [insurerContactColumnNameList]
   );
-
-  const onClickResetDefaultColumnSelection = useCallback(async () => {
-    await dispatch(saveInsurerContactColumnListName({ isReset: true }));
-    getInsurerContactsList();
-    toggleCustomField();
-  }, [dispatch, toggleCustomField, getInsurerContactsList]);
-
-  const onClickSaveColumnSelection = useCallback(async () => {
-    try {
-      await dispatch(saveInsurerContactColumnListName({ insurerContactColumnList }));
-      getInsurerContactsList();
-    } catch (e) {
-      /***/
-    }
-    toggleCustomField();
-  }, [dispatch, toggleCustomField, insurerContactColumnList, getInsurerContactsList]);
 
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
@@ -85,18 +74,56 @@ const InsurerContactTab = () => {
     },
     [dispatch]
   );
+  const onClickSaveColumnSelection = useCallback(async () => {
+    try {
+      const isBothEqual = _.isEqual(
+        insurerContactColumnNameList,
+        insurerContactDefaultColumnNameList
+      );
+      if (!isBothEqual) {
+        await dispatch(saveInsurerContactColumnNameList({ insurerContactColumnNameList }));
+        getInsurerContactsList();
+      } else {
+        errorNotification('Please select different columns to apply changes.');
+        throw Error();
+      }
+      toggleCustomField();
+    } catch (e) {
+      /**/
+    }
+  }, [
+    toggleCustomField,
+    insurerContactColumnNameList,
+    getInsurerContactsList,
+    insurerContactDefaultColumnNameList,
+  ]);
 
-  const buttons = useMemo(
+  const onClickResetDefaultColumnSelection = useCallback(async () => {
+    await dispatch(saveInsurerContactColumnNameList({ isReset: true }));
+    dispatch(getInsurerContactColumnNameList());
+    getInsurerContactsList();
+    toggleCustomField();
+  }, [toggleCustomField, getInsurerContactsList]);
+
+  const onClickCloseColumnSelection = useCallback(() => {
+    dispatch({
+      type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_COLUMN_LIST_ACTION,
+      data: insurerContactDefaultColumnNameList,
+    });
+    toggleCustomField();
+  }, [insurerContactDefaultColumnNameList, toggleCustomField]);
+
+  const customFieldsModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleCustomField() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
     ],
-    [toggleCustomField, onClickResetDefaultColumnSelection, onClickSaveColumnSelection]
+    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
   );
 
   const checkIfEnterKeyPressed = useCallback(
@@ -121,7 +148,7 @@ const InsurerContactTab = () => {
 
   useEffect(() => {
     getInsurerContactsList();
-    dispatch(getInsurerContactColumnNamesList());
+    dispatch(getInsurerContactColumnNameList());
   }, []);
 
   return (
@@ -177,7 +204,7 @@ const InsurerContactTab = () => {
           defaultFields={defaultFields}
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={buttons}
+          buttons={customFieldsModalButtons}
           toggleCustomField={toggleCustomField}
         />
       )}

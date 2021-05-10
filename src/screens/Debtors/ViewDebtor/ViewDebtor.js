@@ -17,7 +17,6 @@ import { DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/DebtorsReduxCon
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
 import DebtorsCreditLimitTab from '../components/DebtorsCreditLimitTab';
-// import DebtorsStakeHolderTab from '../components/DebtorsStakeHolderTab';
 import DebtorsApplicationTab from '../components/DebtorsApplicationTab';
 import DebtorsOverduesTab from '../components/DebtorsOverduesTab';
 import DebtorsClaimsTab from '../components/DebtorsClaimsTab';
@@ -73,6 +72,24 @@ const ViewInsurer = () => {
   const dropdownData = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
+
+  const FINAL_COMPONENTS = useMemo(() => {
+    let filteredComponents = [...VIEW_DEBTOR_TABS];
+    if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
+      delete filteredComponents[1];
+      filteredComponents = filteredComponents.filter(e => e);
+    }
+    return filteredComponents;
+  }, [debtorData]);
+
+  const FINAL_TABS = useMemo(() => {
+    let filteredTabs = [...tabs];
+    if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
+      delete filteredTabs[1];
+      filteredTabs = filteredTabs.filter(e => e);
+    }
+    return filteredTabs;
+  }, [debtorData]);
 
   const INPUTS = useMemo(
     () => [
@@ -384,8 +401,13 @@ const ViewInsurer = () => {
       ) : (
         <Loader />
       )}
-      <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
-      <div className="common-white-container">{VIEW_DEBTOR_TABS[activeTabIndex]}</div>
+      <Tab
+        tabs={FINAL_TABS}
+        tabActive={tabActive}
+        activeTabIndex={activeTabIndex}
+        className="mt-15"
+      />
+      <div className="common-white-container">{FINAL_COMPONENTS[activeTabIndex]}</div>
     </>
   );
 };

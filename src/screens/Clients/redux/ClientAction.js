@@ -241,6 +241,10 @@ export const getClientContactColumnNamesList = () => {
           type: CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_COLUMN_LIST_USER_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_COLUMN_DEFAULT_LIST_USER_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -258,7 +262,7 @@ export const changeClientContactColumnListStatus = data => {
 };
 
 export const saveClientContactColumnListName = ({
-  clientContactColumnList = {},
+  clientContactColumnNameList = {},
   isReset = false,
 }) => {
   return async dispatch => {
@@ -269,28 +273,28 @@ export const saveClientContactColumnListName = ({
       };
 
       if (!isReset) {
-        const defaultColumns = clientContactColumnList.defaultFields
+        const defaultColumns = clientContactColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = clientContactColumnList.customFields
+        const customFields = clientContactColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
           isReset: false,
           columns: [...defaultColumns, ...customFields],
         };
-      }
-
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await ClientContactApiService.updateClientContactColumnListName(data);
-
-        dispatch(getClientContactColumnNamesList());
-
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully.');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await ClientContactApiService.updateClientContactColumnListName(data);
+      if (response && response.data && response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully.');
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_COLUMN_DEFAULT_LIST_USER_ACTION,
+          data: clientContactColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -333,6 +337,10 @@ export const getClientPoliciesColumnNamesList = () => {
           type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_LIST_USER_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_DEFAULT_LIST_USER_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -350,7 +358,7 @@ export const changeClientPoliciesColumnListStatus = data => {
 };
 
 export const saveClientPoliciesColumnListName = ({
-  clientPoliciesColumnList = {},
+  clientPoliciesColumnNameList = {},
   isReset = false,
 }) => {
   return async dispatch => {
@@ -362,10 +370,10 @@ export const saveClientPoliciesColumnListName = ({
       };
 
       if (!isReset) {
-        const defaultColumns = clientPoliciesColumnList.defaultFields
+        const defaultColumns = clientPoliciesColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = clientPoliciesColumnList.customFields
+        const customFields = clientPoliciesColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
@@ -373,18 +381,19 @@ export const saveClientPoliciesColumnListName = ({
           isReset: false,
           columns: [...defaultColumns, ...customFields],
         };
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
+        }
       }
 
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await ClientPoliciesApiService.updateClientPoliciesColumnListName(data);
-
-        dispatch(getClientPoliciesColumnNamesList());
-
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully.');
-        }
+      const response = await ClientPoliciesApiService.updateClientPoliciesColumnListName(data);
+      if (response && response.data && response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully.');
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_DEFAULT_LIST_USER_ACTION,
+          data: clientPoliciesColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -533,6 +542,11 @@ export const getClientDocumentsColumnNamesList = () => {
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type:
+            CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -550,7 +564,7 @@ export const changeClientDocumentsColumnListStatus = data => {
 };
 
 export const saveClientDocumentsColumnListName = ({
-  clientDocumentsColumnList = {},
+  clientDocumentsColumnNameList = {},
   isReset = false,
 }) => {
   return async dispatch => {
@@ -562,10 +576,10 @@ export const saveClientDocumentsColumnListName = ({
       };
 
       if (!isReset) {
-        const defaultColumns = clientDocumentsColumnList.defaultFields
+        const defaultColumns = clientDocumentsColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = clientDocumentsColumnList.customFields
+        const customFields = clientDocumentsColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
@@ -573,18 +587,20 @@ export const saveClientDocumentsColumnListName = ({
           isReset: false,
           columns: [...defaultColumns, ...customFields],
         };
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
+        }
       }
 
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await ClientDocumentsApiService.updateClientDocumentColumnListName(data);
-
-        dispatch(getClientDocumentsColumnNamesList());
-
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully.');
-        }
+      const response = await ClientDocumentsApiService.updateClientDocumentColumnListName(data);
+      if (response && response.data && response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully.');
+        dispatch({
+          type:
+            CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          data: clientDocumentsColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -688,6 +704,10 @@ export const getCreditLimitColumnsNameList = () => {
           type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -725,17 +745,20 @@ export const saveClientCreditLimitColumnNameList = ({
           isReset: false,
           columns: [...defaultFields, ...customFields],
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await ClientCreditLimitApiService.updateClientCreditLimitColumnNameList(
-          data
-        );
-        dispatch(getCreditLimitColumnsNameList());
-        if (response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await ClientCreditLimitApiService.updateClientCreditLimitColumnNameList(
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully');
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_DEFAULT_COLUMN_LIST_ACTION,
+          data: clientCreditLimitColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -774,6 +797,10 @@ export const getClientApplicationColumnNameList = () => {
           type: CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -791,7 +818,7 @@ export const changeClientApplicationColumnListStatus = data => {
 };
 
 export const saveClientApplicationColumnNameList = ({
-  clientApplicationColumnNameListData = {},
+  clientApplicationColumnNameList = {},
   isReset = false,
 }) => {
   return async dispatch => {
@@ -802,10 +829,10 @@ export const saveClientApplicationColumnNameList = ({
         columnFor: 'client-application',
       };
       if (!isReset) {
-        const defaultFields = clientApplicationColumnNameListData.defaultFields
+        const defaultFields = clientApplicationColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = clientApplicationColumnNameListData.customFields
+        const customFields = clientApplicationColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
@@ -813,17 +840,20 @@ export const saveClientApplicationColumnNameList = ({
           isReset: false,
           columns: [...defaultFields, ...customFields],
         };
-      }
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await ClientApplicationApiService.updateClientApplicationColumnNameList(
-          data
-        );
-        dispatch(getClientApplicationColumnNameList());
-        if (response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully');
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
         }
+      }
+      const response = await ClientApplicationApiService.updateClientApplicationColumnNameList(
+        data
+      );
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully');
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_DEFAULT_COLUMN_LIST_ACTION,
+          data: clientApplicationColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -864,6 +894,10 @@ export const getClientTaskColumnList = () => {
           type: CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_COLUMN_NAME_LIST_ACTION,
           data: response.data.data,
         });
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
+          data: response.data.data,
+        });
       }
     } catch (e) {
       displayErrors(e);
@@ -880,8 +914,8 @@ export const changeClientTaskColumnNameListStatus = data => {
   };
 };
 
-export const saveClientTaskColumnNameListSelection = ({
-  clientTaskColumnNameListData = {},
+export const saveClientTaskColumnNameListName = ({
+  clientTaskColumnNameList = {},
   isReset = false,
 }) => {
   return async dispatch => {
@@ -893,10 +927,10 @@ export const saveClientTaskColumnNameListSelection = ({
       };
 
       if (!isReset) {
-        const defaultColumns = clientTaskColumnNameListData.defaultFields
+        const defaultColumns = clientTaskColumnNameList.defaultFields
           .filter(e => e.isChecked)
           .map(e => e.name);
-        const customFields = clientTaskColumnNameListData.customFields
+        const customFields = clientTaskColumnNameList.customFields
           .filter(e => e.isChecked)
           .map(e => e.name);
         data = {
@@ -904,18 +938,19 @@ export const saveClientTaskColumnNameListSelection = ({
           isReset: false,
           columns: [...defaultColumns, ...customFields],
         };
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          throw Error();
+        }
       }
 
-      if (!isReset && data.columns.length < 1) {
-        errorNotification('Please select at least one column to continue.');
-      } else {
-        const response = await ClientTaskApiService.updateClientTaskColumnNameList(data);
-
-        dispatch(getClientTaskColumnList());
-
-        if (response && response.data && response.data.status === 'SUCCESS') {
-          successNotification(response?.data?.message || 'Columns updated successfully');
-        }
+      const response = await ClientTaskApiService.updateClientTaskColumnNameList(data);
+      if (response && response.data && response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Columns updated successfully');
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.CLIENT_TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
+          data: clientTaskColumnNameList,
+        });
       }
     } catch (e) {
       displayErrors(e);

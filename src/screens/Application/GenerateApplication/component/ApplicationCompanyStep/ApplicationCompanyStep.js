@@ -76,6 +76,8 @@ const ApplicationCompanyStep = () => {
   const [wipeOutDetails, setWipeOutDetails] = useState(false);
   const [selectedDebtorId, setSelectedDebtorId] = useState('');
 
+  const [wipeOuts, setWipeOuts] = useState('');
+
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState('');
 
   const toggleConfirmationModal = useCallback(
@@ -93,26 +95,6 @@ const ApplicationCompanyStep = () => {
   useEffect(() => {
     setSelectedDebtorId(companyState?.debtorId?.value);
   }, [companyState?.debtorId]);
-
-  const changeEntityType = useMemo(
-    () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
-      {
-        title: 'Delete',
-        buttonType: 'danger',
-        onClick: async () => {
-          try {
-            await dispatch(wipeOutPersonsAsEntityChange(selectedDebtorId, []));
-            setWipeOutDetails(true);
-            toggleConfirmationModal();
-          } catch (e) {
-            /**/
-          }
-        },
-      },
-    ],
-    [toggleConfirmationModal, wipeOutDetails, selectedDebtorId]
-  );
 
   const INPUTS = useMemo(
     () => [
@@ -270,8 +252,8 @@ const ApplicationCompanyStep = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSingleCompanyState(data?.name, data);
       if (data?.name === 'country') {
+        updateSingleCompanyState(data?.name, data);
         let showDropDownInput = true;
 
         switch (data?.value) {
@@ -291,7 +273,9 @@ const ApplicationCompanyStep = () => {
         setIsAusOrNew(showDropDownInput);
       } else if (data?.name === 'entityType' && partners?.length !== 0) {
         setShowConfirmModal(true);
+        setWipeOuts(data);
       } else {
+        updateSingleCompanyState(data?.name, data);
         dispatch(updateEditApplicationField('company', data?.name, data));
       }
     },
@@ -302,6 +286,8 @@ const ApplicationCompanyStep = () => {
       newZealandStates,
       australianStates,
       setIsAusOrNew,
+      wipeOutDetails,
+      setWipeOuts,
     ]
   );
 
@@ -501,6 +487,27 @@ const ApplicationCompanyStep = () => {
       handleTextInputChange,
       isAusOrNew,
     ]
+  );
+
+  const changeEntityType = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Delete',
+        buttonType: 'danger',
+        onClick: async () => {
+          try {
+            await dispatch(wipeOutPersonsAsEntityChange(selectedDebtorId, []));
+            updateSingleCompanyState(wipeOuts?.name, wipeOuts);
+            setWipeOutDetails(true);
+            toggleConfirmationModal();
+          } catch (e) {
+            /**/
+          }
+        },
+      },
+    ],
+    [toggleConfirmationModal, wipeOutDetails, selectedDebtorId, updateSingleCompanyState, wipeOuts]
   );
 
   useEffect(() => {

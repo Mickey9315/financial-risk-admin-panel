@@ -6,6 +6,8 @@ import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDet
 import { addPersonDetail } from '../../../redux/ApplicationAction';
 
 const ApplicationPersonStep = () => {
+  const dispatch = useDispatch();
+
   const personState = useSelector(
     ({ application }) => application?.editApplication?.partners ?? []
   );
@@ -13,8 +15,7 @@ const ApplicationPersonStep = () => {
     ({ application }) => application?.editApplication?.company?.entityType ?? []
   );
 
-  const entityTypeFromCompany = entityType?.value;
-  const dispatch = useDispatch();
+  const entityTypeFromCompany = useMemo(() => entityType?.value ?? '', [entityType]);
 
   useEffect(() => {
     if (personState?.length < 1 && ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany)) {
@@ -22,55 +23,29 @@ const ApplicationPersonStep = () => {
     }
   }, []);
 
-  const hasRadio = useMemo(() => ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany), [
-    entityTypeFromCompany,
-  ]);
-
   const getAccordionAccordingEntityType = useCallback(
     (person, index) => {
       let itemHeader = 'Director Details';
+
       switch (entityTypeFromCompany) {
-        // case 'PROPRIETARY_LIMITED':
-        //   return getAccordionItem();
-        // case 'LIMITED_COMPANY':
-        //   return getAccordionItem();
         case 'PARTNERSHIP':
           itemHeader = 'Partner Details';
-          break;
-        case 'SOLE_TRADER':
-          itemHeader = 'Sole Trader Details';
           break;
         case 'TRUST':
           itemHeader = 'Trustee Details';
           break;
-        case 'BUSINESS':
-          itemHeader = 'Proprietor Details';
-          break;
-        // case 'CORPORATION':
-        //   return getAccordionItem();
-        // case 'GOVERNMENT':
-        //   return getAccordionItem();
-        // case 'INCORPORATED':
-        //   return getAccordionItem();
-        // case 'NO_LIABILITY':
-        //   return getAccordionItem();
-        // case 'PROPRIETARY':
-        //   return getAccordionItem();
-        // case 'REGISTERED_BODY':
-        //   return getAccordionItem();
         default:
           break;
       }
       return (
         <PersonIndividualDetail
           itemHeader={itemHeader}
-          hasRadio={hasRadio}
           index={index}
           entityTypeFromCompany={entityTypeFromCompany}
         />
       );
     },
-    [hasRadio]
+    [entityTypeFromCompany]
   );
 
   return (

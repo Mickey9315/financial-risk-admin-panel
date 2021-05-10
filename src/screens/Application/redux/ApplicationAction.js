@@ -367,6 +367,7 @@ export const wipeOutPersonsAsEntityChange = (debtor, data) => {
       }
     } catch (e) {
       displayErrors(e);
+      throw Error();
     }
   };
 };
@@ -382,47 +383,13 @@ export const updatePersonData = (index, name, value) => {
     });
   };
 };
-// dispatch this when radio button change from indi to company
-export const changePersonType = (index, type) => {
-  const companyData = {
-    type: 'company',
-    abn: '',
-    acn: '',
-    entityType: '',
-    entityName: '',
-    tradingName: '',
-    errors: {},
-  };
 
-  const individualData = {
-    type: 'individual',
-    title: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    dateOfBirth: '',
-    driverLicenceNumber: '',
-    phoneNumber: '',
-    mobileNumber: '',
-    email: '',
-    allowToCheckCreditHistory: false,
-    property: '',
-    unitNumber: '',
-    streetNumber: '',
-    streetName: '',
-    streetType: '',
-    suburb: '',
-    state: '',
-    country: '',
-    postCode: '',
-    errors: {},
-  };
-  const data = type === 'individual' ? individualData : companyData;
+export const changePersonType = (index, personType) => {
   return dispatch => {
     dispatch({
       type: APPLICATION_REDUX_CONSTANTS.PERSON.CHANGE_APPLICATION_PERSON_TYPE,
       index,
-      data,
+      personType,
     });
   };
 };
@@ -449,7 +416,12 @@ export const saveApplicationStepDataToBackend = data => {
         successNotification(response?.data?.message || 'Application step saved successfully');
       }
     } catch (e) {
-      displayErrors(e);
+      if (e?.response?.data?.messageCode === 'APPLICATION_ALREADY_EXISTS') {
+        errorNotification(e?.response?.data?.message ?? 'Application already exist');
+        throw Error();
+      } else {
+        displayErrors(e);
+      }
     }
   };
 };
@@ -532,14 +504,20 @@ export const deleteApplicationDocumentAction = async (appDocId, cb) => {
 export const getApplicationDetailById = applicationId => {
   return async dispatch => {
     try {
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_REQUEST_ACTION,
+      });
       const response = await ApplicationApiServices.getApplicationDetail(applicationId);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_ACTION,
+          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_SUCCESS_ACTION,
           data: response.data.data,
         });
       }
     } catch (e) {
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_FAIL_ACTION,
+      });
       displayErrors(e);
     }
   };
@@ -548,8 +526,8 @@ export const getApplicationDetailById = applicationId => {
 export const resetApplicationDetail = () => {
   return dispatch => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_ACTION,
-      data: [],
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_SUCCESS_ACTION,
+      data: {},
     });
   };
 };
