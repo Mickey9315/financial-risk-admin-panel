@@ -106,76 +106,6 @@ const ApplicationCompanyStep = () => {
         data: clients,
       },
       {
-        label: 'Country*',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'country',
-        data: countryList,
-      },
-      {
-        label: 'Debtor',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'debtorId',
-        data: debtors,
-      },
-      {
-        label: 'Trading Name',
-        placeholder: 'Trading Name',
-        type: 'text',
-        name: 'tradingName',
-        data: [],
-      },
-      {
-        label: 'ABN*',
-        placeholder: '01234',
-        type: 'search',
-        name: 'abn',
-        data: [],
-      },
-      {
-        label: 'ACN',
-        placeholder: '01234',
-        type: 'search',
-        name: 'acn',
-        data: [],
-      },
-      {
-        label: 'Entity Name*',
-        placeholder: 'Enter Entity',
-        type: 'entityName',
-        name: 'entityName',
-        data: [],
-      },
-      {
-        label: 'Phone Number',
-        placeholder: '1234567890',
-        type: 'text',
-        name: 'phoneNumber',
-        data: [],
-      },
-      {
-        label: 'Entity Type*',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'entityType',
-        data: entityType,
-      },
-      {
-        label: 'Outstanding Amount',
-        placeholder: '$0000',
-        type: 'text',
-        name: 'outstandingAmount',
-        data: [],
-      },
-      {
-        label: 'Property',
-        placeholder: 'Property',
-        type: 'text',
-        name: 'property',
-        data: [],
-      },
-      {
         label: 'Unit Number',
         placeholder: 'Unit Number',
         type: 'text',
@@ -183,10 +113,26 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
+        label: 'Debtor',
+        placeholder: 'Select',
+        type: 'select',
+        isOr: true,
+        name: 'debtorId',
+        data: debtors,
+      },
+      {
         label: 'Street Number*',
         placeholder: 'Street Number',
         type: 'text',
         name: 'streetNumber',
+        data: [],
+      },
+      {
+        label: 'ABN*',
+        placeholder: '01234',
+        type: 'search',
+        isOr: true,
+        name: 'abn',
         data: [],
       },
       {
@@ -197,6 +143,14 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'entityName',
+        isOr: true,
+        name: 'entityName',
+        data: [],
+      },
+      {
         label: 'Street Type',
         placeholder: 'Select',
         type: 'select',
@@ -204,10 +158,38 @@ const ApplicationCompanyStep = () => {
         data: streetType,
       },
       {
+        label: 'ACN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
+        data: [],
+      },
+      {
         label: 'Suburb',
         placeholder: 'Suburb',
         type: 'text',
         name: 'suburb',
+        data: [],
+      },
+      {
+        label: 'Entity Type*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'entityType',
+        data: entityType,
+      },
+      {
+        label: 'Country*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'country',
+        data: countryList,
+      },
+      {
+        label: 'Trading Name',
+        placeholder: 'Trading Name',
+        type: 'text',
+        name: 'tradingName',
         data: [],
       },
       {
@@ -218,10 +200,31 @@ const ApplicationCompanyStep = () => {
         data: stateValue,
       },
       {
+        label: 'Property',
+        placeholder: 'Property',
+        type: 'text',
+        name: 'property',
+        data: [],
+      },
+      {
         label: 'Postcode*',
         placeholder: 'Postcode',
         type: 'text',
         name: 'postCode',
+        data: [],
+      },
+      {
+        label: 'Phone Number',
+        placeholder: '1234567890',
+        type: 'text',
+        name: 'phoneNumber',
+        data: [],
+      },
+      {
+        label: 'Outstanding Amount',
+        placeholder: '$0000',
+        type: 'text',
+        name: 'outstandingAmount',
         data: [],
       },
     ],
@@ -427,6 +430,8 @@ const ApplicationCompanyStep = () => {
             <Input
               type="text"
               name={input.name}
+              suffix={input.name === 'abn' ? <span className="material-icons">search</span> : ''}
+              borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               value={companyState?.[input.name]}
               onChange={handleTextInputChange}
@@ -439,7 +444,9 @@ const ApplicationCompanyStep = () => {
             <Input
               type="text"
               name={input.name}
+              suffix={<span className="material-icons">search</span>}
               placeholder={input.placeholder}
+              borderClass={input?.isOr && 'is-or-container'}
               onKeyDown={handleEntityNameSearch}
               value={companyState?.entityName?.label}
               onChange={handleEntityChange}
@@ -453,7 +460,7 @@ const ApplicationCompanyStep = () => {
           }
           component = (
             <ReactSelect
-              className="react-select-container"
+              className={`${input?.isOr && 'is-or-container'} 'react-select-container'`}
               classNamePrefix="react-select"
               placeholder={input.placeholder}
               name={input.name}

@@ -35,3 +35,17 @@
   font: $subtitle $font-regular;
   color: $primary-color;
 }
+.is-or-container{
+  position: relative;
+}
+.is-or-container::after{
+  content: 'or';
+  position: absolute;
+  bottom: -16px;
+  left: calc(50% - 8px);
+  font: $subtitle $font-medium;
+  color: $primary-color;
+}
+.material-icons{
+  color: $placeholder-color;
+}
