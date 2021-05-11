@@ -429,7 +429,7 @@ const ApplicationCompanyStep = () => {
             <Input
               type="text"
               name={input.name}
-              suffix={input.name === 'abn' ? <span className="material-icons">search</span> : ''}
+              suffix={<span className="material-icons">search</span>}
               borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               value={companyState?.[input.name]}

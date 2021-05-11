@@ -16,11 +16,11 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
           validated = false;
           errors.abn = 'Please enter ABN number before continue';
         }
-        if (item?.abn && item?.abn?.trim()?.length < 11) {
+        if (item?.abn && item?.abn?.trim()?.length !== 11 && Number.isNaN(item?.abn)) {
           validated = false;
           errors.abn = 'Please enter valid ABN number before continue';
         }
-        if (item?.acn && item?.acn?.trim()?.length < 9) {
+        if (item?.acn && item?.acn?.trim()?.length !== 9 && Number.isNaN(item?.acn)) {
           validated = false;
           errors.acn = 'Please enter valid ACN number before continue';
         }

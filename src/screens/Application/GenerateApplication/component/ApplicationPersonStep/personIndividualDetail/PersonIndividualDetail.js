@@ -153,11 +153,29 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         type: 'blank',
       },
       {
+        label: 'ACN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
+        value: acn ?? '',
+        isOr: true,
+        data: [],
+      },
+      {
         label: 'Trading Name',
         placeholder: 'Trading Name',
         type: 'text',
         name: 'tradingName',
         value: tradingName ?? '',
+        data: [],
+      },
+      {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'entityName',
+        name: 'entityName',
+        isOr: true,
+        value: entityName?.label ?? entityName ?? '',
         data: [],
       },
       {
@@ -167,22 +185,6 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         name: 'entityType',
         value: entityType ?? [],
         data: companyEntityType ?? [],
-      },
-      {
-        label: 'Entity Name*',
-        placeholder: 'Enter Entity',
-        type: 'entityName',
-        name: 'entityName',
-        value: entityName?.label ?? entityName ?? '',
-        data: [],
-      },
-      {
-        label: 'ACN',
-        placeholder: '01234',
-        type: 'search',
-        name: 'acn',
-        value: acn ?? '',
-        data: [],
       },
       {
         label: 'ABN*',
@@ -573,6 +575,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
             <Input
               type="text"
               name={input.name}
+              suffix={<span className="material-icons">search</span>}
+              borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               value={input?.value}
               onKeyDown={handleSearchTextInputKeyDown}
@@ -610,6 +614,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
             <Input
               type="text"
               name={input.name}
+              suffix={<span className="material-icons">search</span>}
+              borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
               value={input?.value}

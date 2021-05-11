@@ -10,11 +10,11 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.abn = 'Please enter ABN number before continue';
   }
-  if (data?.abn && data?.abn?.trim()?.length < 11) {
+  if (data?.abn && data?.abn?.trim()?.length !== 11 && Number.isNaN(data?.abn)) {
     validated = false;
     errors.abn = 'Please enter valid ABN number before continue';
   }
-  if (data?.acn && data?.acn?.trim()?.length < 9) {
+  if (data?.acn && data?.acn?.trim()?.length !== 9 && Number.isNaN(data?.acn)) {
     validated = false;
     errors.acn = 'Please enter valid ACN number before continue';
   }
