@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import './ApplicationDocumentStep.scss';
 import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../../../../common/Input/Input';

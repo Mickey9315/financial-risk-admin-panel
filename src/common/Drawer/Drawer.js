@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import './Drawer.scss';
 import PropTypes from 'prop-types';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import './MyWorkNotifications.scss';
 import logo from '../../../assets/images/logo.svg';
 
 const MyWorkNotifications = () => {

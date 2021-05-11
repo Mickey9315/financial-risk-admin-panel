@@ -3,7 +3,6 @@ import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import IconButton from '../../IconButton/IconButton';
 import dummy from '../../../assets/images/dummy.svg';
-import './FileUpload.scss';
 
 const FileUpload = props => {
   const { isProfile, handleChange, profilePictureUrl, fileName, className } = props;

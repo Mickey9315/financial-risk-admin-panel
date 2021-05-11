@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './RadioButton.scss';
 
 const RadioButton = props => {
   const { id, label, value, name, className, ...restProps } = props;

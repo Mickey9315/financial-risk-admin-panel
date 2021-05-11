@@ -1,0 +1,248 @@
+@import "../../screens/Application/ViewApplication/ViewApplication";
+// TODO handle this css
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  padding-right: 2rem;
+}
+
+.screen-title {
+  font: $h3 $font-medium;
+  color: $primary-color;
+}
+
+.header-right-part {
+  display: flex;
+}
+
+.user-dp {
+  position: relative;
+  height: 3.5rem;
+  width: 3.5rem;
+  margin-left: 0.625rem;
+  object-position: center;
+  object-fit: cover;
+  border-radius: 0.625rem;
+  cursor: pointer;
+}
+
+.user-dp:hover {
+  opacity: .8;
+}
+
+.user-settings {
+  position: absolute;
+  top: 75px;
+  right: 30px;
+  width: 245px;
+  padding: 10px 0;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px #82828229;
+  overflow: hidden;
+  z-index: 9;
+
+  > div {
+    display: flex;
+    align-items: center;
+    padding: 8px 25px;
+    font: $h6 $font-medium;
+    color: $primary-color;
+    cursor: pointer;
+
+    span {
+      margin-right: 10px;
+      font-size: 24px;
+      color: $secondary-color;
+    }
+  }
+}
+
+.user-settings > div:hover {
+  background-color: $background-color;
+}
+
+.search {
+  width: 13.125rem;
+}
+
+.header-search-container {
+  position: relative;
+  width: 320px;
+  background-color: white;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+
+  >div:first-child {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 56px;
+    padding: 5px 10px;
+  }
+
+  input {
+    flex: 1;
+    font: $subtitle $font-medium;
+    color: $primary-color;
+    border: none;
+    outline: none;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  span {
+    margin-left: 10px;
+    font-size: $h4;
+    color: $primary-color;
+    cursor: pointer;
+  }
+}
+
+.header-search-container-focused {
+  border-color: transparent;
+  box-shadow: 0px 0px 10px #3D3D3D29;
+}
+
+.got-search-results {
+  font: $subtitle $font-medium;
+  border-radius: 10px 10px 0 0;
+}
+
+.header-search-results {
+  position: absolute;
+  bottom: -56px;
+  left: -1px;
+  right: -1px;
+  padding: 10px;
+  min-height: 70px;
+  background-color: white;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0px 10px 10px -1px #3D3D3D29;
+  -webkit-box-shadow: 0px 10px 10px -1px #3D3D3D29;
+  -moz-box-shadow: 0px 10px 13px -1px #3D3D3D29;
+}
+
+.notification {
+  position: relative;
+  width: 3.5rem;
+  margin-left: 10px;
+  color: $primary-color;
+  height: auto;
+}
+
+.notification.true::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  height: 14px;
+  width: 14px;
+  background-color: $secondary-color;
+  border-radius: 50%;
+  border: 1px solid white;
+}
+
+.change-password-dialog {
+  width: 40vw;
+  max-width: 450px;
+  min-width: 400px;
+}
+
+.change-password-grid {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  width: 100%;
+
+  span {
+    white-space: nowrap;
+  }
+
+  input {
+    min-width: 200px;
+  }
+}
+
+.edit-profile-dialog{
+  width: 470px;
+}
+.edit-profile-grid{
+  display: grid;
+  align-items: center;
+  grid-template-columns: 40% 60%;
+  gap: 20px 10px;
+  width: 100%;
+  .form-title{
+    font-size: 14px;
+    min-width: 100px;
+    font-family: 'GoogleSans-Regular', serif;
+    font-weight: normal;
+  }
+  .user-dp{
+    height: 40px;
+    width: 40px;
+    margin-left: 0;
+  }
+  .user-fields{
+    color: $secondary-color;
+    max-width: 200px;
+    font-size: 14px;
+    word-break: break-all;
+    overflow: hidden;
+    line-height: 32px;
+  }
+  .input-container{
+    max-width: 230px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: normal;
+    border-radius: 5px;
+  }
+}
+
+.notification-set {
+  padding: 20px;
+}
+
+.notification-set-title {
+  margin-bottom: 10px;
+  font: $h6 $font-medium;
+  color: $primary-color;
+}
+
+.common-notification-content-box {
+  @extend .common-accordion-item-content-box;
+  margin-bottom: 8px;
+}
+
+.notification-drawer-title {
+  display: flex;
+  align-items: center;
+  span {
+    font-size: $h4;
+    margin-right: 5px;
+  }
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-header-name, .tab-content-header {
+  font: $h5 $font-medium;
+  color: $primary-color;
+}
+
+.page-header-button-container {
+  display: flex;
+}

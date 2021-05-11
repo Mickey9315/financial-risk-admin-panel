@@ -1,0 +1,61 @@
+html, body{
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: $font-regular;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body * {
+  box-sizing: border-box;
+}
+
+code {
+  font-family: $font-regular;
+}
+
+input::placeholder, textarea::placeholder, .react-select__placeholder {
+  font: $subtitle $font-regular;
+  color: $placeholder-color!important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active  {
+  font: $subtitle $font-regular;
+  transition: background-color 5000s;
+  -webkit-text-fill-color: $field-color !important;
+}
+
+/* scrollbar starts here */
+* {
+  scrollbar-color: $primary-color white;
+  scrollbar-width: thin;
+}
+/* width */
+::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $primary-color;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: $primary-variant-color;
+}
+/* scrollbar ends here */

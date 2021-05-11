@@ -1,0 +1,10 @@
+.common-detail-field.view-insurer-website {
+  grid-column: 1/span 2;
+
+  a {
+    padding: 2px 8px;
+    text-decoration: none;
+    font: $subtitle $font-medium;
+    color: $field-color;
+  }
+}

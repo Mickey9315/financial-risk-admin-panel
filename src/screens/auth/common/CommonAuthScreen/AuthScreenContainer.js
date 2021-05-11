@@ -1,5 +1,4 @@
 import React from 'react';
-import './CommonAuthScreen.scss';
 import PropTypes from 'prop-types';
 import logo from '../../../../assets/images/logo.svg';
 import grayLogo from '../../../../assets/images/logo-light.svg';

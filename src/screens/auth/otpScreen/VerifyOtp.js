@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './VerifyOtp.scss';
 import { useHistory } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';

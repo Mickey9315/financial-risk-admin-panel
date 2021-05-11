@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './Settings.scss';
 import Tab from '../../common/Tab/Tab';
 import SettingsDocumentTypeTab from './Components/SettingsDocumentTypeTab';
 import SettingsApiIntegrationTab from './Components/SettingsApiIntegrationTab';

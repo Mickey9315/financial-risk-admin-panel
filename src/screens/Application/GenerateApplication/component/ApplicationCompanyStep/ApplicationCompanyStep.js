@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import Input from '../../../../../common/Input/Input';
-import './ApplicationCompanyStep.scss';
 import {
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,

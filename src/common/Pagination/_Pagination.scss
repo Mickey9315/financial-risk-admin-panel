@@ -1,0 +1,83 @@
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1.25rem;
+  background-color: #ffffff;
+  .react-dropdown-select {
+    height: 35px!important;
+  }
+}
+
+.pagination-container  .react-select__control {
+  height: 35px!important;
+  width: 80px!important;
+  .react-select__value-container {
+    font: $title $font-medium!important;
+  }
+
+}
+
+.records-per-page-container {
+  display: flex;
+  align-items: center;
+  font: $title $font-medium;
+  color: $placeholder-color;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  font: $title $font-medium;
+  color: $placeholder-color;
+}
+
+.page-handler {
+  display: flex;
+  height: 2.188rem;
+  border: 0.063rem solid $border-color;
+}
+
+.first-page, .last-page, .prev-page, .next-page, .page-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-width: 2.188rem;
+  padding: 0 10px;
+  cursor: pointer;
+
+  span {
+    font-size: $title;
+    color: $field-color;
+  }
+
+  :disabled {
+    cursor: not-allowed!important;
+  }
+}
+
+.pagination-button-disabled {
+  cursor: not-allowed;
+}
+
+.first-page span, .last-page span {
+  font-size: $h5;
+}
+
+.first-page span {
+  transform: rotate(180deg);
+}
+
+.page-number {
+  font-size: $title;
+  color: $field-color;
+  border-left: 0.063rem solid $border-color;
+  border-right: 0.063rem solid $border-color;
+  cursor: text;
+}
+
+.pagination-button-disabled span{
+  color: $border-color;
+}

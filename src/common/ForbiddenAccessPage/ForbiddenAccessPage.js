@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import './ForbiddenAccessPage.scss';
 import { useHistory } from 'react-router-dom';
 import Button from '../Button/Button';
 

@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import './Modal.scss';
 import PropTypes from 'prop-types';
 import Button from '../Button/Button';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';

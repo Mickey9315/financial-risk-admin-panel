@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Switch.scss';
 
 const Switch = props => {
   const { id } = props;

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import './Pagination.scss';
 import PropTypes from 'prop-types';
 import ReactSelect from 'react-select';
 

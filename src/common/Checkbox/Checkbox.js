@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Checkbox.scss';
 
 const Checkbox = props => {
   const { title, className, ...restProps } = props;

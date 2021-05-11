@@ -1,0 +1,156 @@
+.matrix-container {
+  width: 100%;
+  flex-direction: column;
+}
+
+.matrix-title {
+  margin-bottom: 10px ;
+  font: $h5 $font-medium;
+  color: $primary-color;
+}
+
+.matrix-table {
+  display: grid;
+  grid-template-columns: 150px calc(45% - 70px) calc(30% - 60px) calc(25% - 50px);
+  gap: 10px;
+  margin-bottom: 20px;
+  border-spacing: 10px;
+  border-collapse: separate;
+  .header {
+    font: $subtitle $font-bold;
+    color: $field-color;
+  }
+}
+
+.matrix-level {
+  grid-column: 1;
+  align-items: center;
+  align-self: center;
+  font: $h4 $font-bold;
+  color: $primary-color;
+}
+
+.matrix-australia {
+  grid-column: 2;
+}
+
+.matrix-new-zealand {
+  grid-column: 3;
+}
+
+.matrix-guidelines {
+  grid-column: 4;
+}
+
+.matrix-detail-container {
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  background-color: $border-color;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.country-name, .report-guideline-title {
+  display: flex;
+  align-items: center;
+  font: $subtitle $font-bold;
+  color: $field-color;
+  margin-bottom: 10px;
+
+  span {
+    margin-right: 5px;
+    padding: 2px 7px;
+    font-size: $subtitle;
+    color: white;
+    background-color: $secondary-color;
+    border: 1px solid white;
+    border-radius: 5px;
+  }
+}
+
+.country-name div {
+  height: 20px;
+  margin-right: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+
+  img {
+    width: 30px;
+    height: 20px;
+  }
+}
+
+.matrix-detail-grid {
+  display: flex;
+  gap: 10px;
+
+  > div {
+    width: 50%;
+  }
+ }
+
+.matrix-detail-title {
+  margin-bottom: 5px;
+  font: $subtitle $font-bold;
+  color: $primary-color;
+}
+
+.matrix-detail-report-container, .au-illion-report-container, .au-equifax-report-container, .nz-illion-report-container, .au-report-container {
+  display: flex;
+  span {
+    min-height: 12px;
+    height: 12px;
+    margin: 3px 5px 0 0;
+    font-size: $subtitle;
+    font-weight: 500;
+    color: $secondary-color;
+    transform: rotate(90deg);
+  }
+}
+
+.illion-report, .au-report-container, .au-illion-report-container {
+  grid-column: 1;
+}
+
+.equifax-report, .au-equifax-report-container {
+  grid-column: 2;
+}
+
+.matrix-guidelines-title {
+  margin-bottom: 10px;
+  font: $h5 $font-medium;
+  color: $primary-color;
+}
+
+.matrix-guidelines-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  width: 100%;
+  padding-bottom: 15px;
+  gap: 10px;
+  > div {
+    display: flex;
+    min-height: 150px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: $border-color;
+    color: $field-color;
+
+    span {
+      min-height: 12px;
+      height: 12px;
+      margin: 3px 5px 0 0;
+      font-size: $subtitle;
+      font-weight: 500;
+      color: $secondary-color;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.matrix-horizontal-line {
+  margin:  10px -20px;
+  height: 2px;
+  background-color: $background-color;
+}

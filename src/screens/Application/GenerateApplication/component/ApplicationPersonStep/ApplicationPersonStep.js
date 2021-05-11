@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import './ApplicationPersonStep.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import Accordion from '../../../../../common/Accordion/Accordion';
 import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDetail';

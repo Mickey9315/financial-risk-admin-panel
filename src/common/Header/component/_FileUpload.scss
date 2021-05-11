@@ -1,0 +1,21 @@
+.user-dp-upload {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  .user-dp{
+    margin-left: 0;
+  }
+  .user-dp-upload{
+    background: none;
+    border: none;
+    color: $field-color;
+  }
+  p {
+    font-size: 12px;
+    color: $field-color;
+    word-break: break-all;
+    overflow: hidden;
+    cursor: pointer;
+  }
+}

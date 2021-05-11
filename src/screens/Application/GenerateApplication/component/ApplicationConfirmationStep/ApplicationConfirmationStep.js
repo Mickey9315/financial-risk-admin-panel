@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useCallback, useMemo } from 'react';
 import moment from 'moment';
-import './ApplicationConfirmationStep.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import Checkbox from '../../../../../common/Checkbox/Checkbox';
 import RadioButton from '../../../../../common/RadioButton/RadioButton';

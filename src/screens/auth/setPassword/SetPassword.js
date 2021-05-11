@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './SetPassword.scss';
 import { useHistory } from 'react-router-dom';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import Button from '../../../common/Button/Button';

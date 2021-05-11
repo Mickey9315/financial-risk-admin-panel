@@ -3,7 +3,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import Tab from '../../../common/Tab/Tab';
-import './DebtorsTabs.scss';
 import {
   changeDebtorData,
   getDebtorById,

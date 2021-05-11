@@ -1,0 +1,82 @@
+.stepper-container {
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+  background-color: $primary-color-1;
+  border-radius: 10px;
+
+  .arrow {
+    color: $placeholder-color;
+  }
+}
+
+.step-container {
+  display: flex;
+  align-items: center;
+}
+
+.step-container:first-child .arrow {
+  display: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  padding: 15px;
+  font: $title $font-medium;
+  color: $placeholder-color;
+  border-radius: 10px;
+  overflow: hidden;
+
+  span {
+    font-weight: 400;
+    margin-right: 10px;
+    color: $placeholder-color;
+  }
+}
+
+.selected-step {
+  color: white;
+  background-color: $primary-color;
+}
+
+.done-step {
+  .step {
+    background-color: $success-color;
+    color: white;
+  }
+  span {
+    color: white;
+  }
+  .arrow {
+    color: $primary-color;
+  }
+}
+
+.step-container.active-step {
+  .step {
+    color: white;
+    background-color: $primary-color;
+    span {
+      color: white;
+    }
+  }
+
+  .arrow {
+    color: $primary-color;
+  }
+}
+.step-content {
+  width: 100%;
+  margin-top: 10px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.stepper-buttons-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}

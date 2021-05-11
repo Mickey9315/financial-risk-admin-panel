@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Tab.scss';
 
 const Tab = props => {
   const { tabs, className, activeTabIndex, tabActive, ...restProps } = props;

@@ -1,0 +1,126 @@
+@import "color-palette";
+@import "typography";
+@import "common-class";
+@import "basic-styles";
+@import "modified-library";
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.f-14 {
+  font-size: $subtitle;
+}
+
+.font-primary {
+  color: $primary-color;
+}
+
+.font-secondary {
+  color: $secondary-color;
+}
+
+.font-placeholder {
+  color: $placeholder-color;
+}
+
+.font-field {
+  color: $field-color;
+}
+
+.font-danger {
+  color: $error-color;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.just-center {
+  justify-content: center!important;
+}
+
+.just-bet {
+  justify-content: space-between!important;
+}
+
+.just-end {
+  justify-content: flex-end!important;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.ml-5 {
+  margin-left: 0.313rem;
+}
+
+.ml-10 {
+  margin-left: 0.625rem;
+}
+
+.ml-15 {
+  margin-left: 0.938rem;
+}
+
+.mr-5 {
+  margin-right: 0.313rem;
+}
+
+.mr-10 {
+  margin-right: 0.625rem;
+}
+
+.mr-15 {
+  margin-right: 0.938rem;
+}
+
+.mt-5 {
+  margin-top: 5px;
+}
+
+.mt-10 {
+  margin-top: 0.625rem;
+}
+
+.mt-15 {
+  margin-top: 0.938rem;
+}
+.mt-20 {
+  margin-top: 1.25rem;
+}
+
+.mb-5 {
+  margin-bottom: .313rem;
+}
+
+.mb-10 {
+  margin-bottom: 0.625rem;
+}
+
+.mb-15 {
+  margin-bottom: .938rem;
+}
+
+.form-title {
+  width: 80px;
+  font: $subtitle $font-medium;
+  color: $primary-color;
+}
+
+.no-record-found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+  padding: 20px;
+  font: $subtitle $font-regular;
+  color: $primary-color;
+}
+

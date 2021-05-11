@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import './MyWorkTasks.scss';
 import propTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import Table from '../../../common/Table/Table';

@@ -1,5 +1,4 @@
 import React from 'react';
-import './NotesTab.scss';
 import BigInput from '../../BigInput/BigInput';
 import Table from '../../Table/Table';
 import Pagination from '../../Pagination/Pagination';

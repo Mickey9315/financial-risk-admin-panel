@@ -1,5 +1,4 @@
 import React from 'react';
-import './ContactsTab.scss';
 import PropTypes from 'prop-types';
 import IconButton from '../../IconButton/IconButton';
 import CustomFieldModal from '../../Modal/CustomFieldModal/CustomFieldModal';

@@ -1,0 +1,226 @@
+.view-application-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.view-application-details-left {
+  width: calc(70% - 5px);
+  font-size: $subtitle;
+  color: $field-color;
+  > div {
+    flex-direction: column;
+    padding: 30px;
+  }
+}
+
+.view-application-details-right {
+  width: calc(30% - 5px);
+  > div {
+    padding: 20px;
+  }
+}
+
+.view-application-accordion {
+  width: 100%;
+
+ .accordion-body-container {
+    background-color: white;
+  }
+
+  .accordion-item-header-container {
+    height: 32px;
+  }
+}
+
+.common-accordion-item-content-box {
+  margin-bottom: 10px;
+  padding: 5px 15px 10px 15px;
+  font-size: $text;
+  border: 1px solid $border-color;
+  border-radius: 5px;
+
+  .note-title, .alert-title, .document-title {
+    max-width: 70%;
+    font: $subtitle $font-medium;
+    color: $secondary-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu-name {
+    font: $subtitle!important;
+  }
+}
+
+.common-accordion-item-content-box:last-child {
+  margin-bottom: 0;
+}
+
+.date-owner-row, .date-time-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 40px 1fr;
+  gap: 0 5px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .title {
+    max-width: 40px;
+    color: $field-color;
+  }
+
+  .details {
+    color: $primary-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.report-row {
+  display: grid;
+  grid-template-columns: 40px 2fr;
+  gap: 3px 5px;
+
+  .title {
+    color: $field-color;
+  }
+
+  .details {
+    color: $primary-color;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.note-title-row, .alert-title-row, .document-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .material-icons-round {
+    width: 10px;
+    cursor: pointer;
+  }
+  .material-icons-round:hover {
+    color: $field-color;
+  }
+}
+
+.common-accordion-item-content-box.high-alert {
+  background-color: $error-color-light;
+  .alert-title {
+    color: $error-color;
+  }
+}
+
+.common-accordion-item-content-box.alert {
+  background-color: $secondary-color-light;
+  .alert-title {
+    color: $secondary-color;
+  }
+}
+
+.document-title-row .document-title {
+  color: $primary-color;
+}
+
+.view-application-status {
+  width: 180px;
+  margin-top: 5px;
+}
+
+.application-details-grid {
+  display: grid;
+  display: -ms-grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin: 20px 0;
+
+  .detail {
+    margin-top: 5px;
+    font-size: $text;
+    color: $primary-color;
+  }
+}
+
+.add-task-button, .add-note-button {
+  margin-bottom: 10px;
+  padding: 5px 15px;
+  font: $text $font-medium;
+  border-radius: 5px;
+}
+.add-document-button{
+  margin-bottom: 10px;
+  padding: 5px;
+  font: $text $font-medium;
+  border-radius: 5px;
+}
+
+.blockers-title {
+  margin-bottom: 7px;
+  font: $subtitle $font-medium;
+  color:$secondary-color;
+}
+
+.current-business-address-title {
+  margin: 10px 0;
+  font: $subtitle $font-medium;
+  color: $primary-color;
+}
+
+.current-business-address {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.guideline {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 10px 15px;
+  color: $field-color;
+  background-color: $border-color;
+  border-radius: 10px;
+}
+
+.guideline:last-child {
+  margin-bottom: 0;
+}
+
+.view-application-question, .view-application-answer {
+  margin: 10px 0;
+  color: $field-color;
+}
+
+.view-application-answer {
+  color: $primary-color;
+}
+
+.application-filter-modal .form-title {
+  width: 175px;
+}
+
+.accordion-body-container.application-active-accordion-scroll.active-accordion{
+  max-height: 60vh;
+  overflow: auto!important;
+}
+
+.view-application-accordion-description {
+  color: $primary-color;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.view-application-accordion-dropdown .menu-name {
+  font-size: $subtitle!important;
+}

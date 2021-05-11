@@ -1,5 +1,4 @@
 import React from 'react';
-import './IconButton.scss';
 import PropTypes from 'prop-types';
 
 const IconButton = props => {

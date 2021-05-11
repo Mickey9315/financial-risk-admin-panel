@@ -1,0 +1,64 @@
+.common-list-container {
+  position: relative;
+  width: 100%;
+  max-height: calc(100vh - 14.751rem);
+  margin-top: 0.625rem;
+  overflow-y: auto;
+}
+
+.common-list-pagination {
+  border-bottom-left-radius: .625rem;
+  border-bottom-right-radius: .625rem;
+}
+
+.filter-modal {
+  width: fit-content;
+  max-width: 900px;
+  min-width: 650px;
+}
+
+.filter-modal-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 0 20px;
+  .react-dropdown-select {
+    width: 200px;
+    height: 32px;
+  }
+}
+
+.filter-select {
+  width: 200px;
+}
+
+.filter-date-picker-container {
+  width: 200px;
+  margin-right: 20px;
+}
+
+.filter-date-picker-container:last-child {
+  margin-right: 0;
+}
+
+.custom-field-modal {
+  width: 60vw;
+  min-width: 500px;
+  max-width: 600px;
+}
+
+.custom-field-content {
+  display: flex;
+  > div {
+    margin-right: 60px;
+   label {
+      margin: 10px 0;
+    }
+  }
+}
+
+.custom-field-title {
+  font: $h5 $font-medium;
+  color: $primary-color;
+  margin-bottom: 20px;
+}

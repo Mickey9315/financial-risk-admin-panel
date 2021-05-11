@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import '../Settings.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../../common/Input/Input';
 import Button from '../../../common/Button/Button';

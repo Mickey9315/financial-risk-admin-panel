@@ -1,5 +1,4 @@
 import React from 'react';
-import './CreditLimitTab.scss';
 import BigInput from '../../BigInput/BigInput';
 import IconButton from '../../IconButton/IconButton';
 import Table from '../../Table/Table';

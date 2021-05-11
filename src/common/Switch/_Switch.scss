@@ -1,0 +1,40 @@
+.common-switch {
+  display: none;
+}
+
+.common-switch + label {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 24px;
+  background: $border-color;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+.common-switch + label:after {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: 50%;
+  transition: 0.5s;
+}
+
+.common-switch:checked + label {
+  background: $primary-color;
+}
+
+.common-switch:checked + label:after {
+  left: 100%;
+  border: 1px solid $primary-color;
+  transform: translateX(-100%);
+}
+
+.common-switch + label:active:after {
+  width: 48px;
+}

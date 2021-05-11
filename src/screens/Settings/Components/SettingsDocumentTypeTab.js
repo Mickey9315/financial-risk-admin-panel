@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import '../Settings.scss';
 import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';

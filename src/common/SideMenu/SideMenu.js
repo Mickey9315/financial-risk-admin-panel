@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import './SideMenu.scss';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import logo from '../../assets/images/logo.svg';

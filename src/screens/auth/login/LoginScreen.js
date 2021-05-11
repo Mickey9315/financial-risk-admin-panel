@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './LoginScreen.scss';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import grayLogo from '../../../assets/images/logo-light.svg';

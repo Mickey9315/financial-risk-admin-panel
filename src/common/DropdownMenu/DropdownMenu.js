@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import './DropdownMenu.scss';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 
 const menuRoot = document.getElementById('menu-root');

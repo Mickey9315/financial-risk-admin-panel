@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import './ApplicationCreditLimitStep.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import RadioButton from '../../../../../common/RadioButton/RadioButton';
 import Input from '../../../../../common/Input/Input';

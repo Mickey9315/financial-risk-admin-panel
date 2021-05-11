@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
-import './ViewApplication.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';

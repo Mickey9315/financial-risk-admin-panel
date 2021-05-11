@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import './Layout.scss';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import SideMenu from '../SideMenu/SideMenu';

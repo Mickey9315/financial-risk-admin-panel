@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import './InsurerMatrixTab.scss';
 import australia from '../../../../assets/images/australia.svg';
 import newZealandFlag from '../../../../assets/images/new-zealand.svg';
 import { getInsurerMatrixData } from '../../redux/InsurerAction';

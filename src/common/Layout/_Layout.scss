@@ -1,0 +1,22 @@
+.dashboard-container {
+  display: flex;
+  justify-content: space-between;
+  height: 100vh;
+  width: 100%;
+  padding: 1rem 0 1rem 1rem;
+  background-color: $background-color;
+  overflow: hidden;
+}
+
+.right-side-container {
+  width: calc(100% - 15.313rem);
+  height: calc(100vh - 2rem);
+  background-color: $background-color;
+}
+
+.page-container {
+  height: calc(100vh - 100px);
+  padding-right: 2rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

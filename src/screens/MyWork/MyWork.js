@@ -6,7 +6,6 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import Tab from '../../common/Tab/Tab';
-import './MyWork.scss';
 import IconButton from '../../common/IconButton/IconButton';
 import Button from '../../common/Button/Button';
 // import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';

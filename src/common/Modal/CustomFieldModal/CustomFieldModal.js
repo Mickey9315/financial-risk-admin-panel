@@ -1,5 +1,4 @@
 import React from 'react';
-import './CustomFieldModal.scss';
 import PropTypes from 'prop-types';
 import Modal from '../Modal';
 import Checkbox from '../../Checkbox/Checkbox';

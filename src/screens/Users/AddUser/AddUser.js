@@ -1,6 +1,5 @@
 /* eslint-disable no-shadow */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import './AddUser.scss';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';

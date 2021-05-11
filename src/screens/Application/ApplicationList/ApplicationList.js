@@ -23,7 +23,6 @@ import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomField
 import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
-import '../ViewApplication/ViewApplication.scss';
 import { APPLICATION_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/ApplicationReduxConstants';
 
 const initialFilterState = {

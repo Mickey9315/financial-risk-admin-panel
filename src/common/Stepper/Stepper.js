@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import './Stepper.scss';
 import { useSelector } from 'react-redux';
 
 import Button from '../Button/Button';

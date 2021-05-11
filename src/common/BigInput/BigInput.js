@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './BigInput.scss';
 
 const BigInput = React.forwardRef((props, ref) => {
   const {

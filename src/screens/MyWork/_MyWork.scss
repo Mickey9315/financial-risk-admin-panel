@@ -1,0 +1,30 @@
+@import "../Clients/ViewClient/ViewClient";
+
+.my-work-add-task-container {
+  @extend .client-details-container
+}
+
+.my-work-tab-button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .date-picker-container {
+    height: 48px;
+    border-radius: 10px;
+  }
+}
+
+.my-work-tab {
+  width: fit-content!important;
+  background-color: white!important;
+}
+
+.my-work-tab-content-container {
+  margin-top: 0.625rem;
+  flex-direction: column;
+}
+
+.my-work-tab-button-row .react-datepicker-popper {
+  left: unset!important;
+  right: 0;
+}

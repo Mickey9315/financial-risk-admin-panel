@@ -1,0 +1,48 @@
+.client-list-row {
+  cursor: pointer;
+}
+
+.add-to-crm-modal {
+  width: 60vw;
+}
+
+.crm-checkbox-list-container {
+  max-height: 250px;
+  margin-top: 10px;
+  overflow-y: auto;
+}
+
+.check-all-crmList {
+  label {
+    font: $subtitle $font-bold;
+  }
+  margin-top: 10px;
+  padding-left: 8px;
+}
+
+.crm-checkbox-list {
+  padding: 8px;
+
+  &:nth-child(even) {
+    background-color: $background-color;
+  }
+}
+
+.contacts-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px 10px;
+  font: $subtitle $font-medium;
+  color: $primary-color;
+  padding: 20px;
+  overflow: hidden;
+
+  .title {
+    font-family: $font-regular;
+    color: $field-color;
+  }
+}
+
+.client-filter-title {
+  width: 180px!important;
+}

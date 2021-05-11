@@ -1,0 +1,124 @@
+.upload-document-modal {
+  width: 60vw;
+}
+.add-debtor-stake-modal{
+  width:80%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  .modal-body{
+    flex-grow: 1;
+    overflow-y:auto ;
+  }
+  .debtor-stakeholder-modal{
+    display: grid;
+    grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
+    align-items: center;
+    padding: 5px 30px;
+    gap: 10px;
+    font: $subtitle $font-regular!important;
+    > span {
+      color: $primary-color;
+    }
+    .react-select-container, .input-container, .date-picker-container {
+      width: 70%;
+      min-width: 170px;
+    }
+
+    .radio-container {
+      display: flex;
+      align-items: center;
+      grid-column: 1/span 4;
+    }
+
+    .grid-checkbox, .title, .main-title, .horizontal-line, .radio-title {
+      grid-column: 1 / span 4;
+    }
+
+    .grid-checkbox label {
+      color: $primary-color;
+    }
+
+    .main-title {
+      font: $title $font-medium;
+      color: $secondary-color;
+      padding: 5px 0;
+    }
+
+    .title {
+      color: $secondary-color;
+    }
+
+    .horizontal-line {
+      height: 1px;
+      margin: 0 -20px;
+      background-color: $border-color;
+    }
+
+    .detail-value {
+      width: 80%;
+      min-width: 180px;
+      padding: 5px 10px;
+      color: $field-color;
+      background-color: $border-color;
+      border-radius: 5px;
+      min-height: 28px;
+    }
+
+    .radio-buttons {
+      grid-column: 1/ span 4;
+    }
+
+    .long-text {
+      grid-column: 2/ span 3;
+      width: 100%;
+      padding: 5px 10px;
+      color: $field-color;
+      background-color: $border-color;
+      border-radius: 5px;
+    }
+  }
+
+}
+
+.document-upload-popup-container, .add-notes-popup-container {
+  display: grid;
+  grid-template-columns: 180px 2fr;
+  gap: 15px 5px;
+
+  > span {
+    color: $primary-color;
+  }
+
+  .react-select-container, .upload-document-input {
+    width: 180px;
+  }
+  .switch-container {
+    width: 180px;
+  }
+  .document-upload-input{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border: 0.063rem solid #E7ECF2;
+    height: 32px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.313rem;
+    button{
+      border: none;
+      color: #B2B9BF;
+      background: none;
+    }
+    p{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #B2B9BF;
+    }
+
+  }
+}
+
+
