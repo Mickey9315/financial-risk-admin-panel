@@ -133,6 +133,11 @@ const initialDebtorState = {
 
 export const debtorsManagement = (state = initialDebtorState, action) => {
   switch (action.type) {
+    case DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_REQUEST:
+      return {
+        ...state,
+        debtorsList: { ...state?.debtorsList, isLoading: true, error: null },
+      };
     case DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_SUCCESS:
       return {
         ...state,
@@ -141,7 +146,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
     case DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_FAILURE:
       return {
         ...state,
-        debtorsList: { ...state?.clientList, isLoading: false, error: null },
+        debtorsList: { ...state?.debtorsList, isLoading: false, error: null },
       };
     case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION:
       return {

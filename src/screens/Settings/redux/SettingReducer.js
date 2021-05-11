@@ -70,7 +70,6 @@ export const settingReducer = (state = initialSettingState, action) => {
         documentType: {
           ...action?.data,
           isLoading: false,
-          error: null,
         },
       };
 
@@ -80,7 +79,6 @@ export const settingReducer = (state = initialSettingState, action) => {
         documentType: {
           ...state?.documentType,
           isLoading: false,
-          error: action?.error,
         },
       };
 

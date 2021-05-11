@@ -10,14 +10,20 @@ export const getTaskListByFilter = (params = {}) => {
       columnFor: 'task',
     };
     try {
+      dispatch({
+        type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_REQUEST_ACTION,
+      });
       const response = await MyWorkApiServices.getTaskListData(param);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_LIST_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_SUCCESS_ACTION,
           data: response.data.data,
         });
       }
     } catch (e) {
+      dispatch({
+        type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_FAIL_ACTION,
+      });
       displayErrors(e);
     }
   };

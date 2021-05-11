@@ -15,9 +15,8 @@ export const fetchDocSuccess = data => ({
   data,
 });
 
-export const fetchDocFailure = error => ({
+export const fetchDocFailure = () => ({
   type: SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.FETCH_DOCUMENT_TYPE_LIST_FAILURE,
-  error,
 });
 
 export const resetPageDataFilters = () => ({
@@ -83,12 +82,13 @@ export const getAuditUserList = data => ({
 export const getSettingDocumentTypeList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch(fetchDocRequest());
       const response = await SettingDocumentTypeApiServices.getDocumentListData(params);
       if (response.data.status === 'SUCCESS') {
         dispatch(fetchDocSuccess(response.data.data));
       }
     } catch (e) {
-      dispatch(fetchDocFailure(e?.message));
+      dispatch(fetchDocFailure());
       displayErrors(e);
     }
   };

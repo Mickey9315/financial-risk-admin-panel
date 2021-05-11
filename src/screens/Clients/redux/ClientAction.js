@@ -18,6 +18,9 @@ import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch({
+        type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST,
+      });
       const response = await ClientApiService.getAllClientList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
@@ -28,7 +31,6 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
     } catch (e) {
       dispatch({
         type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_FAILURE,
-        data: null,
       });
       displayErrors(e);
     }

@@ -16,6 +16,9 @@ import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_REQUEST,
+      });
       const response = await DebtorsApiServices.getAllDebtorsList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({

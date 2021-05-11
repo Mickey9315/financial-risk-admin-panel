@@ -379,7 +379,7 @@ const ClientList = () => {
     }
   }, [searchInputRef, setIsModalLoading]);
 
-  const handleRiskAanalystFilterChange = useCallback(
+  const handleRiskAnalystFilterChange = useCallback(
     event => {
       if (event && event.value) {
         dispatchFilter({
@@ -537,7 +537,7 @@ const ClientList = () => {
               name="riskAnalystId"
               options={riskAnalystFilterListData}
               value={clientRiskAnalystSelectedValue}
-              onChange={handleRiskAanalystFilterChange}
+              onChange={handleRiskAnalystFilterChange}
               isSearchable={false}
             />
           </div>

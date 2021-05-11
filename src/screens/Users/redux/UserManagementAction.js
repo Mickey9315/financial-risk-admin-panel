@@ -12,6 +12,9 @@ import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch({
+        type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST,
+      });
       const response = await UserManagementApiService.getAllUserListByFilter(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
@@ -22,7 +25,6 @@ export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) =
     } catch (e) {
       dispatch({
         type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE,
-        data: null,
       });
       displayErrors(e);
     }

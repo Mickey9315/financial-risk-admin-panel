@@ -38,11 +38,27 @@ const initialInsurer = {
 
 export const insurer = (state = initialInsurer, action) => {
   switch (action.type) {
-    case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_ACTION:
+    case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_REQUEST_ACTION:
+      return {
+        ...state,
+        insurerList: {
+          ...state?.insurerList,
+          isLoading: true,
+        },
+      };
+    case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_SUCCESS_ACTION:
       return {
         ...state,
         insurerList: {
           ...action?.data,
+          isLoading: false,
+        },
+      };
+    case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_FAIL_ACTION:
+      return {
+        ...state,
+        insurerList: {
+          ...state?.insurerList,
           isLoading: false,
         },
       };

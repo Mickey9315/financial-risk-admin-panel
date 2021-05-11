@@ -14,24 +14,21 @@ import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 export const getInsurerListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch({
+        type: INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_REQUEST_ACTION,
+      });
       const response = await InsurerApiService.getAllInsurerListData(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
-          type: INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_ACTION,
+          type: INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_SUCCESS_ACTION,
           data: response.data.data,
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      dispatch({
+        type: INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_FAIL_ACTION,
+      });
+      displayErrors(e);
     }
   };
 };
@@ -51,16 +48,7 @@ export const getInsurerColumnNameList = () => {
         });
       }
     } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else if (e.response.data.status === 'ERROR') {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-        throw Error();
-      }
+      displayErrors(e);
     }
   };
 };

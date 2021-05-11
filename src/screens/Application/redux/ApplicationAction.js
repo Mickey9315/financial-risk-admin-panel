@@ -13,6 +13,9 @@ import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_REQUEST,
+      });
       const response = await ApplicationApiServices.getApplicationListByFilter(params);
 
       if (response.data.status === 'SUCCESS') {

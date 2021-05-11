@@ -36,13 +36,37 @@ const initialMyWork = {
 
 export const myWorkReducer = (state = initialMyWork, action) => {
   switch (action.type) {
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_LIST_ACTION:
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_REQUEST_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state?.task,
+          taskList: {
+            ...state?.task?.taskList,
+            isLoading: true,
+          },
+        },
+      };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_SUCCESS_ACTION:
       return {
         ...state,
         task: {
           ...state?.task,
           taskList: {
             ...action?.data,
+            isLoading: false,
+          },
+        },
+      };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_FAIL_ACTION:
+      return {
+        ...state,
+        task: {
+          ...state?.task,
+          taskList: {
+            ...state?.task?.taskList,
             isLoading: false,
           },
         },

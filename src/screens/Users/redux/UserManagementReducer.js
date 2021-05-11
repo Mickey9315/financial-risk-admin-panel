@@ -23,18 +23,21 @@ const initialUserColumnManagementState = {
 
 export const userManagementList = (state = initialUserManagementListState, action) => {
   switch (action.type) {
+    case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS:
       return {
+        ...state,
         ...action?.data,
         isLoading: false,
-        error: null,
       };
     case USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE:
       return {
         ...state,
         isLoading: false,
-        docs: null,
-        error: action?.error,
       };
     case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_USERLIST_PAGINATION_DATA: {
       return {

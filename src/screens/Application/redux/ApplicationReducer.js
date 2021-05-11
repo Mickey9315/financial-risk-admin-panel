@@ -140,6 +140,15 @@ const initialApplicationList = {
 
 export const application = (state = initialApplicationList, action) => {
   switch (action.type) {
+    case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_REQUEST:
+      return {
+        ...state,
+        applicationList: {
+          ...state?.applicationList,
+          isLoading: true,
+        },
+      };
+
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_SUCCESS:
       return {
         ...state,

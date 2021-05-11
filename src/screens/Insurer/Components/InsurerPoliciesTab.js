@@ -139,7 +139,7 @@ const InsurerPoliciesTab = () => {
 
   const [crmIds, setCrmIds] = useState([]);
   const [syncFromCRM, setSyncFromCRM] = useState(false);
-  const [searchPolicies, setSearchPolicies] = useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
 
   const toggleSyncWithCRM = useCallback(() => {
     setCrmIds([]);
@@ -158,22 +158,28 @@ const InsurerPoliciesTab = () => {
     const data = {
       clientIds: crmIds,
     };
-    if (data?.clientIds?.length > 0) {
-      toggleSyncWithCRM();
-      InsurerPoliciesApiServices.syncInsurerPolicyList(id, data)
-        .then(res => {
-          if (res.data.status === 'SUCCESS') {
-            successNotification(res?.data?.message ?? 'Success');
-            getInsurerPoliciesList();
-          }
-        })
-        .catch(() => {
-          errorNotification('Server error');
-        });
-    } else {
-      errorNotification('Select at least one policy to sync');
+    try {
+      if (data?.clientIds?.length > 0) {
+        setIsModalLoading(true);
+        InsurerPoliciesApiServices.syncInsurerPolicyList(id, data)
+          .then(res => {
+            if (res.data.status === 'SUCCESS') {
+              successNotification(res?.data?.message ?? 'Success');
+              getInsurerPoliciesList();
+              toggleSyncWithCRM();
+              setIsModalLoading(false);
+            }
+          })
+          .catch(() => {
+            errorNotification('Server error');
+          });
+      } else {
+        errorNotification('Select at least one policy to sync');
+      }
+    } catch (e) {
+      /**/
     }
-  }, [crmIds, getInsurerPoliciesList, setSyncFromCRM]);
+  }, [crmIds, getInsurerPoliciesList, setSyncFromCRM, setIsModalLoading]);
 
   const syncWithCRMButtons = useMemo(
     () => [
@@ -199,20 +205,14 @@ const InsurerPoliciesTab = () => {
     [getInsurerPoliciesList]
   );
 
-  const checkIfEnterKeyPressedForPolicy = useCallback(
-    e => {
-      if (e.key === 'Enter') {
-        const searchKeyword = searchInputRef?.current?.value;
-        if (searchKeyword?.trim()?.toString()?.length !== 0) {
-          dispatch(getPolicySyncListForCRM(id, searchKeyword?.trim()?.toString()));
-          setSearchPolicies(true);
-        } else {
-          errorNotification('Please enter any value than press enter');
-        }
-      }
-    },
-    [setSearchPolicies]
-  );
+  const checkIfEnterKeyPressedForPolicy = useCallback(async () => {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length > 0) {
+      setIsModalLoading(true);
+      await dispatch(getPolicySyncListForCRM(id, searchKeyword?.trim()?.toString()));
+      setIsModalLoading(false);
+    }
+  }, [setIsModalLoading]);
 
   const selectPolicyFromCRMList = useCallback(
     crmId => {
@@ -309,12 +309,12 @@ const InsurerPoliciesTab = () => {
             prefixClass="font-placeholder"
             placeholder="Search policy"
             type="text"
-            onKeyDown={checkIfEnterKeyPressedForPolicy}
+            onChange={_.debounce(checkIfEnterKeyPressedForPolicy, 1000)}
           />
-          {searchPolicies && (
+          {!isModalLoading ? (
             <>
               <div className="crm-checkbox-list-container">
-                {syncListFromCrm && syncListFromCrm?.length > 0 ? (
+                {syncListFromCrm?.length > 0 ? (
                   syncListFromCrm?.map(crm => (
                     <Checkbox
                       title={crm?.name}
@@ -328,6 +328,8 @@ const InsurerPoliciesTab = () => {
                 )}
               </div>
             </>
+          ) : (
+            <Loader />
           )}
         </Modal>
       )}
