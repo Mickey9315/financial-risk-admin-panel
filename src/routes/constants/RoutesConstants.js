@@ -1,27 +1,40 @@
-import LoginScreen from '../../screens/auth/login/LoginScreen';
-import ForgotPassword from '../../screens/auth/forgotPassword/ForgotPassword';
-import SetPassword from '../../screens/auth/setPassword/SetPassword';
-import ResetPassword from '../../screens/auth/resetPassword/ResetPassword';
-import VerifyOtp from '../../screens/auth/otpScreen/VerifyOtp';
-import UserList from '../../screens/Users/UserList/UserList';
-import AddUser from '../../screens/Users/AddUser/AddUser';
-import ClientList from '../../screens/Clients/ClientList/ClientList';
-import ViewClient from '../../screens/Clients/ViewClient/ViewClient';
-import ViewInsurer from '../../screens/Insurer/ViewInsurer/ViewInsurer';
-import InsurerList from '../../screens/Insurer/InsurerList/InsurerList';
-// import ViewInsurer from '../../screens/Insurer/ViewInsurer/ViewInsurer';
-import MyWork from '../../screens/MyWork/MyWork';
-import Settings from '../../screens/Settings/Settings';
-import DebtorsList from '../../screens/Debtors/DebtorsList/DebtorsList';
-import ViewDebtor from '../../screens/Debtors/ViewDebtor/ViewDebtor';
-import PageNotFound from '../../common/PageNotFound/PageNotFound';
+import { lazy } from 'react';
 
-import ForbiddenAccessPage from '../../common/ForbiddenAccessPage/ForbiddenAccessPage';
-import ApplicationList from '../../screens/Application/ApplicationList/ApplicationList';
-import GenerateApplication from '../../screens/Application/GenerateApplication/GenerateApplication';
-import MyWorkAddTask from '../../screens/MyWork/MyWorkTasks/MyWorkAddTask/MyWorkAddTask';
-import MyWorkEditTask from '../../screens/MyWork/MyWorkTasks/MyWorkEditTask/MyWorkEditTask';
-import ViewApplication from '../../screens/Application/ViewApplication/ViewApplication';
+const LoginScreen = lazy(() => import('../../screens/auth/login/LoginScreen'));
+const ForgotPassword = lazy(() => import('../../screens/auth/forgotPassword/ForgotPassword'));
+const SetPassword = lazy(() => import('../../screens/auth/setPassword/SetPassword'));
+const ResetPassword = lazy(() => import('../../screens/auth/resetPassword/ResetPassword'));
+const VerifyOtp = lazy(() => import('../../screens/auth/otpScreen/VerifyOtp'));
+const ForbiddenAccessPage = lazy(() =>
+  import('../../common/ForbiddenAccessPage/ForbiddenAccessPage')
+);
+const UserList = lazy(() => import('../../screens/Users/UserList/UserList'));
+const AddUser = lazy(() => import('../../screens/Users/AddUser/AddUser'));
+const ClientList = lazy(() => import('../../screens/Clients/ClientList/ClientList'));
+const ViewClient = lazy(() => import('../../screens/Clients/ViewClient/ViewClient'));
+const ViewInsurer = lazy(() => import('../../screens/Insurer/ViewInsurer/ViewInsurer'));
+const ApplicationList = lazy(() =>
+  import('../../screens/Application/ApplicationList/ApplicationList')
+);
+const InsurerList = lazy(() => import('../../screens/Insurer/InsurerList/InsurerList'));
+const GenerateApplication = lazy(() =>
+  import('../../screens/Application/GenerateApplication/GenerateApplication')
+);
+// const ViewInsurer = lazy(() => import('../../screens/Insurer/ViewInsurer/ViewInsurer'));
+const MyWork = lazy(() => import('../../screens/MyWork/MyWork'));
+const MyWorkAddTask = lazy(() =>
+  import('../../screens/MyWork/MyWorkTasks/MyWorkAddTask/MyWorkAddTask')
+);
+const Settings = lazy(() => import('../../screens/Settings/Settings'));
+const DebtorsList = lazy(() => import('../../screens/Debtors/DebtorsList/DebtorsList'));
+const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebtor'));
+const MyWorkEditTask = lazy(() =>
+  import('../../screens/MyWork/MyWorkTasks/MyWorkEditTask/MyWorkEditTask')
+);
+const ViewApplication = lazy(() =>
+  import('../../screens/Application/ViewApplication/ViewApplication')
+);
+const PageNotFound = lazy(() => import('../../common/PageNotFound/PageNotFound'));
 
 export const ROUTES_CONSTANTS = [
   {

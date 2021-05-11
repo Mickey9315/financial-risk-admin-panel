@@ -1,8 +1,9 @@
+import { lazy } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-import Layout from '../common/Layout/Layout';
+const Layout = lazy(() => import('../common/Layout/Layout'));
 
 export const AuthenticatedRoute = ({ component: Component, ...options }) => {
   const loggedUserDetails = useSelector(({ loggedUserProfile }) => loggedUserProfile);
