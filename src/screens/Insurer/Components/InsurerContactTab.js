@@ -50,7 +50,7 @@ const InsurerContactTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getInsurerContactsList({ page, limit: newLimit });
+      getInsurerContactsList({ page: 1, limit: newLimit });
     },
     [getInsurerContactsList]
   );

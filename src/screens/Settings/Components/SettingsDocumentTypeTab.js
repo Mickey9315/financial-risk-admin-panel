@@ -83,7 +83,7 @@ const SettingsDocumentTypeTab = () => {
     newLimit => {
       getSettingDocumentTypeListByFilter({ page: 1, limit: newLimit });
     },
-    [dispatch, getSettingDocumentTypeListByFilter]
+    [getSettingDocumentTypeListByFilter]
   );
 
   const pageActionClick = useCallback(

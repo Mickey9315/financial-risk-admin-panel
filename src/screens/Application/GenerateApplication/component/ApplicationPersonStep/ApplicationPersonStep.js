@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Accordion from '../../../../../common/Accordion/Accordion';
 import PersonIndividualDetail from './personIndividualDetail/PersonIndividualDetail';
-import { addPersonDetail } from '../../../redux/ApplicationAction';
+import {
+  addPersonDetail,
+  getApplicationCompanyDropDownData,
+} from '../../../redux/ApplicationAction';
 
 const ApplicationPersonStep = () => {
   const dispatch = useDispatch();
@@ -20,6 +23,11 @@ const ApplicationPersonStep = () => {
     if (personState?.length < 1 && ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany)) {
       dispatch(addPersonDetail('individual'));
     }
+  }, []);
+
+  useEffect(() => {
+    // dispatch(getApplicationFilter());
+    dispatch(getApplicationCompanyDropDownData());
   }, []);
 
   const getAccordionAccordingEntityType = useCallback(

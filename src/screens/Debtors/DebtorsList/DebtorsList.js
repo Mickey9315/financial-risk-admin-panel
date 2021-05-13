@@ -95,13 +95,13 @@ const DebtorsList = () => {
     newPage => {
       getDebtorsListByFilter({ page: newPage, limit });
     },
-    [dispatch, limit, getDebtorsListByFilter]
+    [limit, getDebtorsListByFilter]
   );
   const onSelectLimit = useCallback(
     newLimit => {
       getDebtorsListByFilter({ page: 1, limit: newLimit });
     },
-    [dispatch, getDebtorsListByFilter]
+    [getDebtorsListByFilter]
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -183,7 +183,7 @@ const DebtorsList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getDebtorsListByFilter({}, toggleFilterModal);
+    getDebtorsListByFilter({ page: 1, limit }, toggleFilterModal);
   }, [getDebtorsListByFilter]);
 
   const onClickResetFilter = useCallback(() => {

@@ -91,7 +91,7 @@ const DebtorsStakeHolderTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getDebtorStakeHolderList({ page, limit: newLimit });
+      getDebtorStakeHolderList({ page: 1, limit: newLimit });
     },
     [getDebtorStakeHolderList]
   );
@@ -230,11 +230,36 @@ const DebtorsStakeHolderTab = () => {
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
 
+  const prevRef = useRef({});
+
   useEffect(() => {
-    if (stakeHolder?.country?.value === 'AUS' || stakeHolder?.country?.value === 'NZL') {
-      setIsAusOrNew(true);
+    const country = stakeHolder?.country?.value ?? '';
+    let showDropDownInput = true;
+    dispatch(updateStakeHolderDetail('state', []));
+    switch (country) {
+      case 'AUS':
+      case 'NZL':
+        setStateValue(country === 'AUS' ? australianStates : newZealandStates);
+        break;
+      default:
+        showDropDownInput = false;
+        break;
     }
-  }, [stakeHolder?.country]);
+    setIsAusOrNew(showDropDownInput);
+    if (!prevRef.current?.abn) {
+      prevRef.current = { ...prevRef.current, abn: stakeHolder?.abn };
+    }
+    if (!prevRef.current?.acn) {
+      prevRef.current = { ...prevRef.current, acn: stakeHolder?.acn };
+    }
+  }, [
+    stakeHolder?.abn,
+    stakeHolder?.acn,
+    stakeHolder?.country?.value,
+    prevRef,
+    australianStates,
+    newZealandStates,
+  ]);
 
   useEffect(() => {
     dispatch(getStakeHolderDropDownData());
@@ -453,7 +478,7 @@ const DebtorsStakeHolderTab = () => {
         name: 'email',
       },
     ],
-    [isAusOrNew, stateValue, titleDropDown, countryList]
+    [isAusOrNew, stateValue, titleDropDown, countryList, streetType]
   );
 
   const updateStakeHolderSingleDetail = useCallback((name, value) => {
@@ -480,27 +505,8 @@ const DebtorsStakeHolderTab = () => {
   const handleSelectInputChange = useCallback(
     data => {
       updateStakeHolderSingleDetail(data?.name, data);
-      if (data?.name === 'country') {
-        let showDropDownInput = true;
-
-        switch (data?.value) {
-          case 'AUS':
-            updateStakeHolderSingleDetail('state', []);
-            setStateValue(australianStates);
-            break;
-          case 'NZL':
-            updateStakeHolderSingleDetail('state', []);
-            setStateValue(newZealandStates);
-            break;
-          default:
-            showDropDownInput = false;
-            updateStakeHolderSingleDetail('state', '');
-            break;
-        }
-        setIsAusOrNew(showDropDownInput);
-      }
     },
-    [updateStakeHolderSingleDetail, setStateValue, australianStates, newZealandStates]
+    [updateStakeHolderSingleDetail]
   );
 
   const handleCheckBoxEvent = useCallback(
@@ -532,16 +538,23 @@ const DebtorsStakeHolderTab = () => {
     async e => {
       try {
         if (e.key === 'Enter') {
-          const response = await getStakeHolderCompanyDataFromABNorACN(e.target.value);
+          const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(e.target.value));
           if (response) {
+            if (e?.target?.name === 'abn') {
+              prevRef.current.abn = response?.abn;
+            } else {
+              prevRef.current.acn = response?.acn;
+            }
             updateStakeHolderState(response);
           }
         }
       } catch {
-        /**/
+        let value = prevRef?.current?.abn;
+        if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
+        updateStakeHolderSingleDetail(e?.target?.name, value);
       }
     },
-    [updateStakeHolderState]
+    [updateStakeHolderState, updateStakeHolderSingleDetail, prevRef.current]
   );
 
   const handleEntityNameSearch = useCallback(
@@ -578,18 +591,26 @@ const DebtorsStakeHolderTab = () => {
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const response = await getStakeHolderCompanyDataFromABNorACN(data.abn);
+        const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(data.abn));
         if (response) {
+          prevRef.current.abn = response?.abn;
+          prevRef.current.acn = response?.acn;
           updateStakeHolderState(response);
           handleToggleDropdown();
         }
-      } catch (err) {
+      } catch {
         /**/
       }
       handleToggleDropdown(false);
       setSearchedEntityNameValue('');
     },
-    [stakeHolder, updateStakeHolderState, handleToggleDropdown, setSearchedEntityNameValue]
+    [
+      prevRef.current,
+      stakeHolder,
+      updateStakeHolderState,
+      handleToggleDropdown,
+      setSearchedEntityNameValue,
+    ]
   );
 
   const getComponentFromType = useCallback(
@@ -717,6 +738,7 @@ const DebtorsStakeHolderTab = () => {
                 showYearDropdown
                 scrollableYearDropdown
                 maxDate={new Date()}
+                popperProps={{ positionFixed: true }}
               />
               <span className="material-icons-round">event_available</span>
             </div>

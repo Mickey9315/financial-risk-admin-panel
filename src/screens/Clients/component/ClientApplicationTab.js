@@ -47,7 +47,7 @@ const ClientApplicationTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getClientApplicationList({ page, limit: newLimit });
+      getClientApplicationList({ page: 1, limit: newLimit });
     },
     [getClientApplicationList]
   );

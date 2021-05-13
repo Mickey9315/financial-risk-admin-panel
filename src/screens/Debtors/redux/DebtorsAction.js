@@ -20,7 +20,7 @@ export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
         type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_REQUEST,
       });
       const response = await DebtorsApiServices.getAllDebtorsList(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_SUCCESS,
           data: response.data.data,
@@ -43,7 +43,7 @@ export const getDebtorsColumnNameList = () => {
     try {
       const response = await DebtorsApiServices.getDebtorsColumnNameList(params);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
@@ -97,7 +97,7 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameList = {}, isReset 
         }
       }
       const response = await DebtorsApiServices.updateDebtorsColumnNameList(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
@@ -127,7 +127,7 @@ export const getDebtorById = id => {
   return async dispatch => {
     try {
       const response = await DebtorsApiServices.getDebtorDetailById(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.SELECTED_DEBTORS_DATA,
           data: response.data.data,
@@ -143,7 +143,7 @@ export const getDebtorDropdownData = () => {
   return async dispatch => {
     try {
       const response = await DebtorsApiServices.getDebtorDropdownDataList();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS,
@@ -180,7 +180,7 @@ export const updateDebtorData = (id, finalData, cb) => {
   return async dispatch => {
     try {
       const response = await DebtorsApiServices.updateDebtorDetailById(id, finalData);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Debtor details updated successfully');
         dispatch(getDebtorById(id));
         cb();
@@ -203,7 +203,7 @@ export const getDebtorsNotesListDataAction = (id, params = { page: 1, limit: 15 
 
       const response = await DebtorsNotesApiService.getDebtorsNotesList(id, updatedParams);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.NOTES.FETCH_DEBTOR_NOTES_LIST_SUCCESS,
           data: response.data.data,
@@ -232,7 +232,7 @@ export const addDebtorsNoteAction = (entityId, noteData) => {
 
       const response = await DebtorsNotesApiService.addDebtorsNote(data);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         await dispatch(getDebtorsNotesListDataAction(entityId));
         successNotification(response?.data?.message || 'Note added successfully.');
       }
@@ -255,7 +255,7 @@ export const updateDebtorsNoteAction = (entityId, noteData) => {
 
       const response = await DebtorsNotesApiService.updateDebtorsNote(noteId, data);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         await dispatch(getDebtorsNotesListDataAction(entityId));
         successNotification(response?.data?.message || 'Note updated successfully.');
       }
@@ -269,7 +269,7 @@ export const deleteDebtorsNoteAction = async (noteId, cb) => {
   try {
     const response = await DebtorsNotesApiService.deleteDebtorsNote(noteId);
 
-    if (response.data.status === 'SUCCESS') {
+    if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Note deleted successfully.');
       if (cb) {
         cb();
@@ -292,7 +292,7 @@ export const getDebtorDocumentsListData = (id, params = { page: 1, limit: 15 }) 
 
       const response = await DebtorsDocumentApiServices.getDebtorDocumentsList(id, updatedParams);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.FETCH_DEBTOR_DOCUMENTS_LIST_SUCCESS,
           data: response.data.data,
@@ -316,7 +316,7 @@ export const getDebtorDocumentsColumnNamesList = () => {
       };
 
       const response = await DebtorsDocumentApiServices.getDebtorDocumentsColumnNamesList(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
@@ -373,7 +373,7 @@ export const saveDebtorDocumentsColumnListName = ({
         }
       }
       const response = await DebtorsDocumentApiServices.updateDebtorDocumentColumnListName(data);
-      if (response && response.data && response.data.status === 'SUCCESS') {
+      if (response && response.data && response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             DEBTORS_REDUX_CONSTANTS.DOCUMENTS
@@ -396,7 +396,7 @@ export const getDocumentTypeList = () => {
       };
 
       const response = await DebtorsDocumentApiServices.getDocumentTypeList(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENT_TYPE_LIST_USER_ACTION,
           data: response.data.data,
@@ -412,7 +412,7 @@ export const uploadDocument = (data, config) => {
   return async dispatch => {
     try {
       const response = await DebtorsDocumentApiServices.uploadDocument(data, config);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DEBTOR_ACTION,
           data: response.data.data,
@@ -447,7 +447,7 @@ export const downloadDocuments = async data => {
 export const deleteDebtorDocumentAction = async (docId, cb) => {
   try {
     const response = await DebtorsDocumentApiServices.deleteDebtorDocument(docId);
-    if (response.data.status === 'SUCCESS') {
+    if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Document deleted successfully.');
       if (cb) {
         cb();
@@ -467,7 +467,7 @@ export const getDebtorTaskListData = (params, id) => {
         requestedEntityId: id,
       };
       const response = await DebtorTaskApiService.getDebtorTaskListData(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.FETCH_DEBTOR_TASK_LIST_SUCCESS,
           data: response.data.data,
@@ -490,7 +490,7 @@ export const getDebtorTaskColumnList = () => {
         columnFor: 'debtor-task',
       };
       const response = await DebtorTaskApiService.getDebtorTaskColumnNameList(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.DEBTOR_TASK_COLUMN_NAME_LIST_ACTION,
           data: response.data.data,
@@ -546,7 +546,7 @@ export const saveDebtorTaskColumnNameListName = ({
       }
 
       const response = await DebtorTaskApiService.updateDebtorTaskColumnNameList(data);
-      if (response && response.data && response.data.status === 'SUCCESS') {
+      if (response && response.data && response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.DEBTOR_TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
           data: debtorsTaskColumnNameList,
@@ -563,7 +563,7 @@ export const getAssigneeDropDownData = () => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.getAssigneeDropDownData();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ASSIGNEE_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
@@ -579,7 +579,7 @@ export const getEntityDropDownData = params => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
-      if (response.data.status === 'SUCCESS' && response.data.data) {
+      if (response?.data?.status === 'SUCCESS' && response.data.data) {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
@@ -595,7 +595,7 @@ export const getDebtorDefaultEntityDropDownData = params => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
-      if (response.data.status === 'SUCCESS' && response.data.data) {
+      if (response?.data?.status === 'SUCCESS' && response.data.data) {
         dispatch({
           type:
             DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK
@@ -623,7 +623,7 @@ export const saveTaskData = (data, cb) => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.saveNewTask(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
@@ -640,7 +640,7 @@ export const deleteTaskAction = (taskId, cb) => {
   return async () => {
     try {
       const response = await DebtorTaskApiService.deleteTask();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task deleted successfully.');
         if (cb) {
           cb();
@@ -656,7 +656,7 @@ export const getDebtorTaskDetail = id => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.getDebtorTaskDetailById(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.EDIT_TASK.GET_DEBTOR_TASK_DETAILS_ACTION,
           data: response.data.data,
@@ -672,7 +672,7 @@ export const updateTaskData = (id, data, cb) => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.updateTask(id, data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
@@ -694,7 +694,7 @@ export const getDebtorApplicationListData = (id, param) => {
         listFor: 'debtor-application',
       };
       const response = await DebtorApplicationApiServices.getApplicationListData(id, params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.APPLICATION.FETCH_DEBTOR_APPLICATION_LIST_SUCCESS,
           data: response.data.data,
@@ -719,7 +719,7 @@ export const getDebtorApplicationColumnNameList = () => {
       const response = await DebtorApplicationApiServices.getDebtorApplicationColumnNameList(
         params
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_COLUMN_LIST_ACTION,
           data: response.data.data,
@@ -776,7 +776,7 @@ export const saveDebtorApplicationColumnNameList = ({
       const response = await DebtorApplicationApiServices.updateDebtorApplicationColumnNameList(
         data
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_DEFAULT_COLUMN_LIST_ACTION,
           data: debtorsApplicationColumnNameList,
@@ -794,7 +794,7 @@ export const getDebtorCreditLimitData = (id, data) => {
   return async dispatch => {
     try {
       const response = await DebtorCreditLimitApiServices.getDebtorCreditLimitList(id, data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.FETCH_DEBTOR_CREDIT_LIMIT_LIST_SUCCESS,
           data: response.data.data,
@@ -815,7 +815,7 @@ export const getCreditLimitColumnsNameList = () => {
       const response = await DebtorCreditLimitApiServices.getDebtorCreditLimitColumnNameList(
         params
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.DEBTOR_CREDIT_LIMIT_COLUMN_LIST_ACTION,
           data: response.data.data,
@@ -872,7 +872,7 @@ export const saveDebtorCreditLimitColumnNameList = ({
       const response = await DebtorCreditLimitApiServices.updateDebtorCreditLimitColumnNameList(
         data
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.CREDIT_LIMIT.DEBTOR_CREDIT_LIMIT_DEFAULT_COLUMN_LIST_ACTION,
           data: debtorsCreditLimitColumnNameList,
@@ -893,7 +893,7 @@ export const getDebtorStakeHolderListData = (id, param) => {
         ...param,
       };
       const response = await DebtorStakeHolderApiServices.getStakeHolderListData(id, params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_SUCCESS,
           data: response.data.data,
@@ -918,7 +918,7 @@ export const getDebtorStakeHolderColumnNameList = () => {
       const response = await DebtorStakeHolderApiServices.getDebtorStakeHolderColumnNameList(
         params
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION,
           data: response.data.data,
@@ -974,7 +974,7 @@ export const saveDebtorStakeHolderColumnNameList = ({
       const response = await DebtorStakeHolderApiServices.updateDebtorStakeHolderColumnNameList(
         data
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_DEFAULT_COLUMN_LIST_ACTION,
           data: debtorsStakeHolderColumnNameList,
@@ -1012,7 +1012,7 @@ export const getStakeHolderDropDownData = () => {
   return async dispatch => {
     try {
       const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDropdownData();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA,
@@ -1025,19 +1025,22 @@ export const getStakeHolderDropDownData = () => {
   };
 };
 
-export const getStakeHolderCompanyDataFromABNorACN = async id => {
-  try {
-    const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderCompanyDataFromABNorACN(
-      id
-    );
+export const getStakeHolderCompanyDataFromABNorACN = id => {
+  return async () => {
+    try {
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderCompanyDataFromABNorACN(
+        id
+      );
 
-    if (response.data.status === 'SUCCESS') {
-      return response.data.data;
+      if (response?.data?.status === 'SUCCESS') {
+        return response.data.data;
+      }
+    } catch (e) {
+      displayErrors(e);
+      throw Error();
     }
-  } catch (e) {
-    displayErrors(e);
-  }
-  return null;
+    return null;
+  };
 };
 
 export const updateStakeHolderDataOnValueSelected = data => {
@@ -1067,7 +1070,7 @@ export const searchStakeHolderCompanyEntityName = searchText => {
         params
       );
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
@@ -1081,9 +1084,9 @@ export const searchStakeHolderCompanyEntityName = searchText => {
       }
     } catch (e) {
       if (e.response && e.response.data) {
-        if (e.response.data.status === undefined) {
+        if (e.response?.data?.status === undefined) {
           errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
+        } else if (e.response?.data?.status === 'INTERNAL_SERVER_ERROR') {
           errorNotification('Internal server error');
         } else {
           dispatch({
@@ -1120,7 +1123,7 @@ export const addNewStakeHolder = (id, data, cb) => {
         id,
         data
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Stakeholder created successfully');
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
@@ -1141,7 +1144,7 @@ export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
         stakeHolderId,
         data
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Stakeholder updated successfully');
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
@@ -1160,7 +1163,7 @@ export const deleteStakeHolderDetails = (stakeHolderId, cb) => {
       const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.deleteStakeHolder(
         stakeHolderId
       );
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Stakeholder deleted successfully');
         cb();
       }
@@ -1174,7 +1177,7 @@ export const getStakeHolderDetails = id => {
   return async dispatch => {
     try {
       const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDetails(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKE_HOLDER_DETAILS,
           data: response?.data?.data,

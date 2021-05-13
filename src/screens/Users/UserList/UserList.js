@@ -135,7 +135,7 @@ const UserList = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getUserManagementByFilter({ page, limit: newLimit });
+      getUserManagementByFilter({ page: 1, limit: newLimit });
     },
     [getUserManagementByFilter]
   );
@@ -154,7 +154,7 @@ const UserList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getUserManagementByFilter({ page, limit }, toggleFilterModal);
+    getUserManagementByFilter({ page: 1, limit }, toggleFilterModal);
   }, [getUserManagementByFilter, toggleFilterModal]);
 
   const onClickResetFilterUserList = useCallback(() => {

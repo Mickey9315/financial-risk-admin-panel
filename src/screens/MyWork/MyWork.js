@@ -178,9 +178,9 @@ const MyWork = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getTaskList({ page, limit: newLimit });
+      getTaskList({ page: 1, limit: newLimit });
     },
-    [getTaskList, page]
+    [getTaskList]
   );
 
   const getSelectedValue = useMemo(() => {
@@ -319,8 +319,8 @@ const MyWork = () => {
   }, [toggleFilterModal]);
 
   const applyFilterOnClick = useCallback(() => {
-    getTaskList({ page, limit }, toggleFilterModal);
-  }, [getTaskList, page, limit, toggleFilterModal]);
+    getTaskList({ page: 1, limit }, toggleFilterModal);
+  }, [getTaskList, limit, toggleFilterModal]);
 
   const resetFilterOnClick = useCallback(() => {
     dispatchFilter({
@@ -384,6 +384,7 @@ const MyWork = () => {
                 scrollableYearDropdown
                 placeholderText="Select date..."
                 dateFormat="dd/MM/yyyy"
+                popperProps={{ positionFixed: true }}
               />
               <span className="material-icons-round">event_available</span>
             </div>

@@ -47,7 +47,7 @@ const ClientCreditLimitTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getCreditLimitList({ page, limit: newLimit });
+      getCreditLimitList({ page: 1, limit: newLimit });
     },
     [getCreditLimitList]
   );

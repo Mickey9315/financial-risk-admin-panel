@@ -211,13 +211,13 @@ const ClientList = () => {
     newPage => {
       getClientListByFilter({ page: newPage, limit });
     },
-    [dispatch, limit, getClientListByFilter]
+    [limit, getClientListByFilter]
   );
   const onSelectLimit = useCallback(
     newLimit => {
       getClientListByFilter({ page: 1, limit: newLimit });
     },
-    [dispatch, getClientListByFilter]
+    [getClientListByFilter]
   );
   const [filterModal, setFilterModal] = React.useState(false);
   const toggleFilterModal = useCallback(
@@ -226,7 +226,7 @@ const ClientList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getClientListByFilter({ page, limit }, toggleFilterModal);
+    getClientListByFilter({ page: 1, limit }, toggleFilterModal);
   }, [getClientListByFilter, page, limit]);
 
   const onClickResetFilterClientList = useCallback(() => {
@@ -328,21 +328,23 @@ const ClientList = () => {
           if (res.data.status === 'SUCCESS') {
             successNotification(res?.data?.message || 'Client data successfully synced');
             setAddFromCRM(false);
-            setIsModalLoading(false);
             dispatch(getClientList());
             dispatch({
               type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
               data: [],
             });
           }
+          setIsModalLoading(false);
+          setCrmIds([]);
         })
         .catch(() => {
-          errorNotification('Server error');
+          errorNotification('Already exist');
+          setIsModalLoading(false);
         });
     } else {
       errorNotification('Select at least one client to Add');
     }
-  }, [crmIds, setIsModalLoading, setAddFromCRM]);
+  }, [crmIds, setIsModalLoading, setAddFromCRM, setCrmIds]);
 
   const toggleAddFromCRM = useCallback(() => {
     setCrmIds([]);
@@ -355,10 +357,14 @@ const ClientList = () => {
 
   const addToCRMButtons = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: toggleAddFromCRM },
-      { title: 'Add', buttonType: 'primary', onClick: addDataFromCrm },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: toggleAddFromCRM,
+      },
+      { title: 'Add', buttonType: 'primary', onClick: addDataFromCrm, disabled: isModalLoading },
     ],
-    [toggleAddFromCRM, addDataFromCrm]
+    [toggleAddFromCRM, addDataFromCrm, isModalLoading]
   );
   const openViewClient = useCallback(
     id => {
@@ -372,11 +378,12 @@ const ClientList = () => {
   const checkIfEnterKeyPressed = useCallback(async () => {
     const searchKeyword = searchInputRef?.current?.value;
     if (searchKeyword?.trim()?.toString()?.length !== 0) {
+      setCrmIds([]);
       setIsModalLoading(true);
       await dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
       setIsModalLoading(false);
     }
-  }, [searchInputRef, setIsModalLoading]);
+  }, [searchInputRef, setIsModalLoading, setCrmIds]);
 
   const handleRiskAnalystFilterChange = useCallback(
     event => {
@@ -430,24 +437,32 @@ const ClientList = () => {
         ]
       : [];
   }, [filterList, serviceManagerId]);
-  const selectClientFromCrm = crmId => {
-    let arr = [...crmIds];
-    if (arr.includes(crmId)) {
-      arr = arr.filter(e => e !== crmId);
-    } else {
-      arr = [...arr, crmId];
-    }
-    setCrmIds(arr);
-  };
-
-  const selectAllClientsFromCrm = e => {
-    if (e.target.checked) {
-      const arr = syncListFromCrm?.map(crm => crm?.crmId?.toString());
+  const selectClientFromCrm = useCallback(
+    crmId => {
+      let arr = [...crmIds];
+      if (arr.includes(crmId)) {
+        arr = arr.filter(e => e !== crmId);
+      } else {
+        arr = [...arr, crmId];
+      }
       setCrmIds(arr);
-    } else {
-      setCrmIds([]);
-    }
-  };
+    },
+    [crmIds, setCrmIds]
+  );
+
+  const selectAllClientsFromCrm = useCallback(
+    e => {
+      if (e.target.checked) {
+        const arr = syncListFromCrm?.map(crm => crm?.crmId?.toString());
+        setCrmIds(arr);
+      } else {
+        setCrmIds([]);
+      }
+    },
+    [syncListFromCrm, setCrmIds]
+  );
+
+  console.log(crmIds);
 
   useEffect(() => {
     return dispatch(resetClientListPaginationData(page, pages, total, limit));

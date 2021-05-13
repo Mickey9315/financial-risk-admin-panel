@@ -100,8 +100,9 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       }
     }
     if (type === 'company' && validated) {
-      const { abn, acn, entityType, entityName, tradingName } = item;
+      const { _id, abn, acn, entityType, entityName, tradingName } = item;
       preparedData = {
+        _id,
         type,
         abn,
         acn,
@@ -111,6 +112,7 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       };
     } else if (type === 'individual' && validated) {
       const {
+        _id,
         title,
         firstName,
         middleName,
@@ -134,6 +136,7 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
       delete country?.name;
 
       preparedData = {
+        _id,
         type,
         title: title?.value,
         firstName,

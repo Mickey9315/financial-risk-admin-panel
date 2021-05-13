@@ -265,6 +265,7 @@ const ViewClient = () => {
             placeholderText="No inception date added"
             selected={new Date(viewClientData?.inceptionDate ?? null)}
             disabled
+            popperProps={{ positionFixed: true }}
           />
         </div>
         <span>Expiry Date</span>
@@ -277,6 +278,7 @@ const ViewClient = () => {
             placeholderText="No expiry date added"
             selected={new Date(viewClientData?.expiryDate ?? null)}
             disabled
+            popperProps={{ positionFixed: true }}
           />
         </div>
       </div>

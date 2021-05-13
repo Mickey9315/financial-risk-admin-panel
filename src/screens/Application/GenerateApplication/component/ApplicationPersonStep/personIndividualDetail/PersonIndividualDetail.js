@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
@@ -10,13 +10,12 @@ import Checkbox from '../../../../../../common/Checkbox/Checkbox';
 import RadioButton from '../../../../../../common/RadioButton/RadioButton';
 import {
   changePersonType,
-  getApplicationCompanyDataFromABNOrACN,
-  getApplicationCompanyDropDownData,
-  getApplicationFilter,
+  getApplicationPersonDataFromABNOrACN,
   removePersonDetail,
   searchApplicationCompanyEntityName,
   updatePersonData,
   updatePersonStepDataOnValueSelected,
+  wipeOutIndividualPerson,
 } from '../../../../redux/ApplicationAction';
 import { DRAWER_ACTIONS } from '../../ApplicationCompanyStep/ApplicationCompanyStep';
 import Loader from '../../../../../../common/Loader/Loader';
@@ -76,22 +75,37 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
 
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState(''); // retry ABN lookup
 
-  useEffect(() => {
-    if (
-      partners?.[index]?.country?.value === 'AUS' ||
-      partners?.[index]?.country?.value === 'NZL'
-    ) {
-      setIsAusOrNew(true);
-      setStateValue(
-        partners?.[index]?.country?.value === 'AUS' ? australianStates : newZealandStates
-      );
-    }
-  }, [partners?.[index]?.country]);
+  const prevRef = useRef({});
 
   useEffect(() => {
-    dispatch(getApplicationFilter());
-    dispatch(getApplicationCompanyDropDownData());
-  }, []);
+    const country = partners?.[index]?.country?.value ?? '';
+    let showDropDownInput = true;
+    updateSinglePersonState('state', []);
+    switch (country) {
+      case 'AUS':
+      case 'NZL':
+        setStateValue(country === 'AUS' ? australianStates : newZealandStates);
+        break;
+      default:
+        showDropDownInput = false;
+        break;
+    }
+    setIsAusOrNew(showDropDownInput);
+    if (!prevRef.current?.abn) {
+      prevRef.current = { ...prevRef.current, abn: partners?.[index]?.abn };
+    }
+    if (!prevRef.current?.acn) {
+      prevRef.current = { ...prevRef.current, acn: partners?.[index]?.acn };
+    }
+  }, [
+    partners?.[index]?.abn,
+    partners?.[index]?.acn,
+    partners?.[index]?.country?.value,
+    prevRef,
+    australianStates,
+    newZealandStates,
+    updateSinglePersonState,
+  ]);
 
   const {
     type,
@@ -408,27 +422,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   const handleSelectInputChange = useCallback(
     data => {
       updateSinglePersonState(data?.name, data);
-      if (data?.name === 'country') {
-        let showDropDownInput = true;
-
-        switch (data?.value) {
-          case 'AUS':
-            updateSinglePersonState('state', []);
-            setStateValue(australianStates);
-            break;
-          case 'NZL':
-            updateSinglePersonState('state', []);
-            setStateValue(newZealandStates);
-            break;
-          default:
-            showDropDownInput = false;
-            updateSinglePersonState('state', []);
-            break;
-        }
-        setIsAusOrNew(showDropDownInput);
-      }
     },
-    [updateSinglePersonState, setStateValue, australianStates, newZealandStates]
+    [updateSinglePersonState]
   );
   const updatePersonState = useCallback(data => {
     dispatch(updatePersonStepDataOnValueSelected(index, data));
@@ -454,18 +449,29 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     async data => {
       try {
         const params = { clientId: companyState?.clientId?.value };
-        const response = await getApplicationCompanyDataFromABNOrACN(data.abn, params);
+        const response = await dispatch(getApplicationPersonDataFromABNOrACN(data.abn, params));
         if (response) {
           updatePersonState(response);
+          prevRef.current = {
+            ...prevRef.current,
+            acn: response?.acn,
+            abn: response?.abn,
+          };
           handleToggleDropdown();
         }
-      } catch (err) {
+      } catch {
         /**/
       }
       handleToggleDropdown(false);
       setSearchedEntityNameValue('');
     },
-    [companyState, updatePersonState, handleToggleDropdown, setSearchedEntityNameValue]
+    [
+      companyState?.clientId?.value,
+      updatePersonState,
+      handleToggleDropdown,
+      setSearchedEntityNameValue,
+      prevRef.current,
+    ]
   );
 
   const handleEntityNameSearch = useCallback(
@@ -499,16 +505,26 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       try {
         if (e.key === 'Enter') {
           const params = { clientId: companyState?.clientId?.value };
-          const response = await getApplicationCompanyDataFromABNOrACN(e.target.value, params);
+          const response = await dispatch(
+            getApplicationPersonDataFromABNOrACN(e.target.value, params)
+          );
+
           if (response) {
             updatePersonState(response);
+            prevRef.current = {
+              ...prevRef.current,
+              acn: response?.acn,
+              abn: response?.abn,
+            };
           }
         }
       } catch {
-        /**/
+        let value = prevRef?.current?.abn;
+        if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
+        updateSinglePersonState(e?.target?.name, value);
       }
     },
-    [companyState, updatePersonState]
+    [companyState, updatePersonState, updateSinglePersonState, prevRef.current]
   );
 
   const handleCheckBoxEvent = useCallback(
@@ -665,6 +681,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
                 showYearDropdown
                 scrollableYearDropdown
                 maxDate={new Date()}
+                popperProps={{ positionFixed: true }}
               />
               <span className="material-icons-round">event_available</span>
             </div>
@@ -716,29 +733,30 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       handleTextInputChange,
       isAusOrNew,
       handleEntityChange,
+      handleSearchTextInputKeyDown,
     ]
   );
-  const deletePartner = e => {
-    e.stopPropagation();
-    if (partners?.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
-      errorNotification('You can not remove partner');
-    } else if (partners?.length <= 1) {
-      errorNotification('You can not remove every partner');
-    } else {
-      dispatch(removePersonDetail(index));
-    }
-    successNotification('Partner deleted successfully');
-  };
+  const deletePartner = useCallback(
+    e => {
+      e.stopPropagation();
+      if (partners?.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
+        errorNotification('You can not remove partner');
+      } else if (partners?.length <= 1) {
+        errorNotification('You can not remove every partner/trust');
+      } else if (partners?.[index]?._id) {
+        console.log('HERE', partners?.[index]?._id);
+        dispatch(wipeOutIndividualPerson(partners?.[index]?._id, index));
+      } else {
+        dispatch(removePersonDetail(index));
+        successNotification('Partner deleted successfully');
+      }
+    },
+    [partners, entityTypeFromCompany, companyState?.debtorId?.value, index]
+  );
 
   const getSuffixItem = useMemo(() => {
-    if (partners?.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
-      return '';
-    }
-    if (partners?.length <= 1) {
-      return '';
-    }
     return 'delete_outline';
-  }, [partners, entityTypeFromCompany]);
+  }, []);
 
   return (
     <>

@@ -3,6 +3,7 @@ import {
   updateStakeHolder,
   updateStakeHolderDetail,
 } from '../../redux/DebtorsAction';
+import { checkForEmail } from '../../../../helpers/ValidationHelper';
 
 export const stakeHolderValidation = (dispatch, data, debtorData, callBack, isEdit) => {
   let validated = true;
@@ -58,6 +59,10 @@ export const stakeHolderValidation = (dispatch, data, debtorData, callBack, isEd
     if (!data?.driverLicenceNumber || data?.driverLicenceNumber?.length <= 0) {
       validated = false;
       errors.driverLicenceNumber = 'Please enter driver licence number before continue';
+    }
+    if (data?.email && !checkForEmail(data?.email)) {
+      validated = false;
+      errors.email = 'Please enter valid email address before continue';
     }
     if (!data?.streetNumber || data?.streetNumber?.length <= 0) {
       validated = false;

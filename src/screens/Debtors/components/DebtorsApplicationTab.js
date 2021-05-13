@@ -49,7 +49,7 @@ const DebtorsApplicationTab = () => {
 
   const onSelectLimit = useCallback(
     newLimit => {
-      getDebtorApplicationList({ page, limit: newLimit });
+      getDebtorApplicationList({ page: 1, limit: newLimit });
     },
     [getDebtorApplicationList]
   );

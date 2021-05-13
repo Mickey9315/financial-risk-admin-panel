@@ -39,7 +39,11 @@ const initialApplicationList = {
       clientId: [],
       postCode: '',
       state: [],
-      country: [],
+      country: {
+        label: 'Australia',
+        name: 'country',
+        value: 'AUS',
+      },
       suburb: '',
       streetType: [],
       streetName: '',
@@ -57,6 +61,7 @@ const initialApplicationList = {
       debtorId: [],
       clientList: [],
       wipeOutDetails: false,
+      registrationNo: '',
       errors: {},
     },
     creditLimit: {
@@ -258,6 +263,26 @@ export const application = (state = initialApplicationList, action) => {
       return {
         ...state,
         companyData,
+      };
+    }
+
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS: {
+      return {
+        ...state,
+        editApplication: {
+          ...state?.editApplication,
+          company: {
+            ...state?.editApplication?.company,
+            debtorId: action?.isDebtor ? { ...state?.editApplication?.company?.debtorId } : [],
+            postCode: '',
+            state: [],
+            entityType: [],
+            entityName: [],
+            acn: '',
+            abn: '',
+            tradingName: '',
+          },
+        },
       };
     }
 

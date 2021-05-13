@@ -73,19 +73,17 @@ const ViewInsurer = () => {
   );
 
   const FINAL_COMPONENTS = useMemo(() => {
-    let filteredComponents = [...VIEW_DEBTOR_TABS];
+    const filteredComponents = [...VIEW_DEBTOR_TABS];
     if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
-      delete filteredComponents[1];
-      filteredComponents = filteredComponents.filter(e => e);
+      filteredComponents.splice(1, 1);
     }
     return filteredComponents;
   }, [debtorData]);
 
   const FINAL_TABS = useMemo(() => {
-    let filteredTabs = [...tabs];
+    const filteredTabs = [...tabs];
     if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
-      delete filteredTabs[1];
-      filteredTabs = filteredTabs.filter(e => e);
+      filteredTabs.splice(1, 1);
     }
     return filteredTabs;
   }, [debtorData]);

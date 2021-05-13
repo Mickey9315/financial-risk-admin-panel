@@ -169,7 +169,7 @@ const InsurerList = () => {
   const syncListFromCrm = useSelector(({ insurer }) => insurer?.syncInsurerWithCRM);
   const [addFromCRM, setAddFromCRM] = useState(false);
   const [crmIds, setCrmIds] = useState([]);
-  const [searchInsurers, setSearchInsurers] = useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
   const onClickAddFromCRM = useCallback(
     value => setAddFromCRM(value !== undefined ? value : e => !e),
     [addFromCRM]
@@ -189,13 +189,14 @@ const InsurerList = () => {
       crmIds,
     };
     if (data.crmIds.length > 0) {
-      toggleAddFromCRM();
+      setIsModalLoading(true);
       InsurerApiService.addInsurerListFromCrm(data)
         .then(res => {
           if (res.data.status === 'SUCCESS') {
             successNotification('Insurer data synced successfully');
-            // setAddFromCRM();
+            setIsModalLoading(false);
             getInsurerList();
+            toggleAddFromCRM();
           }
         })
         .catch(() => {
@@ -204,7 +205,7 @@ const InsurerList = () => {
     } else {
       errorNotification('Please select insurer to Add');
     }
-  }, [crmIds, toggleAddFromCRM, getInsurerList]);
+  }, [crmIds, toggleAddFromCRM, getInsurerList, setIsModalLoading]);
 
   const addToCRMButtons = useMemo(
     () => [
@@ -214,20 +215,16 @@ const InsurerList = () => {
     [toggleAddFromCRM, addDataFromCrm]
   );
 
-  const checkIfEnterKeyPressed = useCallback(
-    e => {
-      if (e.key === 'Enter') {
-        const searchKeyword = searchInputRef?.current?.value;
-        if (searchKeyword?.trim()?.toString()?.length !== 0) {
-          dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
-          setSearchInsurers(true);
-        } else {
-          errorNotification('Please enter any value than press enter');
-        }
-      }
-    },
-    [setSearchInsurers]
-  );
+  const checkIfEnterKeyPressed = useCallback(async () => {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length > 0) {
+      setIsModalLoading(true);
+      await dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
+      setIsModalLoading(false);
+    } else {
+      errorNotification('Please enter any value than press enter');
+    }
+  }, [setIsModalLoading]);
 
   const selectInsurerFromCrm = useCallback(
     crmId => {
@@ -312,9 +309,9 @@ const InsurerList = () => {
             prefixClass="font-placeholder"
             placeholder="Search clients"
             type="text"
-            onKeyDown={checkIfEnterKeyPressed}
+            onKeyDown={_.debounce(checkIfEnterKeyPressed, 1000)}
           />
-          {searchInsurers && (
+          {!isModalLoading ? (
             <>
               {/* <Checkbox title="Name" className="check-all-crmList" /> */}
               <div className="crm-checkbox-list-container">
@@ -332,6 +329,8 @@ const InsurerList = () => {
                 )}
               </div>
             </>
+          ) : (
+            <Loader />
           )}
         </Modal>
       )}

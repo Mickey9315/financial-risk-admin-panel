@@ -400,6 +400,7 @@ const ClientTaskTab = () => {
                   }
                   onChange={date => handleDateChange(input.name, new Date(date).toISOString())}
                   minDate={new Date()}
+                  popperProps={{ positionFixed: true }}
                 />
                 <span className="material-icons-round">event_available</span>
               </div>

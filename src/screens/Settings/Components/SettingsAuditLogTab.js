@@ -155,7 +155,7 @@ const SettingsAuditLogTab = () => {
     [setFilterModal]
   );
   const onClickApplyFilter = useCallback(() => {
-    getAuditLogListByFilter({ page: 1 }, toggleFilterModal);
+    getAuditLogListByFilter({ page: 1, limit }, toggleFilterModal);
   }, [getAuditLogListByFilter]);
 
   const onClickResetFilterAuditLogList = useCallback(() => {

@@ -252,7 +252,7 @@ const ApplicationList = () => {
     [setFilterModal]
   );
   const onClickApplyFilter = useCallback(() => {
-    getApplicationsByFilter({ page, limit }, toggleFilterModal);
+    getApplicationsByFilter({ page: 1, limit }, toggleFilterModal);
   }, [getApplicationsByFilter, toggleFilterModal, page, limit]);
 
   const onClickResetFilter = useCallback(() => {
