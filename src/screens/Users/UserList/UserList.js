@@ -1,10 +1,8 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -27,7 +25,6 @@ import Loader from '../../../common/Loader/Loader';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
-import { saveApplicationColumnNameList } from '../../Application/redux/ApplicationAction';
 import { USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 
 const initialFilterState = {

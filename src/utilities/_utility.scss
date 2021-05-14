@@ -2,6 +2,7 @@
 @import "typography";
 @import "common-class";
 @import "basic-styles";
+@import "node_modules/react-datepicker/dist/react-datepicker";
 @import "modified-library";
 
 .cursor-pointer {
@@ -37,15 +38,15 @@
 }
 
 .just-center {
-  justify-content: center!important;
+  justify-content: center !important;
 }
 
 .just-bet {
-  justify-content: space-between!important;
+  justify-content: space-between !important;
 }
 
 .just-end {
-  justify-content: flex-end!important;
+  justify-content: flex-end !important;
 }
 
 .align-center {
@@ -91,6 +92,7 @@
 .mt-15 {
   margin-top: 0.938rem;
 }
+
 .mt-20 {
   margin-top: 1.25rem;
 }
