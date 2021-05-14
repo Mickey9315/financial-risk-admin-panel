@@ -1,11 +1,8 @@
-import { lazy } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-const Layout = lazy(() => import('../common/Layout/Layout'));
-
-export const AuthenticatedRoute = ({ component: Component, ...options }) => {
+export const AuthenticatedRoute = ({ component, ...options }) => {
   const loggedUserDetails = useSelector(({ loggedUserProfile }) => loggedUserProfile);
 
   if (!loggedUserDetails?.email) {
@@ -16,28 +13,15 @@ export const AuthenticatedRoute = ({ component: Component, ...options }) => {
     );
   }
 
-  if (!Component) {
-    if (options.path !== '/dashboard') {
-      return (
-        <Route {...options}>
-          <Redirect to="/dashboard" />
-        </Route>
-      );
-    }
-
-    return <Route {...options} component={Layout} />;
+  if (options.path !== '/dashboard' && !component) {
+    return (
+      <Route {...options}>
+        <Redirect to="/dashboard" />
+      </Route>
+    );
   }
 
-  return (
-    <Route
-      {...options}
-      render={() => (
-        <Layout>
-          <Component />
-        </Layout>
-      )}
-    />
-  );
+  return <Route {...options} component={component} />;
 };
 
 AuthenticatedRoute.propTypes = {

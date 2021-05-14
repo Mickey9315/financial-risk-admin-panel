@@ -1,10 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import logo from '../../assets/images/logo.svg';
 import { SIDEBAR_URLS } from '../../constants/SidebarConstants';
+import { getAllUserPrivileges } from '../../screens/Users/redux/UserManagementAction';
+import { SESSION_VARIABLES } from '../../constants/SessionStorage';
 
 const SideMenu = () => {
+  const dispatch = useDispatch();
+
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
 
   const userAccessibleMenu = useMemo(() => {
@@ -15,6 +19,10 @@ const SideMenu = () => {
 
     return accessibleModules;
   }, [userPrivilegesData]);
+
+  useEffect(() => {
+    dispatch(getAllUserPrivileges());
+  }, [SESSION_VARIABLES.USER_TOKEN]);
 
   return (
     <div className="side-menu-container">
