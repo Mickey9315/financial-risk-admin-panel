@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import { store } from '../../redux/store';
-import history from '../../routes/History';
 import { getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
 import { errorNotification } from '../../common/Toast';
 import { LOGIN_REDUX_CONSTANTS } from '../../screens/auth/login/redux/LoginReduxConstants';
@@ -37,7 +36,7 @@ instance.interceptors.response.use(
         store.dispatch({
           type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
         });
-        history.replace('/login');
+        window.location.href = '/login';
         errorNotification('For security purposes you have been logged out, you need to re login');
         return false;
       case 403:
