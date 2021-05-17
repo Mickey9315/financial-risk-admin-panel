@@ -516,10 +516,10 @@ const ApplicationCompanyStep = () => {
             <Input
               type="text"
               name={input.name}
-              suffix={<span className="material-icons">search</span>}
+              suffix={isAusOrNew && <span className="material-icons">search</span>}
               placeholder={input.placeholder}
               borderClass={input?.isOr && 'is-or-container'}
-              onKeyDown={handleEntityNameSearch}
+              onKeyDown={isAusOrNew ? handleEntityNameSearch : null}
               value={companyState?.entityName?.label ?? ''}
               onChange={handleEntityChange}
             />

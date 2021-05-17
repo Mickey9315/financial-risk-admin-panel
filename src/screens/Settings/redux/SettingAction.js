@@ -5,6 +5,10 @@ import SettingOrganizationDetailsApiService from '../services/SettingOrganizatio
 import SettingApiIntegrationService from '../services/SettingApiIntegrationService';
 import SettingAuditLogApiService from '../services/SettingAuditLogApiService';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 export const fetchDocRequest = () => ({
   type: SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.FETCH_DOCUMENT_TYPE_LIST_REQUEST,
@@ -107,15 +111,17 @@ export const updateDocumentFieldStatus = (name, value) => {
 };
 
 export const addNewSettingDocType = (data, cb) => {
-  return async dispatch => {
+  return async () => {
     try {
+      startLoaderButtonOnRequest('settingAddNewDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.addNewDocumentType(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'New document type added successfully');
+        stopLoaderButtonOnSuccessOrFail('settingAddNewDocumentTypeButtonLoaderAction');
         cb();
-        dispatch(resetAddDocType());
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('settingAddNewDocumentTypeButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -135,15 +141,17 @@ export const getDocumentTypeDetailsById = id => {
 };
 
 export const updateSettingDocType = (id, data, cb) => {
-  return async dispatch => {
+  return async () => {
     try {
+      startLoaderButtonOnRequest('settingUpdateDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.editDocumentTypeById(id, data);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Document type updated successfully');
-        dispatch(resetAddDocType());
+        stopLoaderButtonOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -152,14 +160,17 @@ export const updateSettingDocType = (id, data, cb) => {
 export const deleteSettingDocumentType = (id, cb) => {
   return async () => {
     try {
+      startLoaderButtonOnRequest('settingDeleteDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.deleteDocumentType(id);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Document type deleted successfully.');
+        stopLoaderButtonOnSuccessOrFail('settingDeleteDocumentTypeButtonLoaderAction');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('settingDeleteDocumentTypeButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -191,14 +202,17 @@ export const changeApiIntegrationDetails = data => {
 export const updateApiIntegrationDetails = data => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`settingApiIntegrationButtonLoaderAction`);
       const response = await SettingApiIntegrationService.updateApiIntegrationDetails(data);
       if (response.data.status === 'SUCCESS') {
         successNotification(
           response?.data?.message || 'API integration details updated successfully'
         );
+        stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
         dispatch(updateApiIntegration(data));
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -231,14 +245,17 @@ export const changeOrganizationDetails = data => {
 export const updateOrganizationDetails = data => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('settingUpdateOrganizationDetailsButtonLoaderAction');
       const response = await SettingOrganizationDetailsApiService.updateOrganizationDetails(data);
       if (response.data.status === 'SUCCESS') {
         dispatch(updateOrgDetails(response.data.data));
         successNotification(
           response?.data?.message || 'Organization details updated successfully.'
         );
+        stopLoaderButtonOnSuccessOrFail('settingUpdateOrganizationDetailsButtonLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('settingUpdateOrganizationDetailsButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -247,11 +264,13 @@ export const updateOrganizationDetails = data => {
 export const getAuditLogsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      dispatch({ type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_REQUEST });
       const response = await SettingAuditLogApiService.getAuditLogList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch(fetchAuditLogList(response.data.data));
       }
     } catch (e) {
+      dispatch({ type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_FAIL });
       displayErrors(e);
     }
   };
@@ -289,6 +308,9 @@ export const changeAuditLogColumnListStatus = data => {
 export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -307,6 +329,9 @@ export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isRese
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -317,8 +342,14 @@ export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isRese
           type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_DEFAULT_COLUMN_LIST_ACTION,
           data: auditLogColumnNameList,
         });
+        stopLoaderButtonOnSuccessOrFail(
+          `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };

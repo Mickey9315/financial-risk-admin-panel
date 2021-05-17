@@ -8,7 +8,6 @@ import _ from 'lodash';
 import Tab from '../../common/Tab/Tab';
 import IconButton from '../../common/IconButton/IconButton';
 import Button from '../../common/Button/Button';
-// import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';
 import MyWorkTasks from './MyWorkTasks/MyWorkTasks';
 import CustomFieldModal from '../../common/Modal/CustomFieldModal/CustomFieldModal';
 import {
@@ -81,6 +80,11 @@ const MyWork = () => {
   const { priority, isCompleted, startDate, endDate, assigneeId } = useMemo(() => filter ?? {}, [
     filter,
   ]);
+
+  const {
+    myWorkTaskColumnsSaveButtonLoaderAction,
+    myWorkTaskColumnsResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const handlePriorityFilterChange = useCallback(
     event => {
@@ -291,11 +295,23 @@ const MyWork = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: myWorkTaskColumnsResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: myWorkTaskColumnsSaveButtonLoaderAction,
+      },
     ],
-    [toggleCustomField, onClickSaveColumnSelection, onClickResetDefaultColumnSelection]
+    [
+      toggleCustomField,
+      onClickSaveColumnSelection,
+      onClickResetDefaultColumnSelection,
+      myWorkTaskColumnsSaveButtonLoaderAction,
+      myWorkTaskColumnsResetButtonLoaderAction,
+    ]
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -319,7 +335,8 @@ const MyWork = () => {
   }, [toggleFilterModal]);
 
   const applyFilterOnClick = useCallback(() => {
-    getTaskList({ page: 1, limit }, toggleFilterModal);
+    toggleFilterModal();
+    getTaskList({ page: 1, limit });
   }, [getTaskList, limit, toggleFilterModal]);
 
   const resetFilterOnClick = useCallback(() => {
@@ -337,7 +354,11 @@ const MyWork = () => {
         onClick: resetFilterOnClick,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: closeFilterOnClick },
-      { title: 'Apply', buttonType: 'primary', onClick: applyFilterOnClick },
+      {
+        title: 'Apply',
+        buttonType: 'primary',
+        onClick: applyFilterOnClick,
+      },
     ],
     [resetFilterOnClick, toggleFilterModal, applyFilterOnClick, applyFilterOnClick]
   );

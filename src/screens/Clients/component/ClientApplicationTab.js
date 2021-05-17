@@ -26,6 +26,12 @@ const ClientApplicationTab = () => {
     clientApplicationColumnNameList,
     clientApplicationDefaultColumnNameList,
   } = useSelector(({ clientManagement }) => clientManagement?.application ?? {});
+
+  const {
+    viewClientApplicationColumnSaveButtonLoaderAction,
+    viewClientApplicationColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, headers, pages, docs, page, limit } = useMemo(() => applicationList ?? {}, [
     applicationList,
   ]);
@@ -120,11 +126,23 @@ const ClientApplicationTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewClientApplicationColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewClientApplicationColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewClientApplicationColumnSaveButtonLoaderAction,
+      viewClientApplicationColumnResetButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {

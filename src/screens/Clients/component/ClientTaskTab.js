@@ -13,6 +13,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import {
   changeClientTaskColumnNameListStatus,
+  deleteTaskAction,
   getAssigneeDropDownData,
   getClientTaskColumnList,
   getClientTaskDetail,
@@ -28,7 +29,6 @@ import Loader from '../../../common/Loader/Loader';
 import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
-import { deleteTaskAction } from '../../MyWork/redux/MyWorkAction';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
 
 const priorityData = [
@@ -58,6 +58,14 @@ const ClientTaskTab = () => {
   const { entityType, ...addTaskState } = useSelector(
     ({ clientManagement }) => clientManagement?.task?.addTask ?? {}
   );
+
+  const {
+    viewClientTaskColumnSaveButtonLoaderAction,
+    viewClientTaskColumnResetButtonLoaderAction,
+    viewClientSaveNewTaskButtonLoaderAction,
+    viewClientUpdateTaskButtonLoaderAction,
+    viewClientDeleteTaskButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const { page, pages, total, limit, docs, headers } = useMemo(() => taskList ?? {}, [taskList]);
   const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
@@ -152,11 +160,23 @@ const ClientTaskTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewClientTaskColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewClientTaskColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewClientTaskColumnResetButtonLoaderAction,
+      viewClientTaskColumnSaveButtonLoaderAction,
+    ]
   );
 
   const onChangeSelectedColumn = useCallback((type, name, value) => {
@@ -286,19 +306,19 @@ const ClientTaskTab = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return addTaskState?.assigneeId || {};
+          return addTaskState?.assigneeId || [];
         }
         case 'priority': {
-          return addTaskState?.priority || {};
+          return addTaskState?.priority || [];
         }
         case 'entityType': {
-          return entityType || {};
+          return entityType || [];
         }
         case 'entityId': {
-          return addTaskState?.entityId || {};
+          return addTaskState?.entityId || [];
         }
         default:
-          return {};
+          return [];
       }
     },
     [addTaskState, assigneeList, priorityData, entityList, entityTypeData]
@@ -427,17 +447,27 @@ const ClientTaskTab = () => {
   const addTaskModalButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseAddTask },
-      { title: 'Add', buttonType: 'primary', onClick: onSaveTask },
+      {
+        title: 'Add',
+        buttonType: 'primary',
+        onClick: onSaveTask,
+        isLoading: viewClientSaveNewTaskButtonLoaderAction,
+      },
     ],
-    [onCloseAddTask, onSaveTask]
+    [onCloseAddTask, onSaveTask, viewClientSaveNewTaskButtonLoaderAction]
   );
 
   const editTaskModalButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseEditTask },
-      { title: 'Save', buttonType: 'primary', onClick: onSaveTask },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onSaveTask,
+        isLoading: viewClientUpdateTaskButtonLoaderAction,
+      },
     ],
-    [onCloseAddTask, onSaveTask]
+    [onCloseAddTask, onSaveTask, viewClientUpdateTaskButtonLoaderAction]
   );
 
   const [deleteTaskData, setDeleteTaskData] = useState('');
@@ -490,9 +520,10 @@ const ClientTaskTab = () => {
             /**/
           }
         },
+        isLoading: viewClientDeleteTaskButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, deleteTaskData, callBack]
+    [toggleConfirmationModal, deleteTaskData, callBack, viewClientDeleteTaskButtonLoaderAction]
   );
 
   useEffect(() => {

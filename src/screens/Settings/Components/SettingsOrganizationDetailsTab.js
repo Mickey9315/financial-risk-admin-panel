@@ -14,6 +14,11 @@ const SettingsOrganizationDetailsTab = () => {
   const organizationDetail = useSelector(
     ({ settingReducer }) => settingReducer?.organizationDetails ?? {}
   );
+
+  const { settingUpdateOrganizationDetailsButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getOrganizationDetails());
@@ -79,9 +84,13 @@ const SettingsOrganizationDetailsTab = () => {
     });
     setErrorElementList(tempArray);
     if (!checkCondition) {
-      dispatch(updateOrganizationDetails({ ...organizationDetail }));
-      setErrorElementList([]);
-      setIsEdit(false);
+      try {
+        await dispatch(updateOrganizationDetails({ ...organizationDetail }));
+        setErrorElementList([]);
+        setIsEdit(false);
+      } catch (e) {
+        /**/
+      }
     }
   }, [setIsEdit, organizationDetail]);
 
@@ -101,7 +110,12 @@ const SettingsOrganizationDetailsTab = () => {
         )}
         {isEdit && (
           <div className="buttons-row">
-            <Button buttonType="primary" title="Save" onClick={onSaveOrganizationDetails} />
+            <Button
+              buttonType="primary"
+              title="Save"
+              onClick={onSaveOrganizationDetails}
+              isLoading={settingUpdateOrganizationDetailsButtonLoaderAction}
+            />
             <Button buttonType="danger" title="Cancel" onClick={onCancelEdit} />
           </div>
         )}

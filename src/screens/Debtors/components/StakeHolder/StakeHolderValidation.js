@@ -5,7 +5,7 @@ import {
 } from '../../redux/DebtorsAction';
 import { checkForEmail } from '../../../../helpers/ValidationHelper';
 
-export const stakeHolderValidation = (dispatch, data, debtorData, callBack, isEdit) => {
+export const stakeHolderValidation = async (dispatch, data, debtorData, callBack, isEdit) => {
   let validated = true;
   const errors = {};
   let preparedData = {};
@@ -167,9 +167,9 @@ export const stakeHolderValidation = (dispatch, data, debtorData, callBack, isEd
     try {
       validated = true;
       if (isEdit) {
-        dispatch(updateStakeHolder(debtorId, data?._id, finalData, callBack));
+        await dispatch(updateStakeHolder(debtorId, data?._id, finalData, callBack));
       } else {
-        dispatch(addNewStakeHolder(debtorId, finalData, callBack));
+        await dispatch(addNewStakeHolder(debtorId, finalData, callBack));
       }
     } catch {
       /**/

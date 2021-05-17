@@ -36,6 +36,12 @@ const AddUser = () => {
   const [modalData, setModalData] = useState(null);
   const prevUserRoleData = useRef(null);
 
+  const {
+    viewUserUpdateUserButtonLoaderAction,
+    viewUserAddNewUserButtonLoaderAction,
+    viewUserDeleteUserButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const filteredOrganisationList = useMemo(
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) ?? [],
     [selectedUser]
@@ -238,11 +244,12 @@ const AddUser = () => {
           title: 'Delete',
           buttonType: 'danger',
           onClick: deleteUserClick,
+          isLoading: viewUserDeleteUserButtonLoaderAction,
         },
       ],
     });
     toggleConfirmationModal(true);
-  }, [deleteUserClick, toggleConfirmationModal]);
+  }, [deleteUserClick, toggleConfirmationModal, viewUserDeleteUserButtonLoaderAction]);
 
   const clients = useMemo(() => {
     let finalData = [];
@@ -300,7 +307,16 @@ const AddUser = () => {
             <>
               <Button buttonType="primary-1" title="Close" onClick={backToUser} />
               <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-                <Button buttonType="primary" title="Save" onClick={onClickAddUser} />
+                <Button
+                  buttonType="primary"
+                  title="Save"
+                  onClick={onClickAddUser}
+                  isLoading={
+                    action === 'add'
+                      ? viewUserAddNewUserButtonLoaderAction
+                      : viewUserUpdateUserButtonLoaderAction
+                  }
+                />
               </UserPrivilegeWrapper>
             </>
           )}

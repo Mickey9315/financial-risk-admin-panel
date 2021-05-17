@@ -140,15 +140,15 @@ const GenerateApplication = () => {
           return await applicationCompanyStepValidations(dispatch, data, editApplicationData);
 
         case 'partners':
-          return applicationPersonStepValidation(dispatch, data, editApplicationData);
+          return await applicationPersonStepValidation(dispatch, data, editApplicationData);
 
         case 'creditLimit':
-          return applicationCreditStepValidations(dispatch, data, editApplicationData);
+          return await applicationCreditStepValidations(dispatch, data, editApplicationData);
 
         case 'documents':
-          return applicationDocumentsStepValidations(dispatch, data, editApplicationData);
+          return await applicationDocumentsStepValidations(dispatch, data, editApplicationData);
         case 'confirmationStep':
-          return applicationConfirmationStepValidations(
+          return await applicationConfirmationStepValidations(
             dispatch,
             data,
             editApplicationData,

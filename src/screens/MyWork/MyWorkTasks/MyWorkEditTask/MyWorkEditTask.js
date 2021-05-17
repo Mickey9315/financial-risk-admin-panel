@@ -51,6 +51,10 @@ const MyWorkAddTask = () => {
 
   const { assigneeList, entityList } = useMemo(() => dropDownData, [dropDownData]);
 
+  const { myWorkEditTaskLoaderButtonAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
+
   const INPUTS = useMemo(
     () => [
       {
@@ -304,7 +308,12 @@ const MyWorkAddTask = () => {
         </div>
         <div className="buttons-row">
           <Button buttonType="primary-1" title="Close" onClick={onCloseEditTask} />
-          <Button buttonType="primary" title="Save" onClick={onSaveTask} />
+          <Button
+            buttonType="primary"
+            title="Save"
+            onClick={onSaveTask}
+            isLoading={myWorkEditTaskLoaderButtonAction}
+          />
         </div>
       </div>
       <div className="common-white-container my-work-add-task-container">

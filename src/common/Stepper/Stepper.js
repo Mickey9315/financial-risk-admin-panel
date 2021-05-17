@@ -14,6 +14,10 @@ const Stepper = props => {
     [applicationDetail.company?.entityType]
   );
 
+  const { generateApplicationSaveAndNextButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
+
   const {
     steps,
     stepIndex,
@@ -96,6 +100,7 @@ const Stepper = props => {
             buttonType="primary"
             title={`Save${activeStep !== steps?.length - 1 ? ' and Next' : ''}`}
             onClick={onClickNextButton}
+            isLoading={generateApplicationSaveAndNextButtonLoaderAction}
           />
         </div>
       </div>

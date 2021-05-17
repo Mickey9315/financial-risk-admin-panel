@@ -15,6 +15,7 @@ import Modal from '../../../../common/Modal/Modal';
 import Input from '../../../../common/Input/Input';
 import Switch from '../../../../common/Switch/Switch';
 import DropdownMenu from '../../../../common/DropdownMenu/DropdownMenu';
+import { errorNotification } from '../../../../common/Toast';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -64,6 +65,12 @@ const ApplicationNotesAccordion = props => {
     ({ application }) => application?.viewApplication?.notes?.noteList?.docs || []
   );
 
+  const {
+    viewApplicationEditNoteButtonLoaderAction,
+    viewApplicationAddNewNoteButtonLoaderAction,
+    viewApplicationDeleteNoteButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   // add task
   const [modifyNoteModal, setModifyNoteModal] = useState(false);
 
@@ -97,7 +104,7 @@ const ApplicationNotesAccordion = props => {
       setCurrentNoteId(note._id);
       setEditNoteDetails(note);
     },
-    [setShowActionMenu, setMenuPosition]
+    [setShowActionMenu, setMenuPosition, setCurrentNoteId, setEditNoteDetails]
   );
 
   const callBack = useCallback(() => {
@@ -139,16 +146,24 @@ const ApplicationNotesAccordion = props => {
       description: selectedApplicationNote.description,
       isPublic: selectedApplicationNote.isPublic,
     };
-    if (selectedApplicationNote.type === NOTE_ACTIONS.ADD) {
-      await dispatch(addApplicationNoteAction(applicationId, noteData));
-    } else {
-      noteData.noteId = selectedApplicationNote.noteId;
-      await dispatch(updateApplicationNoteAction(applicationId, noteData));
+    try {
+      if (noteData?.description?.trim()?.length > 0) {
+        if (selectedApplicationNote.type === NOTE_ACTIONS.ADD) {
+          await dispatch(addApplicationNoteAction(applicationId, noteData));
+        } else {
+          noteData.noteId = selectedApplicationNote.noteId;
+          await dispatch(updateApplicationNoteAction(applicationId, noteData));
+        }
+        dispatchSelectedApplicationNote({
+          type: APPLICATION_NOTE_REDUCER_ACTIONS.RESET_STATE,
+        });
+        toggleModifyNotes();
+      } else {
+        errorNotification('Please Enter Description');
+      }
+    } catch (e) {
+      /**/
     }
-    dispatchSelectedApplicationNote({
-      type: APPLICATION_NOTE_REDUCER_ACTIONS.RESET_STATE,
-    });
-    toggleModifyNotes();
   }, [selectedApplicationNote, toggleModifyNotes]);
 
   const onEditNoteClick = useCallback(() => {
@@ -178,32 +193,61 @@ const ApplicationNotesAccordion = props => {
     toggleConfirmationModal();
   }, [toggleConfirmationModal, setShowActionMenu, showActionMenu]);
 
+  const [activeLoaderButton, setActiveLoaderButton] = useState(false);
+
+  const deleteViewApplicationNote = useCallback(async () => {
+    try {
+      await dispatch(deleteApplicationNoteAction(currentNoteId, () => callBack()));
+    } catch (e) {
+      /**/
+    }
+  }, [currentNoteId, callBack]);
+
   const noteCRUDButtons = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
+      { title: 'Close', buttonType: 'primary-1', onClick: onCloseNotePopup },
       {
         title: `${selectedApplicationNote.type === 'EDIT' ? 'Edit' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
+        isLoading: activeLoaderButton,
       },
     ],
-    [onCloseNotePopup, addOrUpdateNote, selectedApplicationNote]
+    [onCloseNotePopup, addOrUpdateNote, selectedApplicationNote.type, activeLoaderButton]
   );
   const deleteNoteButtons = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      { title: 'Close', buttonType: 'primary-1', onClick: toggleConfirmationModal },
       {
         title: 'Delete',
         buttonType: 'danger',
-        onClick: () => dispatch(deleteApplicationNoteAction(currentNoteId, () => callBack())),
+        onClick: deleteViewApplicationNote,
+        isLoading: viewApplicationDeleteNoteButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, currentNoteId, callBack]
+    [
+      toggleConfirmationModal,
+      currentNoteId,
+      callBack,
+      deleteViewApplicationNote,
+      viewApplicationDeleteNoteButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {
     dispatch(getApplicationNotesList(applicationId));
   }, []);
+
+  useEffect(() => {
+    if (selectedApplicationNote.type === 'EDIT')
+      setActiveLoaderButton(viewApplicationEditNoteButtonLoaderAction);
+    else setActiveLoaderButton(viewApplicationAddNewNoteButtonLoaderAction);
+  }, [
+    selectedApplicationNote.type,
+    setActiveLoaderButton,
+    viewApplicationEditNoteButtonLoaderAction,
+    viewApplicationAddNewNoteButtonLoaderAction,
+  ]);
 
   return (
     <>

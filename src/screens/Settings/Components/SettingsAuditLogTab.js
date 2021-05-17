@@ -29,6 +29,12 @@ const SettingsAuditLogTab = () => {
   );
 
   const { userNameList } = useSelector(({ settingReducer }) => settingReducer ?? []);
+
+  const {
+    settingAuditLogColumnSaveButtonLoaderAction,
+    settingAuditLogColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { defaultFields, customFields } = useMemo(
     () => auditLogColumnNameList ?? { defaultFields: [], customFields: [] },
     [auditLogColumnNameList]
@@ -155,8 +161,9 @@ const SettingsAuditLogTab = () => {
     [setFilterModal]
   );
   const onClickApplyFilter = useCallback(() => {
-    getAuditLogListByFilter({ page: 1, limit }, toggleFilterModal);
-  }, [getAuditLogListByFilter]);
+    toggleFilterModal();
+    getAuditLogListByFilter({ page: 1, limit });
+  }, [getAuditLogListByFilter, toggleFilterModal]);
 
   const onClickResetFilterAuditLogList = useCallback(() => {
     dispatchFilter({ type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.RESET_STATE });
@@ -251,11 +258,23 @@ const SettingsAuditLogTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: settingAuditLogColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: settingAuditLogColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      settingAuditLogColumnSaveButtonLoaderAction,
+      settingAuditLogColumnResetButtonLoaderAction,
+    ]
   );
   const history = useHistory();
 

@@ -54,7 +54,6 @@ function debtorsNoteReducer(state, action) {
       return state;
   }
 }
-
 const DebtorsNotesTab = () => {
   const searchInputRef = useRef();
   const dispatch = useDispatch();
@@ -76,6 +75,12 @@ const DebtorsNotesTab = () => {
     value => setModifyNoteModal(value !== undefined ? value : e => !e),
     [setModifyNoteModal]
   );
+
+  const {
+    viewDebtorAddNewNoteButtonLoaderAction,
+    viewDebtorUpdateNoteButtonLoaderAction,
+    viewDebtorDeleteNoteButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => debtorsNotesList ?? {},
@@ -166,29 +171,43 @@ const DebtorsNotesTab = () => {
       description: selectedDebtorsNote?.description,
       isPublic: selectedDebtorsNote?.isPublic,
     };
-    if (selectedDebtorsNote?.type === NOTE_ACTIONS.ADD) {
-      // await dispatch(addClientNoteAction(id, noteData));
-      await dispatch(addDebtorsNoteAction(id, noteData));
+    if (selectedDebtorsNote?.description?.trim()?.length > 0) {
+      if (selectedDebtorsNote?.type === NOTE_ACTIONS.ADD) {
+        // await dispatch(addClientNoteAction(id, noteData));
+        await dispatch(addDebtorsNoteAction(id, noteData));
+      } else {
+        noteData.noteId = selectedDebtorsNote?.noteId;
+        await dispatch(updateDebtorsNoteAction(id, noteData));
+      }
+      dispatchSelectedDebtorsNote({
+        type: DEBTORS_NOTE_REDUCER_ACTIONS.RESET_STATE,
+      });
+      toggleModifyNotes();
     } else {
-      noteData.noteId = selectedDebtorsNote?.noteId;
-      await dispatch(updateDebtorsNoteAction(id, noteData));
+      errorNotification('Please enter description.');
     }
-    dispatchSelectedDebtorsNote({
-      type: DEBTORS_NOTE_REDUCER_ACTIONS.RESET_STATE,
-    });
-    toggleModifyNotes();
-  }, [selectedDebtorsNote, toggleModifyNotes]);
+  }, [selectedDebtorsNote, toggleModifyNotes, id]);
 
-  const addToCRMButtons = useMemo(
+  const debtorNoteButtons = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
       {
         title: `${selectedDebtorsNote?.type === 'EDIT' ? 'Edit' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
+        isLoading:
+          selectedDebtorsNote?.type === 'EDIT'
+            ? viewDebtorUpdateNoteButtonLoaderAction
+            : viewDebtorAddNewNoteButtonLoaderAction,
       },
     ],
-    [onCloseNotePopup, addOrUpdateNote]
+    [
+      onCloseNotePopup,
+      addOrUpdateNote,
+      selectedDebtorsNote?.type,
+      viewDebtorAddNewNoteButtonLoaderAction,
+      viewDebtorUpdateNoteButtonLoaderAction,
+    ]
   );
 
   const callBack = () => {
@@ -203,16 +222,17 @@ const DebtorsNotesTab = () => {
       {
         title: 'Delete',
         buttonType: 'danger',
-        onClick: () => {
+        onClick: async () => {
           try {
             dispatch(deleteDebtorsNoteAction(deleteId, () => callBack()));
           } catch (e) {
             /**/
           }
         },
+        isLoading: viewDebtorDeleteNoteButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, getDebtorNotesList, deleteId]
+    [toggleConfirmationModal, getDebtorNotesList, deleteId, viewDebtorDeleteNoteButtonLoaderAction]
   );
 
   const pageActionClick = useCallback(
@@ -240,7 +260,7 @@ const DebtorsNotesTab = () => {
         <Modal
           header={`${selectedDebtorsNote?.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
           className="add-to-crm-modal"
-          buttons={addToCRMButtons}
+          buttons={debtorNoteButtons}
           hideModal={toggleModifyNotes}
         >
           <div className="add-notes-popup-container">

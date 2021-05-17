@@ -46,6 +46,10 @@ const MyWorkAddTask = () => {
     taskData,
   ]);
 
+  const { myWorkSaveNewTaskLoaderButtonAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
+
   const INPUTS = useMemo(
     () => [
       {
@@ -157,7 +161,7 @@ const MyWorkAddTask = () => {
     backToTaskList();
   }, [backToTaskList]);
 
-  const onSaveTask = useCallback(() => {
+  const onSaveTask = useCallback(async () => {
     const data = {
       title: addTaskState?.title?.trim(),
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
@@ -173,7 +177,7 @@ const MyWorkAddTask = () => {
       errorNotification('Please add title');
     } else {
       try {
-        dispatch(saveTaskData(data, backToTaskList));
+        await dispatch(saveTaskData(data, backToTaskList));
       } catch (e) {
         errorNotification('Something went wrong please add again');
       }
@@ -273,7 +277,12 @@ const MyWorkAddTask = () => {
         </div>
         <div className="buttons-row">
           <Button buttonType="primary-1" title="Close" onClick={onCloseAddTask} />
-          <Button buttonType="primary" title="Save" onClick={onSaveTask} />
+          <Button
+            buttonType="primary"
+            title="Save"
+            onClick={onSaveTask}
+            isLoading={myWorkSaveNewTaskLoaderButtonAction}
+          />
         </div>
       </div>
       <div className="common-white-container my-work-add-task-container">

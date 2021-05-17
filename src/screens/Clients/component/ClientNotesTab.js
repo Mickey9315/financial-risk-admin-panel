@@ -77,6 +77,12 @@ const ClientNotesTab = () => {
     ({ clientManagement }) => clientManagement?.notes?.notesList ?? {}
   );
 
+  const {
+    viewClientAddNewNoteButtonLoaderAction,
+    viewClientUpdateNoteButtonLoaderAction,
+    viewClientDeleteNoteButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList ?? {}, [
     clientNotesList,
   ]);
@@ -127,16 +133,26 @@ const ClientNotesTab = () => {
     toggleModifyNotes();
   }, [toggleModifyNotes, dispatchSelectedClientNote]);
 
-  const addToCRMButtons = useMemo(
+  const modifyNoteModalButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
       {
         title: `${selectedClientNote?.type === 'EDIT' ? 'Edit' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
+        isLoading:
+          selectedClientNote?.type === 'EDIT'
+            ? viewClientUpdateNoteButtonLoaderAction
+            : viewClientAddNewNoteButtonLoaderAction,
       },
     ],
-    [onCloseNotePopup, addOrUpdateNote]
+    [
+      onCloseNotePopup,
+      addOrUpdateNote,
+      selectedClientNote?.type,
+      viewClientUpdateNoteButtonLoaderAction,
+      viewClientAddNewNoteButtonLoaderAction,
+    ]
   );
 
   const pageActionClick = useCallback(
@@ -199,16 +215,17 @@ const ClientNotesTab = () => {
       {
         title: 'Delete',
         buttonType: 'danger',
-        onClick: () => {
+        onClick: async () => {
           try {
-            dispatch(deleteClientNoteAction(deleteId, () => callBack()));
+            await dispatch(deleteClientNoteAction(deleteId, () => callBack()));
           } catch (e) {
             /**/
           }
         },
+        isLoading: viewClientDeleteNoteButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, getClientNotesList, deleteId]
+    [toggleConfirmationModal, getClientNotesList, deleteId, viewClientDeleteNoteButtonLoaderAction]
   );
 
   const onChangeSelectedNoteInput = useCallback(e => {
@@ -237,7 +254,7 @@ const ClientNotesTab = () => {
         <Modal
           header={`${selectedClientNote?.type === 'EDIT' ? 'Edit Note' : 'Add Note'} `}
           className="add-to-crm-modal"
-          buttons={addToCRMButtons}
+          buttons={modifyNoteModalButton}
           hideModal={toggleModifyNotes}
         >
           <div className="add-notes-popup-container">
@@ -281,30 +298,35 @@ const ClientNotesTab = () => {
           <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
         </div>
       </div>
+      {/* eslint-disable-next-line no-nested-ternary */}
       {docs ? (
-        <>
-          <div className="tab-table-container">
-            <Table
-              align="left"
-              valign="center"
-              data={docs}
-              tableClass="white-header-table"
-              headers={headers}
-              recordActionClick={onSelectUserRecordActionClick}
-              refreshData={getClientNotesList}
-              haveActions
+        docs.length > 0 ? (
+          <>
+            <div className="tab-table-container">
+              <Table
+                align="left"
+                valign="center"
+                data={docs}
+                tableClass="white-header-table"
+                headers={headers}
+                recordActionClick={onSelectUserRecordActionClick}
+                refreshData={getClientNotesList}
+                haveActions
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-record-found">No record found</div>
+        )
       ) : (
         <Loader />
       )}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -14,6 +15,10 @@ function ResetPassword() {
 
   const history = useHistory();
   const { token } = useQueryParams();
+
+  const { resetPasswordButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
 
   const onChangePassword = e => {
     const changedPassword = e.target.value;
@@ -83,6 +88,7 @@ function ResetPassword() {
         buttonType="secondary"
         className="ml-15"
         onClick={onClickResetPassword}
+        disabled={resetPasswordButtonLoaderAction}
       />
     </AuthScreenContainer>
   );

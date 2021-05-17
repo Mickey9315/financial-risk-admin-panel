@@ -27,6 +27,12 @@ const DebtorsApplicationTab = () => {
     debtorsApplicationColumnNameList,
     debtorsApplicationDefaultColumnNameList,
   } = useSelector(({ debtorsManagement }) => debtorsManagement?.application ?? {});
+
+  const {
+    viewDebtorApplicationColumnSaveButtonLoaderAction,
+    viewDebtorApplicationColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
     () => applicationList ?? {},
     [applicationList]
@@ -121,11 +127,23 @@ const DebtorsApplicationTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewDebtorApplicationColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewDebtorApplicationColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewDebtorApplicationColumnSaveButtonLoaderAction,
+      viewDebtorApplicationColumnResetButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {

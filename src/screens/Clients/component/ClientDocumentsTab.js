@@ -113,6 +113,15 @@ const ClientDocumentsTab = () => {
     clientDocumentsColumnNameList,
     clientDocumentsDefaultColumnNameList,
   } = useSelector(({ clientManagement }) => clientManagement?.documents ?? {});
+
+  const {
+    viewClientDocumentColumnSaveButtonLoaderAction,
+    viewClientDocumentColumnResetButtonLoaderAction,
+    viewClientUploadDocumentButtonLoaderAction,
+    viewClientDownloadDocumentButtonLoaderAction,
+    viewClientDeleteDocumentButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, pages, page, limit, docs, headers } = useMemo(() => documentsList ?? {}, [
     documentsList,
   ]);
@@ -191,11 +200,23 @@ const ClientDocumentsTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewClientDocumentColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewClientDocumentColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewClientDocumentColumnSaveButtonLoaderAction,
+      viewClientDocumentColumnResetButtonLoaderAction,
+    ]
   );
 
   const onClickUploadDocument = useCallback(async () => {
@@ -304,9 +325,14 @@ const ClientDocumentsTab = () => {
   const uploadDocumentButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseUploadDocumentButton },
-      { title: 'Upload', buttonType: 'primary', onClick: onClickUploadDocument },
+      {
+        title: 'Upload',
+        buttonType: 'primary',
+        onClick: onClickUploadDocument,
+        isLoading: viewClientUploadDocumentButtonLoaderAction,
+      },
     ],
-    [onCloseUploadDocumentButton, onClickUploadDocument]
+    [onCloseUploadDocumentButton, onClickUploadDocument, viewClientUploadDocumentButtonLoaderAction]
   );
   const deleteDocument = useCallback(
     data => {
@@ -347,24 +373,31 @@ const ClientDocumentsTab = () => {
             /**/
           }
         },
+        isLoading: viewClientDeleteDocumentButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, deleteDocumentData]
+    [toggleConfirmationModal, deleteDocumentData, viewClientDeleteDocumentButtonLoaderAction]
   );
 
   const onClickDownloadButton = useCallback(async () => {
     if (documentsList?.docs?.length !== 0) {
-      if (selectedCheckBoxData?.length !== 0) {
-        const docsToDownload = selectedCheckBoxData?.map(e => e.id);
-        const res = await downloadDocuments(docsToDownload);
-        downloadAll(res);
-      } else {
-        errorNotification('Please select at least one document to download');
+      try {
+        if (selectedCheckBoxData?.length !== 0) {
+          const docsToDownload = selectedCheckBoxData?.map(e => e.id);
+          const res = await downloadDocuments(docsToDownload);
+          if (res) {
+            downloadAll(res);
+          }
+        } else {
+          errorNotification('Please select at least one document to download');
+        }
+      } catch (e) {
+        /**/
       }
     } else {
       errorNotification('You have no documents to download');
     }
-  }, [documentsList, selectedCheckBoxData]);
+  }, [documentsList, selectedCheckBoxData, downloadAll]);
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
@@ -455,34 +488,40 @@ const ClientDocumentsTab = () => {
             buttonType="primary-1"
             title="cloud_download"
             onClick={onClickDownloadButton}
+            isLoading={viewClientDownloadDocumentButtonLoaderAction}
           />
         </div>
       </div>
+      {/* eslint-disable-next-line no-nested-ternary */}
       {docs ? (
-        <>
-          <div className="tab-table-container">
-            <Table
-              align="left"
-              valign="center"
-              data={docs}
-              headers={headers}
-              tableClass="white-header-table"
-              extraColumns={deleteDocumentAction}
-              refreshData={getClientDocumentsList}
-              showCheckbox
-              onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+        docs.length > 0 ? (
+          <>
+            <div className="tab-table-container">
+              <Table
+                align="left"
+                valign="center"
+                data={docs}
+                headers={headers}
+                tableClass="white-header-table"
+                extraColumns={deleteDocumentAction}
+                refreshData={getClientDocumentsList}
+                showCheckbox
+                onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+              />
+            </div>
+            <Pagination
+              className="common-list-pagination"
+              total={total}
+              pages={pages}
+              page={page}
+              limit={limit}
+              pageActionClick={pageActionClick}
+              onSelectLimit={onSelectLimit}
             />
-          </div>
-          <Pagination
-            className="common-list-pagination"
-            total={total}
-            pages={pages}
-            page={page}
-            limit={limit}
-            pageActionClick={pageActionClick}
-            onSelectLimit={onSelectLimit}
-          />
-        </>
+          </>
+        ) : (
+          <div className="no-record-found">No record found</div>
+        )
       ) : (
         <Loader />
       )}

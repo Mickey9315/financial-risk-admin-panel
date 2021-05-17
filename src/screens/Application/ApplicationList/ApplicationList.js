@@ -84,6 +84,12 @@ const ApplicationList = () => {
   const { dropdownData } = useSelector(
     ({ application }) => application?.applicationFilterList ?? {}
   );
+
+  const {
+    applicationListColumnSaveButtonLoaderAction,
+    applicationListColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const {
     entity,
@@ -252,7 +258,8 @@ const ApplicationList = () => {
     [setFilterModal]
   );
   const onClickApplyFilter = useCallback(() => {
-    getApplicationsByFilter({ page: 1, limit }, toggleFilterModal);
+    toggleFilterModal();
+    getApplicationsByFilter({ page: 1, limit });
   }, [getApplicationsByFilter, toggleFilterModal, page, limit]);
 
   const onClickResetFilter = useCallback(() => {
@@ -270,7 +277,11 @@ const ApplicationList = () => {
         onClick: onClickResetFilter,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
-      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
+      {
+        title: 'Apply',
+        buttonType: 'primary',
+        onClick: onClickApplyFilter,
+      },
     ],
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
@@ -321,11 +332,23 @@ const ApplicationList = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: applicationListColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: applicationListColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, toggleCustomField, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      toggleCustomField,
+      onClickSaveColumnSelection,
+      applicationListColumnSaveButtonLoaderAction,
+      applicationListColumnResetButtonLoaderAction,
+    ]
   );
 
   const { defaultFields, customFields } = useMemo(

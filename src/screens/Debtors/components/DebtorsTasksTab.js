@@ -15,9 +15,9 @@ import Loader from '../../../common/Loader/Loader';
 import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
-import { deleteTaskAction } from '../../MyWork/redux/MyWorkAction';
 import {
   changeDebtorTaskColumnNameListStatus,
+  deleteTaskAction,
   getAssigneeDropDownData,
   getDebtorTaskColumnList,
   getDebtorTaskDetail,
@@ -58,6 +58,15 @@ const DebtorTaskTab = () => {
   const { entityType, ...addTaskState } = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
   );
+
+  const {
+    viewDebtorTaskColumnSaveButtonLoaderAction,
+    viewDebtorTaskColumnResetButtonLoaderAction,
+    viewDebtorAddNewTaskButtonLoaderAction,
+    viewDebtorUpdateTaskButtonLoaderAction,
+    viewDebtorDeleteTaskButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { page, pages, total, limit, docs, headers, isLoading } = useMemo(() => taskList ?? {}, [
     taskList,
   ]);
@@ -153,11 +162,23 @@ const DebtorTaskTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewDebtorTaskColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewDebtorTaskColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewDebtorTaskColumnResetButtonLoaderAction,
+      viewDebtorTaskColumnSaveButtonLoaderAction,
+    ]
   );
 
   const onChangeSelectedColumn = useCallback((type, name, value) => {
@@ -427,17 +448,27 @@ const DebtorTaskTab = () => {
   const addTaskModalButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseAddTask },
-      { title: 'Add', buttonType: 'primary', onClick: onSaveTask },
+      {
+        title: 'Add',
+        buttonType: 'primary',
+        onClick: onSaveTask,
+        isLoading: viewDebtorAddNewTaskButtonLoaderAction,
+      },
     ],
-    [onCloseAddTask, onSaveTask]
+    [onCloseAddTask, onSaveTask, viewDebtorAddNewTaskButtonLoaderAction]
   );
 
   const editTaskModalButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseEditTask },
-      { title: 'Save', buttonType: 'primary', onClick: onSaveTask },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onSaveTask,
+        isLoading: viewDebtorUpdateTaskButtonLoaderAction,
+      },
     ],
-    [onCloseAddTask, onSaveTask]
+    [onCloseAddTask, onSaveTask, viewDebtorUpdateTaskButtonLoaderAction]
   );
 
   const [deleteTaskData, setDeleteTaskData] = useState('');
@@ -490,9 +521,10 @@ const DebtorTaskTab = () => {
             /**/
           }
         },
+        isLoading: viewDebtorDeleteTaskButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, deleteTaskData, callBack]
+    [toggleConfirmationModal, deleteTaskData, callBack, viewDebtorDeleteTaskButtonLoaderAction]
   );
 
   useEffect(() => {

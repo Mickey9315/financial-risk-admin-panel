@@ -27,6 +27,10 @@ import {
 } from '../redux/InsurerReduxConstants';
 import InsurerApiService from '../services/InsurerApiService';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 const InsurerList = () => {
   const history = useHistory();
@@ -36,6 +40,13 @@ const InsurerList = () => {
   const { insurerColumnNameList, insurerDefaultColumnNameList } = useSelector(
     ({ insurer }) => insurer ?? {}
   );
+
+  const {
+    insurerListColumnSaveButtonLoaderAction,
+    insurerListColumnResetButtonLoaderAction,
+    insurerListAddFromCRMButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, pages, page, limit, isLoading, docs, headers } = useMemo(
     () => insurerListWithPageData ?? {},
     [insurerListWithPageData]
@@ -115,11 +126,23 @@ const InsurerList = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: insurerListColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: insurerListColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      insurerListColumnSaveButtonLoaderAction,
+      insurerListColumnResetButtonLoaderAction,
+    ]
   );
   const { defaultFields, customFields } = useMemo(
     () => insurerColumnNameList ?? { defaultFields: [], customFields: [] },
@@ -188,31 +211,41 @@ const InsurerList = () => {
     const data = {
       crmIds,
     };
-    if (data.crmIds.length > 0) {
-      setIsModalLoading(true);
-      InsurerApiService.addInsurerListFromCrm(data)
-        .then(res => {
-          if (res.data.status === 'SUCCESS') {
-            successNotification('Insurer data synced successfully');
-            setIsModalLoading(false);
-            getInsurerList();
-            toggleAddFromCRM();
-          }
-        })
-        .catch(() => {
-          errorNotification('Internal server error');
-        });
-    } else {
-      errorNotification('Please select insurer to Add');
+    try {
+      if (data?.crmIds?.length > 0) {
+        startLoaderButtonOnRequest('insurerListAddFromCRMButtonLoaderAction');
+        InsurerApiService.addInsurerListFromCrm(data)
+          .then(res => {
+            if (res?.data?.status === 'SUCCESS') {
+              successNotification(res?.data?.message ?? 'Insurer data synced successfully');
+              getInsurerList();
+              stopLoaderButtonOnSuccessOrFail('insurerListAddFromCRMButtonLoaderAction');
+              toggleAddFromCRM();
+            }
+          })
+          .catch(e => {
+            errorNotification(e?.data?.message ?? 'Internal server error');
+            stopLoaderButtonOnSuccessOrFail('insurerListAddFromCRMButtonLoaderAction');
+          });
+      } else {
+        errorNotification('Please select insurer to Add');
+      }
+    } catch (e) {
+      /**/
     }
-  }, [crmIds, toggleAddFromCRM, getInsurerList, setIsModalLoading]);
+  }, [crmIds, toggleAddFromCRM, getInsurerList]);
 
   const addToCRMButtons = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: toggleAddFromCRM },
-      { title: 'Add', buttonType: 'primary', onClick: addDataFromCrm },
+      {
+        title: 'Add',
+        buttonType: 'primary',
+        onClick: addDataFromCrm,
+        isLoading: insurerListAddFromCRMButtonLoaderAction,
+      },
     ],
-    [toggleAddFromCRM, addDataFromCrm]
+    [toggleAddFromCRM, addDataFromCrm, insurerListAddFromCRMButtonLoaderAction]
   );
 
   const checkIfEnterKeyPressed = useCallback(async () => {

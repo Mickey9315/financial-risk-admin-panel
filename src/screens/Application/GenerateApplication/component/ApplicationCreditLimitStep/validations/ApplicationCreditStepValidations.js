@@ -4,7 +4,7 @@ import {
 } from '../../../../redux/ApplicationAction';
 import { NUMBER_REGEX } from '../../../../../../constants/RegexConstants';
 
-export const applicationCreditStepValidations = (dispatch, data, editApplicationData) => {
+export const applicationCreditStepValidations = async (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = true;
 
@@ -55,7 +55,7 @@ export const applicationCreditStepValidations = (dispatch, data, editApplication
       note,
     };
     try {
-      dispatch(saveApplicationStepDataToBackend(finalData));
+      await dispatch(saveApplicationStepDataToBackend(finalData));
     } catch (e) {
       /**/
     }

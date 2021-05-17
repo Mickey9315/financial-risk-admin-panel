@@ -12,6 +12,10 @@ import DebtorApplicationApiServices from '../services/DebtorApplicationApiServic
 import DebtorCreditLimitApiServices from '../services/DebtorCreditLimitApiServices';
 import DebtorStakeHolderApiServices from '../services/DebtorStakeHolderApiServices';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -74,6 +78,7 @@ export const changeDebtorsColumnListStatus = data => {
 export const saveDebtorsColumnListName = ({ debtorsColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`DebtorListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
       let data = {
         columns: [],
         isReset: true,
@@ -93,6 +98,9 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameList = {}, isReset 
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `DebtorListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -104,8 +112,14 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameList = {}, isReset 
           data: debtorsColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(
+          `DebtorListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `DebtorListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -179,13 +193,16 @@ export const OnChangeCountry = value => {
 export const updateDebtorData = (id, finalData, cb) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorUpdateDebtorButtonLoaderAction`);
       const response = await DebtorsApiServices.updateDebtorDetailById(id, finalData);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Debtor details updated successfully');
         dispatch(getDebtorById(id));
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateDebtorButtonLoaderAction`);
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateDebtorButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -222,6 +239,7 @@ export const getDebtorsNotesListDataAction = (id, params = { page: 1, limit: 15 
 export const addDebtorsNoteAction = (entityId, noteData) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorAddNewNoteButtonLoaderAction`);
       const { description, isPublic } = noteData;
       const data = {
         noteFor: 'debtor',
@@ -235,8 +253,10 @@ export const addDebtorsNoteAction = (entityId, noteData) => {
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getDebtorsNotesListDataAction(entityId));
         successNotification(response?.data?.message || 'Note added successfully.');
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewNoteButtonLoaderAction`);
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewNoteButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -245,6 +265,7 @@ export const addDebtorsNoteAction = (entityId, noteData) => {
 export const updateDebtorsNoteAction = (entityId, noteData) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorUpdateNoteButtonLoaderAction`);
       const { noteId, description, isPublic } = noteData;
       const data = {
         noteFor: 'debtor',
@@ -258,8 +279,10 @@ export const updateDebtorsNoteAction = (entityId, noteData) => {
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getDebtorsNotesListDataAction(entityId));
         successNotification(response?.data?.message || 'Note updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateNoteButtonLoaderAction`);
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateNoteButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -267,15 +290,18 @@ export const updateDebtorsNoteAction = (entityId, noteData) => {
 
 export const deleteDebtorsNoteAction = async (noteId, cb) => {
   try {
+    startLoaderButtonOnRequest(`viewDebtorDeleteNoteButtonLoaderAction`);
     const response = await DebtorsNotesApiService.deleteDebtorsNote(noteId);
 
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Note deleted successfully.');
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteNoteButtonLoaderAction`);
       if (cb) {
         cb();
       }
     }
   } catch (e) {
+    stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteNoteButtonLoaderAction`);
     displayErrors(e);
   }
 };
@@ -349,6 +375,10 @@ export const saveDebtorDocumentsColumnListName = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `viewDebtorDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
+
       let data = {
         isReset: true,
         columns: [],
@@ -369,6 +399,9 @@ export const saveDebtorDocumentsColumnListName = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewDebtorDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -381,8 +414,14 @@ export const saveDebtorDocumentsColumnListName = ({
           data: debtorsDocumentColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(
+          `viewDebtorDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewDebtorDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -411,6 +450,7 @@ export const getDocumentTypeList = () => {
 export const uploadDocument = (data, config) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorUploadDocumentButtonLoaderAction`);
       const response = await DebtorsDocumentApiServices.uploadDocument(data, config);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
@@ -418,8 +458,10 @@ export const uploadDocument = (data, config) => {
           data: response.data.data,
         });
         successNotification(response.data.message || 'Document uploaded successfully');
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorUploadDocumentButtonLoaderAction`);
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorUploadDocumentButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -429,16 +471,19 @@ export const downloadDocuments = async data => {
   const str = data.toString();
 
   try {
+    startLoaderButtonOnRequest(`viewDebtorDownloadDocumentButtonLoaderAction`);
     const config = {
       documentIds: str,
       action: 'download',
     };
 
     const response = await DebtorsDocumentApiServices.downloadDocuments(config);
-    if (response.statusText === 'OK') {
+    if (response?.statusText === 'OK') {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorDownloadDocumentButtonLoaderAction`);
       return response;
     }
   } catch (e) {
+    stopLoaderButtonOnSuccessOrFail(`viewDebtorDownloadDocumentButtonLoaderAction`);
     displayErrors(e);
   }
   return false;
@@ -446,14 +491,17 @@ export const downloadDocuments = async data => {
 
 export const deleteDebtorDocumentAction = async (docId, cb) => {
   try {
+    startLoaderButtonOnRequest(`viewDebtorDeleteDocumentButtonLoaderAction`);
     const response = await DebtorsDocumentApiServices.deleteDebtorDocument(docId);
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Document deleted successfully.');
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteDocumentButtonLoaderAction`);
       if (cb) {
         cb();
       }
     }
   } catch (e) {
+    stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteDocumentButtonLoaderAction`);
     displayErrors(e);
   }
 };
@@ -521,6 +569,9 @@ export const saveDebtorTaskColumnNameListName = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `viewDebtorTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -541,6 +592,9 @@ export const saveDebtorTaskColumnNameListName = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewDebtorTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -552,8 +606,14 @@ export const saveDebtorTaskColumnNameListName = ({
           data: debtorsTaskColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(
+          `viewDebtorTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewDebtorTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -622,15 +682,18 @@ export const updateAddTaskStateFields = (name, value) => {
 export const saveTaskData = (data, cb) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorAddNewTaskButtonLoaderAction`);
       const response = await DebtorTaskApiService.saveNewTask(data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task created successfully');
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewTaskButtonLoaderAction`);
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewTaskButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -639,14 +702,17 @@ export const saveTaskData = (data, cb) => {
 export const deleteTaskAction = (taskId, cb) => {
   return async () => {
     try {
-      const response = await DebtorTaskApiService.deleteTask();
+      startLoaderButtonOnRequest(`viewDebtorDeleteTaskButtonLoaderAction`);
+      const response = await DebtorTaskApiService.deleteTask(taskId);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task deleted successfully.');
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteTaskButtonLoaderAction`);
         if (cb) {
           cb();
         }
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteTaskButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -671,15 +737,18 @@ export const getDebtorTaskDetail = id => {
 export const updateTaskData = (id, data, cb) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorUpdateTaskButtonLoaderAction`);
       const response = await DebtorTaskApiService.updateTask(id, data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_RESET_ADD_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task updated successfully');
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateTaskButtonLoaderAction`);
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateTaskButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -750,6 +819,9 @@ export const saveDebtorApplicationColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `viewDebtorApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -769,6 +841,9 @@ export const saveDebtorApplicationColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewDebtorApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -782,8 +857,14 @@ export const saveDebtorApplicationColumnNameList = ({
           data: debtorsApplicationColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
+        stopLoaderButtonOnSuccessOrFail(
+          `viewDebtorApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewDebtorApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -846,6 +927,9 @@ export const saveDebtorCreditLimitColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `viewDebtorCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -865,6 +949,9 @@ export const saveDebtorCreditLimitColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewDebtorCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -878,8 +965,14 @@ export const saveDebtorCreditLimitColumnNameList = ({
           data: debtorsCreditLimitColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
+        stopLoaderButtonOnSuccessOrFail(
+          `viewDebtorCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewDebtorCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -949,6 +1042,9 @@ export const saveDebtorStakeHolderColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -968,6 +1064,9 @@ export const saveDebtorStakeHolderColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -980,8 +1079,14 @@ export const saveDebtorStakeHolderColumnNameList = ({
           data: debtorsStakeHolderColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
+        stopLoaderButtonOnSuccessOrFail(
+          `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -1119,6 +1224,7 @@ export const searchStakeHolderCompanyEntityName = searchText => {
 export const addNewStakeHolder = (id, data, cb) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
       const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.addNewStakeHolder(
         id,
         data
@@ -1128,9 +1234,11 @@ export const addNewStakeHolder = (id, data, cb) => {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
         });
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -1139,6 +1247,7 @@ export const addNewStakeHolder = (id, data, cb) => {
 export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
       const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.updateStakeHolder(
         debtorId,
         stakeHolderId,
@@ -1149,9 +1258,11 @@ export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
         });
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -1160,14 +1271,17 @@ export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
 export const deleteStakeHolderDetails = (stakeHolderId, cb) => {
   return async () => {
     try {
+      startLoaderButtonOnRequest(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
       const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.deleteStakeHolder(
         stakeHolderId
       );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Stakeholder deleted successfully');
+        stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
       displayErrors(e);
     }
   };

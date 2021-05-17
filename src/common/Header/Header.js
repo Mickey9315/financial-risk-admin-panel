@@ -43,6 +43,13 @@ const Header = () => {
   const toggleEditProfileModal = value =>
     setShowEditProfileModal(value !== undefined ? value : e => !e);
 
+  // LoaderButtons
+  const {
+    updateProfileHeaderButtonLoaderAction,
+    resetPasswordHeaderButtonLoaderAction,
+    logoutHeaderButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { name, email, contactNumber, profilePictureUrl, changed } = useMemo(() => {
     if (loggedUserDetail) {
       // eslint-disable-next-line no-shadow
@@ -97,9 +104,11 @@ const Header = () => {
 
   const onLogoutClick = async () => {
     try {
-      await dispatch(logoutUser());
-      history.replace('/login');
-      toggleUserSettings(false);
+      if (!logoutHeaderButtonLoaderAction) {
+        await dispatch(logoutUser());
+        history.replace('/login');
+        toggleUserSettings(false);
+      }
     } catch (e) {
       /**/
     }
@@ -144,56 +153,71 @@ const Header = () => {
               'content-type': 'multipart/form-data',
             },
           };
-          dispatch(uploadProfilePicture(formData, config));
-          setFileName('Browse...');
-          setFile(null);
+          await dispatch(uploadProfilePicture(formData, config));
         }
         if (changed) {
-          dispatch(updateUserProfile(name, contactNumber));
+          await dispatch(updateUserProfile(name, contactNumber));
         }
         setIsEditProfileButton(false);
         toggleEditProfileModal(false);
+        setFileName('Browse...');
+        setFile(null);
       } catch (err) {
         /**/
       }
     }
   }, [name, contactNumber, file, changed, fileName]);
-  const editProfileButtons = [
-    {
-      title: 'Close',
-      buttonType: 'primary-1',
-      onClick: onCloseEditProfileClick,
-    },
-    {
-      title: isEditProfileButton ? 'Save' : 'Edit',
-      buttonType: 'primary',
-      onClick: () => {
-        setIsEditProfileButton(!isEditProfileButton);
+  const editProfileButtons = useMemo(
+    () => [
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: onCloseEditProfileClick,
       },
-    },
-  ];
-  const onEditProfileButtons = [
-    {
-      title: 'Close',
-      buttonType: 'primary-1',
-      onClick: onCloseEditProfileClick,
-    },
-    {
-      title: 'Save',
-      buttonType: 'primary',
-      onClick: onSaveEditProfileClick,
-    },
-  ];
+      {
+        title: isEditProfileButton ? 'Save' : 'Edit',
+        buttonType: 'primary',
+        onClick: () => {
+          setIsEditProfileButton(!isEditProfileButton);
+        },
+      },
+    ],
+    [onCloseEditProfileClick, isEditProfileButton, setIsEditProfileButton]
+  );
+  const onEditProfileButtons = useMemo(
+    () => [
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: onCloseEditProfileClick,
+      },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onSaveEditProfileClick,
+        isLoading: updateProfileHeaderButtonLoaderAction,
+      },
+    ],
+    [onCloseEditProfileClick, onSaveEditProfileClick, updateProfileHeaderButtonLoaderAction]
+  );
   /** ********Edit Profile methods end********** */
 
-  const changePasswordBtns = [
-    {
-      title: 'Close',
-      buttonType: 'primary-1',
-      onClick: onCloseChangePasswordClick,
-    },
-    { title: 'Save', buttonType: 'primary', onClick: onChangePasswordClick },
-  ];
+  const changePasswordBtns = useMemo(
+    () => [
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: onCloseChangePasswordClick,
+      },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onChangePasswordClick,
+        isLoading: resetPasswordHeaderButtonLoaderAction,
+      },
+    ],
+    [onCloseChangePasswordClick, onChangePasswordClick, resetPasswordHeaderButtonLoaderAction]
+  );
 
   const userSettingsRef = useRef();
 
@@ -310,7 +334,10 @@ const Header = () => {
             <div onClick={toggleChangePasswordModal}>
               <span className="material-icons-round">lock</span> Change Password
             </div>
-            <div onClick={onLogoutClick}>
+            <div
+              onClick={onLogoutClick}
+              className={logoutHeaderButtonLoaderAction && 'cursor-not-allowed'}
+            >
               <span className="material-icons-round">exit_to_app</span> Logout
             </div>
           </div>

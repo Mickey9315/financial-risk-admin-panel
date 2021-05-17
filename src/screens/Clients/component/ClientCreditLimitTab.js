@@ -26,6 +26,12 @@ const ClientCreditLimitTab = () => {
     clientCreditLimitColumnNameList,
     clientCreditLimitDefaultColumnNameList,
   } = useSelector(({ clientManagement }) => clientManagement?.creditLimit ?? {});
+
+  const {
+    viewClientCreditLimitColumnSaveButtonLoaderAction,
+    viewClientCreditLimitColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, headers, pages, docs, page, limit } = useMemo(() => creditLimitList ?? {}, [
     creditLimitList,
   ]);
@@ -117,11 +123,23 @@ const ClientCreditLimitTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewClientCreditLimitColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewClientCreditLimitColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewClientCreditLimitColumnSaveButtonLoaderAction,
+      viewClientCreditLimitColumnResetButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {

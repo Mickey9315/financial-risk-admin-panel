@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import grayLogo from '../../../assets/images/logo-light.svg';
 import Button from '../../../common/Button/Button';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
@@ -19,6 +19,9 @@ function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberUser, setRememberUser] = useState(false);
+  const { logInButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
 
   const onClickLogin = async () => {
     if (email.toString().trim().length === 0) errorNotification('You forgot to enter email!');
@@ -99,7 +102,12 @@ function LoginScreen() {
           Forgot Password?
         </Link>
       </div>
-      <Button title="Login" buttonType="secondary" onClick={onClickLogin} />
+      <Button
+        title="Login"
+        buttonType="secondary"
+        onClick={onClickLogin}
+        isLoading={logInButtonLoaderAction}
+      />
       <img alt="TCR" className="gray-logo" src={grayLogo} />
     </AuthScreenContainer>
   );

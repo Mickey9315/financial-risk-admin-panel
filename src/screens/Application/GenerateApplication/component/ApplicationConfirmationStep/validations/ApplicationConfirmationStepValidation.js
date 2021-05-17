@@ -1,6 +1,6 @@
 import { saveApplicationStepDataToBackend } from '../../../../redux/ApplicationAction';
 
-export const applicationConfirmationStepValidations = (
+export const applicationConfirmationStepValidations = async (
   dispatch,
   data,
   editApplicationData,
@@ -13,7 +13,7 @@ export const applicationConfirmationStepValidations = (
       applicationId: editApplicationData._id,
     };
     try {
-      dispatch(saveApplicationStepDataToBackend(finalData));
+      await dispatch(saveApplicationStepDataToBackend(finalData));
       history.replace('/applications');
     } catch (e) {
       /**/

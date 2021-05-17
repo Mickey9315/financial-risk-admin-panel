@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Button = props => {
-  const { title, buttonType, className, ...restProps } = props;
+  const { isLoading, title, buttonType, className, ...restProps } = props;
   const buttonClass = `button ${buttonType}-button ${className}`;
 
   return (
-    <button type="button" className={buttonClass} {...restProps}>
-      {title}
+    <button type="button" className={buttonClass} {...restProps} disabled={isLoading}>
+      <div className={isLoading && 'button-loader'}>{!isLoading && title}</div>
     </button>
   );
 };
@@ -25,10 +25,12 @@ Button.propTypes = {
     'outlined-red',
   ]).isRequired,
   className: PropTypes.string,
+  isLoading: PropTypes.bool,
 };
 
 Button.defaultProps = {
   className: '',
+  isLoading: false,
 };
 
 export default Button;

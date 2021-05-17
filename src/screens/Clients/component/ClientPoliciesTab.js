@@ -32,6 +32,12 @@ const ClientPoliciesTab = () => {
     clientPoliciesDefaultColumnNameList,
   } = useSelector(({ clientManagement }) => clientManagement?.policies ?? {});
 
+  const {
+    viewClientPoliciesColumnSaveButtonLoaderAction,
+    viewClientPoliciesColumnResetButtonLoaderAction,
+    viewClientPoliciesSyncWithCRMButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
     policiesList,
   ]);
@@ -109,11 +115,23 @@ const ClientPoliciesTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewClientPoliciesColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewClientPoliciesColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewClientPoliciesColumnSaveButtonLoaderAction,
+      viewClientPoliciesColumnResetButtonLoaderAction,
+    ]
   );
 
   const checkIfEnterKeyPressed = e => {
@@ -172,7 +190,12 @@ const ClientPoliciesTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Sync With CRM" onClick={syncClientPoliciesData} />
+          <Button
+            buttonType="secondary"
+            title="Sync With CRM"
+            onClick={syncClientPoliciesData}
+            isLoading={viewClientPoliciesSyncWithCRMButtonLoaderAction}
+          />
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

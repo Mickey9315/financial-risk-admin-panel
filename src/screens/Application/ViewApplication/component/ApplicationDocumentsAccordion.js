@@ -67,6 +67,11 @@ const ApplicationDocumentsAccordion = props => {
     initialApplicationDocumentState
   );
 
+  const {
+    viewDocumentUploadDocumentButtonLoaderAction,
+    viewDocumentDeleteDocumentButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   // upload doc
   const [uploadModel, setUploadModel] = useState(false);
   const toggleUploadModel = useCallback(
@@ -230,11 +235,20 @@ const ApplicationDocumentsAccordion = props => {
       {
         title: 'Close',
         buttonType: 'primary-1',
-        onClick: () => onCloseUploadDocumentButton(),
+        onClick: onCloseUploadDocumentButton,
       },
-      { title: 'Upload', buttonType: 'primary', onClick: () => onClickUploadDocument() },
+      {
+        title: 'Upload',
+        buttonType: 'primary',
+        onClick: onClickUploadDocument,
+        isLoading: viewDocumentUploadDocumentButtonLoaderAction,
+      },
     ],
-    [onCloseUploadDocumentButton, onClickUploadDocument]
+    [
+      onCloseUploadDocumentButton,
+      onClickUploadDocument,
+      viewDocumentUploadDocumentButtonLoaderAction,
+    ]
   );
 
   // Delete
@@ -271,9 +285,10 @@ const ApplicationDocumentsAccordion = props => {
             /**/
           }
         },
+        isLoading: viewDocumentDeleteDocumentButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, applicationDocId]
+    [toggleConfirmationModal, applicationDocId, viewDocumentDeleteDocumentButtonLoaderAction]
   );
 
   useEffect(() => {

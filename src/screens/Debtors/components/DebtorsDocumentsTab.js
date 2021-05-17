@@ -114,6 +114,14 @@ const DebtorsDocumentsTab = () => {
     debtorsDocumentDefaultColumnNameList,
   } = useSelector(({ debtorsManagement }) => debtorsManagement?.documents ?? {});
 
+  const {
+    viewDebtorDocumentColumnSaveButtonLoaderAction,
+    viewDebtorDocumentColumnResetButtonLoaderAction,
+    viewDebtorUploadDocumentButtonLoaderAction,
+    viewDebtorDownloadDocumentButtonLoaderAction,
+    viewDebtorDeleteDocumentButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => documentsList ?? {},
     [documentsList]
@@ -191,17 +199,29 @@ const DebtorsDocumentsTab = () => {
     toggleCustomField();
   }, [debtorsDocumentDefaultColumnNameList, toggleCustomField]);
 
-  const buttons = useMemo(
+  const customFieldModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewDebtorDocumentColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewDebtorDocumentColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewDebtorDocumentColumnSaveButtonLoaderAction,
+      viewDebtorDocumentColumnResetButtonLoaderAction,
+    ]
   );
 
   const onClickUploadDocument = useCallback(async () => {
@@ -311,9 +331,14 @@ const DebtorsDocumentsTab = () => {
   const uploadDocumentButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseUploadDocumentButton },
-      { title: 'Upload', buttonType: 'primary', onClick: onClickUploadDocument },
+      {
+        title: 'Upload',
+        buttonType: 'primary',
+        onClick: onClickUploadDocument,
+        isLoading: viewDebtorUploadDocumentButtonLoaderAction,
+      },
     ],
-    [onCloseUploadDocumentButton, onClickUploadDocument]
+    [onCloseUploadDocumentButton, onClickUploadDocument, viewDebtorUploadDocumentButtonLoaderAction]
   );
   const deleteDocument = useCallback(
     data => {
@@ -348,14 +373,20 @@ const DebtorsDocumentsTab = () => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            await dispatch(deleteDebtorDocumentAction(deleteDocumentData.id, () => callBack()));
+            await dispatch(deleteDebtorDocumentAction(deleteDocumentData?.id, () => callBack()));
           } catch (e) {
             /**/
           }
         },
+        isLoading: viewDebtorDeleteDocumentButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, deleteDocumentData]
+    [
+      toggleConfirmationModal,
+      deleteDocumentData?.id,
+      callBack,
+      viewDebtorDeleteDocumentButtonLoaderAction,
+    ]
   );
 
   const onClickDownloadButton = useCallback(async () => {
@@ -363,7 +394,7 @@ const DebtorsDocumentsTab = () => {
       if (selectedCheckBoxData?.length !== 0) {
         const docsToDownload = selectedCheckBoxData?.map(e => e.id);
         const res = await downloadDocuments(docsToDownload);
-        downloadAll(res);
+        if (res) downloadAll(res);
       } else {
         errorNotification('Please select at least one document to download');
       }
@@ -461,6 +492,7 @@ const DebtorsDocumentsTab = () => {
             buttonType="primary-1"
             title="cloud_download"
             onClick={onClickDownloadButton}
+            isLoading={viewDebtorDownloadDocumentButtonLoaderAction}
           />
         </div>
       </div>
@@ -502,7 +534,7 @@ const DebtorsDocumentsTab = () => {
           defaultFields={defaultFields}
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={buttons}
+          buttons={customFieldModalButtons}
           toggleCustomField={toggleCustomField}
         />
       )}

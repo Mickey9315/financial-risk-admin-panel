@@ -14,6 +14,7 @@ const SettingsApiIntegrationTab = () => {
   const apiIntegrationData = useSelector(
     ({ settingReducer }) => settingReducer?.apiIntegration ?? {}
   );
+
   const apiIntegrationDetails = useMemo(() => apiIntegrationData?.integration ?? {}, [
     apiIntegrationData,
   ]);
@@ -104,6 +105,10 @@ const SettingsApiIntegrationTab = () => {
       if (errorElementList.length <= 0) setIsEditItemIndex(i);
     },
     [setIsEditItemIndex, errorElementList]
+  );
+
+  const { settingApiIntegrationButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
   );
 
   const onInputValueChange = useCallback((row, e) => {
@@ -214,6 +219,7 @@ const SettingsApiIntegrationTab = () => {
                     buttonType="primary"
                     title="Save"
                     onClick={() => onSaveItem(row, index)}
+                    isLoading={isEditItemIndex === index && settingApiIntegrationButtonLoaderAction}
                   />
                   <Button
                     buttonType="danger"

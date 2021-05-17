@@ -10,6 +10,10 @@ import InsurerContactApiServices from '../services/InsurerContactApiServices';
 import InsurerPoliciesApiServices from '../services/InsurerPoliciesApiServices';
 import InsurerMatrixApiServices from '../services/InsurerMatrixApiServices';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 export const getInsurerListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -65,6 +69,9 @@ export const changeInsurerColumnListStatus = data => {
 export const saveInsurerColumnListName = ({ insurerColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `insurerListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -82,6 +89,9 @@ export const saveInsurerColumnListName = ({ insurerColumnNameList = {}, isReset 
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `insurerListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -92,8 +102,14 @@ export const saveInsurerColumnListName = ({ insurerColumnNameList = {}, isReset 
           data: insurerColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(
+          `insurerListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `insurerListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -166,6 +182,9 @@ export const saveInsurerContactColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `viewInsurerContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -183,6 +202,9 @@ export const saveInsurerContactColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewInsurerContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -195,8 +217,14 @@ export const saveInsurerContactColumnNameList = ({
           type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_DEFAULT_COLUMN_LIST_ACTION,
           data: insurerContactColumnNameList,
         });
+        stopLoaderButtonOnSuccessOrFail(
+          `viewInsurerContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewInsurerContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -205,12 +233,15 @@ export const saveInsurerContactColumnNameList = ({
 export const syncInsurerContactListData = id => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewInsurerSyncInsurerContactButtonLoaderAction`);
       const response = await InsurerContactApiServices.syncInsurerContactList(id);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Insurer contact updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(`viewInsurerSyncInsurerContactButtonLoaderAction`);
         dispatch(getInsurerContactListData(id));
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewInsurerSyncInsurerContactButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -272,6 +303,9 @@ export const saveInsurerPoliciesColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `viewInsurerPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -292,6 +326,9 @@ export const saveInsurerPoliciesColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewInsurerPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -304,8 +341,14 @@ export const saveInsurerPoliciesColumnNameList = ({
           type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_DEFAULT_COLUMN_LIST_ACTION,
           data: insurerPoliciesColumnNameList,
         });
+        stopLoaderButtonOnSuccessOrFail(
+          `viewInsurerPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewInsurerPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -334,13 +377,16 @@ export const getListFromCrm = data => {
 export const syncInsurerData = id => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(`viewInsurerSyncInsurerDataButtonLoaderAction`);
       const response = await InsurerApiService.syncInsurerDataWithCrm(id);
 
       if (response.data.status === 'SUCCESS') {
         dispatch(getInsurerById(id));
         successNotification(response?.data?.message || 'Insurer data updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(`viewInsurerSyncInsurerDataButtonLoaderAction`);
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`viewInsurerSyncInsurerDataButtonLoaderAction`);
       displayErrors(e);
     }
   };

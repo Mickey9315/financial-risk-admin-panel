@@ -21,6 +21,10 @@ import Modal from '../../../common/Modal/Modal';
 import Checkbox from '../../../common/Checkbox/Checkbox';
 import { INSURER_VIEW_REDUX_CONSTANT } from '../redux/InsurerReduxConstants';
 import InsurerPoliciesApiServices from '../services/InsurerPoliciesApiServices';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 const InsurerPoliciesTab = () => {
   const dispatch = useDispatch();
@@ -37,6 +41,13 @@ const InsurerPoliciesTab = () => {
     insurerPoliciesColumnNameList,
     insurerPoliciesDefaultColumnNameList,
   } = useSelector(({ insurer }) => insurer?.policies ?? {});
+
+  const {
+    viewInsurerPoliciesColumnResetButtonLoaderAction,
+    viewInsurerPoliciesColumnSaveButtonLoaderAction,
+    viewInsurerPoliciesSyncWithCRMButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
     policiesList,
   ]);
@@ -108,11 +119,23 @@ const InsurerPoliciesTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewInsurerPoliciesColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewInsurerPoliciesColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewInsurerPoliciesColumnSaveButtonLoaderAction,
+      viewInsurerPoliciesColumnResetButtonLoaderAction,
+    ]
   );
 
   const onChangeSelectedColumn = useCallback(
@@ -160,18 +183,19 @@ const InsurerPoliciesTab = () => {
     };
     try {
       if (data?.clientIds?.length > 0) {
-        setIsModalLoading(true);
+        startLoaderButtonOnRequest('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
         InsurerPoliciesApiServices.syncInsurerPolicyList(id, data)
           .then(res => {
-            if (res.data.status === 'SUCCESS') {
-              successNotification(res?.data?.message ?? 'Success');
+            if (res?.data?.status === 'SUCCESS') {
+              successNotification(res?.data?.message ?? 'Policies synced successfully.');
               getInsurerPoliciesList();
+              stopLoaderButtonOnSuccessOrFail('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
               toggleSyncWithCRM();
-              setIsModalLoading(false);
             }
           })
-          .catch(() => {
-            errorNotification('Server error');
+          .catch(e => {
+            stopLoaderButtonOnSuccessOrFail('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
+            errorNotification(e?.data?.message ?? 'Failed');
           });
       } else {
         errorNotification('Select at least one policy to sync');
@@ -179,14 +203,19 @@ const InsurerPoliciesTab = () => {
     } catch (e) {
       /**/
     }
-  }, [crmIds, getInsurerPoliciesList, setSyncFromCRM, setIsModalLoading]);
+  }, [crmIds, getInsurerPoliciesList, setSyncFromCRM]);
 
   const syncWithCRMButtons = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: toggleSyncWithCRM },
-      { title: 'Sync', buttonType: 'primary', onClick: syncDataFromCRM },
+      {
+        title: 'Sync',
+        buttonType: 'primary',
+        onClick: syncDataFromCRM,
+        isLoading: viewInsurerPoliciesSyncWithCRMButtonLoaderAction,
+      },
     ],
-    [toggleSyncWithCRM, syncDataFromCRM]
+    [toggleSyncWithCRM, syncDataFromCRM, viewInsurerPoliciesSyncWithCRMButtonLoaderAction]
   );
 
   const checkIfEnterKeyPressed = useCallback(

@@ -9,6 +9,10 @@ import ApplicationCompanyStepApiServices from '../services/ApplicationCompanySte
 import ApplicationDocumentStepApiServices from '../services/ApplicationDocumentStepApiServices';
 import ApplicationViewApiServices from '../services/ApplicationViewApiServices';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -81,6 +85,9 @@ export const saveApplicationColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `applicationListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -100,6 +107,9 @@ export const saveApplicationColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `applicationListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -110,8 +120,15 @@ export const saveApplicationColumnNameList = ({
           data: applicationColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
+
+        stopLoaderButtonOnSuccessOrFail(
+          `applicationListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `applicationListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -464,6 +481,7 @@ export const updatePersonStepDataOnValueSelected = (index, data) => {
 export const saveApplicationStepDataToBackend = data => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('generateApplicationSaveAndNextButtonLoaderAction');
       const response = await ApplicationApiServices.saveApplicationStepDataToBackend(data);
       if (response?.data?.status === 'SUCCESS') {
         if (response?.data?.data?.applicationStage) {
@@ -471,8 +489,10 @@ export const saveApplicationStepDataToBackend = data => {
           dispatch(changeEditApplicationFieldValue('_id', _id));
         }
         successNotification(response?.data?.message || 'Application step saved successfully');
+        stopLoaderButtonOnSuccessOrFail('generateApplicationSaveAndNextButtonLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('generateApplicationSaveAndNextButtonLoaderAction');
       displayErrors(e);
       throw Error();
     }
@@ -524,6 +544,7 @@ export const getApplicationDocumentDataList = (id, params = { page: 1, limit: 15
 export const uploadDocument = (data, config) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('GenerateApplicationDocumentUploadButtonLoaderAction');
       const response = await ApplicationDocumentStepApiServices.uploadDocument(data, config);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
@@ -531,8 +552,10 @@ export const uploadDocument = (data, config) => {
           data: response.data.data,
         });
         successNotification(response?.data?.message || 'Application document added successfully.');
+        stopLoaderButtonOnSuccessOrFail('GenerateApplicationDocumentUploadButtonLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('GenerateApplicationDocumentUploadButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -540,14 +563,17 @@ export const uploadDocument = (data, config) => {
 
 export const deleteApplicationDocumentAction = async (appDocId, cb) => {
   try {
+    startLoaderButtonOnRequest('generateApplicationDocumentDeleteButtonLoaderAction');
     const response = await ApplicationDocumentStepApiServices.deleteApplicationDocument(appDocId);
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Application document deleted successfully.');
+      stopLoaderButtonOnSuccessOrFail('generateApplicationDocumentDeleteButtonLoaderAction');
       if (cb) {
         cb();
       }
     }
   } catch (e) {
+    stopLoaderButtonOnSuccessOrFail('generateApplicationDocumentDeleteButtonLoaderAction');
     displayErrors(e);
   }
 };
@@ -684,14 +710,17 @@ export const updateApplicationTaskStateFields = (name, value) => {
 export const saveApplicationTaskData = (data, backToTask) => {
   return async () => {
     try {
+      startLoaderButtonOnRequest('viewApplicationAddNewTaskButtonLoaderAction');
       const response = await ApplicationViewApiServices.applicationTaskApiServices.saveNewTask(
         data
       );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'New task added successfully.');
+        stopLoaderButtonOnSuccessOrFail('viewApplicationAddNewTaskButtonLoaderAction');
         backToTask();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewApplicationAddNewTaskButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -720,15 +749,18 @@ export const getApplicationTaskDetail = id => {
 export const updateApplicationTaskData = (id, data, cb) => {
   return async () => {
     try {
+      startLoaderButtonOnRequest('viewApplicationUpdateTaskButtonLoaderAction');
       const response = await ApplicationViewApiServices.applicationTaskApiServices.updateTask(
         id,
         data
       );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task updated successfully.');
+        stopLoaderButtonOnSuccessOrFail('viewApplicationUpdateTaskButtonLoaderAction');
         cb();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewApplicationUpdateTaskButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -737,16 +769,19 @@ export const updateApplicationTaskData = (id, data, cb) => {
 export const deleteApplicationTaskAction = (taskId, cb) => {
   return async () => {
     try {
+      startLoaderButtonOnRequest('viewApplicationDeleteTaskButtonLoaderAction');
       const response = await ApplicationViewApiServices.applicationTaskApiServices.deleteTask(
         taskId
       );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task deleted successfully.');
+        stopLoaderButtonOnSuccessOrFail('viewApplicationDeleteTaskButtonLoaderAction');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewApplicationDeleteTaskButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -799,6 +834,7 @@ export const getViewApplicationDocumentTypeList = () => {
 export const viewApplicationUploadDocument = (data, config) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('viewDocumentUploadDocumentButtonLoaderAction');
       const response = await ApplicationViewApiServices.applicationModulesApiServices.uploadDocument(
         data,
         config
@@ -811,8 +847,10 @@ export const viewApplicationUploadDocument = (data, config) => {
           data: response.data.data,
         });
         successNotification(response?.data?.message || 'Document uploaded successfully.');
+        stopLoaderButtonOnSuccessOrFail('viewDocumentUploadDocumentButtonLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewDocumentUploadDocumentButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -820,16 +858,19 @@ export const viewApplicationUploadDocument = (data, config) => {
 
 export const deleteViewApplicationDocumentAction = async (appDocId, cb) => {
   try {
+    startLoaderButtonOnRequest('viewDocumentDeleteDocumentButtonLoaderAction');
     const response = await ApplicationViewApiServices.applicationModulesApiServices.deleteApplicationDocument(
       appDocId
     );
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Document deleted successfully.');
+      stopLoaderButtonOnSuccessOrFail('viewDocumentDeleteDocumentButtonLoaderAction');
       if (cb) {
         cb();
       }
     }
   } catch (e) {
+    stopLoaderButtonOnSuccessOrFail('viewDocumentDeleteDocumentButtonLoaderAction');
     displayErrors(e);
   }
 };
@@ -863,6 +904,7 @@ export const getApplicationNotesList = id => {
 export const addApplicationNoteAction = (entityId, noteData) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('viewApplicationAddNewNoteButtonLoaderAction');
       const { description, isPublic } = noteData;
       const data = {
         noteFor: 'application',
@@ -878,8 +920,10 @@ export const addApplicationNoteAction = (entityId, noteData) => {
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getApplicationNotesList(entityId));
         successNotification(response?.data?.message || 'Note added successfully.');
+        stopLoaderButtonOnSuccessOrFail('viewApplicationAddNewNoteButtonLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewApplicationAddNewNoteButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -888,6 +932,7 @@ export const addApplicationNoteAction = (entityId, noteData) => {
 export const updateApplicationNoteAction = (entityId, noteData) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('viewApplicationEditNoteButtonLoaderAction');
       const { noteId, description, isPublic } = noteData;
       const data = {
         noteFor: 'application',
@@ -904,8 +949,10 @@ export const updateApplicationNoteAction = (entityId, noteData) => {
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getApplicationNotesList(entityId));
         successNotification(response?.data?.message || 'Note updated successfully.');
+        stopLoaderButtonOnSuccessOrFail('viewApplicationEditNoteButtonLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewApplicationEditNoteButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -914,17 +961,20 @@ export const updateApplicationNoteAction = (entityId, noteData) => {
 export const deleteApplicationNoteAction = (noteId, cb) => {
   return async () => {
     try {
+      startLoaderButtonOnRequest('viewApplicationDeleteNoteButtonLoaderAction');
       const response = await ApplicationViewApiServices.applicationNotesApiServices.deleteApplicationNote(
         noteId
       );
 
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Note deleted successfully.');
+        stopLoaderButtonOnSuccessOrFail('viewApplicationDeleteNoteButtonLoaderAction');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewApplicationDeleteNoteButtonLoaderAction');
       displayErrors(e);
     }
   };

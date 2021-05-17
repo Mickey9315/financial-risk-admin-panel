@@ -1,36 +1,24 @@
 import AuthApiService from '../../services/AuthApiService';
-import { errorNotification, successNotification } from '../../../../common/Toast';
+import { successNotification } from '../../../../common/Toast';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../../common/LoaderButton/redux/LoaderButtonAction';
+import { displayErrors } from '../../../../helpers/ErrorNotifyHelper';
 
 export const forgotPassword = async email => {
   try {
+    startLoaderButtonOnRequest('forgotPasswordButtonLoaderAction');
     const data = { email };
     const response = await AuthApiService.forgotPassword(data);
 
     if (response.data.status === 'SUCCESS') {
       successNotification('OTP has been sent successfully to your registered email address.');
+      stopLoaderButtonOnSuccessOrFail('forgotPasswordButtonLoaderAction');
     }
   } catch (e) {
-    if (e.response && e.response.data) {
-      if (e.response.data.status === undefined) {
-        errorNotification('It seems like server is down, Please try again later.');
-      } else if (e.response.data.status === 'INTERNAL_SERVER_ERROR') {
-        errorNotification('Internal server error');
-      } else if (e.response.data.status === 'ERROR') {
-        if (e.response.data.messageCode) {
-          switch (e.response.data.messageCode) {
-            case 'USER_NOT_FOUND':
-            case 'EMAIL_NOT_FOUND':
-              errorNotification('User not found');
-              break;
-            default:
-              errorNotification(e.response.data?.message);
-              break;
-          }
-        } else {
-          errorNotification('It seems like server is down, Please try again later.');
-        }
-      }
-      throw Error();
-    }
+    displayErrors(e);
+    stopLoaderButtonOnSuccessOrFail('forgotPasswordButtonLoaderAction');
+    throw Error();
   }
 };

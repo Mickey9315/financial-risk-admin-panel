@@ -31,6 +31,10 @@ import {
   CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
 } from '../redux/ClientReduxConstants';
 import Loader from '../../../common/Loader/Loader';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 const initialFilterState = {
   riskAnalystId: '',
@@ -71,6 +75,13 @@ const ClientList = () => {
     ({ clientManagementFilterList }) => clientManagementFilterList ?? {}
   );
   const syncListFromCrm = useSelector(({ syncClientWithCrm }) => syncClientWithCrm ?? []);
+
+  const {
+    clientListColumnSaveButtonLoaderAction,
+    clientListColumnResetButtonLoaderAction,
+    clientListAddFromCRMButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
@@ -226,8 +237,9 @@ const ClientList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getClientListByFilter({ page: 1, limit }, toggleFilterModal);
-  }, [getClientListByFilter, page, limit]);
+    toggleFilterModal();
+    getClientListByFilter({ page: 1, limit });
+  }, [getClientListByFilter, page, limit, toggleFilterModal]);
 
   const onClickResetFilterClientList = useCallback(() => {
     dispatchFilter({ type: CLIENT_FILTER_REDUCER_ACTIONS.RESET_STATE });
@@ -242,7 +254,11 @@ const ClientList = () => {
         onClick: onClickResetFilterClientList,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
-      { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
+      {
+        title: 'Apply',
+        buttonType: 'primary',
+        onClick: onClickApplyFilter,
+      },
     ],
     [toggleFilterModal, onClickApplyFilter, toggleFilterModal]
   );
@@ -289,11 +305,23 @@ const ClientList = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: clientListColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: clientListColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      clientListColumnSaveButtonLoaderAction,
+      onClickSaveColumnSelection,
+      clientListColumnResetButtonLoaderAction,
+    ]
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -321,30 +349,34 @@ const ClientList = () => {
     const data = {
       crmIds,
     };
-    if (data.crmIds.length > 0) {
-      setIsModalLoading(true);
-      ClientApiService.updateClientListFromCrm(data)
-        .then(res => {
-          if (res.data.status === 'SUCCESS') {
-            successNotification(res?.data?.message || 'Client data successfully synced');
-            setAddFromCRM(false);
-            dispatch(getClientList());
-            dispatch({
-              type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
-              data: [],
-            });
-          }
-          setIsModalLoading(false);
-          setCrmIds([]);
-        })
-        .catch(() => {
-          errorNotification('Already exist');
-          setIsModalLoading(false);
-        });
-    } else {
-      errorNotification('Select at least one client to Add');
+    try {
+      if (data.crmIds.length > 0) {
+        startLoaderButtonOnRequest('clientListAddFromCRMButtonLoaderAction');
+        ClientApiService.updateClientListFromCrm(data)
+          .then(res => {
+            if (res.data.status === 'SUCCESS') {
+              successNotification(res?.data?.message || 'Client data successfully synced');
+              setAddFromCRM(false);
+              dispatch(getClientList());
+              dispatch({
+                type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
+                data: [],
+              });
+              stopLoaderButtonOnSuccessOrFail('clientListAddFromCRMButtonLoaderAction');
+            }
+            setCrmIds([]);
+          })
+          .catch(e => {
+            errorNotification(e?.data?.message ?? 'Already exist');
+            stopLoaderButtonOnSuccessOrFail('clientListAddFromCRMButtonLoaderAction');
+          });
+      } else {
+        errorNotification('Select at least one client to Add');
+      }
+    } catch (e) {
+      /**/
     }
-  }, [crmIds, setIsModalLoading, setAddFromCRM, setCrmIds]);
+  }, [crmIds, setAddFromCRM, setCrmIds]);
 
   const toggleAddFromCRM = useCallback(() => {
     setCrmIds([]);
@@ -362,9 +394,14 @@ const ClientList = () => {
         buttonType: 'primary-1',
         onClick: toggleAddFromCRM,
       },
-      { title: 'Add', buttonType: 'primary', onClick: addDataFromCrm, disabled: isModalLoading },
+      {
+        title: 'Add',
+        buttonType: 'primary',
+        onClick: addDataFromCrm,
+        isLoading: clientListAddFromCRMButtonLoaderAction,
+      },
     ],
-    [toggleAddFromCRM, addDataFromCrm, isModalLoading]
+    [toggleAddFromCRM, addDataFromCrm, clientListAddFromCRMButtonLoaderAction]
   );
   const openViewClient = useCallback(
     id => {
@@ -461,8 +498,6 @@ const ClientList = () => {
     },
     [syncListFromCrm, setCrmIds]
   );
-
-  console.log(crmIds);
 
   useEffect(() => {
     return dispatch(resetClientListPaginationData(page, pages, total, limit));

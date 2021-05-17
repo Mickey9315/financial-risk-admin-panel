@@ -2,6 +2,10 @@ import MyWorkApiServices from '../services/MyWorkApiServices';
 import { MY_WORK_REDUX_CONSTANTS } from './MyWorkReduxConstants';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
+import {
+  startLoaderButtonOnRequest,
+  stopLoaderButtonOnSuccessOrFail,
+} from '../../../common/LoaderButton/redux/LoaderButtonAction';
 
 export const getTaskListByFilter = (params = {}) => {
   return async dispatch => {
@@ -96,15 +100,18 @@ export const updateAddTaskStateFields = (name, value) => {
 export const saveTaskData = (data, backToTask) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('myWorkSaveNewTaskLoaderButtonAction');
       const response = await MyWorkApiServices.saveNewTask(data);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task created successfully');
+        stopLoaderButtonOnSuccessOrFail('myWorkSaveNewTaskLoaderButtonAction');
         backToTask();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('myWorkSaveNewTaskLoaderButtonAction');
       displayErrors(e);
     }
   };
@@ -160,6 +167,9 @@ export const changeTaskListColumnStatus = data => {
 export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest(
+        `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -179,6 +189,9 @@ export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = 
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -191,8 +204,14 @@ export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = 
           data: taskColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
+        stopLoaderButtonOnSuccessOrFail(
+          `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
     }
   };
@@ -260,15 +279,20 @@ export const updateEditTaskStateFields = (name, value) => {
 export const editTaskData = (id, data, backToTask) => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('myWorkEditTaskLoaderButtonAction');
+
       const response = await MyWorkApiServices.updateTask(id, data);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task updated successfully');
+        stopLoaderButtonOnSuccessOrFail('myWorkEditTaskLoaderButtonAction');
+
         backToTask();
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('myWorkEditTaskLoaderButtonAction');
       displayErrors(e);
     }
   };

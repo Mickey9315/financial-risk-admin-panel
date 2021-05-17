@@ -26,6 +26,12 @@ const DebtorsCreditLimitTab = () => {
     debtorsCreditLimitColumnNameList,
     debtorsCreditLimitDefaultColumnNameList,
   } = useSelector(({ debtorsManagement }) => debtorsManagement?.creditLimit ?? {});
+
+  const {
+    viewDebtorCreditLimitColumnSaveButtonLoaderAction,
+    viewDebtorCreditLimitColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
     () => creditLimitList ?? {},
     [creditLimitList]
@@ -125,11 +131,23 @@ const DebtorsCreditLimitTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewDebtorCreditLimitColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewDebtorCreditLimitColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewDebtorCreditLimitColumnSaveButtonLoaderAction,
+      viewDebtorCreditLimitColumnResetButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {

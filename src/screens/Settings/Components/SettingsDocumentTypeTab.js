@@ -54,6 +54,12 @@ const SettingsDocumentTypeTab = () => {
     ({ settingReducer }) => settingReducer?.addDocumentType ?? {}
   );
 
+  const {
+    settingAddNewDocumentTypeButtonLoaderAction,
+    settingUpdateDocumentTypeButtonLoaderAction,
+    settingDeleteDocumentTypeButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { isLoading, error, total, pages, page, limit, docs, headers } = useMemo(
     () => documentTypeListData ?? {},
     [documentTypeListData]
@@ -179,9 +185,10 @@ const SettingsDocumentTypeTab = () => {
         title: 'Add',
         buttonType: 'primary',
         onClick: addNewDocumentType,
+        isLoading: settingAddNewDocumentTypeButtonLoaderAction,
       },
     ],
-    [toggleAddDocModal, addNewDocumentType]
+    [toggleAddDocModal, addNewDocumentType, settingAddNewDocumentTypeButtonLoaderAction]
   );
 
   const editDocButtons = useMemo(
@@ -195,9 +202,10 @@ const SettingsDocumentTypeTab = () => {
         title: 'Save',
         buttonType: 'primary',
         onClick: addNewDocumentType,
+        isLoading: settingUpdateDocumentTypeButtonLoaderAction,
       },
     ],
-    [toggleEditDocModal, addNewDocumentType]
+    [toggleEditDocModal, addNewDocumentType, settingUpdateDocumentTypeButtonLoaderAction]
   );
 
   const deleteDocumentButtons = useMemo(
@@ -213,9 +221,10 @@ const SettingsDocumentTypeTab = () => {
             /**/
           }
         },
+        isLoading: settingDeleteDocumentTypeButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, docId]
+    [toggleConfirmationModal, docId, settingDeleteDocumentTypeButtonLoaderAction]
   );
 
   const recordActionClick = useCallback(

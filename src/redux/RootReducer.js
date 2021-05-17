@@ -23,6 +23,7 @@ import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
 import { clearAuthToken } from '../helpers/LocalStorageHelper';
+import { loaderButtonReducer } from '../common/LoaderButton/redux/LoaderButtonReducer';
 
 const appReducer = combineReducers({
   loggedUserProfile,
@@ -41,6 +42,7 @@ const appReducer = combineReducers({
   debtorsManagement,
   myWorkReducer,
   settingReducer,
+  loaderButtonReducer,
 });
 
 const rootReducer = (state, action) => {

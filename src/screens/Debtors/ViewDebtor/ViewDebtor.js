@@ -72,6 +72,10 @@ const ViewInsurer = () => {
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
 
+  const { viewDebtorUpdateDebtorButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
+
   const FINAL_COMPONENTS = useMemo(() => {
     const filteredComponents = [...VIEW_DEBTOR_TABS];
     if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
@@ -310,7 +314,7 @@ const ViewInsurer = () => {
     if (debtorData?.postCode) finalData.address.postCode = debtorData?.postCode?.trim();
 
     dispatch(updateDebtorData(id, finalData, () => backToDebtor()));
-  }, [debtorData]);
+  }, [debtorData, id, backToDebtor]);
 
   const getComponentFromType = useCallback(
     input => {
@@ -385,7 +389,12 @@ const ViewInsurer = () => {
             <>
               <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
               <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
-                <Button buttonType="primary" title="Save" onClick={onClickUpdateDebtor} />
+                <Button
+                  buttonType="primary"
+                  title="Save"
+                  onClick={onClickUpdateDebtor}
+                  isLoading={viewDebtorUpdateDebtorButtonLoaderAction}
+                />
               </UserPrivilegeWrapper>
             </>
           )}

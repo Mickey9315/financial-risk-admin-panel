@@ -30,6 +30,13 @@ const InsurerContactTab = () => {
     insurerContactColumnNameList,
     insurerContactDefaultColumnNameList,
   } = useSelector(({ insurer }) => insurer?.contact ?? {});
+
+  const {
+    viewInsurerContactColumnSaveButtonLoaderAction,
+    viewInsurerContactColumnResetButtonLoaderAction,
+    viewInsurerSyncInsurerContactButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { docs, headers, pages, page, total, limit } = useMemo(() => contactList ?? {}, [
     contactList,
   ]);
@@ -119,11 +126,23 @@ const InsurerContactTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewInsurerContactColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewInsurerContactColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewInsurerContactColumnSaveButtonLoaderAction,
+      viewInsurerContactColumnResetButtonLoaderAction,
+    ]
   );
 
   const checkIfEnterKeyPressed = useCallback(
@@ -171,7 +190,12 @@ const InsurerContactTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Sync With CRM" onClick={syncInsurerContactData} />
+          <Button
+            buttonType="secondary"
+            title="Sync With CRM"
+            onClick={syncInsurerContactData}
+            isLoading={viewInsurerSyncInsurerContactButtonLoaderAction}
+          />
         </div>
       </div>
       {docs ? (

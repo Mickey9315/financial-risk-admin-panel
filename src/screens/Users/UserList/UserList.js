@@ -60,6 +60,12 @@ const UserList = () => {
     ({ userManagementColumnList }) => userManagementColumnList ?? {}
   );
 
+  const {
+    UserListColumnSaveButtonLoaderAction,
+    UserListColumnResetButtonLoaderAction,
+    viewUserDeleteUserButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const [deleteId, setDeleteId] = useState(null);
   const { role, startDate, endDate } = useMemo(() => filter ?? {}, [filter]);
@@ -151,7 +157,8 @@ const UserList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getUserManagementByFilter({ page: 1, limit }, toggleFilterModal);
+    toggleFilterModal();
+    getUserManagementByFilter({ page: 1, limit });
   }, [getUserManagementByFilter, toggleFilterModal]);
 
   const onClickResetFilterUserList = useCallback(() => {
@@ -215,11 +222,23 @@ const UserList = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: UserListColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: UserListColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      UserListColumnSaveButtonLoaderAction,
+      UserListColumnResetButtonLoaderAction,
+    ]
   );
   const { defaultFields, customFields } = useMemo(
     () => userColumnNameList ?? { defaultFields: [], customFields: [] },
@@ -254,7 +273,6 @@ const UserList = () => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            toggleConfirmationModal(false);
             const data = {
               page: page ?? 1,
               limit: limit ?? 15,
@@ -263,14 +281,26 @@ const UserList = () => {
               endDate: endDate ?? undefined,
             };
             await dispatch(deleteUserDetails(deleteId, data));
+            toggleConfirmationModal(false);
             setDeleteId(null);
           } catch (e) {
             /**/
           }
         },
+        isLoading: viewUserDeleteUserButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, setDeleteId, page, limit, role, startDate, endDate]
+    [
+      toggleConfirmationModal,
+      setDeleteId,
+      page,
+      limit,
+      role,
+      startDate,
+      endDate,
+      viewUserDeleteUserButtonLoaderAction,
+      deleteId,
+    ]
   );
   const onSelectUserRecordActionClick = useCallback(
     async (type, id) => {

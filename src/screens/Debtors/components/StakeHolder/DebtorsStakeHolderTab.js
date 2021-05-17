@@ -69,6 +69,14 @@ const DebtorsStakeHolderTab = () => {
     debtorsStakeHolderDefaultColumnNameList,
   } = useSelector(({ debtorsManagement }) => debtorsManagement?.stakeHolder ?? {});
 
+  const {
+    viewDebtorStakeHolderColumnSaveButtonLoaderAction,
+    viewDebtorStakeHolderColumnResetButtonLoaderAction,
+    viewDebtorAddNewStakeHolderButtonLoaderAction,
+    viewDebtorUpdateStakeHolderButtonLoaderAction,
+    viewDebtorDeleteStakeHolderButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
     () => stakeHolderList ?? {},
     [stakeHolderList]
@@ -168,11 +176,23 @@ const DebtorsStakeHolderTab = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewDebtorStakeHolderColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewDebtorStakeHolderColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewDebtorStakeHolderColumnResetButtonLoaderAction,
+      viewDebtorStakeHolderColumnSaveButtonLoaderAction,
+    ]
   );
 
   // Add stakeHolder
@@ -810,9 +830,20 @@ const DebtorsStakeHolderTab = () => {
         title: isEdit ? 'Edit' : 'Add',
         buttonType: 'primary',
         onClick: () => stakeHolderValidation(dispatch, stakeHolder, debtorData, callBack, isEdit),
+        isLoading: isEdit
+          ? viewDebtorUpdateStakeHolderButtonLoaderAction
+          : viewDebtorAddNewStakeHolderButtonLoaderAction,
       },
     ],
-    [isEdit, onClickCancelStakeHolderModal, stakeHolderValidation, stakeHolder, debtorData]
+    [
+      isEdit,
+      onClickCancelStakeHolderModal,
+      stakeHolderValidation,
+      stakeHolder,
+      debtorData,
+      viewDebtorUpdateStakeHolderButtonLoaderAction,
+      viewDebtorAddNewStakeHolderButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {
@@ -845,16 +876,22 @@ const DebtorsStakeHolderTab = () => {
       {
         title: 'Delete',
         buttonType: 'danger',
-        onClick: () => {
+        onClick: async () => {
           try {
-            dispatch(deleteStakeHolderDetails(deleteId, () => deleteCallBack()));
+            await dispatch(deleteStakeHolderDetails(deleteId, () => deleteCallBack()));
           } catch (e) {
             /**/
           }
         },
+        isLoading: viewDebtorDeleteStakeHolderButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, deleteId, deleteCallBack]
+    [
+      toggleConfirmationModal,
+      deleteId,
+      deleteCallBack,
+      viewDebtorDeleteStakeHolderButtonLoaderAction,
+    ]
   );
 
   const onSelectStakeHolderRecordActionClick = useCallback(

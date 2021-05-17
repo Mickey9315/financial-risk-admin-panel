@@ -108,6 +108,12 @@ const ApplicationTaskAccordion = props => {
     ({ application }) => application?.viewApplication?.dropDownData || {}
   );
 
+  const {
+    viewApplicationDeleteTaskButtonLoaderAction,
+    viewApplicationAddNewTaskButtonLoaderAction,
+    viewApplicationUpdateTaskButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { assigneeList, entityList } = useMemo(() => taskDropDownData, [taskDropDownData]);
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);
 
@@ -145,23 +151,15 @@ const ApplicationTaskAccordion = props => {
     getTaskList,
   ]);
 
-  const onCloseAddTaskClick = useCallback(() => {
+  const onCloseTaskModal = useCallback(() => {
     dispatch({
       type:
         APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
           .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
-    toggleAddTaskModal();
-  }, [toggleAddTaskModal]);
-
-  const onCloseEditTaskClick = useCallback(() => {
-    dispatch({
-      type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
-    });
-    toggleEditTaskModal();
-  }, [toggleEditTaskModal]);
+    if (addTaskModal) toggleAddTaskModal();
+    if (editTaskModal) toggleEditTaskModal();
+  }, [toggleAddTaskModal, addTaskModal, editTaskModal, toggleEditTaskModal]);
 
   const onAddTaskClick = useCallback(() => {
     dispatch(
@@ -309,7 +307,7 @@ const ApplicationTaskAccordion = props => {
     [addTaskState, assigneeList, priorityData, entityList, entityTypeData]
   );
 
-  const onSaveTaskClick = useCallback(() => {
+  const onSaveTaskClick = useCallback(async () => {
     const data = {
       title: addTaskState?.title?.trim() || '',
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
@@ -326,12 +324,12 @@ const ApplicationTaskAccordion = props => {
     } else {
       try {
         if (editTaskModal) {
-          dispatch(updateApplicationTaskData(currentTaskId, data, backToTaskList));
+          await dispatch(updateApplicationTaskData(currentTaskId, data, backToTaskList));
         } else {
-          dispatch(saveApplicationTaskData(data, backToTaskList));
+          await dispatch(saveApplicationTaskData(data, backToTaskList));
         }
       } catch (e) {
-        errorNotification('Something went wrong please add again');
+        /**/
       }
     }
   }, [currentTaskId, addTaskState, backToTaskList, editTaskModal]);
@@ -417,18 +415,28 @@ const ApplicationTaskAccordion = props => {
 
   const addTaskModalButton = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: onCloseAddTaskClick },
-      { title: 'Add', buttonType: 'primary', onClick: onSaveTaskClick },
+      { title: 'Close', buttonType: 'primary-1', onClick: onCloseTaskModal },
+      {
+        title: 'Add',
+        buttonType: 'primary',
+        onClick: onSaveTaskClick,
+        isLoading: viewApplicationAddNewTaskButtonLoaderAction,
+      },
     ],
-    [onSaveTaskClick, onCloseAddTaskClick]
+    [onSaveTaskClick, onCloseTaskModal, viewApplicationAddNewTaskButtonLoaderAction]
   );
 
   const editTaskModalButton = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: onCloseEditTaskClick },
-      { title: 'Save', buttonType: 'primary', onClick: onSaveTaskClick },
+      { title: 'Close', buttonType: 'primary-1', onClick: onCloseTaskModal },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onSaveTaskClick,
+        isLoading: viewApplicationUpdateTaskButtonLoaderAction,
+      },
     ],
-    [onSaveTaskClick, onCloseEditTaskClick]
+    [onSaveTaskClick, onCloseTaskModal, viewApplicationUpdateTaskButtonLoaderAction]
   );
 
   const onDeleteTaskClick = useCallback(() => {
@@ -436,16 +444,25 @@ const ApplicationTaskAccordion = props => {
     toggleConfirmationModal();
   }, [toggleConfirmationModal, setShowActionMenu, showActionMenu]);
 
+  const deleteViewApplicationTask = useCallback(async () => {
+    await dispatch(deleteApplicationTaskAction(currentTaskId, backToTaskList));
+  }, [currentTaskId, backToTaskList]);
+
   const deleteTaskButtons = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
       {
         title: 'Delete',
         buttonType: 'danger',
-        onClick: () => dispatch(deleteApplicationTaskAction(currentTaskId, backToTaskList)),
+        onClick: deleteViewApplicationTask,
+        isLoading: viewApplicationDeleteTaskButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, currentTaskId, backToTaskList]
+    [
+      toggleConfirmationModal,
+      deleteViewApplicationTask,
+      viewApplicationDeleteTaskButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {

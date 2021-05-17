@@ -61,6 +61,11 @@ const DebtorsList = () => {
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
 
+  const {
+    DebtorListColumnSaveButtonLoaderAction,
+    DebtorListColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { entityType } = useMemo(() => filter, [filter]);
 
@@ -161,11 +166,23 @@ const DebtorsList = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: DebtorListColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: DebtorListColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      DebtorListColumnSaveButtonLoaderAction,
+      DebtorListColumnResetButtonLoaderAction,
+    ]
   );
 
   const onChangeSelectedColumn = useCallback(
@@ -183,8 +200,9 @@ const DebtorsList = () => {
   );
 
   const onClickApplyFilter = useCallback(() => {
-    getDebtorsListByFilter({ page: 1, limit }, toggleFilterModal);
-  }, [getDebtorsListByFilter]);
+    toggleFilterModal();
+    getDebtorsListByFilter({ page: 1, limit });
+  }, [getDebtorsListByFilter, toggleFilterModal]);
 
   const onClickResetFilter = useCallback(() => {
     dispatchFilter({

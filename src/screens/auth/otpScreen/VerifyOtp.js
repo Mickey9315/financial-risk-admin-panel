@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
+import { useSelector } from 'react-redux';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import Button from '../../../common/Button/Button';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -12,6 +13,10 @@ function VerifyOtp() {
   const [otp, setOtp] = useState('');
   const history = useHistory();
   const { email } = useQueryParams();
+
+  const { verifyOTPButtonLoaderAction, resendOTPButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
 
   const onChangeOtp = e => {
     setOtp(e);
@@ -75,8 +80,19 @@ function VerifyOtp() {
           Back To Login
         </a>
       </div>
-      <Button title="Resend OTP" buttonType="outlined-secondary" onClick={resendOTP} />
-      <Button title="Submit" buttonType="secondary" className="ml-15" onClick={onClickVerifyOTP} />
+      <Button
+        title="Resend OTP"
+        buttonType="outlined-secondary"
+        onClick={resendOTP}
+        isLoading={resendOTPButtonLoaderAction}
+      />
+      <Button
+        title="Submit"
+        buttonType="secondary"
+        className="ml-15"
+        onClick={onClickVerifyOTP}
+        isLoading={verifyOTPButtonLoaderAction}
+      />
     </AuthScreenContainer>
   );
 }

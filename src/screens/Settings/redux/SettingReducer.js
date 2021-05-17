@@ -165,6 +165,15 @@ export const settingReducer = (state = initialSettingState, action) => {
         },
       };
 
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_REQUEST:
+      return {
+        ...state,
+        auditLogList: {
+          ...state?.auditLogList,
+          isLoading: true,
+        },
+      };
+
     case SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_SUCCESS:
       return {
         ...state,
@@ -172,6 +181,15 @@ export const settingReducer = (state = initialSettingState, action) => {
           ...action?.data,
           isLoading: false,
           error: null,
+        },
+      };
+
+    case SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_FAIL:
+      return {
+        ...state,
+        auditLogList: {
+          ...state?.auditLogList,
+          isLoading: false,
         },
       };
 

@@ -49,6 +49,10 @@ const ViewClient = () => {
     initialAssigneeState
   );
 
+  const { viewClientSyncWithCRMButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
+
   const tabActive = index => {
     setActiveTabIndex(index);
   };
@@ -169,7 +173,12 @@ const ViewClient = () => {
           <span>View Client</span>
         </div>
         <div className="buttons-row">
-          <Button buttonType="secondary" title="Sync With CRM" onClick={syncClientDataClick} />
+          <Button
+            buttonType="secondary"
+            title="Sync With CRM"
+            onClick={syncClientDataClick}
+            isLoading={viewClientSyncWithCRMButtonLoaderAction}
+          />
         </div>
       </div>
       <div className="common-white-container client-details-container">

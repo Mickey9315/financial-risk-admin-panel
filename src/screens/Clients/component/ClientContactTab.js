@@ -31,6 +31,12 @@ const ClientContactsTab = () => {
     clientContactDefaultColumnNameList,
   } = useSelector(({ clientManagement }) => clientManagement?.contact ?? {});
 
+  const {
+    viewClientContactColumnSaveButtonLoaderAction,
+    viewClientContactColumnResetButtonLoaderAction,
+    viewClientContactSyncWithCRMButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
   const { total, pages, page, limit, docs, headers } = useMemo(() => contactList ?? {}, [
     contactList,
   ]);
@@ -101,17 +107,29 @@ const ClientContactsTab = () => {
     [dispatch]
   );
 
-  const buttons = useMemo(
+  const customFieldModalButtons = useMemo(
     () => [
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
+        isLoading: viewClientContactColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
-      { title: 'Save', buttonType: 'primary', onClick: onClickSaveColumnSelection },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onClickSaveColumnSelection,
+        isLoading: viewClientContactColumnSaveButtonLoaderAction,
+      },
     ],
-    [onClickResetDefaultColumnSelection, onClickCloseColumnSelection, onClickSaveColumnSelection]
+    [
+      onClickResetDefaultColumnSelection,
+      onClickCloseColumnSelection,
+      onClickSaveColumnSelection,
+      viewClientContactColumnResetButtonLoaderAction,
+      viewClientContactColumnSaveButtonLoaderAction,
+    ]
   );
 
   const checkIfEnterKeyPressed = e => {
@@ -170,7 +188,12 @@ const ClientContactsTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Sync With CRM" onClick={syncClientContactData} />
+          <Button
+            buttonType="secondary"
+            title="Sync With CRM"
+            onClick={syncClientContactData}
+            isLoading={viewClientContactSyncWithCRMButtonLoaderAction}
+          />
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
@@ -207,7 +230,7 @@ const ClientContactsTab = () => {
           defaultFields={defaultFields}
           customFields={customFields}
           onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={buttons}
+          buttons={customFieldModalButtons}
           toggleCustomField={toggleCustomField}
         />
       )}

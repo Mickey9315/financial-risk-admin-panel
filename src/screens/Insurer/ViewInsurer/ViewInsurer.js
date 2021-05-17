@@ -8,9 +8,11 @@ import InsurerContactTab from '../Components/InsurerContactTab';
 import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
 import Button from '../../../common/Button/Button';
 import InsurerMatrixTab from '../Components/InsurerMatrixTab/InsurerMatrixTab';
-import Loader from '../../../common/Loader/Loader';
+
+const INSURER_TABS = ['Policies', 'Contacts', 'Matrix'];
 
 const ViewInsurer = () => {
+  const TAB_COMPONENTS = [<InsurerPoliciesTab />, <InsurerContactTab />, <InsurerMatrixTab />];
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const tabActive = index => {
     setActiveTabIndex(index);
@@ -23,9 +25,26 @@ const ViewInsurer = () => {
   };
 
   const insurerData = useSelector(({ insurer }) => insurer?.insurerViewData ?? {});
-  const tabs = !insurerData?.isDefault
-    ? ['Policies', 'Contacts', 'Matrix']
-    : ['Policies', 'Matrix'];
+  const { viewInsurerSyncInsurerDataButtonLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
+
+  const finalTabs = useMemo(() => {
+    const temp = [...INSURER_TABS];
+    if (insurerData?.isDefault) {
+      temp.splice(0, 1);
+    }
+    return temp;
+  }, [INSURER_TABS, insurerData?.isDefault]);
+
+  const finalComponents = useMemo(() => {
+    const temp = [...TAB_COMPONENTS];
+    if (insurerData?.isDefault) {
+      temp.splice(0, 1);
+    }
+    return temp;
+  }, [TAB_COMPONENTS, insurerData?.isDefault]);
+
   const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
     insurerData,
   ]);
@@ -37,9 +56,6 @@ const ViewInsurer = () => {
     dispatch(syncInsurerData(id));
   }, [id]);
 
-  if (!insurerData) {
-    return <Loader />;
-  }
   return (
     <>
       <div className="breadcrumb-button-row">
@@ -54,6 +70,7 @@ const ViewInsurer = () => {
               buttonType="secondary"
               title="Sync With CRM"
               onClick={syncInsurersDataOnClick}
+              isLoading={viewInsurerSyncInsurerDataButtonLoaderAction}
             />
           </div>
         )}
@@ -121,19 +138,13 @@ const ViewInsurer = () => {
           </div>
         </div>
       </div>
-      <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
-      {!insurerData?.isDefault ? (
-        <div className="common-white-container">
-          {activeTabIndex === 0 && <InsurerPoliciesTab />}
-          {activeTabIndex === 1 && <InsurerContactTab />}
-          {activeTabIndex === 2 && <InsurerMatrixTab />}
-        </div>
-      ) : (
-        <div className="common-white-container">
-          {activeTabIndex === 0 && <InsurerPoliciesTab />}
-          {activeTabIndex === 1 && <InsurerMatrixTab />}
-        </div>
-      )}
+      <Tab
+        tabs={finalTabs}
+        tabActive={tabActive}
+        activeTabIndex={activeTabIndex}
+        className="mt-15"
+      />
+      <div className="common-white-container">{finalComponents[activeTabIndex]}</div>
     </>
   );
 };

@@ -62,11 +62,6 @@ const ApplicationDocumentStep = () => {
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
     [setShowConfirmModal]
   );
-
-  /* const documentTypeList = useSelector(
-    ({ application }) => application.editApplication.documentStep.documentTypeList
-  );
-*/
   const [selectedApplicationDocuments, dispatchSelectedApplicationDocuments] = useReducer(
     applicationDocumentReducer,
     initialApplicationDocumentState
@@ -75,6 +70,11 @@ const ApplicationDocumentStep = () => {
   const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
     selectedApplicationDocuments,
   ]);
+
+  const {
+    GenerateApplicationDocumentUploadButtonLoaderAction,
+    generateApplicationDocumentDeleteButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const [uploadModel, setUploadModel] = useState(false);
   const toggleUploadModel = useCallback(
@@ -211,9 +211,18 @@ const ApplicationDocumentStep = () => {
   const uploadDocumentButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseUploadDocumentButton() },
-      { title: 'Upload', buttonType: 'primary', onClick: onClickUploadDocument },
+      {
+        title: 'Upload',
+        buttonType: 'primary',
+        onClick: onClickUploadDocument,
+        isLoading: GenerateApplicationDocumentUploadButtonLoaderAction,
+      },
     ],
-    [onCloseUploadDocumentButton, onClickUploadDocument]
+    [
+      onCloseUploadDocumentButton,
+      onClickUploadDocument,
+      GenerateApplicationDocumentUploadButtonLoaderAction,
+    ]
   );
 
   useEffect(() => {
@@ -269,9 +278,10 @@ const ApplicationDocumentStep = () => {
             /**/
           }
         },
+        isLoading: generateApplicationDocumentDeleteButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, applicationDocId]
+    [toggleConfirmationModal, applicationDocId, generateApplicationDocumentDeleteButtonLoaderAction]
   );
 
   const deleteApplicationDocument = useCallback(

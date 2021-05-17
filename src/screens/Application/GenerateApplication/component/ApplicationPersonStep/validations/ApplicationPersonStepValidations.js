@@ -3,8 +3,13 @@ import {
   saveApplicationStepDataToBackend,
   updatePersonData,
 } from '../../../../redux/ApplicationAction';
+import {
+  EMAIL_ADDRESS_REGEX,
+  NUMBER_REGEX,
+  SPECIAL_CHARACTER_REGEX,
+} from '../../../../../../constants/RegexConstants';
 
-export const applicationPersonStepValidation = (dispatch, data, editApplicationData) => {
+export const applicationPersonStepValidation = async (dispatch, data, editApplicationData) => {
   let validated = true;
   const partners = data?.map((item, index) => {
     const errors = {};
@@ -16,17 +21,21 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
           validated = false;
           errors.abn = 'Please enter ABN number before continue';
         }
-        if (item?.abn && item?.abn?.trim()?.length !== 11 && Number.isNaN(item?.abn)) {
+        if (item?.abn && (!NUMBER_REGEX.test(item?.abn) || item?.abn?.trim()?.length !== 11)) {
           validated = false;
-          errors.abn = 'Please enter valid ABN number before continue';
+          errors.abn = 'Please enter valid ABN number';
         }
-        if (item?.acn && item?.acn?.trim()?.length !== 9 && Number.isNaN(item?.acn)) {
+        if (item?.acn && (!NUMBER_REGEX.test(item?.acn) || item?.acn?.trim()?.length !== 9)) {
           validated = false;
-          errors.acn = 'Please enter valid ACN number before continue';
+          errors.acn = 'Please enter valid ACN number';
         }
-        if (!item?.entityName || item?.entityName?.length <= 0) {
+        if (
+          !item?.entityName ||
+          item?.entityName?.length <= 0 ||
+          item?.entityName?.value?.trim()?.length <= 0
+        ) {
           validated = false;
-          errors.entityName = 'Please enter entity name';
+          errors.entityName = 'Please enter entity name before continue';
         }
         if (!item?.entityType || item?.entityType?.length <= 0) {
           validated = false;
@@ -42,14 +51,29 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
           validated = false;
           errors.firstName = 'Please enter firstname before continue';
         }
+        if (item?.firstName && SPECIAL_CHARACTER_REGEX.test(item?.firstName)) {
+          validated = false;
+          errors.firstName = 'Please enter valid firstname';
+        }
         if (!item?.lastName || item?.lastName?.trim()?.length <= 0) {
           validated = false;
-          // errorNotification('Please enter lastname before continue');
           errors.lastName = 'Please enter lastname before continue';
+        }
+        if (item?.lastName && SPECIAL_CHARACTER_REGEX.test(item?.lastName)) {
+          validated = false;
+          errors.lastName = 'Please enter valid lastname';
         }
         if (!item?.state || item?.state?.length <= 0) {
           validated = false;
-          errors.state = 'Please select state before continue';
+          if (item?.country?.value === 'AUS' || item?.country?.value === 'NZL') {
+            errors.state = 'Please select state before continue';
+          } else {
+            errors.state = 'Please enter state before continue';
+          }
+        }
+        if (item?.state && SPECIAL_CHARACTER_REGEX.test(item?.state?.value)) {
+          validated = false;
+          errors.state = 'Please enter valid state';
         }
         if (!item?.country || item?.country?.length <= 0) {
           validated = false;
@@ -59,20 +83,23 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
           validated = false;
           errors.dateOfBirth = 'Please select date of birth before continue';
         }
-        if (!item?.driverLicenceNumber || item?.driverLicenceNumber?.length <= 0) {
+        if (!item?.driverLicenceNumber || item?.driverLicenceNumber?.trim()?.length <= 0) {
           validated = false;
           errors.driverLicenceNumber = 'Please enter driver licence number before continue';
         }
+        if (item?.driverLicenceNumber && !NUMBER_REGEX.test(item?.driverLicenceNumber)) {
+          validated = false;
+          errors.driverLicenceNumber = 'Please enter driver valid licence number';
+        }
         if (!item?.streetNumber || item?.streetNumber?.length <= 0) {
           validated = false;
-          errors.streetNumber = 'Please select street number before continue';
+          errors.streetNumber = 'Please enter street number before continue';
         }
-        // eslint-disable-next-line no-restricted-globals
-        if (item?.streetNumber && isNaN(item?.streetNumber)) {
+        if (item?.streetNumber && !NUMBER_REGEX.test(item?.streetNumber)) {
           validated = false;
           errors.streetNumber = 'Street number should be number';
         }
-        if (!item?.streetName || item?.streetName?.length <= 0) {
+        if (!item?.streetName || item?.streetName?.trim()?.length <= 0) {
           validated = false;
           errors.streetName = 'Please enter street name before continue';
         }
@@ -80,22 +107,25 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
           validated = false;
           errors.streetType = 'Please select street type before continue';
         }
-        if (!item?.state || item?.state?.length <= 0) {
-          validated = false;
-          errors.state = 'Please select state before continue';
-        }
         if (!item?.suburb || item?.suburb?.length <= 0) {
           validated = false;
           errors.suburb = 'Please enter suburb before continue';
         }
-        if (!item?.postCode || item?.postCode?.trim()?.length <= 0) {
+        if (!item?.postCode || item?.postCode?.length <= 0) {
           validated = false;
-          errors.postCode = 'Please enter postcode before continue';
+          errors.postCode = 'Please enter post code before continue';
         }
-        // eslint-disable-next-line no-restricted-globals
-        if (item?.postCode && isNaN(item?.postCode)) {
+        if (item?.postCode && !NUMBER_REGEX.test(item?.postCode)) {
           validated = false;
-          errors.postCode = 'Postcode should be number';
+          errors.postCode = 'Post code should be number';
+        }
+        if (item?.phoneNumber && !NUMBER_REGEX.test(item?.phoneNumber)) {
+          validated = false;
+          errors.phoneNumber = 'Phone number should be number';
+        }
+        if (item?.email && !EMAIL_ADDRESS_REGEX.test(item?.email)) {
+          validated = false;
+          errors.email = 'Please enter valid email address';
         }
       }
     }
@@ -187,7 +217,7 @@ export const applicationPersonStepValidation = (dispatch, data, editApplicationD
         errorNotification('You can only add one sole trader');
       } else {
         validated = true;
-        dispatch(saveApplicationStepDataToBackend(finalData));
+        await dispatch(saveApplicationStepDataToBackend(finalData));
       }
     } catch (e) {
       /**/
