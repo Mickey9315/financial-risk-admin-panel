@@ -21,15 +21,15 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       validated = false;
       errors.acn = 'Please enter valid ACN number';
     }
-  } else if (!data?.registrationNo || data?.registrationNo?.trim().length <= 0) {
+  } else if (!data?.registrationNumber || data?.registrationNumber?.trim().length <= 0) {
     validated = false;
-    errors.registrationNo = 'Please enter registration number before continue';
+    errors.registrationNumber = 'Please enter registration number before continue';
   } else if (
-    data?.registrationNo &&
-    (data?.registrationNo?.length <= 5 || data?.registrationNo?.length >= 30)
+    data?.registrationNumber &&
+    (data?.registrationNumber?.length <= 5 || data?.registrationNumber?.length >= 30)
   ) {
     validated = false;
-    errors.registrationNo = 'Please enter valid registration number';
+    errors.registrationNumber = 'Please enter valid registration number';
   }
   if (
     !data?.entityName ||
@@ -100,7 +100,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       debtorId,
       country,
       isActive,
-      registrationNo,
+      registrationNumber,
       wipeOutDetails,
     } = data;
 
@@ -134,7 +134,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       finalData.abn = abn ?? '';
       finalData.acn = acn ?? '';
     } else {
-      finalData.registrationNo = registrationNo ?? '';
+      finalData.registrationNumber = registrationNumber ?? '';
     }
 
     try {

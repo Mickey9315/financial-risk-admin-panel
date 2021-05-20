@@ -14,6 +14,10 @@ export const HEADER_URLS = {
   UPLOAD_PROFILE_PICTURE: `${BASE_URL}profile/upload/`,
   CHANGE_PASSWORD_URL: `${BASE_URL}auth/change-password/`,
   LOGOUT_URL: `${BASE_URL}auth/logout/`,
+  HEADER_NOTIFICATIONS: {
+    GET_HEADER_NOTIFICATION_LIST_URL: `${BASE_URL}notification/list/`,
+    MARK_AS_READ_NOTIFICATION_URL: `${BASE_URL}notification/markAsRead/`,
+  },
 };
 
 export const USER_MANAGEMENT_URLS = {
@@ -220,6 +224,10 @@ export const MY_WORK_URL = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name/`,
     TASK_DETAIL_BY_ID_URL: `${BASE_URL}task/details/`,
     UPDATE_TASK: `${BASE_URL}task/`,
+  },
+  MY_WORK_NOTIFICATION: {
+    MY_WORK_NOTIFICATION_LIST: `${BASE_URL}notification/`,
+    MY_WORK_DELETE_NOTIFICATION: `${BASE_URL}notification/`,
   },
 };
 

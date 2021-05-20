@@ -2,7 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const IconButton = props => {
-  const { isLoading, title, buttonType, iconColor, className, buttonTitle, ...restProps } = props;
+  const {
+    isLoading,
+    isBadge,
+    badgeCount,
+    title,
+    buttonType,
+    iconColor,
+    className,
+    buttonTitle,
+    ...restProps
+  } = props;
   const buttonClass = `button ${buttonType}-button icon-button ${className}`;
 
   return (
@@ -13,6 +23,7 @@ const IconButton = props => {
       title={buttonTitle}
       disabled={isLoading}
     >
+      {isBadge && <span className="notification-badge">{badgeCount}</span>}
       <span className={`material-icons-round ${isLoading && 'button-loader'}`}>
         {!isLoading && title}
       </span>
@@ -36,6 +47,8 @@ IconButton.propTypes = {
   iconColor: PropTypes.string,
   buttonTitle: PropTypes.string,
   isLoading: PropTypes.bool,
+  isBadge: PropTypes.bool,
+  badgeCount: PropTypes.number,
 };
 
 IconButton.defaultProps = {
@@ -43,6 +56,8 @@ IconButton.defaultProps = {
   iconColor: '',
   buttonTitle: '',
   isLoading: false,
+  isBadge: false,
+  badgeCount: 0,
 };
 
 export default IconButton;

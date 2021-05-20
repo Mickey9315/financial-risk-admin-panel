@@ -32,6 +32,10 @@ const initialMyWork = {
       assigneeList: [],
     },
   },
+  notification: {
+    isLoading: false,
+    notificationList: {},
+  },
 };
 
 export const myWorkReducer = (state = initialMyWork, action) => {
@@ -110,7 +114,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         value: data?._id,
         name: 'entityId',
       }));
-      console.log(82, entityList);
+
       return {
         ...state,
         task: {
@@ -272,6 +276,66 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           },
         },
       };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+      .GET_MY_WORK_NOTIFICATION_LIST_REQUEST_ACTION:
+      return {
+        ...state,
+        notification: {
+          ...state?.notification,
+          isLoading: true,
+        },
+      };
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+      .GET_MY_WORK_NOTIFICATION_LIST_SUCCESS_ACTION: {
+      const notificationList = Object.entries(action?.data?.docs).map(([key, value]) => ({
+        title: key,
+        data: value,
+      }));
+      return {
+        ...state,
+        notification: {
+          ...state.notification,
+          notificationList,
+          page: action?.data?.page,
+          limit: action?.data?.limit,
+          pages: action?.data?.pages,
+          total: action?.data?.total,
+          isLoading: false,
+        },
+      };
+    }
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+      .GET_MY_WORK_NOTIFICATION_LIST_FAIL_ACTION:
+      return {
+        ...state,
+        notification: {
+          ...state.notification,
+          isLoading: true,
+        },
+      };
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+      .DELETE_MY_WORK_NOTIFICATION_ACTION: {
+      const notifications = [...state?.notification?.notificationList];
+      const finalData = [];
+
+      notifications?.forEach(notification => {
+        const data = notification?.data?.filter(e => e?._id !== action.data);
+
+        if (data.length > 0) {
+          finalData.push({ ...notification, data });
+        }
+      });
+
+      return {
+        ...state,
+        notification: {
+          ...state.notification,
+          notificationList: finalData,
+        },
+      };
+    }
+
     default:
       return state;
   }

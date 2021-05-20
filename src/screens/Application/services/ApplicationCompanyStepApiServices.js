@@ -8,12 +8,12 @@ const ApplicationCompanyStepApiServices = {
     ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_BY_DEBTOR_DETAILS}${id}`, {
       params,
     }),
-  getApplicationCompanyDataFromABNorACN: (id, params) =>
-    ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_BY_ABN_ACN_DETAILS}${id}`, {
+  getApplicationCompanyDataFromABNorACN: params =>
+    ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_BY_ABN_ACN_DETAILS}`, {
       params,
     }),
-  searchApplicationCompanyEntityName: (searchText, params) =>
-    ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_ENTITY_TYPE}${searchText}`, {
+  searchApplicationCompanyEntityName: params =>
+    ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_ENTITY_TYPE}`, {
       params,
     }),
   deleteApplicationCompanyEntityTypeData: params =>

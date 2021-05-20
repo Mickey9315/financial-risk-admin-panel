@@ -3,7 +3,11 @@ import {
   updateStakeHolder,
   updateStakeHolderDetail,
 } from '../../redux/DebtorsAction';
-import { checkForEmail } from '../../../../helpers/ValidationHelper';
+import {
+  EMAIL_ADDRESS_REGEX,
+  NUMBER_REGEX,
+  SPECIAL_CHARACTER_REGEX,
+} from '../../../../constants/RegexConstants';
 
 export const stakeHolderValidation = async (dispatch, data, debtorData, callBack, isEdit) => {
   let validated = true;
@@ -14,17 +18,21 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.abn = 'Please enter ABN number before continue';
     }
-    if (data?.abn && data?.abn?.trim()?.length < 11) {
+    if (data?.abn && (!NUMBER_REGEX.test(data?.abn) || data?.abn?.trim()?.length !== 11)) {
       validated = false;
-      errors.abn = 'Please enter valid ABN number before continue';
+      errors.abn = 'Please enter valid ABN number';
     }
-    if (data?.acn && data?.acn?.trim()?.length < 9) {
+    if (data?.acn && (!NUMBER_REGEX.test(data?.acn) || data?.acn?.trim()?.length !== 9)) {
       validated = false;
-      errors.acn = 'Please enter valid ACN number before continue';
+      errors.acn = 'Please enter valid ACN number';
     }
-    if (!data?.entityName || data?.entityName?.length <= 0) {
+    if (
+      !data?.entityName ||
+      data?.entityName?.length <= 0 ||
+      data?.entityName?.value?.trim()?.length <= 0
+    ) {
       validated = false;
-      errors.entityName = 'Please enter entity name';
+      errors.entityName = 'Please enter entity name before continue';
     }
     if (!data?.entityType || data?.entityType?.length <= 0) {
       validated = false;
@@ -40,13 +48,29 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.firstName = 'Please enter firstname before continue';
     }
+    if (data?.firstName && SPECIAL_CHARACTER_REGEX.test(data?.firstName)) {
+      validated = false;
+      errors.firstName = 'Please enter valid firstname';
+    }
     if (!data?.lastName || data?.lastName?.trim()?.length <= 0) {
       validated = false;
       errors.lastName = 'Please enter lastname before continue';
     }
+    if (data?.lastName && SPECIAL_CHARACTER_REGEX.test(data?.lastName)) {
+      validated = false;
+      errors.lastName = 'Please enter valid lastname';
+    }
     if (!data?.state || data?.state?.length <= 0) {
       validated = false;
-      errors.state = 'Please select state before continue';
+      if (data?.country?.value === 'AUS' || data?.country?.value === 'NZL') {
+        errors.state = 'Please select state before continue';
+      } else {
+        errors.state = 'Please enter state before continue';
+      }
+    }
+    if (data?.state && SPECIAL_CHARACTER_REGEX.test(data?.state?.value)) {
+      validated = false;
+      errors.state = 'Please enter valid state';
     }
     if (!data?.country || data?.country?.length <= 0) {
       validated = false;
@@ -56,24 +80,23 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.dateOfBirth = 'Please select date of birth before continue';
     }
-    if (!data?.driverLicenceNumber || data?.driverLicenceNumber?.length <= 0) {
+    if (!data?.driverLicenceNumber || data?.driverLicenceNumber?.trim()?.length <= 0) {
       validated = false;
       errors.driverLicenceNumber = 'Please enter driver licence number before continue';
     }
-    if (data?.email && !checkForEmail(data?.email)) {
+    if (data?.driverLicenceNumber && !NUMBER_REGEX.test(data?.driverLicenceNumber)) {
       validated = false;
-      errors.email = 'Please enter valid email address before continue';
+      errors.driverLicenceNumber = 'Please enter driver valid licence number';
     }
     if (!data?.streetNumber || data?.streetNumber?.length <= 0) {
       validated = false;
-      errors.streetNumber = 'Please select street number before continue';
+      errors.streetNumber = 'Please enter street number before continue';
     }
-    // eslint-disable-next-line no-restricted-globals
-    if (data?.streetNumber && isNaN(data?.streetNumber)) {
+    if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber)) {
       validated = false;
       errors.streetNumber = 'Street number should be number';
     }
-    if (!data?.streetName || data?.streetName?.length <= 0) {
+    if (!data?.streetName || data?.streetName?.trim()?.length <= 0) {
       validated = false;
       errors.streetName = 'Please enter street name before continue';
     }
@@ -81,22 +104,25 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.streetType = 'Please select street type before continue';
     }
-    if (!data?.state || data?.state?.length <= 0) {
-      validated = false;
-      errors.state = 'Please select state before continue';
-    }
     if (!data?.suburb || data?.suburb?.length <= 0) {
       validated = false;
       errors.suburb = 'Please enter suburb before continue';
     }
-    if (!data?.postCode || data?.postCode?.trim()?.length <= 0) {
+    if (!data?.postCode || data?.postCode?.length <= 0) {
       validated = false;
-      errors.postCode = 'Please enter postcode before continue';
+      errors.postCode = 'Please enter post code before continue';
     }
-    // eslint-disable-next-line no-restricted-globals
-    if (data?.postCode && isNaN(data?.postCode)) {
+    if (data?.postCode && !NUMBER_REGEX.test(data?.postCode)) {
       validated = false;
-      errors.postCode = 'Postcode should be number';
+      errors.postCode = 'Post code should be number';
+    }
+    if (data?.phoneNumber && !NUMBER_REGEX.test(data?.phoneNumber)) {
+      validated = false;
+      errors.phoneNumber = 'Phone number should be number';
+    }
+    if (data?.email && !EMAIL_ADDRESS_REGEX.test(data?.email)) {
+      validated = false;
+      errors.email = 'Please enter valid email address';
     }
   }
   if (data?.type === 'company' && validated) {

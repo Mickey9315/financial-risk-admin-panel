@@ -207,12 +207,20 @@ const SettingsApiIntegrationTab = () => {
                 </div>
               </div>
               {index !== isEditItemIndex ? (
-                <Button
-                  buttonType="primary"
-                  title="Edit"
-                  name={row.name}
-                  onClick={() => onEditItemIndex(index)}
-                />
+                <div className="buttons-row">
+                  <Button
+                    buttonType="primary"
+                    title="Edit"
+                    name={row.name}
+                    onClick={() => onEditItemIndex(index)}
+                  />
+                  <Button
+                    buttonType="primary"
+                    title="Test"
+                    name={row.name}
+                    // onClick={() => onEditItemIndex(index)}
+                  />
+                </div>
               ) : (
                 <div className="buttons-row">
                   <Button

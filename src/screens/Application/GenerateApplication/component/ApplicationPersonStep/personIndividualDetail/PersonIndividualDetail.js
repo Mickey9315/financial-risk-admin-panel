@@ -64,12 +64,14 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   );
   const partners = useSelector(({ application }) => application?.editApplication?.partners ?? []);
 
-  const { streetType, australianStates, countryList, newZealandStates } = useSelector(
-    ({ application }) => application?.companyData?.dropdownData ?? {}
-  );
-  const companyEntityType = useSelector(
-    ({ application }) => application?.applicationFilterList?.dropdownData?.companyEntityType ?? []
-  );
+  const {
+    streetType,
+    australianStates,
+    countryList,
+    newZealandStates,
+    companyEntityType,
+  } = useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
+
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
 
@@ -448,8 +450,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: companyState?.clientId?.value };
-        const response = await dispatch(getApplicationPersonDataFromABNOrACN(data.abn, params));
+        const params = { searchString: data?.abn, clientId: companyState?.clientId?.value };
+        const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
         if (response) {
           updatePersonState(response);
           prevRef.current = {
@@ -482,32 +484,35 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
           data: null,
         });
         setSearchedEntityNameValue(e.target.value.toString());
-        const params = { clientId: companyState?.clientId?.value };
-        dispatch(searchApplicationCompanyEntityName(e.target.value, params));
+        const params = {
+          searchString: e?.target?.value,
+          clientId: companyState?.clientId?.value,
+        };
+        dispatch(searchApplicationCompanyEntityName(params));
       }
     },
-    [companyState, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
+    [companyState?.clientId, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
   );
 
   const retryEntityNameRequest = useCallback(() => {
     if (searchedEntityNameValue?.trim()?.length > 0) {
-      if (!companyState?.clientId || companyState?.clientId?.length === 0) {
-        errorNotification('Please select client before continue');
-        return;
-      }
-      const params = { clientId: companyState?.clientId?.value };
-      dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
+      const params = {
+        searchString: searchedEntityNameValue,
+        clientId: companyState?.clientId?.value,
+      };
+      dispatch(searchApplicationCompanyEntityName(params));
     }
-  }, [searchedEntityNameValue, companyState]);
+  }, [searchedEntityNameValue, companyState?.clientId]);
 
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
       try {
         if (e.key === 'Enter') {
-          const params = { clientId: companyState?.clientId?.value };
-          const response = await dispatch(
-            getApplicationPersonDataFromABNOrACN(e.target.value, params)
-          );
+          const params = {
+            searchString: e?.target?.value,
+            clientId: companyState?.clientId?.value,
+          };
+          const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
 
           if (response) {
             updatePersonState(response);
@@ -744,7 +749,6 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       } else if (partners?.length <= 1) {
         errorNotification('You can not remove every partner/trust');
       } else if (partners?.[index]?._id) {
-        console.log('HERE', partners?.[index]?._id);
         dispatch(wipeOutIndividualPerson(partners?.[index]?._id, index));
       } else {
         dispatch(removePersonDetail(index));

@@ -8,6 +8,15 @@ const HeaderApiService = {
     ApiService.postData(HEADER_URLS.UPLOAD_PROFILE_PICTURE, data, config),
   changePassword: data => ApiService.putData(HEADER_URLS.CHANGE_PASSWORD_URL, data),
   logoutUser: () => ApiService.deleteData(HEADER_URLS.LOGOUT_URL),
+
+  notificationApiServices: {
+    getHeaderNotificationList: () =>
+      ApiService.getData(HEADER_URLS.HEADER_NOTIFICATIONS.GET_HEADER_NOTIFICATION_LIST_URL),
+    markNotificationAsReadAndDelete: notificationId =>
+      ApiService.putData(
+        `${HEADER_URLS.HEADER_NOTIFICATIONS.MARK_AS_READ_NOTIFICATION_URL}${notificationId}`
+      ),
+  },
 };
 
 export default HeaderApiService;

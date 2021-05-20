@@ -297,3 +297,51 @@ export const editTaskData = (id, data, backToTask) => {
     }
   };
 };
+
+export const getMyWorkNotificationList = (params = {}) => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type:
+          MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+            .GET_MY_WORK_NOTIFICATION_LIST_REQUEST_ACTION,
+      });
+      const response = await MyWorkApiServices.notification.getMyWorkNotificationListData(params);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+              .GET_MY_WORK_NOTIFICATION_LIST_SUCCESS_ACTION,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      dispatch({
+        type:
+          MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+            .GET_MY_WORK_NOTIFICATION_LIST_FAIL_ACTION,
+      });
+      displayErrors(e);
+    }
+  };
+};
+export const deleteMyWorkNotification = notificationId => {
+  return async dispatch => {
+    try {
+      const response = await MyWorkApiServices.notification.deleteMyWorkNotificationData(
+        notificationId
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Notification deleted successfully');
+        dispatch({
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+              .DELETE_MY_WORK_NOTIFICATION_ACTION,
+          data: notificationId,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};

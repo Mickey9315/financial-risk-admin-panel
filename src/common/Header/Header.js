@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import {
   changeEditProfileData,
   changePassword,
+  getHeaderNotificationListURL,
   getLoggedUserDetails,
   logoutUser,
+  markNotificationAsReadAndDeleteAction,
   updateUserProfile,
   uploadProfilePicture,
 } from './redux/HeaderAction';
@@ -18,8 +21,9 @@ import { errorNotification } from '../Toast';
 import { SIDEBAR_URLS } from '../../constants/SidebarConstants';
 import FileUpload from './component/FileUpload';
 import Drawer from '../Drawer/Drawer';
-import Checkbox from '../Checkbox/Checkbox';
 import { SESSION_VARIABLES } from '../../constants/SessionStorage';
+import { getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
+import { connectWebSocket } from '../../helpers/SocketHelper';
 
 const Header = () => {
   const history = useHistory();
@@ -49,6 +53,16 @@ const Header = () => {
     resetPasswordHeaderButtonLoaderAction,
     logoutHeaderButtonLoaderAction,
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+
+  const notificationData = useSelector(
+    ({ headerNotificationReducer }) => headerNotificationReducer ?? []
+  );
+
+  const { notificationList } = useMemo(() => notificationData ?? [], [notificationData]);
+  const notificationBadge = useMemo(() => {
+    const result = notificationList?.filter(notification => notification?.isRead !== true);
+    return result?.length ?? 0;
+  }, [notificationList]);
 
   const { name, email, contactNumber, profilePictureUrl, changed } = useMemo(() => {
     if (loggedUserDetail) {
@@ -272,10 +286,11 @@ const Header = () => {
   );
 
   const [notificationDrawer, setNotificationDrawer] = useState(false);
-  const openNotificationDrawer = useCallback(value =>
-    setNotificationDrawer(value !== undefined ? value : e => !e)
+  const openNotificationDrawer = useCallback(
+    value => setNotificationDrawer(value !== undefined ? value : e => !e),
+    []
   );
-  const NotiDrawerHeader = () => {
+  const NotificationDrawerHeader = () => {
     return (
       <div className="notification-drawer-title">
         <span className="material-icons-round">notifications_active</span> Notifications
@@ -297,6 +312,14 @@ const Header = () => {
       setSearchStart(true);
     }
   };
+
+  useEffect(() => {
+    dispatch(getHeaderNotificationListURL());
+    const AUTH_TOKEN = getAuthTokenLocalStorage();
+    if (AUTH_TOKEN !== null) {
+      connectWebSocket(AUTH_TOKEN);
+    }
+  }, []);
 
   return (
     <div className="header-container">
@@ -320,10 +343,12 @@ const Header = () => {
           {searchStart && <div className="header-search-results">Opps! No such results found.</div>}
         </div>
         <IconButton
+          isBadge={notificationBadge > 0}
           title="notifications_active"
           buttonType="outlined-bg"
           className="notification"
           onClick={openNotificationDrawer}
+          badgeCount={notificationBadge}
         />
         <img className="user-dp" src={profilePictureUrl ?? dummy} onClick={toggleUserSettings} />
         {showUserSettings && (
@@ -345,49 +370,42 @@ const Header = () => {
         {
           /** ********** notification drawer starts ************ */
           <Drawer
-            header={<NotiDrawerHeader />}
+            header={<NotificationDrawerHeader />}
             drawerState={notificationDrawer}
             closeDrawer={() => setNotificationDrawer(false)}
           >
-            <div className="notification-set">
-              <div className="notification-set-title">Today</div>
-              <div className="common-notification-content-box">
-                <div className="d-flex align-center just-bet">
-                  <div className="tag red-tag">Really High</div>
-                  <Checkbox />
-                </div>
-                <div className="date-owner-row">
-                  <span className="title mr-5">Date:</span>
-                  <span className="details">15-Dec-2020</span>
-
-                  <span className="title">Owner:</span>
-                  <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                </div>
-                <div className="font-field">Description:</div>
-                <div className="font-primary">
-                  Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                  invidunt ut labore et.
-                </div>
+            {notificationList?.length > 0 ? (
+              <div className="notification-set">
+                <div className="notification-set-title">Today</div>
+                {notificationList?.map(notification => (
+                  <div
+                    className="common-accordion-item-content-box high-alert"
+                    key={notification?._id}
+                  >
+                    <div className="date-owner-row just-bet">
+                      <span className="title mr-5">Date:</span>
+                      <span className="details">
+                        {moment(notification?.updatedAt).format('DD-MMM-YYYY')}
+                      </span>
+                      <span />
+                      <span
+                        className="material-icons-round font-placeholder"
+                        style={{ textAlign: 'end', fontSize: '18px', cursor: 'pointer' }}
+                        onClick={() =>
+                          dispatch(markNotificationAsReadAndDeleteAction(notification?._id))
+                        }
+                      >
+                        cancel
+                      </span>
+                    </div>
+                    <div className="font-field">Description:</div>
+                    <div className="font-primary">{notification?.description}</div>
+                  </div>
+                ))}
               </div>
-              <div className="common-accordion-item-content-box high-alert">
-                <div className="note-title-row">
-                  <div className="note-title">Title of Note</div>
-                  <span className="material-icons-round font-placeholder">more_vert</span>
-                </div>
-                <div className="date-owner-row">
-                  <span className="title mr-5">Date:</span>
-                  <span className="details">15-Dec-2020</span>
-
-                  <span className="title">Owner:</span>
-                  <span className="details">Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
-                </div>
-                <div className="font-field">Description:</div>
-                <div className="font-primary">
-                  Lorem ipsum dolor sit amet, consetetur saelitr, sed diam nonumy eirmod tempor
-                  invidunt ut labore et.
-                </div>
-              </div>
-            </div>
+            ) : (
+              <div className="no-record-found">No record found</div>
+            )}
           </Drawer>
 
           /** ********** notification drawer ends ************ */

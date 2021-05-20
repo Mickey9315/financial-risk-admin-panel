@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 
+const Dashboard = lazy(() => import('../../screens/Dashboard/Dashboard'));
 const LoginScreen = lazy(() => import('../../screens/auth/login/LoginScreen'));
 const ForgotPassword = lazy(() => import('../../screens/auth/forgotPassword/ForgotPassword'));
 const SetPassword = lazy(() => import('../../screens/auth/setPassword/SetPassword'));
@@ -68,6 +69,7 @@ export const ROUTES_CONSTANTS = [
   },
   {
     path: '/dashboard',
+    component: Dashboard,
     authenticated: true,
   },
   {

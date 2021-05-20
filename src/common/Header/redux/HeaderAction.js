@@ -1,6 +1,6 @@
 import HeaderApiService from '../services/HeaderApiService';
 import { successNotification } from '../../Toast';
-import { EDIT_PROFILE_CONSTANT } from './HeaderConstants';
+import { EDIT_PROFILE_CONSTANT, HEADER_NOTIFICATION_REDUX_CONSTANTS } from './HeaderConstants';
 import { LOGIN_REDUX_CONSTANTS } from '../../../screens/auth/login/redux/LoginReduxConstants';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import {
@@ -108,6 +108,59 @@ export const logoutUser = () => {
       }
     } catch (e) {
       stopLoaderButtonOnSuccessOrFail('logoutHeaderButtonLoaderAction');
+      displayErrors(e);
+    }
+  };
+};
+
+export const getHeaderNotificationListURL = () => {
+  return async dispatch => {
+    try {
+      const response = await HeaderApiService.notificationApiServices.getHeaderNotificationList();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: HEADER_NOTIFICATION_REDUX_CONSTANTS.GET_HEADER_NOTIFICATION,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      /**/
+    }
+  };
+};
+
+export const updateHeaderNotificationOnTaskAssignedAction = data => {
+  return dispatch => {
+    dispatch({
+      type: HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_ASSIGNED,
+      data,
+    });
+  };
+};
+
+export const updateHeaderNotificationOnTaskUpdatedAction = data => {
+  return dispatch => {
+    dispatch({
+      type: HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_UPDATED,
+      data,
+    });
+  };
+};
+
+export const markNotificationAsReadAndDeleteAction = notificationId => {
+  return async dispatch => {
+    try {
+      const response = await HeaderApiService.notificationApiServices.markNotificationAsReadAndDelete(
+        notificationId
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Notification deleted successfully');
+        dispatch({
+          type: HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_DELETED_READ,
+          id: notificationId,
+        });
+      }
+    } catch (e) {
       displayErrors(e);
     }
   };

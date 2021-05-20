@@ -263,7 +263,7 @@ const ApplicationCompanyStep = () => {
       label: 'Company Registration No.*',
       placeholder: 'Registration no',
       type: 'text',
-      name: 'registrationNo',
+      name: 'registrationNumber',
     });
     filteredData.splice(8, 1);
     return filteredData;
@@ -306,8 +306,10 @@ const ApplicationCompanyStep = () => {
               })
             );
           } else if (companyState?.abn?.length > 0 || companyState?.abn?.length > 0) {
+            const searchString = companyState?.abn ?? companyState?.acn;
             response = await dispatch(
-              getApplicationCompanyDataFromABNOrACN(companyState?.abn ?? companyState?.acn, {
+              getApplicationCompanyDataFromABNOrACN({
+                searchString,
                 clientId: data?.value,
               })
             );
@@ -375,10 +377,9 @@ const ApplicationCompanyStep = () => {
             errorNotification('Please select clientId before continue');
             return;
           }
-          const params = { clientId: companyState?.clientId?.value };
-          const response = await dispatch(
-            getApplicationCompanyDataFromABNOrACN(e.target.value, params)
-          );
+          const searchString = e?.target?.value;
+          const params = { searchString, clientId: companyState?.clientId?.value };
+          const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
           if (response) {
             updateCompanyState(response);
@@ -405,16 +406,30 @@ const ApplicationCompanyStep = () => {
           errorNotification('Please select client before continue');
           return;
         }
+        if (!companyState?.country || companyState?.country?.length === 0) {
+          errorNotification('Please select country before continue');
+          return;
+        }
         dispatchDrawerState({
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
         setSearchedEntityNameValue(e.target.value.toString());
-        const params = { clientId: companyState?.clientId?.value };
-        dispatch(searchApplicationCompanyEntityName(e.target.value, params));
+        const params = {
+          searchString: e?.target?.value,
+          country: companyState?.country?.value,
+          clientId: companyState?.clientId?.value,
+        };
+        dispatch(searchApplicationCompanyEntityName(params));
       }
     },
-    [companyState, updateCompanyState, dispatchDrawerState, setSearchedEntityNameValue]
+    [
+      companyState?.country,
+      companyState?.clientId,
+      updateCompanyState,
+      dispatchDrawerState,
+      setSearchedEntityNameValue,
+    ]
   );
 
   const retryEntityNameRequest = useCallback(() => {
@@ -423,10 +438,18 @@ const ApplicationCompanyStep = () => {
         errorNotification('Please select client before continue');
         return;
       }
-      const params = { clientId: companyState?.clientId?.value };
-      dispatch(searchApplicationCompanyEntityName(searchedEntityNameValue, params));
+      if (!companyState?.country || companyState?.country?.length === 0) {
+        errorNotification('Please select country before continue');
+        return;
+      }
+      const params = {
+        searchString: searchedEntityNameValue,
+        country: companyState?.country?.value,
+        clientId: companyState?.clientId?.value,
+      };
+      dispatch(searchApplicationCompanyEntityName(params));
     }
-  }, [searchedEntityNameValue, companyState]);
+  }, [searchedEntityNameValue, companyState?.country, companyState?.clientId]);
 
   const handleEntityChange = useCallback(event => {
     const { name, value } = event.target;
@@ -451,8 +474,8 @@ const ApplicationCompanyStep = () => {
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { clientId: companyState?.clientId?.value };
-        const response = await dispatch(getApplicationCompanyDataFromABNOrACN(data.abn, params));
+        const params = { searchString: data?.abn, clientId: companyState?.clientId?.value };
+        const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
         if (response) {
           updateCompanyState(response);

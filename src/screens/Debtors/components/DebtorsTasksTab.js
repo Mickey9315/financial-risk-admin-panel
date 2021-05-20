@@ -547,7 +547,7 @@ const DebtorTaskTab = () => {
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef.current.value;
-    console.log(searchKeyword);
+
     if (searchKeyword.trim().toString().length === 0 && e.key !== 'Enter') {
       getDebtorTaskList();
     } else if (e.key === 'Enter') {

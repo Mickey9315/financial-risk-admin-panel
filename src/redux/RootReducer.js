@@ -17,7 +17,7 @@ import {
 } from '../screens/Clients/redux/ClientReducer';
 import { application } from '../screens/Application/redux/ApplicationReducer';
 import { insurer } from '../screens/Insurer/redux/InsurerReducer';
-import { loggedUserProfile } from '../common/Header/redux/HeaderReducer';
+import { headerNotificationReducer, loggedUserProfile } from '../common/Header/redux/HeaderReducer';
 import { myWorkReducer } from '../screens/MyWork/redux/MyWorkReducer';
 import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 import { settingReducer } from '../screens/Settings/redux/SettingReducer';
@@ -43,6 +43,7 @@ const appReducer = combineReducers({
   myWorkReducer,
   settingReducer,
   loaderButtonReducer,
+  headerNotificationReducer,
 });
 
 const rootReducer = (state, action) => {

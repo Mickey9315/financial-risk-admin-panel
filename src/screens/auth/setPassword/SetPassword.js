@@ -19,7 +19,7 @@ function SetPassword() {
 
   const history = useHistory();
   const { token } = useQueryParams();
-  console.log('token->', token);
+
   const onChangePassword = e => {
     const changedPassword = e.target.value;
     setMakePassword(changedPassword);

@@ -336,7 +336,7 @@ const ClientDocumentsTab = () => {
   );
   const deleteDocument = useCallback(
     data => {
-      // console.log(data);
+      //
       setDeleteDocumentData(data);
       setShowConfirmModal(true);
     },

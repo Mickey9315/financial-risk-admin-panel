@@ -249,13 +249,15 @@ const InsurerList = () => {
   );
 
   const checkIfEnterKeyPressed = useCallback(async () => {
-    const searchKeyword = searchInputRef?.current?.value;
-    if (searchKeyword?.trim()?.toString()?.length > 0) {
-      setIsModalLoading(true);
-      await dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
-      setIsModalLoading(false);
-    } else {
-      errorNotification('Please enter any value than press enter');
+    try {
+      const searchKeyword = searchInputRef?.current?.value;
+      if (searchKeyword?.trim()?.toString()?.length > 0) {
+        setIsModalLoading(true);
+        await dispatch(getListFromCrm(searchKeyword?.trim()?.toString()));
+        setIsModalLoading(false);
+      }
+    } catch (e) {
+      /**/
     }
   }, [setIsModalLoading]);
 

@@ -174,3 +174,30 @@
 .select > div:nth-child(2) {
   width: 100%;
 }
+
+.error-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 400px;
+  padding-top: 10vh;
+
+  img {
+    height: 200px;
+  }
+}
+
+.invalid-url {
+  margin-top: 10px;
+  font: $title $font-regular;
+  color: $field-color;
+}
+
+.page-does-not-exist {
+  margin-top: 40px;
+  font: $h4 $font-medium;
+  color: $primary-color;
+}
+

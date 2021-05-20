@@ -10,7 +10,7 @@ export const setPassword = async (token, password, cb) => {
   try {
     startLoaderButtonOnRequest('setPasswordButtonLoaderAction');
     const data = { token, password };
-    console.log('data : ', data);
+
     const response = await AuthApiService.setPassword(data);
 
     if (response.data.status === 'SUCCESS') {

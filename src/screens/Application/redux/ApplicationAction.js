@@ -211,11 +211,10 @@ export const getApplicationCompanyDataFromDebtor = (id, params) => {
   };
 };
 
-export const getApplicationCompanyDataFromABNOrACN = (id, params) => {
+export const getApplicationCompanyDataFromABNOrACN = params => {
   return async dispatch => {
     try {
       const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN(
-        id,
         params
       );
 
@@ -234,7 +233,7 @@ export const getApplicationCompanyDataFromABNOrACN = (id, params) => {
   };
 };
 
-export const searchApplicationCompanyEntityName = (searchText, params) => {
+export const searchApplicationCompanyEntityName = params => {
   return async dispatch => {
     try {
       dispatch({
@@ -247,7 +246,6 @@ export const searchApplicationCompanyEntityName = (searchText, params) => {
         },
       });
       const response = await ApplicationCompanyStepApiServices.searchApplicationCompanyEntityName(
-        searchText,
         params
       );
 

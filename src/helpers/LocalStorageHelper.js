@@ -1,4 +1,6 @@
 import { SESSION_VARIABLES } from '../constants/SessionStorage';
+// eslint-disable-next-line import/no-cycle
+import { disconnectWebSocket } from './SocketHelper';
 
 export const AUTH_TOKEN = 'userToken';
 
@@ -43,4 +45,5 @@ export const clearAuthToken = () => {
   SESSION_VARIABLES.USER_TOKEN = null;
   sessionStorage.removeItem(AUTH_TOKEN);
   localStorage.removeItem(AUTH_TOKEN);
+  disconnectWebSocket();
 };

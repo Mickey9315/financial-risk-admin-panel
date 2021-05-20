@@ -14,5 +14,12 @@ const MyWorkApiServices = {
   deleteTask: taskId => ApiService.deleteData(`${MY_WORK_URL.TASK.TASK_LIST_URL}${taskId}`),
   getTaskDetailById: id => ApiService.getData(`${MY_WORK_URL.TASK.TASK_DETAIL_BY_ID_URL}${id}`),
   updateTask: (id, data) => ApiService.putData(`${MY_WORK_URL.TASK.UPDATE_TASK}${id}`, data),
+
+  notification: {
+    getMyWorkNotificationListData: params =>
+      ApiService.getData(MY_WORK_URL.MY_WORK_NOTIFICATION.MY_WORK_NOTIFICATION_LIST, { params }),
+    deleteMyWorkNotificationData: id =>
+      ApiService.deleteData(`${MY_WORK_URL.MY_WORK_NOTIFICATION.MY_WORK_DELETE_NOTIFICATION}${id}`),
+  },
 };
 export default MyWorkApiServices;
