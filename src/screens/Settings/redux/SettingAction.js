@@ -206,13 +206,31 @@ export const updateApiIntegrationDetails = data => {
       const response = await SettingApiIntegrationService.updateApiIntegrationDetails(data);
       if (response.data.status === 'SUCCESS') {
         successNotification(
-          response?.data?.message || 'API integration details updated successfully'
+          response?.data?.message || 'API integration details tested successfully'
         );
         stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
         dispatch(updateApiIntegration(data));
       }
     } catch (e) {
       stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
+      displayErrors(e);
+    }
+  };
+};
+
+export const testApiIntegrationDetails = params => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest(`settingApiIntegrationTestButtonLoaderAction`);
+      const response = await SettingApiIntegrationService.testApiIntegrationDetails(params);
+      if (response.data.status === 'SUCCESS') {
+        successNotification(
+          response?.data?.message || 'API integration details updated successfully'
+        );
+        stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationTestButtonLoaderAction`);
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationTestButtonLoaderAction`);
       displayErrors(e);
     }
   };

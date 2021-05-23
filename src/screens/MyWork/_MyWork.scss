@@ -25,7 +25,10 @@
   right: 0;
 }
 .common-white-container.notification-white-container{
+  max-height: calc(100vh - 10.75rem);
   display: block;
+  overflow: auto;
+
 }
 .my-work-task-action-row{
   display: flex;

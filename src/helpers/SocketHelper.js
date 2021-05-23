@@ -1,12 +1,10 @@
 import socketIOClient from 'socket.io-client';
 import { displayErrors } from './ErrorNotifyHelper';
 import { HEADER_NOTIFICATION_REDUX_CONSTANTS } from '../common/Header/redux/HeaderConstants';
-// eslint-disable-next-line import/no-cycle
 import {
   updateHeaderNotificationOnTaskAssignedAction,
   updateHeaderNotificationOnTaskUpdatedAction,
 } from '../common/Header/redux/HeaderAction';
-// eslint-disable-next-line import/no-cycle
 import { store } from '../redux/store';
 
 const SOCKET_URI = 'https://client.trad.dev.gradlesol.com';

@@ -246,6 +246,7 @@ export const SETTING_URL = {
   API_INTEGRATION: {
     GET_API_INTEGRATION: `${BASE_URL}settings/api-integration/`,
     UPDATE_API_INTEGRATION: `${BASE_URL}settings/api-integration/`,
+    TEST_API_INTEGRATION: `${BASE_URL}settings/test-credentials/`,
   },
   AUDIT_LOG: {
     GET_AUDIT_LOG_LIST: `${BASE_URL}settings/audit-logs/`,

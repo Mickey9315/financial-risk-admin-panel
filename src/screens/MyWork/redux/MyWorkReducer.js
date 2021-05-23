@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { MY_WORK_REDUX_CONSTANTS } from './MyWorkReduxConstants';
 
 const initialMyWork = {
@@ -34,7 +35,7 @@ const initialMyWork = {
   },
   notification: {
     isLoading: false,
-    notificationList: {},
+    notificationList: [],
   },
 };
 
@@ -288,20 +289,36 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       };
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
       .GET_MY_WORK_NOTIFICATION_LIST_SUCCESS_ACTION: {
-      const notificationList = Object.entries(action?.data?.docs).map(([key, value]) => ({
+      let notificationList = state?.notification?.notificationList ?? [];
+      let hasMoreData = false;
+      const { page, pages, docs } = action?.data;
+      notificationList = notificationList?.map(elem => {
+        if (docs[elem?.title]) {
+          const final = docs[elem?.title];
+          delete docs[elem?.title];
+          return { ...elem, data: [...elem?.data, ...final] };
+        }
+        return elem;
+      });
+      if (page < pages) {
+        hasMoreData = true;
+      }
+      const newNotificationList = Object.entries(docs).map(([key, value]) => ({
         title: key,
         data: value,
       }));
+
       return {
         ...state,
         notification: {
-          ...state.notification,
-          notificationList,
+          ...state?.notification,
+          notificationList: [...new Set([...newNotificationList, ...notificationList])],
           page: action?.data?.page,
           limit: action?.data?.limit,
           pages: action?.data?.pages,
           total: action?.data?.total,
           isLoading: false,
+          hasMoreData,
         },
       };
     }
@@ -316,7 +333,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       };
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
       .DELETE_MY_WORK_NOTIFICATION_ACTION: {
-      const notifications = [...state?.notification?.notificationList];
+      const notifications = state?.notification?.notificationList ?? [];
       const finalData = [];
 
       notifications?.forEach(notification => {
@@ -332,6 +349,44 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         notification: {
           ...state.notification,
           notificationList: finalData,
+        },
+      };
+    }
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS.CLEAR_NOTIFICATION_DATA:
+      return {
+        ...state,
+        notification: {
+          isLoading: false,
+          notificationList: [],
+        },
+      };
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+      .GET_NOTIFICATION_FROM_SOCKET: {
+      let notificationList = state?.notification?.notificationList ?? [];
+      const { updatedAt, _id, description } = action?.data;
+      const data = {
+        [moment(updatedAt).format('YYYY-M-DD')]: [{ updatedAt, _id, description }],
+      };
+      notificationList = notificationList?.map(elem => {
+        if (data[elem.title]) {
+          const final = data[elem.title];
+          delete data[elem.title];
+          return { ...elem, data: [...final, ...elem.data] };
+        }
+        return elem;
+      });
+      const newNotificationList = Object.entries(data).map(([key, value]) => ({
+        title: key,
+        data: value,
+      }));
+
+      return {
+        ...state,
+        notification: {
+          ...state.notification,
+          notificationList: [...new Set([...newNotificationList, ...notificationList])],
         },
       };
     }

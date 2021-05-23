@@ -35,6 +35,7 @@ import {
   startLoaderButtonOnRequest,
   stopLoaderButtonOnSuccessOrFail,
 } from '../../../common/LoaderButton/redux/LoaderButtonAction';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 const initialFilterState = {
   riskAnalystId: '',
@@ -367,7 +368,7 @@ const ClientList = () => {
             setCrmIds([]);
           })
           .catch(e => {
-            errorNotification(e?.data?.message ?? 'Already exist');
+            displayErrors(e);
             stopLoaderButtonOnSuccessOrFail('clientListAddFromCRMButtonLoaderAction');
           });
       } else {

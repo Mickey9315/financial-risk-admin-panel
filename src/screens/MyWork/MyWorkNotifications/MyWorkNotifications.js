@@ -4,26 +4,30 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import logo from '../../../assets/images/logo.svg';
-import { deleteMyWorkNotification, getMyWorkNotificationList } from '../redux/MyWorkAction';
-import Loader from '../../../common/Loader/Loader';
-import Pagination from '../../../common/Pagination/Pagination';
+import {
+  clearNotificationData,
+  deleteMyWorkNotification,
+  getMyWorkNotificationList,
+} from '../redux/MyWorkAction';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import IconButton from '../../../common/IconButton/IconButton';
 import Modal from '../../../common/Modal/Modal';
+import Loader from '../../../common/Loader/Loader';
 
 const MyWorkNotifications = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { isLoading, notificationList, limit, page, pages, total } = useSelector(
+  const [isFetching, setIsFetching] = useState(false);
+  const { isLoading, notificationList, page, pages, total, hasMoreData } = useSelector(
     ({ myWorkReducer }) => myWorkReducer?.notification ?? {}
   );
-  const notifications = useMemo(() => notificationList ?? {}, [notificationList]);
 
-  const [filterDate, setFilterDate] = useState(new Date());
+  const [filterDate, setFilterDate] = useState(undefined);
+
   const { month, year } = useMemo(() => {
     const data = {
-      month: filterDate?.getMonth() + 1 ?? undefined,
-      year: filterDate?.getFullYear() ?? undefined,
+      month: filterDate?.getMonth() + 1 || undefined,
+      year: filterDate?.getFullYear() || undefined,
     };
     return data;
   }, [filterDate]);
@@ -38,10 +42,9 @@ const MyWorkNotifications = () => {
   const getMyWorkNotificationListByFilter = useCallback(
     async (params = {}, cb) => {
       const data = {
-        page: page ?? 1,
-        limit: limit ?? 15,
-        month: month ?? undefined,
-        year: year ?? undefined,
+        page: page || 1,
+        month: month || undefined,
+        year: year || undefined,
         ...params,
       };
       try {
@@ -53,7 +56,7 @@ const MyWorkNotifications = () => {
         /**/
       }
     },
-    [total, pages, page, limit, month, year]
+    [total, pages, page, month, year]
   );
 
   // filter
@@ -66,13 +69,14 @@ const MyWorkNotifications = () => {
     toggleFilterModal();
   }, [toggleFilterModal]);
 
-  const applyFilterOnClick = useCallback(() => {
+  const applyFilterOnClick = useCallback(async () => {
     toggleFilterModal();
-    getMyWorkNotificationListByFilter({ page: 1, limit });
-  }, [getMyWorkNotificationListByFilter, limit, toggleFilterModal]);
+    await dispatch(clearNotificationData());
+    await getMyWorkNotificationListByFilter({ page: 1 });
+  }, [getMyWorkNotificationListByFilter, toggleFilterModal]);
 
   const resetFilterOnClick = useCallback(() => {
-    setFilterDate(new Date());
+    setFilterDate(undefined);
     applyFilterOnClick();
   }, []);
 
@@ -93,26 +97,10 @@ const MyWorkNotifications = () => {
     [resetFilterOnClick, toggleFilterModal, applyFilterOnClick, applyFilterOnClick]
   );
 
-  const pageActionClick = useCallback(
-    async newPage => {
-      await getMyWorkNotificationListByFilter({ page: newPage, limit });
-    },
-    [getMyWorkNotificationListByFilter, limit]
-  );
-
-  const onSelectLimit = useCallback(
-    async newLimit => {
-      await getMyWorkNotificationListByFilter({ page: 1, limit: newLimit });
-    },
-    [getMyWorkNotificationListByFilter]
-  );
-
   useEffect(() => {
     const params = {
-      page: page ?? 1,
-      limit: limit ?? 15,
-      month: month ?? undefined,
-      year: year ?? undefined,
+      month: month || undefined,
+      year: year || undefined,
     };
     const url = Object.entries(params)
       .filter(arr => arr[1] !== undefined)
@@ -120,31 +108,52 @@ const MyWorkNotifications = () => {
       .join('&');
 
     history.push(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, month, year]);
+  }, [history, total, pages, month, year]);
 
-  const {
-    page: paramPage,
-    limit: paramLimit,
-    month: paramMonth,
-    year: paramYear,
-  } = useQueryParams();
+  const { month: paramMonth, year: paramYear } = useQueryParams();
 
   useEffect(async () => {
-    const params = {
-      page: page ?? paramPage ?? 1,
-      limit: limit ?? paramLimit ?? 15,
-    };
     const filters = {
       month: paramMonth ?? undefined,
       year: paramYear ?? undefined,
     };
-    await getMyWorkNotificationListByFilter({ ...params, ...filters });
+    await getMyWorkNotificationListByFilter({ ...filters });
   }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearNotificationData());
+    };
+  }, []);
+
+  const handleScroll = e => {
+    if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight)
+      if (notificationList?.length > 0) {
+        setIsFetching(true);
+      }
+  };
+
+  const fetchMoreListItems = () => {
+    try {
+      setTimeout(async () => {
+        const changedPage = page + 1;
+        await getMyWorkNotificationListByFilter({ page: changedPage });
+        setIsFetching(false);
+      }, [500]);
+    } catch (e) {
+      /**/
+    }
+  };
+
+  useEffect(() => {
+    if (!isFetching) return;
+    if (hasMoreData) fetchMoreListItems();
+  }, [isFetching, hasMoreData]);
 
   return (
     <>
       <div className="my-work-task-action-row">
-        {!isLoading && notifications && (
+        {!isLoading && notificationList && (
           <IconButton
             buttonType="secondary"
             title="filter_list"
@@ -154,57 +163,47 @@ const MyWorkNotifications = () => {
           />
         )}
       </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading && notifications ? (
-        notifications?.length > 0 ? (
-          <>
-            <div className="common-white-container notification-white-container">
-              {notifications?.map(e => (
-                <>
-                  <div className="notification-date">{moment(e?.title).format('DD-MMM-YYYY')}</div>
-                  <div className="notification-container">
-                    {e?.data?.map(data => (
-                      <div className="notification-row">
-                        <div className="notification-circle-container">
-                          <div className="notification-vertical-line" />
-                          <div className="notification-circle">
-                            <img src={logo} alt="logo" />
-                          </div>
-                        </div>
-
-                        <div className="notification-detail-row">
-                          <span className="font-field">{data?.description}</span>
-                          <span className="notification-time">
-                            {moment(data?.createdAt).format('hh:mm A')}
-                          </span>
-                          <span
-                            className="material-icons-round"
-                            onClick={() => dispatch(deleteMyWorkNotification(data?._id))}
-                          >
-                            delete_outline
-                          </span>
+      {notificationList?.length > 0 ? (
+        <>
+          <div
+            className="common-white-container notification-white-container"
+            onScroll={handleScroll}
+          >
+            {notificationList?.map(e => (
+              <>
+                <div className="notification-date">{moment(e?.title).format('DD-MMM-YYYY')}</div>
+                <div className="notification-container">
+                  {e?.data?.map(data => (
+                    <div className="notification-row">
+                      <div className="notification-circle-container">
+                        <div className="notification-vertical-line" />
+                        <div className="notification-circle">
+                          <img src={logo} alt="logo" />
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </>
-              ))}
-              <Pagination
-                className="common-list-pagination"
-                total={total}
-                pages={pages}
-                page={page}
-                limit={limit}
-                pageActionClick={pageActionClick}
-                onSelectLimit={onSelectLimit}
-              />
-            </div>
-          </>
-        ) : (
-          <div className="no-record-found">No record found</div>
-        )
+
+                      <div className="notification-detail-row">
+                        <span className="font-field">{data?.description}</span>
+                        <span className="notification-time">
+                          {moment(data?.createdAt).format('hh:mm A')}
+                        </span>
+                        <span
+                          className="material-icons-round"
+                          onClick={() => dispatch(deleteMyWorkNotification(data?._id))}
+                        >
+                          delete_outline
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ))}
+            {hasMoreData && <Loader />}
+          </div>
+        </>
       ) : (
-        <Loader />
+        <div className="no-record-found">No record found</div>
       )}
       {filterModal && (
         <Modal
@@ -217,10 +216,10 @@ const MyWorkNotifications = () => {
             <div className="form-title">Select Date</div>
             <div className="date-picker-container filter-date-picker-container mr-15">
               <DatePicker
-                selected={filterDate ?? new Date()}
+                selected={filterDate}
                 onChange={handleSelectDateChange}
                 showMonthYearPicker
-                placeholderText="From Date"
+                placeholderText="Select Month"
                 dateFormat="MMM yyyy"
               />
               <span className="material-icons-round">event_available</span>

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Switch, Route, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import {
@@ -23,7 +23,7 @@ import FileUpload from './component/FileUpload';
 import Drawer from '../Drawer/Drawer';
 import { SESSION_VARIABLES } from '../../constants/SessionStorage';
 import { getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
-import { connectWebSocket } from '../../helpers/SocketHelper';
+import { connectWebSocket, disconnectWebSocket } from '../../helpers/SocketHelper';
 
 const Header = () => {
   const history = useHistory();
@@ -249,13 +249,6 @@ const Header = () => {
     setConfirmPassword(e.target.value);
   };
 
-  const headerTitle = useMemo(
-    () =>
-      SIDEBAR_URLS.find(item => history?.location?.pathname?.includes(item?.url ?? ''))?.title ??
-      '',
-    [history?.location?.pathname]
-  );
-
   useEffect(() => {
     if (SESSION_VARIABLES.USER_TOKEN) dispatch(getLoggedUserDetails());
   }, [SESSION_VARIABLES.USER_TOKEN]);
@@ -319,11 +312,20 @@ const Header = () => {
     if (AUTH_TOKEN !== null) {
       connectWebSocket(AUTH_TOKEN);
     }
+    return () => disconnectWebSocket();
   }, []);
 
   return (
     <div className="header-container">
-      <div className="screen-title">{headerTitle}</div>
+      <div className="screen-title">
+        <Switch>
+          {SIDEBAR_URLS.map(route => (
+            <Route exact path={route.url}>
+              {route.title}
+            </Route>
+          ))}
+        </Switch>
+      </div>
       <div className="header-right-part">
         <div
           ref={headerSearchRef}

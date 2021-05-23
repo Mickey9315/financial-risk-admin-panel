@@ -7,6 +7,7 @@ import {
   startLoaderButtonOnRequest,
   stopLoaderButtonOnSuccessOrFail,
 } from '../../LoaderButton/redux/LoaderButtonAction';
+import { MY_WORK_REDUX_CONSTANTS } from '../../../screens/MyWork/redux/MyWorkReduxConstants';
 
 export const changePassword = async (oldPassword, newPassword) => {
   try {
@@ -135,6 +136,11 @@ export const updateHeaderNotificationOnTaskAssignedAction = data => {
       type: HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_ASSIGNED,
       data,
     });
+    dispatch({
+      type:
+        MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS.GET_NOTIFICATION_FROM_SOCKET,
+      data,
+    });
   };
 };
 
@@ -142,6 +148,11 @@ export const updateHeaderNotificationOnTaskUpdatedAction = data => {
   return dispatch => {
     dispatch({
       type: HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_UPDATED,
+      data,
+    });
+    dispatch({
+      type:
+        MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS.GET_NOTIFICATION_FROM_SOCKET,
       data,
     });
   };

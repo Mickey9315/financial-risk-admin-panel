@@ -301,14 +301,14 @@ export const editTaskData = (id, data, backToTask) => {
 export const getMyWorkNotificationList = (params = {}) => {
   return async dispatch => {
     try {
-      dispatch({
+      await dispatch({
         type:
           MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
             .GET_MY_WORK_NOTIFICATION_LIST_REQUEST_ACTION,
       });
       const response = await MyWorkApiServices.notification.getMyWorkNotificationListData(params);
       if (response?.data?.status === 'SUCCESS') {
-        dispatch({
+        await dispatch({
           type:
             MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
               .GET_MY_WORK_NOTIFICATION_LIST_SUCCESS_ACTION,
@@ -316,7 +316,7 @@ export const getMyWorkNotificationList = (params = {}) => {
         });
       }
     } catch (e) {
-      dispatch({
+      await dispatch({
         type:
           MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
             .GET_MY_WORK_NOTIFICATION_LIST_FAIL_ACTION,
@@ -343,5 +343,13 @@ export const deleteMyWorkNotification = notificationId => {
     } catch (e) {
       displayErrors(e);
     }
+  };
+};
+
+export const clearNotificationData = () => {
+  return dispatch => {
+    dispatch({
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS.CLEAR_NOTIFICATION_DATA,
+    });
   };
 };

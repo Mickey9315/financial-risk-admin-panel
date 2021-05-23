@@ -6,6 +6,7 @@ import Loader from '../../../common/Loader/Loader';
 import {
   changeApiIntegrationDetails,
   getApiIntegration,
+  testApiIntegrationDetails,
   updateApiIntegrationDetails,
 } from '../redux/SettingAction';
 
@@ -99,6 +100,7 @@ const SettingsApiIntegrationTab = () => {
     [apiIntegrationDetails]
   );
 
+  const [isTestItemIndex, setIsTestItemIndex] = useState(null);
   const [isEditItemIndex, setIsEditItemIndex] = useState(null);
   const onEditItemIndex = useCallback(
     i => {
@@ -107,9 +109,10 @@ const SettingsApiIntegrationTab = () => {
     [setIsEditItemIndex, errorElementList]
   );
 
-  const { settingApiIntegrationButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
-  );
+  const {
+    settingApiIntegrationButtonLoaderAction,
+    settingApiIntegrationTestButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const onInputValueChange = useCallback((row, e) => {
     const { name, value } = e.target;
@@ -138,6 +141,29 @@ const SettingsApiIntegrationTab = () => {
       }
     },
     [apiIntegrationDetails, setErrorElementList, setIsEditItemIndex]
+  );
+
+  const onTestItem = useCallback(
+    async row => {
+      let checkCondition = false;
+      let tempArray = [];
+
+      row.inputs.forEach((input, i) => {
+        if ((input?.value?.toString()?.trim()?.length ?? -1) === 0) {
+          tempArray = tempArray?.concat([i]) ?? [];
+          checkCondition = true;
+        }
+      });
+      setErrorElementList(tempArray);
+
+      if (!checkCondition) {
+        const apiName = row?.name;
+        await dispatch(testApiIntegrationDetails({ apiName }));
+        setErrorElementList([]);
+        setIsTestItemIndex(-1);
+      }
+    },
+    [apiIntegrationDetails, setErrorElementList, setIsTestItemIndex]
   );
 
   const onCancelEditItemIndex = useCallback(() => {
@@ -218,7 +244,13 @@ const SettingsApiIntegrationTab = () => {
                     buttonType="primary"
                     title="Test"
                     name={row.name}
-                    // onClick={() => onEditItemIndex(index)}
+                    onClick={async () => {
+                      setIsTestItemIndex(index);
+                      await onTestItem(row, index);
+                    }}
+                    isLoading={
+                      isTestItemIndex === index && settingApiIntegrationTestButtonLoaderAction
+                    }
                   />
                 </div>
               ) : (
