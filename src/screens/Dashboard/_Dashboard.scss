@@ -1,0 +1,61 @@
+.react-select-container.dashboard-select-container {
+  height: 56px;
+  width: 100%;
+
+  .react-select__control {
+    max-height: 56px!important;
+    min-height: 56px!important;
+    border-radius: 10px;
+  }
+
+  .react-select__dropdown-indicator {
+    padding: 15px!important;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 25px;
+  color: $primary-color;
+
+  .title {
+    margin-top: 15px;
+    font: $h4 $font-medium;
+  }
+
+  .readings {
+    margin: 10px 0 20px 0;
+    font: $h1 $font-bold;
+  }
+}
+
+.dashboard-white-container {
+  position: relative;
+  padding: 25px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.dashboard-white-container-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  width: 46px;
+  font-size: 26px;
+  color: white;
+  background-color: $primary-color;
+  border-radius: 10px;
+}
+
+.dashboard-white-container-stripe {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 15px;
+  background: transparent linear-gradient(90deg, $primary-color 0%, #fff 100%) 0% 0% no-repeat padding-box;
+}
