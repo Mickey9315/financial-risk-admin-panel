@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useReducer, useState} from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap.css';
 import Drawer from '../Drawer/Drawer';
-import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
+import {processTableDataByType} from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
 import Checkbox from '../Checkbox/Checkbox';
 import DropdownMenu from '../DropdownMenu/DropdownMenu';
-import { successNotification } from '../Toast';
+import {successNotification} from '../Toast';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -339,21 +339,15 @@ function Row(props) {
             case 'priority':
               return (
                 <td key={index.toString()} align={align}>
-                  <Tooltip
-                    overlayClassName="tooltip-top-class"
-                    overlay={<span>{value || 'No value'}</span>}
-                    placement="topLeft"
-                  >
-                    <span title={value ?? ''} className={`task-priority-${value}`}>
+                    <span className={`task-priority-${value}`}>
                       {value ?? '-'}
                     </span>
-                  </Tooltip>
                 </td>
               );
             case 'isCompleted':
               return (
                 <td key={index.toString()} align={align}>
-                  {data?.[key]?.props?.className !== 'table-checkbox' ? (
+                  {value?.length > 50 ? (
                     <Tooltip
                       overlayClassName="tooltip-top-class"
                       overlay={<span>{value ?? 'No value'}</span>}
@@ -369,9 +363,10 @@ function Row(props) {
             default:
               return (
                 <td key={index.toString()} align={align}>
-                  {data?.[key]?.props?.className !== 'table-checkbox' ? (
+                  {value?.length > 50 ? (
                     <Tooltip
                       overlayClassName="tooltip-top-class"
+                      mouseEnterDelay={0.5}
                       overlay={<span>{value ?? 'No value'}</span>}
                       placement="topLeft"
                     >

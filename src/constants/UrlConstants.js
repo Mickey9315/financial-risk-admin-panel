@@ -20,6 +20,11 @@ export const HEADER_URLS = {
   },
 };
 
+export const DASHBOARD_URLS = {
+  DASHBOARD_DETAILS: `${BASE_URL}dashboard`,
+  DASHBOARD_USER_LIST: `${BASE_URL}dashboard/user-list`
+}
+
 export const USER_MANAGEMENT_URLS = {
   USER_LIST_URL: `${BASE_URL}user/`,
   USER_PRIVILEGES_URL: `${BASE_URL}privilege/`,

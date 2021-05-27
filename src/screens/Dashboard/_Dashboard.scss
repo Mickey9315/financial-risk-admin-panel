@@ -1,9 +1,9 @@
 .react-select-container.dashboard-select-container {
-  height: 56px;
+  min-height: 56px;
   width: 100%;
 
   .react-select__control {
-    max-height: 56px!important;
+    max-height: unset!important;
     min-height: 56px!important;
     border-radius: 10px;
   }

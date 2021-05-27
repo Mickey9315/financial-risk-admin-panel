@@ -24,8 +24,10 @@ import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
 import { clearAuthToken } from '../helpers/LocalStorageHelper';
 import { loaderButtonReducer } from '../common/LoaderButton/redux/LoaderButtonReducer';
+import {dashboard} from "../screens/Dashboard/redux/DashboardReducer";
 
 const appReducer = combineReducers({
+  dashboard,
   loggedUserProfile,
   userPrivileges,
   userManagementColumnList,
@@ -43,7 +45,7 @@ const appReducer = combineReducers({
   myWorkReducer,
   settingReducer,
   loaderButtonReducer,
-  headerNotificationReducer,
+  headerNotificationReducer
 });
 
 const rootReducer = (state, action) => {
