@@ -19,9 +19,11 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  padding: 2px;
   background-color: $secondary-color;
   color: white;
   font-size: $sub-text;
   border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

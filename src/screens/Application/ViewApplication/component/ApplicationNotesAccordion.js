@@ -235,10 +235,6 @@ const ApplicationNotesAccordion = props => {
   );
 
   useEffect(() => {
-    dispatch(getApplicationNotesList(applicationId));
-  }, []);
-
-  useEffect(() => {
     if (selectedApplicationNote.type === 'EDIT')
       setActiveLoaderButton(viewApplicationEditNoteButtonLoaderAction);
     else setActiveLoaderButton(viewApplicationAddNewNoteButtonLoaderAction);

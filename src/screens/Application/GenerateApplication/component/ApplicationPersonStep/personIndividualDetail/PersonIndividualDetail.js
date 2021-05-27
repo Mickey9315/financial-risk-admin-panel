@@ -82,7 +82,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   useEffect(() => {
     const country = partners?.[index]?.country?.value ?? '';
     let showDropDownInput = true;
-    updateSinglePersonState('state', []);
+    // updateSinglePersonState('state', []);
     switch (country) {
       case 'AUS':
       case 'NZL':

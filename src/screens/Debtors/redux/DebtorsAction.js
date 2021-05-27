@@ -1010,330 +1010,345 @@ export const surrenderDebtorCreditLimit = (id, data) => {
 
       displayErrors(e);
     }
-  };
-};
-
-// Stake Holder
-export const getDebtorStakeHolderListData = (id, param) => {
-  return async dispatch => {
-    try {
-      const params = {
-        ...param,
+    export const downloadCreditLimitCSV = id => {
+      return async () => {
+        try {
+          startLoaderButtonOnRequest('viewDebtorDownloadCreditLimitCSVButtonLoaderAction');
+          const response = await DebtorCreditLimitApiServices.downloadCreditLimitCSVFile(id);
+          if (response?.data?.status === 'SUCCESS') {
+            stopLoaderButtonOnSuccessOrFail(`viewDebtorDownloadCreditLimitCSVButtonLoaderAction`);
+            return response;
+          }
+        } catch (e) {
+          stopLoaderButtonOnSuccessOrFail('viewDebtorDownloadCreditLimitCSVButtonLoaderAction');
+          displayErrors(e);
+          throw Error();
+        }
+        return false;
       };
-      const response = await DebtorStakeHolderApiServices.getStakeHolderListData(id, params);
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_SUCCESS,
-          data: response.data.data,
-        });
-      }
-    } catch (e) {
-      dispatch({
-        type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_FAILURE,
-        data: null,
-      });
-      displayErrors(e);
-    }
-  };
-};
+    };
 
-export const getDebtorStakeHolderColumnNameList = () => {
-  return async dispatch => {
-    try {
-      const params = {
-        columnFor: 'stakeholder',
+    // Stake Holder
+    export const getDebtorStakeHolderListData = (id, param) => {
+      return async dispatch => {
+        try {
+          const params = {
+            ...param,
+          };
+          const response = await DebtorStakeHolderApiServices.getStakeHolderListData(id, params);
+          if (response?.data?.status === 'SUCCESS') {
+            dispatch({
+              type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_SUCCESS,
+              data: response.data.data,
+            });
+          }
+        } catch (e) {
+          dispatch({
+            type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.FETCH_DEBTOR_STAKE_HOLDER_LIST_FAILURE,
+            data: null,
+          });
+          displayErrors(e);
+        }
       };
-      const response = await DebtorStakeHolderApiServices.getDebtorStakeHolderColumnNameList(
-        params
-      );
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION,
-          data: response.data.data,
-        });
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
-        });
-      }
-    } catch (e) {
-      displayErrors(e);
-    }
-  };
-};
+    };
 
-export const changeDebtorStakeHolderColumnListStatus = data => {
-  return async dispatch => {
-    dispatch({
-      type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.UPDATE_DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION,
-      data,
-    });
-  };
-};
-
-export const saveDebtorStakeHolderColumnNameList = ({
-  debtorsStakeHolderColumnNameList = {},
-  isReset = false,
-}) => {
-  return async dispatch => {
-    try {
-      startLoaderButtonOnRequest(
-        `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
-      );
-      let data = {
-        isReset: true,
-        columns: [],
-        columnFor: 'stakeholder',
+    export const getDebtorStakeHolderColumnNameList = () => {
+      return async dispatch => {
+        try {
+          const params = {
+            columnFor: 'stakeholder',
+          };
+          const response = await DebtorStakeHolderApiServices.getDebtorStakeHolderColumnNameList(
+            params
+          );
+          if (response?.data?.status === 'SUCCESS') {
+            dispatch({
+              type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION,
+              data: response.data.data,
+            });
+            dispatch({
+              type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_DEFAULT_COLUMN_LIST_ACTION,
+              data: response.data.data,
+            });
+          }
+        } catch (e) {
+          displayErrors(e);
+        }
       };
-      if (!isReset) {
-        const defaultFields = debtorsStakeHolderColumnNameList.defaultFields
-          .filter(e => e.isChecked)
-          .map(e => e.name);
-        const customFields = debtorsStakeHolderColumnNameList.customFields
-          .filter(e => e.isChecked)
-          .map(e => e.name);
-        data = {
-          ...data,
-          isReset: false,
-          columns: [...defaultFields, ...customFields],
-        };
-        if (data.columns.length < 1) {
-          errorNotification('Please select at least one column to continue.');
+    };
+
+    export const changeDebtorStakeHolderColumnListStatus = data => {
+      return async dispatch => {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.UPDATE_DEBTOR_STAKE_HOLDER_COLUMN_LIST_ACTION,
+          data,
+        });
+      };
+    };
+
+    export const saveDebtorStakeHolderColumnNameList = ({
+      debtorsStakeHolderColumnNameList = {},
+      isReset = false,
+    }) => {
+      return async dispatch => {
+        try {
+          startLoaderButtonOnRequest(
+            `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
+          let data = {
+            isReset: true,
+            columns: [],
+            columnFor: 'stakeholder',
+          };
+          if (!isReset) {
+            const defaultFields = debtorsStakeHolderColumnNameList.defaultFields
+              .filter(e => e.isChecked)
+              .map(e => e.name);
+            const customFields = debtorsStakeHolderColumnNameList.customFields
+              .filter(e => e.isChecked)
+              .map(e => e.name);
+            data = {
+              ...data,
+              isReset: false,
+              columns: [...defaultFields, ...customFields],
+            };
+            if (data.columns.length < 1) {
+              errorNotification('Please select at least one column to continue.');
+              stopLoaderButtonOnSuccessOrFail(
+                `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+              );
+              throw Error();
+            }
+          }
+          const response = await DebtorStakeHolderApiServices.updateDebtorStakeHolderColumnNameList(
+            data
+          );
+          if (response?.data?.status === 'SUCCESS') {
+            dispatch({
+              type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_DEFAULT_COLUMN_LIST_ACTION,
+              data: debtorsStakeHolderColumnNameList,
+            });
+            successNotification(response?.data?.message || 'Columns updated successfully');
+            stopLoaderButtonOnSuccessOrFail(
+              `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+            );
+          }
+        } catch (e) {
           stopLoaderButtonOnSuccessOrFail(
             `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
+          displayErrors(e);
+        }
+      };
+    };
+
+    export const changeStakeHolderPersonType = personType => {
+      return dispatch => {
+        dispatch({
+          type:
+            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+              .CHANGE_DEBTOR_STAKE_HOLDER_PERSON_TYPE,
+          personType,
+        });
+      };
+    };
+
+    export const updateStakeHolderDetail = (name, value) => {
+      return dispatch => {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_FIELDS,
+          name,
+          value,
+        });
+      };
+    };
+
+    export const getStakeHolderDropDownData = () => {
+      return async dispatch => {
+        try {
+          const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDropdownData();
+          if (response?.data?.status === 'SUCCESS') {
+            dispatch({
+              type:
+                DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA,
+              data: response.data.data,
+            });
+          }
+        } catch (e) {
+          displayErrors(e);
+        }
+      };
+    };
+
+    export const getStakeHolderCompanyDataFromABNorACN = id => {
+      return async () => {
+        try {
+          const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderCompanyDataFromABNorACN(
+            id
+          );
+
+          if (response?.data?.status === 'SUCCESS') {
+            return response.data.data;
+          }
+        } catch (e) {
+          displayErrors(e);
           throw Error();
         }
-      }
-      const response = await DebtorStakeHolderApiServices.updateDebtorStakeHolderColumnNameList(
-        data
-      );
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.DEBTOR_STAKE_HOLDER_DEFAULT_COLUMN_LIST_ACTION,
-          data: debtorsStakeHolderColumnNameList,
-        });
-        successNotification(response?.data?.message || 'Columns updated successfully');
-        stopLoaderButtonOnSuccessOrFail(
-          `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
-        );
-      }
-    } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
-        `viewDebtorStakeHolderColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
-      );
-      displayErrors(e);
-    }
-  };
-};
+        return null;
+      };
+    };
 
-export const changeStakeHolderPersonType = personType => {
-  return dispatch => {
-    dispatch({
-      type:
-        DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
-          .CHANGE_DEBTOR_STAKE_HOLDER_PERSON_TYPE,
-      personType,
-    });
-  };
-};
-
-export const updateStakeHolderDetail = (name, value) => {
-  return dispatch => {
-    dispatch({
-      type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_FIELDS,
-      name,
-      value,
-    });
-  };
-};
-
-export const getStakeHolderDropDownData = () => {
-  return async dispatch => {
-    try {
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDropdownData();
-      if (response?.data?.status === 'SUCCESS') {
+    export const updateStakeHolderDataOnValueSelected = data => {
+      return dispatch => {
         dispatch({
           type:
-            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA,
-          data: response.data.data,
+            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_COMPANY_ALL_DATA,
+          data,
         });
-      }
-    } catch (e) {
-      displayErrors(e);
-    }
-  };
-};
+      };
+    };
 
-export const getStakeHolderCompanyDataFromABNorACN = id => {
-  return async () => {
-    try {
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderCompanyDataFromABNorACN(
-        id
-      );
-
-      if (response?.data?.status === 'SUCCESS') {
-        return response.data.data;
-      }
-    } catch (e) {
-      displayErrors(e);
-      throw Error();
-    }
-    return null;
-  };
-};
-
-export const updateStakeHolderDataOnValueSelected = data => {
-  return dispatch => {
-    dispatch({
-      type:
-        DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_COMPANY_ALL_DATA,
-      data,
-    });
-  };
-};
-
-export const searchStakeHolderCompanyEntityName = searchText => {
-  return async dispatch => {
-    try {
-      dispatch({
-        type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
-        data: {
-          isLoading: true,
-          error: false,
-          errorMessage: '',
-          data: [],
-        },
-      });
-      const params = { searchString: searchText };
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.searchStakeHolderCompanyEntityName(
-        params
-      );
-
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
-          data: {
-            isLoading: false,
-            error: false,
-            errorMessage: '',
-            data: response.data.data,
-          },
-        });
-      }
-    } catch (e) {
-      if (e.response && e.response.data) {
-        if (e.response?.data?.status === undefined) {
-          errorNotification('It seems like server is down, Please try again later.');
-        } else if (e.response?.data?.status === 'INTERNAL_SERVER_ERROR') {
-          errorNotification('Internal server error');
-        } else {
+    export const searchStakeHolderCompanyEntityName = searchText => {
+      return async dispatch => {
+        try {
           dispatch({
-            type:
-              DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+            type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
             data: {
-              isLoading: false,
-              error: true,
-              errorMessage: e.response.data.message ?? 'Please try again later.',
+              isLoading: true,
+              error: false,
+              errorMessage: '',
               data: [],
             },
           });
+          const params = { searchString: searchText };
+          const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.searchStakeHolderCompanyEntityName(
+            params
+          );
+
+          if (response?.data?.status === 'SUCCESS') {
+            dispatch({
+              type:
+                DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+              data: {
+                isLoading: false,
+                error: false,
+                errorMessage: '',
+                data: response.data.data,
+              },
+            });
+          }
+        } catch (e) {
+          if (e.response && e.response.data) {
+            if (e.response?.data?.status === undefined) {
+              errorNotification('It seems like server is down, Please try again later.');
+            } else if (e.response?.data?.status === 'INTERNAL_SERVER_ERROR') {
+              errorNotification('Internal server error');
+            } else {
+              dispatch({
+                type:
+                  DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+                data: {
+                  isLoading: false,
+                  error: true,
+                  errorMessage: e.response.data.message ?? 'Please try again later.',
+                  data: [],
+                },
+              });
+            }
+          } else {
+            dispatch({
+              type:
+                DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+              data: {
+                isLoading: false,
+                error: true,
+                errorMessage: 'ABR lookup facing trouble to found searched data. Please try again...',
+                data: [],
+              },
+            });
+          }
         }
-      } else {
-        dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
-          data: {
-            isLoading: false,
-            error: true,
-            errorMessage: 'ABR lookup facing trouble to found searched data. Please try again...',
-            data: [],
-          },
-        });
-      }
-    }
-  };
-};
+      };
+    };
 
-export const addNewStakeHolder = (id, data, cb) => {
-  return async dispatch => {
-    try {
-      startLoaderButtonOnRequest(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.addNewStakeHolder(
-        id,
-        data
-      );
-      if (response?.data?.status === 'SUCCESS') {
-        successNotification(response?.data?.message || 'Stakeholder created successfully');
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
-        });
-        stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
-        cb();
-      }
-    } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
-      displayErrors(e);
-    }
-  };
-};
+    export const addNewStakeHolder = (id, data, cb) => {
+      return async dispatch => {
+        try {
+          startLoaderButtonOnRequest(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
+          const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.addNewStakeHolder(
+            id,
+            data
+          );
+          if (response?.data?.status === 'SUCCESS') {
+            successNotification(response?.data?.message || 'Stakeholder created successfully');
+            dispatch({
+              type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
+            });
+            stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
+            cb();
+          }
+        } catch (e) {
+          stopLoaderButtonOnSuccessOrFail(`viewDebtorAddNewStakeHolderButtonLoaderAction`);
+          displayErrors(e);
+        }
+      };
+    };
 
-export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
-  return async dispatch => {
-    try {
-      startLoaderButtonOnRequest(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.updateStakeHolder(
-        debtorId,
-        stakeHolderId,
-        data
-      );
-      if (response?.data?.status === 'SUCCESS') {
-        successNotification(response?.data?.message || 'Stakeholder updated successfully');
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
-        });
-        stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
-        cb();
-      }
-    } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
-      displayErrors(e);
-    }
-  };
-};
+    export const updateStakeHolder = (debtorId, stakeHolderId, data, cb) => {
+      return async dispatch => {
+        try {
+          startLoaderButtonOnRequest(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
+          const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.updateStakeHolder(
+            debtorId,
+            stakeHolderId,
+            data
+          );
+          if (response?.data?.status === 'SUCCESS') {
+            successNotification(response?.data?.message || 'Stakeholder updated successfully');
+            dispatch({
+              type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.RESET_STAKE_HOLDER_STATE,
+            });
+            stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
+            cb();
+          }
+        } catch (e) {
+          stopLoaderButtonOnSuccessOrFail(`viewDebtorUpdateStakeHolderButtonLoaderAction`);
+          displayErrors(e);
+        }
+      };
+    };
 
-export const deleteStakeHolderDetails = (stakeHolderId, cb) => {
-  return async () => {
-    try {
-      startLoaderButtonOnRequest(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.deleteStakeHolder(
-        stakeHolderId
-      );
-      if (response?.data?.status === 'SUCCESS') {
-        successNotification(response?.data?.message || 'Stakeholder deleted successfully');
-        stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
-        cb();
-      }
-    } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
-      displayErrors(e);
-    }
-  };
-};
+    export const deleteStakeHolderDetails = (stakeHolderId, cb) => {
+      return async () => {
+        try {
+          startLoaderButtonOnRequest(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
+          const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.deleteStakeHolder(
+            stakeHolderId
+          );
+          if (response?.data?.status === 'SUCCESS') {
+            successNotification(response?.data?.message || 'Stakeholder deleted successfully');
+            stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
+            cb();
+          }
+        } catch (e) {
+          stopLoaderButtonOnSuccessOrFail(`viewDebtorDeleteStakeHolderButtonLoaderAction`);
+          displayErrors(e);
+        }
+      };
+    };
 
-export const getStakeHolderDetails = id => {
-  return async dispatch => {
-    try {
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDetails(id);
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKE_HOLDER_DETAILS,
-          data: response?.data?.data,
-        });
-      }
-    } catch (e) {
-      displayErrors(e);
-    }
-  };
-};
+    export const getStakeHolderDetails = id => {
+      return async dispatch => {
+        try {
+          const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDetails(id);
+          if (response?.data?.status === 'SUCCESS') {
+            dispatch({
+              type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKE_HOLDER_DETAILS,
+              data: response?.data?.data,
+            });
+          }
+        } catch (e) {
+          displayErrors(e);
+        }
+      };
+    };

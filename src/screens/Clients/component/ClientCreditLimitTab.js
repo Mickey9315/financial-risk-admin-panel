@@ -9,6 +9,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import {
   changeClientCreditLimitColumnListStatus,
+  downloadCreditLimitCSV,
   getClientCreditLimitData,
   getCreditLimitColumnsNameList,
   modifyClientCreditLimit,
@@ -22,6 +23,7 @@ import Button from '../../../common/Button/Button';
 import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { NUMBER_REGEX } from '../../../constants/RegexConstants';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const ClientCreditLimitTab = () => {
   const { id } = useParams();
@@ -38,6 +40,7 @@ const ClientCreditLimitTab = () => {
     viewClientCreditLimitColumnResetButtonLoaderAction,
     ViewClientSurrenderCreditLimitButtonLoaderAction,
     ViewClientModifyCreditLimitButtonLoaderAction,
+    viewClientDownloadCreditLimitCSVButtonLoaderAction,
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const { total, headers, pages, docs, page, limit } = useMemo(() => creditLimitList ?? {}, [
@@ -154,6 +157,19 @@ const ClientCreditLimitTab = () => {
     getCreditLimitList();
     dispatch(getCreditLimitColumnsNameList());
   }, []);
+
+  const onClickDownloadButton = useCallback(async () => {
+    if (docs?.length !== 0) {
+      try {
+        const res = await dispatch(downloadCreditLimitCSV(id));
+        if (res) downloadAll(res);
+      } catch (e) {
+        errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+      }
+    } else {
+      errorNotification('You have no records to download');
+    }
+  }, [docs, id]);
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;
@@ -287,6 +303,12 @@ const ClientCreditLimitTab = () => {
             buttonType="primary"
             title="format_line_spacing"
             onClick={toggleCustomField}
+          />
+          <IconButton
+            buttonType="primary-1"
+            title="cloud_download"
+            onClick={onClickDownloadButton}
+            isLoading={viewClientDownloadCreditLimitCSVButtonLoaderAction}
           />
         </div>
       </div>

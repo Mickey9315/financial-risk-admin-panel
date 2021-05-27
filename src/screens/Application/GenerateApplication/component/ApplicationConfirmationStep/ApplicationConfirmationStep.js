@@ -362,22 +362,22 @@ const ApplicationConfirmationStep = () => {
       label: 'isPassedMaxPeriodDetails',
       type: 'text',
     },
-    {
+    partners?.length > 0 && {
       type: 'line',
     },
-    {
+    partners?.length > 0 && {
       title: 'Director Details',
-      type: 'main-title',
+      type: 'main-title-director-detail',
     },
-    {
+    partners?.length > 0 && {
       type: 'array',
       data: getPersonStepData(partners || []),
     },
-    {
+    documents?.uploadDocumentApplicationData?.length > 0 && {
       title: 'Documents Details',
-      type: 'main-title',
+      type: 'title',
     },
-    {
+    documents?.uploadDocumentApplicationData?.length > 0 && {
       type: 'array',
       data: getDocumentStepData,
     },
@@ -446,6 +446,12 @@ const ApplicationConfirmationStep = () => {
           return (
             <>
               <div className="main-title">{detail.title}</div>
+            </>
+          );
+        case 'main-title-director-detail':
+          return (
+            <>
+              <div className="main-title-director-detail">{detail.title}</div>
             </>
           );
         case 'line':

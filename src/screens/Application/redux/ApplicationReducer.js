@@ -121,7 +121,7 @@ const initialApplicationList = {
   },
 
   viewApplication: {
-    isLoading: true,
+    isLoading: false,
     applicationDetail: {},
     task: {
       taskList: [],
@@ -474,8 +474,8 @@ export const application = (state = initialApplicationList, action) => {
         ...state,
         viewApplication: {
           ...state?.viewApplication,
-          isLoading: false,
           applicationDetail: action?.data,
+          isLoading: false,
         },
       };
 
@@ -487,6 +487,22 @@ export const application = (state = initialApplicationList, action) => {
           isLoading: false,
         },
       };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_STATUS_CHANGE_ACTION: {
+      const newStatus = state?.viewApplication?.applicationDetail?.applicationStatus?.find(
+        status => status?.value === action?.data?.status
+      );
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          applicationDetail: {
+            ...state?.viewApplication?.applicationDetail,
+            status: newStatus,
+          },
+        },
+      };
+    }
 
     // application task
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.APPLICATION_TASK_LIST_ACTION:

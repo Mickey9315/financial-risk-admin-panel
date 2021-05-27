@@ -10,7 +10,7 @@ export const applicationConfirmationStepValidations = async (
   if (validated) {
     const finalData = {
       stepper: 'confirmation',
-      applicationId: editApplicationData._id,
+      applicationId: editApplicationData?._id,
     };
     try {
       await dispatch(saveApplicationStepDataToBackend(finalData));

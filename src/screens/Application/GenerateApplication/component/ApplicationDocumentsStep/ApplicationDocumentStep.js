@@ -292,6 +292,8 @@ const ApplicationDocumentStep = () => {
     [showConfirmModal]
   );
 
+  console.log(documentData);
+
   return (
     <>
       {showConfirmModal && (
@@ -310,30 +312,31 @@ const ApplicationDocumentStep = () => {
         <span className="font-primary mr-15">Upload your documents here</span>
         <IconButton buttonType="primary" title="cloud_upload" onClick={() => toggleUploadModel()} />
       </div>
-      <table className="documents-table">
-        <tbody>
-          <tr>
-            <th align="left">Document Type</th>
-            <th align="left">Description</th>
-            <th />
-          </tr>
-          {documentData &&
-            documentData?.map(document => (
+      {documentData?.length > 0 && (
+        <table className="documents-table">
+          <tbody>
+            <tr>
+              <th align="left">Document Type</th>
+              <th align="left">Description</th>
+              <th />
+            </tr>
+            {documentData?.map(document => (
               <tr>
-                <td>{document.documentTypeId}</td>
-                <td>{document.description}</td>
+                <td>{document?.documentTypeId}</td>
+                <td>{document?.description}</td>
                 <td align="right">
                   <span
                     className="material-icons-round font-danger cursor-pointer"
-                    onClick={() => deleteApplicationDocument(document._id)}
+                    onClick={() => deleteApplicationDocument(document?._id)}
                   >
                     delete_outline
                   </span>{' '}
                 </td>
               </tr>
             ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      )}
       {uploadModel && (
         <Modal
           header="Upload Documents"

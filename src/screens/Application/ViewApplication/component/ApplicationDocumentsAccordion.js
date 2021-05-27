@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -7,7 +7,6 @@ import Tooltip from 'rc-tooltip';
 import {
   deleteViewApplicationDocumentAction,
   getApplicationModuleList,
-  getViewApplicationDocumentTypeList,
   viewApplicationUploadDocument,
 } from '../../redux/ApplicationAction';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
@@ -291,11 +290,6 @@ const ApplicationDocumentsAccordion = props => {
     [toggleConfirmationModal, applicationDocId, viewDocumentDeleteDocumentButtonLoaderAction]
   );
 
-  useEffect(() => {
-    dispatch(getApplicationModuleList(applicationId));
-    dispatch(getViewApplicationDocumentTypeList());
-  }, []);
-
   return (
     <>
       {applicationDocsList !== undefined && (
@@ -308,7 +302,7 @@ const ApplicationDocumentsAccordion = props => {
           />
           {applicationDocsList &&
             applicationDocsList.map(doc => (
-              <div className="common-accordion-item-content-box">
+              <div className="common-accordion-item-content-box" key={Math.random()}>
                 <div className="document-title-row">
                   <Tooltip
                     overlayClassName="tooltip-left-class"

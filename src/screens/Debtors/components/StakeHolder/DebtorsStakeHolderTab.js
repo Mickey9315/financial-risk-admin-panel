@@ -255,7 +255,7 @@ const DebtorsStakeHolderTab = () => {
   useEffect(() => {
     const country = stakeHolder?.country?.value ?? '';
     let showDropDownInput = true;
-    dispatch(updateStakeHolderDetail('state', []));
+    // dispatch(updateStakeHolderDetail('state', []));
     switch (country) {
       case 'AUS':
       case 'NZL':
@@ -303,49 +303,52 @@ const DebtorsStakeHolderTab = () => {
       ],
     },
   ];
-  const COMPANY_INPUT = [
-    {
-      type: 'blank',
-    },
-    {
-      label: 'Trading Name',
-      placeholder: 'Trading Name',
-      type: 'text',
-      name: 'tradingName',
-      data: [],
-    },
-    {
-      label: 'Entity Type*',
-      placeholder: 'Select',
-      type: 'select',
-      name: 'entityType',
-      data: companyEntityType ?? [],
-    },
-    {
-      label: 'Entity Name*',
-      placeholder: 'Enter Entity',
-      type: 'entityName',
-      name: 'entityName',
-      data: [],
-    },
-    {
-      label: 'ACN',
-      placeholder: '01234',
-      type: 'search',
-      name: 'acn',
-      data: [],
-    },
-    {
-      label: 'ABN*',
-      placeholder: '01234',
-      type: 'search',
-      name: 'abn',
-      data: [],
-    },
-    {
-      type: 'blank',
-    },
-  ];
+  const COMPANY_INPUT = useMemo(
+    () => [
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Trading Name',
+        placeholder: 'Trading Name',
+        type: 'text',
+        name: 'tradingName',
+        data: [],
+      },
+      {
+        label: 'Entity Type*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'entityType',
+        data: companyEntityType ?? [],
+      },
+      {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'entityName',
+        name: 'entityName',
+        data: [],
+      },
+      {
+        label: 'ACN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
+        data: [],
+      },
+      {
+        label: 'ABN*',
+        placeholder: '01234',
+        type: 'search',
+        name: 'abn',
+        data: [],
+      },
+      {
+        type: 'blank',
+      },
+    ],
+    [companyEntityType]
+  );
   const INDIVIDUAL_INPUT = useMemo(
     () => [
       {
@@ -685,7 +688,7 @@ const DebtorsStakeHolderTab = () => {
               options={input.data}
               value={
                 input?.name === 'title'
-                  ? titleDropDown?.find(title => title?.value === stakeHolder?.title) ||
+                  ? titleDropDown?.filter(title => title?.value === stakeHolder?.title) ||
                     stakeHolder?.title
                   : stakeHolder?.[input.name] || []
               }

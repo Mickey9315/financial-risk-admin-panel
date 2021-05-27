@@ -73,6 +73,7 @@ const UserList = () => {
     () => userListWithPageData ?? {},
     [userListWithPageData]
   );
+
   const handleStartDateChange = useCallback(
     date => {
       dispatchFilter({
@@ -367,7 +368,7 @@ const UserList = () => {
     const foundValue = USER_ROLES.find(e => {
       return (e?.value ?? '') === role;
     });
-    return foundValue ? [foundValue] : [];
+    return foundValue ?? [];
   }, [role]);
 
   return (
@@ -446,7 +447,7 @@ const UserList = () => {
               placeholder="Select"
               name="role"
               options={USER_ROLES}
-              values={userRoleSelectedValue}
+              value={userRoleSelectedValue}
               onChange={handleFilterChange}
               searchable={false}
             />

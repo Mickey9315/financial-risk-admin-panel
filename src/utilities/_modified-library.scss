@@ -101,10 +101,6 @@
   padding: 0!important;
 }
 
-.react-datepicker-wrapper {
-  z-index: 2;
-}
-
 .date-picker-container {
   position: relative;
   display: flex;
@@ -155,57 +151,6 @@
 
 .react-datepicker-wrapper {
   z-index: 2;
-}
-
-.date-picker-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 32px;
-  padding-left: 6px;
-  background-color: #ffffff;
-  border: 0.063rem solid $border-color;
-  border-radius: 0.313rem;
-
-  input {
-    width: 100%;
-    font: $subtitle $font-regular;
-    color: $field-color;
-    background-color: transparent!important;
-    border: none;
-    outline: none;
-    cursor: pointer;
-  }
-
-  span {
-    //position: absolute;
-    right: 5px;
-    font-size: 24px;
-    color: $placeholder-color;
-    z-index: 1;
-  }
-  .react-datepicker__header{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: space-between;
-    .react-datepicker__header__dropdown{
-      padding-top: 15px;
-      .react-datepicker__year-read-view, .react-datepicker__month-read-view{
-        display: flex;
-        flex-direction: row-reverse;
-      }
-      .react-datepicker__year-dropdown, .react-datepicker__month-dropdown, .react-datepicker__month-year-dropdown{
-        z-index: 2!important;
-      }
-      .react-datepicker__navigation{
-        top : 0
-      }
-    }
-  }
-}
-
-.react-datepicker-wrapper {
   width: 100%;
 }
 

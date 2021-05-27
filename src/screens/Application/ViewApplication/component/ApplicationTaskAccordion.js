@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import ReactSelect from 'react-select';
@@ -10,11 +10,9 @@ import Button from '../../../../common/Button/Button';
 import Checkbox from '../../../../common/Checkbox/Checkbox';
 import {
   deleteApplicationTaskAction,
-  getApplicationTaskDefaultEntityDropDownData,
   getApplicationTaskDetail,
   getApplicationTaskEntityDropDownData,
   getApplicationTaskList,
-  getAssigneeDropDownData,
   saveApplicationTaskData,
   updateApplicationTaskData,
   updateApplicationTaskStateFields,
@@ -48,28 +46,21 @@ const ApplicationTaskAccordion = props => {
     ({ application }) => application?.viewApplication?.task?.taskList || []
   );
 
-  const getTaskList = useCallback(() => {
-    dispatch(getApplicationTaskList(applicationId));
-  }, [applicationId]);
-
-  const handleTaskCheckbox = useCallback(
-    async (taskId, value) => {
-      try {
-        await TableApiService.tableActions({
-          url: 'task',
-          method: 'put',
-          id: taskId,
-          data: {
-            isCompleted: value,
-          },
-        });
-        getTaskList();
-      } catch (e) {
-        /**/
-      }
-    },
-    [getTaskList]
-  );
+  const handleTaskCheckbox = useCallback(async (taskId, value) => {
+    try {
+      await TableApiService.tableActions({
+        url: 'task',
+        method: 'put',
+        id: taskId,
+        data: {
+          isCompleted: value,
+        },
+      });
+      dispatch(getApplicationTaskList(applicationId));
+    } catch (e) {
+      /**/
+    }
+  }, []);
 
   // edit task
   const [currentTaskId, setCurrentTaskId] = useState('');
@@ -140,7 +131,7 @@ const ApplicationTaskAccordion = props => {
     if (editTaskModal) toggleEditTaskModal();
     if (showConfirmModal) toggleConfirmationModal();
 
-    getTaskList();
+    dispatch(getApplicationTaskList(applicationId));
   }, [
     toggleAddTaskModal,
     toggleEditTaskModal,
@@ -148,7 +139,6 @@ const ApplicationTaskAccordion = props => {
     editTaskModal,
     showConfirmModal,
     toggleConfirmationModal,
-    getTaskList,
   ]);
 
   const onCloseTaskModal = useCallback(() => {
@@ -464,12 +454,6 @@ const ApplicationTaskAccordion = props => {
       viewApplicationDeleteTaskButtonLoaderAction,
     ]
   );
-
-  useEffect(() => {
-    dispatch(getAssigneeDropDownData());
-    dispatch(getApplicationTaskDefaultEntityDropDownData({ entityName: 'application' }));
-    getTaskList();
-  }, []);
 
   return (
     <>

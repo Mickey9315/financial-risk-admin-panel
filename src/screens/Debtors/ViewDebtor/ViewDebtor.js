@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
+import DatePicker from 'react-datepicker';
 import Tab from '../../../common/Tab/Tab';
 import {
   changeDebtorData,
@@ -97,21 +98,21 @@ const ViewInsurer = () => {
       {
         isEditable: false,
         label: 'ABN*',
-        placeholder: '01234',
+        placeholder: 'Enter ABN number',
         type: 'text',
         name: 'abn',
       },
       {
         isEditable: false,
         label: 'ACN',
-        placeholder: '01234',
+        placeholder: 'Enter ACN number',
         type: 'text',
         name: 'acn',
       },
       {
         isEditable: false,
         label: 'Entity Type',
-        placeholder: 'Entity Type',
+        placeholder: 'Select entity type',
         type: 'select',
         name: 'entityType',
         data: [],
@@ -119,56 +120,56 @@ const ViewInsurer = () => {
       {
         isEditable: false,
         label: 'Entity Name',
-        placeholder: 'Enter Entity',
+        placeholder: 'Enter entity name',
         type: 'text',
         name: 'entityName',
       },
       {
         isEditable: true,
         label: 'Trading Name',
-        placeholder: 'Trading Name',
+        placeholder: 'Enter trading name',
         type: 'text',
         name: 'tradingName',
       },
       {
         isEditable: true,
         label: 'Phone Number',
-        placeholder: '1234567890',
+        placeholder: 'Enter phone number',
         type: 'text',
         name: 'contactNumber',
       },
       {
         isEditable: true,
         label: 'Property',
-        placeholder: 'Property',
+        placeholder: 'Enter property number',
         type: 'text',
         name: 'property',
       },
       {
         isEditable: true,
         label: 'Unit Number',
-        placeholder: 'Unit Number',
+        placeholder: 'Enter unit number',
         type: 'text',
         name: 'unitNumber',
       },
       {
         isEditable: true,
         label: 'Street Number',
-        placeholder: 'Street Number',
+        placeholder: 'Enter street number',
         type: 'text',
         name: 'streetNumber',
       },
       {
         isEditable: true,
         label: 'Street Name',
-        placeholder: 'Street Name',
+        placeholder: 'Enter street name',
         type: 'text',
         name: 'streetName',
       },
       {
         isEditable: true,
         label: 'Street Type',
-        placeholder: 'Street Type',
+        placeholder: 'Select street type',
         type: 'select',
         name: 'streetType',
         data: dropdownData?.streetType ?? [],
@@ -176,14 +177,14 @@ const ViewInsurer = () => {
       {
         isEditable: true,
         label: 'Suburb',
-        placeholder: 'Suburb',
+        placeholder: 'Enter suburb',
         type: 'text',
         name: 'suburb',
       },
       {
         isEditable: false,
         label: 'State',
-        placeholder: 'State',
+        placeholder: 'Select state',
         type: 'select',
         name: 'state',
         data: [],
@@ -191,16 +192,30 @@ const ViewInsurer = () => {
       {
         isEditable: false,
         label: 'Country',
-        placeholder: 'Country',
+        placeholder: 'Select country',
         type: 'select',
         name: 'country',
       },
       {
         isEditable: true,
         label: 'Postcode',
-        placeholder: 'Postcode',
+        placeholder: 'Enter postcode',
         type: 'text',
         name: 'postCode',
+      },
+      {
+        isEditable: true,
+        label: 'Review Date',
+        placeholder: 'Select review date',
+        type: 'date',
+        name: 'reviewDate',
+      },
+      {
+        isEditable: false,
+        label: 'Risk Rating',
+        placeholder: 'Enter risk rating',
+        type: 'text',
+        name: 'riskRating',
       },
     ],
     [debtorData, dropdownData]
@@ -237,6 +252,13 @@ const ViewInsurer = () => {
   const handleOnSelectInputChange = useCallback(
     data => {
       handleOnChange(data?.name, data);
+    },
+    [handleOnChange]
+  );
+
+  const handleOnDateChange = useCallback(
+    (name, date) => {
+      handleOnChange(name, date);
     },
     [handleOnChange]
   );
@@ -289,7 +311,12 @@ const ViewInsurer = () => {
         case 'postCode': {
           return debtorData?.postCode || '';
         }
-
+        case 'reviewDate': {
+          return debtorData?.reviewDate || null;
+        }
+        case 'riskRating': {
+          return debtorData?.riskRating || '';
+        }
         default:
           return null;
       }
@@ -312,6 +339,7 @@ const ViewInsurer = () => {
       finalData.address.streetType = debtorData?.streetType?.value?.trim();
     if (debtorData?.suburb) finalData.address.suburb = debtorData?.suburb?.trim();
     if (debtorData?.postCode) finalData.address.postCode = debtorData?.postCode?.trim();
+    if (debtorData?.reviewDate) finalData.reviewDate = debtorData?.reviewDate;
 
     dispatch(updateDebtorData(id, finalData, () => backToDebtor()));
   }, [debtorData, id, backToDebtor]);
@@ -328,11 +356,11 @@ const ViewInsurer = () => {
               <Input
                 type="text"
                 name={input.name}
-                placeholder={action === 'view' ? '-' : input.placeholder}
+                placeholder={action === 'view' || !input.isEditable ? '-' : input.placeholder}
                 value={debtorData?.[input.name]}
                 onChange={handleOnTextChange}
                 disabled={action === 'view' || !input.isEditable}
-                borderClass={action === 'view' || !input.isEditable ? 'disabled-control' : ''}
+                borderClass={(action === 'view' || !input.isEditable) && 'disabled-control'}
               />
             </div>
           );
@@ -343,29 +371,50 @@ const ViewInsurer = () => {
               <div className="common-detail-title">{input.label}</div>
               <ReactSelect
                 className={`select-client-list-container react-select-container ${
-                  (action === 'view' || !input.isEditable) && 'disabled-control'
+                  action === 'view' && 'disabled-control'
                 }`}
                 classNamePrefix="react-select"
                 type="text"
                 name={input.name}
-                placeholder={action === 'view' ? '-' : input.placeholder}
+                placeholder={action === 'view' || !input.isEditable ? '-' : input.placeholder}
                 options={input.data}
                 value={getSelectedValues}
                 isSearchable={false}
                 onChange={handleOnSelectInputChange}
                 isDisabled={action === 'view' || !input.isEditable}
-                dropdownHandle={action !== 'view' && input.isEditable}
               />
             </div>
           );
           break;
         }
+        case 'date':
+          component = (
+            <div className="common-detail-field">
+              <div className="common-detail-title">{input.label}</div>
+              <div className={`date-picker-container ${action === 'view' && 'disabled-control'}`}>
+                <DatePicker
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText={action === 'view' || !input.isEditable ? '-' : input.placeholder}
+                  selected={getSelectedValues}
+                  onChange={date => handleOnDateChange(input.name, date)}
+                  showMonthDropdown
+                  showYearDropdown
+                  scrollableYearDropdown
+                  minDate={new Date()}
+                  popperProps={{ positionFixed: true }}
+                  disabled={action === 'view'}
+                />
+                {action !== 'view' && <span className="material-icons-round">event_available</span>}
+              </div>
+            </div>
+          );
+          break;
         default:
           return null;
       }
       return <>{component}</>;
     },
-    [debtorData, editDebtorClick, action, handleOnChange, setValuesFromRedux]
+    [debtorData, editDebtorClick, action, handleOnChange, setValuesFromRedux, handleOnDateChange]
   );
 
   useEffect(() => {

@@ -854,6 +854,26 @@ export const saveClientCreditLimitColumnNameList = ({
     }
   };
 };
+
+export const downloadCreditLimitCSV = id => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest('viewClientDownloadCreditLimitCSVButtonLoaderAction');
+      const response = await ClientCreditLimitApiService.downloadCreditLimitCSVFile(id);
+      if (response?.data?.status === 'SUCCESS') {
+        stopLoaderButtonOnSuccessOrFail(`viewClientDownloadCreditLimitCSVButtonLoaderAction`);
+        return response;
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewClientDownloadCreditLimitCSVButtonLoaderAction');
+      displayErrors(e);
+      throw Error();
+    }
+    return false;
+  };
+};
+
+// application
 export const getClientApplicationListData = (id, param) => {
   return async dispatch => {
     try {

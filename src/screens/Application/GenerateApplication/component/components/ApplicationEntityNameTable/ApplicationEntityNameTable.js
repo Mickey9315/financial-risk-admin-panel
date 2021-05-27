@@ -19,15 +19,15 @@ const ApplicationEntityNameTable = props => {
           <tr>
             <td>
               <div className="link" onClick={() => handleEntityNameSelect(row)}>
-                {typeof row.label === 'string' ? row.label : '-'}
+                {typeof row?.label === 'string' ? row?.label : '-'}
               </div>
             </td>
             <td>
-              {typeof row.state === 'string' ? row.state : '-'}/
-              {typeof row.postCode === 'string' ? row.postCode : '-'}
+              {typeof row?.state === 'string' ? row?.state : '-'}/
+              {typeof row?.postCode === 'string' ? row?.postCode : '-'}
             </td>
-            <td>{typeof row.status === 'string' ? row.status : '-'}</td>
-            <td>{typeof row.abn === 'string' ? row.abn : '-'}</td>
+            <td>{typeof row?.status === 'string' ? row?.status : '-'}</td>
+            <td>{typeof row?.abn === 'string' ? row?.abn : '-'}</td>
           </tr>
         ))}
       </tbody>

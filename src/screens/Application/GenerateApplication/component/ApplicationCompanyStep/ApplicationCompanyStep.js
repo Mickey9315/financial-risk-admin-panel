@@ -54,7 +54,7 @@ const ApplicationCompanyStep = () => {
   const companyState = useSelector(
     ({ application }) => application?.editApplication?.company ?? {}
   );
-  const { partners } = useSelector(({ application }) => application?.editApplication ?? {});
+  const { partners, errors } = useSelector(({ application }) => application?.editApplication ?? {});
   const {
     clients,
     debtors,
@@ -293,6 +293,14 @@ const ApplicationCompanyStep = () => {
 
   const handleSelectInputChange = useCallback(
     async data => {
+      if (data?.name === 'country') {
+        dispatch(updateEditApplicationField('company', 'state', null));
+
+        const finalErrors = { ...errors };
+        delete finalErrors.state;
+
+        dispatch(updateEditApplicationData('company', { errors: finalErrors }));
+      }
       if (data?.name === 'entityType' && partners?.length !== 0) {
         setShowConfirmModal(true);
         setWipeOuts(data);
@@ -334,6 +342,7 @@ const ApplicationCompanyStep = () => {
       setWipeOuts,
       updateCompanyState,
       companyState,
+      errors,
     ]
   );
 

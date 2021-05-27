@@ -1,11 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import Accordion from '../../../common/Accordion/Accordion';
-import { getApplicationDetailById, resetApplicationDetail } from '../redux/ApplicationAction';
+import {
+  changeApplicationStatus,
+  getApplicationDetailById,
+  getApplicationModuleList,
+  getApplicationNotesList,
+  getApplicationTaskDefaultEntityDropDownData,
+  getAssigneeDropDownData,
+  getViewApplicationDocumentTypeList,
+  resetApplicationDetail,
+} from '../redux/ApplicationAction';
 import TableApiService from '../../../common/Table/TableApiService';
 import Drawer from '../../../common/Drawer/Drawer';
 import ApplicationReportAccordion from './component/ApplicationReportAccordion';
@@ -16,6 +25,9 @@ import ApplicationDocumentsAccordion from './component/ApplicationDocumentsAccor
 import ApplicationLogsAccordion from './component/ApplicationLogsAccordion';
 import { errorNotification } from '../../../common/Toast';
 import Loader from '../../../common/Loader/Loader';
+import Modal from '../../../common/Modal/Modal';
+import { NUMBER_REGEX } from '../../../constants/RegexConstants';
+import Input from '../../../common/Input/Input';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -46,12 +58,36 @@ const ViewApplication = () => {
   const history = useHistory();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { applicationDetail, isLoading } = useSelector(
-    ({ application }) => application?.viewApplication ?? {}
-  );
+  const viewApplicationData = useSelector(({ application }) => application?.viewApplication ?? {});
+  const { applicationDetail, isLoading } = useMemo(() => viewApplicationData, [
+    viewApplicationData,
+  ]);
+  const [showConfirmModal, setShowConfirmationModal] = useState(false);
+  const [statusToChange, setStatusToChange] = useState({});
+  const toggleConfirmationModal = useCallback(() => {
+    setShowConfirmationModal(!showConfirmModal);
+  }, [showConfirmModal]);
+  const {
+    tradingName,
+    entityType,
+    entityName,
+    abn,
+    debtorId,
+    clientId,
+    creditLimit,
+    applicationId,
+    isAllowToUpdate,
+    status,
+    _id,
+  } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   useEffect(() => {
     dispatch(getApplicationDetailById(id));
+    dispatch(getAssigneeDropDownData());
+    dispatch(getApplicationTaskDefaultEntityDropDownData({ entityName: 'application' }));
+    dispatch(getApplicationNotesList(id));
+    dispatch(getApplicationModuleList(id));
+    dispatch(getViewApplicationDocumentTypeList());
     return () => dispatch(resetApplicationDetail());
   }, []);
 
@@ -85,56 +121,127 @@ const ViewApplication = () => {
     () => [
       {
         title: 'Application ID',
-        value: applicationDetail?.applicationId,
+        value: applicationId,
         name: '_id',
         type: 'text',
       },
       {
         title: 'Credit Limit',
-        value: applicationDetail?.creditLimit,
+        value: creditLimit,
         name: 'creditLimit',
         type: 'text',
       },
       {
         title: 'Client Name',
-        value: applicationDetail?.clientId?.[0],
+        value: clientId?.[0],
         name: 'clientId',
         type: 'link',
       },
       {
         title: 'Debtor Name',
-        value: applicationDetail?.debtorId?.[0],
+        value: debtorId?.[0],
         name: 'debtorId',
         type: 'link',
       },
       {
         title: 'ABN',
-        value: applicationDetail?.abn,
+        value: abn,
         name: 'abn',
         type: 'text',
       },
       {
         title: 'Entity Name',
-        value: applicationDetail?.entityName,
+        value: entityName,
         name: 'entityName',
         type: 'text',
       },
       {
         title: 'Entity Type',
-        value: applicationDetail?.entityType,
+        value: entityType,
         name: 'entityType',
         type: 'text',
       },
       {
         title: 'Trading Name',
-        value: applicationDetail?.tradingName,
+        value: tradingName,
         name: 'tradingName',
         type: 'text',
       },
     ],
-    [applicationDetail]
+    [tradingName, entityType, entityName, abn, debtorId, clientId, creditLimit, applicationId]
   );
   const blockers = applicationDetails?.blockers;
+
+  // limit modify
+
+  const [newCreditLimit, setNewCreditLimit] = useState('');
+  const [modifyLimitModal, setModifyLimitModal] = useState(false);
+  const toggleModifyLimitModal = useCallback(() => {
+    setNewCreditLimit('');
+    setModifyLimitModal(!modifyLimitModal);
+  }, [modifyLimitModal]);
+
+  const modifyLimit = useCallback(async () => {
+    try {
+      if (newCreditLimit?.trim()?.length <= 0) {
+        errorNotification('Please provide new credit limit');
+      } else if (newCreditLimit && !newCreditLimit.match(NUMBER_REGEX)) {
+        errorNotification('Please provide valid credit limit');
+      } else {
+        const data = {
+          creditLimit: newCreditLimit,
+          status: statusToChange?.value,
+        };
+        await dispatch(changeApplicationStatus(_id, data));
+        toggleModifyLimitModal();
+      }
+    } catch (e) {
+      /**/
+    }
+  }, [newCreditLimit, toggleModifyLimitModal, statusToChange, _id]);
+
+  const modifyLimitButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleModifyLimitModal() },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: modifyLimit,
+      },
+    ],
+    [toggleModifyLimitModal, modifyLimit]
+  );
+
+  const handleApplicationStatusChange = useCallback(
+    e => {
+      if (['CANCELLED', 'DECLINED', 'SURRENDERED', 'WITHDRAWN'].includes(e?.value)) {
+        setStatusToChange(e);
+        toggleConfirmationModal();
+      } else if (['APPROVED'].includes(e?.value)) {
+        setStatusToChange(e);
+        toggleModifyLimitModal();
+      } else {
+        dispatch(changeApplicationStatus(_id, { status: e?.value }));
+      }
+    },
+    [toggleConfirmationModal, toggleModifyLimitModal, _id]
+  );
+
+  const changeStatusButton = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Change',
+        buttonType: 'danger',
+        onClick: async () => {
+          await dispatch(changeApplicationStatus(_id, { status: statusToChange?.value }));
+          toggleConfirmationModal();
+        },
+        // isLoading: viewApplicationDeleteTaskButtonLoaderAction,
+      },
+    ],
+    [toggleConfirmationModal, statusToChange, _id]
+  );
 
   return (
     <>
@@ -156,15 +263,16 @@ const ViewApplication = () => {
                     classNamePrefix="react-select"
                     placeholder="Select Status"
                     name="applicationStatus"
-                    value={applicationDetail?.status || []}
-                    options={applicationDetail?.applicationStatus || []}
-                    isDisabled={!applicationDetail?.isAllowToUpdate}
+                    value={status || []}
+                    options={applicationDetail?.applicationStatus}
+                    isDisabled={!isAllowToUpdate}
+                    onChange={handleApplicationStatusChange}
                   />
                 </div>
                 <div className="application-details-grid">
-                  {applicationDetails.map(detail => (
+                  {applicationDetails?.map(detail => (
                     <div>
-                      <div className="font-field mb-5">{detail.title}</div>
+                      <div className="font-field mb-5">{detail?.title}</div>
                       {detail?.type === 'text' && (
                         <div className="detail">{detail.value || '-'}</div>
                       )}
@@ -177,9 +285,9 @@ const ViewApplication = () => {
                           className="detail"
                           onClick={() => {
                             handleDrawerState(
-                              detail.value._id,
-                              applicationDetail.headers.filter(
-                                header => header.name === detail.name
+                              detail?.value?._id,
+                              applicationDetail?.headers?.filter(
+                                header => header?.name === detail?.name
                               )
                             );
                           }}
@@ -195,7 +303,9 @@ const ViewApplication = () => {
                     <div className="blockers-title">Blockers</div>
 
                     {blockers.map(blocker => (
-                      <div className="guideline">{blocker?.value}</div>
+                      <div className="guideline" key={Math.random()}>
+                        {blocker?.value}
+                      </div>
                     ))}
                   </>
                 )}
@@ -239,11 +349,43 @@ const ViewApplication = () => {
       ) : (
         <Loader />
       )}
+      {showConfirmModal && (
+        <Modal
+          header="Application Status"
+          buttons={changeStatusButton}
+          hideModal={toggleConfirmationModal}
+        >
+          <span className="confirmation-message">
+            Are you sure you want to {statusToChange?.label} this application?
+          </span>
+        </Modal>
+      )}
+      {modifyLimitModal && (
+        <Modal
+          header="Modify Credit Limit"
+          buttons={modifyLimitButtons}
+          hideModal={toggleModifyLimitModal}
+        >
+          <div className="modify-credit-limit-container align-center">
+            <span>Credit Limit</span>
+            <Input type="text" value={creditLimit} disabled borderClass="disabled-control" />
+            <span>Change Credit Limit</span>
+            <Input
+              prefixClass="font-placeholder"
+              placeholder="New Credit Limit"
+              name="creditLimit"
+              type="text"
+              value={newCreditLimit}
+              onChange={e => setNewCreditLimit(e.target.value)}
+            />
+          </div>
+        </Modal>
+      )}
     </>
   );
 };
 
-export default React.memo(ViewApplication);
+export default ViewApplication;
 
 function TableLinkDrawer(props) {
   const { drawerState, closeDrawer } = props;
@@ -263,9 +405,11 @@ function TableLinkDrawer(props) {
   return (
     <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
       <div className="contacts-grid">
-        {drawerState.data.map(row => (
+        {drawerState?.data?.map(row => (
           <>
-            <div className="title">{row.label}</div>
+            <div className="title" key={Math.random()}>
+              {row.label}
+            </div>
             <div>{checkValue(row)}</div>
           </>
         ))}

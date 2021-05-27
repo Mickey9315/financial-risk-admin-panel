@@ -17,6 +17,7 @@ import {
   saveApplicationColumnNameList,
   getApplicationFilter,
   resetApplicationListPaginationData,
+  updateEditApplicationField,
 } from '../redux/ApplicationAction';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
@@ -390,6 +391,13 @@ const ApplicationList = () => {
   }, []);
 
   const generateApplicationClick = useCallback(() => {
+    dispatch(
+      updateEditApplicationField('company', 'country', {
+        label: 'Australia',
+        name: 'country',
+        value: 'AUS',
+      })
+    );
     history.push(`/applications/application/generate/`);
   }, []);
 
@@ -455,7 +463,7 @@ const ApplicationList = () => {
 
   // eslint-disable-next-line no-shadow
   const viewApplicationOnSelectRecord = useCallback((id, data) => {
-    if (data?.status === 'DRAFT') {
+    if (data?.status === 'Draft') {
       history.push(`/applications/application/generate/?applicationId=${id}`);
     } else {
       history.push(`/applications/detail/view/${id}`);

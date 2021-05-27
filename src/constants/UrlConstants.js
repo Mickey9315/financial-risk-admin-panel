@@ -53,6 +53,7 @@ export const APPLICATION_URLS = {
 
   // View Application
   VIEW_APPLICATION: {
+    CHANGE_APPLICATION_STATUS: `${BASE_URL}application/`,
     APPLICATION_TASK: {
       GET_TASK_LIST: `${BASE_URL}task/`,
       ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
@@ -90,6 +91,7 @@ export const CLIENT_URLS = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
     CREDIT_LIMIT_ACTIONS: `${BASE_URL}client/credit-limit/`,
+    DOWNLOAD_CLIENT_CREDIT_LIMIT_CSV: `${BASE_URL}debtor/download/`,
   },
 
   APPLICATION: {
@@ -200,6 +202,7 @@ export const DEBTORS_URLS = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
     CREDIT_LIMIT_ACTIONS: `${BASE_URL}debtor/credit-limit/`,
+    DOWNLOAD_DEBTOR_CREDIT_LIMIT_CSV: `${BASE_URL}debtor/download/`,
   },
   STAKE_HOLDER: {
     STAKE_HOLDER_LIST: `${BASE_URL}debtor/stakeholder/`,

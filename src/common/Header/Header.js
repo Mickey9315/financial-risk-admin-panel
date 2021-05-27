@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Switch, Route, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import _ from 'lodash';
 import {
   changeEditProfileData,
   changePassword,
@@ -58,11 +59,31 @@ const Header = () => {
     ({ headerNotificationReducer }) => headerNotificationReducer ?? []
   );
 
-  const { notificationList } = useMemo(() => notificationData ?? [], [notificationData]);
+  const notificationList = useMemo(() => {
+    let list = [];
+    if (notificationData?.notificationList?.length > 0) {
+      list = Object.values(
+        notificationData?.notificationList?.reduce((acc, cur) => {
+          if (!acc[new Date(cur.createdAt).toLocaleDateString()])
+            acc[new Date(cur.createdAt).toLocaleDateString()] = {
+              createdAt: new Date(cur.createdAt).toLocaleDateString(),
+              notifications: [],
+            };
+          acc[new Date(cur.createdAt).toLocaleDateString()].notifications.push(cur);
+          return acc;
+        }, {})
+      );
+      list = _.orderBy(list, ['createdAt'], ['desc']);
+    }
+    return list ?? [];
+  }, [notificationData?.notificationList]);
+
   const notificationBadge = useMemo(() => {
-    const result = notificationList?.filter(notification => notification?.isRead !== true);
+    const result = notificationData?.notificationList?.filter(
+      notification => notification?.isRead !== true
+    );
     return result?.length ?? 0;
-  }, [notificationList]);
+  }, [notificationData?.notificationList]);
 
   const { name, email, contactNumber, profilePictureUrl, changed } = useMemo(() => {
     if (loggedUserDetail) {
@@ -375,34 +396,45 @@ const Header = () => {
             closeDrawer={() => setNotificationDrawer(false)}
           >
             {notificationList?.length > 0 ? (
-              <div className="notification-set">
-                <div className="notification-set-title">Today</div>
-                {notificationList?.map(notification => (
-                  <div
-                    className="common-accordion-item-content-box high-alert"
-                    key={notification?._id}
-                  >
-                    <div className="date-owner-row just-bet">
-                      <span className="title mr-5">Date:</span>
-                      <span className="details">
-                        {moment(notification?.updatedAt).format('DD-MMM-YYYY')}
-                      </span>
-                      <span />
-                      <span
-                        className="material-icons-round font-placeholder"
-                        style={{ textAlign: 'end', fontSize: '18px', cursor: 'pointer' }}
-                        onClick={() =>
-                          dispatch(markNotificationAsReadAndDeleteAction(notification?._id))
-                        }
-                      >
-                        cancel
-                      </span>
-                    </div>
-                    <div className="font-field">Description:</div>
-                    <div className="font-primary">{notification?.description}</div>
+              notificationList?.map(notification => (
+                <div className="notification-set">
+                  <div className="notification-set-title">
+                    {moment(notification?.createdAt).calendar(null, {
+                      sameDay: '[Today]',
+                      nextDay: '[Tomorrow]',
+                      nextWeek: 'dddd',
+                      lastDay: '[Yesterday]',
+                      lastWeek: '[Last] dddd',
+                      sameElse: 'DD/MM/YYYY',
+                    })}
                   </div>
-                ))}
-              </div>
+                  {notification?.notifications?.map(singleNotification => (
+                    <div
+                      className="common-accordion-item-content-box high-alert"
+                      key={singleNotification?._id}
+                    >
+                      <div className="date-owner-row just-bet">
+                        <span className="title mr-5">Date:</span>
+                        <span className="details">
+                          {moment(singleNotification?.createdAt).format('DD-MMM-YYYY')}
+                        </span>
+                        <span />
+                        <span
+                          className="material-icons-round font-placeholder"
+                          style={{ textAlign: 'end', fontSize: '18px', cursor: 'pointer' }}
+                          onClick={() =>
+                            dispatch(markNotificationAsReadAndDeleteAction(singleNotification?._id))
+                          }
+                        >
+                          cancel
+                        </span>
+                      </div>
+                      <div className="font-field">Description:</div>
+                      <div className="font-primary">{singleNotification?.description}</div>
+                    </div>
+                  ))}
+                </div>
+              ))
             ) : (
               <div className="no-record-found">No record found</div>
             )}

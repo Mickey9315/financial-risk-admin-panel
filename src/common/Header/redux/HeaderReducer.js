@@ -26,7 +26,7 @@ export const headerNotificationReducer = (state = { notificationList: [] }, acti
       };
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_ASSIGNED: {
       const notifications = [...state?.notificationList];
-      notifications.push(action?.data);
+      notifications.unshift(action?.data);
       return {
         ...state,
         notificationList: notifications,
@@ -34,7 +34,7 @@ export const headerNotificationReducer = (state = { notificationList: [] }, acti
     }
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_UPDATED: {
       const notifications = [...state?.notificationList];
-      notifications.push(action?.data);
+      notifications.unshift(action?.data);
       return {
         ...state,
         notificationList: notifications,

@@ -2,6 +2,11 @@ import ApiService from '../../../services/api-service/ApiService';
 import { APPLICATION_URLS } from '../../../constants/UrlConstants';
 
 const ApplicationViewApiServices = {
+  changeApplicationStatus: (applicationId, status) =>
+    ApiService.putData(
+      `${APPLICATION_URLS.VIEW_APPLICATION.CHANGE_APPLICATION_STATUS}${applicationId}`,
+      status
+    ),
   applicationTaskApiServices: {
     getApplicationTaskListData: params =>
       ApiService.getData(APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_TASK.GET_TASK_LIST, {
