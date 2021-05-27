@@ -1204,6 +1204,38 @@ export const updateTaskData = (id, data, cb) => {
   };
 };
 
+export const modifyClientCreditLimit = (id, data) => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest('ViewClientModifyCreditLimitButtonLoaderAction');
+      const response = await ClientCreditLimitApiService.modifyClientCreditLimitData(id, data);
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Credit limit updated successfully');
+        stopLoaderButtonOnSuccessOrFail('ViewClientModifyCreditLimitButtonLoaderAction');
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('ViewClientModifyCreditLimitButtonLoaderAction');
+      displayErrors(e);
+    }
+  };
+};
+
+export const surrenderClientCreditLimit = (id, data) => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest('ViewClientSurrenderCreditLimitButtonLoaderAction');
+      const response = await ClientCreditLimitApiService.surrenderClientCreditLimitData(id, data);
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Credit limit surrendered successfully');
+        stopLoaderButtonOnSuccessOrFail('ViewClientSurrenderCreditLimitButtonLoaderAction');
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('ViewClientSurrenderCreditLimitButtonLoaderAction');
+      displayErrors(e);
+    }
+  };
+};
+
 export const resetPageData = () => {
   return async dispatch => {
     dispatch({

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import _ from 'lodash';
@@ -13,9 +13,15 @@ import {
   changeDebtorCreditLimitColumnListStatus,
   getCreditLimitColumnsNameList,
   getDebtorCreditLimitData,
+  modifyDebtorCreditLimit,
   saveDebtorCreditLimitColumnNameList,
+  surrenderDebtorCreditLimit,
 } from '../redux/DebtorsAction';
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import Button from '../../../common/Button/Button';
+import { NUMBER_REGEX } from '../../../constants/RegexConstants';
+import Modal from '../../../common/Modal/Modal';
+import Input from '../../../common/Input/Input';
 
 const DebtorsCreditLimitTab = () => {
   const { id } = useParams();
@@ -30,6 +36,8 @@ const DebtorsCreditLimitTab = () => {
   const {
     viewDebtorCreditLimitColumnSaveButtonLoaderAction,
     viewDebtorCreditLimitColumnResetButtonLoaderAction,
+    ViewDebtorSurrenderCreditLimitButtonLoaderAction,
+    ViewDebtorModifyCreditLimitButtonLoaderAction,
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
@@ -168,6 +176,107 @@ const DebtorsCreditLimitTab = () => {
     }
   };
 
+  // actions
+
+  const [modifyLimitModal, setModifyLimitModal] = useState(false);
+  const [surrenderModal, setSurrenderModal] = useState(false);
+  const [newCreditLimit, setNewCreditLimit] = useState('');
+  const [currentCreditLimitData, setCurrentCreditLimitData] = useState({});
+
+  const toggleModifyLimitModal = useCallback(() => {
+    setNewCreditLimit('');
+    setModifyLimitModal(!modifyLimitModal);
+  }, [modifyLimitModal, setNewCreditLimit]);
+
+  const toggleSurrenderModal = useCallback(() => {
+    setSurrenderModal(!surrenderModal);
+  }, [surrenderModal]);
+
+  const creditLimitAction = useMemo(
+    () => [
+      data => (
+        <span className="table-action-buttons">
+          <Button
+            buttonType="outlined-primary-small"
+            title="Modify"
+            onClick={() => {
+              setCurrentCreditLimitData(data);
+              toggleModifyLimitModal();
+            }}
+          />
+          <Button
+            buttonType="outlined-red-small"
+            title="Surrender"
+            onClick={() => {
+              setCurrentCreditLimitData(data);
+              toggleSurrenderModal();
+            }}
+          />
+        </span>
+      ),
+    ],
+    [toggleModifyLimitModal, toggleSurrenderModal, setCurrentCreditLimitData]
+  );
+
+  const modifyLimit = useCallback(async () => {
+    try {
+      if (newCreditLimit?.trim()?.length <= 0) {
+        errorNotification('Please provide new credit limit');
+      } else if (newCreditLimit && !newCreditLimit.match(NUMBER_REGEX)) {
+        errorNotification('Please provide valid credit limit');
+      } else {
+        const data = {
+          action: 'modify',
+          creditLimit: newCreditLimit,
+        };
+        await dispatch(modifyDebtorCreditLimit(currentCreditLimitData?.id, data));
+        getCreditLimitList();
+        toggleModifyLimitModal();
+      }
+    } catch (e) {
+      /**/
+    }
+  }, [newCreditLimit, currentCreditLimitData, toggleModifyLimitModal, getCreditLimitList]);
+
+  const surrenderLimit = useCallback(async () => {
+    try {
+      const data = {
+        action: 'surrender',
+        creditLimit: currentCreditLimitData?.creditLimit,
+      };
+      await dispatch(surrenderDebtorCreditLimit(currentCreditLimitData?.id, data));
+      toggleSurrenderModal();
+      getCreditLimitList();
+    } catch (e) {
+      /**/
+    }
+  }, [currentCreditLimitData, toggleSurrenderModal, getCreditLimitList]);
+
+  const modifyLimitButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleModifyLimitModal() },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: modifyLimit,
+        isLoading: ViewDebtorModifyCreditLimitButtonLoaderAction,
+      },
+    ],
+    [toggleModifyLimitModal, modifyLimit, ViewDebtorModifyCreditLimitButtonLoaderAction]
+  );
+  const surrenderLimitButtons = useMemo(
+    () => [
+      { title: 'No', buttonType: 'primary-1', onClick: () => toggleSurrenderModal() },
+      {
+        title: 'Yes',
+        buttonType: 'danger',
+        onClick: surrenderLimit,
+        isLoading: ViewDebtorSurrenderCreditLimitButtonLoaderAction,
+      },
+    ],
+    [toggleSurrenderModal, surrenderLimit, ViewDebtorSurrenderCreditLimitButtonLoaderAction]
+  );
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -201,6 +310,7 @@ const DebtorsCreditLimitTab = () => {
                 tableClass="white-header-table"
                 data={docs}
                 headers={headers}
+                tableButtonActions={creditLimitAction}
               />
             </div>
             <Pagination
@@ -227,6 +337,43 @@ const DebtorsCreditLimitTab = () => {
           buttons={buttons}
           toggleCustomField={toggleCustomField}
         />
+      )}
+      {modifyLimitModal && (
+        <Modal
+          header="Modify Credit Limit"
+          buttons={modifyLimitButtons}
+          hideModal={toggleModifyLimitModal}
+        >
+          <div className="modify-credit-limit-container align-center">
+            <span>Credit Limit</span>
+            <Input
+              type="text"
+              value={currentCreditLimitData?.creditLimit}
+              disabled
+              borderClass="disabled-control"
+            />
+            <span>Change Credit Limit</span>
+            <Input
+              prefixClass="font-placeholder"
+              placeholder="New Credit Limit"
+              name="creditLimit"
+              type="text"
+              value={newCreditLimit}
+              onChange={e => setNewCreditLimit(e.target.value)}
+            />
+          </div>
+        </Modal>
+      )}
+      {surrenderModal && (
+        <Modal
+          header="Modify Credit Limit"
+          buttons={surrenderLimitButtons}
+          hideModal={toggleSurrenderModal}
+        >
+          <span className="confirmation-message">
+            Are you sure you want to surrender this credit limit?
+          </span>
+        </Modal>
       )}
     </>
   );

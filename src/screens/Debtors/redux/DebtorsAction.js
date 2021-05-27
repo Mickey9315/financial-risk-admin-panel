@@ -978,6 +978,41 @@ export const saveDebtorCreditLimitColumnNameList = ({
   };
 };
 
+export const modifyDebtorCreditLimit = (id, data) => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest('ViewDebtorModifyCreditLimitButtonLoaderAction');
+
+      const response = await DebtorCreditLimitApiServices.modifyDebtorCreditLimitData(id, data);
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Credit limit updated successfully');
+        stopLoaderButtonOnSuccessOrFail('ViewDebtorModifyCreditLimitButtonLoaderAction');
+      }
+    } catch (e) {
+      displayErrors(e);
+      stopLoaderButtonOnSuccessOrFail('ViewDebtorModifyCreditLimitButtonLoaderAction');
+    }
+  };
+};
+
+export const surrenderDebtorCreditLimit = (id, data) => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest('ViewDebtorSurrenderCreditLimitButtonLoaderAction');
+
+      const response = await DebtorCreditLimitApiServices.surrenderDebtorCreditLimitData(id, data);
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Credit limit surrendered successfully');
+        stopLoaderButtonOnSuccessOrFail('ViewDebtorSurrenderCreditLimitButtonLoaderAction');
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('ViewDebtorSurrenderCreditLimitButtonLoaderAction');
+
+      displayErrors(e);
+    }
+  };
+};
+
 // Stake Holder
 export const getDebtorStakeHolderListData = (id, param) => {
   return async dispatch => {

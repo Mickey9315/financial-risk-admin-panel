@@ -89,6 +89,7 @@ export const CLIENT_URLS = {
     CREDIT_LIMIT_LIST: `${BASE_URL}client/credit-limit/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
+    CREDIT_LIMIT_ACTIONS: `${BASE_URL}client/credit-limit/`,
   },
 
   APPLICATION: {
@@ -198,6 +199,7 @@ export const DEBTORS_URLS = {
     CREDIT_LIMIT_LIST: `${BASE_URL}debtor/credit-limit/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
+    CREDIT_LIMIT_ACTIONS: `${BASE_URL}debtor/credit-limit/`,
   },
   STAKE_HOLDER: {
     STAKE_HOLDER_LIST: `${BASE_URL}debtor/stakeholder/`,

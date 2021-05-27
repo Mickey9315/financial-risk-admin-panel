@@ -320,9 +320,7 @@ const Header = () => {
       <div className="screen-title">
         <Switch>
           {SIDEBAR_URLS.map(route => (
-            <Route exact path={route.url}>
-              {route.title}
-            </Route>
+            <Route path={route.url}>{route.title}</Route>
           ))}
         </Switch>
       </div>

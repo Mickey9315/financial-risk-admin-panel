@@ -47,6 +47,7 @@ const Table = props => {
     valign,
     headers,
     extraColumns,
+    tableButtonActions,
     headerClass,
     data,
     rowClass,
@@ -206,6 +207,7 @@ const Table = props => {
             {(haveActions || extraColumns.length > 0) && (
               <th style={{ position: 'sticky', right: 0 }} />
             )}
+            {tableButtonActions.length > 0 && <th align={align}>Credit Limit Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -216,6 +218,7 @@ const Table = props => {
               align={align}
               valign={valign}
               extraColumns={extraColumns}
+              tableButtonActions={tableButtonActions}
               rowClass={rowClass}
               recordSelected={recordSelected}
               recordActionClick={recordActionClick}
@@ -237,6 +240,7 @@ Table.propTypes = {
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   headers: PropTypes.array,
   extraColumns: PropTypes.arrayOf(PropTypes.element),
+  tableButtonActions: PropTypes.arrayOf(PropTypes.element),
   headerClass: PropTypes.string,
   data: PropTypes.array,
   rowClass: PropTypes.string,
@@ -256,6 +260,7 @@ Table.defaultProps = {
   headerClass: '',
   data: [],
   extraColumns: [],
+  tableButtonActions: [],
   rowClass: '',
   haveActions: false,
   showCheckbox: false,
@@ -276,6 +281,7 @@ function Row(props) {
     recordSelected,
     haveActions,
     extraColumns,
+    tableButtonActions,
     recordActionClick,
     showCheckbox,
     isSelected,
@@ -408,6 +414,11 @@ function Row(props) {
             {element(data)}
           </td>
         ))}
+        {tableButtonActions.map((element, index) => (
+          <td key={index.toString()} width={10} align={align} valign={valign} className={rowClass}>
+            {element(data)}
+          </td>
+        ))}
       </tr>
       {showActionMenu && (
         <DropdownMenu style={menuPosition} toggleMenu={setShowActionMenu}>
@@ -428,6 +439,7 @@ Row.propTypes = {
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   data: PropTypes.object,
   extraColumns: PropTypes.arrayOf(PropTypes.func),
+  tableButtonActions: PropTypes.arrayOf(PropTypes.func),
   rowClass: PropTypes.string,
   recordSelected: PropTypes.func,
   haveActions: PropTypes.bool,
@@ -442,6 +454,7 @@ Row.defaultProps = {
   valign: 'left',
   data: {},
   extraColumns: [],
+  tableButtonActions: [],
   rowClass: '',
   recordSelected: () => {},
   haveActions: false,

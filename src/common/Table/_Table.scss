@@ -161,3 +161,9 @@
   max-width: 100px;
   text-align: center;
 }
+
+.table-action-buttons{
+  button:not(:last-child){
+  margin-right: 7px;
+  }
+}

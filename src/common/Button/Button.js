@@ -22,6 +22,8 @@ Button.propTypes = {
     'primary-1',
     'outlined-primary',
     'outlined-secondary',
+    'outlined-primary-small',
+    'outlined-red-small',
     'outlined-red',
   ]).isRequired,
   className: PropTypes.string,

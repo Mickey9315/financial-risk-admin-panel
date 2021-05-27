@@ -36,6 +36,11 @@
   color: $primary-color;
   border-color: $primary-color;
 }
+.outlined-primary-small-button{
+  @extend .outlined-primary-button;
+  padding: 6px 15px;
+  border-radius: 8px;
+}
 
 .outlined-secondary-button {
   background-color: #ffffff;
@@ -47,6 +52,11 @@
   background-color: #ffffff;
   color: $error-color;
   border-color: $error-color;
+}
+.outlined-red-small-button{
+  @extend .outlined-red-button;
+  padding: 6px 15px;
+  border-radius: 8px;
 }
 
 .outlined-primary-button:hover, .outlined-secondary-button:hover, .outlined-red-button:hover {
