@@ -66,7 +66,16 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
   if (
     !['AUS', 'NZL'].includes(data?.country?.value) &&
     data?.state &&
-    (SPECIAL_CHARACTER_REGEX.test(data?.state?.value) || SPECIAL_CHARACTER_REGEX.test(data?.state))
+    !data.state.value &&
+    SPECIAL_CHARACTER_REGEX.test(data?.state)
+  ) {
+    validated = false;
+    errors.state = 'Please enter valid state';
+  }
+  if (
+    data?.state?.value &&
+    !['AUS', 'NZL'].includes(data?.country?.value) &&
+    SPECIAL_CHARACTER_REGEX.test(data?.state.value)
   ) {
     validated = false;
     errors.state = 'Please enter valid state';
