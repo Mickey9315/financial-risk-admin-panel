@@ -192,7 +192,7 @@ const DebtorsNotesTab = () => {
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
       {
-        title: `${selectedDebtorsNote?.type === 'EDIT' ? 'Edit' : 'Add'} `,
+        title: `${selectedDebtorsNote?.type === 'EDIT' ? 'Save' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
         isLoading:

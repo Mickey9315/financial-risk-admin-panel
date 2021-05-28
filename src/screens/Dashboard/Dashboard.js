@@ -16,7 +16,7 @@ const Dashboard = () => {
     }));
   }, [dashboardUserList]);
   const getDetailsOnSelectedUsersChange = useCallback(value => {
-    const users = value.map(user => user.value);
+    const users = value.map(user => user.value).join(',');
     dispatch(getDashboardDetails(users));
   }, []);
 

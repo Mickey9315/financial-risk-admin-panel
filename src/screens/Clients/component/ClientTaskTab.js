@@ -41,6 +41,7 @@ const entityTypeData = [
   { value: 'application', label: 'Application', name: 'entityType' },
   { value: 'client', label: 'Client', name: 'entityType' },
   { value: 'debtor', label: 'Debtor', name: 'entityType' },
+  { value: 'insurer', label: 'Insurer', name: 'entityType' },
   // { value: 'claim', label: 'Claim', name: 'entityType' },
   // { value: 'overdue', label: 'Overdue', name: 'entityType' },
 ];

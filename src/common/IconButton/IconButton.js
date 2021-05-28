@@ -23,7 +23,7 @@ const IconButton = props => {
       title={buttonTitle}
       disabled={isLoading}
     >
-      {isBadge && <span className="notification-badge">{badgeCount}</span>}
+      {isBadge && <span className="notification-badge">{badgeCount < 99 ? badgeCount : '99+'}</span>}
       <span className={`material-icons-round ${isLoading && 'button-loader'}`}>
         {!isLoading && title}
       </span>
