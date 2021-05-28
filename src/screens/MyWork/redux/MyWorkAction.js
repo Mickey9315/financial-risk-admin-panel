@@ -301,11 +301,6 @@ export const editTaskData = (id, data, backToTask) => {
 export const getMyWorkNotificationList = (params = {}) => {
   return async dispatch => {
     try {
-      await dispatch({
-        type:
-          MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
-            .GET_MY_WORK_NOTIFICATION_LIST_REQUEST_ACTION,
-      });
       const response = await MyWorkApiServices.notification.getMyWorkNotificationListData(params);
       if (response?.data?.status === 'SUCCESS') {
         await dispatch({
@@ -316,11 +311,6 @@ export const getMyWorkNotificationList = (params = {}) => {
         });
       }
     } catch (e) {
-      await dispatch({
-        type:
-          MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
-            .GET_MY_WORK_NOTIFICATION_LIST_FAIL_ACTION,
-      });
       displayErrors(e);
     }
   };

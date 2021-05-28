@@ -38,11 +38,16 @@ const Stepper = props => {
   }, [activeStep, setActiveStep, backClick]);
 
   const onClickNextButton = useCallback(async () => {
-    const result = await nextClick();
+    try {
+      const result = await nextClick();
 
-    if (result && activeStep < steps.length - 1) {
-      onChangeIndex(activeStep + 1);
-      setActiveStep(prevState => prevState + 1);
+      if (result && activeStep < steps.length - 1) {
+        onChangeIndex(activeStep + 1);
+        setActiveStep(prevState => prevState + 1);
+      }
+    }
+    catch (e) {
+      /** */
     }
   }, [steps, activeStep, setActiveStep, onChangeIndex, nextClick]);
 
@@ -58,9 +63,8 @@ const Stepper = props => {
         {steps.map((step, index) => (
           <div
             key={index.toString()}
-            className={`step-container ${activeStep === index && 'active-step'} ${
-              index < activeStep && 'done-step'
-            }`}
+            className={`step-container ${activeStep === index && 'active-step'} ${index < activeStep && 'done-step'
+              }`}
           >
             <span className={`material-icons-round arrow ${index < activeStep && 'done-step'}`}>
               keyboard_arrow_right
@@ -121,10 +125,10 @@ Stepper.propTypes = {
 
 Stepper.defaultProps = {
   className: '',
-  onChangeIndex: () => {},
-  backClick: () => {},
-  nextClick: () => {},
-  addStepClick: () => {},
+  onChangeIndex: () => { },
+  backClick: () => { },
+  nextClick: () => { },
+  addStepClick: () => { },
 };
 
 export default Stepper;

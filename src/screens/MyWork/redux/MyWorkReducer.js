@@ -34,25 +34,12 @@ const initialMyWork = {
     },
   },
   notification: {
-    isLoading: false,
     notificationList: [],
   },
 };
 
 export const myWorkReducer = (state = initialMyWork, action) => {
   switch (action.type) {
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_REQUEST_ACTION:
-      return {
-        ...state,
-        task: {
-          ...state?.task,
-          taskList: {
-            ...state?.task?.taskList,
-            isLoading: true,
-          },
-        },
-      };
-
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_SUCCESS_ACTION:
       return {
         ...state,
@@ -60,18 +47,6 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           ...state?.task,
           taskList: {
             ...action?.data,
-            isLoading: false,
-          },
-        },
-      };
-
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_FAIL_ACTION:
-      return {
-        ...state,
-        task: {
-          ...state?.task,
-          taskList: {
-            ...state?.task?.taskList,
             isLoading: false,
           },
         },
@@ -284,7 +259,6 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         ...state,
         notification: {
           ...state?.notification,
-          isLoading: true,
         },
       };
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
@@ -317,7 +291,6 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           limit: action?.data?.limit,
           pages: action?.data?.pages,
           total: action?.data?.total,
-          isLoading: false,
           hasMoreData,
         },
       };
@@ -328,7 +301,6 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         ...state,
         notification: {
           ...state.notification,
-          isLoading: true,
         },
       };
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
@@ -357,7 +329,6 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         notification: {
-          isLoading: false,
           notificationList: [],
         },
       };

@@ -16,7 +16,7 @@ export const applicationConfirmationStepValidations = async (
       await dispatch(saveApplicationStepDataToBackend(finalData));
       history.replace('/applications');
     } catch (e) {
-      /**/
+      throw Error()
     }
     validated = true;
   }

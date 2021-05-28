@@ -38,6 +38,10 @@ export const processTableDataByType = ({ header, row, actions }) => {
       );
     case 'booleanString':
       return currentData ? 'Yes' : 'No';
+
+    case 'endorsedString':
+      return currentData && 'yes';
+
     case 'link':
       return (
         <div className="link" onClick={() => handleViewDocument(header, row)}>

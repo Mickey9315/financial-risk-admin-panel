@@ -19,7 +19,7 @@ const MyWorkNotifications = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [isFetching, setIsFetching] = useState(false);
-  const { isLoading, notificationList, page, pages, total, hasMoreData } = useSelector(
+  const { notificationList, page, pages, total, hasMoreData } = useSelector(
     ({ myWorkReducer }) => myWorkReducer?.notification ?? {}
   );
 
@@ -156,7 +156,7 @@ const MyWorkNotifications = () => {
   return (
     <>
       <div className="my-work-task-action-row">
-        {!isLoading && sortedList && (
+        {sortedList && (
           <IconButton
             buttonType="secondary"
             title="filter_list"

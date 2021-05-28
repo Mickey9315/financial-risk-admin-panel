@@ -22,8 +22,8 @@ export const HEADER_URLS = {
 
 export const DASHBOARD_URLS = {
   DASHBOARD_DETAILS: `${BASE_URL}dashboard`,
-  DASHBOARD_USER_LIST: `${BASE_URL}dashboard/user-list`
-}
+  DASHBOARD_USER_LIST: `${BASE_URL}dashboard/user-list`,
+};
 
 export const USER_MANAGEMENT_URLS = {
   USER_LIST_URL: `${BASE_URL}user/`,
@@ -96,7 +96,7 @@ export const CLIENT_URLS = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
     CREDIT_LIMIT_ACTIONS: `${BASE_URL}client/credit-limit/`,
-    DOWNLOAD_CLIENT_CREDIT_LIMIT_CSV: `${BASE_URL}debtor/download/`,
+    DOWNLOAD_CLIENT_CREDIT_LIMIT_CSV: `${BASE_URL}client/download/`,
   },
 
   APPLICATION: {

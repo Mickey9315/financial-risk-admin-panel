@@ -25,8 +25,9 @@
   right: 0;
 }
 .common-white-container.notification-white-container{
-  max-height: calc(100vh - 10.75rem);
+  max-height: calc(100vh - 11rem);
   display: block;
+  margin-top: 20px;
   overflow: auto;
 
 }

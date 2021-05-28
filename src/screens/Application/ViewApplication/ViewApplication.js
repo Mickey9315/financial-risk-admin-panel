@@ -192,13 +192,13 @@ const ViewApplication = () => {
           creditLimit: newCreditLimit,
           status: statusToChange?.value,
         };
-        await dispatch(changeApplicationStatus(_id, data));
+        await dispatch(changeApplicationStatus(id, data));
         toggleModifyLimitModal();
       }
     } catch (e) {
       /**/
     }
-  }, [newCreditLimit, toggleModifyLimitModal, statusToChange, _id]);
+  }, [newCreditLimit, toggleModifyLimitModal, statusToChange, id]);
 
   const modifyLimitButtons = useMemo(
     () => [

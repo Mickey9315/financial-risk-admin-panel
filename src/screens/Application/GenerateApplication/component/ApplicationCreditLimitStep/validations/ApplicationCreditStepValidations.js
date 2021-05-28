@@ -57,7 +57,7 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
     try {
       await dispatch(saveApplicationStepDataToBackend(finalData));
     } catch (e) {
-      /**/
+      throw Error()
     }
     validated = true;
   }

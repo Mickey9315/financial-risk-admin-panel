@@ -370,9 +370,8 @@ const ViewInsurer = () => {
             <div className="common-detail-field">
               <div className="common-detail-title">{input.label}</div>
               <ReactSelect
-                className={`select-client-list-container react-select-container ${
-                  action === 'view' && 'disabled-control'
-                }`}
+                className={`select-client-list-container react-select-container ${action === 'view' && 'disabled-control'
+                  }`}
                 classNamePrefix="react-select"
                 type="text"
                 name={input.name}
@@ -395,7 +394,7 @@ const ViewInsurer = () => {
                 <DatePicker
                   dateFormat="dd/MM/yyyy"
                   placeholderText={action === 'view' || !input.isEditable ? '-' : input.placeholder}
-                  selected={getSelectedValues}
+                  selected={new Date(getSelectedValues)}
                   onChange={date => handleOnDateChange(input.name, date)}
                   showMonthDropdown
                   showYearDropdown

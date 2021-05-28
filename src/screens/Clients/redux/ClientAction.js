@@ -860,7 +860,7 @@ export const downloadCreditLimitCSV = id => {
     try {
       startLoaderButtonOnRequest('viewClientDownloadCreditLimitCSVButtonLoaderAction');
       const response = await ClientCreditLimitApiService.downloadCreditLimitCSVFile(id);
-      if (response?.data?.status === 'SUCCESS') {
+      if (response?.statusText === 'OK') {
         stopLoaderButtonOnSuccessOrFail(`viewClientDownloadCreditLimitCSVButtonLoaderAction`);
         return response;
       }

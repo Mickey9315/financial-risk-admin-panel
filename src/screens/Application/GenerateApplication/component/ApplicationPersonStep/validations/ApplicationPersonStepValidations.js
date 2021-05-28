@@ -220,7 +220,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         await dispatch(saveApplicationStepDataToBackend(finalData));
       }
     } catch (e) {
-      /**/
+      throw Error()
     }
   } else {
     errorNotification('Please fill the details.');
