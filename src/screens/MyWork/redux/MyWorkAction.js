@@ -237,14 +237,17 @@ export const getTaskFilter = () => {
 export const deleteTaskAction = (taskId, cb) => {
   return async () => {
     try {
+      startLoaderButtonOnRequest('myWorkTaskDeleteTaskButtonLoaderAction');
       const response = await MyWorkApiServices.deleteTask(taskId);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task deleted successfully.');
+        stopLoaderButtonOnSuccessOrFail('myWorkTaskDeleteTaskButtonLoaderAction');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('myWorkTaskDeleteTaskButtonLoaderAction');
       displayErrors(e);
     }
   };

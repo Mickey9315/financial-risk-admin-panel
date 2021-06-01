@@ -84,6 +84,7 @@ const MyWorkTasks = () => {
   const {
     myWorkTaskColumnsSaveButtonLoaderAction,
     myWorkTaskColumnsResetButtonLoaderAction,
+    myWorkTaskDeleteTaskButtonLoaderAction,
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const handlePriorityFilterChange = useCallback(
@@ -295,9 +296,10 @@ const MyWorkTasks = () => {
             /**/
           }
         },
+        isLoading: myWorkTaskDeleteTaskButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, deleteTaskData, callBack]
+    [toggleConfirmationModal, deleteTaskData, callBack, myWorkTaskDeleteTaskButtonLoaderAction]
   );
 
   const pageActionClick = useCallback(

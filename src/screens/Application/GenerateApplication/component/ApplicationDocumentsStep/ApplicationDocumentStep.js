@@ -186,18 +186,22 @@ const ApplicationDocumentStep = () => {
       formData.append('document', selectedApplicationDocuments.fileData);
       formData.append('entityId', editApplication?._id);
       formData.append('documentFor', 'application');
-      const config = {
-        headers: {
-          'content-type': 'multipart/form-data',
-        },
-      };
-      await dispatch(uploadDocument(formData, config));
-      dispatchSelectedApplicationDocuments({
-        type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
-      });
-      getApplicationDocumentDataList();
-      setFileData('');
-      toggleUploadModel();
+      try {
+        const config = {
+          headers: {
+            'content-type': 'multipart/form-data',
+          },
+        };
+        await dispatch(uploadDocument(formData, config));
+        dispatchSelectedApplicationDocuments({
+          type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
+        });
+        getApplicationDocumentDataList();
+        setFileData('');
+        toggleUploadModel();
+      } catch (e) {
+        /**/
+      }
     }
   }, [
     selectedApplicationDocuments,

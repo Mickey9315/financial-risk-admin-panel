@@ -17,10 +17,12 @@ import ClientCreditLimitTab from '../component/ClientCreditLimitTab';
 import ClientContactTab from '../component/ClientContactTab';
 import ClientApplicationTab from '../component/ClientApplicationTab';
 import ClientTaskTab from '../component/ClientTaskTab';
+import Switch from '../../../common/Switch/Switch';
 
 const initialAssigneeState = {
   riskAnalystId: [],
   serviceManagerId: [],
+  isAutoApproveAllowed: null,
 };
 
 const ASSIGNEE_REDUCER_ACTIONS = {
@@ -44,7 +46,7 @@ function assigneeReducer(state, action) {
 
 const ViewClient = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [{ riskAnalystId, serviceManagerId }, dispatchAssignee] = useReducer(
+  const [{ riskAnalystId, serviceManagerId, isAutoApproveAllowed }, dispatchAssignee] = useReducer(
     assigneeReducer,
     initialAssigneeState
   );
@@ -124,6 +126,11 @@ const ViewClient = () => {
         },
       });
     }
+    dispatchAssignee({
+      type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'isAutoApproveAllowed',
+      value: viewClientData?.isAutoApproveAllowed,
+    });
   }, [viewClientData]);
 
   const onChangeAssignee = useCallback(
@@ -141,6 +148,25 @@ const ViewClient = () => {
       const data = {};
       data[`${name}`] = value;
       dispatch(updateSelectedClientData(id, data));
+    },
+    [dispatchAssignee]
+  );
+
+  const onChangeApplicationAutomationSwitch = useCallback(
+    event => {
+      const { name, checked } = event?.target;
+      const data = {};
+      data[`${name}`] = checked;
+      try {
+        dispatch(updateSelectedClientData(id, data));
+        dispatchAssignee({
+          type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
+          name,
+          checked,
+        });
+      } catch (e) {
+        /**/
+      }
     },
     [dispatchAssignee]
   );
@@ -241,12 +267,12 @@ const ViewClient = () => {
           onChange={onChangeAssignee}
           isSearchable
         />
-        <span>IBIS Sector</span>
+        <span>Insurer Name</span>
         <Input
           type="text"
           readOnly
-          placeholder="No IBIS sector added"
-          value={viewClientData?.sector ?? ''}
+          placeholder="N/A"
+          value={viewClientData?.insurerId?.name ?? ''}
         />
         <span>Sales Person</span>
         <Input
@@ -254,6 +280,13 @@ const ViewClient = () => {
           readOnly
           placeholder="No sales person added"
           value={viewClientData?.salesPerson ?? ''}
+        />
+        <span>IBIS Sector</span>
+        <Input
+          type="text"
+          readOnly
+          placeholder="No IBIS sector added"
+          value={viewClientData?.sector ?? ''}
         />
         <span>Website</span>
         <Input
@@ -290,6 +323,13 @@ const ViewClient = () => {
             popperProps={{ positionFixed: true }}
           />
         </div>
+        <span>Automate Applications</span>
+        <Switch
+          id="automate-applications"
+          name="isAutoApproveAllowed"
+          checked={isAutoApproveAllowed}
+          onChange={onChangeApplicationAutomationSwitch}
+        />
       </div>
       <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
       <div className="common-white-container">{tabComponent[activeTabIndex]}</div>

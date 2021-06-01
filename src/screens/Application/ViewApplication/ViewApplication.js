@@ -78,6 +78,7 @@ const ViewApplication = () => {
     applicationId,
     isAllowToUpdate,
     status,
+    blockers,
     _id,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
@@ -170,16 +171,15 @@ const ViewApplication = () => {
     ],
     [tradingName, entityType, entityName, abn, debtorId, clientId, creditLimit, applicationId]
   );
-  const blockers = applicationDetails?.blockers;
 
   // limit modify
 
   const [newCreditLimit, setNewCreditLimit] = useState('');
   const [modifyLimitModal, setModifyLimitModal] = useState(false);
   const toggleModifyLimitModal = useCallback(() => {
-    setNewCreditLimit('');
+    setNewCreditLimit(creditLimit);
     setModifyLimitModal(!modifyLimitModal);
-  }, [modifyLimitModal]);
+  }, [modifyLimitModal, creditLimit]);
 
   const modifyLimit = useCallback(async () => {
     try {
@@ -298,13 +298,13 @@ const ViewApplication = () => {
                     </div>
                   ))}
                 </div>
-                {blockers && (
+                {blockers?.length > 0 && (
                   <>
                     <div className="blockers-title">Blockers</div>
 
                     {blockers.map(blocker => (
                       <div className="guideline" key={Math.random()}>
-                        {blocker?.value}
+                        {blocker}
                       </div>
                     ))}
                   </>
@@ -362,21 +362,19 @@ const ViewApplication = () => {
       )}
       {modifyLimitModal && (
         <Modal
-          header="Modify Credit Limit"
+          header="Approve Application"
           buttons={modifyLimitButtons}
           hideModal={toggleModifyLimitModal}
         >
           <div className="modify-credit-limit-container align-center">
             <span>Credit Limit</span>
-            <Input type="text" value={creditLimit} disabled borderClass="disabled-control" />
-            <span>Change Credit Limit</span>
             <Input
               prefixClass="font-placeholder"
               placeholder="New Credit Limit"
               name="creditLimit"
               type="text"
               value={newCreditLimit}
-              onChange={e => setNewCreditLimit(e.target.value)}
+              onChange={e => setNewCreditLimit(e?.target?.value)}
             />
           </div>
         </Modal>
