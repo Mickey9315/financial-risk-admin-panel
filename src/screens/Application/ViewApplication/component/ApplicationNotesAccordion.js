@@ -207,7 +207,7 @@ const ApplicationNotesAccordion = props => {
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onCloseNotePopup },
       {
-        title: `${selectedApplicationNote.type === 'EDIT' ? 'Edit' : 'Add'} `,
+        title: `${selectedApplicationNote.type === 'EDIT' ? 'Save' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
         isLoading: activeLoaderButton,

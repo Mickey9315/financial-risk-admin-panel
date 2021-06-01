@@ -16,6 +16,8 @@ import Loader from '../../../../../common/Loader/Loader';
 import ApplicationEntityNameTable from '../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import Modal from '../../../../../common/Modal/Modal';
 import IconButton from '../../../../../common/IconButton/IconButton';
+import { applicationErrorHelper } from '../../../../../helpers/applicationErrorHelper';
+import { APPLICATION_REDUX_CONSTANTS } from '../../../redux/ApplicationReduxConstants';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -83,6 +85,10 @@ const ApplicationCompanyStep = () => {
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
     [setShowConfirmModal]
   );
+
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorModal, setErrorModal] = useState(false);
+  const [warningModal, setWarningModal] = useState(false);
 
   const prevRef = useRef({});
 
@@ -269,6 +275,23 @@ const ApplicationCompanyStep = () => {
     return filteredData;
   }, [INPUTS, isAusOrNew]);
 
+  /**/
+  const handleApplicationErrors = useCallback(response => {
+    const { isModal, modalType, message, resData } = applicationErrorHelper(response);
+    if (isModal && modalType === 'ERROR') {
+      setErrorMessage(message);
+      setErrorModal(true);
+      return false;
+    }
+    if (isModal && modalType === 'WARNING') {
+      setErrorMessage(message);
+      setWarningModal(true);
+      return { resData, isModal };
+    }
+    return { resData };
+  }, []);
+  /**/
+
   const updateSingleCompanyState = useCallback(
     (name, value) => {
       if (wipeOutDetails) {
@@ -324,12 +347,13 @@ const ApplicationCompanyStep = () => {
           } else {
             updateSingleCompanyState(data?.name, data);
           }
-          if (response) {
+          const { resData } = handleApplicationErrors(response);
+          if (resData) {
             updateSingleCompanyState(data?.name, data);
-            updateCompanyState(response);
+            updateCompanyState(resData);
           }
         } catch (e) {
-          /**/
+          handleApplicationErrors(e?.response);
         }
       } else {
         updateSingleCompanyState(data?.name, data);
@@ -356,17 +380,18 @@ const ApplicationCompanyStep = () => {
         const params = { clientId: companyState?.clientId?.value };
         const response = await dispatch(getApplicationCompanyDataFromDebtor(data?.value, params));
 
-        if (response) {
+        const { resData } = handleApplicationErrors(response);
+        if (resData) {
           await handleSelectInputChange(data);
-          updateCompanyState(response);
+          updateCompanyState(resData);
           prevRef.current = {
             ...prevRef.current,
-            acn: response?.acn,
-            abn: response?.abn,
+            acn: resData?.acn,
+            abn: resData?.abn,
           };
         }
       } catch (e) {
-        /**/
+        handleApplicationErrors(e?.response);
       }
     },
     [
@@ -390,19 +415,21 @@ const ApplicationCompanyStep = () => {
           const params = { searchString, clientId: companyState?.clientId?.value };
           const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
-          if (response) {
-            updateCompanyState(response);
+          const { resData } = handleApplicationErrors(response);
+          if (resData) {
+            updateCompanyState(resData);
             prevRef.current = {
               ...prevRef.current,
-              acn: response?.acn,
-              abn: response?.abn,
+              acn: resData?.acn,
+              abn: resData?.abn,
             };
           }
         }
-      } catch {
+      } catch (err) {
         let value = prevRef?.current?.abn;
         if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
         updateSingleCompanyState(e?.target?.name, value);
+        handleApplicationErrors(err?.response);
       }
     },
     [companyState, updateCompanyState, updateSingleCompanyState, prevRef.current]
@@ -486,16 +513,17 @@ const ApplicationCompanyStep = () => {
         const params = { searchString: data?.abn, clientId: companyState?.clientId?.value };
         const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
-        if (response) {
-          updateCompanyState(response);
+        const { resData } = handleApplicationErrors(response);
+        if (resData) {
+          updateCompanyState(resData);
           prevRef.current = {
             ...prevRef.current,
-            acn: response?.acn,
-            abn: response?.abn,
+            acn: resData?.acn,
+            abn: resData?.abn,
           };
         }
       } catch (err) {
-        /**/
+        handleApplicationErrors(err?.response);
       }
       handleToggleDropdown(false);
       setSearchedEntityNameValue('');
@@ -621,6 +649,42 @@ const ApplicationCompanyStep = () => {
     [toggleConfirmationModal, wipeOutDetails, selectedDebtorId, updateSingleCompanyState, wipeOuts]
   );
 
+  const errorModalButtons = useMemo(
+    () => [
+      {
+        title: 'Ok',
+        buttonType: 'primary',
+        onClick: () => {
+          setErrorModal(false);
+        },
+      },
+    ],
+    []
+  );
+
+  const warningModalButtons = useMemo(
+    () => [
+      {
+        title: 'No',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatch({
+            type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_WIPE_OUT_DATA_IF_EXIST,
+          });
+          setWarningModal(false);
+        },
+      },
+      {
+        title: 'Yes',
+        buttonType: 'primary',
+        onClick: () => {
+          setWarningModal(false);
+        },
+      },
+    ],
+    []
+  );
+
   useEffect(() => {
     dispatch(getApplicationCompanyDropDownData());
     return () => dispatch(updateEditApplicationData('companyStep', { errors: {} }));
@@ -628,6 +692,16 @@ const ApplicationCompanyStep = () => {
 
   return (
     <>
+      {warningModal && (
+        <Modal header="Application Already Exists" buttons={warningModalButtons}>
+          <span className="confirmation-message">{errorMessage}</span>
+        </Modal>
+      )}
+      {errorModal && (
+        <Modal header="Application Already Exists" buttons={errorModalButtons}>
+          <span className="confirmation-message">{errorMessage}</span>
+        </Modal>
+      )}
       {showConfirmModal && (
         <Modal
           header="Change entity type"

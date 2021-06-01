@@ -286,6 +286,43 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
 
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_WIPE_OUT_DATA_IF_EXIST: {
+      return {
+        ...state,
+        editApplication: {
+          ...state?.editApplication,
+          company: {
+            ...state?.editApplication?.company,
+            clientId: [],
+            postCode: '',
+            state: [],
+            country: {
+              label: 'Australia',
+              name: 'country',
+              value: 'AUS',
+            },
+            suburb: '',
+            streetType: [],
+            streetName: '',
+            streetNumber: '',
+            unitNumber: '',
+            property: '',
+            address: '',
+            outstandingAmount: '',
+            entityType: [],
+            phoneNumber: '',
+            entityName: [],
+            acn: '',
+            abn: '',
+            tradingName: '',
+            debtorId: [],
+            clientList: [],
+            registrationNo: '',
+          },
+        },
+      };
+    }
+
     // edit application
     case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
       .APPLICATION_COMPANY_EDIT_APPLICATION_CHANGE_FIELD_VALUE: {

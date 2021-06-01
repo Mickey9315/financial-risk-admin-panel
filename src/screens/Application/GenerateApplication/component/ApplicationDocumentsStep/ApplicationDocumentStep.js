@@ -292,8 +292,6 @@ const ApplicationDocumentStep = () => {
     [showConfirmModal]
   );
 
-  console.log(documentData);
-
   return (
     <>
       {showConfirmModal && (

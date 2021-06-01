@@ -33,7 +33,6 @@ instance.interceptors.response.use(
     const statusCode = error?.response?.status ?? 0;
     switch (statusCode) {
       case 401:
-        console.log('here');
         store.dispatch({
           type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
         });

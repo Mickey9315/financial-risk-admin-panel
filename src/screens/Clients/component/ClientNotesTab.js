@@ -137,7 +137,7 @@ const ClientNotesTab = () => {
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => onCloseNotePopup() },
       {
-        title: `${selectedClientNote?.type === 'EDIT' ? 'Edit' : 'Add'} `,
+        title: `${selectedClientNote?.type === 'EDIT' ? 'Save' : 'Add'} `,
         buttonType: 'primary',
         onClick: addOrUpdateNote,
         isLoading:
