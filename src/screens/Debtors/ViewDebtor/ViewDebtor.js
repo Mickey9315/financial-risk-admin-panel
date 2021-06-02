@@ -8,6 +8,7 @@ import {
   changeDebtorData,
   getDebtorById,
   getDebtorDropdownData,
+  setViewDebtorActiveTabIndex,
   updateDebtorData,
 } from '../redux/DebtorsAction';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
@@ -41,6 +42,7 @@ const VIEW_DEBTOR_TABS = [
 const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const tabActive = index => {
+    setViewDebtorActiveTabIndex(index);
     setActiveTabIndex(index);
   };
   const history = useHistory();
@@ -66,6 +68,11 @@ const ViewInsurer = () => {
     'Notes',
     'Reports',
   ];
+
+  const viewDebtorActiveTabIndex = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.viewDebtorActiveTabIndex ?? 0
+  );
+
   const debtorData = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.selectedDebtorData ?? {}
   );
@@ -73,7 +80,7 @@ const ViewInsurer = () => {
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
 
-  const { viewDebtorUpdateDebtorButtonLoaderAction } = useSelector(
+  const { viewDebtorUpdateDebtorButtonLoaderAction, viewDebtorPageLoaderAction } = useSelector(
     ({ loaderButtonReducer }) => loaderButtonReducer ?? false
   );
 
@@ -222,16 +229,19 @@ const ViewInsurer = () => {
   );
 
   useEffect(() => {
-    if (action !== 'add' && id) {
-      dispatch(getDebtorById(id));
-    }
+    dispatch(getDebtorById(id));
     return () => {
       dispatch({
         type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTOR_MANAGEMENT_UPDATE_DEBTOR_ACTION,
         data: [],
       });
+      setViewDebtorActiveTabIndex(0);
     };
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    tabActive(viewDebtorActiveTabIndex);
+  }, [viewDebtorActiveTabIndex]);
 
   const editDebtorClick = useCallback(() => {
     history.push(`/debtors/debtor/edit/${id}`);
@@ -312,7 +322,7 @@ const ViewInsurer = () => {
           return debtorData?.postCode || '';
         }
         case 'reviewDate': {
-          return debtorData?.reviewDate || null;
+          return debtorData?.reviewDate || new Date();
         }
         case 'riskRating': {
           return debtorData?.riskRating || '';
@@ -370,8 +380,9 @@ const ViewInsurer = () => {
             <div className="common-detail-field">
               <div className="common-detail-title">{input.label}</div>
               <ReactSelect
-                className={`select-client-list-container react-select-container ${action === 'view' && 'disabled-control'
-                  }`}
+                className={`select-client-list-container react-select-container ${
+                  action === 'view' && 'disabled-control'
+                }`}
                 classNamePrefix="react-select"
                 type="text"
                 name={input.name}
@@ -422,46 +433,52 @@ const ViewInsurer = () => {
 
   return (
     <>
-      <div className="breadcrumb-button-row">
-        <div className="breadcrumb">
-          <span onClick={backToDebtorList}>Debtor List</span>
-          <span className="material-icons-round">navigate_next</span>
-          <span>View Debtor</span>
-        </div>
-        <div className="buttons-row">
-          {action === 'view' ? (
-            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
-              <Button buttonType="primary" title="Edit" onClick={editDebtorClick} />
-            </UserPrivilegeWrapper>
+      {!viewDebtorPageLoaderAction ? (
+        <>
+          <div className="breadcrumb-button-row">
+            <div className="breadcrumb">
+              <span onClick={backToDebtorList}>Debtor List</span>
+              <span className="material-icons-round">navigate_next</span>
+              <span>View Debtor</span>
+            </div>
+            <div className="buttons-row">
+              {action === 'view' ? (
+                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                  <Button buttonType="primary" title="Edit" onClick={editDebtorClick} />
+                </UserPrivilegeWrapper>
+              ) : (
+                <>
+                  <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
+                  <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                    <Button
+                      buttonType="primary"
+                      title="Save"
+                      onClick={onClickUpdateDebtor}
+                      isLoading={viewDebtorUpdateDebtorButtonLoaderAction}
+                    />
+                  </UserPrivilegeWrapper>
+                </>
+              )}
+            </div>
+          </div>
+          {debtorData ? (
+            <div className="common-detail-container">
+              <div className="common-detail-grid">{INPUTS.map(getComponentFromType)}</div>
+            </div>
           ) : (
-            <>
-              <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
-              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
-                <Button
-                  buttonType="primary"
-                  title="Save"
-                  onClick={onClickUpdateDebtor}
-                  isLoading={viewDebtorUpdateDebtorButtonLoaderAction}
-                />
-              </UserPrivilegeWrapper>
-            </>
+            <Loader />
           )}
-        </div>
-      </div>
-      {debtorData ? (
-        <div className="common-detail-container">
-          <div className="common-detail-grid">{INPUTS.map(getComponentFromType)}</div>
-        </div>
+          <Tab
+            tabs={FINAL_TABS}
+            tabActive={tabActive}
+            activeTabIndex={activeTabIndex}
+            className="mt-15"
+          />
+          <div className="common-white-container">{FINAL_COMPONENTS[activeTabIndex]}</div>
+        </>
       ) : (
         <Loader />
       )}
-      <Tab
-        tabs={FINAL_TABS}
-        tabActive={tabActive}
-        activeTabIndex={activeTabIndex}
-        className="mt-15"
-      />
-      <div className="common-white-container">{FINAL_COMPONENTS[activeTabIndex]}</div>
     </>
   );
 };

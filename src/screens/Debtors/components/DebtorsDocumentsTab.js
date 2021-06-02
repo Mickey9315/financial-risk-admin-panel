@@ -153,7 +153,7 @@ const DebtorsDocumentsTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
@@ -436,10 +436,13 @@ const DebtorsDocumentsTab = () => {
     [getDebtorsDocumentsList]
   );
   useEffect(() => {
-    getDebtorsDocumentsList();
     dispatch(getDebtorDocumentsColumnNamesList());
     dispatch(getDocumentTypeList());
   }, []);
+
+  useEffect(() => {
+    getDebtorsDocumentsList();
+  }, [id]);
 
   const handleDocumentChange = useCallback(
     newValue => {

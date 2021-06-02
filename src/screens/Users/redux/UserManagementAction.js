@@ -150,14 +150,17 @@ export const setNewUserInitialStates = moduleAccess => {
 export const getSelectedUserData = id => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('viewUserPageLoaderAction');
       const response = await UserManagementApiService.getSelectedUserData(id);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
           data: response.data.data,
         });
+        stopLoaderButtonOnSuccessOrFail('viewUserPageLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewUserPageLoaderAction');
       displayErrors(e);
     }
   };

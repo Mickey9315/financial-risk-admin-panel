@@ -95,7 +95,7 @@ const ClientTaskTab = () => {
         cb();
       }
     },
-    [page, limit, isCompletedChecked]
+    [page, limit, isCompletedChecked, id]
   );
 
   const onSelectLimit = useCallback(
@@ -529,7 +529,7 @@ const ClientTaskTab = () => {
 
   useEffect(() => {
     getClientTaskList();
-  }, [isCompletedChecked]);
+  }, [isCompletedChecked, id]);
 
   useEffect(() => {
     dispatch(getClientTaskColumnList());

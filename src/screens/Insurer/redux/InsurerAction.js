@@ -14,6 +14,7 @@ import {
   startLoaderButtonOnRequest,
   stopLoaderButtonOnSuccessOrFail,
 } from '../../../common/LoaderButton/redux/LoaderButtonAction';
+import { store } from '../../../redux/store';
 
 export const getInsurerListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -118,14 +119,17 @@ export const saveInsurerColumnListName = ({ insurerColumnNameList = {}, isReset 
 export const getInsurerById = id => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('viewInsurerPageLoaderAction');
       const response = await InsurerApiService.getSelectedInsurerData(id);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.VIEW_INSURER_DATA,
           data: response.data.data,
         });
+        stopLoaderButtonOnSuccessOrFail('viewInsurerPageLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewInsurerPageLoaderAction');
       displayErrors(e);
     }
   };
@@ -434,4 +438,11 @@ export const resetInsurerListPaginationData = (page, limit, pages, total) => {
       limit,
     });
   };
+};
+
+export const setViewInsurerActiveTabIndex = index => {
+  store.dispatch({
+    type: INSURER_VIEW_REDUX_CONSTANT.VIEW_INSURER_ACTIVE_TAB_INDEX,
+    index,
+  });
 };

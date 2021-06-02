@@ -66,7 +66,7 @@ const InsurerPoliciesTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -259,9 +259,12 @@ const InsurerPoliciesTab = () => {
   );
 
   useEffect(() => {
-    getInsurerPoliciesList();
     dispatch(getInsurerPoliciesColumnNameList());
   }, []);
+
+  useEffect(() => {
+    getInsurerPoliciesList();
+  }, [id]);
 
   return (
     <>

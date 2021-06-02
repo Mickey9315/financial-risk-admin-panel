@@ -1,6 +1,10 @@
 import HeaderApiService from '../services/HeaderApiService';
-import { successNotification } from '../../Toast';
-import { EDIT_PROFILE_CONSTANT, HEADER_NOTIFICATION_REDUX_CONSTANTS } from './HeaderConstants';
+import { errorNotification, successNotification } from '../../Toast';
+import {
+  EDIT_PROFILE_CONSTANT,
+  HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS,
+  HEADER_NOTIFICATION_REDUX_CONSTANTS,
+} from './HeaderConstants';
 import { LOGIN_REDUX_CONSTANTS } from '../../../screens/auth/login/redux/LoginReduxConstants';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import {
@@ -173,6 +177,25 @@ export const markNotificationAsReadAndDeleteAction = notificationId => {
       }
     } catch (e) {
       displayErrors(e);
+    }
+  };
+};
+
+export const searchGlobalData = value => {
+  return async dispatch => {
+    try {
+      const params = {
+        searchString: value,
+      };
+      const response = await HeaderApiService.globalSearchApiServices.getGlobalSearchData(params);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS.GET_SEARCH_RESULT_LIST,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      errorNotification(e);
     }
   };
 };

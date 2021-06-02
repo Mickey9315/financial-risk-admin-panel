@@ -9,6 +9,7 @@ import {
   startLoaderButtonOnRequest,
   stopLoaderButtonOnSuccessOrFail,
 } from '../../../common/LoaderButton/redux/LoaderButtonAction';
+import { store } from '../../../redux/store';
 
 export const fetchDocRequest = () => ({
   type: SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.FETCH_DOCUMENT_TYPE_LIST_REQUEST,
@@ -390,4 +391,11 @@ export const getAuditUserName = () => {
       displayErrors(e);
     }
   };
+};
+
+export const setSettingActiveTabIndex = index => {
+  store.dispatch({
+    type: SETTING_REDUX_CONSTANTS.SETTING_ACTIVE_TAB_INDEX,
+    index,
+  });
 };

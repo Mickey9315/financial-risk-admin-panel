@@ -256,14 +256,38 @@ export const deleteTaskAction = (taskId, cb) => {
 export const getTaskById = id => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('myWorkViewTaskLoaderAction');
       const response = await MyWorkApiServices.getTaskDetailById(id);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_DETAIL_BY_ID_ACTION,
           data: response.data.data,
         });
+        stopLoaderButtonOnSuccessOrFail('myWorkViewTaskLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('myWorkViewTaskLoaderAction');
+      displayErrors(e);
+    }
+  };
+};
+
+export const markTaskAsComplete = (id, data) => {
+  return async dispatch => {
+    try {
+      startLoaderButtonOnRequest('myWorkCompleteTaskLoaderButtonAction');
+      const response = await MyWorkApiServices.updateTask(id, data);
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Task updated successfully.');
+        stopLoaderButtonOnSuccessOrFail('myWorkCompleteTaskLoaderButtonAction');
+        dispatch({
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_EDIT_TASK_FIELD_ACTION,
+          name: 'isCompleted',
+          value: data?.isCompleted,
+        });
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('myWorkCompleteTaskLoaderButtonAction');
       displayErrors(e);
     }
   };

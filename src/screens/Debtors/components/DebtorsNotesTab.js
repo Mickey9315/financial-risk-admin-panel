@@ -99,7 +99,7 @@ const DebtorsNotesTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -252,7 +252,7 @@ const DebtorsNotesTab = () => {
 
   useEffect(() => {
     getDebtorNotesList();
-  }, []);
+  }, [id]);
 
   return (
     <>

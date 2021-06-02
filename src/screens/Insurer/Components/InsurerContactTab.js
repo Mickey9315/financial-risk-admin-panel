@@ -52,7 +52,7 @@ const InsurerContactTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -166,9 +166,12 @@ const InsurerContactTab = () => {
   }, [id]);
 
   useEffect(() => {
-    getInsurerContactsList();
     dispatch(getInsurerContactColumnNameList());
   }, []);
+
+  useEffect(() => {
+    getInsurerContactsList();
+  }, [id]);
 
   return (
     <>

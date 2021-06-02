@@ -138,7 +138,7 @@ const ClientDocumentsTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -432,10 +432,13 @@ const ClientDocumentsTab = () => {
     [getClientDocumentsList]
   );
   useEffect(() => {
-    getClientDocumentsList();
     dispatch(getClientDocumentsColumnNamesList());
     dispatch(getDocumentTypeList());
   }, []);
+
+  useEffect(() => {
+    getClientDocumentsList();
+  }, [id]);
 
   const handleDocumentChange = useCallback(
     newValue => {

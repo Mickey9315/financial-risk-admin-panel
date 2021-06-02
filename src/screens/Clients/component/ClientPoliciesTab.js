@@ -54,7 +54,7 @@ const ClientPoliciesTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -166,9 +166,12 @@ const ClientPoliciesTab = () => {
   }, [id]);
 
   useEffect(() => {
-    getClientPoliciesList();
     dispatch(getClientPoliciesColumnNamesList());
   }, []);
+
+  useEffect(() => {
+    getClientPoliciesList();
+  }, [id]);
 
   return (
     <>

@@ -17,14 +17,18 @@ import {
 } from '../screens/Clients/redux/ClientReducer';
 import { application } from '../screens/Application/redux/ApplicationReducer';
 import { insurer } from '../screens/Insurer/redux/InsurerReducer';
-import { headerNotificationReducer, loggedUserProfile } from '../common/Header/redux/HeaderReducer';
+import {
+  globalSearchReducer,
+  headerNotificationReducer,
+  loggedUserProfile,
+} from '../common/Header/redux/HeaderReducer';
 import { myWorkReducer } from '../screens/MyWork/redux/MyWorkReducer';
 import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
 import { clearAuthToken } from '../helpers/LocalStorageHelper';
 import { loaderButtonReducer } from '../common/LoaderButton/redux/LoaderButtonReducer';
-import {dashboard} from "../screens/Dashboard/redux/DashboardReducer";
+import { dashboard } from '../screens/Dashboard/redux/DashboardReducer';
 
 const appReducer = combineReducers({
   dashboard,
@@ -45,7 +49,8 @@ const appReducer = combineReducers({
   myWorkReducer,
   settingReducer,
   loaderButtonReducer,
-  headerNotificationReducer
+  headerNotificationReducer,
+  globalSearchReducer,
 });
 
 const rootReducer = (state, action) => {

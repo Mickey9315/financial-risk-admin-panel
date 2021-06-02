@@ -1,4 +1,8 @@
-import { EDIT_PROFILE_CONSTANT, HEADER_NOTIFICATION_REDUX_CONSTANTS } from './HeaderConstants';
+import {
+  EDIT_PROFILE_CONSTANT,
+  HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS,
+  HEADER_NOTIFICATION_REDUX_CONSTANTS,
+} from './HeaderConstants';
 
 export const loggedUserProfile = (state = { changed: false }, action) => {
   switch (action.type) {
@@ -49,6 +53,23 @@ export const headerNotificationReducer = (state = { notificationList: [] }, acti
         notificationList: finalList,
       };
     }
+    default:
+      return state;
+  }
+};
+
+export const globalSearchReducer = (state = [], action) => {
+  switch (action.type) {
+    case HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS.GET_SEARCH_RESULT_LIST:
+      return {
+        ...state,
+        searchResults: action?.data,
+      };
+    case HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS.CLEAR_SEARCHED_DATA_LIST:
+      return {
+        ...state,
+        searchResults: [],
+      };
     default:
       return state;
   }

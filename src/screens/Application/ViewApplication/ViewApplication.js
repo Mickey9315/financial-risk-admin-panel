@@ -90,7 +90,7 @@ const ViewApplication = () => {
     dispatch(getApplicationModuleList(id));
     dispatch(getViewApplicationDocumentTypeList());
     return () => dispatch(resetApplicationDetail());
-  }, []);
+  }, [id]);
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const handleDrawerState = useCallback(async (idDrawer, headers) => {
@@ -279,7 +279,7 @@ const ViewApplication = () => {
                       {detail?.type === 'link' && (
                         <div
                           style={{
-                            textDecoration: 'underline',
+                            textDecoration: detail?.value?.value && 'underline',
                             cursor: 'pointer',
                           }}
                           className="detail"

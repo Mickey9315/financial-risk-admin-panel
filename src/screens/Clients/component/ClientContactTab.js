@@ -53,7 +53,7 @@ const ClientContactsTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const { defaultFields, customFields } = useMemo(
@@ -165,6 +165,9 @@ const ClientContactsTab = () => {
 
   useEffect(() => {
     getClientContactsList();
+  }, [id]);
+
+  useEffect(() => {
     dispatch(getClientContactColumnNamesList());
   }, []);
 

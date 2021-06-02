@@ -2,6 +2,7 @@ import { SETTING_REDUX_CONSTANTS } from './SettingReduxConstants';
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 
 const initialSettingState = {
+  settingTabActiveIndex: 0,
   documentType: {
     docs: [],
     total: 0,
@@ -245,6 +246,13 @@ export const settingReducer = (state = initialSettingState, action) => {
           limit: 15,
         },
       };
+
+    case SETTING_REDUX_CONSTANTS.SETTING_ACTIVE_TAB_INDEX: {
+      return {
+        ...state,
+        settingTabActiveIndex: action?.index,
+      };
+    }
 
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;

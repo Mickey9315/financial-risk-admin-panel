@@ -16,6 +16,7 @@ import {
 } from '../../redux/MyWorkAction';
 import { errorNotification } from '../../../../common/Toast';
 import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
+import Loader from '../../../../common/Loader/Loader';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -52,7 +53,7 @@ const MyWorkAddTask = () => {
 
   const { assigneeList, entityList } = useMemo(() => dropDownData, [dropDownData]);
 
-  const { myWorkEditTaskLoaderButtonAction } = useSelector(
+  const { myWorkEditTaskLoaderButtonAction, myWorkViewTaskLoaderAction } = useSelector(
     ({ loaderButtonReducer }) => loaderButtonReducer ?? false
   );
 
@@ -301,25 +302,32 @@ const MyWorkAddTask = () => {
 
   return (
     <>
-      <div className="breadcrumb-button-row">
-        <div className="breadcrumb">
-          <span onClick={backToTaskList}>Task List</span>
-          <span className="material-icons-round">navigate_next</span>
-          <span>Edit Task</span>
-        </div>
-        <div className="buttons-row">
-          <Button buttonType="primary-1" title="Close" onClick={onCloseEditTask} />
-          <Button
-            buttonType="primary"
-            title="Save"
-            onClick={onSaveTask}
-            isLoading={myWorkEditTaskLoaderButtonAction}
-          />
-        </div>
-      </div>
-      <div className="common-white-container my-work-add-task-container">
-        {INPUTS.map(getComponentFromType)}
-      </div>
+      {' '}
+      {!myWorkViewTaskLoaderAction ? (
+        <>
+          <div className="breadcrumb-button-row">
+            <div className="breadcrumb">
+              <span onClick={backToTaskList}>Task List</span>
+              <span className="material-icons-round">navigate_next</span>
+              <span>Edit Task</span>
+            </div>
+            <div className="buttons-row">
+              <Button buttonType="primary-1" title="Close" onClick={onCloseEditTask} />
+              <Button
+                buttonType="primary"
+                title="Save"
+                onClick={onSaveTask}
+                isLoading={myWorkEditTaskLoaderButtonAction}
+              />
+            </div>
+          </div>
+          <div className="common-white-container my-work-add-task-container">
+            {INPUTS.map(getComponentFromType)}
+          </div>
+        </>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 };

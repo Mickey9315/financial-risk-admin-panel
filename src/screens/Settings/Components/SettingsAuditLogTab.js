@@ -181,13 +181,7 @@ const SettingsAuditLogTab = () => {
   } = useQueryParams();
 
   useEffect(() => {
-    const params = {
-      page: paramPage || 1,
-      limit: paramLimit || 15,
-    };
-    dispatch(getAuditLogColumnNameList());
     dispatch(getAuditUserName());
-    getAuditLogListByFilter(params);
     return dispatch(resetAuditLogList());
   }, []);
 

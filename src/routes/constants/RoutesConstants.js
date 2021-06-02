@@ -26,12 +26,13 @@ const MyWork = lazy(() => import('../../screens/MyWork/MyWork'));
 const MyWorkAddTask = lazy(() =>
   import('../../screens/MyWork/MyWorkTasks/MyWorkAddTask/MyWorkAddTask')
 );
-const Settings = lazy(() => import('../../screens/Settings/Settings'));
-const DebtorsList = lazy(() => import('../../screens/Debtors/DebtorsList/DebtorsList'));
-const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebtor'));
 const MyWorkEditTask = lazy(() =>
   import('../../screens/MyWork/MyWorkTasks/MyWorkEditTask/MyWorkEditTask')
 );
+const MyWorkViewTask = lazy(() => import('../../screens/MyWork/MyWorkTasks/MyWorkViewTask'));
+const Settings = lazy(() => import('../../screens/Settings/Settings'));
+const DebtorsList = lazy(() => import('../../screens/Debtors/DebtorsList/DebtorsList'));
+const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebtor'));
 const ViewApplication = lazy(() =>
   import('../../screens/Application/ViewApplication/ViewApplication')
 );
@@ -80,6 +81,11 @@ export const ROUTES_CONSTANTS = [
   {
     path: '/my-work/add',
     component: MyWorkAddTask,
+    authenticated: true,
+  },
+  {
+    path: '/my-work/view/:id',
+    component: MyWorkViewTask,
     authenticated: true,
   },
   {

@@ -17,6 +17,11 @@ const HeaderApiService = {
         `${HEADER_URLS.HEADER_NOTIFICATIONS.MARK_AS_READ_NOTIFICATION_URL}${notificationId}`
       ),
   },
+
+  globalSearchApiServices: {
+    getGlobalSearchData: params =>
+      ApiService.getData(`${HEADER_URLS.HEADER_GLOBAL_SEARCH}`, { params }),
+  },
 };
 
 export default HeaderApiService;

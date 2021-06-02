@@ -60,7 +60,7 @@ const DebtorsCreditLimitTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -162,9 +162,12 @@ const DebtorsCreditLimitTab = () => {
   );
 
   useEffect(() => {
-    getCreditLimitList();
     dispatch(getCreditLimitColumnsNameList());
   }, []);
+
+  useEffect(() => {
+    getCreditLimitList();
+  }, [id]);
 
   const onClickDownloadButton = useCallback(async () => {
     if (docs?.length === 0) {

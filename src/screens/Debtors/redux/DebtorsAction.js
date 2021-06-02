@@ -16,6 +16,7 @@ import {
   startLoaderButtonOnRequest,
   stopLoaderButtonOnSuccessOrFail,
 } from '../../../common/LoaderButton/redux/LoaderButtonAction';
+import { store } from '../../../redux/store';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -140,14 +141,17 @@ export const resetDebtorListPaginationData = (page, pages, total, limit) => {
 export const getDebtorById = id => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('viewDebtorPageLoaderAction');
       const response = await DebtorsApiServices.getDebtorDetailById(id);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.SELECTED_DEBTORS_DATA,
           data: response.data.data,
         });
+        stopLoaderButtonOnSuccessOrFail('viewDebtorPageLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewDebtorPageLoaderAction');
       displayErrors(e);
     }
   };
@@ -1354,4 +1358,11 @@ export const getStakeHolderDetails = id => {
       displayErrors(e);
     }
   };
+};
+
+export const setViewDebtorActiveTabIndex = index => {
+  store.dispatch({
+    type: DEBTORS_REDUX_CONSTANTS.VIEW_DEBTOR_ACTIVE_TAB_INDEX,
+    index,
+  });
 };

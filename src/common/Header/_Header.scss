@@ -117,16 +117,25 @@
 
 .header-search-results {
   position: absolute;
-  bottom: -56px;
   left: -1px;
   right: -1px;
+  margin: 0;
   padding: 10px;
   min-height: 70px;
+  max-height: 140px;
+  overflow: auto;
   background-color: white;
+  color: #B8C1CC;
+  list-style-type:none;
   border-radius: 0 0 10px 10px;
   box-shadow: 0px 10px 10px -1px #3D3D3D29;
   -webkit-box-shadow: 0px 10px 10px -1px #3D3D3D29;
   -moz-box-shadow: 0px 10px 13px -1px #3D3D3D29;
+  z-index: 1000;
+  li{
+    margin: 5px;
+    cursor: pointer;
+  }
 }
 
 .notification {

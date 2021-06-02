@@ -1,14 +1,14 @@
-import React, {useCallback, useEffect, useMemo, useReducer, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap.css';
 import Drawer from '../Drawer/Drawer';
-import {processTableDataByType} from '../../helpers/TableDataProcessHelper';
+import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
 import Checkbox from '../Checkbox/Checkbox';
 import DropdownMenu from '../DropdownMenu/DropdownMenu';
-import {successNotification} from '../Toast';
+import { successNotification } from '../Toast';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -339,9 +339,7 @@ function Row(props) {
             case 'priority':
               return (
                 <td key={index.toString()} align={align}>
-                    <span className={`task-priority-${value}`}>
-                      {value ?? '-'}
-                    </span>
+                  <span className={`task-priority-${value}`}>{value ?? '-'}</span>
                 </td>
               );
             case 'isCompleted':

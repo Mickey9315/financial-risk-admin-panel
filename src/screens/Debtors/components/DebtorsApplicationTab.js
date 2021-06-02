@@ -50,7 +50,7 @@ const DebtorsApplicationTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -147,9 +147,12 @@ const DebtorsApplicationTab = () => {
   );
 
   useEffect(() => {
-    getDebtorApplicationList();
     dispatch(getDebtorApplicationColumnNameList());
   }, []);
+
+  useEffect(() => {
+    getDebtorApplicationList();
+  }, [id]);
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;

@@ -15,6 +15,7 @@ const initialInsurer = {
     headers: [],
     isLoading: true,
   },
+  viewInsurerActiveTabIndex: 0,
   insurerColumnNameList: {},
   insurerDefaultColumnNameList: {},
   insurerViewData: {},
@@ -210,6 +211,12 @@ export const insurer = (state = initialInsurer, action) => {
           ...state?.policies,
           policySyncList: action?.data,
         },
+      };
+    }
+    case INSURER_VIEW_REDUX_CONSTANT.VIEW_INSURER_ACTIVE_TAB_INDEX: {
+      return {
+        ...state,
+        viewInsurerActiveTabIndex: action?.index,
       };
     }
     default:

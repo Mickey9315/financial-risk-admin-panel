@@ -94,7 +94,7 @@ const DebtorsStakeHolderTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -850,9 +850,12 @@ const DebtorsStakeHolderTab = () => {
   );
 
   useEffect(() => {
-    getDebtorStakeHolderList();
     dispatch(getDebtorStakeHolderColumnNameList());
   }, []);
+
+  useEffect(() => {
+    getDebtorStakeHolderList();
+  }, [id]);
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;

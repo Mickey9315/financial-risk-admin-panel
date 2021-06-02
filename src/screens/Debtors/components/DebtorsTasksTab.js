@@ -93,7 +93,7 @@ const DebtorTaskTab = () => {
         cb();
       }
     },
-    [page, limit, isCompletedChecked]
+    [page, limit, isCompletedChecked, id]
   );
 
   const onSelectLimit = useCallback(
@@ -530,7 +530,7 @@ const DebtorTaskTab = () => {
 
   useEffect(() => {
     getDebtorTaskList();
-  }, [isCompletedChecked]);
+  }, [isCompletedChecked, id]);
 
   useEffect(() => {
     dispatch(getDebtorTaskColumnList());

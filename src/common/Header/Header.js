@@ -10,6 +10,7 @@ import {
   getLoggedUserDetails,
   logoutUser,
   markNotificationAsReadAndDeleteAction,
+  searchGlobalData,
   updateUserProfile,
   uploadProfilePicture,
 } from './redux/HeaderAction';
@@ -25,6 +26,8 @@ import Drawer from '../Drawer/Drawer';
 import { SESSION_VARIABLES } from '../../constants/SessionStorage';
 import { getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
 import { connectWebSocket, disconnectWebSocket } from '../../helpers/SocketHelper';
+import { handleGlobalSearchSelect } from '../../helpers/GlobalSearchHelper';
+import { HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS } from './redux/HeaderConstants';
 
 const Header = () => {
   const history = useHistory();
@@ -55,6 +58,16 @@ const Header = () => {
     logoutHeaderButtonLoaderAction,
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
+  /*
+  Global Search Data */
+
+  const globalSearchResult = useSelector(
+    ({ globalSearchReducer }) => globalSearchReducer?.searchResults ?? []
+  );
+
+  /*
+   * Notification Data
+   * */
   const notificationData = useSelector(
     ({ headerNotificationReducer }) => headerNotificationReducer ?? []
   );
@@ -84,6 +97,8 @@ const Header = () => {
     );
     return result?.length ?? 0;
   }, [notificationData?.notificationList]);
+
+  /* end */
 
   const { name, email, contactNumber, profilePictureUrl, changed } = useMemo(() => {
     if (loggedUserDetail) {
@@ -321,11 +336,27 @@ const Header = () => {
     setHeaderSearchFocused(false);
   };
   useOnClickOutside(headerSearchRef, searchOutsideClick);
-  const onSearchEnterKeyPress = e => {
-    if (e.keyCode === 13) {
-      setSearchStart(true);
+  const onSearchEnterKeyPress = useCallback(e => {
+    try {
+      if (e.keyCode === 13) {
+        const { value } = e?.target;
+        if (value?.trim()?.length > 0) {
+          dispatch(searchGlobalData(value));
+        }
+      }
+    } catch (err) {
+      /**/
     }
-  };
+  }, []);
+
+  const handleOnSearchChange = useCallback(e => {
+    if (e?.target?.value?.trim()?.length === 0) {
+      setSearchStart(false);
+      dispatch({
+        type: HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS.CLEAR_SEARCHED_DATA_LIST,
+      });
+    } else setSearchStart(true);
+  }, []);
 
   useEffect(() => {
     dispatch(getHeaderNotificationListURL());
@@ -358,10 +389,25 @@ const Header = () => {
               placeholder="Search Here"
               onFocus={searchOnFocus}
               onKeyDown={onSearchEnterKeyPress}
+              onChange={handleOnSearchChange}
+              onClick={handleOnSearchChange}
             />
             <span className="material-icons-round">search</span>
           </div>
-          {searchStart && <div className="header-search-results">Opps! No such results found.</div>}
+          {searchStart && (
+            <ul className="header-search-results">
+              {globalSearchResult?.map(searchResult => (
+                <li
+                  onClick={() => {
+                    handleGlobalSearchSelect(searchResult, history);
+                    setSearchStart(false);
+                  }}
+                >
+                  {searchResult?.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <IconButton
           isBadge={notificationBadge > 0}
@@ -399,7 +445,7 @@ const Header = () => {
               notificationList?.map(notification => (
                 <div className="notification-set">
                   <div className="notification-set-title">
-                    {moment(notification?.createdAt).calendar(null, {
+                    {moment(notification?.createdAt).calendar({
                       sameDay: '[Today]',
                       nextDay: '[Tomorrow]',
                       nextWeek: 'dddd',

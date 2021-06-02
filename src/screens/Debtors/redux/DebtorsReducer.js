@@ -6,6 +6,9 @@ import {
 
 const initialDebtorState = {
   debtorsList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
+
+  viewDebtorActiveTabIndex: 0,
+
   notes: {
     notesList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   },
@@ -839,6 +842,13 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           ...state?.stakeHolder,
           stakeHolderDropDownData: { ...dropDownData },
         },
+      };
+    }
+
+    case DEBTORS_REDUX_CONSTANTS.VIEW_DEBTOR_ACTIVE_TAB_INDEX: {
+      return {
+        ...state,
+        viewDebtorActiveTabIndex: action?.index,
       };
     }
 

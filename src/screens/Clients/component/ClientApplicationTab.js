@@ -48,7 +48,7 @@ const ClientApplicationTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -146,9 +146,12 @@ const ClientApplicationTab = () => {
   );
 
   useEffect(() => {
-    getClientApplicationList();
     dispatch(getClientApplicationColumnNameList());
   }, []);
+
+  useEffect(() => {
+    getClientApplicationList();
+  }, [id]);
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;

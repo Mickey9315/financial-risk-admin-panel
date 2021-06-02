@@ -2,7 +2,7 @@ import { errorNotification } from '../common/Toast';
 
 export const displayErrors = e => {
   if (e?.code === 'ECONNABORTED') {
-    errorNotification('Request Timeout');
+    errorNotification('Request Timeout, Make sure you are connected to network.');
   } else {
     switch (e?.response?.data?.status) {
       case 'INTERNAL_SERVER_ERROR':

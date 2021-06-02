@@ -24,6 +24,7 @@ import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementRed
 import Modal from '../../../common/Modal/Modal';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import Loader from '../../../common/Loader/Loader';
 
 const AddUser = () => {
   const history = useHistory();
@@ -40,6 +41,7 @@ const AddUser = () => {
     viewUserUpdateUserButtonLoaderAction,
     viewUserAddNewUserButtonLoaderAction,
     viewUserDeleteUserButtonLoaderAction,
+    viewUserPageLoaderAction,
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const filteredOrganisationList = useMemo(
@@ -82,7 +84,7 @@ const AddUser = () => {
         data: null,
       });
     };
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (
@@ -282,160 +284,166 @@ const AddUser = () => {
 
   return (
     <>
-      {showModal && (
-        <Modal
-          header={modalData.title}
-          buttons={modalData.buttons}
-          hideModal={toggleConfirmationModal}
-        >
-          <span className="confirmation-message">{modalData.description}</span>
-        </Modal>
-      )}
-      <div className="breadcrumb-button-row">
-        <div className="breadcrumb">
-          <span onClick={backToUser}>User List</span>
-          <span className="material-icons-round">navigate_next</span>
-          <span>{getBreadcrumbTitle} User</span>
-        </div>
-        <div className="buttons-row">
-          {action === 'view' ? (
-            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-              <Button buttonType="primary" title="Edit" onClick={editUserClick} />
-              <Button buttonType="danger" title="Delete" onClick={deleteModalButtonClick} />
-            </UserPrivilegeWrapper>
-          ) : (
-            <>
-              <Button buttonType="primary-1" title="Close" onClick={backToUser} />
-              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-                <Button
-                  buttonType="primary"
-                  title="Save"
-                  onClick={onClickAddUser}
-                  isLoading={
-                    action === 'add'
-                      ? viewUserAddNewUserButtonLoaderAction
-                      : viewUserUpdateUserButtonLoaderAction
-                  }
-                />
-              </UserPrivilegeWrapper>
-            </>
+      {!viewUserPageLoaderAction ? (
+        <>
+          {showModal && (
+            <Modal
+              header={modalData.title}
+              buttons={modalData.buttons}
+              hideModal={toggleConfirmationModal}
+            >
+              <span className="confirmation-message">{modalData.description}</span>
+            </Modal>
           )}
-        </div>
-      </div>
-      <div className="common-detail-container">
-        <div className="common-detail-grid">
-          <div className="common-detail-field">
-            <span className="common-detail-title">Name</span>
-            <Input
-              type="text"
-              placeholder={action === 'view' ? '' : 'Jason Gatt'}
-              name="name"
-              value={name}
-              onChange={onChangeUserData}
-              disabled={action === 'view'}
-              borderClass={action === 'view' ? 'disabled-control' : ''}
-            />
-          </div>
-          <div className="common-detail-field">
-            <span className="common-detail-title">Email</span>
-            <Input
-              type="email"
-              placeholder={action === 'view' ? '' : 'jason@trad.au'}
-              name="email"
-              value={email}
-              onChange={onChangeUserData}
-              disabled={action === 'view'}
-              borderClass={action === 'view' ? 'disabled-control' : ''}
-            />
-          </div>
-          <div className="common-detail-field">
-            <span className="common-detail-title">Role</span>
-            <ReactSelect
-              className={`react-select-container ${action === 'view' && 'disabled-control'}`}
-              classNamePrefix="react-select"
-              placeholder={action === 'view' ? '' : 'Select'}
-              name="role"
-              options={USER_ROLES}
-              value={userRoleSelectedValue}
-              onChange={onChangeUserRole}
-              isDisabled={action === 'view'}
-              dropdownHandle={action !== 'view'}
-              searchable={false}
-            />
-          </div>
-          <div className="common-detail-field">
-            <span className="common-detail-title">Phone Number</span>
-            <Input
-              name="contactNumber"
-              value={contactNumber}
-              type="text"
-              placeholder="1234567890"
-              onChange={onChangeUserData}
-              disabled={action === 'view'}
-              borderClass={action === 'view' ? 'disabled-control' : ''}
-            />
-          </div>
-          <div className="common-detail-field">
-            <span className="common-detail-title">Max credit limit approval</span>
-            <Input
-              name="maxCreditLimit"
-              value={maxCreditLimit}
-              type="text"
-              placeholder={action === 'view' ? 'No credit limit added' : 'Enter credit limit'}
-              onChange={onChangeUserData}
-              disabled={action === 'view'}
-              borderClass={action === 'view' ? 'disabled-control' : ''}
-            />
-          </div>
-          {role !== 'superAdmin' && (
-            <div className="common-detail-field user-select-client">
-              <span className="common-detail-title">Select Client</span>
-              <ReactSelect
-                isMulti
-                value={clientIds}
-                onChange={clientSelected}
-                options={clients}
-                isDisabled={action === 'view' || role === 'superAdmin'}
-                className="react-select-container isMulti-react-select"
-                classNamePrefix="react-select"
-                color="#003A78"
-                placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
-                dropdownHandle={false}
-                keepSelectedInList={false}
-              />
+          <div className="breadcrumb-button-row">
+            <div className="breadcrumb">
+              <span onClick={backToUser}>User List</span>
+              <span className="material-icons-round">navigate_next</span>
+              <span>{getBreadcrumbTitle} User</span>
             </div>
-          )}
-        </div>
-      </div>
-      <div className="module-container">
-        {filteredOrganisationList.map(module => (
-          <div key={module.label} className="module">
-            <div className="module-title">{module.label}</div>
-            {USER_MODULE_ACCESS.map(access => (
-              <Checkbox
-                key={access.label}
-                disabled={
-                  action === 'view' ||
-                  (module?.accessTypes?.includes('full-access') &&
-                    (access.value === 'read' || access.value === 'write')) ||
-                  (module?.accessTypes?.includes('write') && access.value === 'read')
-                }
-                title={access.label}
-                name={access.value}
-                className={`${
-                  (action === 'view' ||
-                    (module?.accessTypes?.includes('full-access') &&
-                      (access.value === 'read' || access.value === 'write')) ||
-                    (module?.accessTypes?.includes('write') && access.value === 'read')) &&
-                  'checkbox-disabled'
-                }`}
-                checked={module.accessTypes.includes(access.value)}
-                onChange={() => onChangeUserAccess(module, access)}
-              />
+            <div className="buttons-row">
+              {action === 'view' ? (
+                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                  <Button buttonType="primary" title="Edit" onClick={editUserClick} />
+                  <Button buttonType="danger" title="Delete" onClick={deleteModalButtonClick} />
+                </UserPrivilegeWrapper>
+              ) : (
+                <>
+                  <Button buttonType="primary-1" title="Close" onClick={backToUser} />
+                  <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                    <Button
+                      buttonType="primary"
+                      title="Save"
+                      onClick={onClickAddUser}
+                      isLoading={
+                        action === 'add'
+                          ? viewUserAddNewUserButtonLoaderAction
+                          : viewUserUpdateUserButtonLoaderAction
+                      }
+                    />
+                  </UserPrivilegeWrapper>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="common-detail-container">
+            <div className="common-detail-grid">
+              <div className="common-detail-field">
+                <span className="common-detail-title">Name</span>
+                <Input
+                  type="text"
+                  placeholder={action === 'view' ? '' : 'Jason Gatt'}
+                  name="name"
+                  value={name}
+                  onChange={onChangeUserData}
+                  disabled={action === 'view'}
+                  borderClass={action === 'view' ? 'disabled-control' : ''}
+                />
+              </div>
+              <div className="common-detail-field">
+                <span className="common-detail-title">Email</span>
+                <Input
+                  type="email"
+                  placeholder={action === 'view' ? '' : 'jason@trad.au'}
+                  name="email"
+                  value={email}
+                  onChange={onChangeUserData}
+                  disabled={action === 'view'}
+                  borderClass={action === 'view' ? 'disabled-control' : ''}
+                />
+              </div>
+              <div className="common-detail-field">
+                <span className="common-detail-title">Role</span>
+                <ReactSelect
+                  className={`react-select-container ${action === 'view' && 'disabled-control'}`}
+                  classNamePrefix="react-select"
+                  placeholder={action === 'view' ? '' : 'Select'}
+                  name="role"
+                  options={USER_ROLES}
+                  value={userRoleSelectedValue}
+                  onChange={onChangeUserRole}
+                  isDisabled={action === 'view'}
+                  dropdownHandle={action !== 'view'}
+                  searchable={false}
+                />
+              </div>
+              <div className="common-detail-field">
+                <span className="common-detail-title">Phone Number</span>
+                <Input
+                  name="contactNumber"
+                  value={contactNumber}
+                  type="text"
+                  placeholder="1234567890"
+                  onChange={onChangeUserData}
+                  disabled={action === 'view'}
+                  borderClass={action === 'view' ? 'disabled-control' : ''}
+                />
+              </div>
+              <div className="common-detail-field">
+                <span className="common-detail-title">Max credit limit approval</span>
+                <Input
+                  name="maxCreditLimit"
+                  value={maxCreditLimit}
+                  type="text"
+                  placeholder={action === 'view' ? 'No credit limit added' : 'Enter credit limit'}
+                  onChange={onChangeUserData}
+                  disabled={action === 'view'}
+                  borderClass={action === 'view' ? 'disabled-control' : ''}
+                />
+              </div>
+              {role !== 'superAdmin' && (
+                <div className="common-detail-field user-select-client">
+                  <span className="common-detail-title">Select Client</span>
+                  <ReactSelect
+                    isMulti
+                    value={clientIds}
+                    onChange={clientSelected}
+                    options={clients}
+                    isDisabled={action === 'view' || role === 'superAdmin'}
+                    className="react-select-container isMulti-react-select"
+                    classNamePrefix="react-select"
+                    color="#003A78"
+                    placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
+                    dropdownHandle={false}
+                    keepSelectedInList={false}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="module-container">
+            {filteredOrganisationList.map(module => (
+              <div key={module.label} className="module">
+                <div className="module-title">{module.label}</div>
+                {USER_MODULE_ACCESS.map(access => (
+                  <Checkbox
+                    key={access.label}
+                    disabled={
+                      action === 'view' ||
+                      (module?.accessTypes?.includes('full-access') &&
+                        (access.value === 'read' || access.value === 'write')) ||
+                      (module?.accessTypes?.includes('write') && access.value === 'read')
+                    }
+                    title={access.label}
+                    name={access.value}
+                    className={`${
+                      (action === 'view' ||
+                        (module?.accessTypes?.includes('full-access') &&
+                          (access.value === 'read' || access.value === 'write')) ||
+                        (module?.accessTypes?.includes('write') && access.value === 'read')) &&
+                      'checkbox-disabled'
+                    }`}
+                    checked={module.accessTypes.includes(access.value)}
+                    onChange={() => onChangeUserAccess(module, access)}
+                  />
+                ))}
+              </div>
             ))}
           </div>
-        ))}
-      </div>
+        </>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 };

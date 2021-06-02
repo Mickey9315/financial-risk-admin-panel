@@ -99,7 +99,7 @@ const ClientNotesTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -246,7 +246,7 @@ const ClientNotesTab = () => {
 
   useEffect(() => {
     getClientNotesList();
-  }, []);
+  }, [id]);
 
   return (
     <>

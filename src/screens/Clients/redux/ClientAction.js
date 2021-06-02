@@ -18,6 +18,7 @@ import {
   startLoaderButtonOnRequest,
   stopLoaderButtonOnSuccessOrFail,
 } from '../../../common/LoaderButton/redux/LoaderButtonAction';
+import { store } from '../../../redux/store';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -57,14 +58,17 @@ export const resetClientListPaginationData = (page, pages, total, limit) => {
 export const getClientById = id => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('viewClientPageLoaderAction');
       const response = await ClientApiService.getClientById(id);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.SELECTED_CLIENT_DATA,
           data: response.data.data,
         });
+        stopLoaderButtonOnSuccessOrFail('viewClientPageLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewClientPageLoaderAction');
       displayErrors(e);
     }
   };
@@ -1254,6 +1258,13 @@ export const surrenderClientCreditLimit = (id, data) => {
       displayErrors(e);
     }
   };
+};
+
+export const setViewClientActiveTabIndex = index => {
+  store.dispatch({
+    type: CLIENT_REDUX_CONSTANTS.VIEW_CLIENT_ACTIVE_TAB_INDEX,
+    index,
+  });
 };
 
 export const resetPageData = () => {

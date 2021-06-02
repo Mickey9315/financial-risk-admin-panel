@@ -8,6 +8,7 @@ import {
 const initialClientListState = {
   clientList: { docs: [], total: 1, limit: 15, page: 1, pages: 1, isLoading: true, error: null },
   selectedClient: null,
+  viewClientActiveTabIndex: 0,
   creditLimit: {
     creditLimitList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
     clientCreditLimitColumnNameList: {},
@@ -538,6 +539,13 @@ export const clientManagement = (state = initialClientListState, action) => {
           addTask: action?.data,
         },
       };
+
+    case CLIENT_REDUX_CONSTANTS.VIEW_CLIENT_ACTIVE_TAB_INDEX: {
+      return {
+        ...state,
+        viewClientActiveTabIndex: action?.index,
+      };
+    }
 
     default:
       return state;
