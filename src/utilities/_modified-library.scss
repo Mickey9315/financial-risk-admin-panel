@@ -416,6 +416,38 @@
   transform: rotate(-135deg);
 }
 
+// for month and year picker starts here
+.month-year-picker {
+  .react-datepicker {
+    max-height: 220px;
+    min-height: 220px;
+  }
+  .react-datepicker-year-header {
+    padding: 15px 15px 0;
+  }
+  .react-datepicker__month {
+    margin: 20px;
+  }
+  .react-datepicker__month-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: center;
+    gap: 10px;
+    margin: 5px 0;
+  }
+  .react-datepicker__month .react-datepicker__month-text, .react-datepicker__month .react-datepicker__quarter-text {
+    width: 100%;;
+    padding: 5px;
+    font-size: 14px;
+    font-family: $font-regular;
+    color: $field-color;
+  }
+  .react-datepicker__month-text.react-datepicker__month-text--keyboard-selected {
+    background-color: $primary-color;
+    color: #ffffff;
+  }
+}
+
 .tooltip-top-class {
   max-width: 500px;
   word-break: break-all;

@@ -132,6 +132,20 @@ const initialDebtorState = {
       countryList: [],
     },
   },
+  reports: {
+    reportsList: {
+      docs: [],
+      total: 0,
+      limit: 0,
+      page: 1,
+      pages: 1,
+      isLoading: true,
+      error: null,
+    },
+    reportsListForFetch: [],
+    debtorsReportsColumnNameList: {},
+    debtorsReportsDefaultColumnNameList: {},
+  },
 };
 
 export const debtorsManagement = (state = initialDebtorState, action) => {
@@ -213,6 +227,11 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           ...state?.selectedDebtorData,
           [`${action.name}`]: action?.value,
         },
+      };
+    case DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_RESET_DEBTOR_DETAILS:
+      return {
+        ...state,
+        selectedDebtorData: {},
       };
 
     // DEBTORS NOTES
@@ -542,15 +561,6 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           },
         },
       };
-    case DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_LIST_ACTION: {
-      return {
-        ...state,
-        application: {
-          ...state?.application,
-          applicationList: action?.data,
-        },
-      };
-    }
     case DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_COLUMN_LIST_ACTION: {
       return {
         ...state,
@@ -849,6 +859,84 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         viewDebtorActiveTabIndex: action?.index,
+      };
+    }
+
+    // reports
+    case DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_SUCCESS:
+      return {
+        ...state,
+        reports: {
+          ...state?.reports,
+          reportsList: {
+            ...state?.reports?.reportsList,
+            ...action?.data,
+            isLoading: false,
+            error: null,
+          },
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_FAILURE:
+      return {
+        ...state,
+        reports: {
+          ...state?.reports,
+          reportsList: {
+            ...state?.reports?.reportsList,
+            isLoading: false,
+            error: action?.data,
+          },
+        },
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.REPORTS.DEBTOR_REPORTS_COLUMN_LIST_ACTION: {
+      return {
+        ...state,
+        reports: {
+          ...state?.reports,
+          debtorsReportsColumnNameList: action?.data,
+        },
+      };
+    }
+    case DEBTORS_REDUX_CONSTANTS.REPORTS.DEBTOR_REPORTS_DEFAULT_COLUMN_LIST_ACTION: {
+      return {
+        ...state,
+        reports: {
+          ...state?.reports,
+          debtorsReportsDefaultColumnNameList: action?.data,
+        },
+      };
+    }
+    case DEBTORS_REDUX_CONSTANTS.REPORTS.UPDATE_DEBTOR_REPORTS_COLUMN_LIST_ACTION: {
+      const debtorsReportsColumnNameList = {
+        ...state?.reports?.debtorsReportsColumnNameList,
+      };
+      // eslint-disable-next-line no-shadow
+      const { name, type, value } = action?.data;
+      debtorsReportsColumnNameList[`${type}`] = debtorsReportsColumnNameList?.[`${type}`]?.map(e =>
+        e.name === name ? { ...e, isChecked: value } : e
+      );
+      return {
+        ...state,
+        reports: {
+          ...state?.reports,
+          debtorsReportsColumnNameList,
+        },
+      };
+    }
+
+    case DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_DATA_FOR_FETCH: {
+      let reportsListForFetch = state?.reports?.reportsListForFetch;
+      reportsListForFetch = action?.data?.map(report => ({
+        label: report?.name,
+        value: report?.code,
+      }));
+      return {
+        ...state,
+        reports: {
+          ...state?.reports,
+          reportsListForFetch,
+        },
       };
     }
 

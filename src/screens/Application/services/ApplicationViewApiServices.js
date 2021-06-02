@@ -75,5 +75,20 @@ const ApplicationViewApiServices = {
         `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_NOTES.GET_NOTES_LIST}${id}`
       ),
   },
+  applicationReportsApiServices: {
+    getDebtorsReportListData: id =>
+      ApiService.getData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.APPLICATION_REPORTS_LIST}${id}`
+      ),
+    getApplicationReportListDataForFetch: () =>
+      ApiService.getData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.APPLICATION_REPORTS_LIST_FOR_FETCH}`
+      ),
+    fetchSelectedReportsForApplication: data =>
+      ApiService.putData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.FETCH_SELECTED_REPORTS_FOR_APPLICATION}`,
+        data
+      ),
+  },
 };
 export default ApplicationViewApiServices;

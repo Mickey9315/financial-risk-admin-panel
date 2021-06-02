@@ -121,4 +121,20 @@
   }
 }
 
+.fetch-report-modal {
+  width: 500px;
+}
+
+.fetch-report-popup-container {
+  display: grid;
+  grid-template-columns: 150px minmax(200px, 400px);
+  gap: 10px;
+  align-items: center;
+  font-size: $subtitle;
+
+  span {
+    color: $primary-color;
+  }
+}
+
 

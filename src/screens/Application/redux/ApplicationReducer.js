@@ -135,6 +135,10 @@ const initialApplicationList = {
     notes: {
       noteList: [],
     },
+    reports: {
+      reportList: [],
+      reportsListForFetch: [],
+    },
     dropDownData: {
       assigneeList: [],
       entityList: [],
@@ -706,6 +710,39 @@ export const application = (state = initialApplicationList, action) => {
           },
         },
       };
+
+    // reports
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
+      .APPLICATION_REPORTS_LIST_DATA:
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          reports: {
+            ...state?.viewApplication?.reports,
+            reportList: action?.data,
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
+      .FETCH_APPLICATION_REPORTS_LIST_DATA_FOR_FETCH: {
+      let reportsListForFetch = state?.viewApplication?.reports?.reportsListForFetch;
+      reportsListForFetch = action?.data?.map(report => ({
+        label: report?.name,
+        value: report?.code,
+      }));
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          reports: {
+            ...state?.viewApplication?.reports,
+            reportsListForFetch,
+          },
+        },
+      };
+    }
 
     default:
       return state;

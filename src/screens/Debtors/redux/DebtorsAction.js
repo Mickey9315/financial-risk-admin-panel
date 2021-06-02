@@ -17,6 +17,7 @@ import {
   stopLoaderButtonOnSuccessOrFail,
 } from '../../../common/LoaderButton/redux/LoaderButtonAction';
 import { store } from '../../../redux/store';
+import DebtorsReportsApiServices from '../services/DebtorsReportsApiServices';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1365,4 +1366,143 @@ export const setViewDebtorActiveTabIndex = index => {
     type: DEBTORS_REDUX_CONSTANTS.VIEW_DEBTOR_ACTIVE_TAB_INDEX,
     index,
   });
+};
+// Reports
+export const getDebtorReportsListData = (id, param) => {
+  return async dispatch => {
+    try {
+      const params = {
+        ...param,
+        // listFor: 'debtor-application',
+      };
+      const response = await DebtorsReportsApiServices.getDebtorsReportListData(id, params);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_SUCCESS,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_FAILURE,
+        data: null,
+      });
+      displayErrors(e);
+    }
+  };
+};
+
+export const getDebtorReportsColumnNameList = () => {
+  return async dispatch => {
+    try {
+      const response = await DebtorsReportsApiServices.getDebtorReportColumnNameList();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.REPORTS.DEBTOR_REPORTS_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.REPORTS.DEBTOR_REPORTS_DEFAULT_COLUMN_LIST_ACTION,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const changeDebtorReportsColumnListStatus = data => {
+  return async dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.REPORTS.UPDATE_DEBTOR_REPORTS_COLUMN_LIST_ACTION,
+      data,
+    });
+  };
+};
+
+export const saveDebtorReportsColumnNameList = ({
+  debtorsReportsColumnNameList = {},
+  isReset = false,
+}) => {
+  return async dispatch => {
+    try {
+      startLoaderButtonOnRequest(
+        `viewDebtorReportColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
+      let data = {
+        isReset: true,
+        columns: [],
+        // columnFor: 'debtor-application',
+      };
+      if (!isReset) {
+        const defaultFields = debtorsReportsColumnNameList.defaultFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        const customFields = debtorsReportsColumnNameList.customFields
+          .filter(e => e.isChecked)
+          .map(e => e.name);
+        data = {
+          ...data,
+          isReset: false,
+          columns: [...defaultFields, ...customFields],
+        };
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          stopLoaderButtonOnSuccessOrFail(
+            `viewDebtorReportColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
+          throw Error();
+        }
+      }
+
+      const response = await DebtorsReportsApiServices.updateDebtorReportColumnNameList(data);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.REPORTS.DEBTOR_REPORTS_DEFAULT_COLUMN_LIST_ACTION,
+          data: debtorsReportsColumnNameList,
+        });
+        successNotification(response?.data?.message || 'Columns updated successfully');
+        stopLoaderButtonOnSuccessOrFail(
+          `viewDebtorReportColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail(
+        `viewDebtorReportColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
+      displayErrors(e);
+    }
+  };
+};
+
+export const getDebtorReportsListForFetch = () => {
+  return async dispatch => {
+    try {
+      const response = await DebtorsReportsApiServices.getDebtorsReportListDataForFetch();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_DATA_FOR_FETCH,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+export const fetchSelectedReportsForDebtor = data => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest('viewDebtorFetchReportButtonLoaderAction');
+      const response = await DebtorsReportsApiServices.fetchSelectedReportsForDebtor(data);
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Reports fetched successfully');
+        stopLoaderButtonOnSuccessOrFail('viewDebtorFetchReportButtonLoaderAction');
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewDebtorFetchReportButtonLoaderAction');
+      displayErrors(e);
+    }
+  };
 };

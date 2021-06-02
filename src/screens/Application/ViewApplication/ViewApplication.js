@@ -10,6 +10,8 @@ import {
   getApplicationDetailById,
   getApplicationModuleList,
   getApplicationNotesList,
+  getApplicationReportsListData,
+  getApplicationReportsListForFetch,
   getApplicationTaskDefaultEntityDropDownData,
   getAssigneeDropDownData,
   getViewApplicationDocumentTypeList,
@@ -80,7 +82,16 @@ const ViewApplication = () => {
     status,
     blockers,
     _id,
+    country,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
+
+  const [isAUSOrNZL, setIsAUZOrNZL] = useState(false);
+
+  useEffect(() => {
+    if (['AUS', 'NZL'].includes(country)) {
+      setIsAUZOrNZL(true);
+    }
+  }, [country]);
 
   useEffect(() => {
     dispatch(getApplicationDetailById(id));
@@ -91,6 +102,13 @@ const ViewApplication = () => {
     dispatch(getViewApplicationDocumentTypeList());
     return () => dispatch(resetApplicationDetail());
   }, [id]);
+
+  useEffect(() => {
+    if (debtorId?.length > 0 && isAUSOrNZL) {
+      dispatch(getApplicationReportsListData(debtorId?.[0]?._id));
+      dispatch(getApplicationReportsListForFetch());
+    }
+  }, [debtorId, isAUSOrNZL]);
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const handleDrawerState = useCallback(async (idDrawer, headers) => {
@@ -335,7 +353,9 @@ const ViewApplication = () => {
             <div className="view-application-details-right">
               <div className="common-white-container">
                 <Accordion className="view-application-accordion">
-                  <ApplicationReportAccordion index={0} />
+                  {isAUSOrNZL && (
+                    <ApplicationReportAccordion debtorId={debtorId?.[0]?._id} index={0} />
+                  )}
                   <ApplicationTaskAccordion applicationId={id} index={1} />
                   <ApplicationNotesAccordion applicationId={id} index={2} />
                   <ApplicationAlertsAccordion index={3} />

@@ -997,3 +997,60 @@ export const changeApplicationStatus = (applicationId, status) => {
     }
   };
 };
+
+// reports
+export const getApplicationReportsListData = id => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationReportsApiServices.getDebtorsReportListData(
+        id
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
+              .APPLICATION_REPORTS_LIST_DATA,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const getApplicationReportsListForFetch = () => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationReportsApiServices.getApplicationReportListDataForFetch();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
+              .FETCH_APPLICATION_REPORTS_LIST_DATA_FOR_FETCH,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const fetchSelectedReportsForApplication = data => {
+  return async () => {
+    try {
+      startLoaderButtonOnRequest('viewApplicationFetchReportButtonLoaderAction');
+      const response = await ApplicationViewApiServices.applicationReportsApiServices.fetchSelectedReportsForApplication(
+        data
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Reports fetched successfully');
+        stopLoaderButtonOnSuccessOrFail('viewApplicationFetchReportButtonLoaderAction');
+      }
+    } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('viewApplicationFetchReportButtonLoaderAction');
+      displayErrors(e);
+    }
+  };
+};

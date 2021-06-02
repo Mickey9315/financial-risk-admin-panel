@@ -217,11 +217,12 @@ const MyWorkNotifications = () => {
         >
           <div className="filter-modal-row">
             <div className="form-title">Select Date</div>
-            <div className="date-picker-container filter-date-picker-container mr-15">
+            <div className="date-picker-container month-year-picker filter-date-picker-container mr-15">
               <DatePicker
                 selected={filterDate}
                 onChange={handleSelectDateChange}
                 showMonthYearPicker
+                showFullMonthYearPicker
                 placeholderText="Select Month"
                 dateFormat="MMM yyyy"
               />

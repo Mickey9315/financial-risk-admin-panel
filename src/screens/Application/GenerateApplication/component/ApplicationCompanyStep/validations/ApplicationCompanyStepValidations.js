@@ -131,12 +131,12 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       entityType: entityType?.value,
       wipeOutDetails,
       address: {
-        property,
-        unitNumber,
+        property: property?.trim()?.length > 0 ? property : undefined,
+        unitNumber: unitNumber?.trim()?.length > 0 ? unitNumber : undefined,
         streetNumber,
-        streetName,
-        streetType: streetType?.value,
-        suburb,
+        streetName: streetName?.trim()?.length > 0 ? streetName : undefined,
+        streetType: streetType?.value?.trim()?.length > 0 ? streetType?.value : undefined,
+        suburb: suburb?.trim()?.length > 0 ? suburb : undefined,
         state: state.value ?? state,
         country: { name: country?.label, code: country?.value },
         postCode,
@@ -155,7 +155,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       validated = true;
     } catch (e) {
       validated = false;
-      throw Error()
+      throw Error();
     }
   }
   dispatch(updateEditApplicationData('company', { errors }));

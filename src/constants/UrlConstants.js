@@ -76,6 +76,11 @@ export const APPLICATION_URLS = {
     APPLICATION_NOTES: {
       GET_NOTES_LIST: `${BASE_URL}note/`,
     },
+    APPLICATION_REPORTS: {
+      APPLICATION_REPORTS_LIST: `${BASE_URL}credit-report/`,
+      APPLICATION_REPORTS_LIST_FOR_FETCH: `${BASE_URL}credit-report/list/`,
+      FETCH_SELECTED_REPORTS_FOR_APPLICATION: `${BASE_URL}credit-report/generate/`,
+    },
   },
 };
 
@@ -223,6 +228,13 @@ export const DEBTORS_URLS = {
       SAVE_NEW_STAKE_HOLDER: `${BASE_URL}debtor/stakeholder/`,
       DELETE_STAKE_HOLDER: `${BASE_URL}debtor/stakeholder/`,
     },
+  },
+  REPORTS: {
+    DEBTOR_REPORTS_LIST: `${BASE_URL}credit-report/`,
+    COLUMN_NAME_LIST_URL: `${BASE_URL}credit-report/column-name/`,
+    UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}credit-report/column-name/`,
+    DEBTOR_REPORTS_LIST_FOR_FETCH: `${BASE_URL}credit-report/list/`,
+    FETCH_SELECTED_REPORTS_FOR_DEBTOR: `${BASE_URL}credit-report/generate/`,
   },
 };
 

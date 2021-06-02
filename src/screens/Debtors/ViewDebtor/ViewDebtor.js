@@ -84,21 +84,34 @@ const ViewInsurer = () => {
     ({ loaderButtonReducer }) => loaderButtonReducer ?? false
   );
 
+  const [isAUSOrNZL, setIsAUSOrNAL] = useState(false);
+
+  useEffect(() => {
+    if (['AUS', 'NZL'].includes(debtorData?.country?.value)) setIsAUSOrNAL(true);
+  }, [debtorData?.country]);
+
   const FINAL_COMPONENTS = useMemo(() => {
     const filteredComponents = [...VIEW_DEBTOR_TABS];
     if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
       filteredComponents.splice(1, 1);
     }
+    if (!isAUSOrNZL) {
+      filteredComponents.splice(filteredComponents?.length - 1, 1);
+    }
+
     return filteredComponents;
-  }, [debtorData]);
+  }, [debtorData, isAUSOrNZL]);
 
   const FINAL_TABS = useMemo(() => {
     const filteredTabs = [...tabs];
     if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
       filteredTabs.splice(1, 1);
     }
+    if (!isAUSOrNZL) {
+      filteredTabs.splice(filteredTabs?.length - 1, 1);
+    }
     return filteredTabs;
-  }, [debtorData]);
+  }, [debtorData, isAUSOrNZL]);
 
   const INPUTS = useMemo(
     () => [
@@ -228,11 +241,26 @@ const ViewInsurer = () => {
     [debtorData, dropdownData]
   );
 
+  const finalInputs = useMemo(() => {
+    if (isAUSOrNZL) {
+      return [...INPUTS];
+    }
+    const filteredData = [...INPUTS];
+    filteredData.splice(0, 2, {
+      isEditable: false,
+      label: 'Registration No.*',
+      placeholder: 'Registration No',
+      type: 'text',
+      name: 'registrationNumber',
+    });
+    return filteredData;
+  }, [INPUTS, isAUSOrNZL]);
+
   useEffect(() => {
     dispatch(getDebtorById(id));
     return () => {
       dispatch({
-        type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTOR_MANAGEMENT_UPDATE_DEBTOR_ACTION,
+        type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_RESET_DEBTOR_DETAILS,
         data: [],
       });
       setViewDebtorActiveTabIndex(0);
@@ -463,7 +491,7 @@ const ViewInsurer = () => {
           </div>
           {debtorData ? (
             <div className="common-detail-container">
-              <div className="common-detail-grid">{INPUTS.map(getComponentFromType)}</div>
+              <div className="common-detail-grid">{finalInputs.map(getComponentFromType)}</div>
             </div>
           ) : (
             <Loader />
