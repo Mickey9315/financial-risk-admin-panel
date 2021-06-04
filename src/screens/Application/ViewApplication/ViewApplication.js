@@ -195,28 +195,27 @@ const ViewApplication = () => {
   const [newCreditLimit, setNewCreditLimit] = useState('');
   const [modifyLimitModal, setModifyLimitModal] = useState(false);
   const toggleModifyLimitModal = useCallback(() => {
-    setNewCreditLimit(creditLimit);
     setModifyLimitModal(!modifyLimitModal);
-  }, [modifyLimitModal, creditLimit]);
+  }, [modifyLimitModal]);
 
   const modifyLimit = useCallback(async () => {
-    try {
-      if (newCreditLimit?.trim()?.length <= 0) {
-        errorNotification('Please provide new credit limit');
-      } else if (newCreditLimit && !newCreditLimit.match(NUMBER_REGEX)) {
-        errorNotification('Please provide valid credit limit');
-      } else {
+    if (newCreditLimit?.toString()?.trim().length <= 0) {
+      errorNotification('Please provide new credit limit');
+    } else if (newCreditLimit && !newCreditLimit?.toString()?.match(NUMBER_REGEX)) {
+      errorNotification('Please provide valid credit limit');
+    } else {
+      try {
         const data = {
           creditLimit: newCreditLimit,
           status: statusToChange?.value,
         };
         await dispatch(changeApplicationStatus(id, data));
         toggleModifyLimitModal();
+      } catch (e) {
+        /**/
       }
-    } catch (e) {
-      /**/
     }
-  }, [newCreditLimit, toggleModifyLimitModal, statusToChange, id]);
+  }, [newCreditLimit, toggleModifyLimitModal, statusToChange?.value, id]);
 
   const modifyLimitButtons = useMemo(
     () => [
@@ -242,7 +241,7 @@ const ViewApplication = () => {
         dispatch(changeApplicationStatus(_id, { status: e?.value }));
       }
     },
-    [toggleConfirmationModal, toggleModifyLimitModal, _id]
+    [toggleConfirmationModal, toggleModifyLimitModal, _id, setStatusToChange]
   );
 
   const changeStatusButton = useMemo(
@@ -260,6 +259,10 @@ const ViewApplication = () => {
     ],
     [toggleConfirmationModal, statusToChange, _id]
   );
+
+  useEffect(() => {
+    setNewCreditLimit(creditLimit);
+  }, [creditLimit]);
 
   return (
     <>

@@ -403,7 +403,7 @@ const Header = () => {
                     setSearchStart(false);
                   }}
                 >
-                  {searchResult?.name}
+                  {searchResult?.title}
                 </li>
               ))}
             </ul>

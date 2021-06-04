@@ -19,6 +19,7 @@ import { applicationPersonStepValidation } from './component/ApplicationPersonSt
 import { applicationDocumentsStepValidations } from './component/ApplicationDocumentsStep/validations/ApplicationDocumentStepValidations';
 import { applicationConfirmationStepValidations } from './component/ApplicationConfirmationStep/validations/ApplicationConfirmationStepValidation';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
+import Loader from '../../../common/Loader/Loader';
 
 const STEP_COMPONENT = [
   <ApplicationCompanyStep />,
@@ -63,6 +64,10 @@ const GenerateApplication = () => {
     ({ application }) => application?.editApplication ?? {}
   );
   const { applicationId } = useQueryParams();
+
+  const { generateApplicationPageLoaderAction } = useSelector(
+    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  );
 
   // for stepper components
   const FILTERED_STEP_COMPONENT = useMemo(() => {
@@ -166,23 +171,29 @@ const GenerateApplication = () => {
 
   return (
     <>
-      <div className="breadcrumb-button-row">
-        <div className="breadcrumb">
-          <span onClick={backToApplication}>Application List</span>
-          <span className="material-icons-round">navigate_next</span>
-          <span>Generate Application</span>
-        </div>
-      </div>
-      <Stepper
-        className="mt-10"
-        steps={FILTERED_STEPS}
-        stepIndex={applicationStage ?? 0}
-        onChangeIndex={onChangeIndex}
-        nextClick={onNextClick}
-        addStepClick={addStepClick}
-      >
-        {FILTERED_STEP_COMPONENT[applicationStage ?? 0]}
-      </Stepper>
+      {!generateApplicationPageLoaderAction ? (
+        <>
+          <div className="breadcrumb-button-row">
+            <div className="breadcrumb">
+              <span onClick={backToApplication}>Application List</span>
+              <span className="material-icons-round">navigate_next</span>
+              <span>Generate Application</span>
+            </div>
+          </div>
+          <Stepper
+            className="mt-10"
+            steps={FILTERED_STEPS}
+            stepIndex={applicationStage ?? 0}
+            onChangeIndex={onChangeIndex}
+            nextClick={onNextClick}
+            addStepClick={addStepClick}
+          >
+            {FILTERED_STEP_COMPONENT[applicationStage ?? 0]}
+          </Stepper>
+        </>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 };

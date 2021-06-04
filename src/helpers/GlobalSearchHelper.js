@@ -33,17 +33,17 @@ const InsurerTabMapper = {
   matrix: 2,
 };
 
-const handleSearchWithSubModules = (path, module, isSubModule, subModuleName, history) => {
-  if (isSubModule) {
+const handleSearchWithSubModules = (path, module, hasSubModule, subModule, history) => {
+  if (hasSubModule) {
     switch (module) {
       case 'client':
-        setViewClientActiveTabIndex(ClientTabMapper?.[subModuleName]);
+        setViewClientActiveTabIndex(ClientTabMapper?.[subModule]);
         break;
       case 'debtor':
-        setViewDebtorActiveTabIndex(DebtorsTabMapper?.[subModuleName]);
+        setViewDebtorActiveTabIndex(DebtorsTabMapper?.[subModule]);
         break;
       case 'insurer':
-        setViewInsurerActiveTabIndex(InsurerTabMapper?.[subModuleName]);
+        setViewInsurerActiveTabIndex(InsurerTabMapper?.[subModule]);
         break;
       case 'setting':
         setSettingActiveTabIndex(1);
@@ -57,31 +57,27 @@ const handleSearchWithSubModules = (path, module, isSubModule, subModuleName, hi
 
 export const handleGlobalSearchSelect = (data, history) => {
   try {
-    const { module, _id, isSubModuleTab, subModule } = data;
+    const { module, _id, hasSubModule, subModule, status } = data;
     switch (module) {
       case 'my-work':
         handleSearchWithSubModules(
           `/my-work/view/${_id}`,
           module,
-          isSubModuleTab,
+          hasSubModule,
           subModule,
           history
         );
         break;
       case 'application':
-        handleSearchWithSubModules(
-          `/applications/detail/view/${_id}`,
-          module,
-          isSubModuleTab,
-          subModule,
-          history
-        );
+        if (status === 'DRAFT')
+          history.push(`/applications/application/generate/?applicationId=${_id}`);
+        else history.push(`/applications/detail/view/${_id}`);
         break;
       case 'client':
         handleSearchWithSubModules(
           `/clients/client/view/${_id}`,
           module,
-          isSubModuleTab,
+          hasSubModule,
           subModule,
           history
         );
@@ -90,7 +86,7 @@ export const handleGlobalSearchSelect = (data, history) => {
         handleSearchWithSubModules(
           `/debtors/debtor/view/${_id}`,
           module,
-          isSubModuleTab,
+          hasSubModule,
           subModule,
           history
         );
@@ -99,7 +95,7 @@ export const handleGlobalSearchSelect = (data, history) => {
         handleSearchWithSubModules(
           `/insurer/view/${_id}`,
           module,
-          isSubModuleTab,
+          hasSubModule,
           subModule,
           history
         );
@@ -108,7 +104,7 @@ export const handleGlobalSearchSelect = (data, history) => {
         handleSearchWithSubModules(
           `/users/user/view/${_id}`,
           module,
-          isSubModuleTab,
+          hasSubModule,
           subModule,
           history
         );

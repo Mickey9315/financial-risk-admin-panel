@@ -153,14 +153,17 @@ export const getApplicationFilter = () => {
 export const getApplicationDetail = applicationId => {
   return async dispatch => {
     try {
+      startLoaderButtonOnRequest('generateApplicationPageLoaderAction');
       const response = await ApplicationApiServices.getApplicationDetail(applicationId);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS,
           data: response.data.data,
         });
+        stopLoaderButtonOnSuccessOrFail('generateApplicationPageLoaderAction');
       }
     } catch (e) {
+      stopLoaderButtonOnSuccessOrFail('generateApplicationPageLoaderAction');
       displayErrors(e);
     }
   };

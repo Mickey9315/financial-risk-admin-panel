@@ -287,6 +287,13 @@ const ViewClient = () => {
               onChange={onChangeAssignee}
               isSearchable
             />
+            <span>Insurer Name</span>
+            <Input
+              type="text"
+              readOnly
+              placeholder="N/A"
+              value={viewClientData?.insurerId?.name ?? ''}
+            />
             <span>IBIS Sector</span>
             <Input
               type="text"
