@@ -1,0 +1,23 @@
+.react-select-container.overdue-month-picker {
+  min-height: 47px;
+  max-height: 47px;
+  width: 200px;
+  margin-right: 10px;
+
+  .react-select__indicators {
+    align-self: center;
+  }
+
+  .react-select__control {
+    min-height: 47px;
+    max-height: 47px;
+    border-radius: 10px;
+  }
+}
+
+.new-submission-modal {
+  .date-picker-container, .react-select-container, .react-select-container .react-select__control {
+    min-height: 47px;
+    max-height: 47px;
+  }
+}

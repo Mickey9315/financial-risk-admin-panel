@@ -1,11 +1,11 @@
-.react-select__control {
-  max-height: 32px !important;
-  min-height: 32px !important;
+.react-select-container .react-select__control {
+  max-height: 32px;
+  min-height: 32px;
   width: 100%;
-  padding: 2px 5px 2px 8px !important;
-  border-color: $border-color !important;
+  padding: 2px 5px 2px 8px;
+  border-color: $border-color!important;
   background-color: white;
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 .isMulti-react-select .react-select__control {
@@ -417,17 +417,21 @@
 }
 
 // for month and year picker starts here
+
 .month-year-picker {
   .react-datepicker {
     max-height: 220px;
     min-height: 220px;
   }
+
   .react-datepicker-year-header {
     padding: 15px 15px 0;
   }
+
   .react-datepicker__month {
     margin: 20px;
   }
+
   .react-datepicker__month-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -435,6 +439,7 @@
     gap: 10px;
     margin: 5px 0;
   }
+
   .react-datepicker__month .react-datepicker__month-text, .react-datepicker__month .react-datepicker__quarter-text {
     width: 100%;;
     padding: 5px;
@@ -442,6 +447,7 @@
     font-family: $font-regular;
     color: $field-color;
   }
+
   .react-datepicker__month-text.react-datepicker__month-text--keyboard-selected {
     background-color: $primary-color;
     color: #ffffff;

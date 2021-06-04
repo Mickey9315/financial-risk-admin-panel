@@ -1,0 +1,66 @@
+.common-white-container.add-overdues-container {
+  padding: 15px 30px;
+}
+
+.client-entry-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  span {
+    font: $title $font-bold;
+    color: $field-color
+  }
+}
+
+.add-overdue-modal {
+  width: 80vw;
+}
+
+.add-modal-full-width-row {
+  font: $subtitle $font-bold;
+  color: $secondary-color;
+}
+
+.add-overdue-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 5%;
+
+  .add-overdue-field-container {
+    display: flex;
+
+    > div, input, textarea, .react-select-container, .react-select-container .react-select__control, .date-picker-container {
+      width: 100%;
+    }
+  }
+
+  .add-overdue-textarea {
+    grid-column: 2;
+    grid-row: 7/span 7;
+  }
+
+  .add-overdue-amount-input, .add-overdue-total-amount {
+    width: 100%;
+    text-align: right;
+  }
+
+  .add-overdue-total-amount-title, .add-overdue-total-amount {
+    font: $subtitle $font-medium;
+    color: $secondary-color!important;
+  }
+}
+
+.add-overdue-title {
+  width: 35%;
+  min-width: 200px;
+  margin-top: 5px;
+  font: $subtitle $font-regular;
+  color: $field-color;
+}
+
+.add-overdues-save-button {
+  margin-top: 25px;
+  width: 100%;
+  text-align: right;
+}

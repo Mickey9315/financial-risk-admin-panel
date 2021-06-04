@@ -113,6 +113,14 @@
   margin-bottom: .938rem;
 }
 
+.bg-white {
+  background-color: #ffffff;
+}
+
+.bg-background-color {
+  background-color: $background-color;
+}
+
 .form-title {
   width: 80px;
   font: $subtitle $font-medium;

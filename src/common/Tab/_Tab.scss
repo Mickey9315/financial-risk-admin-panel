@@ -1,3 +1,40 @@
+.tab-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  border-radius: 10px;
+}
+
+.tab-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 7px 10px;
+  background-color: $primary-color-1;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab {
+  margin-right: 10px;
+  padding: 15px;
+  font: $title $font-medium;
+  color: $field-color;
+  white-space: nowrap;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tab:last-child {
+  margin-right: 20px;
+}
+
+.active-tab {
+  color: white;
+  background-color: $primary-color;
+}
+
 .tab-content-header-row {
   display: flex;
   justify-content: space-between;
@@ -8,4 +45,35 @@
 
 .tab:hover:not(.active-tab) {
   color: $primary-color;
+}
+
+.tab-prev-next-button {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #ffffff;
+  background-color: rgba(56,85,143,1);
+  cursor: pointer;
+}
+
+.tab-prev-button {
+  left: 0;
+}
+
+.tab-next-button {
+  right: 0;
+}
+
+.hidden-tab-paddle {
+  display: none;
+}
+
+.dummy-tab-div {
+  height: 50px;
+  width: 50px;
+  padding: 0 10px;
 }

@@ -17,6 +17,7 @@
 @import "src/screens/Clients/ViewClient/ViewClient";
 @import "src/screens/Debtors/components/debtorTabs";
 @import "src/screens/Debtors/ViewDebtor/DebtorsTabs";
+@import "src/screens/Reports/Reports";
 @import "src/screens/Insurer/Components/InsurerMatrixTab/InsurerMatrixTab";
 @import "src/screens/Insurer/InsurerList/InsurerList";
 @import "src/screens/Insurer/ViewInsurer/ViewInsurer";
@@ -24,6 +25,10 @@
 @import "src/screens/MyWork/MyWorkNotifications/MyWorkNotifications";
 @import "src/screens/MyWork/MyWorkTasks/MyWorkTasks";
 @import "src/screens/MyWork/MyWorkTasks/MyWorkAddTask/MyWorkAddTask";
+@import "src/screens/Overdues/OverduesList/OverduesList";
+@import "src/screens/Overdues/OverduesList/AddOverdues/AddOverdues";
+@import "src/screens/Claims/ClaimsList/ClaimsList";
+@import "src/screens/Claims/AddViewClaims/AddViewClaims";
 @import "src/screens/Settings/Settings";
 @import "src/screens/Users/AddUser/AddUser";
 @import "src/screens/Users/UserList/UserList";

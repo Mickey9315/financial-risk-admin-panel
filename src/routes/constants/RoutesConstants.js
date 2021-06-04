@@ -26,13 +26,20 @@ const MyWork = lazy(() => import('../../screens/MyWork/MyWork'));
 const MyWorkAddTask = lazy(() =>
   import('../../screens/MyWork/MyWorkTasks/MyWorkAddTask/MyWorkAddTask')
 );
+const OverduesList = lazy(() => import('../../screens/Overdues/OverduesList/OverduesList'));
+const AddOverdues = lazy(() =>
+  import('../../screens/Overdues/OverduesList/AddOverdues/AddOverdues')
+);
+const Settings = lazy(() => import('../../screens/Settings/Settings'));
+const DebtorsList = lazy(() => import('../../screens/Debtors/DebtorsList/DebtorsList'));
+const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebtor'));
+const Reports = lazy(() => import('../../screens/Reports/Reports'));
+const Claims = lazy(() => import('../../screens/Claims/ClaimsList/ClaimsList'));
+const AddClaims = lazy(() => import('../../screens/Claims/AddViewClaims/AddViewClaims'));
 const MyWorkEditTask = lazy(() =>
   import('../../screens/MyWork/MyWorkTasks/MyWorkEditTask/MyWorkEditTask')
 );
 const MyWorkViewTask = lazy(() => import('../../screens/MyWork/MyWorkTasks/MyWorkViewTask'));
-const Settings = lazy(() => import('../../screens/Settings/Settings'));
-const DebtorsList = lazy(() => import('../../screens/Debtors/DebtorsList/DebtorsList'));
-const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebtor'));
 const ViewApplication = lazy(() =>
   import('../../screens/Application/ViewApplication/ViewApplication')
 );
@@ -120,14 +127,27 @@ export const ROUTES_CONSTANTS = [
   },
   {
     path: '/claims',
+    component: Claims,
+    authenticated: true,
+  },
+  {
+    path: '/claims/add',
+    component: AddClaims,
     authenticated: true,
   },
   {
     path: '/over-dues',
+    component: OverduesList,
+    authenticated: true,
+  },
+  {
+    path: '/over-dues/:period',
+    component: AddOverdues,
     authenticated: true,
   },
   {
     path: '/reports',
+    component: Reports,
     authenticated: true,
   },
   {

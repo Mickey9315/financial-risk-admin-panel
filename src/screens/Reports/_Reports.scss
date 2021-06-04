@@ -1,0 +1,45 @@
+.report-container {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(100px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.report {
+  min-height: 180px;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  cursor: pointer;
+
+  .icon {
+    margin-bottom: 20px;
+    padding: 10px;
+    color: #ffffff;
+    background-color: $primary-color;
+    border-radius: 10px;
+  }
+
+  .report-title {
+    font: 28px $font-medium;
+    color: $primary-color;
+  }
+}
+
+.report-selected {
+  background-color: $primary-color;
+  color: #ffffff;
+
+  .icon {
+    color: $primary-color;
+    background-color: #ffffff;
+  }
+
+  .report-title {
+    color: #ffffff;
+  }
+}
+
+.report-tooltip {
+  text-transform: lowercase;
+}

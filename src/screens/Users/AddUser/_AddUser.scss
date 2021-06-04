@@ -30,8 +30,6 @@
   color: $primary-color;
 }
 
-
-
 .module-container {
   display: grid;
   display: -ms-grid;
@@ -60,4 +58,10 @@
   * {
     cursor: not-allowed;
   }
+}
+
+.add-user-detail-container span{
+  padding: 0 10px;
+  font: $subtitle $font-medium;
+  color: $field-color;
 }

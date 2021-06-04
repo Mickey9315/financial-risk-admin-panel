@@ -10,11 +10,24 @@
   }
 
   > div {
-    width: 70%;
+    width: 95%;
+  }
+
+  .client-detail {
+    padding: .344rem;
     min-width: 170px;
+    color: $field-color;
+    cursor: not-allowed;
   }
 
    input {
     cursor: default!important;
   }
+}
+
+.client-detail {
+  min-height: 32px;
+  padding: 3px 7px;
+  border: 1px solid $border-color;
+  border-radius: 5px;
 }

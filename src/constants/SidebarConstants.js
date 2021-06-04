@@ -8,7 +8,7 @@ export const SIDEBAR_NAMES = {
   OVERDUE: 'overdue',
   INSURER: 'insurer',
   USER: 'user',
-  REPORT: 'report',
+  REPORT: 'credit-report',
   SETTINGS: 'settings',
 };
 
@@ -49,6 +49,13 @@ export const SIDEBAR_URLS = [
     name: SIDEBAR_NAMES.DEBTOR,
   },
   {
+    label: 'Reports',
+    title: 'Reports',
+    icon: 'pie_chart',
+    url: '/reports',
+    name: SIDEBAR_NAMES.REPORT
+  },
+  {
     label: 'Claims',
     title: 'Claims',
     icon: 'class',
@@ -75,13 +82,6 @@ export const SIDEBAR_URLS = [
     icon: 'admin_panel_settings',
     url: '/users',
     name: SIDEBAR_NAMES.USER,
-  },
-  {
-    label: 'Reports',
-    title: 'Reports',
-    icon: 'pie_chart',
-    url: '/reports',
-    name: SIDEBAR_NAMES.REPORT,
   },
   {
     label: 'Settings',
