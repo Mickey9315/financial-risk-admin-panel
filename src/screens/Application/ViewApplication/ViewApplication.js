@@ -30,6 +30,8 @@ import Loader from '../../../common/Loader/Loader';
 import Modal from '../../../common/Modal/Modal';
 import { NUMBER_REGEX } from '../../../constants/RegexConstants';
 import Input from '../../../common/Input/Input';
+import Button from '../../../common/Button/Button';
+import Switch from '../../../common/Switch/Switch';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -64,6 +66,10 @@ const ViewApplication = () => {
   const { applicationDetail, isLoading } = useMemo(() => viewApplicationData, [
     viewApplicationData,
   ]);
+
+  // status logic
+  const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
+  const [declinedNoteData, setDeclinedNoteData] = useState({ description: '', isPublic: false });
   const [showConfirmModal, setShowConfirmationModal] = useState(false);
   const [statusToChange, setStatusToChange] = useState({});
   const toggleConfirmationModal = useCallback(() => {
@@ -83,6 +89,7 @@ const ViewApplication = () => {
     blockers,
     _id,
     country,
+    notesListLength,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const [isAUSOrNZL, setIsAUZOrNZL] = useState(false);
@@ -209,13 +216,13 @@ const ViewApplication = () => {
           creditLimit: newCreditLimit,
           status: statusToChange?.value,
         };
-        await dispatch(changeApplicationStatus(id, data));
+        await dispatch(changeApplicationStatus(id, data, statusToChange));
         toggleModifyLimitModal();
       } catch (e) {
         /**/
       }
     }
-  }, [newCreditLimit, toggleModifyLimitModal, statusToChange?.value, id]);
+  }, [newCreditLimit, toggleModifyLimitModal, statusToChange, id]);
 
   const modifyLimitButtons = useMemo(
     () => [
@@ -231,38 +238,112 @@ const ViewApplication = () => {
 
   const handleApplicationStatusChange = useCallback(
     e => {
-      if (['CANCELLED', 'DECLINED', 'SURRENDERED', 'WITHDRAWN'].includes(e?.value)) {
+      if (['CANCELLED', 'SURRENDERED', 'WITHDRAWN'].includes(e?.value)) {
         setStatusToChange(e);
         toggleConfirmationModal();
-      } else if (['APPROVED'].includes(e?.value)) {
-        setStatusToChange(e);
-        toggleModifyLimitModal();
       } else {
-        dispatch(changeApplicationStatus(_id, { status: e?.value }));
+        dispatch(changeApplicationStatus(_id, { status: e?.value }, e));
       }
     },
-    [toggleConfirmationModal, toggleModifyLimitModal, _id, setStatusToChange]
+    [toggleConfirmationModal, _id, setStatusToChange, statusToChange]
   );
+
+  const handleDeclinedStatusWithNote = useCallback(async () => {
+    try {
+      if (declinedNoteData?.description?.trim()?.length > 0) {
+        const data = {
+          description: declinedNoteData?.description,
+          isPublic: declinedNoteData?.isPublic,
+          status: statusToChange?.value,
+        };
+        await dispatch(changeApplicationStatus(id, data, statusToChange));
+        dispatch(getApplicationNotesList(id));
+        toggleConfirmationModal();
+      } else {
+        errorNotification('Please Enter Description');
+      }
+    } catch (e) {
+      /**/
+    }
+  }, [declinedNoteData, statusToChange?.value, id, toggleConfirmationModal]);
 
   const changeStatusButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
       {
-        title: 'Change',
+        title: 'Save',
         buttonType: 'danger',
         onClick: async () => {
-          await dispatch(changeApplicationStatus(_id, { status: statusToChange?.value }));
-          toggleConfirmationModal();
+          try {
+            if (notesListLength > 0 || statusToChange?.value !== 'DECLINED') {
+              await dispatch(
+                changeApplicationStatus(_id, { status: statusToChange?.value }, statusToChange)
+              );
+              toggleConfirmationModal();
+            } else {
+              await handleDeclinedStatusWithNote();
+            }
+          } catch (e) {
+            /**/
+          }
         },
-        // isLoading: viewApplicationDeleteTaskButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, statusToChange, _id]
+    [toggleConfirmationModal, statusToChange, _id, handleDeclinedStatusWithNote]
   );
 
   useEffect(() => {
     setNewCreditLimit(creditLimit);
   }, [creditLimit]);
+
+  useEffect(() => {
+    if (['APPROVED', 'DECLINED'].includes(status?.value)) setIsApprovedOrDeclined(true);
+    else {
+      setIsApprovedOrDeclined(false);
+    }
+  }, [status]);
+
+  const rightSideStatusButtons = useMemo(() => {
+    if (!['DECLINED', 'APPROVED'].includes(status?.value)) {
+      return (
+        <div className="right-side-status">
+          <Button
+            buttonType="success"
+            className="small-button"
+            title="Approve"
+            onClick={() => {
+              setStatusToChange({ label: 'Approved', value: 'APPROVED' });
+              toggleModifyLimitModal();
+            }}
+          />
+          <Button
+            buttonType="danger"
+            className="small-button"
+            title="Decline"
+            onClick={() => {
+              setStatusToChange({ label: 'Declined', value: 'DECLINED' });
+              toggleConfirmationModal();
+            }}
+          />
+        </div>
+      );
+    }
+    if (['APPROVED'].includes(status?.value)) {
+      return (
+        <div className="right-side-status">
+          <div>{status?.label}</div>
+        </div>
+      );
+    }
+    if (['DECLINED'].includes(status?.value)) {
+      return (
+        <div className="right-side-status">
+          <div>{status?.label}</div>
+        </div>
+      );
+    }
+    return <></>;
+  }, [status, toggleModifyLimitModal, setStatusToChange, toggleConfirmationModal]);
 
   return (
     <>
@@ -278,17 +359,22 @@ const ViewApplication = () => {
             <div className="view-application-details-left">
               <div className="common-white-container">
                 <div className="">Status</div>
-                <div className="view-application-status">
-                  <ReactSelect
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                    placeholder="Select Status"
-                    name="applicationStatus"
-                    value={status || []}
-                    options={applicationDetail?.applicationStatus}
-                    isDisabled={!isAllowToUpdate}
-                    onChange={handleApplicationStatusChange}
-                  />
+                <div className="application-status-grid">
+                  <div>
+                    <div className="view-application-status">
+                      <ReactSelect
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        placeholder="Select Status"
+                        name="applicationStatus"
+                        value={!isApprovedOrDeclined ? status : []}
+                        options={applicationDetail?.applicationStatus}
+                        isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
+                        onChange={handleApplicationStatusChange}
+                      />
+                    </div>
+                  </div>
+                  {rightSideStatusButtons}
                 </div>
                 <div className="application-details-grid">
                   {applicationDetails?.map(detail => (
@@ -374,13 +460,48 @@ const ViewApplication = () => {
       )}
       {showConfirmModal && (
         <Modal
+          className="add-to-crm-modal"
           header="Application Status"
           buttons={changeStatusButton}
           hideModal={toggleConfirmationModal}
         >
-          <span className="confirmation-message">
-            Are you sure you want to {statusToChange?.label} this application?
-          </span>
+          {notesListLength > 0 || statusToChange?.value !== 'DECLINED' ? (
+            <span className="confirmation-message">
+              Are you sure you want to {statusToChange?.label} this application?
+              <hr />
+              Dont forget to put add a Note.
+            </span>
+          ) : (
+            <>
+              {' '}
+              <span className="confirmation-message">
+                Are you sure you want to {statusToChange?.label} this application?
+              </span>
+              <hr />
+              <div className="add-notes-popup-container">
+                <span>Description</span>
+                <Input
+                  prefixClass="font-placeholder"
+                  placeholder="Note description"
+                  name="description"
+                  type="text"
+                  value={declinedNoteData?.description}
+                  onChange={e => {
+                    setDeclinedNoteData({ ...declinedNoteData, description: e?.target?.value });
+                  }}
+                />
+                <span>Private/Public</span>
+                <Switch
+                  id="selected-note"
+                  name="isPublic"
+                  checked={declinedNoteData.isPublic}
+                  onChange={e => {
+                    setDeclinedNoteData({ ...declinedNoteData, isPublic: e.target.checked });
+                  }}
+                />
+              </div>
+            </>
+          )}
         </Modal>
       )}
       {modifyLimitModal && (

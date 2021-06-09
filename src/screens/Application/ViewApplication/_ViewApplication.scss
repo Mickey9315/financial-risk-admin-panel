@@ -131,6 +131,17 @@
   color: $primary-color;
 }
 
+.application-status-grid{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.right-side-status{
+  display: flex;
+  color:$primary-color;
+}
+
 .view-application-status {
   width: 180px;
   margin-top: 5px;

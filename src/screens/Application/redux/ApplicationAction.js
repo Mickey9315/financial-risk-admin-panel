@@ -981,7 +981,7 @@ export const deleteApplicationNoteAction = (noteId, cb) => {
   };
 };
 
-export const changeApplicationStatus = (applicationId, status) => {
+export const changeApplicationStatus = (applicationId, status, statusToChange) => {
   return async dispatch => {
     try {
       const response = await ApplicationViewApiServices.changeApplicationStatus(
@@ -992,7 +992,7 @@ export const changeApplicationStatus = (applicationId, status) => {
         successNotification(response?.data?.message ?? 'Application status updated successfully.');
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_STATUS_CHANGE_ACTION,
-          data: status,
+          data: statusToChange,
         });
       }
     } catch (e) {

@@ -106,7 +106,6 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     prevRef,
     australianStates,
     newZealandStates,
-    updateSinglePersonState,
   ]);
 
   const {
@@ -355,7 +354,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         type: isAusOrNew ? 'select' : 'text',
         name: 'state',
         data: stateValue || [],
-        value: !isAusOrNew ? state?.label : state ?? '',
+        value: isAusOrNew ? state ?? [] : state ?? '',
       },
       {
         label: 'Contact Details',
@@ -736,7 +735,6 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       handleSelectInputChange,
       handleEmailChange,
       handleTextInputChange,
-      isAusOrNew,
       handleEntityChange,
       handleSearchTextInputKeyDown,
     ]

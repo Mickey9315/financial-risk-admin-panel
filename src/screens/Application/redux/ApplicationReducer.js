@@ -122,7 +122,9 @@ const initialApplicationList = {
 
   viewApplication: {
     isLoading: false,
-    applicationDetail: {},
+    applicationDetail: {
+      notesListLength: 0,
+    },
     task: {
       taskList: [],
       addTask: {},
@@ -530,16 +532,13 @@ export const application = (state = initialApplicationList, action) => {
       };
 
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_STATUS_CHANGE_ACTION: {
-      const newStatus = state?.viewApplication?.applicationDetail?.applicationStatus?.find(
-        status => status?.value === action?.data?.status
-      );
       return {
         ...state,
         viewApplication: {
           ...state?.viewApplication,
           applicationDetail: {
             ...state?.viewApplication?.applicationDetail,
-            status: newStatus,
+            status: action?.data,
           },
         },
       };
@@ -707,6 +706,10 @@ export const application = (state = initialApplicationList, action) => {
           notes: {
             ...state?.viewApplication?.notes,
             noteList: action?.data,
+          },
+          applicationDetail: {
+            ...state?.viewApplication?.applicationDetail,
+            notesListLength: action?.data?.docs?.length,
           },
         },
       };
