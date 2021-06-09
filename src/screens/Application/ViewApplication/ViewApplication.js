@@ -63,9 +63,10 @@ const ViewApplication = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const viewApplicationData = useSelector(({ application }) => application?.viewApplication ?? {});
-  const { applicationDetail, isLoading } = useMemo(() => viewApplicationData, [
-    viewApplicationData,
-  ]);
+  const { applicationDetail, isLoading } = useMemo(
+    () => viewApplicationData,
+    [viewApplicationData]
+  );
 
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
@@ -342,20 +343,7 @@ const ViewApplication = () => {
         </div>
       );
     }
-    if (['APPROVED'].includes(status?.value)) {
-      return (
-        <div className="right-side-status">
-          <div>{status?.label}</div>
-        </div>
-      );
-    }
-    if (['DECLINED'].includes(status?.value)) {
-      return (
-        <div className="right-side-status">
-          <div>{status?.label}</div>
-        </div>
-      );
-    }
+
     return <></>;
   }, [status, toggleModifyLimitModal, setStatusToChange, toggleConfirmationModal]);
 
@@ -376,17 +364,33 @@ const ViewApplication = () => {
                 <div className="application-status-grid">
                   <div>
                     <div className="view-application-status">
-                      <ReactSelect
-                        className="react-select-container"
-                        classNamePrefix="react-select"
-                        placeholder="Select Status"
-                        name="applicationStatus"
-                        value={!isApprovedOrDeclined ? status : []}
-                        options={applicationDetail?.applicationStatus}
-                        isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
-                        onChange={handleApplicationStatusChange}
-                      />
-                      {!isAllowToUpdate && (
+                      {isApprovedOrDeclined ? (
+                        <div>
+                          {['APPROVED'].includes(status?.value) && (
+                            <div className="application-status approved-application-status">
+                              {status?.label}
+                            </div>
+                          )}
+                          {['DECLINED'].includes(status?.value) && (
+                            <div className="application-status declined-application-status">
+                              {status?.label}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <ReactSelect
+                          className="react-select-container"
+                          classNamePrefix="react-select"
+                          placeholder="Select Status"
+                          name="applicationStatus"
+                          value={!isApprovedOrDeclined ? status : []}
+                          options={applicationDetail?.applicationStatus}
+                          isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
+                          onChange={handleApplicationStatusChange}
+                        />
+                      )}
+
+                      {!isAllowToUpdate && !isApprovedOrDeclined && (
                         <div className="ui-state-error">
                           You don&apos;t have access to approve application, please contact admin
                           that.
@@ -394,7 +398,7 @@ const ViewApplication = () => {
                       )}
                     </div>
                   </div>
-                  {rightSideStatusButtons}
+                  {isAllowToUpdate && rightSideStatusButtons}
                 </div>
                 <div className="application-details-grid">
                   {applicationDetails?.map(detail => (
@@ -487,17 +491,14 @@ const ViewApplication = () => {
         >
           {notesListLength > 0 || statusToChange?.value !== 'DECLINED' ? (
             <span className="confirmation-message">
-              Are you sure you want to {statusToChange?.label} this application?
-              <hr />
-              Dont forget to put add a Note.
+              Are you sure you want to {statusToChange?.label} this application? Dont forget to put
+              add a Note.
             </span>
           ) : (
             <>
-              {' '}
-              <span className="confirmation-message">
-                Are you sure you want to {statusToChange?.label} this application?
-              </span>
-              <hr />
+              <div className="font-field mb-30">
+                Are you sure you want to decline this application?
+              </div>
               <div className="add-notes-popup-container">
                 <span>Description</span>
                 <Input

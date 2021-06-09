@@ -142,6 +142,20 @@
   color:$primary-color;
 }
 
+.application-status {
+  padding: 7px 10px;
+  color: white;
+  border-radius: 5px;
+}
+
+.approved-application-status {
+background-color: $success-color;
+}
+
+.declined-application-status {
+  background-color: $error-color;
+}
+
 .view-application-status {
   display: flex;
   align-items: center;
