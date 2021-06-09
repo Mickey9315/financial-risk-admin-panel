@@ -65,16 +65,16 @@ const Table = props => {
   const [expandedRowId, setExpandedRow] = useState(-1);
 
   const handleRowExpansion = useCallback(
-          id => {
-            if (expandedRowId === id) {
-              setExpandedRow(-1);
-            } else {
-              setExpandedRow(id);
-            }
+    id => {
+      if (expandedRowId === id) {
+        setExpandedRow(-1);
+      } else {
+        setExpandedRow(id);
+      }
 
-            recordSelected(id);
-          },
-          [expandedRowId]
+      recordSelected(id);
+    },
+    [expandedRowId]
   );
 
   const handleDrawerState = useCallback(async (header, currentData, row) => {
@@ -302,7 +302,7 @@ function Row(props) {
     rowClass,
     recordSelected,
     isExpandable,
-          dataIndex,
+    dataIndex,
     handleRowExpansion,
     isRowExpanded,
     haveActions,
@@ -346,17 +346,17 @@ function Row(props) {
   return (
     <>
       <tr
-              onClick={() =>
-                      isExpandable ? handleRowExpansion(data?.id) : recordSelected(data.id, data)
-              }
-              className={`
+        onClick={() =>
+          isExpandable ? handleRowExpansion(data?.id) : recordSelected(data.id, data)
+        }
+        className={`
           main-table-row
           ${
-                      data?.isCompleted?.props?.children?.props?.checked
-                              ? `completedTask ${rowClass}`
-                              : rowClass
-              }
-              ${dataIndex%2 === 0 ? 'bg-white' : 'bg-background-color'}
+            data?.isCompleted?.props?.children?.props?.checked
+              ? `completedTask ${rowClass}`
+              : rowClass
+          }
+              ${dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}
         `}
       >
         {showCheckbox && (
@@ -365,13 +365,13 @@ function Row(props) {
           </td>
         )}
         {isExpandable && (
-                <td align="center" className="expandable-arrow">
+          <td align="center" className="expandable-arrow">
             <span
-                    className={`material-icons-round ${isRowExpanded ? 'rotate-expandable-arrow' : ''}`}
+              className={`material-icons-round ${isRowExpanded ? 'rotate-expandable-arrow' : ''}`}
             >
               keyboard_arrow_right
             </span>
-                </td>
+          </td>
         )}
         {Object.entries(data).map(([key, value], index) => {
           switch (key) {
@@ -392,7 +392,7 @@ function Row(props) {
                       overlay={<span>{value ?? 'No value'}</span>}
                       placement="topLeft"
                     >
-                  {value ?? '-'}
+                      {value ?? '-'}
                     </Tooltip>
                   ) : (
                     value ?? '-'
@@ -422,7 +422,9 @@ function Row(props) {
           <td
             align="right"
             valign={valign}
-            className={`fixed-action-menu ${showActionMenu ? 'fixed-action-menu-clicked' : ''} ${dataIndex%2===0 ? 'bg-white' : 'bg-background-color'}`}
+            className={`fixed-action-menu ${showActionMenu ? 'fixed-action-menu-clicked' : ''} ${
+              dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'
+            }`}
           >
             <span
               className="material-icons-round cursor-pointer table-action"

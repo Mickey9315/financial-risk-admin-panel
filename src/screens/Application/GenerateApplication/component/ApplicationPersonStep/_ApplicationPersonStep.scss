@@ -6,9 +6,10 @@
   display: grid;
   grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
   align-items: center;
-  padding: 5px 30px;
+  padding: 5px 30px 30px;
   gap: 10px;
   font: $subtitle $font-regular!important;
+
   > span {
     color: $primary-color;
   }
@@ -85,7 +86,4 @@
   left: calc(50% - 8px);
   font: $subtitle $font-medium;
   color: $primary-color;
-}
-.material-icons{
-  color: $placeholder-color;
 }

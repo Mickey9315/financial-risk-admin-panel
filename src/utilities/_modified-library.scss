@@ -8,6 +8,10 @@
   box-shadow: none;
 }
 
+.react-datepicker-popper {
+  z-index: 10!important;
+}
+
 .isMulti-react-select .react-select__control {
   min-height: unset!important;
   max-height: unset!important;

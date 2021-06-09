@@ -34,6 +34,7 @@ const Settings = lazy(() => import('../../screens/Settings/Settings'));
 const DebtorsList = lazy(() => import('../../screens/Debtors/DebtorsList/DebtorsList'));
 const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebtor'));
 const Reports = lazy(() => import('../../screens/Reports/Reports'));
+const ViewReports = lazy(() => import('../../screens/Reports/ViewReports/ViewReport'));
 const Claims = lazy(() => import('../../screens/Claims/ClaimsList/ClaimsList'));
 const AddClaims = lazy(() => import('../../screens/Claims/AddViewClaims/AddViewClaims'));
 const MyWorkEditTask = lazy(() =>
@@ -148,6 +149,11 @@ export const ROUTES_CONSTANTS = [
   {
     path: '/reports',
     component: Reports,
+    authenticated: true,
+  },
+  {
+    path: '/reports/:type',
+    component: ViewReports,
     authenticated: true,
   },
   {

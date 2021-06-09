@@ -64,13 +64,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   );
   const partners = useSelector(({ application }) => application?.editApplication?.partners ?? []);
 
-  const {
-    streetType,
-    australianStates,
-    countryList,
-    newZealandStates,
-    companyEntityType,
-  } = useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
+  const { streetType, australianStates, countryList, newZealandStates, companyEntityType } =
+    useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
 
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
@@ -475,6 +470,22 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     ]
   );
 
+  const handleEntityNameOnSearchClick = useCallback(
+    ref => {
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.SHOW_DRAWER,
+        data: null,
+      });
+      setSearchedEntityNameValue(ref?.value.toString());
+      const params = {
+        searchString: ref?.value,
+        clientId: companyState?.clientId?.value,
+      };
+      dispatch(searchApplicationCompanyEntityName(params));
+    },
+    [companyState?.clientId, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
+  );
+
   const handleEntityNameSearch = useCallback(
     e => {
       if (e.key === 'Enter') {
@@ -502,6 +513,32 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       dispatch(searchApplicationCompanyEntityName(params));
     }
   }, [searchedEntityNameValue, companyState?.clientId]);
+
+  const handleSearchTextOnSearchClick = useCallback(
+    async ref => {
+      try {
+        const params = {
+          searchString: ref?.value,
+          clientId: companyState?.clientId?.value,
+        };
+        const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
+
+        if (response) {
+          updatePersonState(response);
+          prevRef.current = {
+            ...prevRef.current,
+            acn: response?.acn,
+            abn: response?.abn,
+          };
+        }
+      } catch {
+        let value = prevRef?.current?.abn;
+        if (ref?.name === 'acn') value = prevRef?.current?.acn;
+        updateSinglePersonState(ref?.name, value);
+      }
+    },
+    [companyState, updatePersonState, updateSinglePersonState, prevRef.current]
+  );
 
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
@@ -595,7 +632,9 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
             <Input
               type="text"
               name={input.name}
-              suffix={<span className="material-icons">search</span>}
+              suffix="search"
+              suffixClick={handleSearchTextOnSearchClick}
+              suffixClass="application-search-suffix"
               borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               value={input?.value}
@@ -634,7 +673,9 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
             <Input
               type="text"
               name={input.name}
-              suffix={<span className="material-icons">search</span>}
+              suffix="search"
+              suffixClass="application-search-suffix"
+              suffixClick={handleEntityNameOnSearchClick}
               borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
@@ -798,6 +839,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       )}
       <AccordionItem
         index={index}
+        isExpanded
         className="application-person-step-accordion"
         header={itemHeader ?? 'Director Details'}
         prefix="expand_more"

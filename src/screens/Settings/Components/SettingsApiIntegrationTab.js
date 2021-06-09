@@ -16,14 +16,16 @@ const SettingsApiIntegrationTab = () => {
     ({ settingReducer }) => settingReducer?.apiIntegration ?? {}
   );
 
-  const apiIntegrationDetails = useMemo(() => apiIntegrationData?.integration ?? {}, [
-    apiIntegrationData,
-  ]);
+  const apiIntegrationDetails = useMemo(
+    () => apiIntegrationData?.integration ?? {},
+    [apiIntegrationData]
+  );
   const isLoading = useMemo(() => apiIntegrationData?.isLoading ?? false, [apiIntegrationData]);
   const [errorElementList, setErrorElementList] = useState([]);
-  const { equifax, illion, rss, abn } = useMemo(() => apiIntegrationDetails ?? {}, [
-    apiIntegrationDetails,
-  ]);
+  const { equifax, illion, rss, abn } = useMemo(
+    () => apiIntegrationDetails ?? {},
+    [apiIntegrationDetails]
+  );
 
   const settingsApiIntegrationRow = useMemo(
     () => [
@@ -36,13 +38,13 @@ const SettingsApiIntegrationTab = () => {
             title: 'User name',
             name: 'username',
             placeholder: 'Enter user name',
-            value: equifax?.username,
+            value: equifax?.username ?? '-',
           },
           {
             title: 'Password',
             name: 'password',
             placeholder: 'Enter password',
-            value: equifax?.password,
+            value: equifax?.password ?? '-',
           },
         ],
       },
@@ -54,19 +56,19 @@ const SettingsApiIntegrationTab = () => {
             title: 'User Id',
             name: 'userId',
             placeholder: 'Enter user ID',
-            value: illion?.userId,
+            value: illion?.userId ?? '-',
           },
           {
             title: 'Subscriber ID',
             name: 'subscriberId',
             placeholder: 'Enter subscriber ID',
-            value: illion?.subscriberId,
+            value: illion?.subscriberId ?? '-',
           },
           {
             title: 'Password',
             name: 'password',
             placeholder: 'Enter password',
-            value: illion?.password,
+            value: illion?.password ?? '-',
           },
         ],
       },
@@ -79,7 +81,7 @@ const SettingsApiIntegrationTab = () => {
             name: 'accessToken',
             placeholder: 'Enter access token',
             type: 'textarea',
-            value: rss?.accessToken,
+            value: rss?.accessToken ?? '-',
           },
         ],
       },
@@ -91,7 +93,7 @@ const SettingsApiIntegrationTab = () => {
             title: 'GUID',
             name: 'guid',
             placeholder: 'Enter GUID',
-            value: abn?.guid,
+            value: abn?.guid ?? '-',
             className: 'abn-guid-input',
           },
         ],
@@ -109,10 +111,8 @@ const SettingsApiIntegrationTab = () => {
     [setIsEditItemIndex, errorElementList]
   );
 
-  const {
-    settingApiIntegrationButtonLoaderAction,
-    settingApiIntegrationTestButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  const { settingApiIntegrationButtonLoaderAction, settingApiIntegrationTestButtonLoaderAction } =
+    useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const onInputValueChange = useCallback((row, e) => {
     const { name, value } = e.target;

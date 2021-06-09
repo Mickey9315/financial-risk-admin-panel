@@ -32,7 +32,23 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
     errors.creditLimit = 'Credit limit should be greater than zero';
     validated = false;
   }
-
+  if (data?.outstandingAmount && !data?.outstandingAmount?.toString()?.match(NUMBER_REGEX)) {
+    errors.outstandingAmount = 'Please enter valid outstanding amount';
+    validated = false;
+  } else if (parseInt(data?.outstandingAmount, 10) === 0) {
+    errors.outstandingAmount = 'Outstanding amount should be greater than zero';
+    validated = false;
+  }
+  if (!data?.ordersOnHand || data?.ordersOnHand?.toString()?.trim()?.length <= 0) {
+    errors.ordersOnHand = 'Please enter credit limit amount';
+    validated = false;
+  } else if (!data?.ordersOnHand?.toString()?.match(NUMBER_REGEX)) {
+    errors.ordersOnHand = 'Please enter valid credit limit amount';
+    validated = false;
+  } else if (parseInt(data?.ordersOnHand, 10) === 0) {
+    errors.ordersOnHand = 'Credit limit should be greater than zero';
+    validated = false;
+  }
   if (validated) {
     const {
       isExtendedPaymentTerms,
@@ -57,7 +73,7 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
     try {
       await dispatch(saveApplicationStepDataToBackend(finalData));
     } catch (e) {
-      throw Error()
+      throw Error();
     }
     validated = true;
   }

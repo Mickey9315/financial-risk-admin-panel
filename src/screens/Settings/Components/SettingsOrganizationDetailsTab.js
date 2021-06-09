@@ -127,15 +127,24 @@ const SettingsOrganizationDetailsTab = () => {
               <>
                 <span>{detail.title}</span>
                 <div>
-                  <Input
-                    type="text"
-                    name={detail.name}
-                    placeholder={isEdit ? detail.placeholder : '-'}
-                    onChange={e => onChangeOrganization(e)}
-                    value={detail?.value}
-                    disabled={!isEdit}
-                    borderClass={`${!isEdit && 'disabled-control'}`}
-                  />
+                  {isEdit ? (
+                    <Input
+                      type="text"
+                      name={detail.name}
+                      placeholder={detail.placeholder}
+                      onChange={e => onChangeOrganization(e)}
+                      value={detail?.value}
+                    />
+                  ) : (
+                    <div
+                      className={`settings-organization-details-value ${
+                        detail?.title === 'website' || ('email' && 'mail-id-value')
+                      }`}
+                    >
+                      {detail?.value}
+                    </div>
+                  )}
+
                   {errorElementList.includes(index) && (
                     <div className="settings-no-value-error">Please enter {detail.errorName}.</div>
                   )}

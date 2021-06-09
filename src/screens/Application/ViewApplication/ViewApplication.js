@@ -83,6 +83,8 @@ const ViewApplication = () => {
     debtorId,
     clientId,
     creditLimit,
+    outstandingAmount,
+    ordersOnHand,
     applicationId,
     isAllowToUpdate,
     status,
@@ -155,6 +157,18 @@ const ViewApplication = () => {
         title: 'Credit Limit',
         value: creditLimit,
         name: 'creditLimit',
+        type: 'text',
+      },
+      {
+        title: 'Outstanding Amount',
+        value: outstandingAmount,
+        name: 'outstandingAmount',
+        type: 'text',
+      },
+      {
+        title: 'Order on Hand',
+        value: ordersOnHand,
+        name: 'ordersOnHand',
         type: 'text',
       },
       {
@@ -372,6 +386,12 @@ const ViewApplication = () => {
                         isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
                         onChange={handleApplicationStatusChange}
                       />
+                      {!isAllowToUpdate && (
+                        <div className="ui-state-error">
+                          You don&apos;t have access to approve application, please contact admin
+                          that.
+                        </div>
+                      )}
                     </div>
                   </div>
                   {rightSideStatusButtons}

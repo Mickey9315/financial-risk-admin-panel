@@ -56,16 +56,18 @@
   justify-content: center;
   height: 100%;
   color: #ffffff;
-  background-color: rgba(56,85,143,1);
+  background-color: $primary-color;
   cursor: pointer;
 }
 
 .tab-prev-button {
   left: 0;
+  border-right: 1px solid $background-color;
 }
 
 .tab-next-button {
   right: 0;
+  border-left: 1px solid $background-color;
 }
 
 .hidden-tab-paddle {

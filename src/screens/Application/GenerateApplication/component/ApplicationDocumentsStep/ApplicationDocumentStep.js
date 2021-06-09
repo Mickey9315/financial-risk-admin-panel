@@ -49,9 +49,10 @@ const ApplicationDocumentStep = () => {
   const { documentTypeList, uploadDocumentApplicationData } = useSelector(
     ({ application }) => application.editApplication?.documents
   );
-  const documentData = useMemo(() => uploadDocumentApplicationData, [
-    uploadDocumentApplicationData,
-  ]);
+  const documentData = useMemo(
+    () => uploadDocumentApplicationData,
+    [uploadDocumentApplicationData]
+  );
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');
@@ -67,9 +68,10 @@ const ApplicationDocumentStep = () => {
     initialApplicationDocumentState
   );
 
-  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
-    selectedApplicationDocuments,
-  ]);
+  const { documentType, description, isPublic } = useMemo(
+    () => selectedApplicationDocuments,
+    [selectedApplicationDocuments]
+  );
 
   const {
     GenerateApplicationDocumentUploadButtonLoaderAction,
@@ -310,7 +312,7 @@ const ApplicationDocumentStep = () => {
         </Modal>
       )}
       <div className="font-secondary f-14 mb-10">Upload Documents</div>
-      <div className="if-yes-row">
+      <div className="upload-document-row d-flex align-center">
         <span className="font-primary mr-15">Upload your documents here</span>
         <IconButton buttonType="primary" title="cloud_upload" onClick={() => toggleUploadModel()} />
       </div>

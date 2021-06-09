@@ -12,7 +12,9 @@ const Switch = props => {
         {...props}
         style={{ height: 0, width: 0 }}
       />
-      <label htmlFor={id} />
+      <label htmlFor={id}>
+        <div />
+      </label>
     </span>
   );
 };

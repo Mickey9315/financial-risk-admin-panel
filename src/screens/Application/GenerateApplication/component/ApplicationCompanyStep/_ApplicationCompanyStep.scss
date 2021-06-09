@@ -1,3 +1,13 @@
+.application-company-container {
+  @extend .client-details-container;
+  padding: 0 10px!important;
+  font: $subtitle $font-regular;
+
+  > div {
+    width:100%
+  }
+}
+
 .application-entity-name-modal {
   min-height: 30vh;
   max-height: 70vh;
@@ -44,6 +54,24 @@
   font: $subtitle $font-medium;
   color: $primary-color;
 }
-.material-icons{
-  color: $placeholder-color;
+
+.application-search-suffix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background-color: $primary-color;
+}
+
+.application-company-step--main-title {
+  margin-top: 5px;
+  font: $title $font-medium;
+  color: $secondary-color;
+}
+
+.application-stepper-divider {
+  width: 100% !important;
+  grid-column: 1/span 4;
+  margin: 10px 0;
+  border-top: 1px solid $primary-color-1;
 }

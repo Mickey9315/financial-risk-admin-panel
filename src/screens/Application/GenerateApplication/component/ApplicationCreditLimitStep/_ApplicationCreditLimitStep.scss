@@ -1,14 +1,11 @@
-.if-yes-row, .upload-document-row {
-  display: flex;
-  align-items: center;
-  margin: 10px 0 20px 0;
-
+.if-yes-row, .credit-limits-note, .upload-document-row {
   span {
     font-size: $subtitle;
   }
 
   .input-container {
     flex: 1;
+    margin-top: 10px;
   }
 }
 
@@ -21,16 +18,25 @@ textarea {
 }
 
 .credit-limit-amount {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 75px 1fr 155px 1fr;
+  gap: 0 10px;
   width: 100%;
   margin: 10px 0 20px 0;
 
   span {
+    margin-top: 7px;
+    white-space: nowrap;
     font-size: $subtitle;
   }
 
   .input-container {
-    width: 60%;
+    width: 100%;
   }
+}
+
+.application-credit-limits-grid {
+  display: grid;
+  grid-template-columns: calc(50% - 15px) calc(50% - 15px);
+  gap: 20px 30px
 }

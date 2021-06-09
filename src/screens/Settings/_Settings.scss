@@ -123,3 +123,17 @@
   font: $subtitle $font-regular;
   color: $error-color;
 }
+
+.settings-organization-details-row {
+  grid-template-columns: 150px minmax(200px, 800px);
+  align-items: baseline;
+  span {
+    margin-top: 5px;
+  }
+}
+
+.settings-organization-details-value {
+  padding: .344rem;
+  font: $subtitle $font-medium;
+  color: $field-color;
+}

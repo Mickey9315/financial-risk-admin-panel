@@ -135,26 +135,23 @@ const ApplicationCompanyStep = () => {
         data: clients,
       },
       {
-        label: 'Unit Number',
-        placeholder: 'Unit Number',
-        type: 'text',
-        name: 'unitNumber',
-        data: [],
+        label: 'Country*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'country',
+        data: countryList,
       },
       {
-        label: 'Debtor',
+        type: 'section',
+        mainTitle: 'Debtor Search',
+      },
+      {
+        label: 'Existing Debtors',
         placeholder: 'Select',
         type: 'select',
         isOr: isAusOrNew,
         name: 'debtorId',
         data: debtors,
-      },
-      {
-        label: 'Street Number*',
-        placeholder: 'Street Number',
-        type: 'text',
-        name: 'streetNumber',
-        data: [],
       },
       {
         label: 'ABN*',
@@ -165,10 +162,10 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'Street Name',
-        placeholder: 'Street Name',
-        type: 'text',
-        name: 'streetName',
+        label: 'ACN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
         data: [],
       },
       {
@@ -180,18 +177,36 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
+        type: 'section',
+        mainTitle: 'Address and Other details',
+      },
+      {
+        label: 'Unit Number',
+        placeholder: 'Unit Number',
+        type: 'text',
+        name: 'unitNumber',
+        data: [],
+      },
+      {
+        label: 'Street Number*',
+        placeholder: 'Street Number',
+        type: 'text',
+        name: 'streetNumber',
+        data: [],
+      },
+      {
+        label: 'Street Name',
+        placeholder: 'Street Name',
+        type: 'text',
+        name: 'streetName',
+        data: [],
+      },
+      {
         label: 'Street Type',
         placeholder: 'Select',
         type: 'select',
         name: 'streetType',
         data: streetType,
-      },
-      {
-        label: 'ACN',
-        placeholder: '01234',
-        type: 'search',
-        name: 'acn',
-        data: [],
       },
       {
         label: 'Suburb',
@@ -206,13 +221,6 @@ const ApplicationCompanyStep = () => {
         type: 'select',
         name: 'entityType',
         data: entityType,
-      },
-      {
-        label: 'Country*',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'country',
-        data: countryList,
       },
       {
         label: 'Trading Name',
@@ -249,13 +257,6 @@ const ApplicationCompanyStep = () => {
         name: 'phoneNumber',
         data: [],
       },
-      {
-        label: 'Outstanding Amount',
-        placeholder: '$0000',
-        type: 'text',
-        name: 'outstandingAmount',
-        data: [],
-      },
     ],
     [clients, debtors, streetType, entityType, stateValue, isAusOrNew, countryList]
   );
@@ -271,7 +272,7 @@ const ApplicationCompanyStep = () => {
       type: 'text',
       name: 'registrationNumber',
     });
-    filteredData.splice(8, 1);
+    filteredData.splice(5, 1);
     return filteredData;
   }, [INPUTS, isAusOrNew]);
 
@@ -403,10 +404,41 @@ const ApplicationCompanyStep = () => {
     ]
   );
 
+  const onHandleSearchClick = useCallback(
+    async ref => {
+      try {
+        if (!companyState?.clientId || companyState?.clientId?.length === 0) {
+          errorNotification('Please select clientId before continue');
+          return;
+        }
+        const searchString = ref?.value;
+        const params = { searchString, clientId: companyState?.clientId?.value };
+        const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
+
+        const { resData } = handleApplicationErrors(response);
+        if (resData) {
+          updateCompanyState(resData);
+          prevRef.current = {
+            ...prevRef.current,
+            acn: resData?.acn,
+            abn: resData?.abn,
+          };
+        }
+      } catch (err) {
+        let value = prevRef?.current?.abn;
+        if (ref?.name === 'acn') value = prevRef?.current?.acn;
+        updateSingleCompanyState(ref?.name, value);
+        handleApplicationErrors(err?.response);
+      }
+    },
+    [companyState, updateCompanyState, updateSingleCompanyState, prevRef.current]
+  );
+
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
-      try {
-        if (e.key === 'Enter') {
+      useRef();
+      if (e.key === 'Enter') {
+        try {
           if (!companyState?.clientId || companyState?.clientId?.length === 0) {
             errorNotification('Please select clientId before continue');
             return;
@@ -424,16 +456,38 @@ const ApplicationCompanyStep = () => {
               abn: resData?.abn,
             };
           }
+        } catch (err) {
+          let value = prevRef?.current?.abn;
+          if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
+          updateSingleCompanyState(e?.target?.name, value);
+          handleApplicationErrors(err?.response);
         }
-      } catch (err) {
-        let value = prevRef?.current?.abn;
-        if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
-        updateSingleCompanyState(e?.target?.name, value);
-        handleApplicationErrors(err?.response);
       }
     },
     [companyState, updateCompanyState, updateSingleCompanyState, prevRef.current]
   );
+
+  const handleEntityNameSearchOnSearchClick = useCallback(async ref => {
+    if (!companyState?.clientId || companyState?.clientId?.length === 0) {
+      errorNotification('Please select client before continue');
+      return;
+    }
+    if (!companyState?.country || companyState?.country?.length === 0) {
+      errorNotification('Please select country before continue');
+      return;
+    }
+    dispatchDrawerState({
+      type: DRAWER_ACTIONS.SHOW_DRAWER,
+      data: null,
+    });
+    setSearchedEntityNameValue(ref.value.toString());
+    const params = {
+      searchString: ref?.value,
+      country: companyState?.country?.value,
+      clientId: companyState?.clientId?.value,
+    };
+    dispatch(searchApplicationCompanyEntityName(params));
+  }, []);
 
   const handleEntityNameSearch = useCallback(
     async e => {
@@ -562,7 +616,9 @@ const ApplicationCompanyStep = () => {
             <Input
               type="text"
               name={input.name}
-              suffix={<span className="material-icons">search</span>}
+              suffix="search"
+              suffixClass="application-search-suffix"
+              suffixClick={onHandleSearchClick}
               borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               value={companyState?.[input.name] ?? ''}
@@ -576,7 +632,9 @@ const ApplicationCompanyStep = () => {
             <Input
               type="text"
               name={input.name}
-              suffix={isAusOrNew && <span className="material-icons">search</span>}
+              suffix={isAusOrNew && 'search'}
+              suffixClick={isAusOrNew ? handleEntityNameSearchOnSearchClick : null}
+              suffixClass="application-search-suffix"
               placeholder={input.placeholder}
               borderClass={input?.isOr && 'is-or-container'}
               onKeyDown={isAusOrNew ? handleEntityNameSearch : null}
@@ -592,7 +650,7 @@ const ApplicationCompanyStep = () => {
           }
           component = (
             <ReactSelect
-              className={`${input?.isOr && 'is-or-container'} 'react-select-container'`}
+              className="react-select-container"
               classNamePrefix="react-select"
               placeholder={input.placeholder}
               name={input.name}
@@ -605,7 +663,11 @@ const ApplicationCompanyStep = () => {
           break;
         }
         default:
-          return null;
+          return (
+            <div className="application-stepper-divider">
+              <div className="application-company-step--main-title">{input?.mainTitle}</div>
+            </div>
+          );
       }
       return (
         <React.Fragment key={input.label}>
@@ -747,9 +809,7 @@ const ApplicationCompanyStep = () => {
           )}
         </Modal>
       )}
-      <div className="common-white-container client-details-container">
-        {finalInputs.map(getComponentFromType)}
-      </div>
+      <div className="application-company-container">{finalInputs.map(getComponentFromType)}</div>
     </>
   );
 };

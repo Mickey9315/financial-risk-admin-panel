@@ -64,9 +64,10 @@ const SettingsDocumentTypeTab = () => {
     () => documentTypeListData ?? {},
     [documentTypeListData]
   );
-  const { documentTitle, documentFor } = useMemo(() => documentTypeAddData ?? {}, [
-    documentTypeAddData,
-  ]);
+  const { documentTitle, documentFor } = useMemo(
+    () => documentTypeAddData ?? {},
+    [documentTypeAddData]
+  );
 
   const [docId, setDocId] = useState(null);
 
@@ -286,7 +287,6 @@ const SettingsDocumentTypeTab = () => {
                 tableClass="main-list-table"
                 data={docs}
                 headers={headers}
-                rowClass="cursor-pointer"
                 haveActions
                 recordActionClick={recordActionClick}
               />

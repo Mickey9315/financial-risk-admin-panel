@@ -11,6 +11,7 @@
   background-color: #ffffff;
   border-radius: 10px;
   cursor: pointer;
+  text-decoration: none;
 
   .icon {
     margin-bottom: 20px;
@@ -21,12 +22,12 @@
   }
 
   .report-title {
-    font: 28px $font-medium;
+    font: $h4 $font-medium;
     color: $primary-color;
   }
 }
 
-.report-selected {
+.report:hover {
   background-color: $primary-color;
   color: #ffffff;
 
