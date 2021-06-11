@@ -207,7 +207,7 @@ const DebtorsStakeHolderTab = () => {
     }));
   }, []);
 
-  const debtorData = useSelector(
+  const { entityType, ...debtorData } = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.selectedDebtorData ?? {}
   );
 
@@ -219,10 +219,15 @@ const DebtorsStakeHolderTab = () => {
     ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDetails ?? {}
   );
 
-  const { streetType, australianStates, companyEntityType, countryList, newZealandStates } =
-    useSelector(
-      ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDropDownData ?? {}
-    );
+  const {
+    streetType,
+    australianStates,
+    companyEntityType,
+    countryList,
+    newZealandStates,
+  } = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDropDownData ?? {}
+  );
 
   const [addStakeHolderModal, setAddStakeHolderModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -280,7 +285,7 @@ const DebtorsStakeHolderTab = () => {
     dispatch(getStakeHolderDropDownData());
   }, []);
 
-  const INPUTS = [
+  const RADIO_INPUTS = [
     {
       type: 'radio',
       name: 'type',
@@ -290,14 +295,17 @@ const DebtorsStakeHolderTab = () => {
           label: 'Individual',
           value: 'individual',
         },
-        {
-          id: 'company',
-          label: 'Company',
-          value: 'company',
-        },
       ],
     },
   ];
+  const INPUTS = useMemo(() => {
+    if (entityType?.value !== 'SOLE_TRADER') {
+      RADIO_INPUTS[0].data.push({ id: 'company', label: 'Company', value: 'company' });
+      return RADIO_INPUTS;
+    }
+    return RADIO_INPUTS;
+  }, [entityType?.value]);
+
   const COMPANY_INPUT = useMemo(
     () => [
       {
@@ -308,7 +316,7 @@ const DebtorsStakeHolderTab = () => {
         placeholder: 'Trading Name',
         type: 'text',
         name: 'tradingName',
-        data: [],
+        value: stakeHolder?.tradingName,
       },
       {
         label: 'Entity Type*',
@@ -316,33 +324,34 @@ const DebtorsStakeHolderTab = () => {
         type: 'select',
         name: 'entityType',
         data: companyEntityType ?? [],
+        value: stakeHolder?.entityType,
       },
       {
         label: 'Entity Name*',
         placeholder: 'Enter Entity',
         type: 'entityName',
         name: 'entityName',
-        data: [],
+        value: stakeHolder?.entityName?.value,
       },
       {
         label: 'ACN',
         placeholder: '01234',
         type: 'search',
         name: 'acn',
-        data: [],
+        value: stakeHolder?.acn,
       },
       {
         label: 'ABN*',
         placeholder: '01234',
         type: 'search',
         name: 'abn',
-        data: [],
+        value: stakeHolder?.abn,
       },
       {
         type: 'blank',
       },
     ],
-    [companyEntityType]
+    [companyEntityType, stakeHolder]
   );
   const INDIVIDUAL_INPUT = useMemo(
     () => [
@@ -362,36 +371,44 @@ const DebtorsStakeHolderTab = () => {
         type: 'select',
         name: 'title',
         data: titleDropDown || [],
+        value: isEdit
+          ? titleDropDown?.filter(title => title.value === stakeHolder?.title)
+          : stakeHolder?.title,
       },
       {
         label: 'First Name*',
         placeholder: 'Enter first name',
         type: 'text',
         name: 'firstName',
+        value: stakeHolder?.firstName,
       },
       {
         label: 'Middle Name',
         placeholder: 'Enter middle name',
         type: 'text',
         name: 'middleName',
+        value: stakeHolder?.middleName,
       },
       {
         label: 'Last Name*',
         placeholder: 'Enter last name',
         type: 'text',
         name: 'lastName',
+        value: stakeHolder?.lastName,
       },
       {
         label: 'Date of Birth*',
         placeholder: 'Select date',
         type: 'date',
         name: 'dateOfBirth',
+        value: stakeHolder?.dateOfBirth ? new Date(stakeHolder?.dateOfBirth) : '',
       },
       {
         label:
           'Do you give your consent for us to check your credit history with external credit agencies?*',
         type: 'checkbox',
         name: 'allowToCheckCreditHistory',
+        value: stakeHolder?.allowToCheckCreditHistory,
       },
       {
         label: 'Identification Details',
@@ -405,6 +422,7 @@ const DebtorsStakeHolderTab = () => {
         placeholder: 'Enter driver license number',
         type: 'text',
         name: 'driverLicenceNumber',
+        value: stakeHolder?.driverLicenceNumber,
       },
       {
         type: 'blank',
@@ -421,20 +439,21 @@ const DebtorsStakeHolderTab = () => {
         placeholder: 'Enter location',
         type: 'text',
         name: 'unitNumber',
+        value: stakeHolder?.unitNumber,
       },
       {
         label: 'Street Number*',
         placeholder: 'Street number',
         type: 'text',
         name: 'streetNumber',
-        data: [],
+        value: stakeHolder?.streetNumber,
       },
       {
         label: 'Street Name',
         placeholder: 'Enter street Name',
         type: 'text',
         name: 'streetName',
-        data: [],
+        value: stakeHolder?.streetName,
       },
       {
         label: 'Street Type',
@@ -442,13 +461,14 @@ const DebtorsStakeHolderTab = () => {
         type: 'select',
         name: 'streetType',
         data: streetType || [],
+        value: stakeHolder?.streetType,
       },
       {
         label: 'Suburb',
         placeholder: 'Suburb',
         type: 'text',
         name: 'suburb',
-        data: [],
+        value: stakeHolder?.suburb,
       },
       {
         label: 'Country*',
@@ -456,12 +476,14 @@ const DebtorsStakeHolderTab = () => {
         type: 'select',
         name: 'country',
         data: countryList || [],
+        value: stakeHolder?.country,
       },
       {
         label: 'Postcode*',
         placeholder: 'Enter postcode',
         type: 'text',
         name: 'postCode',
+        value: stakeHolder?.postCode,
       },
       {
         label: 'State*',
@@ -469,6 +491,7 @@ const DebtorsStakeHolderTab = () => {
         type: isAusOrNew ? 'select' : 'text',
         name: 'state',
         data: stateValue || [],
+        value: stakeHolder?.state,
       },
       {
         label: 'Contact Details',
@@ -482,21 +505,24 @@ const DebtorsStakeHolderTab = () => {
         placeholder: '1234567890',
         type: 'text',
         name: 'phoneNumber',
+        value: stakeHolder?.phoneNumber,
       },
       {
         label: 'Mobile',
         placeholder: '1234567890',
         type: 'text',
         name: 'mobileNumber',
+        value: stakeHolder?.mobileNumber,
       },
       {
         label: 'Email',
         placeholder: 'Enter email address',
         type: 'email',
         name: 'email',
+        value: stakeHolder?.email,
       },
     ],
-    [isAusOrNew, stateValue, titleDropDown, countryList, streetType]
+    [isAusOrNew, stateValue, titleDropDown, countryList, streetType, stakeHolder, isEdit]
   );
 
   const updateStakeHolderSingleDetail = useCallback((name, value) => {
@@ -556,14 +582,18 @@ const DebtorsStakeHolderTab = () => {
     async e => {
       try {
         if (e.key === 'Enter') {
-          const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(e.target.value));
-          if (response) {
-            if (e?.target?.name === 'abn') {
-              prevRef.current.abn = response?.abn;
+          if (e?.target?.value?.trim()?.length > 0) {
+            const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(e.target.value));
+            if (response) {
+              if (e?.target?.name === 'abn') {
+                prevRef.current.abn = response?.abn;
+              } else {
+                prevRef.current.acn = response?.acn;
+              }
+              updateStakeHolderState(response);
             } else {
-              prevRef.current.acn = response?.acn;
+              errorNotification(`Please enter search text for ${e?.target?.name}`);
             }
-            updateStakeHolderState(response);
           }
         }
       } catch {
@@ -575,15 +605,59 @@ const DebtorsStakeHolderTab = () => {
     [updateStakeHolderState, updateStakeHolderSingleDetail, prevRef.current]
   );
 
+  const handleSearchTextOnSearchClick = useCallback(
+    async ref => {
+      try {
+        if (ref?.value?.trim()?.length > 0) {
+          const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(ref.value));
+          if (response) {
+            if (ref?.name === 'abn') {
+              prevRef.current.abn = response?.abn;
+            } else {
+              prevRef.current.acn = response?.acn;
+            }
+            updateStakeHolderState(response);
+          }
+        } else {
+          errorNotification(`Please enter search text for ${ref?.name}`);
+        }
+      } catch {
+        let value = prevRef?.current?.abn;
+        if (ref?.name === 'acn') value = prevRef?.current?.acn;
+        updateStakeHolderSingleDetail(ref?.name, value);
+      }
+    },
+    [updateStakeHolderState, updateStakeHolderSingleDetail, prevRef.current]
+  );
+
   const handleEntityNameSearch = useCallback(
     e => {
       if (e.key === 'Enter') {
+        if (e?.target?.value?.trim()?.length > 0) {
+          dispatchDrawerState({
+            type: DRAWER_ACTIONS.SHOW_DRAWER,
+            data: null,
+          });
+          setSearchedEntityNameValue(e?.target?.value?.toString());
+          dispatch(searchStakeHolderCompanyEntityName(e?.target?.value?.toString()));
+        } else {
+          errorNotification('Please enter search text for entity name');
+        }
+      }
+    },
+    [stakeHolder, dispatchDrawerState, setSearchedEntityNameValue]
+  );
+  const handleEntityNameOnSearchClick = useCallback(
+    ref => {
+      if (ref?.value?.trim()?.length > 0) {
         dispatchDrawerState({
           type: DRAWER_ACTIONS.SHOW_DRAWER,
           data: null,
         });
-        setSearchedEntityNameValue(e?.target?.value?.toString());
-        dispatch(searchStakeHolderCompanyEntityName(e?.target?.value?.toString()));
+        setSearchedEntityNameValue(ref?.value?.toString());
+        dispatch(searchStakeHolderCompanyEntityName(ref?.value?.toString()));
+      } else {
+        errorNotification('Please enter search text for entity name');
       }
     },
     [stakeHolder, dispatchDrawerState, setSearchedEntityNameValue]
@@ -641,11 +715,7 @@ const DebtorsStakeHolderTab = () => {
               type="text"
               placeholder={input.placeholder}
               name={input.name}
-              value={
-                input.name === 'state'
-                  ? (isAusOrNew && stakeHolder?.[input.name]?.label) || stakeHolder?.[input.name]
-                  : stakeHolder?.[input.name]
-              }
+              value={input?.value ?? ''}
               onChange={handleTextInputChange}
             />
           );
@@ -656,7 +726,7 @@ const DebtorsStakeHolderTab = () => {
               type="email"
               placeholder={input.placeholder}
               name={input.name}
-              value={stakeHolder?.[input.name]}
+              value={input?.value ?? ''}
               onChange={handleTextInputChange}
             />
           );
@@ -669,8 +739,8 @@ const DebtorsStakeHolderTab = () => {
               placeholder={input.placeholder}
               suffix="search"
               suffixClass="application-search-suffix"
-              suffixClick={handleSearchTextInputKeyDown}
-              value={stakeHolder?.[input.name]}
+              suffixClick={handleSearchTextOnSearchClick}
+              value={input?.value ?? ''}
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
             />
@@ -684,12 +754,7 @@ const DebtorsStakeHolderTab = () => {
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              value={
-                input?.name === 'title'
-                  ? titleDropDown?.filter(title => title?.value === stakeHolder?.title) ||
-                    stakeHolder?.title
-                  : stakeHolder?.[input.name] || []
-              }
+              value={input?.value ?? []}
               isSearchable
               onChange={handleSelectInputChange}
             />
@@ -701,7 +766,7 @@ const DebtorsStakeHolderTab = () => {
               className="grid-checkbox"
               name={input.name}
               title={input.label}
-              checked={stakeHolder?.allowToCheckCreditHistory}
+              checked={input?.value ?? false}
               onChange={handleCheckBoxEvent}
             />
           );
@@ -713,11 +778,11 @@ const DebtorsStakeHolderTab = () => {
               name={input.name}
               suffix="search"
               suffixClass="application-search-suffix"
-              suffixClick={handleEntityNameSearch}
+              suffixClick={handleEntityNameOnSearchClick}
               setIsEdit
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              value={stakeHolder?.entityName?.value ?? ''}
+              value={input?.value ?? ''}
               onChange={handleEntityChange}
             />
           );
@@ -756,7 +821,7 @@ const DebtorsStakeHolderTab = () => {
               <DatePicker
                 dateFormat="dd/MM/yyyy"
                 placeholderText={input.placeholder}
-                selected={stakeHolder?.dateOfBirth && new Date(stakeHolder?.dateOfBirth)}
+                selected={input?.value}
                 onChange={date => onChangeDate(input.name, date)}
                 showMonthDropdown
                 showYearDropdown
@@ -809,7 +874,8 @@ const DebtorsStakeHolderTab = () => {
       handleRadioButton,
       onChangeDate,
       handleEntityChange,
-      titleDropDown,
+      handleEntityNameOnSearchClick,
+      handleSearchTextOnSearchClick,
     ]
   );
 

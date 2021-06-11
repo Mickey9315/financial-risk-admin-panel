@@ -280,7 +280,6 @@ const OverduesList = () => {
   );
 
   const onAddNewSubmission = useCallback(() => {
-    console.log(newSubmissionDetails);
     if (
       // eslint-disable-next-line no-prototype-builtins
       !newSubmissionDetails.hasOwnProperty('clientId') ||
@@ -430,29 +429,29 @@ const OverduesList = () => {
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Date</div>
-                <div className="date-picker-container filter-date-picker-container mr-15">
+                <div className="date-picker-container month-year-picker mr-15">
                   <DatePicker
                     className="filter-date-picker"
                     selected={startDate}
                     onChange={handleStartDateChange}
                     placeholderText="From Date"
-                    showMonthDropdown
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
                     showYearDropdown
-                    scrollableYearDropdown
-                    dateFormat="dd/MM/yyyy"
+                    showFullMonthYearPicker
                   />
                   <span className="material-icons-round">event_available</span>
                 </div>
-                <div className="date-picker-container filter-date-picker-container">
+                <div className="date-picker-container month-year-picker">
                   <DatePicker
                     className="filter-date-picker"
                     selected={endDate}
                     onChange={handleEndDateChange}
                     placeholderText="To Date"
-                    showMonthDropdown
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
                     showYearDropdown
-                    scrollableYearDropdown
-                    dateFormat="dd/MM/yyyy"
+                    showFullMonthYearPicker
                   />
                   <span className="material-icons-round">event_available</span>
                 </div>

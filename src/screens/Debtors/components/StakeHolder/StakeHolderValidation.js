@@ -150,7 +150,7 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
 
     preparedData = {
       type,
-      title,
+      title: title?.value,
       firstName,
       middleName,
       lastName,

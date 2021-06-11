@@ -7,8 +7,13 @@ import {
 } from '../common/Header/redux/HeaderAction';
 import { store } from '../redux/store';
 
-const SOCKET_URI = 'https://client.trad.dev.gradlesol.com';
-const TYPE = 'user';
+const urls = {
+  dev: 'https://client.trad.dev.gradlesol.com',
+  test: 'https://client.trad.test.humanpixel.com.au',
+};
+
+const SOCKET_URI = urls.dev;
+const TYPE = 'client-user';
 let socket = null;
 
 export const dispatchActionsOnSocketEvents = data => {

@@ -411,18 +411,22 @@ const ApplicationCompanyStep = () => {
           errorNotification('Please select clientId before continue');
           return;
         }
-        const searchString = ref?.value;
-        const params = { searchString, clientId: companyState?.clientId?.value };
-        const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
+        if (ref?.value?.trim()?.length > 0) {
+          const searchString = ref?.value;
+          const params = { searchString, clientId: companyState?.clientId?.value };
+          const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
-        const { resData } = handleApplicationErrors(response);
-        if (resData) {
-          updateCompanyState(resData);
-          prevRef.current = {
-            ...prevRef.current,
-            acn: resData?.acn,
-            abn: resData?.abn,
-          };
+          const { resData } = handleApplicationErrors(response);
+          if (resData) {
+            updateCompanyState(resData);
+            prevRef.current = {
+              ...prevRef.current,
+              acn: resData?.acn,
+              abn: resData?.abn,
+            };
+          }
+        } else {
+          errorNotification(`Please enter search text for ${ref?.name}`);
         }
       } catch (err) {
         let value = prevRef?.current?.abn;
@@ -442,18 +446,22 @@ const ApplicationCompanyStep = () => {
             errorNotification('Please select clientId before continue');
             return;
           }
-          const searchString = e?.target?.value;
-          const params = { searchString, clientId: companyState?.clientId?.value };
-          const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
+          if (e?.target?.value?.trim()?.length > 0) {
+            const searchString = e?.target?.value;
+            const params = { searchString, clientId: companyState?.clientId?.value };
+            const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
-          const { resData } = handleApplicationErrors(response);
-          if (resData) {
-            updateCompanyState(resData);
-            prevRef.current = {
-              ...prevRef.current,
-              acn: resData?.acn,
-              abn: resData?.abn,
-            };
+            const { resData } = handleApplicationErrors(response);
+            if (resData) {
+              updateCompanyState(resData);
+              prevRef.current = {
+                ...prevRef.current,
+                acn: resData?.acn,
+                abn: resData?.abn,
+              };
+            }
+          } else {
+            errorNotification(`Please enter search text for ${e?.target?.name}`);
           }
         } catch (err) {
           let value = prevRef?.current?.abn;
@@ -467,15 +475,15 @@ const ApplicationCompanyStep = () => {
   );
 
   const handleEntityNameSearchOnSearchClick = useCallback(async ref => {
+    if (!companyState?.clientId || companyState?.clientId?.length === 0) {
+      errorNotification('Please select client before continue');
+      return;
+    }
+    if (!companyState?.country || companyState?.country?.length === 0) {
+      errorNotification('Please select country before continue');
+      return;
+    }
     if (ref?.value.toString().trim().length > 0) {
-      if (!companyState?.clientId || companyState?.clientId?.length === 0) {
-        errorNotification('Please select client before continue');
-        return;
-      }
-      if (!companyState?.country || companyState?.country?.length === 0) {
-        errorNotification('Please select country before continue');
-        return;
-      }
       dispatchDrawerState({
         type: DRAWER_ACTIONS.SHOW_DRAWER,
         data: null,

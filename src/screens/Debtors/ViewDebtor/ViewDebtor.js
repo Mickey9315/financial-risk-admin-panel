@@ -92,7 +92,7 @@ const ViewInsurer = () => {
 
   const FINAL_COMPONENTS = useMemo(() => {
     const filteredComponents = [...VIEW_DEBTOR_TABS];
-    if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
+    if (!['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(debtorData?.entityType?.value)) {
       filteredComponents.splice(1, 1);
     }
     if (!isAUSOrNZL) {
@@ -104,7 +104,7 @@ const ViewInsurer = () => {
 
   const FINAL_TABS = useMemo(() => {
     const filteredTabs = [...tabs];
-    if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
+    if (!['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(debtorData?.entityType?.value)) {
       filteredTabs.splice(1, 1);
     }
     if (!isAUSOrNZL) {

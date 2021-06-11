@@ -64,8 +64,13 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   );
   const partners = useSelector(({ application }) => application?.editApplication?.partners ?? []);
 
-  const { streetType, australianStates, countryList, newZealandStates, companyEntityType } =
-    useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
+  const {
+    streetType,
+    australianStates,
+    countryList,
+    newZealandStates,
+    companyEntityType,
+  } = useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
 
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
@@ -476,16 +481,20 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
 
   const handleEntityNameOnSearchClick = useCallback(
     ref => {
-      dispatchDrawerState({
-        type: DRAWER_ACTIONS.SHOW_DRAWER,
-        data: null,
-      });
-      setSearchedEntityNameValue(ref?.value.toString());
-      const params = {
-        searchString: ref?.value,
-        clientId: companyState?.clientId?.value,
-      };
-      dispatch(searchApplicationCompanyEntityName(params));
+      if (ref?.value.toString().trim().length > 0) {
+        dispatchDrawerState({
+          type: DRAWER_ACTIONS.SHOW_DRAWER,
+          data: null,
+        });
+        setSearchedEntityNameValue(ref?.value.toString());
+        const params = {
+          searchString: ref?.value,
+          clientId: companyState?.clientId?.value,
+        };
+        dispatch(searchApplicationCompanyEntityName(params));
+      } else {
+        errorNotification('Please enter search text for entity name');
+      }
     },
     [companyState?.clientId, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
   );
@@ -493,16 +502,20 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   const handleEntityNameSearch = useCallback(
     e => {
       if (e.key === 'Enter') {
-        dispatchDrawerState({
-          type: DRAWER_ACTIONS.SHOW_DRAWER,
-          data: null,
-        });
-        setSearchedEntityNameValue(e.target.value.toString());
-        const params = {
-          searchString: e?.target?.value,
-          clientId: companyState?.clientId?.value,
-        };
-        dispatch(searchApplicationCompanyEntityName(params));
+        if (e?.target?.value.toString().trim().length > 0) {
+          dispatchDrawerState({
+            type: DRAWER_ACTIONS.SHOW_DRAWER,
+            data: null,
+          });
+          setSearchedEntityNameValue(e.target.value.toString());
+          const params = {
+            searchString: e?.target?.value,
+            clientId: companyState?.clientId?.value,
+          };
+          dispatch(searchApplicationCompanyEntityName(params));
+        } else {
+          errorNotification('Please enter search text for entity name');
+        }
       }
     },
     [companyState?.clientId, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
@@ -521,19 +534,23 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   const handleSearchTextOnSearchClick = useCallback(
     async ref => {
       try {
-        const params = {
-          searchString: ref?.value,
-          clientId: companyState?.clientId?.value,
-        };
-        const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
-
-        if (response) {
-          updatePersonState(response);
-          prevRef.current = {
-            ...prevRef.current,
-            acn: response?.acn,
-            abn: response?.abn,
+        if (ref?.value?.trim()?.length > 0) {
+          const params = {
+            searchString: ref?.value,
+            clientId: companyState?.clientId?.value,
           };
+          const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
+
+          if (response) {
+            updatePersonState(response);
+            prevRef.current = {
+              ...prevRef.current,
+              acn: response?.acn,
+              abn: response?.abn,
+            };
+          }
+        } else {
+          errorNotification(`Please enter search text for ${ref?.name}`);
         }
       } catch {
         let value = prevRef?.current?.abn;
@@ -548,20 +565,24 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     async e => {
       try {
         if (e.key === 'Enter') {
-          const params = {
-            searchString: e?.target?.value,
-            clientId: companyState?.clientId?.value,
-          };
-          const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
-
-          if (response) {
-            updatePersonState(response);
-            prevRef.current = {
-              ...prevRef.current,
-              acn: response?.acn,
-              abn: response?.abn,
+          if (e?.target?.value?.trim()?.length > 0) {
+            const params = {
+              searchString: e?.target?.value,
+              clientId: companyState?.clientId?.value,
             };
+            const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
+
+            if (response) {
+              updatePersonState(response);
+              prevRef.current = {
+                ...prevRef.current,
+                acn: response?.acn,
+                abn: response?.abn,
+              };
+            }
           }
+        } else {
+          errorNotification(`Please enter search text for ${e?.target?.name}`);
         }
       } catch {
         let value = prevRef?.current?.abn;

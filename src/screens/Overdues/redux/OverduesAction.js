@@ -85,6 +85,10 @@ export const getOverdueListByDate = params => {
           type: OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.GET_OVERDUE_LIST_BY_DATE,
           data: response?.data?.data,
         });
+        dispatch({
+          type: OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.COPY_OVERDUE_LIST_BY_DATE,
+          data: response?.data?.data,
+        });
         stopLoaderButtonOnSuccessOrFail('addOverduePageLoaderAction');
       }
     } catch (e) {

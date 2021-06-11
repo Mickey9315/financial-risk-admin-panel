@@ -1,5 +1,5 @@
 .common-white-container.add-overdues-container {
-  padding: 15px 30px;
+  padding: 15px 0;
 }
 
 .client-entry-details {
@@ -7,6 +7,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding: 0 40px;
   span {
     font: $title $font-bold;
     color: $field-color
@@ -63,4 +64,27 @@
   margin-top: 25px;
   width: 100%;
   text-align: right;
+}
+
+.table-class.add-overdue-table {
+  margin-top: 10px;
+
+  thead {
+    border: 1px solid #ffffff;
+  th {
+    text-align: left;
+  }
+  }
+
+  td:first-child, th:first-child {
+    padding: 8px 0 8px 40px;
+  }
+
+  td:last-child, th:last-child {
+    padding: 8px 40px 8px 0;
+  }
+
+  tr:nth-child(1) td:first-child, tr:nth-child(1) td:last-child {
+    border-radius: unset;
+  }
 }

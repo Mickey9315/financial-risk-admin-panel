@@ -92,12 +92,21 @@ const ApplicationList = () => {
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const { entity, clientId, debtorId, status, minCreditLimit, maxCreditLimit, startDate, endDate } =
-    useMemo(() => filter ?? {}, [filter]);
+  const {
+    entity,
+    clientId,
+    debtorId,
+    status,
+    minCreditLimit,
+    maxCreditLimit,
+    startDate,
+    endDate,
+  } = useMemo(() => filter ?? {}, [filter]);
 
   useEffect(() => {
     dispatch(getApplicationFilter());
   }, []);
+
   const handleStartDateChange = useCallback(
     date => {
       dispatchFilter({
