@@ -103,7 +103,6 @@
 }
 
 .ui-state-error {
-  margin-top: 5px;
   font:$text $font-regular;
   color: $error-color;
 }
@@ -181,4 +180,14 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.custom-field-title {
+  position: sticky;
+  top: 0;
+  padding-bottom: 20px;
+  font: $h5 $font-medium;
+  color: $primary-color;
+  background-color: #ffffff;
+  z-index: 5;
 }

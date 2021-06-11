@@ -20,7 +20,10 @@ const ApplicationPersonStep = () => {
   const entityTypeFromCompany = useMemo(() => entityType?.value ?? '', [entityType]);
 
   useEffect(() => {
-    if (personState?.length < 1 && ['PARTNERSHIP', 'TRUST'].includes(entityTypeFromCompany)) {
+    if (
+      personState?.length < 1 &&
+      ['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(entityTypeFromCompany)
+    ) {
       dispatch(addPersonDetail('individual'));
     }
   }, []);
@@ -40,6 +43,9 @@ const ApplicationPersonStep = () => {
           break;
         case 'TRUST':
           itemHeader = 'Trustee Details';
+          break;
+        case 'SOLE_TRADER':
+          itemHeader = 'Person Details';
           break;
         default:
           break;

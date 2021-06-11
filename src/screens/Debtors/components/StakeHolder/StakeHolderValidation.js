@@ -96,18 +96,6 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.streetNumber = 'Street number should be number';
     }
-    if (!data?.streetName || data?.streetName?.trim()?.length <= 0) {
-      validated = false;
-      errors.streetName = 'Please enter street name before continue';
-    }
-    if (!data?.streetType || data?.streetType?.length <= 0) {
-      validated = false;
-      errors.streetType = 'Please select street type before continue';
-    }
-    if (!data?.suburb || data?.suburb?.length <= 0) {
-      validated = false;
-      errors.suburb = 'Please enter suburb before continue';
-    }
     if (!data?.postCode || data?.postCode?.length <= 0) {
       validated = false;
       errors.postCode = 'Please enter post code before continue';

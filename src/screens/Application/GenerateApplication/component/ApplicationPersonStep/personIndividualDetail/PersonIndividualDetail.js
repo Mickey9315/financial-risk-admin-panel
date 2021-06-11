@@ -139,7 +139,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     }));
   }, []);
 
-  const INPUTS = [
+  const RADIO_INPUTS = [
     {
       type: 'radio',
       name: 'type',
@@ -149,14 +149,18 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
           label: 'Individual',
           value: 'individual',
         },
-        {
-          id: 'company',
-          label: 'Company',
-          value: 'company',
-        },
       ],
     },
   ];
+
+  const INPUTS = useMemo(() => {
+    if (companyState?.entityType?.value !== 'SOLE_TRADER') {
+      RADIO_INPUTS[0].data.push({ id: 'company', label: 'Company', value: 'company' });
+      return RADIO_INPUTS;
+    }
+    return RADIO_INPUTS;
+  }, [companyState?.entityType?.value]);
+
   const COMPANY_INPUT = useMemo(
     () => [
       {
@@ -305,7 +309,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         value: streetNumber ?? '',
       },
       {
-        label: 'Street Name*',
+        label: 'Street Name',
         placeholder: 'Enter street Name',
         type: 'text',
         name: 'streetName',
@@ -313,7 +317,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         value: streetName ?? '',
       },
       {
-        label: 'Street Type*',
+        label: 'Street Type',
         placeholder: 'Select',
         type: 'select',
         name: 'streetType',
@@ -321,7 +325,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         value: partners?.[index]?.streetType ?? [],
       },
       {
-        label: 'Suburb*',
+        label: 'Suburb',
         placeholder: 'Suburb',
         type: 'text',
         name: 'suburb',
@@ -814,12 +818,15 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
           {entityNameSearchDropDownData?.isLoading ? (
             <Loader />
           ) : (
-            !entityNameSearchDropDownData?.error && (
+            !entityNameSearchDropDownData?.error &&
+            (entityNameSearchDropDownData?.data?.length > 0 ? (
               <ApplicationEntityNameTable
                 data={entityNameSearchDropDownData?.data}
                 handleEntityNameSelect={handleEntityNameSelect}
               />
-            )
+            ) : (
+              <div className="no-record-found">No record found</div>
+            ))
           )}
           {entityNameSearchDropDownData?.error && (
             <>

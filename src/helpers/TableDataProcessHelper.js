@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React from 'react';
 import Checkbox from '../common/Checkbox/Checkbox';
+import { NumberCommaSeparator } from './NumberCommaSeparator';
 
 export const processTableDataByType = ({ header, row, actions }) => {
   const { type } = header;
@@ -48,6 +49,9 @@ export const processTableDataByType = ({ header, row, actions }) => {
           {currentData}
         </div>
       );
+
+    case 'amount':
+      return currentData ? NumberCommaSeparator(currentData) : '-';
 
     default:
       return currentData;

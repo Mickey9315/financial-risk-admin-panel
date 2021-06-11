@@ -1,5 +1,8 @@
 .upload-document-modal, .add-task-modal {
   width: 60vw;
+  .document-upload-popup-container > span {
+    font-size: $subtitle;
+  }
 }
 
 .document-upload-popup-container, .add-notes-popup-container, .modify-credit-limit-container {

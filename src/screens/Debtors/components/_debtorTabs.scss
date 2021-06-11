@@ -1,25 +1,30 @@
 .upload-document-modal {
   width: 60vw;
 }
-.add-debtor-stake-modal{
-  width:80%;
+
+.add-debtor-stake-modal {
+  width: 80%;
   height: 80%;
   display: flex;
   flex-direction: column;
-  .modal-body{
+
+  .modal-body {
     flex-grow: 1;
-    overflow-y:auto ;
+    overflow-y: auto;
   }
-  .debtor-stakeholder-modal{
+
+  .debtor-stakeholder-modal {
     display: grid;
     grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
     align-items: center;
     padding: 5px 30px;
     gap: 10px;
-    font: $subtitle $font-regular!important;
+    font: $subtitle $font-regular !important;
+
     > span {
       color: $primary-color;
     }
+
     .react-select-container, .input-container, .date-picker-container {
       width: 70%;
       min-width: 170px;
@@ -84,6 +89,7 @@
 .document-upload-popup-container, .add-notes-popup-container {
   display: grid;
   grid-template-columns: 180px 2fr;
+  align-items: center;
   gap: 15px 5px;
 
   > span {
@@ -93,10 +99,12 @@
   .react-select-container, .upload-document-input {
     width: 180px;
   }
+
   .switch-container {
     width: 180px;
   }
-  .document-upload-input{
+
+  .document-upload-input {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -106,12 +114,14 @@
     width: 100%;
     overflow: hidden;
     border-radius: 0.313rem;
-    button{
+
+    button {
       border: none;
       color: #B2B9BF;
       background: none;
     }
-    p{
+
+    p {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

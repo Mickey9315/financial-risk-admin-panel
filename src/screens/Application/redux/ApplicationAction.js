@@ -541,7 +541,6 @@ export const uploadDocument = (data, config) => {
     try {
       startLoaderButtonOnRequest('GenerateApplicationDocumentUploadButtonLoaderAction');
       const response = await ApplicationDocumentStepApiServices.uploadDocument(data, config);
-      console.log(response?.data?.data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA,

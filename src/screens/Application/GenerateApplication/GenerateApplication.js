@@ -72,7 +72,11 @@ const GenerateApplication = () => {
   // for stepper components
   const FILTERED_STEP_COMPONENT = useMemo(() => {
     const finalSteps = [...STEP_COMPONENT];
-    if (!['PARTNERSHIP', 'TRUST'].includes(editApplicationData?.company?.entityType?.value ?? '')) {
+    if (
+      !['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(
+        editApplicationData?.company?.entityType?.value ?? ''
+      )
+    ) {
       finalSteps.splice(1, 1);
     }
 
@@ -85,7 +89,7 @@ const GenerateApplication = () => {
     let finalSteps = [...steps];
     const entityType = editApplicationData?.company?.entityType?.value ?? '';
 
-    if (!['PARTNERSHIP', 'TRUST'].includes(entityType)) {
+    if (!['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(entityType)) {
       finalSteps.splice(1, 1);
     } else {
       finalSteps = finalSteps.map(step => {

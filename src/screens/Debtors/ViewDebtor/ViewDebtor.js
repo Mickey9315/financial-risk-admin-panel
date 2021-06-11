@@ -1,31 +1,31 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import ReactSelect from "react-select";
-import DatePicker from "react-datepicker";
-import Tab from "../../../common/Tab/Tab";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import ReactSelect from 'react-select';
+import DatePicker from 'react-datepicker';
+import Tab from '../../../common/Tab/Tab';
 import {
   changeDebtorData,
   getDebtorById,
   getDebtorDropdownData,
   setViewDebtorActiveTabIndex,
-  updateDebtorData
-} from "../redux/DebtorsAction";
-import UserPrivilegeWrapper from "../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper";
-import { SIDEBAR_NAMES } from "../../../constants/SidebarConstants";
-import Button from "../../../common/Button/Button";
-import { DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS } from "../redux/DebtorsReduxConstants";
-import Input from "../../../common/Input/Input";
-import Loader from "../../../common/Loader/Loader";
-import DebtorsCreditLimitTab from "../components/DebtorsCreditLimitTab";
-import DebtorsApplicationTab from "../components/DebtorsApplicationTab";
-import DebtorsOverduesTab from "../components/DebtorsOverduesTab";
-import DebtorsClaimsTab from "../components/DebtorsClaimsTab";
-import DebtorsDocumentsTab from "../components/DebtorsDocumentsTab";
-import DebtorsNotesTab from "../components/DebtorsNotesTab";
-import DebtorsReportsTab from "../components/DebtorsReportsTab";
-import DebtorsTasksTab from "../components/DebtorsTasksTab";
-import DebtorsStakeHolderTab from "../components/StakeHolder/DebtorsStakeHolderTab";
+  updateDebtorData,
+} from '../redux/DebtorsAction';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import Button from '../../../common/Button/Button';
+import { DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import Input from '../../../common/Input/Input';
+import Loader from '../../../common/Loader/Loader';
+import DebtorsCreditLimitTab from '../components/DebtorsCreditLimitTab';
+import DebtorsApplicationTab from '../components/DebtorsApplicationTab';
+import DebtorsOverduesTab from '../components/DebtorsOverduesTab';
+import DebtorsClaimsTab from '../components/DebtorsClaimsTab';
+import DebtorsDocumentsTab from '../components/DebtorsDocumentsTab';
+import DebtorsNotesTab from '../components/DebtorsNotesTab';
+import DebtorsReportsTab from '../components/DebtorsReportsTab';
+import DebtorsTasksTab from '../components/DebtorsTasksTab';
+import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderTab';
 
 const VIEW_DEBTOR_TABS = [
   <DebtorsCreditLimitTab />,
@@ -36,7 +36,7 @@ const VIEW_DEBTOR_TABS = [
   <DebtorsTasksTab />,
   <DebtorsDocumentsTab />,
   <DebtorsNotesTab />,
-  <DebtorsReportsTab />
+  <DebtorsReportsTab />,
 ];
 
 const ViewInsurer = () => {
@@ -58,15 +58,15 @@ const ViewInsurer = () => {
   }, []);
 
   const tabs = [
-    "Credit Limits",
-    "Stakeholder",
-    "Application",
-    "Overdues",
-    "Claims",
-    "Tasks",
-    "Documents",
-    "Notes",
-    "Reports"
+    'Credit Limits',
+    'Stakeholder',
+    'Application',
+    'Overdues',
+    'Claims',
+    'Tasks',
+    'Documents',
+    'Notes',
+    'Reports',
   ];
 
   const viewDebtorActiveTabIndex = useSelector(
@@ -87,12 +87,12 @@ const ViewInsurer = () => {
   const [isAUSOrNZL, setIsAUSOrNAL] = useState(false);
 
   useEffect(() => {
-    if (["AUS", "NZL"].includes(debtorData?.country?.value)) setIsAUSOrNAL(true);
+    if (['AUS', 'NZL'].includes(debtorData?.country?.value)) setIsAUSOrNAL(true);
   }, [debtorData?.country]);
 
   const FINAL_COMPONENTS = useMemo(() => {
     const filteredComponents = [...VIEW_DEBTOR_TABS];
-    if (!["PARTNERSHIP", "TRUST"].includes(debtorData?.entityType?.value)) {
+    if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
       filteredComponents.splice(1, 1);
     }
     if (!isAUSOrNZL) {
@@ -104,7 +104,7 @@ const ViewInsurer = () => {
 
   const FINAL_TABS = useMemo(() => {
     const filteredTabs = [...tabs];
-    if (!["PARTNERSHIP", "TRUST"].includes(debtorData?.entityType?.value)) {
+    if (!['PARTNERSHIP', 'TRUST'].includes(debtorData?.entityType?.value)) {
       filteredTabs.splice(1, 1);
     }
     if (!isAUSOrNZL) {
@@ -117,143 +117,143 @@ const ViewInsurer = () => {
     () => [
       {
         isEditable: false,
-        label: "ABN*",
-        placeholder: "Enter ABN number",
-        type: "text",
-        name: "abn",
-        value: debtorData?.abn || "-"
+        label: 'ABN*',
+        placeholder: 'Enter ABN number',
+        type: 'text',
+        name: 'abn',
+        value: debtorData?.abn || '-',
       },
       {
         isEditable: false,
-        label: "ACN",
-        placeholder: "Enter ACN number",
-        type: "text",
-        name: "acn",
-        value: debtorData?.acn || "-"
+        label: 'ACN',
+        placeholder: 'Enter ACN number',
+        type: 'text',
+        name: 'acn',
+        value: debtorData?.acn || '-',
       },
       {
         isEditable: false,
-        label: "Entity Type",
-        placeholder: "Select entity type",
-        type: "text",
-        name: "entityType",
+        label: 'Entity Type',
+        placeholder: 'Select entity type',
+        type: 'text',
+        name: 'entityType',
         data: [],
-        value: debtorData?.entityType?.label || "-"
+        value: debtorData?.entityType?.label || '-',
       },
       {
         isEditable: false,
-        label: "Entity Name",
-        placeholder: "Enter entity name",
-        type: "text",
-        name: "entityName",
-        value: debtorData?.entityName || "-"
+        label: 'Entity Name',
+        placeholder: 'Enter entity name',
+        type: 'text',
+        name: 'entityName',
+        value: debtorData?.entityName || '-',
       },
       {
         isEditable: true,
-        label: "Trading Name",
-        placeholder: "Enter trading name",
-        type: "input",
-        name: "tradingName",
-        value: debtorData?.tradingName || "-"
+        label: 'Trading Name',
+        placeholder: 'Enter trading name',
+        type: 'input',
+        name: 'tradingName',
+        value: debtorData?.tradingName || '-',
       },
       {
         isEditable: true,
-        label: "Phone Number",
-        placeholder: "Enter phone number",
-        type: "input",
-        name: "contactNumber",
-        value: debtorData?.contactNumber || "-"
+        label: 'Phone Number',
+        placeholder: 'Enter phone number',
+        type: 'input',
+        name: 'contactNumber',
+        value: debtorData?.contactNumber || '-',
       },
       {
         isEditable: true,
-        label: "Property",
-        placeholder: "Enter property number",
-        type: "input",
-        name: "property",
-        value: debtorData?.property || "-"
+        label: 'Property',
+        placeholder: 'Enter property number',
+        type: 'input',
+        name: 'property',
+        value: debtorData?.property || '-',
       },
       {
         isEditable: true,
-        label: "Unit Number",
-        placeholder: "Enter unit number",
-        type: "input",
-        name: "unitNumber",
-        value: debtorData?.unitNumber || "-"
+        label: 'Unit Number',
+        placeholder: 'Enter unit number',
+        type: 'input',
+        name: 'unitNumber',
+        value: debtorData?.unitNumber || '-',
       },
       {
         isEditable: true,
-        label: "Street Number",
-        placeholder: "Enter street number",
-        type: "input",
-        name: "streetNumber",
-        value: debtorData?.streetNumber || "-"
+        label: 'Street Number',
+        placeholder: 'Enter street number',
+        type: 'input',
+        name: 'streetNumber',
+        value: debtorData?.streetNumber || '-',
       },
       {
         isEditable: true,
-        label: "Street Name",
-        placeholder: "Enter street name",
-        type: "input",
-        name: "streetName",
-        value: debtorData?.streetName || "-"
+        label: 'Street Name',
+        placeholder: 'Enter street name',
+        type: 'input',
+        name: 'streetName',
+        value: debtorData?.streetName || '-',
       },
       {
         isEditable: true,
-        label: "Street Type",
-        placeholder: "Select street type",
-        type: "select",
-        name: "streetType",
+        label: 'Street Type',
+        placeholder: 'Select street type',
+        type: 'select',
+        name: 'streetType',
         data: dropdownData?.streetType ?? [],
-        value: debtorData?.streetType || []
+        value: debtorData?.streetType || [],
       },
       {
         isEditable: true,
-        label: "Suburb",
-        placeholder: "Enter suburb",
-        type: "input",
-        name: "suburb",
-        value: debtorData?.suburb || "-"
+        label: 'Suburb',
+        placeholder: 'Enter suburb',
+        type: 'input',
+        name: 'suburb',
+        value: debtorData?.suburb || '-',
       },
       {
         isEditable: false,
-        label: "State",
-        placeholder: "Select state",
-        type: "text",
-        name: "state",
+        label: 'State',
+        placeholder: 'Select state',
+        type: 'text',
+        name: 'state',
         data: [],
-        value: debtorData?.state?.label ?? "-"
+        value: debtorData?.state?.label ?? '-',
       },
       {
         isEditable: false,
-        label: "Country",
-        placeholder: "Select country",
-        type: "text",
-        name: "country",
-        value: debtorData?.country?.label || "-"
+        label: 'Country',
+        placeholder: 'Select country',
+        type: 'text',
+        name: 'country',
+        value: debtorData?.country?.label || '-',
       },
       {
         isEditable: true,
-        label: "Postcode",
-        placeholder: "Enter postcode",
-        type: "input",
-        name: "postCode",
-        value: debtorData?.postCode || "-"
+        label: 'Postcode',
+        placeholder: 'Enter postcode',
+        type: 'input',
+        name: 'postCode',
+        value: debtorData?.postCode || '-',
       },
       {
         isEditable: true,
-        label: "Review Date",
-        placeholder: "Select review date",
-        type: "date",
-        name: "reviewDate",
-        value: debtorData?.reviewDate || null
+        label: 'Review Date',
+        placeholder: 'Select review date',
+        type: 'date',
+        name: 'reviewDate',
+        value: debtorData?.reviewDate || null,
       },
       {
         isEditable: false,
-        label: "Risk Rating",
-        placeholder: "Enter risk rating",
-        type: "text",
-        name: "riskRating",
-        value: debtorData?.riskRating || "-"
-      }
+        label: 'Risk Rating',
+        placeholder: 'Enter risk rating',
+        type: 'text',
+        name: 'riskRating',
+        value: debtorData?.riskRating || '-',
+      },
     ],
     [debtorData, dropdownData]
   );
@@ -269,6 +269,7 @@ const ViewInsurer = () => {
       placeholder: 'Registration No',
       type: 'text',
       name: 'registrationNumber',
+      value: debtorData?.registrationNumber,
     });
     return filteredData;
   }, [INPUTS, isAUSOrNZL]);
@@ -278,7 +279,7 @@ const ViewInsurer = () => {
     return () => {
       dispatch({
         type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_RESET_DEBTOR_DETAILS,
-        data: []
+        data: [],
       });
       setViewDebtorActiveTabIndex(0);
     };
@@ -320,7 +321,7 @@ const ViewInsurer = () => {
 
   const onClickUpdateDebtor = useCallback(() => {
     const finalData = {
-      address: {}
+      address: {},
     };
 
     if (debtorData?.tradingName) finalData.tradingName = debtorData?.tradingName?.trim();
@@ -342,56 +343,56 @@ const ViewInsurer = () => {
     input => {
       let component = null;
       switch (input.type) {
-        case "input":
+        case 'input':
           component = (
             <>
-              {action==="view" ? (
+              {action === 'view' ? (
                 <span className="view-debtor-value">{input?.value}</span>
-              ):(
+              ) : (
                 <Input
                   type="text"
                   name={input.name}
-                  placeholder={action==="view" || !input.isEditable ? "-":input.placeholder}
+                  placeholder={action === 'view' || !input.isEditable ? '-' : input.placeholder}
                   value={debtorData?.[input.name]}
                   onChange={handleOnTextChange}
-                  disabled={action==="view" || !input.isEditable}
-                  borderClass={(action==="view" || !input.isEditable) && "disabled-control"}
+                  disabled={action === 'view' || !input.isEditable}
+                  borderClass={(action === 'view' || !input.isEditable) && 'disabled-control'}
                 />
               )}
             </>
           );
           break;
-        case "select": {
+        case 'select': {
           component = (
             <>
-              {action==="view" ? (
+              {action === 'view' ? (
                 <span className="view-debtor-value">{input?.value?.label}</span>
-              ):(
+              ) : (
                 <ReactSelect
                   className={`select-client-list-container react-select-container ${
-                    action==="view" && "disabled-control"
+                    action === 'view' && 'disabled-control'
                   }`}
                   classNamePrefix="react-select"
                   type="text"
                   name={input.name}
-                  placeholder={action==="view" || !input.isEditable ? "-":input.placeholder}
+                  placeholder={action === 'view' || !input.isEditable ? '-' : input.placeholder}
                   options={input.data}
                   value={input?.value}
                   isSearchable={false}
                   onChange={handleOnSelectInputChange}
-                  isDisabled={action==="view" || !input.isEditable}
+                  isDisabled={action === 'view' || !input.isEditable}
                 />
               )}
             </>
           );
           break;
         }
-        case "date":
+        case 'date':
           component = (
-            <div className={`date-picker-container ${action==="view" && "disabled-control"}`}>
+            <div className={`date-picker-container ${action === 'view' && 'disabled-control'}`}>
               <DatePicker
                 dateFormat="dd/MM/yyyy"
-                placeholderText={action==="view" || !input.isEditable ? "-":input.placeholder}
+                placeholderText={action === 'view' || !input.isEditable ? '-' : input.placeholder}
                 selected={new Date(input?.value)}
                 onChange={date => handleOnDateChange(input.name, date)}
                 showMonthDropdown
@@ -399,9 +400,9 @@ const ViewInsurer = () => {
                 scrollableYearDropdown
                 minDate={new Date()}
                 popperProps={{ positionFixed: true }}
-                disabled={action==="view"}
+                disabled={action === 'view'}
               />
-              {action!=="view" && <span className="material-icons-round">event_available</span>}
+              {action !== 'view' && <span className="material-icons-round">event_available</span>}
             </div>
           );
           break;
@@ -435,11 +436,11 @@ const ViewInsurer = () => {
               <span>View Debtor</span>
             </div>
             <div className="buttons-row">
-              {action==="view" ? (
+              {action === 'view' ? (
                 <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
                   <Button buttonType="primary" title="Edit" onClick={editDebtorClick} />
                 </UserPrivilegeWrapper>
-              ):(
+              ) : (
                 <>
                   <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
                   <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
@@ -469,7 +470,7 @@ const ViewInsurer = () => {
           />
           <div className="common-white-container">{FINAL_COMPONENTS[activeTabIndex]}</div>
         </>
-      ):(
+      ) : (
         <Loader />
       )}
     </>

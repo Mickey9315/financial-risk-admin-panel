@@ -39,14 +39,8 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
     errors.outstandingAmount = 'Outstanding amount should be greater than zero';
     validated = false;
   }
-  if (!data?.ordersOnHand || data?.ordersOnHand?.toString()?.trim()?.length <= 0) {
-    errors.ordersOnHand = 'Please enter credit limit amount';
-    validated = false;
-  } else if (!data?.ordersOnHand?.toString()?.match(NUMBER_REGEX)) {
-    errors.ordersOnHand = 'Please enter valid credit limit amount';
-    validated = false;
-  } else if (parseInt(data?.ordersOnHand, 10) === 0) {
-    errors.ordersOnHand = 'Credit limit should be greater than zero';
+  if (data?.ordersOnHand && !data?.ordersOnHand?.toString()?.match(NUMBER_REGEX)) {
+    errors.ordersOnHand = 'Please enter valid order on hand value';
     validated = false;
   }
   if (validated) {

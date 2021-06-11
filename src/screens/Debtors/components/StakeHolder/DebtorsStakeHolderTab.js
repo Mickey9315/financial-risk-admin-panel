@@ -219,15 +219,10 @@ const DebtorsStakeHolderTab = () => {
     ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDetails ?? {}
   );
 
-  const {
-    streetType,
-    australianStates,
-    companyEntityType,
-    countryList,
-    newZealandStates,
-  } = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDropDownData ?? {}
-  );
+  const { streetType, australianStates, companyEntityType, countryList, newZealandStates } =
+    useSelector(
+      ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDropDownData ?? {}
+    );
 
   const [addStakeHolderModal, setAddStakeHolderModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -435,21 +430,21 @@ const DebtorsStakeHolderTab = () => {
         data: [],
       },
       {
-        label: 'Street Name*',
+        label: 'Street Name',
         placeholder: 'Enter street Name',
         type: 'text',
         name: 'streetName',
         data: [],
       },
       {
-        label: 'Street Type*',
+        label: 'Street Type',
         placeholder: 'Select',
         type: 'select',
         name: 'streetType',
         data: streetType || [],
       },
       {
-        label: 'Suburb*',
+        label: 'Suburb',
         placeholder: 'Suburb',
         type: 'text',
         name: 'suburb',
@@ -672,6 +667,9 @@ const DebtorsStakeHolderTab = () => {
               type="text"
               name={input.name}
               placeholder={input.placeholder}
+              suffix="search"
+              suffixClass="application-search-suffix"
+              suffixClick={handleSearchTextInputKeyDown}
               value={stakeHolder?.[input.name]}
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
@@ -713,6 +711,9 @@ const DebtorsStakeHolderTab = () => {
             <Input
               type="text"
               name={input.name}
+              suffix="search"
+              suffixClass="application-search-suffix"
+              suffixClick={handleEntityNameSearch}
               setIsEdit
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
@@ -1009,12 +1010,15 @@ const DebtorsStakeHolderTab = () => {
           {entityNameSearchedData?.isLoading ? (
             <Loader />
           ) : (
-            !entityNameSearchedData?.error && (
+            !entityNameSearchedData?.error &&
+            (entityNameSearchedData?.data?.length > 0 ? (
               <ApplicationEntityNameTable
                 data={entityNameSearchedData?.data}
                 handleEntityNameSelect={handleEntityNameSelect}
               />
-            )
+            ) : (
+              <div className="no-record-found">No record found</div>
+            ))
           )}
           {entityNameSearchedData?.error && (
             <>

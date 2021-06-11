@@ -47,10 +47,6 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.country = 'Please select country before continue';
   }
-  if (!data?.streetNumber || data?.streetNumber?.length <= 0) {
-    validated = false;
-    errors.streetNumber = 'Please enter street number before continue';
-  }
   if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber)) {
     validated = false;
     errors.streetNumber = 'Street number should be number';

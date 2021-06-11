@@ -54,22 +54,22 @@ const ApplicationCreditLimitStep = () => {
       <div className="f-14 font-secondary mb-10">
         Credit Limit Required covering 3 months of sales
       </div>
-      <div className="mb-15">
-        <span className="f-14 font-primary">Credit Limit Amount*</span>
-        <div>
-          <Input
-            type="text"
-            name="creditLimit"
-            placeholder="$00000"
-            value={creditLimit ? NumberCommaSeparator(creditLimit) : ''}
-            borderClass="mt-5"
-            onChange={handleCurrencyChange}
-          />
-          {errors?.creditLimit && <div className="ui-state-error">{errors?.creditLimit}</div>}
-        </div>
-      </div>
       <div className="application-credit-limits-grid">
         <div>
+          <span className="f-14 font-primary">Credit Limit Amount*</span>
+          <div>
+            <Input
+              type="text"
+              name="creditLimit"
+              placeholder="$00000"
+              value={creditLimit ? NumberCommaSeparator(creditLimit) : ''}
+              borderClass="mt-5"
+              onChange={handleCurrencyChange}
+            />
+            {errors?.creditLimit && <div className="ui-state-error">{errors?.creditLimit}</div>}
+          </div>
+        </div>
+        <div className="outstanding-amount-container">
           <span className="f-14 font-primary mb-10">Outstanding Amount</span>
           <div>
             <Input
@@ -160,7 +160,7 @@ const ApplicationCreditLimitStep = () => {
         <div className="if-yes-row">
           <span className="f-14 font-primary">If yes, please provide details</span>
           <textarea
-            rows={3}
+            rows={5}
             placeholder="Details"
             className="mt-5"
             name="extendedPaymentTermsDetails"
@@ -175,7 +175,7 @@ const ApplicationCreditLimitStep = () => {
         <div className="if-yes-row">
           <span className="f-14 font-primary">If yes, please provide details</span>
           <textarea
-            rows={3}
+            rows={5}
             placeholder="Details"
             name="passedOverdueDetails"
             className="mt-5"
@@ -189,7 +189,7 @@ const ApplicationCreditLimitStep = () => {
         </div>
       </div>
 
-      <div className="credit-limits-note mt-15">
+      <div className="credit-limits-note mt-10">
         <span className="font-primary">Note</span>
         <textarea
           rows={5}

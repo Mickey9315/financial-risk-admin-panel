@@ -91,25 +91,9 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
           validated = false;
           errors.driverLicenceNumber = 'Please enter driver valid licence number';
         }
-        if (!item?.streetNumber || item?.streetNumber?.length <= 0) {
-          validated = false;
-          errors.streetNumber = 'Please enter street number before continue';
-        }
         if (item?.streetNumber && !NUMBER_REGEX.test(item?.streetNumber)) {
           validated = false;
           errors.streetNumber = 'Street number should be number';
-        }
-        if (!item?.streetName || item?.streetName?.trim()?.length <= 0) {
-          validated = false;
-          errors.streetName = 'Please enter street name before continue';
-        }
-        if (!item?.streetType || item?.streetType?.length <= 0) {
-          validated = false;
-          errors.streetType = 'Please select street type before continue';
-        }
-        if (!item?.suburb || item?.suburb?.length <= 0) {
-          validated = false;
-          errors.suburb = 'Please enter suburb before continue';
         }
         if (!item?.postCode || item?.postCode?.length <= 0) {
           validated = false;
@@ -220,7 +204,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         await dispatch(saveApplicationStepDataToBackend(finalData));
       }
     } catch (e) {
-      throw Error()
+      throw Error();
     }
   } else {
     errorNotification('Please fill the details.');
