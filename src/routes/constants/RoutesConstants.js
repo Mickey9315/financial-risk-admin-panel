@@ -142,7 +142,7 @@ export const ROUTES_CONSTANTS = [
     authenticated: true,
   },
   {
-    path: '/over-dues/:period',
+    path: '/over-dues/:id/:period',
     component: AddOverdues,
     authenticated: true,
   },

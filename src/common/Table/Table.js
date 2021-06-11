@@ -9,6 +9,7 @@ import TableApiService from './TableApiService';
 import Checkbox from '../Checkbox/Checkbox';
 import DropdownMenu from '../DropdownMenu/DropdownMenu';
 import { successNotification } from '../Toast';
+import ExpandedTableHelper from '../../screens/Overdues/Components/ExpandedTableHelper';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -145,17 +146,18 @@ const Table = props => {
       handleViewDocument,
     };
 
-    return data.map(e => {
+    return data.map((e, index) => {
       const finalObj = {
-        id: e._id,
+        id: e._id ?? index,
       };
       headers.forEach(f => {
         finalObj[`${f.name}`] = processTableDataByType({ header: f, row: e, actions });
       });
 
+      finalObj.dataToExpand = isExpandable ? e?.debtors : undefined;
       return finalObj;
     });
-  }, [data, handleDrawerState, handleCheckBoxState, handleViewDocument]);
+  }, [data, handleDrawerState, isExpandable, handleCheckBoxState, handleViewDocument]);
 
   const onRowSelectedDataChange = useCallback(
     current => {
@@ -246,6 +248,7 @@ const Table = props => {
               showCheckbox={showCheckbox}
               isSelected={selectedRowData.some(f => f.id === e.id)}
               onRowSelectedDataChange={onRowSelectedDataChange}
+              refreshData={refreshData}
             />
           ))}
         </tbody>
@@ -312,6 +315,7 @@ function Row(props) {
     showCheckbox,
     isSelected,
     onRowSelectedDataChange,
+    refreshData,
   } = props;
 
   const [showActionMenu, setShowActionMenu] = useState(false);
@@ -399,6 +403,8 @@ function Row(props) {
                   )}
                 </td>
               );
+            case 'dataToExpand':
+              return null;
             default:
               return (
                 <td key={index.toString()} align={align}>
@@ -456,49 +462,12 @@ function Row(props) {
           </td>
         ))}
       </tr>
-      <tr className={`expandable-table ${isRowExpanded ? 'show-table' : ''}`}>
-        <td colSpan={20}>
-          <div>
-            <table width={100} cellSpacing={0}>
-              <tr>
-                <th>1000</th>
-                <th>1000</th>
-                <th>1000</th>
-                <th>1000</th>
-                <th>1000</th>
-              </tr>
-              <tr>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-              </tr>
-              <tr>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>1000</td>
-              </tr>
-            </table>
-          </div>
-        </td>
-      </tr>
+      <ExpandedTableHelper
+        docs={data?.dataToExpand}
+        isRowExpanded={isRowExpanded}
+        refreshData={refreshData}
+      />
+
       {showActionMenu && (
         <DropdownMenu style={menuPosition} toggleMenu={setShowActionMenu}>
           <div className="menu-name" onClick={e => onClickAction(e, TABLE_ROW_ACTIONS.EDIT_ROW)}>
@@ -530,6 +499,7 @@ Row.propTypes = {
   recordActionClick: PropTypes.func,
   onRowSelectedDataChange: PropTypes.func,
   showCheckbox: PropTypes.bool,
+  refreshData: PropTypes.func,
 };
 
 Row.defaultProps = {
@@ -547,6 +517,7 @@ Row.defaultProps = {
   isSelected: false,
   recordActionClick: () => {},
   onRowSelectedDataChange: () => {},
+  refreshData: () => {},
 };
 
 function TableLinkDrawer(props) {

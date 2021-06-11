@@ -1,0 +1,195 @@
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import moment from 'moment';
+import ReactSelect from 'react-select';
+import { useDispatch } from 'react-redux';
+import TableApiService from '../../../common/Table/TableApiService';
+import Drawer from '../../../common/Drawer/Drawer';
+import { changeOverdueStatus } from '../redux/OverduesAction';
+import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
+
+export const DRAWER_ACTIONS = {
+  SHOW_DRAWER: 'SHOW_DRAWER',
+  HIDE_DRAWER: 'HIDE_DRAWER',
+};
+
+const drawerInitialState = {
+  visible: false,
+  data: [],
+  id: '',
+};
+
+const drawerReducer = (state, action) => {
+  switch (action.type) {
+    case DRAWER_ACTIONS.SHOW_DRAWER:
+      return {
+        visible: true,
+        data: action.data,
+        id: action.id,
+      };
+    case DRAWER_ACTIONS.HIDE_DRAWER:
+      return drawerInitialState;
+
+    default:
+      return state;
+  }
+};
+
+const overdueStatusList = [
+  { label: 'Reported to Insurer', value: 'REPORTED_TO_INSURER', name: 'status' },
+  { label: 'Not Reportable', value: 'NOT_REPORTABLE', name: 'status' },
+];
+
+const ExpandedTableHelper = props => {
+  const { docs, isRowExpanded, refreshData } = props;
+  const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
+  const handleDrawerState = useCallback(async data => {
+    try {
+      const response = await TableApiService.tableActions({
+        url: 'overdue/details',
+        method: 'get',
+        id: data?._id,
+      });
+
+      dispatchDrawerState({
+        type: DRAWER_ACTIONS.SHOW_DRAWER,
+        data: response?.data?.data,
+        id: data?._id,
+      });
+    } catch (e) {
+      /**/
+    }
+  }, []);
+
+  const closeDrawer = useCallback(() => {
+    dispatchDrawerState({
+      type: DRAWER_ACTIONS.HIDE_DRAWER,
+    });
+  }, []);
+
+  return (
+    <>
+      <TableLinkDrawer
+        drawerState={drawerState}
+        closeDrawer={closeDrawer}
+        refreshData={refreshData}
+      />
+      <tr className={`expandable-table ${isRowExpanded && 'show-table'}`}>
+        <td colSpan={20}>
+          <div>
+            <table width={100} cellSpacing={0}>
+              <tr>
+                <th>Name</th>
+                <th>ACN</th>
+                <th>Overdue Type</th>
+                <th>Status</th>
+                <th>Amount</th>
+              </tr>
+              {docs?.map(data => (
+                <tr
+                  onClick={async e => {
+                    e.stopPropagation();
+                    await handleDrawerState(data);
+                  }}
+                >
+                  <td>{data?.name}</td>
+                  <td>{data?.acn}</td>
+                  <td>{data?.overdueType}</td>
+                  <td>{data?.status}</td>
+                  <td>{data?.amount ? NumberCommaSeparator(data?.amount) : ''}</td>
+                </tr>
+              ))}
+            </table>
+          </div>
+        </td>
+      </tr>
+    </>
+  );
+};
+ExpandedTableHelper.propTypes = {
+  docs: PropTypes.array.isRequired,
+  isRowExpanded: PropTypes.bool.isRequired,
+  refreshData: PropTypes.bool.isRequired,
+};
+export default ExpandedTableHelper;
+
+const TableLinkDrawer = props => {
+  const dispatch = useDispatch();
+  const { drawerState, closeDrawer, refreshData } = props;
+  const currentStatus = useMemo(
+    () => drawerState?.data?.filter(data => data?.type === 'status')?.[0],
+    [drawerState]
+  );
+  const [status, setStatus] = useState(currentStatus?.value);
+  const handleOverdueDrawerStatusChange = useCallback(
+    async e => {
+      try {
+        const data = { status: e?.value };
+        await dispatch(changeOverdueStatus(drawerState?.id, data));
+        setStatus(e);
+        refreshData();
+      } catch (err) {
+        /**/
+      }
+    },
+    [drawerState?.id, refreshData]
+  );
+  const checkValue = row => {
+    switch (row.type) {
+      case 'status': {
+        return (
+          <ReactSelect
+            name="overdueStatus"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            placeholder="Select Status"
+            options={overdueStatusList}
+            value={status ?? []}
+            onChange={handleOverdueDrawerStatusChange}
+          />
+        );
+      }
+      case 'dollar':
+        return row?.value ? `$ ${row?.value}` : '-';
+      case 'percent':
+        return row?.value ? `${row?.value} %` : '-';
+      case 'date':
+        return row?.value ? moment(row?.value)?.format('DD-MMM-YYYY') : '-';
+      default:
+        return row?.value ?? '-';
+    }
+  };
+
+  useEffect(() => {
+    if (currentStatus?.value?.value === 'SUBMITTED') {
+      handleOverdueDrawerStatusChange({ label: 'Pending', value: 'PENDING', name: 'status' });
+    } else {
+      setStatus(currentStatus?.value);
+    }
+  }, [currentStatus?.value]);
+
+  return (
+    <Drawer header="Overdue Details" drawerState={drawerState?.visible} closeDrawer={closeDrawer}>
+      <div className="contacts-grid">
+        {drawerState?.data?.map(row => (
+          <>
+            <div className="title">{row?.label}</div>
+            <div>{checkValue(row)}</div>
+          </>
+        ))}
+      </div>
+    </Drawer>
+  );
+};
+
+TableLinkDrawer.propTypes = {
+  drawerState: PropTypes.shape({
+    visible: PropTypes.bool.isRequired,
+    data: PropTypes.array.isRequired,
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+  closeDrawer: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+};
+
+TableLinkDrawer.defaultProps = {};

@@ -29,6 +29,7 @@ import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxCon
 import { clearAuthToken } from '../helpers/LocalStorageHelper';
 import { loaderButtonReducer } from '../common/LoaderButton/redux/LoaderButtonReducer';
 import { dashboard } from '../screens/Dashboard/redux/DashboardReducer';
+import { overdue } from '../screens/Overdues/redux/OverduesReducer';
 
 const appReducer = combineReducers({
   dashboard,
@@ -51,6 +52,7 @@ const appReducer = combineReducers({
   loaderButtonReducer,
   headerNotificationReducer,
   globalSearchReducer,
+  overdue,
 });
 
 const rootReducer = (state, action) => {

@@ -278,3 +278,11 @@ export const SETTING_URL = {
     GET_AUDIT_USER_TYPE_LIST: `${BASE_URL}settings/user-list/`,
   },
 };
+
+export const OVERDUE_URLS = {
+  GET_OVERDUE_LIST: `${BASE_URL}overdue/`,
+  GET_OVERDUE_LIST_BY_DATE: `${BASE_URL}overdue/list/`,
+  GET_ENTITY_LIST: `${BASE_URL}overdue/entity-list/`,
+  CHANGE_OVERDUE_STATUS: `${BASE_URL}overdue/status/`,
+  SAVE_OVERDUE_LIST: `${BASE_URL}overdue/list/`,
+};
