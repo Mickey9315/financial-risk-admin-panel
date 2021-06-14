@@ -474,40 +474,53 @@ const ApplicationCompanyStep = () => {
     [companyState, updateCompanyState, updateSingleCompanyState, prevRef.current]
   );
 
-  const handleEntityNameSearchOnSearchClick = useCallback(async ref => {
-    if (!companyState?.clientId || companyState?.clientId?.length === 0) {
-      errorNotification('Please select client before continue');
-      return;
-    }
-    if (!companyState?.country || companyState?.country?.length === 0) {
-      errorNotification('Please select country before continue');
-      return;
-    }
-    if (ref?.value.toString().trim().length > 0) {
-      dispatchDrawerState({
-        type: DRAWER_ACTIONS.SHOW_DRAWER,
-        data: null,
-      });
-      setSearchedEntityNameValue(ref.value.toString());
-      const params = {
-        searchString: ref?.value,
-        country: companyState?.country?.value,
-        clientId: companyState?.clientId?.value,
-      };
-      dispatch(searchApplicationCompanyEntityName(params));
-    } else {
-      errorNotification('Please enter search text for entity name');
-    }
-  }, []);
+  const handleEntityNameSearchOnSearchClick = useCallback(
+    async ref => {
+      if (!companyState?.clientId || companyState?.clientId?.length === 0) {
+        errorNotification('Please select client before continue');
+        return;
+      }
+      if (!companyState?.country || companyState?.country?.length === 0) {
+        errorNotification('Please select country before continue');
+        return;
+      }
+      if (ref?.value.toString().trim().length > 0) {
+        dispatchDrawerState({
+          type: DRAWER_ACTIONS.SHOW_DRAWER,
+          data: null,
+        });
+        setSearchedEntityNameValue(ref.value.toString());
+        const params = {
+          searchString: ref?.value,
+          country: companyState?.country?.value,
+          clientId: companyState?.clientId?.value,
+        };
+        dispatch(searchApplicationCompanyEntityName(params));
+      } else {
+        errorNotification('Please enter search text for entity name');
+      }
+    },
+    [
+      companyState?.country,
+      companyState?.clientId,
+      updateCompanyState,
+      dispatchDrawerState,
+      setSearchedEntityNameValue,
+    ]
+  );
 
   const handleEntityNameSearch = useCallback(
     async e => {
       if (e.key === 'Enter') {
+        if (!companyState?.clientId || companyState?.clientId?.length === 0) {
+          errorNotification('Please select client before continue');
+          return;
+        }
+        if (!companyState?.country || companyState?.country?.length === 0) {
+          errorNotification('Please select country before continue');
+          return;
+        }
         if (e.target.value.trim().length > 0) {
-          if (!companyState?.country || companyState?.country?.length === 0) {
-            errorNotification('Please select country before continue');
-            return;
-          }
           dispatchDrawerState({
             type: DRAWER_ACTIONS.SHOW_DRAWER,
             data: null,
