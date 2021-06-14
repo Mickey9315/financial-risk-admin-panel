@@ -38,7 +38,6 @@ const ViewReport = () => {
 
   const onClientUnselect = useCallback(
     clickedClient => {
-      console.log('fired');
       setSelectedClientList(
         selectedClientList.filter(client => client?._id !== clickedClient?._id)
       );
