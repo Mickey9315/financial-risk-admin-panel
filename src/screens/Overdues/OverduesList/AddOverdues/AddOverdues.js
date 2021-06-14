@@ -438,7 +438,6 @@ const AddOverdues = () => {
     ],
     [toggleAlertOnLeftModal]
   );
-
   const onCLickOverdueSave = useCallback(async () => {
     let validated = true;
     docs?.forEach(doc => {
@@ -458,7 +457,7 @@ const AddOverdues = () => {
           data.isExistingData = doc?.isExistingData ? doc?.isExistingData : false;
           data.debtorId = doc?.debtorId?.value;
           data.insurerId = doc?.insurerId?.value;
-          data.clientId = doc?.clientId?.value;
+          data.clientId = doc?.clientId;
           data.overdueType = doc?.overdueType?.value;
           data.acn = doc?.acn;
           data.month = doc?.month;
