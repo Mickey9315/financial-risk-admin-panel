@@ -14,6 +14,7 @@ import { getEntityDetails, getOverdueList } from '../redux/OverduesAction';
 import { errorNotification } from '../../../common/Toast';
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
+import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 
 const initialFilterState = {
   debtorId: '',
@@ -110,20 +111,22 @@ const OverduesList = () => {
 
   const handleMinOutstandingAmount = useCallback(
     event => {
+      const updatedVal = event?.target?.value?.toString()?.replaceAll(',', '');
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'minOutstandingAmount',
-        value: event?.target?.value,
+        value: parseInt(updatedVal, 10),
       });
     },
     [dispatchFilter]
   );
   const handleMaxOutstandingAmount = useCallback(
     event => {
+      const updatedVal = event?.target?.value?.toString()?.replaceAll(',', '');
       dispatchFilter({
         type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'maxOutstandingAmount',
-        value: event?.target?.value,
+        value: parseInt(updatedVal, 10),
       });
     },
     [dispatchFilter]
@@ -138,9 +141,10 @@ const OverduesList = () => {
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
-    overdueListWithPageData,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => overdueListWithPageData,
+    [overdueListWithPageData]
+  );
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -390,9 +394,9 @@ const OverduesList = () => {
           {filterModal && (
             <Modal
               headerIcon="filter_list"
-              header="filter"
+              header="Filter"
               buttons={filterModalButtons}
-              className="filter-modal application-filter-modal"
+              className="filter-modal overdue-filter-modal"
             >
               <div className="filter-modal-row">
                 <div className="form-title">Debtor Name</div>
@@ -412,8 +416,10 @@ const OverduesList = () => {
                 <Input
                   type="text"
                   name="min-limit"
-                  value={minOutstandingAmount}
-                  placeholder="3000"
+                  value={
+                    minOutstandingAmount ? NumberCommaSeparator(minOutstandingAmount) : undefined
+                  }
+                  placeholder="0"
                   onChange={handleMinOutstandingAmount}
                 />
               </div>
@@ -422,14 +428,16 @@ const OverduesList = () => {
                 <Input
                   type="text"
                   name="max-limit"
-                  value={maxOutstandingAmount}
-                  placeholder="100000"
+                  value={
+                    maxOutstandingAmount ? NumberCommaSeparator(maxOutstandingAmount) : undefined
+                  }
+                  placeholder="0"
                   onChange={handleMaxOutstandingAmount}
                 />
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Date</div>
-                <div className="date-picker-container month-year-picker mr-15">
+                <div className="date-picker-container month-year-picker">
                   <DatePicker
                     className="filter-date-picker"
                     selected={startDate}

@@ -34,11 +34,13 @@ export const overdue = (state = initialOverdueState, action) => {
     case OVERDUE_REDUX_CONSTANTS.GET_ENTITY_LIST: {
       const entityList = { ...state?.overdueDetails?.entityList };
       Object.entries(action?.data)?.forEach(([key, value]) => {
-        entityList[key] = value?.map(entity => ({
-          label: entity?.name,
-          name: key,
-          value: entity?._id,
-        }));
+        if (key !== 'acnResponse') {
+          entityList[key] = value?.map(entity => ({
+            label: entity?.name,
+            name: key,
+            value: entity?._id,
+          }));
+        }
       });
       return {
         ...state,

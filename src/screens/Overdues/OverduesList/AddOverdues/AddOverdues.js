@@ -304,7 +304,7 @@ const AddOverdues = () => {
               value={input?.value ? NumberCommaSeparator(input?.value) : ''}
               className="add-overdue-amount-input"
               type="text"
-              placeholder={99999}
+              placeholder="0"
               onChange={handleAmountInputChange}
             />
           );
