@@ -32,3 +32,16 @@
     width: 200px;
   }
 }
+
+.expandable-table {
+  tr:nth-child(1) td:first-child, tr:nth-child(1) td:last-child {
+    border-radius: unset;
+  }
+  tbody tr {
+    cursor: pointer;
+  }
+  tbody tr:hover {
+    background-color: $primary-color-1-variant-color;
+    td {color: black}
+  }
+}

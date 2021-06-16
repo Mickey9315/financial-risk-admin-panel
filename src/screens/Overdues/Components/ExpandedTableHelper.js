@@ -42,6 +42,7 @@ const overdueStatusList = [
 
 const ExpandedTableHelper = props => {
   const { docs, isRowExpanded, refreshData } = props;
+  const [isStatusChanged, setIsStatusChanged] = useState(false);
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const handleDrawerState = useCallback(async data => {
     try {
@@ -65,14 +66,18 @@ const ExpandedTableHelper = props => {
     dispatchDrawerState({
       type: DRAWER_ACTIONS.HIDE_DRAWER,
     });
-  }, []);
+    if (isStatusChanged) {
+      setTimeout(() => refreshData(), 500);
+    }
+    setIsStatusChanged(false);
+  }, [isStatusChanged, refreshData]);
 
   return (
     <>
       <TableLinkDrawer
         drawerState={drawerState}
         closeDrawer={closeDrawer}
-        refreshData={refreshData}
+        setIsStatusChanged={setIsStatusChanged}
       />
       <tr className={`expandable-table ${isRowExpanded && 'show-table'}`}>
         <td colSpan={20}>
@@ -85,20 +90,22 @@ const ExpandedTableHelper = props => {
                 <th>Status</th>
                 <th>Amount</th>
               </tr>
-              {docs?.map(data => (
-                <tr
-                  onClick={async e => {
-                    e.stopPropagation();
-                    await handleDrawerState(data);
-                  }}
-                >
-                  <td>{data?.name}</td>
-                  <td>{data?.acn}</td>
-                  <td>{data?.overdueType}</td>
-                  <td>{data?.status}</td>
-                  <td>{data?.amount ? NumberCommaSeparator(data?.amount) : ''}</td>
-                </tr>
-              ))}
+              <tbody>
+                {docs?.map(data => (
+                  <tr
+                    onClick={async e => {
+                      e.stopPropagation();
+                      await handleDrawerState(data);
+                    }}
+                  >
+                    <td>{data?.name}</td>
+                    <td>{data?.acn}</td>
+                    <td>{data?.overdueType}</td>
+                    <td>{data?.status}</td>
+                    <td>{data?.amount ? NumberCommaSeparator(data?.amount) : ''}</td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </td>
@@ -115,24 +122,25 @@ export default ExpandedTableHelper;
 
 const TableLinkDrawer = props => {
   const dispatch = useDispatch();
-  const { drawerState, closeDrawer, refreshData } = props;
+  const { drawerState, closeDrawer, setIsStatusChanged } = props;
   const currentStatus = useMemo(
     () => drawerState?.data?.filter(data => data?.type === 'status')?.[0],
     [drawerState]
   );
   const [status, setStatus] = useState(currentStatus?.value);
+
   const handleOverdueDrawerStatusChange = useCallback(
     async e => {
       try {
         const data = { status: e?.value };
         await dispatch(changeOverdueStatus(drawerState?.id, data));
         setStatus(e);
-        refreshData();
+        setIsStatusChanged(true);
       } catch (err) {
         /**/
       }
     },
-    [drawerState?.id, refreshData]
+    [status, drawerState?.id, setIsStatusChanged]
   );
   const checkValue = row => {
     switch (row.type) {
@@ -150,7 +158,7 @@ const TableLinkDrawer = props => {
         );
       }
       case 'dollar':
-        return row?.value ? `$ ${row?.value}` : '-';
+        return row?.value ? `$ ${NumberCommaSeparator(row?.value)}` : '-';
       case 'percent':
         return row?.value ? `${row?.value} %` : '-';
       case 'date':
@@ -189,7 +197,7 @@ TableLinkDrawer.propTypes = {
     id: PropTypes.string.isRequired,
   }).isRequired,
   closeDrawer: PropTypes.func.isRequired,
-  refreshData: PropTypes.func.isRequired,
+  setIsStatusChanged: PropTypes.func.isRequired,
 };
 
 TableLinkDrawer.defaultProps = {};

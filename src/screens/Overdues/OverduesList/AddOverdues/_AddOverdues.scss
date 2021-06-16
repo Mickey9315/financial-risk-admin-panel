@@ -50,11 +50,18 @@
     font: $subtitle $font-medium;
     color: $secondary-color!important;
   }
+
+  .add-overdue-total-amount {
+    padding-right: 5px;
+    .ui-state-error {
+      text-align: right ;
+    }
+  }
 }
 
-.add-overdue-title {
+.add-overdue-content .add-overdue-field-container .add-overdue-title {
   width: 35%;
-  min-width: 200px;
+  min-width: 180px;
   margin-top: 5px;
   font: $subtitle $font-regular;
   color: $field-color;

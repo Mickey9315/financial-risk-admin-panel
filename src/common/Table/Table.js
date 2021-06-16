@@ -10,6 +10,7 @@ import Checkbox from '../Checkbox/Checkbox';
 import DropdownMenu from '../DropdownMenu/DropdownMenu';
 import { successNotification } from '../Toast';
 import ExpandedTableHelper from '../../screens/Overdues/Components/ExpandedTableHelper';
+import { NumberCommaSeparator } from '../../helpers/NumberCommaSeparator';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -525,7 +526,7 @@ function TableLinkDrawer(props) {
   const checkValue = row => {
     switch (row.type) {
       case 'dollar':
-        return row?.value ? `$ ${row?.value}` : '-';
+        return row?.value ? `$ ${NumberCommaSeparator(row?.value)}` : '-';
       case 'percent':
         return row?.value ? `${row?.value} %` : '-';
       case 'date':

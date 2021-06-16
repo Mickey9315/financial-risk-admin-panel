@@ -19,28 +19,28 @@ export const addOverdueValidations = async (
   const errors = {};
   let preparedData = {};
 
-  if (!data?.acn || data?.acn?.trim()?.length <= 0) {
-    validated = false;
-    errors.acn = 'Please enter ACN number before continue';
-  }
   if (data?.acn && (!NUMBER_REGEX.test(data?.acn) || data?.acn?.trim()?.length !== 9)) {
     validated = false;
     errors.acn = 'Please enter valid ACN number';
   }
-  if (!data?.debtorId || data?.debtorId?.length <= 0) {
+
+  if (data?.debtorId.length <= 0 && !data?.acn && data?.acn?.trim()?.length <= 0) {
     validated = false;
-    errors.debtorId = 'Please select debtor before continue';
+    errors.acn = 'You have to provide at least one - either a debtor or ACN number';
   }
+
   if (data?.debtorId && !isAmendOverdueModal) {
     const isExist = docs?.filter(
       doc =>
         doc?.debtorId?.value === data?.debtorId?.value && doc?.month === moment(period).format('MM')
     );
+
     if (isExist?.length > 0) {
       validated = false;
       errors.debtorId = 'Overdue for selected debtor is already exist, you can amend that.';
     }
   }
+
   if (data?.debtorId && isAmendOverdueModal) {
     const isExist = docs?.filter(
       doc =>
@@ -52,6 +52,7 @@ export const addOverdueValidations = async (
       errors.debtorId = 'Overdue for selected debtor is already exist, you can amend that.';
     }
   }
+
   if (!data?.dateOfInvoice || data?.dateOfInvoice?.length <= 0) {
     validated = false;
     errors.dateOfInvoice = 'Please select date of invoice before continue';
@@ -60,29 +61,40 @@ export const addOverdueValidations = async (
     validated = false;
     errors.overdueType = 'Please select overdue type before continue';
   }
+
   if (!data?.insurerId || data?.insurerId?.length <= 0) {
     validated = false;
     errors.insurerId = 'Please select insurer before continue';
   }
+
   if (data?.currentAmount && !NUMBER_REGEX.test(data?.currentAmount)) {
     validated = false;
     errors.currentAmount = 'Amount should be number';
   }
+
   if (data?.thirtyDaysAmount && !NUMBER_REGEX.test(data?.thirtyDaysAmount)) {
     validated = false;
     errors.thirtyDaysAmount = 'Amount should be number';
   }
+
   if (data?.sixtyDaysAmount && !NUMBER_REGEX.test(data?.sixtyDaysAmount)) {
     validated = false;
     errors.sixtyDaysAmount = 'Amount should be number';
   }
+
   if (data?.ninetyDaysAmount && !NUMBER_REGEX.test(data?.ninetyDaysAmount)) {
     validated = false;
     errors.ninetyDaysAmount = 'Amount should be number';
   }
+
   if (data?.ninetyPlusDaysAmount && !NUMBER_REGEX.test(data?.ninetyPlusDaysAmount)) {
     validated = false;
     errors.ninetyPlusDaysAmount = 'Amount should be number';
+  }
+
+  if (data?.outstandingAmount <= 0) {
+    validated = false;
+    errors.outstandingAmount = 'Outstanding amount cannot be zero';
   }
 
   const {

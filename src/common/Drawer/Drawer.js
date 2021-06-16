@@ -5,8 +5,9 @@ import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 const Drawer = props => {
   const { drawerState, closeDrawer, header, className, children, ...restProps } = props;
   const drawerMenuRef = useRef();
-  useOnClickOutside(drawerMenuRef, () => closeDrawer());
-
+  useOnClickOutside(drawerMenuRef, () => {
+    if (drawerState) closeDrawer();
+  });
   const drawerClasses = `drawer-container ${drawerState ? 'drawer-opened' : ''} ${className}`;
 
   return (
@@ -22,7 +23,7 @@ const Drawer = props => {
               onClick={closeDrawer}
             >
               close
-            </span>{' '}
+            </span>
           </div>
           <div className="drawer-content">{children}</div>
         </div>
