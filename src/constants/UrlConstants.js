@@ -238,6 +238,13 @@ export const DEBTORS_URLS = {
   },
 };
 
+export const CLAIMS_URLS = {
+  CLAIMS_LIST: `${BASE_URL}claim/`,
+  CLAIMS_COLUMN_LIST: `${BASE_URL}claim/column-name/`,
+  UPDATE_CLAIMS_COLUMN_LIST: `${BASE_URL}claim/column-name/`,
+  GET_CLAIMS_ENTITY_LIST: `${BASE_URL}claim/entity-list`,
+};
+
 export const MY_WORK_URL = {
   TASK: {
     TASK_LIST_URL: `${BASE_URL}task/`,

@@ -469,7 +469,7 @@
 
 .tooltip-top-class {
   max-width: 500px;
-  word-break: break-all;
+  overflow: hidden;
 
   .rc-tooltip-arrow {
     left: 25%;
@@ -486,7 +486,7 @@
 
 .tooltip-left-class {
   max-width: 500px;
-  word-break: break-all;
+  overflow: hidden;
 
   .rc-tooltip-arrow {
     border-left-color: $primary-color!important;

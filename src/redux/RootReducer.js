@@ -30,6 +30,7 @@ import { clearAuthToken } from '../helpers/LocalStorageHelper';
 import { loaderButtonReducer } from '../common/LoaderButton/redux/LoaderButtonReducer';
 import { dashboard } from '../screens/Dashboard/redux/DashboardReducer';
 import { overdue } from '../screens/Overdues/redux/OverduesReducer';
+import { claims } from '../screens/Claims/redux/ClaimsReducer';
 
 const appReducer = combineReducers({
   dashboard,
@@ -53,6 +54,7 @@ const appReducer = combineReducers({
   headerNotificationReducer,
   globalSearchReducer,
   overdue,
+  claims,
 });
 
 const rootReducer = (state, action) => {
