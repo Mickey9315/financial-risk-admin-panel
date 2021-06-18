@@ -445,7 +445,8 @@ const Header = () => {
               notificationList?.map(notification => (
                 <div className="notification-set">
                   <div className="notification-set-title">
-                    {moment(notification?.createdAt).calendar({
+                    {notification?.createdAt}
+                    {moment(notification?.createdAt, 'DD/MM/YYYY').calendar({
                       sameDay: '[Today]',
                       nextDay: '[Tomorrow]',
                       nextWeek: 'dddd',

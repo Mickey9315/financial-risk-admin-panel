@@ -245,6 +245,14 @@ export const CLAIMS_URLS = {
   GET_CLAIMS_ENTITY_LIST: `${BASE_URL}claim/entity-list`,
 };
 
+export const REPORTS_URLS = {
+  GET_REPORTS_LIST: `${BASE_URL}report`,
+  GET_REPORTS_COLUMN_LIST: `${BASE_URL}report/column-name`,
+  UPDATE_REPORTS_COLUMN_LIST: `${BASE_URL}report/column-name`,
+
+  GET_REPORT_CLIENT_LIST: `${BASE_URL}report/entity-list`,
+};
+
 export const MY_WORK_URL = {
   TASK: {
     TASK_LIST_URL: `${BASE_URL}task/`,

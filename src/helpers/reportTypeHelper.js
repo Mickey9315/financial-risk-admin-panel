@@ -1,34 +1,34 @@
 export const reportType = [
   {
-    url: 'clientList',
+    url: 'client-list',
     name: 'Client List',
   },
   {
-    url: 'limitList',
+    url: 'limit-list',
     name: 'Limit List',
   },
   {
-    url: 'pendingApplications',
+    url: 'pending-application',
     name: 'Pending Applications',
   },
   {
-    url: 'reviewReport',
+    url: 'review',
     name: 'Review Report',
   },
   {
-    url: 'usageReport',
+    url: 'usage',
     name: 'Usage Report',
   },
   {
-    url: 'usagePerClientReport',
+    url: 'usage-per-client',
     name: 'Usage per Client Report',
   },
   {
-    url: 'limitHistoryReport',
+    url: 'limit-history',
     name: 'Limit History Report',
   },
   {
-    url: 'claimsReport',
+    url: 'claims',
     name: 'Claims Report',
   },
 ];

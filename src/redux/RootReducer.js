@@ -31,6 +31,7 @@ import { loaderButtonReducer } from '../common/LoaderButton/redux/LoaderButtonRe
 import { dashboard } from '../screens/Dashboard/redux/DashboardReducer';
 import { overdue } from '../screens/Overdues/redux/OverduesReducer';
 import { claims } from '../screens/Claims/redux/ClaimsReducer';
+import { reports } from '../screens/Reports/redux/ReportsReducer';
 
 const appReducer = combineReducers({
   dashboard,
@@ -55,6 +56,7 @@ const appReducer = combineReducers({
   globalSearchReducer,
   overdue,
   claims,
+  reports,
 });
 
 const rootReducer = (state, action) => {

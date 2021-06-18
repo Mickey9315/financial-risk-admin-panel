@@ -61,10 +61,8 @@ const DebtorsList = () => {
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
 
-  const {
-    DebtorListColumnSaveButtonLoaderAction,
-    DebtorListColumnResetButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  const { DebtorListColumnSaveButtonLoaderAction, DebtorListColumnResetButtonLoaderAction } =
+    useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { entityType } = useMemo(() => filter, [filter]);
@@ -265,9 +263,10 @@ const DebtorsList = () => {
     dispatch(getDebtorDropdownData());
   }, []);
 
-  const onClickViewDebtor = useCallback(id => history.replace(`debtors/debtor/view/${id}`), [
-    history,
-  ]);
+  const onClickViewDebtor = useCallback(
+    id => history.replace(`debtors/debtor/view/${id}`),
+    [history]
+  );
 
   useEffect(() => {
     return dispatch(resetDebtorListPaginationData(page, pages, total, limit));
@@ -289,7 +288,6 @@ const DebtorsList = () => {
             <IconButton
               buttonType="primary"
               title="format_line_spacing"
-              className="mr-10"
               buttonTitle="Click to select custom fields"
               onClick={() => toggleCustomField()}
             />

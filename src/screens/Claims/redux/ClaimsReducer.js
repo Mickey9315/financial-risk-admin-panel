@@ -63,7 +63,7 @@ export const claims = (state = initialClaims, action) => {
         ...state?.claimsColumnList,
       };
       const { type, name, value } = action?.data;
-      columnList[`${type}`] = columnList[`${type}`].map(field =>
+      columnList[type] = columnList[type].map(field =>
         field.name === name ? { ...field, isChecked: value } : field
       );
       return {

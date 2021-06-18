@@ -9,7 +9,6 @@ import Pagination from '../../../common/Pagination/Pagination';
 import {
   changeClaimsColumnList,
   getClaimsColumnsList,
-  getClaimsDefaultColumnsList,
   getClaimsEntityList,
   getClaimsListByFilter,
   saveClaimsColumnsList,
@@ -20,6 +19,7 @@ import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomField
 import { errorNotification } from '../../../common/Toast';
 import { CLAIMS_REDUX_CONSTANTS } from '../redux/ClaimsReduxConstants';
 import Modal from '../../../common/Modal/Modal';
+import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 
 const initialFilterState = { clientId: '' };
 
@@ -201,6 +201,26 @@ const ClaimsList = () => {
     dispatch(changeClaimsColumnList(data));
   }, []);
 
+  const onSelectLimit = useCallback(
+    newLimit => {
+      getClaimsByFilter({ page: 1, limit: newLimit });
+    },
+    [getClaimsByFilter]
+  );
+
+  const pageActionClick = useCallback(
+    newPage => {
+      getClaimsByFilter({ page: newPage, limit });
+    },
+    [limit, getClaimsByFilter]
+  );
+
+  useUrlParamsUpdate({
+    page: page ?? 1,
+    limit: limit ?? 15,
+    entityType: (clientId?.trim()?.length ?? -1) > 0 ? clientId : undefined,
+  });
+
   useEffect(() => {
     const data = {
       page: paramPage ?? page ?? 1,
@@ -216,7 +236,6 @@ const ClaimsList = () => {
     });
     getClaimsByFilter(data);
     dispatch(getClaimsColumnsList());
-    dispatch(getClaimsDefaultColumnsList());
     dispatch(getClaimsEntityList());
   }, []);
 
@@ -257,7 +276,15 @@ const ClaimsList = () => {
                   rowClass="cursor-pointer"
                 />
               </div>
-              <Pagination className="common-list-pagination" total={total} pages={pages} />
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                onSelectLimit={onSelectLimit}
+                pageActionClick={pageActionClick}
+              />
             </>
           ) : (
             <div className="no-record-found">No record found</div>

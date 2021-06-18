@@ -26,6 +26,7 @@ import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import { USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
+import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 
 const initialFilterState = {
   role: '',
@@ -348,21 +349,13 @@ const UserList = () => {
     return dispatch(resetUserListPaginationData(page, limit, pages, total));
   }, []);
 
-  useEffect(() => {
-    const params = {
-      page: page ?? 1,
-      limit: limit ?? 15,
-      role: role?.length > 0 ?? false ? role?.trim() : undefined,
-      startDate: startDate ? new Date(startDate)?.toISOString() : undefined,
-      endDate: endDate ? new Date(endDate)?.toISOString() : undefined,
-    };
-    const url = Object.entries(params)
-      .filter(arr => arr[1] !== undefined)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-
-    history.replace(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, role, startDate, endDate]);
+  useUrlParamsUpdate({
+    page: page ?? 1,
+    limit: limit ?? 15,
+    role: role?.length > 0 ?? false ? role?.trim() : undefined,
+    startDate: startDate ? new Date(startDate)?.toISOString() : undefined,
+    endDate: endDate ? new Date(endDate)?.toISOString() : undefined,
+  });
 
   const userRoleSelectedValue = useMemo(() => {
     const foundValue = USER_ROLES.find(e => {

@@ -147,7 +147,7 @@ export const ROUTES_CONSTANTS = [
     authenticated: true,
   },
   {
-    path: '/reports',
+    path: '/reports/',
     component: Reports,
     authenticated: true,
   },

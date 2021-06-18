@@ -40,19 +40,6 @@ export const getClaimsColumnsList = () => {
         type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_COLUMNS_LIST,
         data: response.data.data,
       });
-    } catch (e) {
-      displayErrors(e);
-    }
-  };
-};
-
-export const getClaimsDefaultColumnsList = () => {
-  const param = {
-    columnFor: 'claim',
-  };
-  return async dispatch => {
-    try {
-      const response = await ClaimsApiServices.getClaimsColumnList(param);
       dispatch({
         type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_DEFAULT_COLUMN_LIST,
         data: response.data.data,
