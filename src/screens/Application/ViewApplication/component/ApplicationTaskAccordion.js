@@ -303,6 +303,7 @@ const ApplicationTaskAccordion = props => {
       title: addTaskState?.title?.trim() || '',
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId?.value,
+      assigneeType: addTaskState?.assigneeId?.type ?? addTaskState?.assigneeType,
       taskFrom: 'application',
       priority: addTaskState?.priority?.value ?? undefined,
       entityType: entityType?.value ?? undefined,
@@ -355,7 +356,7 @@ const ApplicationTaskAccordion = props => {
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
-                isSearchable={false}
+                isSearchable
                 value={selectedValues}
                 onChange={handleSelectInputChange}
               />

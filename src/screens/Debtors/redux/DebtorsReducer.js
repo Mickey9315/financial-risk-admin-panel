@@ -458,6 +458,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         label: data?.name,
         value: data?._id,
         name: 'assigneeId',
+        type: data?.type,
       }));
       return {
         ...state,

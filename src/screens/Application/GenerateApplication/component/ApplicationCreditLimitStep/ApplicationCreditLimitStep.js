@@ -15,7 +15,7 @@ const ApplicationCreditLimitStep = () => {
     passedOverdueDetails,
     creditLimit,
     outstandingAmount,
-    ordersOnHand,
+    orderOnHand,
     note,
     errors,
   } = useSelector(({ application }) => application?.editApplication?.creditLimit ?? {});
@@ -91,13 +91,13 @@ const ApplicationCreditLimitStep = () => {
           <div>
             <Input
               type="text"
-              name="ordersOnHand"
+              name="orderOnHand"
               placeholder="$00000"
-              value={ordersOnHand ? NumberCommaSeparator(ordersOnHand) : ''}
+              value={orderOnHand ? NumberCommaSeparator(orderOnHand) : ''}
               borderClass="mt-5"
               onChange={handleCurrencyChange}
             />
-            {errors?.ordersOnHand && <div className="ui-state-error">{errors?.ordersOnHand}</div>}
+            {errors?.orderOnHand && <div className="ui-state-error">{errors?.orderOnHand}</div>}
           </div>
         </div>
 

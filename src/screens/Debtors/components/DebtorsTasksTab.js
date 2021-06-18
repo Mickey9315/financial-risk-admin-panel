@@ -309,19 +309,19 @@ const DebtorTaskTab = () => {
     fieldFor => {
       switch (fieldFor) {
         case 'assigneeId': {
-          return addTaskState?.assigneeId || {};
+          return addTaskState?.assigneeId || [];
         }
         case 'priority': {
-          return addTaskState?.priority || {};
+          return addTaskState?.priority || [];
         }
         case 'entityType': {
-          return entityType || {};
+          return entityType || [];
         }
         case 'entityId': {
-          return addTaskState?.entityId || {};
+          return addTaskState?.entityId || [];
         }
         default:
-          return {};
+          return [];
       }
     },
     [addTaskState, assigneeList, priorityData, entityList, entityTypeData]
@@ -342,6 +342,7 @@ const DebtorTaskTab = () => {
       title: addTaskState?.title?.trim(),
       // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
+      assigneeType: addTaskState?.assigneeId?.type ?? addTaskState?.assigneeType,
       assigneeId: addTaskState?.assigneeId?.value,
       taskFrom: 'debtor-task',
       priority: addTaskState?.priority?.value ?? undefined,

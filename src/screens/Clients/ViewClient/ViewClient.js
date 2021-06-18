@@ -1,37 +1,37 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import ReactSelect from "react-select";
-import Button from "../../../common/Button/Button";
-import Tab from "../../../common/Tab/Tab";
-import OverDuesTab from "../../../common/Tab/OverduesTab/OverduesTab";
-import ClaimsTab from "../../../common/Tab/ClaimsTab/ClaimsTab";
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import ReactSelect from 'react-select';
+import moment from 'moment';
+import Button from '../../../common/Button/Button';
+import Tab from '../../../common/Tab/Tab';
+import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
+import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
 import {
   getClientById,
   setViewClientActiveTabIndex,
   syncClientData,
-  updateSelectedClientData
-} from "../redux/ClientAction";
-import ClientPoliciesTab from "../component/ClientPoliciesTab";
-import ClientNotesTab from "../component/ClientNotesTab";
-import ClientDocumentsTab from "../component/ClientDocumentsTab";
-import ClientCreditLimitTab from "../component/ClientCreditLimitTab";
-import ClientContactTab from "../component/ClientContactTab";
-import ClientApplicationTab from "../component/ClientApplicationTab";
-import ClientTaskTab from "../component/ClientTaskTab";
-import Switch from "../../../common/Switch/Switch";
-import Loader from "../../../common/Loader/Loader";
+  updateSelectedClientData,
+} from '../redux/ClientAction';
+import ClientPoliciesTab from '../component/ClientPoliciesTab';
+import ClientNotesTab from '../component/ClientNotesTab';
+import ClientDocumentsTab from '../component/ClientDocumentsTab';
+import ClientCreditLimitTab from '../component/ClientCreditLimitTab';
+import ClientContactTab from '../component/ClientContactTab';
+import ClientApplicationTab from '../component/ClientApplicationTab';
+import ClientTaskTab from '../component/ClientTaskTab';
+import Switch from '../../../common/Switch/Switch';
+import Loader from '../../../common/Loader/Loader';
 
 const initialAssigneeState = {
   riskAnalystId: [],
   serviceManagerId: [],
-  isAutoApproveAllowed: null
+  isAutoApproveAllowed: null,
 };
 
 const ASSIGNEE_REDUCER_ACTIONS = {
-  UPDATE_DATA: "UPDATE_DATA",
-  RESET_STATE: "RESET_STATE"
+  UPDATE_DATA: 'UPDATE_DATA',
+  RESET_STATE: 'RESET_STATE',
 };
 
 function assigneeReducer(state, action) {
@@ -39,7 +39,7 @@ function assigneeReducer(state, action) {
     case ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA:
       return {
         ...state,
-        [`${action.name}`]: action.value
+        [`${action.name}`]: action.value,
       };
     case ASSIGNEE_REDUCER_ACTIONS.RESET_STATE:
       return { ...initialAssigneeState };
@@ -67,18 +67,18 @@ const ViewClient = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const backToClient = () => {
-    history.replace("/clients");
+    history.replace('/clients');
   };
   const tabs = [
-    "Contacts",
-    "Credit Limit",
-    "Application",
-    "Overdues",
-    "Claims",
-    "Tasks",
-    "Policies",
-    "Documents",
-    "Notes"
+    'Contacts',
+    'Credit Limit',
+    'Application',
+    'Overdues',
+    'Claims',
+    'Tasks',
+    'Policies',
+    'Documents',
+    'Notes',
   ];
 
   const viewClientActiveTabIndex = useSelector(
@@ -93,11 +93,11 @@ const ViewClient = () => {
     () =>
       viewClientData
         ? viewClientData?.riskAnalystList?.map(e => ({
-          label: e.name,
-          value: e._id,
-          name: "riskAnalystId"
-        }))
-        :[],
+            label: e.name,
+            value: e._id,
+            name: 'riskAnalystId',
+          }))
+        : [],
     [viewClientData]
   );
 
@@ -105,11 +105,11 @@ const ViewClient = () => {
     () =>
       viewClientData
         ? viewClientData?.serviceManagerList?.map(e => ({
-          label: e.name,
-          value: e._id,
-          name: "serviceManagerId"
-        }))
-        :[],
+            label: e.name,
+            value: e._id,
+            name: 'serviceManagerId',
+          }))
+        : [],
     [viewClientData]
   );
 
@@ -126,25 +126,25 @@ const ViewClient = () => {
     if (viewClientData?.riskAnalystId && viewClientData?.serviceManagerId) {
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-        name: "riskAnalystId",
+        name: 'riskAnalystId',
         value: {
-          label: viewClientData?.riskAnalystId?.name || "",
-          value: viewClientData?.riskAnalystId?._id || ""
-        }
+          label: viewClientData?.riskAnalystId?.name || '',
+          value: viewClientData?.riskAnalystId?._id || '',
+        },
       });
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-        name: "serviceManagerId",
+        name: 'serviceManagerId',
         value: {
-          label: viewClientData?.serviceManagerId?.name || "",
-          value: viewClientData?.serviceManagerId?._id || ""
-        }
+          label: viewClientData?.serviceManagerId?.name || '',
+          value: viewClientData?.serviceManagerId?._id || '',
+        },
       });
     }
     dispatchAssignee({
       type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
-      name: "isAutoApproveAllowed",
-      value: viewClientData?.isAutoApproveAllowed
+      name: 'isAutoApproveAllowed',
+      value: viewClientData?.isAutoApproveAllowed,
     });
   }, [viewClientData]);
 
@@ -156,8 +156,8 @@ const ViewClient = () => {
         name,
         value: {
           label,
-          value
-        }
+          value,
+        },
       });
 
       const data = {};
@@ -177,7 +177,7 @@ const ViewClient = () => {
         dispatchAssignee({
           type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
           name,
-          checked
+          checked,
         });
       } catch (e) {
         /**/
@@ -199,7 +199,7 @@ const ViewClient = () => {
     <ClientTaskTab />,
     <ClientPoliciesTab />,
     <ClientDocumentsTab />,
-    <ClientNotesTab />
+    <ClientNotesTab />,
   ];
 
   return (
@@ -223,17 +223,21 @@ const ViewClient = () => {
           </div>
           <div className="common-white-container client-details-container">
             <span>Name</span>
-            <div className="client-detail">{viewClientData?.name ?? "No name added"}</div>
+            <div className="client-detail">{viewClientData?.name || 'No name added'}</div>
             <span>Address</span>
-            <div className="client-detail">{viewClientData?.address?.city ?? "No address added"}</div>
+            <div className="client-detail">
+              {viewClientData?.address?.city || 'No address added'}
+            </div>
             <span>Phone</span>
-            <div className="client-detail">{viewClientData?.contactNumber ?? "No phone number added"}</div>
+            <div className="client-detail">
+              {viewClientData?.contactNumber || 'No phone number added'}
+            </div>
             <span>ABN</span>
-            <div className="client-detail">{viewClientData?.abn ?? "No ABN number added"}</div>
+            <div className="client-detail">{viewClientData?.abn || 'No ABN number added'}</div>
             <span>ACN</span>
-            <div className="client-detail">{viewClientData?.acn ?? "No ACN number added"}</div>
+            <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
             <span>Referred By</span>
-            <div className="client-detail">{viewClientData?.referredBy ?? "N/A"}</div>
+            <div className="client-detail">{viewClientData?.referredBy || 'N/A'}</div>
             <span>Risk Person</span>
             <ReactSelect
               className="react-select-container"
@@ -241,7 +245,7 @@ const ViewClient = () => {
               placeholder="Select"
               name="riskAnalystId"
               options={riskAnalysts}
-              value={riskAnalystId}
+              value={riskAnalystId || []}
               onChange={onChangeAssignee}
               isSearchable
             />
@@ -252,45 +256,31 @@ const ViewClient = () => {
               placeholder="Select"
               name="serviceManagerId"
               options={serviceManagers}
-              value={serviceManagerId}
+              value={serviceManagerId || []}
               onChange={onChangeAssignee}
               isSearchable
             />
             <span>Insurer Name</span>
-            <div className="client-detail">{viewClientData?.insurerId?.name ?? "N/A"}</div>
+            <div className="client-detail">{viewClientData?.insurerId?.name || 'N/A'}</div>
             <span>Sales Person</span>
-            <div className="client-detail">{viewClientData?.salesPerson ?? "No sales person added"}</div>
+            <div className="client-detail">
+              {viewClientData?.salesPerson || 'No sales person added'}
+            </div>
             <span>IBIS Sector</span>
-            <div className="client-detail">{viewClientData?.sector ?? "No IBIS sector added"}</div>
+            <div className="client-detail">{viewClientData?.sector || 'No IBIS sector added'}</div>
             <span>Website</span>
-            <div className="client-detail mail-id-value">{viewClientData?.website ?? "No website added"}</div>
+            <div className="client-detail mail-id-value">
+              {viewClientData?.website || 'No website added'}
+            </div>
             <span>Trading As</span>
-            <div className="client-detail">{viewClientData?.tradingName ?? "N/A"}</div>
+            <div className="client-detail">{viewClientData?.tradingName || 'N/A'}</div>
             <span>Inception Date</span>
-            <div className="date-picker-container">
-              <DatePicker
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                dateFormat="dd/MM/yyyy"
-                placeholderText="No inception date added"
-                selected={new Date(viewClientData?.inceptionDate ?? null)}
-                disabled
-                popperProps={{ positionFixed: true }}
-              />
+            <div className="client-detail">
+              {moment(viewClientData?.inceptionDate).format('DD/MM/YYYY') || 'N/A'}
             </div>
             <span>Expiry Date</span>
-            <div className="date-picker-container">
-              <DatePicker
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                dateFormat="dd/MM/yyyy"
-                placeholderText="No expiry date added"
-                selected={new Date(viewClientData?.expiryDate ?? null)}
-                disabled
-                popperProps={{ positionFixed: true }}
-              />
+            <div className="client-detail">
+              {moment(viewClientData?.expiryDate).format('DD/MM/YYYY') || 'N/A'}
             </div>
             <span>Automate Applications</span>
             <Switch
@@ -300,10 +290,15 @@ const ViewClient = () => {
               onChange={onChangeApplicationAutomationSwitch}
             />
           </div>
-          <Tab tabs={tabs} tabActive={tabActive} activeTabIndex={activeTabIndex} className="mt-15" />
+          <Tab
+            tabs={tabs}
+            tabActive={tabActive}
+            activeTabIndex={activeTabIndex}
+            className="mt-15"
+          />
           <div className="common-white-container">{tabComponent[activeTabIndex]}</div>
         </>
-      ):(
+      ) : (
         <Loader />
       )}
     </>

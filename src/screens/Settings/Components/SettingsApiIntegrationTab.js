@@ -16,16 +16,14 @@ const SettingsApiIntegrationTab = () => {
     ({ settingReducer }) => settingReducer?.apiIntegration ?? {}
   );
 
-  const apiIntegrationDetails = useMemo(
-    () => apiIntegrationData?.integration ?? {},
-    [apiIntegrationData]
-  );
+  const apiIntegrationDetails = useMemo(() => apiIntegrationData?.integration ?? {}, [
+    apiIntegrationData,
+  ]);
   const isLoading = useMemo(() => apiIntegrationData?.isLoading ?? false, [apiIntegrationData]);
   const [errorElementList, setErrorElementList] = useState([]);
-  const { equifax, illion, rss, abn } = useMemo(
-    () => apiIntegrationDetails ?? {},
-    [apiIntegrationDetails]
-  );
+  const { equifax, illion, rss, abn } = useMemo(() => apiIntegrationDetails ?? {}, [
+    apiIntegrationDetails,
+  ]);
 
   const settingsApiIntegrationRow = useMemo(
     () => [
@@ -111,8 +109,10 @@ const SettingsApiIntegrationTab = () => {
     [setIsEditItemIndex, errorElementList]
   );
 
-  const { settingApiIntegrationButtonLoaderAction, settingApiIntegrationTestButtonLoaderAction } =
-    useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  const {
+    settingApiIntegrationButtonLoaderAction,
+    settingApiIntegrationTestButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const onInputValueChange = useCallback((row, e) => {
     const { name, value } = e.target;
@@ -240,18 +240,20 @@ const SettingsApiIntegrationTab = () => {
                     name={row.name}
                     onClick={() => onEditItemIndex(index)}
                   />
-                  <Button
-                    buttonType="primary"
-                    title="Test"
-                    name={row.name}
-                    onClick={async () => {
-                      setIsTestItemIndex(index);
-                      await onTestItem(row, index);
-                    }}
-                    isLoading={
-                      isTestItemIndex === index && settingApiIntegrationTestButtonLoaderAction
-                    }
-                  />
+                  {index !== 0 && (
+                    <Button
+                      buttonType="primary"
+                      title="Test"
+                      name={row.name}
+                      onClick={async () => {
+                        setIsTestItemIndex(index);
+                        await onTestItem(row, index);
+                      }}
+                      isLoading={
+                        isTestItemIndex === index && settingApiIntegrationTestButtonLoaderAction
+                      }
+                    />
+                  )}
                 </div>
               ) : (
                 <div className="buttons-row">

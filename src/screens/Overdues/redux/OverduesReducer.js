@@ -91,6 +91,26 @@ export const overdue = (state = initialOverdueState, action) => {
       };
     }
 
+    case OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.UPDATE_OVERDUE_LIST_BY_DATE: {
+      return {
+        ...state,
+        overdueListByDate: {
+          ...state?.overdueListByDate,
+          docs: action.data.list,
+        },
+      };
+    }
+
+    case OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.UPDATE_COPY_OVERDUE_LIST_BY_DATE: {
+      return {
+        ...state,
+        overdueListByDateCopy: {
+          ...state?.overdueListByDateCopy,
+          docs: action.data.list,
+        },
+      };
+    }
+
     case OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.GET_OVERDUE_DETAILS: {
       const docs = state?.overdueListByDate?.docs;
       const overdueDetail = docs?.find(doc => doc?._id === action?.id);

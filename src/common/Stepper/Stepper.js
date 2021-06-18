@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '../Button/Button';
 import { getLabelFromValues } from '../../helpers/entityiTypeHelper';
 import { entityTypeMapperObjectForPersonStep } from '../../helpers/Mappers';
+import { getApplicationDetailsOnBackToCompanyStep } from '../../screens/Application/redux/ApplicationAction';
 
 const Stepper = props => {
+  const dispatch = useDispatch();
   const applicationDetail = useSelector(({ application }) => application?.editApplication ?? {});
 
   const entityType = useMemo(
@@ -23,7 +25,6 @@ const Stepper = props => {
     stepIndex,
     children,
     className,
-    backClick,
     nextClick,
     addStepClick,
     onChangeIndex,
@@ -34,8 +35,9 @@ const Stepper = props => {
   const onClickBackButton = useCallback(() => {
     onChangeIndex(activeStep - 1);
     setActiveStep(prevState => prevState - 1);
-    backClick();
-  }, [activeStep, setActiveStep, backClick]);
+    if (activeStep === 1)
+      dispatch(getApplicationDetailsOnBackToCompanyStep(applicationDetail?._id, activeStep));
+  }, [activeStep, setActiveStep, applicationDetail?._id]);
 
   const onClickNextButton = useCallback(async () => {
     try {
@@ -116,7 +118,6 @@ Stepper.propTypes = {
   className: PropTypes.string,
   stepIndex: PropTypes.number.isRequired,
   steps: PropTypes.array.isRequired,
-  backClick: PropTypes.func,
   nextClick: PropTypes.func,
   addStepClick: PropTypes.func,
   onChangeIndex: PropTypes.func,
@@ -126,7 +127,6 @@ Stepper.propTypes = {
 Stepper.defaultProps = {
   className: '',
   onChangeIndex: () => {},
-  backClick: () => {},
   nextClick: () => {},
   addStepClick: () => {},
 };

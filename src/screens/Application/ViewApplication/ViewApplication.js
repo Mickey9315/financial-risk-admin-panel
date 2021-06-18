@@ -32,6 +32,7 @@ import { NUMBER_REGEX } from '../../../constants/RegexConstants';
 import Input from '../../../common/Input/Input';
 import Button from '../../../common/Button/Button';
 import Switch from '../../../common/Switch/Switch';
+import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -63,10 +64,9 @@ const ViewApplication = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const viewApplicationData = useSelector(({ application }) => application?.viewApplication ?? {});
-  const { applicationDetail, isLoading } = useMemo(
-    () => viewApplicationData,
-    [viewApplicationData]
-  );
+  const { applicationDetail, isLoading } = useMemo(() => viewApplicationData, [
+    viewApplicationData,
+  ]);
 
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
@@ -85,7 +85,7 @@ const ViewApplication = () => {
     clientId,
     creditLimit,
     outstandingAmount,
-    ordersOnHand,
+    orderOnHand,
     applicationId,
     isAllowToUpdate,
     status,
@@ -156,20 +156,20 @@ const ViewApplication = () => {
       },
       {
         title: 'Credit Limit',
-        value: creditLimit,
+        value: creditLimit ? NumberCommaSeparator(creditLimit) : '',
         name: 'creditLimit',
         type: 'text',
       },
       {
         title: 'Outstanding Amount',
-        value: outstandingAmount,
+        value: outstandingAmount ? NumberCommaSeparator(outstandingAmount) : '',
         name: 'outstandingAmount',
         type: 'text',
       },
       {
         title: 'Order on Hand',
-        value: ordersOnHand,
-        name: 'ordersOnHand',
+        value: orderOnHand,
+        name: 'orderOnHand',
         type: 'text',
       },
       {

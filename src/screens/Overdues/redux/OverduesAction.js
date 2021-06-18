@@ -150,11 +150,19 @@ export const amendOverdue = (id, data) => {
 };
 
 export const saveOverdueList = data => {
-  return async () => {
+  return async dispatch => {
     try {
       startLoaderButtonOnRequest('saveOverdueToBackEndPageLoaderAction');
       const response = await OverdueApiServices.saveOverdueList(data);
       if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.UPDATE_OVERDUE_LIST_BY_DATE,
+          data,
+        });
+        dispatch({
+          type: OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.UPDATE_COPY_OVERDUE_LIST_BY_DATE,
+          data,
+        });
         successNotification(response?.data?.message ?? 'Overdue saved successfully');
         stopLoaderButtonOnSuccessOrFail('saveOverdueToBackEndPageLoaderAction');
       }

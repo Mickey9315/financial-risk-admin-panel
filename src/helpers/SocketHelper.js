@@ -1,10 +1,7 @@
 import socketIOClient from 'socket.io-client';
 import { displayErrors } from './ErrorNotifyHelper';
 import { HEADER_NOTIFICATION_REDUX_CONSTANTS } from '../common/Header/redux/HeaderConstants';
-import {
-  updateHeaderNotificationOnTaskAssignedAction,
-  updateHeaderNotificationOnTaskUpdatedAction,
-} from '../common/Header/redux/HeaderAction';
+import { updateHeaderNotificationOnNewNotificationAction } from '../common/Header/redux/HeaderAction';
 import { store } from '../redux/store';
 
 const urls = {
@@ -13,20 +10,16 @@ const urls = {
 };
 
 const SOCKET_URI = urls.dev;
-const TYPE = 'client-user';
+const TYPE = 'user';
 let socket = null;
 
 export const dispatchActionsOnSocketEvents = data => {
-  switch (data.type) {
-    case HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_ASSIGNED:
-      store.dispatch(updateHeaderNotificationOnTaskAssignedAction(data?.data));
-      break;
-    case HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_UPDATED:
-      store.dispatch(updateHeaderNotificationOnTaskUpdatedAction(data?.data));
-      break;
-    default:
-      break;
-  }
+  if (
+    data.type === HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_ASSIGNED ||
+    HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_UPDATED ||
+    HEADER_NOTIFICATION_REDUX_CONSTANTS.REVIEW_DEBTOR
+  )
+    store.dispatch(updateHeaderNotificationOnNewNotificationAction(data?.data));
 };
 export const connectWebSocket = AUTH_TOKEN => {
   try {

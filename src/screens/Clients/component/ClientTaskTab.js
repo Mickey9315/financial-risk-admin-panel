@@ -341,6 +341,7 @@ const ClientTaskTab = () => {
       // priority: addTaskState?.priority[0]?.value,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId?.value,
+      assigneeType: addTaskState?.assigneeId?.type ?? addTaskState?.assigneeType,
       taskFrom: 'client-task',
       priority: addTaskState?.priority?.value ?? undefined,
       entityType: entityType?.value ?? undefined,

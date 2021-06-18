@@ -185,6 +185,7 @@ const MyWorkAddTask = () => {
       title: taskDetails?.title?.trim() ?? '',
       dueDate: taskDetails?.dueDate || new Date().toISOString(),
       assigneeId: taskDetails?.assigneeId?.value ?? '',
+      assigneeType: taskDetails?.assigneeId?.type ?? taskDetails?.assigneeType,
       taskFrom: 'task',
       priority: taskDetails?.priority?.value ?? undefined,
       entityType: entityType?.value ?? undefined,

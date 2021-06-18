@@ -70,7 +70,7 @@ const initialApplicationList = {
       passedOverdueDetails: '',
       creditLimit: '',
       outstandingAmount: '',
-      ordersOnHand: '',
+      orderOnHand: '',
       note: '',
       errors: {},
     },
@@ -560,9 +560,10 @@ export const application = (state = initialApplicationList, action) => {
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
       .APPLICATION_TASK_ASSIGNEE_DROP_DOWN_DATA_ACTION: {
       const assigneeList = action?.data?.map(data => ({
-        label: data.name,
-        value: data._id,
+        label: data?.name,
+        value: data?._id,
         name: 'assigneeId',
+        type: data?.type,
       }));
       return {
         ...state,
@@ -746,6 +747,16 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+
+    case APPLICATION_REDUX_CONSTANTS.UPDATE_APPLICATION_DETAILS_ON_BACK_TO_COMPANY_STEP:
+      return {
+        ...state,
+        editApplication: {
+          ...state?.editApplication,
+          ...action?.data,
+          applicationStage: action.activeStep - 1,
+        },
+      };
 
     default:
       return state;

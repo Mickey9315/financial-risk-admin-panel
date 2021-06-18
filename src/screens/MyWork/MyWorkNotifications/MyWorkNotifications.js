@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
-import _ from 'lodash';
 import logo from '../../../assets/images/logo.svg';
 import {
   clearNotificationData,
@@ -23,7 +22,12 @@ const MyWorkNotifications = () => {
     ({ myWorkReducer }) => myWorkReducer?.notification ?? {}
   );
 
-  const sortedList = _.orderBy(notificationList, ['title'], ['desc']);
+  const sortedNotification = useMemo(() => {
+    notificationList?.sort(function (a, b) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    return notificationList;
+  }, [notificationList]);
 
   const [filterDate, setFilterDate] = useState(undefined);
 
@@ -131,7 +135,7 @@ const MyWorkNotifications = () => {
 
   const handleScroll = e => {
     if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight)
-      if (sortedList?.length > 0) {
+      if (sortedNotification?.length > 0) {
         setIsFetching(true);
       }
   };
@@ -156,7 +160,7 @@ const MyWorkNotifications = () => {
   return (
     <>
       <div className="my-work-task-action-row">
-        {sortedList && (
+        {sortedNotification && (
           <IconButton
             buttonType="secondary"
             title="filter_list"
@@ -166,13 +170,13 @@ const MyWorkNotifications = () => {
           />
         )}
       </div>
-      {sortedList?.length > 0 ? (
+      {sortedNotification?.length > 0 ? (
         <>
           <div
             className="common-white-container notification-white-container"
             onScroll={handleScroll}
           >
-            {sortedList?.map(e => (
+            {sortedNotification?.map(e => (
               <>
                 <div className="notification-date">{moment(e?.title).format('DD-MMM-YYYY')}</div>
                 <div className="notification-container">

@@ -25,8 +25,8 @@ const entityTypeData = [
   { value: 'application', label: 'Application', name: 'entityType' },
   { value: 'client', label: 'Client', name: 'entityType' },
   { value: 'debtor', label: 'Debtor', name: 'entityType' },
-    { value: 'insurer', label: 'Insurer', name: 'entityType' },
-    // { value: 'claim', label: 'Claim', name: 'entityType' },
+  { value: 'insurer', label: 'Insurer', name: 'entityType' },
+  // { value: 'claim', label: 'Claim', name: 'entityType' },
   // { value: 'overdue', label: 'Overdue', name: 'entityType' },
 ];
 
@@ -125,8 +125,7 @@ const MyWorkAddTask = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      const { label, value } = data;
-      updateAddTaskState(data?.name ?? '', { label, value });
+      updateAddTaskState(data?.name ?? '', data);
       if (data?.name === 'entityType') {
         dispatch(removeAddTaskEntityId());
       }
@@ -167,6 +166,7 @@ const MyWorkAddTask = () => {
       title: addTaskState?.title?.trim(),
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId?.value,
+      assigneeType: addTaskState?.assigneeId?.type,
       taskFrom: 'task',
       priority: addTaskState?.priority?.value ?? undefined,
       entityType: entityType?.value ?? undefined,

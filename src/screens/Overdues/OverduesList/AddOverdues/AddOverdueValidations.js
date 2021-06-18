@@ -30,10 +30,7 @@ export const addOverdueValidations = async (
   }
 
   if (data?.debtorId && !isAmendOverdueModal) {
-    const isExist = docs?.filter(
-      doc =>
-        doc?.debtorId?.value === data?.debtorId?.value && doc?.month === moment(period).format('MM')
-    );
+    const isExist = docs?.filter(doc => doc?.debtorId?.value === data?.debtorId?.value);
 
     if (isExist?.length > 0) {
       validated = false;

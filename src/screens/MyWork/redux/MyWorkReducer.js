@@ -94,6 +94,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         label: data?.name,
         value: data?._id,
         name: 'assigneeId',
+        type: data?.type,
       }));
       return {
         ...state,
@@ -227,6 +228,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
         label: data?.name,
         value: data?._id,
         name: 'assigneeId',
+        type: data?.type,
       }));
       return {
         ...state,

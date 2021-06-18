@@ -39,8 +39,8 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
     errors.outstandingAmount = 'Outstanding amount should be greater than zero';
     validated = false;
   }
-  if (data?.ordersOnHand && !data?.ordersOnHand?.toString()?.match(NUMBER_REGEX)) {
-    errors.ordersOnHand = 'Please enter valid order on hand value';
+  if (data?.orderOnHand && !data?.orderOnHand?.toString()?.match(NUMBER_REGEX)) {
+    errors.orderOnHand = 'Please enter valid order on hand value';
     validated = false;
   }
   if (validated) {
@@ -50,6 +50,8 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
       extendedPaymentTermsDetails,
       passedOverdueDetails,
       creditLimit,
+      outstandingAmount,
+      orderOnHand,
       note,
     } = data;
 
@@ -62,6 +64,8 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
       isPassedOverdueAmount: isPassedOverdueAmount ?? false,
       passedOverdueDetails: isPassedOverdueAmount ? passedOverdueDetails : '',
       creditLimit,
+      outstandingAmount,
+      orderOnHand,
       note,
     };
     try {

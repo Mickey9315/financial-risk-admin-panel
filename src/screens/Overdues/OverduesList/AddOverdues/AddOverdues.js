@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Prompt } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ import AddOverdueTable from './AddOverdueTable';
 import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import Loader from '../../../../common/Loader/Loader';
 import { displayErrors } from '../../../../helpers/ErrorNotifyHelper';
+import { OVERDUE_REDUX_CONSTANTS } from '../../redux/OverduesReduxConstants';
 
 const AddOverdues = () => {
   const history = useHistory();
@@ -29,6 +30,7 @@ const AddOverdues = () => {
   const [showSaveAlertModal, setShowSaveAlertModal] = useState(false);
   const [alertOnLeftModal, setAlertOnLeftModal] = useState(false);
   const [selectedDebtor, setSelectedDebtor] = useState(null);
+  const [isPrompt, setIsPrompt] = useState(false);
   const toggleAlertOnLeftModal = useCallback(
     value => setAlertOnLeftModal(value !== undefined ? value : e => !e),
     [setAlertOnLeftModal]
@@ -257,8 +259,11 @@ const AddOverdues = () => {
   );
 
   const toggleSaveAlertModal = useCallback(
-    value => setShowSaveAlertModal(value !== undefined ? value : e => !e),
-    [setShowSaveAlertModal]
+    value => {
+      setShowSaveAlertModal(value !== undefined ? value : e => !e);
+      if (isPrompt && alertOnLeftModal) toggleAlertOnLeftModal();
+    },
+    [setShowSaveAlertModal, isPrompt, alertOnLeftModal, toggleAlertOnLeftModal]
   );
 
   const handleAmountInputChange = useCallback(e => {
@@ -475,16 +480,6 @@ const AddOverdues = () => {
     ],
     [toggleSaveAlertModal]
   );
-  const alertOnLeftModalButtons = useMemo(
-    () => [
-      {
-        title: 'Ok',
-        buttonType: 'primary',
-        onClick: () => toggleAlertOnLeftModal(),
-      },
-    ],
-    [toggleAlertOnLeftModal]
-  );
   const onCLickOverdueSave = useCallback(async () => {
     let validated = true;
     docs?.forEach(doc => {
@@ -522,15 +517,52 @@ const AddOverdues = () => {
           return data;
         });
         await dispatch(saveOverdueList({ list: finalData }));
+        if (isPrompt) setIsPrompt(false);
         history.replace('/over-dues');
       } catch (e) {
         displayErrors(e);
       }
     }
-  }, [toggleSaveAlertModal, docs, getOverdueList]);
+  }, [toggleSaveAlertModal, docs, isPrompt, setIsPrompt]);
+  const alertOnLeftModalButtons = useMemo(
+    () => [
+      {
+        title: 'Back To List',
+        buttonType: 'primary-1',
+        onClick: async () => {
+          if (isPrompt) {
+            await dispatch({
+              type: OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.GET_OVERDUE_LIST_BY_DATE,
+              data: overdueListByDateCopy,
+            });
+            history.replace('/over-dues');
+            setIsPrompt(false);
+          } else {
+            history.replace('/over-dues');
+          }
+        },
+      },
+      {
+        title: 'Save',
+        buttonType: 'primary',
+        onClick: onCLickOverdueSave,
+      },
+    ],
+    [onCLickOverdueSave, overdueListByDateCopy, isPrompt, setIsPrompt]
+  );
+
+  const handleBlockedRoute = useCallback(() => {
+    toggleAlertOnLeftModal();
+    setIsPrompt(true);
+    return false;
+  }, [toggleAlertOnLeftModal, setIsPrompt]);
 
   return (
     <>
+      <Prompt
+        when={!_.isEqual(overdueListByDate, overdueListByDateCopy)}
+        message={handleBlockedRoute}
+      />
       {!addOverduePageLoaderAction ? (
         <>
           <div className="breadcrumb-button-row mt-15">

@@ -249,7 +249,6 @@ export const REPORTS_URLS = {
   GET_REPORTS_LIST: `${BASE_URL}report`,
   GET_REPORTS_COLUMN_LIST: `${BASE_URL}report/column-name`,
   UPDATE_REPORTS_COLUMN_LIST: `${BASE_URL}report/column-name`,
-
   GET_REPORT_CLIENT_LIST: `${BASE_URL}report/entity-list`,
 };
 

@@ -24,6 +24,7 @@ import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { downloadAll } from '../../../helpers/DownloadHelper';
+import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 
 const ClientCreditLimitTab = () => {
   const { id } = useParams();
@@ -231,9 +232,9 @@ const ClientCreditLimitTab = () => {
 
   const modifyLimit = useCallback(async () => {
     try {
-      if (newCreditLimit?.trim()?.length <= 0) {
+      if (newCreditLimit?.toString()?.trim().length <= 0) {
         errorNotification('Please provide new credit limit');
-      } else if (newCreditLimit && !newCreditLimit.match(NUMBER_REGEX)) {
+      } else if (newCreditLimit && !newCreditLimit?.toString()?.match(NUMBER_REGEX)) {
         errorNotification('Please provide valid credit limit');
       } else {
         const data = {
@@ -364,7 +365,11 @@ const ClientCreditLimitTab = () => {
             <span>Credit Limit</span>
             <Input
               type="text"
-              value={currentCreditLimitData?.creditLimit}
+              value={
+                currentCreditLimitData?.creditLimit
+                  ? NumberCommaSeparator(currentCreditLimitData?.creditLimit)
+                  : ''
+              }
               disabled
               borderClass="disabled-control"
             />
@@ -374,8 +379,10 @@ const ClientCreditLimitTab = () => {
               placeholder="New Credit Limit"
               name="creditLimit"
               type="text"
-              value={newCreditLimit}
-              onChange={e => setNewCreditLimit(e.target.value)}
+              value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
+              onChange={e =>
+                setNewCreditLimit(parseInt(e?.target?.value?.toString()?.replaceAll(',', ''), 10))
+              }
             />
           </div>
         </Modal>

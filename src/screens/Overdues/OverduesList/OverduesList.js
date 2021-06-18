@@ -141,10 +141,9 @@ const OverduesList = () => {
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => overdueListWithPageData,
-    [overdueListWithPageData]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
+    overdueListWithPageData,
+  ]);
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -308,16 +307,25 @@ const OverduesList = () => {
     }
   }, [newSubmissionDetails]);
 
+  const onCloseNewSubmissionModal = useCallback(() => {
+    setNewSubmissionDetails({});
+    setNewSubmissionModal(e => !e);
+  }, []);
+
   const newSubmissionButtons = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => setNewSubmissionModal(e => !e) },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: onCloseNewSubmissionModal,
+      },
       {
         title: 'Add',
         buttonType: 'primary',
         onClick: onAddNewSubmission,
       },
     ],
-    [onAddNewSubmission]
+    [onAddNewSubmission, onCloseNewSubmissionModal]
   );
 
   return (
@@ -345,6 +353,7 @@ const OverduesList = () => {
             <>
               <div className="common-list-container">
                 <Table
+                  isExpandable
                   tableClass="main-list-table"
                   data={docs}
                   headers={headers}
@@ -372,7 +381,7 @@ const OverduesList = () => {
               className="new-submission-modal"
               headerClassName="left-aligned-modal-header"
               buttons={newSubmissionButtons}
-              hideModal={() => setNewSubmissionModal(e => !e)}
+              hideModal={onCloseNewSubmissionModal}
             >
               <ReactSelect
                 className="react-select-container"

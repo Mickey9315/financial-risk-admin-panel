@@ -134,24 +134,10 @@ export const getHeaderNotificationListURL = () => {
   };
 };
 
-export const updateHeaderNotificationOnTaskAssignedAction = data => {
+export const updateHeaderNotificationOnNewNotificationAction = data => {
   return dispatch => {
     dispatch({
-      type: HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_ASSIGNED,
-      data,
-    });
-    dispatch({
-      type:
-        MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS.GET_NOTIFICATION_FROM_SOCKET,
-      data,
-    });
-  };
-};
-
-export const updateHeaderNotificationOnTaskUpdatedAction = data => {
-  return dispatch => {
-    dispatch({
-      type: HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_UPDATED,
+      type: HEADER_NOTIFICATION_REDUX_CONSTANTS.ADD_NOTIFICATION,
       data,
     });
     dispatch({

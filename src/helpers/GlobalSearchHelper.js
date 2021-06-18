@@ -59,7 +59,7 @@ export const handleGlobalSearchSelect = (data, history) => {
   try {
     const { module, _id, hasSubModule, subModule, status } = data;
     switch (module) {
-      case 'my-work':
+      case 'task':
         handleSearchWithSubModules(
           `/my-work/view/${_id}`,
           module,
