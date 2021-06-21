@@ -4,6 +4,7 @@ import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
+import moment from 'moment';
 import Input from '../../../../common/Input/Input';
 import Modal from '../../../../common/Modal/Modal';
 import Button from '../../../../common/Button/Button';
@@ -97,7 +98,7 @@ const AddOverdues = () => {
   );
 
   const getOverdueList = useCallback(async () => {
-    const data = { date: new Date(period), clientId: id };
+    const data = { date: moment(period, 'MMMM-YYYY').toDate(), clientId: id };
     await dispatch(getOverdueListByDate(data));
   }, [period, id]);
 
@@ -153,7 +154,7 @@ const AddOverdues = () => {
   const addModalInputs = useMemo(
     () => [
       {
-        title: 'Debtor Name',
+        title: 'Debtor Name*',
         name: 'debtorId',
         type: 'select',
         placeholder: 'Select Debtor',
@@ -166,10 +167,11 @@ const AddOverdues = () => {
         type: 'date',
         placeholder: 'Select Month/Year',
         data: '',
-        value: new Date(period),
+        value: moment(period, 'MMMM-YYYY').toDate(),
+        isOr: true,
       },
       {
-        title: 'ACN',
+        title: 'ACN*',
         name: 'acn',
         type: 'text',
         placeholder: 'Enter ACN ',
@@ -178,7 +180,7 @@ const AddOverdues = () => {
       },
       {},
       {
-        title: 'Date of Invoice',
+        title: 'Date of Invoice*',
         name: 'dateOfInvoice',
         type: 'date',
         placeholder: 'Select Date Of Invoice',
@@ -186,7 +188,7 @@ const AddOverdues = () => {
       },
       {},
       {
-        title: 'Overdue Type',
+        title: 'Overdue Type*',
         name: 'overdueType',
         type: 'select',
         placeholder: 'Select Overdue Type',
@@ -195,7 +197,7 @@ const AddOverdues = () => {
       },
       {},
       {
-        title: 'Insurer Name',
+        title: 'Insurer Name*',
         name: 'insurerId',
         type: 'select',
         placeholder: 'Select Insurer',
@@ -249,7 +251,7 @@ const AddOverdues = () => {
       },
 
       {
-        title: 'Outstanding Amounts',
+        title: 'Outstanding Amounts*',
         name: 'outstandingAmount',
         type: 'total-amount',
         value: overdueDetails?.outstandingAmount ?? '',
@@ -298,19 +300,22 @@ const AddOverdues = () => {
           break;
         case 'select':
           component = (
-            <ReactSelect
-              name={input.name}
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder={input.placeholder}
-              options={input?.data}
-              value={input?.value}
-              onChange={
-                input?.name === 'debtorId'
-                  ? e => handleDebtorChange(e, false)
-                  : handleSelectInputChange
-              }
-            />
+            <>
+              <ReactSelect
+                name={input.name}
+                className="react-select-container"
+                classNamePrefix="react-select"
+                placeholder={input.placeholder}
+                options={input?.data}
+                value={input?.value}
+                onChange={
+                  input?.name === 'debtorId'
+                    ? e => handleDebtorChange(e, false)
+                    : handleSelectInputChange
+                }
+              />
+              {input?.isOr && <div className="or-text">OR</div>}
+            </>
           );
           break;
         case 'date':
@@ -321,16 +326,7 @@ const AddOverdues = () => {
               }`}
             >
               {input.name === 'monthString' ? (
-                <DatePicker
-                  name={input.name}
-                  placeholderText={input.placeholder}
-                  dateFormat="MM/yyyy"
-                  selected={input?.value}
-                  showMonthYearPicker
-                  showYearDropdown
-                  showFullMonthYearPicker
-                  disabled
-                />
+                <span className="add-overdue-month-picker">{input?.value}</span>
               ) : (
                 <DatePicker
                   name={input.name}

@@ -25,7 +25,7 @@
 
 .overdue-filter-modal {
   .form-title {
-    width: 175px;
+    width: 215px;
   }
 
   .input-container, .date-picker-container {
@@ -43,5 +43,9 @@
   tbody tr:hover {
     background-color: $primary-color-1-variant-color;
     td {color: black}
+  }
+
+  tbody tr:last-child {
+    border-bottom: 1px solid $background-color;
   }
 }

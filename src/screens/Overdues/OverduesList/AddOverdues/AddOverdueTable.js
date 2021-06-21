@@ -103,47 +103,49 @@ const AddOverdueTable = props => {
       )}
 
       {docs?.length > 0 ? (
-        <table
-          className="table-class main-list-table add-overdue-table"
-          width={100}
-          cellSpacing={0}
-        >
-          <thead>
-            <tr className="bg-background-color">
-              <th>Debtor Name</th>
-              <th>Overdue Type</th>
-              <th>Status</th>
-              <th>Amounts</th>
-              <th />
-            </tr>
-          </thead>
-          {docs?.map(overdue => (
-            <tr>
-              <td>{overdue?.debtorId?.label ?? '-'}</td>
-              <td>{overdue?.overdueType?.label ?? '-'}</td>
-              <td>{overdue?.status?.label ?? '-'}</td>
-              <td>
-                {overdue?.outstandingAmount
-                  ? NumberCommaSeparator(overdue?.outstandingAmount)
-                  : '-'}
-              </td>
-              <td>
-                {overdueActionButtons?.map(button => (
-                  <Button
-                    buttonType={`${
-                      button?.status === overdue?.overdueAction ? 'primary' : 'outlined-primary'
-                    }`}
-                    className="small-button"
-                    title={button?.title}
-                    onClick={() =>
-                      onClickOverdueActionButtons(overdue?._id, button, overdue?.overdueAction)
-                    }
-                  />
-                ))}
-              </td>
-            </tr>
-          ))}
-        </table>
+        <div className="common-list-container">
+          <table
+            className="table-class main-list-table add-overdue-table"
+            width={100}
+            cellSpacing={0}
+          >
+            <thead>
+              <tr className="bg-background-color">
+                <th>Debtor Name</th>
+                <th>Overdue Type</th>
+                <th>Status</th>
+                <th>Amounts</th>
+                <th />
+              </tr>
+            </thead>
+            {docs?.map(overdue => (
+              <tr>
+                <td>{overdue?.debtorId?.label ?? '-'}</td>
+                <td>{overdue?.overdueType?.label ?? '-'}</td>
+                <td>{overdue?.status?.label ?? '-'}</td>
+                <td>
+                  {overdue?.outstandingAmount
+                    ? NumberCommaSeparator(overdue?.outstandingAmount)
+                    : '-'}
+                </td>
+                <td>
+                  {overdueActionButtons?.map(button => (
+                    <Button
+                      buttonType={`${
+                        button?.status === overdue?.overdueAction ? 'primary' : 'outlined-primary'
+                      }`}
+                      className="small-button"
+                      title={button?.title}
+                      onClick={() =>
+                        onClickOverdueActionButtons(overdue?._id, button, overdue?.overdueAction)
+                      }
+                    />
+                  ))}
+                </td>
+              </tr>
+            ))}
+          </table>
+        </div>
       ) : (
         <div className="no-record-found">No record found</div>
       )}

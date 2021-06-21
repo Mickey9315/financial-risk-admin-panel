@@ -36,7 +36,7 @@ const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebto
 const Reports = lazy(() => import('../../screens/Reports/Reports'));
 const ViewReports = lazy(() => import('../../screens/Reports/ViewReports/ViewReport'));
 const Claims = lazy(() => import('../../screens/Claims/ClaimsList/ClaimsList'));
-const AddClaims = lazy(() => import('../../screens/Claims/AddViewClaims/AddViewClaims'));
+const AddViewClaims = lazy(() => import('../../screens/Claims/AddViewClaims/AddViewClaims'));
 const MyWorkEditTask = lazy(() =>
   import('../../screens/MyWork/MyWorkTasks/MyWorkEditTask/MyWorkEditTask')
 );
@@ -132,8 +132,8 @@ export const ROUTES_CONSTANTS = [
     authenticated: true,
   },
   {
-    path: '/claims/add',
-    component: AddClaims,
+    path: '/claims/:type',
+    component: AddViewClaims,
     authenticated: true,
   },
   {

@@ -205,7 +205,7 @@
 .show-table {
   table, td, tr, th, div {
     max-height: 1000px !important;
-    overflow: visible !important;
+    overflow: auto !important;
   }
 }
 

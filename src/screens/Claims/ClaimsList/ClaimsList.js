@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import ReactSelect from 'react-select';
+import { useHistory } from 'react-router-dom';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
@@ -47,6 +48,7 @@ function filterReducer(state, action) {
 
 const ClaimsList = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
   const toggleFilterModal = useCallback(
@@ -71,14 +73,13 @@ const ClaimsList = () => {
   const claimsDefaultColumnList = useSelector(
     ({ claims }) => claims?.claimsDefaultColumnList ?? {}
   );
-  const {
-    claimsListColumnSaveButtonLoaderAction,
-    claimsListColumnResetButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  const { claimsListColumnSaveButtonLoaderAction, claimsListColumnResetButtonLoaderAction } =
+    useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
   const filterDropdownClient = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
-  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(() => claimsList, [
-    claimsList,
-  ]);
+  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
+    () => claimsList,
+    [claimsList]
+  );
 
   const { defaultFields, customFields } = useMemo(
     () =>
@@ -216,6 +217,10 @@ const ClaimsList = () => {
     [limit, getClaimsByFilter]
   );
 
+  const addClaims = useCallback(() => {
+    history.replace('/claims/addClaims');
+  }, [history]);
+
   useUrlParamsUpdate({
     page: page ?? 1,
     limit: limit ?? 15,
@@ -259,7 +264,7 @@ const ClaimsList = () => {
             buttonTitle="Click to select custom fields"
             onClick={() => toggleCustomField()}
           />
-          <Button title="Add" buttonType="success" />
+          <Button title="Add" buttonType="success" onClick={addClaims} />
         </div>
       </div>
 

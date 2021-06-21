@@ -95,3 +95,19 @@
     border-radius: unset;
   }
 }
+
+.table-class td.add-overdue-buttons {
+  max-width: unset;
+}
+
+.date-picker-container .add-overdue-month-picker {
+  font: $subtitle $font-regular;
+  color: $field-color;
+}
+
+.or-text {
+  margin-top: 7px;
+  font: $text $font-medium;
+  color: $primary-color;
+  text-align: center;
+}
