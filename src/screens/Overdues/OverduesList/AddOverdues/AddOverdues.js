@@ -420,13 +420,8 @@ const AddOverdues = () => {
     [overdueDetails, handleDateInputChange, handleSelectInputChange, handleTextInputChange, period]
   );
 
-  const backToOverduesList = async () => {
-    const isBothEqual = _.isEqual(overdueListByDate, overdueListByDateCopy);
-    if (isBothEqual) {
-      history.replace('/over-dues');
-    } else {
-      toggleAlertOnLeftModal();
-    }
+  const backToOverduesList = () => {
+    history.replace('/over-dues');
   };
 
   const getMonthYearSeparated = period.split('-');
@@ -524,6 +519,7 @@ const AddOverdues = () => {
       }
     }
   }, [toggleSaveAlertModal, docs, isPrompt, setIsPrompt]);
+
   const alertOnLeftModalButtons = useMemo(
     () => [
       {
@@ -535,8 +531,8 @@ const AddOverdues = () => {
               type: OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.GET_OVERDUE_LIST_BY_DATE,
               data: overdueListByDateCopy,
             });
-            history.replace('/over-dues');
             setIsPrompt(false);
+            history.replace('/over-dues');
           } else {
             history.replace('/over-dues');
           }

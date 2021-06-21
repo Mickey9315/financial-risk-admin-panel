@@ -4,27 +4,27 @@ import Input from '../Input/Input';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 
 const CustomSelect = props => {
-  const { options, placeholder, className, onChangeCustomSelect, ...restProps } = props;
+  const { options, placeholder, className, onChangeCustomSelect, value, ...restProps } = props;
   const selectClassName = `custom-select ${className}`;
   const customDropdownRef = useRef();
   const [isOpenCustomSelect, setIsOpenCustomSelect] = useState(false);
-  const initialVal = [];
-  const [selectedList, setSelectedList] = useState(initialVal);
+  const [selectedList, setSelectedList] = useState(value || []);
   const [notSelectedList, setNotSelectedList] = useState(options);
+  const [searchedList, setSerchedList] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchedText, setSearchedText] = useState('');
 
   const onClientSelection = useCallback(
     clickedItem => {
       setSelectedList([...selectedList, clickedItem]);
-      setNotSelectedList(notSelectedList?.filter(item => item?._id !== clickedItem?._id));
+      setNotSelectedList(notSelectedList?.filter(item => item?.value !== clickedItem?.value));
     },
     [selectedList, notSelectedList, setSelectedList, setSelectedList]
   );
 
   const onItemUnselect = useCallback(
     clickedItem => {
-      setSelectedList(selectedList?.filter(item => item?._id !== clickedItem?._id));
+      setSelectedList(selectedList?.filter(item => item?.value !== clickedItem?.value));
       setNotSelectedList([...notSelectedList, clickedItem]);
     },
     [selectedList, notSelectedList, setSelectedList, setNotSelectedList]
@@ -37,20 +37,20 @@ const CustomSelect = props => {
   }, []);
 
   useEffect(() => {
-    if (isSearching && searchedText?.toString()?.trim()?.length > 0) {
+    if (isSearching) {
       const foundClients = notSelectedList?.filter(client =>
-        client.name.toLowerCase().includes(searchedText.toString().toLowerCase())
+        client.label.toLowerCase().includes(searchedText.toString().toLowerCase())
       );
-      setNotSelectedList(foundClients);
+      setSerchedList(foundClients);
     }
-  }, [searchedText, setNotSelectedList]);
+  }, [searchedText]);
 
   useEffect(() => {
     setNotSelectedList(options);
   }, [options]);
 
   useEffect(() => {
-    if (selectedList !== initialVal) onChangeCustomSelect(selectedList);
+    if (selectedList !== value) onChangeCustomSelect(selectedList);
   }, [selectedList]);
 
   return (
@@ -61,7 +61,7 @@ const CustomSelect = props => {
             type="text"
             value={
               // eslint-disable-next-line no-nested-ternary
-              !isSearching ? (selectedList.length > 0 ? selectedList[0].name : '') : searchedText
+              !isSearching ? (selectedList.length > 0 ? selectedList[0].label : '') : searchedText
             }
             placeholder={placeholder}
             onChange={onSearchCustomSelect}
@@ -86,15 +86,23 @@ const CustomSelect = props => {
             <ul className="selected-list">
               {selectedList?.map(selectedItem => (
                 <li onClick={() => onItemUnselect(selectedItem)}>
-                  <>{selectedItem?.name || ''}</>
+                  <>{selectedItem?.label || ''}</>
                   <span className="material-icons-round">task_alt</span>
                 </li>
               ))}
             </ul>
             <ul>
-              {notSelectedList?.map(unselectedItem => (
-                <li onClick={() => onClientSelection(unselectedItem)}>{unselectedItem?.name}</li>
-              ))}
+              {isSearching && searchedText?.toString()?.trim()?.length > 0
+                ? searchedList?.map(unselectedItem => (
+                    <li onClick={() => onClientSelection(unselectedItem)}>
+                      {unselectedItem?.label}
+                    </li>
+                  ))
+                : notSelectedList?.map(unselectedItem => (
+                    <li onClick={() => onClientSelection(unselectedItem)}>
+                      {unselectedItem?.label}
+                    </li>
+                  ))}
             </ul>
           </div>
         </div>
@@ -108,6 +116,7 @@ CustomSelect.propTypes = {
   placeholder: PropTypes.string.isRequired,
   onChangeCustomSelect: PropTypes.func,
   className: PropTypes.string,
+  value: PropTypes.array.isRequired,
 };
 
 CustomSelect.defaultProps = {

@@ -1,0 +1,15 @@
+.filter-modal-row .custom-select {
+  .custom-select__control{
+    height: 37px;
+    border-radius: 5px;
+  }
+
+  .custom-select-dropdown {
+    top: 40px;
+  }
+}
+
+.filter-modal-row .title {
+  font: $subtitle $font-regular;
+  color: $primary-color;
+}

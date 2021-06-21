@@ -127,3 +127,23 @@ export const getReportsClientDropdownData = () => {
     }
   };
 };
+
+export const changeReportsFilterFields = (filterFor, name, value) => {
+  return async dispatch => {
+    dispatch({
+      type: REPORTS_REDUX_CONSTANTS.UPDATE_REPORT_FILTER_FIELDS,
+      filterFor,
+      name,
+      value,
+    });
+  };
+};
+
+export const resetCurrentFilter = filterFor => {
+  return async dispatch => {
+    await dispatch({
+      type: REPORTS_REDUX_CONSTANTS.RESET_REPORT_FILTER,
+      filterFor,
+    });
+  };
+};

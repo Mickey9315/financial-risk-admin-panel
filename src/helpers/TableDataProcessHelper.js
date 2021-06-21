@@ -51,7 +51,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
       );
 
     case 'amount':
-      return currentData ? NumberCommaSeparator(currentData) : '-';
+      return currentData ? NumberCommaSeparator(parseFloat(currentData)) : '-';
 
     default:
       return currentData;
