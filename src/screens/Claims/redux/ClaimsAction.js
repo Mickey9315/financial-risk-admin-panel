@@ -169,3 +169,11 @@ export const getClaimDetails = id => {
     }
   };
 };
+
+export const resetClaimDetails = () => {
+  return async dispatch => {
+    dispatch({
+      type: CLAIMS_REDUX_CONSTANTS.RESET_CLAIMS_DETAILS,
+    });
+  };
+};

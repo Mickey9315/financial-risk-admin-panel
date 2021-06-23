@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Switch from '../../../common/Switch/Switch';
@@ -14,8 +15,14 @@ import {
   STAGE,
   UNDERWRITER,
 } from './AddClaimsDropdownHelper';
-import { getClaimDetails, getClaimsEntityList, handleClaimChange } from '../redux/ClaimsAction';
+import {
+  getClaimDetails,
+  getClaimsEntityList,
+  handleClaimChange,
+  resetClaimDetails,
+} from '../redux/ClaimsAction';
 import { addClaimsValidations } from './AddClaimsValidations';
+import Loader from '../../../common/Loader/Loader';
 
 const AddViewClaims = () => {
   const history = useHistory();
@@ -25,6 +32,7 @@ const AddViewClaims = () => {
   const claimDetails = useSelector(({ claims }) => claims?.claimDetails ?? {});
   const backToClaimsList = useCallback(() => {
     history.replace('/claims');
+    dispatch(resetClaimDetails());
   }, [history]);
 
   const claimClientList = clientList?.map(client => {
@@ -66,6 +74,14 @@ const AddViewClaims = () => {
         isRequired: true,
       },
       {
+        name: 'name',
+        title: 'Claim Name',
+        isRequired: true,
+        placeholder: 'Enter claim name',
+        type: 'input',
+        value: claimDetails?.name,
+      },
+      {
         name: 'podreceived',
         title: 'POD Received',
         placeholder: 'Select',
@@ -79,14 +95,6 @@ const AddViewClaims = () => {
         placeholder: 'Select',
         type: 'date',
         value: claimDetails?.podsenttouw,
-      },
-      {
-        name: 'name',
-        title: 'Claim Name',
-        isRequired: true,
-        placeholder: 'Enter claim name',
-        type: 'input',
-        value: claimDetails?.name,
       },
       {
         name: 'codrequested',
@@ -307,19 +315,28 @@ const AddViewClaims = () => {
 
         case 'date':
           component = (
-            <div className={`date-picker-container ${type === 'view' && 'disabled-control'}`}>
-              <DatePicker
-                placeholderText={input.placeholder}
-                selected={(input.value && new Date(input.value)) || null}
-                onChange={date => handleDateInputChange(input.name, date)}
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                popperProps={{ positionFixed: true }}
-                disabled={type === 'view'}
-              />
-              {type === 'add' && <span className="material-icons-round">event</span>}
-            </div>
+            <>
+              {type === 'view' ? (
+                <span className="view-claim-detail">
+                  {input?.value
+                    ? moment(input?.value, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY')
+                    : '-'}
+                </span>
+              ) : (
+                <div className={`date-picker-container ${type === 'view' && 'disabled-control'}`}>
+                  <DatePicker
+                    placeholderText={input.placeholder}
+                    selected={(input.value && new Date(input.value)) || null}
+                    onChange={date => handleDateInputChange(input.name, date)}
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    popperProps={{ positionFixed: true }}
+                  />
+                  <span className="material-icons-round">event</span>
+                </div>
+              )}
+            </>
           );
           break;
 
@@ -329,6 +346,7 @@ const AddViewClaims = () => {
               id={input.name}
               disabled={type === 'view'}
               name={input?.name}
+              className={type === 'view' && 'view-claim-switch-disabled'}
               onChange={onHandleSwitchChange}
               checked={input?.value ?? false}
             />
@@ -390,13 +408,28 @@ const AddViewClaims = () => {
           <span>{type === 'view' ? 'View' : 'New'} Claim</span>
         </div>
       </div>
-      <div
-        className={`common-white-container add-claims-content ${
-          type === 'view' && 'view-claim-content'
-        }`}
-      >
-        {inputClaims.map(getComponentByType)}
-      </div>
+      {type === 'view' ? (
+        (() =>
+          claimDetails && Object.entries(claimDetails).length > 0 ? (
+            <div
+              className={`common-white-container add-claims-content ${
+                type === 'view' && 'view-claim-content'
+              }`}
+            >
+              {inputClaims.map(getComponentByType)}
+            </div>
+          ) : (
+            <Loader />
+          ))()
+      ) : (
+        <div
+          className={`common-white-container add-claims-content ${
+            type === 'view' && 'view-claim-content'
+          }`}
+        >
+          {inputClaims.map(getComponentByType)}
+        </div>
+      )}
       {type === 'add' && (
         <div className="add-overdues-save-button">
           <Button buttonType="primary" title="Save" onClick={onAddClaim} />

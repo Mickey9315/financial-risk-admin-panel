@@ -18,13 +18,17 @@
 }
 
 .claims-title {
-  width: 180px;
+  width: 190px;
   margin-right: 10px;
   font: $subtitle $font-regular;
   color: $primary-color
 }
 
 .view-claim-detail {
-  font: $subtitle $font-medium;
+  font: $subtitle $font-regular;
   color: $field-color;
+}
+
+.view-claim-switch-disabled.common-switch + label {
+  cursor: default;
 }
