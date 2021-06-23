@@ -9,4 +9,12 @@ export const ReportsApiService = {
     ApiService.putData(REPORTS_URLS.UPDATE_REPORTS_COLUMN_LIST, data),
 
   getReportClientList: () => ApiService.getData(REPORTS_URLS.GET_REPORT_CLIENT_LIST),
+
+  downloadReportList: params =>
+    ApiService.request({
+      url: `${REPORTS_URLS.DOWNLOAD_REPORT}`,
+      params,
+      method: 'GET',
+      responseType: 'blob',
+    }),
 };

@@ -538,8 +538,8 @@ const ViewApplication = () => {
               placeholder="New Credit Limit"
               name="creditLimit"
               type="text"
-              value={newCreditLimit}
-              onChange={e => setNewCreditLimit(e?.target?.value)}
+              value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
+              onChange={e => setNewCreditLimit(e?.target?.value?.toString()?.replaceAll(',', ''))}
             />
           </div>
         </Modal>

@@ -80,17 +80,19 @@ const Header = () => {
     if (notificationData?.notificationList?.length > 0) {
       list = Object.values(
         notificationData?.notificationList?.reduce((acc, cur) => {
-          if (!acc[new Date(cur.createdAt).toLocaleDateString()])
-            acc[new Date(cur.createdAt).toLocaleDateString()] = {
-              createdAt: new Date(cur.createdAt).toLocaleDateString(),
+          if (!acc[moment(cur.createdAt).format('DD/MM/YYYY')])
+            acc[moment(cur.createdAt).format('DD/MM/YYYY')] = {
+              createdAt: moment(cur.createdAt).format('DD/MM/YYYY'),
               notifications: [],
             };
-          acc[new Date(cur.createdAt).toLocaleDateString()].notifications.push(cur);
+          acc[moment(cur.createdAt).format('DD/MM/YYYY')].notifications.push(cur);
           return acc;
         }, {})
       );
       list?.sort(function (a, b) {
-        return new Date(b.createdAt) - new Date(a.createdAt);
+        return (
+          moment(b.createdAt, 'DD/MM/YYYY').toDate() - moment(a.createdAt, 'DD/MM/YYYY').toDate()
+        );
       });
     }
     return list ?? [];

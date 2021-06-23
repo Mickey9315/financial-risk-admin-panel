@@ -147,3 +147,21 @@ export const resetCurrentFilter = filterFor => {
     });
   };
 };
+
+export const reportDownloadAction = async reportFor => {
+  startLoaderButtonOnRequest('reportDownloadButtonLoaderAction');
+  const config = {
+    columnFor: reportFor,
+  };
+  try {
+    const response = await ReportsApiService.downloadReportList(config);
+    if (response?.statusText === 'OK') {
+      stopLoaderButtonOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
+      return response;
+    }
+  } catch (e) {
+    stopLoaderButtonOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
+    displayErrors(e);
+  }
+  return false;
+};

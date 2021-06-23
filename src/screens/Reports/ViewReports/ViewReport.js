@@ -11,6 +11,7 @@ import {
   getReportColumnList,
   getReportList,
   getReportsClientDropdownData,
+  reportDownloadAction,
   resetCurrentFilter,
   saveReportColumnList,
 } from '../redux/ReportsAction';
@@ -24,6 +25,7 @@ import { errorNotification } from '../../../common/Toast';
 import { REPORTS_REDUX_CONSTANTS } from '../redux/ReportsReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 import CustomSelect from '../../../common/CustomSelect/CustomSelect';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const ViewReport = () => {
   const dispatch = useDispatch();
@@ -33,14 +35,13 @@ const ViewReport = () => {
   // const customSelectFor = ['limit-list', 'usage-per-client', 'limit-history', 'claims'];
   const [customFieldModal, setCustomFieldModal] = useState(false);
 
-  console.log(restParams);
-
   const reportList = useSelector(({ reports }) => reports?.reportsList ?? {});
   const { reportColumnList, reportDefaultColumnList } = useSelector(({ reports }) => reports ?? {});
 
   const {
     reportListColumnSaveButtonLoaderAction,
     reportListColumnResetButtonLoaderAction,
+    reportDownloadButtonLoaderAction,
   } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
 
   const { docs, headers, page, limit, pages, total, isLoading } = useMemo(() => reportList, [
@@ -389,6 +390,16 @@ const ViewReport = () => {
     [setReviewReportFilterDate]
   );
 
+  // download
+  const downloadReport = useCallback(async () => {
+    try {
+      const response = await reportDownloadAction(paramReport);
+      if (response) downloadAll(response);
+    } catch (e) {
+      /**/
+    }
+  }, [paramReport]);
+
   return (
     <>
       <div className="breadcrumb-button-row">
@@ -411,12 +422,16 @@ const ViewReport = () => {
               <span className="material-icons-round">event_available</span>
             </div>
           )}
-          <IconButton
-            buttonType="primary"
-            title="cloud_download"
-            className="mr-10"
-            buttonTitle={`Click to download ${reportName}`}
-          />
+          {['limit-list', 'pending-application'].includes(paramReport) && (
+            <IconButton
+              buttonType="primary"
+              title="cloud_download"
+              className="mr-10"
+              buttonTitle={`Click to download ${reportName}`}
+              onClick={downloadReport}
+              isLoading={reportDownloadButtonLoaderAction}
+            />
+          )}
           <IconButton
             buttonType="secondary"
             title="filter_list"
@@ -443,7 +458,6 @@ const ViewReport = () => {
                   tableClass="main-list-table"
                   data={docs}
                   headers={headers}
-                  rowClass="cursor-pointer"
                 />
               </div>
               <Pagination
@@ -478,19 +492,7 @@ const ViewReport = () => {
           buttons={filterModalButtons}
           className="filter-modal overdue-filter-modal"
         >
-          <>
-            {reportFilters?.[currentFilter.filter]?.filterInputs?.map(getComponentFromType)}
-            {/* {customSelectFor.includes(paramReport) && ( */}
-            {/*  <div className="filter-modal-row"> */}
-            {/*    <div className="title">Client Name</div> */}
-            {/*    <CustomSelect */}
-            {/*      options={customSelectClientList ?? []} */}
-            {/*      placeholder="Select Client" */}
-            {/*      onChangeCustomSelect={onChangeSelectedClient} */}
-            {/*    /> */}
-            {/*  </div> */}
-            {/* )} */}
-          </>
+          <>{reportFilters?.[currentFilter.filter]?.filterInputs?.map(getComponentFromType)}</>
         </Modal>
       )}
     </>

@@ -321,7 +321,7 @@ const AddOverdues = () => {
         case 'date':
           component =
             input.name === 'monthString' ? (
-              <span className="add-overdue-month-picker">{input?.value}</span>
+              <span className="add-overdue-month-picker font-field f-14">{input?.value}</span>
             ) : (
               <div className="date-picker-container">
                 <DatePicker
@@ -447,7 +447,7 @@ const AddOverdues = () => {
 
     const total =
       sixtyDaysAmount + ninetyDaysAmount + ninetyPlusDaysAmount + thirtyDaysAmount + currentAmount;
-    changeOverdueFields('outstandingAmount', total ?? 0);
+    changeOverdueFields('outstandingAmount', total.toString() ?? 0);
   }, [
     overdueDetails?.currentAmount,
     overdueDetails?.thirtyDaysAmount,

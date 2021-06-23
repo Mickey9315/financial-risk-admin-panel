@@ -7,4 +7,4 @@ export const DATE_FORMAT_CONSTANT_FOR_CALENDER = {
   sameElse: 'DD/MM/YYYY',
 };
 
-export const DATE_FORMAT = 'MM/DD/YYYY';
+export const DATE_FORMAT = 'DD/MM/YYYY';

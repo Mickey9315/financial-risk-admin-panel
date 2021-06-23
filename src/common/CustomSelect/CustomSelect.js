@@ -9,49 +9,56 @@ const CustomSelect = props => {
   const customDropdownRef = useRef();
   const [isOpenCustomSelect, setIsOpenCustomSelect] = useState(false);
   const [selectedList, setSelectedList] = useState(value || []);
-  const [notSelectedList, setNotSelectedList] = useState(options);
-  const [searchedList, setSerchedList] = useState([]);
+  const [notSelectedList, setNotSelectedList] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchedText, setSearchedText] = useState('');
+  const [inputVal, setInputVal] = useState('');
 
-  const onClientSelection = useCallback(
+  const onItemSelection = useCallback(
     clickedItem => {
       setSelectedList([...selectedList, clickedItem]);
-      setNotSelectedList(notSelectedList?.filter(item => item?.value !== clickedItem?.value));
     },
-    [selectedList, notSelectedList, setSelectedList, setSelectedList]
+    [selectedList, setSelectedList]
   );
 
   const onItemUnselect = useCallback(
     clickedItem => {
       setSelectedList(selectedList?.filter(item => item?.value !== clickedItem?.value));
-      setNotSelectedList([...notSelectedList, clickedItem]);
     },
-    [selectedList, notSelectedList, setSelectedList, setNotSelectedList]
+    [selectedList, setSelectedList]
   );
-  useOnClickOutside(customDropdownRef, () => setIsOpenCustomSelect(false));
+  useOnClickOutside(customDropdownRef, () => {
+    setIsOpenCustomSelect(false);
+  });
 
-  const onSearchCustomSelect = useCallback(e => {
-    setIsSearching(true);
-    setSearchedText(e?.target?.value);
-  }, []);
-
-  useEffect(() => {
-    if (isSearching) {
-      const foundClients = notSelectedList?.filter(client =>
-        client.label.toLowerCase().includes(searchedText.toString().toLowerCase())
-      );
-      setSerchedList(foundClients);
-    }
-  }, [searchedText]);
+  const onSearchCustomSelect = useCallback(
+    e => {
+      setSearchedText(e?.target?.value);
+    },
+    [isSearching]
+  );
 
   useEffect(() => {
-    setNotSelectedList(options);
-  }, [options]);
+    const selectedItems = selectedList.map(item => item.value);
+    setNotSelectedList(
+      options?.filter(
+        item =>
+          !selectedItems.includes(item.value) &&
+          item.label.toLowerCase().includes(searchedText.toString().toLowerCase())
+      )
+    );
+  }, [selectedList, searchedText]);
 
   useEffect(() => {
     if (selectedList !== value) onChangeCustomSelect(selectedList);
   }, [selectedList]);
+
+  useEffect(() => {
+    if (isSearching) setInputVal(searchedText);
+    else {
+      setInputVal((selectedList.length > 0 && selectedList[0].label) || '');
+    }
+  }, [selectedList, searchedText, isSearching]);
 
   return (
     <>
@@ -59,14 +66,15 @@ const CustomSelect = props => {
         <div className="custom-select__control" onClick={() => setIsOpenCustomSelect(e => !e)}>
           <Input
             type="text"
-            value={
-              // eslint-disable-next-line no-nested-ternary
-              !isSearching ? (selectedList.length > 0 ? selectedList[0].label : '') : searchedText
-            }
+            value={inputVal}
             placeholder={placeholder}
             onChange={onSearchCustomSelect}
             onBlur={() => {
               setIsSearching(false);
+            }}
+            onFocus={() => {
+              setIsSearching(true);
+              setInputVal('');
             }}
           />
           {selectedList.length > 1 && (
@@ -92,17 +100,9 @@ const CustomSelect = props => {
               ))}
             </ul>
             <ul>
-              {isSearching && searchedText?.toString()?.trim()?.length > 0
-                ? searchedList?.map(unselectedItem => (
-                    <li onClick={() => onClientSelection(unselectedItem)}>
-                      {unselectedItem?.label}
-                    </li>
-                  ))
-                : notSelectedList?.map(unselectedItem => (
-                    <li onClick={() => onClientSelection(unselectedItem)}>
-                      {unselectedItem?.label}
-                    </li>
-                  ))}
+              {notSelectedList?.map(unselectedItem => (
+                <li onClick={() => onItemSelection(unselectedItem)}>{unselectedItem?.label}</li>
+              ))}
             </ul>
           </div>
         </div>
