@@ -128,7 +128,7 @@ const AddOverdueTable = props => {
                     ? NumberCommaSeparator(overdue?.outstandingAmount)
                     : '-'}
                 </td>
-                <td>
+                <td className="add-overdue-buttons">
                   {overdueActionButtons?.map(button => (
                     <Button
                       buttonType={`${

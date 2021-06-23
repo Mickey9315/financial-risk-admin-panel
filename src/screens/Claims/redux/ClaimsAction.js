@@ -125,3 +125,47 @@ export const getClaimsEntityList = () => {
     }
   };
 };
+
+export const handleClaimChange = (name, value) => {
+  return dispatch => {
+    dispatch({
+      type: CLAIMS_REDUX_CONSTANTS.ADD_CLAIMS_VALUE_CHANGE,
+      name,
+      value,
+    });
+  };
+};
+
+export const addClaim = data => {
+  return async dispatch => {
+    try {
+      const response = await ClaimsApiServices.addClaim(data);
+
+      if (response.data.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Claim added successfully');
+        dispatch({
+          type: CLAIMS_REDUX_CONSTANTS.RESET_CLAIMS_DETAILS,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const getClaimDetails = id => {
+  return async dispatch => {
+    try {
+      const response = await ClaimsApiServices.getClaimDetails(id);
+
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLAIMS_REDUX_CONSTANTS.GET_CLAIM_DETAILS,
+          data: response.data.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};

@@ -149,7 +149,7 @@ const Table = props => {
 
     return data.map((e, index) => {
       const finalObj = {
-        id: e._id ?? index,
+        id: e._id ?? e.id ?? index,
       };
       headers.forEach(f => {
         finalObj[`${f.name}`] = processTableDataByType({ header: f, row: e, actions });
@@ -419,7 +419,7 @@ function Row(props) {
                       <span>{value ?? '-'}</span>
                     </Tooltip>
                   ) : (
-                    value ?? '-'
+                    value || '-'
                   )}
                 </td>
               );

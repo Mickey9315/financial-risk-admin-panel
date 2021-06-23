@@ -10,7 +10,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
 
   switch (type) {
     case 'date':
-      return moment(currentData).format('DD-MMM-YYYY');
+      return currentData ? moment(currentData).format('DD-MMM-YYYY') : '-';
     case 'modal':
       if (currentData?.value) {
         return (

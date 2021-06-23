@@ -130,7 +130,6 @@ export const addOverdueValidations = async (
     _id: !isAmendOverdueModal ? Math?.random().toString() : _id,
     clientId,
   };
-  dispatch(handleOverdueFieldChange('errors', errors));
 
   if (validated) {
     const finalData = { ...preparedData };
@@ -145,7 +144,7 @@ export const addOverdueValidations = async (
     } catch {
       /**/
     }
+  } else {
+    dispatch(handleOverdueFieldChange('errors', errors));
   }
-
-  return validated;
 };

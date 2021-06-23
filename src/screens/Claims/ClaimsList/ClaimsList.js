@@ -218,8 +218,16 @@ const ClaimsList = () => {
   );
 
   const addClaims = useCallback(() => {
-    history.replace('/claims/addClaims');
+    history.replace('/claims/add');
   }, [history]);
+
+  const viewClaim = useCallback(
+    id => {
+      console.log(id);
+      history.replace(`claims/view/${id}`);
+    },
+    [history]
+  );
 
   useUrlParamsUpdate({
     page: page ?? 1,
@@ -280,6 +288,7 @@ const ClaimsList = () => {
                   headers={headers}
                   tableClass="main-list-table"
                   rowClass="cursor-pointer"
+                  recordSelected={viewClaim}
                 />
               </div>
               <Pagination

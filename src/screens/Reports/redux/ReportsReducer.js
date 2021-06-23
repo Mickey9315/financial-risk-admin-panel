@@ -224,6 +224,62 @@ const initialFilterState = {
       clientIds: '',
     },
   },
+  reviewReport: {
+    filterInputs: [
+      {
+        type: 'clientSelect',
+        name: 'clientIds',
+        label: 'Client',
+        placeHolder: 'Select clients',
+      },
+      {
+        type: 'select',
+        name: 'debtorId',
+        label: 'Debtor',
+        placeHolder: 'Select debtor',
+      },
+      {
+        type: 'dateRange',
+        label: 'Limit Date',
+        range: [
+          {
+            type: 'date',
+            name: 'limitStartDate',
+            placeHolder: 'Select start date',
+          },
+          {
+            type: 'date',
+            name: 'limitEndDate',
+            placeHolder: 'Select end date',
+          },
+        ],
+      },
+      {
+        type: 'dateRange',
+        label: 'Report Date',
+        range: [
+          {
+            type: 'date',
+            name: 'reportStartDate',
+            placeHolder: 'Select start date',
+          },
+          {
+            type: 'date',
+            name: 'reportEndDate',
+            placeHolder: 'Select end date',
+          },
+        ],
+      },
+    ],
+    filterValues: {
+      clientIds: '',
+      debtorId: '',
+      limitStartDate: null,
+      limitEndDate: null,
+      reportStartDate: null,
+      reportEndDate: null,
+    },
+  },
 };
 
 const initialReports = {
@@ -307,6 +363,7 @@ export const reports = (state = initialReports, action) => {
           label: entity.name,
           name: key,
           value: entity._id,
+          secondValue: key === 'clientIds' ? entity.clientId : undefined,
         }));
       });
 
@@ -318,7 +375,6 @@ export const reports = (state = initialReports, action) => {
     }
 
     case REPORTS_REDUX_CONSTANTS.UPDATE_REPORT_FILTER_FIELDS:
-      console.log(action);
       return {
         ...state,
         reportFilters: {

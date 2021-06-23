@@ -15,6 +15,8 @@ const initialClaims = {
   claimsDefaultColumnList: {},
 
   claimsEntityList: [],
+
+  claimDetails: {},
 };
 
 export const claims = (state = initialClaims, action) => {
@@ -80,6 +82,30 @@ export const claims = (state = initialClaims, action) => {
       return {
         ...state,
         claimsEntityList: list,
+      };
+    }
+
+    case CLAIMS_REDUX_CONSTANTS.ADD_CLAIMS_VALUE_CHANGE: {
+      return {
+        ...state,
+        claimDetails: {
+          ...state?.claimDetails,
+          [action.name]: action.value,
+        },
+      };
+    }
+
+    case CLAIMS_REDUX_CONSTANTS.GET_CLAIM_DETAILS: {
+      return {
+        ...state,
+        claimDetails: action.data,
+      };
+    }
+
+    case CLAIMS_REDUX_CONSTANTS.RESET_CLAIMS_DETAILS: {
+      return {
+        ...state,
+        claimDetails: {},
       };
     }
 

@@ -98,7 +98,7 @@ const AddOverdues = () => {
   );
 
   const getOverdueList = useCallback(async () => {
-    const data = { date: moment(period, 'MMMM-YYYY').toDate(), clientId: id };
+    const data = { date: moment(period, 'MMMM-YYYY').toISOString(), clientId: id };
     await dispatch(getOverdueListByDate(data));
   }, [period, id]);
 
@@ -160,6 +160,7 @@ const AddOverdues = () => {
         placeholder: 'Select Debtor',
         data: entityList?.debtorId,
         value: overdueDetails?.debtorId ?? [],
+        isOr: true,
       },
       {
         title: 'Month/ Year',
@@ -167,8 +168,7 @@ const AddOverdues = () => {
         type: 'date',
         placeholder: 'Select Month/Year',
         data: '',
-        value: moment(period, 'MMMM-YYYY').toDate(),
-        isOr: true,
+        value: moment(period, 'MMMM-YYYY').format('MMMM-YYYY'),
       },
       {
         title: 'ACN*',
@@ -319,15 +319,11 @@ const AddOverdues = () => {
           );
           break;
         case 'date':
-          component = (
-            <div
-              className={`date-picker-container ${
-                input.name === 'monthString' && 'month-year-picker cursor-default'
-              }`}
-            >
-              {input.name === 'monthString' ? (
-                <span className="add-overdue-month-picker">{input?.value}</span>
-              ) : (
+          component =
+            input.name === 'monthString' ? (
+              <span className="add-overdue-month-picker">{input?.value}</span>
+            ) : (
+              <div className="date-picker-container">
                 <DatePicker
                   name={input.name}
                   placeholderText={input.placeholder}
@@ -337,10 +333,9 @@ const AddOverdues = () => {
                   scrollableYearDropdown
                   onChange={e => handleDateInputChange(input?.name, e)}
                 />
-              )}
-              <span className="material-icons-round">event_available</span>
-            </div>
-          );
+                <span className="material-icons-round">event_available</span>
+              </div>
+            );
           break;
         case 'main-title':
           component = <div className="add-modal-full-width-row">{input.title}</div>;
@@ -584,7 +579,7 @@ const AddOverdues = () => {
             <Button
               buttonType="primary"
               title="Save"
-              onClick={onCLickOverdueSave}
+              onClick={overdueListByDate?.docs?.length > 0 && onCLickOverdueSave}
               isLoading={saveOverdueToBackEndPageLoaderAction}
             />
           </div>

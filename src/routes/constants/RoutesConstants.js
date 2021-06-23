@@ -137,6 +137,11 @@ export const ROUTES_CONSTANTS = [
     authenticated: true,
   },
   {
+    path: '/claims/:type/:id',
+    component: AddViewClaims,
+    authenticated: true,
+  },
+  {
     path: '/over-dues',
     component: OverduesList,
     authenticated: true,

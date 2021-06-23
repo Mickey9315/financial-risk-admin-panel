@@ -243,6 +243,8 @@ export const CLAIMS_URLS = {
   CLAIMS_COLUMN_LIST: `${BASE_URL}claim/column-name/`,
   UPDATE_CLAIMS_COLUMN_LIST: `${BASE_URL}claim/column-name/`,
   GET_CLAIMS_ENTITY_LIST: `${BASE_URL}claim/entity-list`,
+  ADD_CLAIM: `${BASE_URL}claim/`,
+  GET_CLAIM_DETAILS: `${BASE_URL}claim/`,
 };
 
 export const REPORTS_URLS = {

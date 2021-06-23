@@ -33,6 +33,8 @@ const ViewReport = () => {
   // const customSelectFor = ['limit-list', 'usage-per-client', 'limit-history', 'claims'];
   const [customFieldModal, setCustomFieldModal] = useState(false);
 
+  console.log(restParams);
+
   const reportList = useSelector(({ reports }) => reports?.reportsList ?? {});
   const { reportColumnList, reportDefaultColumnList } = useSelector(({ reports }) => reports ?? {});
 
@@ -56,6 +58,7 @@ const ViewReport = () => {
   ]);
   const reportFilters = useSelector(({ reports }) => reports?.reportFilters ?? {});
   const reportEntityListData = useSelector(({ reports }) => reports?.reportEntityListData ?? []);
+  const [reviewReportFilterDate, setReviewReportFilterDate] = useState(new Date().toISOString());
   // end
 
   const { defaultFields, customFields } = useMemo(
@@ -75,8 +78,11 @@ const ViewReport = () => {
         params[key] = value || undefined;
       }
     );
+    if (currentFilter.filter === 'reviewReport') {
+      params.date = reviewReportFilterDate || undefined;
+    }
     return { ...params };
-  }, [reportFilters, currentFilter]);
+  }, [reportFilters, currentFilter, reviewReportFilterDate]);
 
   const backToReports = useCallback(() => history.replace('/reports'), [history]);
 
@@ -89,12 +95,19 @@ const ViewReport = () => {
         ...initialParams,
         ...filters,
       };
-      await dispatch(getReportList(params));
-      if (cb && typeof cb === 'function') {
-        cb();
+      if (currentFilter.filter === 'reviewReport') {
+        params.date = reviewReportFilterDate || undefined;
+      }
+      try {
+        await dispatch(getReportList(params));
+        if (cb && typeof cb === 'function') {
+          cb();
+        }
+      } catch (e) {
+        /**/
       }
     },
-    [reportList, page, limit, filters]
+    [reportList, page, limit, filters, currentFilter, reviewReportFilterDate]
   );
 
   const onClickCloseColumnSelection = useCallback(() => {
@@ -202,11 +215,17 @@ const ViewReport = () => {
   const getClientSelectedValues = useMemo(() => {
     const clients = reportFilters?.[currentFilter.filter]?.filterValues?.clientIds?.split(',');
     const selectedClients = [];
-    reportEntityListData?.clientIds?.forEach(data => {
-      if (clients?.includes(data.value)) selectedClients.push(data);
-      return [];
-    });
-    console.log(selectedClients);
+    if (currentFilter.filter === 'claimsReport') {
+      reportEntityListData?.clientIds?.forEach(data => {
+        if (clients?.includes(data.secondValue)) selectedClients.push(data);
+        return [];
+      });
+    } else {
+      reportEntityListData?.clientIds?.forEach(data => {
+        if (clients?.includes(data.value)) selectedClients.push(data);
+        return [];
+      });
+    }
     return selectedClients;
   }, [reportFilters, currentFilter]);
 
@@ -215,12 +234,17 @@ const ViewReport = () => {
   }, []);
 
   const handleClientSelectInputChange = useCallback(e => {
-    const clients = e.map(val => val.value).join(',');
-    changeFilterFields('clientIds', clients);
+    if (currentFilter.filter === 'claimsReport') {
+      const clients = e.map(val => val.secondValue).join(',');
+      changeFilterFields('clientIds', clients);
+    } else {
+      const clients = e.map(val => val.value).join(',');
+      changeFilterFields('clientIds', clients);
+    }
   }, []);
 
   const handleDateInputChange = useCallback((name, date) => {
-    changeFilterFields(name, date);
+    changeFilterFields(name, new Date(date).toISOString());
   }, []);
 
   const getComponentFromType = useCallback(
@@ -262,7 +286,11 @@ const ViewReport = () => {
               <DatePicker
                 name={date.name}
                 className="filter-date-picker"
-                selected={reportFilters?.[currentFilter.filter]?.filterValues[date.name]}
+                selected={
+                  reportFilters?.[currentFilter.filter]?.filterValues[date.name]
+                    ? new Date(reportFilters?.[currentFilter.filter]?.filterValues[date.name])
+                    : null
+                }
                 onChange={selectedDate => handleDateInputChange(date.name, selectedDate)}
                 placeholderText={date.placeHolder}
                 showMonthDropdown
@@ -298,12 +326,14 @@ const ViewReport = () => {
   );
 
   const applyReportsFilter = useCallback(async () => {
-    await getReportListByFilter({}, toggleFilterModal);
+    toggleFilterModal();
+    await getReportListByFilter();
   }, [getReportListByFilter, toggleFilterModal]);
 
   const resetReportsFilter = useCallback(async () => {
     await dispatch(resetCurrentFilter(currentFilter.filter));
-    await getReportListByFilter({}, toggleFilterModal);
+    toggleFilterModal();
+    await getReportListByFilter();
   }, [currentFilter, toggleFilterModal]);
 
   const filterModalButtons = useMemo(
@@ -350,6 +380,15 @@ const ViewReport = () => {
     history.push(`${history?.location?.pathname}?${url}`);
   }, [history, total, pages, page, limit, filters]);
 
+  // extra filter for reviewReport
+  const handleSelectDateChange = useCallback(
+    async date => {
+      setReviewReportFilterDate(new Date(date).toISOString());
+      await getReportListByFilter();
+    },
+    [setReviewReportFilterDate]
+  );
+
   return (
     <>
       <div className="breadcrumb-button-row">
@@ -359,6 +398,19 @@ const ViewReport = () => {
           <span>{reportName}</span>
         </div>
         <div className="page-header-button-container">
+          {currentFilter.filter === 'reviewReport' && (
+            <div className="date-picker-container month-year-picker filter-date-picker-container mr-15 review-report-month-picker">
+              <DatePicker
+                selected={new Date(reviewReportFilterDate)}
+                onChange={handleSelectDateChange}
+                showMonthYearPicker
+                showFullMonthYearPicker
+                placeholderText="Select Month"
+                dateFormat="MMM yyyy"
+              />
+              <span className="material-icons-round">event_available</span>
+            </div>
+          )}
           <IconButton
             buttonType="primary"
             title="cloud_download"
