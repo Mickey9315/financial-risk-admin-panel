@@ -19,7 +19,6 @@ import { addOverdueValidations } from './AddOverdueValidations';
 import AddOverdueTable from './AddOverdueTable';
 import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import Loader from '../../../../common/Loader/Loader';
-import { displayErrors } from '../../../../helpers/ErrorNotifyHelper';
 import { OVERDUE_REDUX_CONSTANTS } from '../../redux/OverduesReduxConstants';
 
 const AddOverdues = () => {
@@ -506,7 +505,7 @@ const AddOverdues = () => {
         if (isPrompt) setIsPrompt(false);
         history.replace('/over-dues');
       } catch (e) {
-        displayErrors(e);
+        /**/
       }
     }
   }, [toggleSaveAlertModal, docs, isPrompt, setIsPrompt]);

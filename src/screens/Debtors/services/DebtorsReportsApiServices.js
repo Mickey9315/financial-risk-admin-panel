@@ -4,8 +4,8 @@ import { DEBTORS_URLS } from '../../../constants/UrlConstants';
 const DebtorApplicationApiServices = {
   getDebtorsReportListData: (id, params) =>
     ApiService.getData(`${DEBTORS_URLS.REPORTS.DEBTOR_REPORTS_LIST}${id}`, { params }),
-  getDebtorsReportListDataForFetch: () =>
-    ApiService.getData(`${DEBTORS_URLS.REPORTS.DEBTOR_REPORTS_LIST_FOR_FETCH}`),
+  getDebtorsReportListDataForFetch: debtorId =>
+    ApiService.getData(`${DEBTORS_URLS.REPORTS.DEBTOR_REPORTS_LIST_FOR_FETCH}${debtorId}`),
   fetchSelectedReportsForDebtor: data =>
     ApiService.putData(`${DEBTORS_URLS.REPORTS.FETCH_SELECTED_REPORTS_FOR_DEBTOR}`, data),
   getDebtorReportColumnNameList: () =>

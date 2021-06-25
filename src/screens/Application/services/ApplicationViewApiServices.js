@@ -80,9 +80,9 @@ const ApplicationViewApiServices = {
       ApiService.getData(
         `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.APPLICATION_REPORTS_LIST}${id}`
       ),
-    getApplicationReportListDataForFetch: () =>
+    getApplicationReportListDataForFetch: id =>
       ApiService.getData(
-        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.APPLICATION_REPORTS_LIST_FOR_FETCH}`
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.APPLICATION_REPORTS_LIST_FOR_FETCH}${id}`
       ),
     fetchSelectedReportsForApplication: data =>
       ApiService.putData(

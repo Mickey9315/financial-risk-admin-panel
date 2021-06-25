@@ -93,6 +93,8 @@ const ViewApplication = () => {
     _id,
     country,
     notesListLength,
+    registrationNumber,
+    acn,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const [isAUSOrNZL, setIsAUZOrNZL] = useState(false);
@@ -116,7 +118,7 @@ const ViewApplication = () => {
   useEffect(() => {
     if (debtorId?.length > 0 && isAUSOrNZL) {
       dispatch(getApplicationReportsListData(debtorId?.[0]?._id));
-      dispatch(getApplicationReportsListForFetch());
+      dispatch(getApplicationReportsListForFetch(debtorId?.[0]?._id));
     }
   }, [debtorId, isAUSOrNZL]);
 
@@ -146,7 +148,7 @@ const ViewApplication = () => {
   const backToApplicationList = () => {
     history.replace('/applications');
   };
-  const applicationDetails = useMemo(
+  const INPUTS = useMemo(
     () => [
       {
         title: 'Application ID',
@@ -185,8 +187,14 @@ const ViewApplication = () => {
         type: 'link',
       },
       {
-        title: 'ABN',
+        title: 'ABN/NCBN',
         value: abn,
+        name: 'abn',
+        type: 'text',
+      },
+      {
+        title: 'ACN/NCN',
+        value: acn,
         name: 'abn',
         type: 'text',
       },
@@ -211,6 +219,20 @@ const ViewApplication = () => {
     ],
     [tradingName, entityType, entityName, abn, debtorId, clientId, creditLimit, applicationId]
   );
+
+  const applicationDetails = useMemo(() => {
+    if (['AUS', 'NZL'].includes(country)) {
+      return [...INPUTS];
+    }
+    const filteredData = [...INPUTS];
+    filteredData.splice(6, 2, {
+      title: 'Company Registration No.*',
+      type: 'text',
+      name: 'registrationNumber',
+      value: registrationNumber,
+    });
+    return filteredData;
+  }, [registrationNumber, INPUTS, country]);
 
   // limit modify
 

@@ -219,7 +219,7 @@ export const getApplicationCompanyDataFromABNOrACN = params => {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN(
-        params
+        { ...params, step: 'company' }
       );
 
       if (response?.data?.status === 'SUCCESS') {
@@ -443,12 +443,11 @@ export const wipeOutIndividualPerson = (personID, index) => {
 };
 // person step edit application
 
-export const getApplicationPersonDataFromABNOrACN = (id, params) => {
+export const getApplicationPersonDataFromABNOrACN = params => {
   return async () => {
     try {
       const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN(
-        id,
-        params
+        { ...params, step: 'person' }
       );
 
       if (response?.data?.status === 'SUCCESS') {
@@ -1035,10 +1034,12 @@ export const getApplicationReportsListData = id => {
   };
 };
 
-export const getApplicationReportsListForFetch = () => {
+export const getApplicationReportsListForFetch = id => {
   return async dispatch => {
     try {
-      const response = await ApplicationViewApiServices.applicationReportsApiServices.getApplicationReportListDataForFetch();
+      const response = await ApplicationViewApiServices.applicationReportsApiServices.getApplicationReportListDataForFetch(
+        id
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:

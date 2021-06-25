@@ -105,13 +105,10 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.country = 'Please select country before continue';
     }
-    if (!data?.dateOfBirth || data?.dateOfBirth?.length <= 0) {
+    if (!data?.dateOfBirth && data?.driverLicenceNumber?.trim()?.length <= 0) {
       validated = false;
-      errors.dateOfBirth = 'Please select date of birth before continue';
-    }
-    if (!data?.driverLicenceNumber || data?.driverLicenceNumber?.trim()?.length <= 0) {
-      validated = false;
-      errors.driverLicenceNumber = 'Please enter driver licence number before continue';
+      errors.driverLicenceNumber =
+        'Please provide at least one - either a driver licence number or date of birth';
     }
     if (data?.driverLicenceNumber && !NUMBER_REGEX.test(data?.driverLicenceNumber)) {
       validated = false;
@@ -193,7 +190,7 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
 
     preparedData = {
       type,
-      title: title?.value,
+      title: title?.value ?? title,
       firstName,
       middleName,
       lastName,

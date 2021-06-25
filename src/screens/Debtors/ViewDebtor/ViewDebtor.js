@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import Tab from '../../../common/Tab/Tab';
 import {
   changeDebtorData,
@@ -314,7 +315,7 @@ const ViewInsurer = () => {
 
   const handleOnDateChange = useCallback(
     (name, date) => {
-      handleOnChange(name, date);
+      handleOnChange(name, moment(date).format('YYYY-MM-DD 00:00:00'));
     },
     [handleOnChange]
   );

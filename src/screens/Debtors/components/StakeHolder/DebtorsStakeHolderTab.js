@@ -392,6 +392,13 @@ const DebtorsStakeHolderTab = () => {
     return filteredData;
   }, [COMPANY_INPUT, isAusOrNewStakeHolder, stakeHolder?.registrationNumber]);
 
+  console.log(
+    isEdit,
+    titleDropDown,
+    stakeHolder?.title,
+    titleDropDown?.filter(title => title.value === stakeHolder?.title)
+  );
+
   const INDIVIDUAL_INPUT = useMemo(
     () => [
       {
@@ -410,9 +417,10 @@ const DebtorsStakeHolderTab = () => {
         type: 'select',
         name: 'title',
         data: titleDropDown || [],
-        value: isEdit
-          ? titleDropDown?.filter(title => title.value === stakeHolder?.title)
-          : stakeHolder?.title,
+        value:
+          isEdit && typeof stakeHolder?.title === 'string'
+            ? titleDropDown?.filter(title => title.value === stakeHolder?.title)
+            : stakeHolder?.title,
       },
       {
         label: 'First Name*',
@@ -436,7 +444,7 @@ const DebtorsStakeHolderTab = () => {
         value: stakeHolder?.lastName,
       },
       {
-        label: 'Date of Birth*',
+        label: 'Date of Birth',
         placeholder: 'Select date',
         type: 'date',
         name: 'dateOfBirth',
@@ -1101,6 +1109,22 @@ const DebtorsStakeHolderTab = () => {
     ]
   );
 
+  console.log(entityType);
+
+  const onStakeHolderDelete = useCallback(
+    stakeHolderId => {
+      if (docs?.length <= 2 && entityType.label === 'Partnership') {
+        errorNotification('You can not remove stake holder');
+      } else if (docs?.length <= 1) {
+        errorNotification('You can not remove every stake holder');
+      } else {
+        setDeleteId(stakeHolderId);
+        toggleConfirmationModal();
+      }
+    },
+    [toggleConfirmationModal, docs?.length]
+  );
+
   const onSelectStakeHolderRecordActionClick = useCallback(
     async (type, _id) => {
       if (type === TABLE_ROW_ACTIONS.EDIT_ROW) {
@@ -1108,11 +1132,10 @@ const DebtorsStakeHolderTab = () => {
         await dispatch(getStakeHolderDetails(_id));
         toggleAddStakeHolderModal();
       } else if (type === TABLE_ROW_ACTIONS.DELETE_ROW) {
-        setDeleteId(_id);
-        toggleConfirmationModal();
+        onStakeHolderDelete(_id);
       }
     },
-    [setIsEdit, toggleAddStakeHolderModal, setDeleteId, toggleConfirmationModal]
+    [setIsEdit, toggleAddStakeHolderModal, onStakeHolderDelete]
   );
 
   const onClickAddStakeHolder = useCallback(() => {

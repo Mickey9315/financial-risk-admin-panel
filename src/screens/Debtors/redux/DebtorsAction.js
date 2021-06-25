@@ -1377,11 +1377,7 @@ export const setViewDebtorActiveTabIndex = index => {
 export const getDebtorReportsListData = (id, param) => {
   return async dispatch => {
     try {
-      const params = {
-        ...param,
-        // listFor: 'debtor-application',
-      };
-      const response = await DebtorsReportsApiServices.getDebtorsReportListData(id, params);
+      const response = await DebtorsReportsApiServices.getDebtorsReportListData(id, { ...param });
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_SUCCESS,
@@ -1482,10 +1478,10 @@ export const saveDebtorReportsColumnNameList = ({
   };
 };
 
-export const getDebtorReportsListForFetch = () => {
+export const getDebtorReportsListForFetch = id => {
   return async dispatch => {
     try {
-      const response = await DebtorsReportsApiServices.getDebtorsReportListDataForFetch();
+      const response = await DebtorsReportsApiServices.getDebtorsReportListDataForFetch(id);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_DATA_FOR_FETCH,

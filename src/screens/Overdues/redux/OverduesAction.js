@@ -169,6 +169,7 @@ export const saveOverdueList = data => {
     } catch (e) {
       stopLoaderButtonOnSuccessOrFail('saveOverdueToBackEndPageLoaderAction');
       displayErrors(e);
+      throw Error();
     }
   };
 };

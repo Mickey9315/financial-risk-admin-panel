@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PropsType from 'prop-types';
 import Loader from '../../../../../../common/Loader/Loader';
 
-const ausHeaders = ['Legal/Business Name', 'Location', 'Status', 'ABN', 'ACN'];
+const ausHeaders = ['Legal/Business Name', 'Location', 'Status', 'ABN'];
 const nzlHeaders = ['Legal/Business Name', 'Status', 'NZBN', 'NCN'];
 
 const ApplicationEntityNameTable = props => {
@@ -19,7 +19,11 @@ const ApplicationEntityNameTable = props => {
 
   const handleScroll = useCallback(
     e => {
-      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight && hasMoreRecords) {
+      if (
+        e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight &&
+        hasMoreRecords &&
+        selectedCountry === 'NZL'
+      ) {
         setIsFetching(true);
         setCurrentPage(page => page + 1);
       }
@@ -61,7 +65,9 @@ const ApplicationEntityNameTable = props => {
               )}
               <td>{typeof row?.status === 'string' ? row?.status : '-'}</td>
               <td>{typeof row?.abn === 'string' ? row?.abn : '-'}</td>{' '}
-              <td>{typeof row?.acn === 'string' ? row?.acn : '-'}</td>
+              {selectedCountry === 'NZL' && (
+                <td>{typeof row?.acn === 'string' ? row?.acn : '-'}</td>
+              )}
             </tr>
           ))}
         </tbody>

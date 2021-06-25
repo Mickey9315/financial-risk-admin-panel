@@ -24,7 +24,7 @@ const MyWorkNotifications = () => {
 
   const sortedNotification = useMemo(() => {
     notificationList?.sort(function (a, b) {
-      return new Date(b.createdAt) - new Date(a.createdAt);
+      return new Date(b.title) - new Date(a.title);
     });
     return notificationList;
   }, [notificationList]);

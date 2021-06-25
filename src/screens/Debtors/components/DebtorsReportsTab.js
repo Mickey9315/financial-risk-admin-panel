@@ -56,7 +56,7 @@ const DebtorsReportsTab = () => {
         cb();
       }
     },
-    [page, limit]
+    [page, limit, id]
   );
 
   const onSelectLimit = useCallback(
@@ -200,10 +200,13 @@ const DebtorsReportsTab = () => {
   }, []);
 
   useEffect(() => {
-    getDebtorReportsList();
-    dispatch(getDebtorReportsListForFetch());
+    getDebtorReportsList(id);
     dispatch(getDebtorReportsColumnNameList());
   }, []);
+
+  useEffect(() => {
+    dispatch(getDebtorReportsListForFetch(id));
+  }, [id]);
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;
