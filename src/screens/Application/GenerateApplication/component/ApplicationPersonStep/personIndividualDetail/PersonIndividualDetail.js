@@ -12,6 +12,7 @@ import {
   changePersonType,
   getApplicationPersonDataFromABNOrACN,
   removePersonDetail,
+  resetEntityTableData,
   searchApplicationCompanyEntityName,
   updatePersonData,
   updatePersonStepDataOnValueSelected,
@@ -74,15 +75,18 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
 
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
+  const [isAusOrNewStakeHolder, setIsAusOrNewStakeHolder] = useState(false);
 
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState(''); // retry ABN lookup
+
+  const [currentPage, setCurrentPage] = useState(0);
 
   const prevRef = useRef({});
 
   useEffect(() => {
     const country = partners?.[index]?.country?.value ?? '';
+    const stakeHolderCountry = partners?.[index]?.stakeholderCountry?.value ?? '';
     let showDropDownInput = true;
-    // updateSinglePersonState('state', []);
     switch (country) {
       case 'AUS':
       case 'NZL':
@@ -92,6 +96,16 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         showDropDownInput = false;
         break;
     }
+    switch (stakeHolderCountry) {
+      case 'AUS':
+      case 'NZL':
+        setIsAusOrNewStakeHolder(true);
+        break;
+      default:
+        setIsAusOrNewStakeHolder(false);
+        break;
+    }
+
     setIsAusOrNew(showDropDownInput);
     if (!prevRef.current?.abn) {
       prevRef.current = { ...prevRef.current, abn: partners?.[index]?.abn };
@@ -100,9 +114,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       prevRef.current = { ...prevRef.current, acn: partners?.[index]?.acn };
     }
   }, [
-    partners?.[index]?.abn,
-    partners?.[index]?.acn,
     partners?.[index]?.country?.value,
+    partners?.[index]?.stakeholderCountry?.value,
     prevRef,
     australianStates,
     newZealandStates,
@@ -131,7 +144,9 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     suburb,
     state,
     country,
+    stakeholderCountry,
     postCode,
+    registrationNumber,
   } = useMemo(() => partners?.[index], [partners?.[index]]);
 
   const titleDropDown = useMemo(() => {
@@ -172,12 +187,19 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         type: 'blank',
       },
       {
-        label: 'ACN',
-        placeholder: '01234',
-        type: 'search',
-        name: 'acn',
-        value: acn ?? '',
-        isOr: true,
+        label: 'Country*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'stakeholderCountry',
+        data: countryList,
+        value: stakeholderCountry ?? [],
+      },
+      {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'entityName',
+        name: 'entityName',
+        value: entityName?.label ?? entityName ?? '',
         data: [],
       },
       {
@@ -189,12 +211,11 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         data: [],
       },
       {
-        label: 'Entity Name*',
-        placeholder: 'Enter Entity',
-        type: 'entityName',
-        name: 'entityName',
-        isOr: true,
-        value: entityName?.label ?? entityName ?? '',
+        label: 'ABN/NZBN*',
+        placeholder: '01234',
+        type: 'search',
+        name: 'abn',
+        value: abn ?? '',
         data: [],
       },
       {
@@ -206,19 +227,42 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         data: companyEntityType ?? [],
       },
       {
-        label: 'ABN*',
+        label: 'ACN/NCN',
         placeholder: '01234',
         type: 'search',
-        name: 'abn',
-        value: abn ?? '',
+        name: 'acn',
+        value: acn ?? '',
         data: [],
       },
-      {
-        type: 'blank',
-      },
     ],
-    [type, abn, acn, entityType, entityName, tradingName, companyEntityType]
+    [
+      type,
+      abn,
+      acn,
+      entityType,
+      entityName,
+      tradingName,
+      companyEntityType,
+      countryList,
+      stakeholderCountry,
+    ]
   );
+  const FINAL_COMPANY_INPUTS = useMemo(() => {
+    if (isAusOrNewStakeHolder) {
+      return [...COMPANY_INPUT];
+    }
+    const filteredData = [...COMPANY_INPUT];
+    filteredData.splice(4, 1, {
+      label: 'Company Registration No.*',
+      placeholder: 'Registration no',
+      type: 'text',
+      name: 'registrationNumber',
+      value: registrationNumber,
+    });
+    filteredData.splice(6, 1);
+    return filteredData;
+  }, [COMPANY_INPUT, isAusOrNewStakeHolder, registrationNumber]);
+
   const INDIVIDUAL_INPUT = useMemo(
     () => [
       {
@@ -426,9 +470,16 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateSinglePersonState(data?.name, data);
+      if (data.name === 'country' && partners?.[index]?.type === 'company') {
+        const { label, value } = data;
+        updateSinglePersonState('stakeholderCountry', { label, name: 'stakeholderCountry', value });
+      } else if (data.name === 'country' && partners?.[index]?.type === 'individual') {
+        if (['AUS', 'NZL'].includes(data.value)) updateSinglePersonState('state', []);
+        else updateSinglePersonState('state', '');
+        updateSinglePersonState(data?.name, data);
+      } else updateSinglePersonState(data?.name, data);
     },
-    [updateSinglePersonState]
+    [updateSinglePersonState, partners?.[index]?.type]
   );
   const updatePersonState = useCallback(data => {
     dispatch(updatePersonStepDataOnValueSelected(index, data));
@@ -450,10 +501,21 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     [dispatchDrawerState]
   );
 
+  const onCloseEntityTableModal = useCallback(() => {
+    handleToggleDropdown(false);
+    setCurrentPage(0);
+    setSearchedEntityNameValue('');
+    dispatch(resetEntityTableData());
+  }, []);
+
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { searchString: data?.abn, clientId: companyState?.clientId?.value };
+        const params = {
+          searchString: data?.abn,
+          clientId: companyState?.clientId?.value,
+          country: partners?.[index]?.stakeholderCountry?.value,
+        };
         const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
         if (response) {
           updatePersonState(response);
@@ -462,82 +524,150 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
             acn: response?.acn,
             abn: response?.abn,
           };
-          handleToggleDropdown();
+          onCloseEntityTableModal();
         }
       } catch {
         /**/
       }
-      handleToggleDropdown(false);
-      setSearchedEntityNameValue('');
     },
     [
       companyState?.clientId?.value,
+      partners?.[index]?.stakeholderCountry?.value,
       updatePersonState,
-      handleToggleDropdown,
-      setSearchedEntityNameValue,
+      onCloseEntityTableModal,
       prevRef.current,
     ]
   );
 
   const handleEntityNameOnSearchClick = useCallback(
     ref => {
+      if (!isAusOrNewStakeHolder) return;
+      if (
+        !partners?.[index]?.stakeholderCountry ||
+        partners?.[index]?.stakeholderCountry?.length === 0
+      ) {
+        errorNotification('Please select country before continue');
+        return;
+      }
       if (ref?.value.toString().trim().length > 0) {
-        dispatchDrawerState({
-          type: DRAWER_ACTIONS.SHOW_DRAWER,
-          data: null,
-        });
-        setSearchedEntityNameValue(ref?.value.toString());
-        const params = {
-          searchString: ref?.value,
-          clientId: companyState?.clientId?.value,
-        };
-        dispatch(searchApplicationCompanyEntityName(params));
+        try {
+          dispatchDrawerState({
+            type: DRAWER_ACTIONS.SHOW_DRAWER,
+            data: null,
+          });
+          setSearchedEntityNameValue(ref?.value.toString());
+          const params = {
+            searchString: ref?.value,
+            clientId: companyState?.clientId?.value,
+            country: partners?.[index]?.stakeholderCountry?.value,
+            page: currentPage,
+          };
+          dispatch(searchApplicationCompanyEntityName(params));
+        } catch (e) {
+          /**/
+        }
       } else {
         errorNotification('Please enter search text for entity name');
       }
     },
-    [companyState?.clientId, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
+    [
+      companyState?.clientId?.value,
+      partners?.[index]?.stakeholderCountry?.value,
+      dispatchDrawerState,
+      updatePersonState,
+      setSearchedEntityNameValue,
+      currentPage,
+      isAusOrNewStakeHolder,
+    ]
   );
 
   const handleEntityNameSearch = useCallback(
     e => {
       if (e.key === 'Enter') {
+        if (!isAusOrNewStakeHolder) return;
+        if (
+          !partners?.[index]?.stakeholderCountry ||
+          partners?.[index]?.stakeholderCountry?.length === 0
+        ) {
+          errorNotification('Please select country before continue');
+          return;
+        }
         if (e?.target?.value.toString().trim().length > 0) {
-          dispatchDrawerState({
-            type: DRAWER_ACTIONS.SHOW_DRAWER,
-            data: null,
-          });
-          setSearchedEntityNameValue(e.target.value.toString());
-          const params = {
-            searchString: e?.target?.value,
-            clientId: companyState?.clientId?.value,
-          };
-          dispatch(searchApplicationCompanyEntityName(params));
+          try {
+            dispatchDrawerState({
+              type: DRAWER_ACTIONS.SHOW_DRAWER,
+              data: null,
+            });
+            setSearchedEntityNameValue(e.target.value.toString());
+            const params = {
+              searchString: e?.target?.value,
+              clientId: companyState?.clientId?.value,
+              country: partners?.[index]?.stakeholderCountry?.value,
+              page: currentPage,
+            };
+            dispatch(searchApplicationCompanyEntityName(params));
+          } catch (err) {
+            /**/
+          }
         } else {
           errorNotification('Please enter search text for entity name');
         }
       }
     },
-    [companyState?.clientId, dispatchDrawerState, updatePersonState, setSearchedEntityNameValue]
+    [
+      companyState?.clientId,
+      partners?.[index]?.stakeholderCountry?.value,
+      dispatchDrawerState,
+      updatePersonState,
+      setSearchedEntityNameValue,
+      currentPage,
+      isAusOrNewStakeHolder,
+    ]
   );
 
-  const retryEntityNameRequest = useCallback(() => {
-    if (searchedEntityNameValue?.trim()?.length > 0) {
-      const params = {
-        searchString: searchedEntityNameValue,
-        clientId: companyState?.clientId?.value,
-      };
-      dispatch(searchApplicationCompanyEntityName(params));
+  const retryEntityNameRequest = useCallback(async () => {
+    if (searchedEntityNameValue.trim().length > 0) {
+      if (
+        !partners?.[index]?.stakeholderCountry ||
+        partners?.[index]?.stakeholderCountry?.length === 0
+      ) {
+        errorNotification('Please select country before continue');
+        return;
+      }
+      try {
+        const params = {
+          searchString: searchedEntityNameValue,
+          clientId: companyState?.clientId?.value,
+          country: partners?.[index]?.stakeholderCountry?.value,
+          page: currentPage,
+        };
+        await dispatch(searchApplicationCompanyEntityName(params));
+      } catch (e) {
+        /**/
+      }
     }
-  }, [searchedEntityNameValue, companyState?.clientId]);
+  }, [
+    searchedEntityNameValue,
+    companyState?.clientId,
+    partners?.[index]?.stakeholderCountry?.value,
+    currentPage,
+  ]);
 
   const handleSearchTextOnSearchClick = useCallback(
     async ref => {
-      try {
-        if (ref?.value?.trim()?.length > 0) {
+      if (
+        !partners?.[index]?.stakeholderCountry ||
+        partners?.[index]?.stakeholderCountry?.length === 0
+      ) {
+        errorNotification('Please select country before continue');
+        return;
+      }
+      if (ref?.value?.trim()?.length > 0) {
+        try {
           const params = {
             searchString: ref?.value,
             clientId: companyState?.clientId?.value,
+            country: partners?.[index]?.stakeholderCountry?.value,
           };
           const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
 
@@ -549,26 +679,40 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               abn: response?.abn,
             };
           }
-        } else {
-          errorNotification(`Please enter search text for ${ref?.name}`);
+        } catch {
+          let value = prevRef?.current?.abn;
+          if (ref?.name === 'acn') value = prevRef?.current?.acn;
+          updateSinglePersonState(ref?.name, value);
         }
-      } catch {
-        let value = prevRef?.current?.abn;
-        if (ref?.name === 'acn') value = prevRef?.current?.acn;
-        updateSinglePersonState(ref?.name, value);
+      } else {
+        errorNotification(`Please enter search text for ${ref?.name}`);
       }
     },
-    [companyState, updatePersonState, updateSinglePersonState, prevRef.current]
+    [
+      partners?.[index]?.stakeholderCountry?.value,
+      companyState?.clientId?.value,
+      updatePersonState,
+      updateSinglePersonState,
+      prevRef.current,
+    ]
   );
 
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
-      try {
-        if (e.key === 'Enter') {
-          if (e?.target?.value?.trim()?.length > 0) {
+      if (e.key === 'Enter') {
+        if (
+          !partners?.[index]?.stakeholderCountry ||
+          partners?.[index]?.stakeholderCountry?.length === 0
+        ) {
+          errorNotification('Please select country before continue');
+          return;
+        }
+        if (e?.target?.value?.trim()?.length > 0) {
+          try {
             const params = {
               searchString: e?.target?.value,
               clientId: companyState?.clientId?.value,
+              country: partners?.[index]?.stakeholderCountry?.value,
             };
             const response = await dispatch(getApplicationPersonDataFromABNOrACN(params));
 
@@ -580,17 +724,23 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
                 abn: response?.abn,
               };
             }
+          } catch {
+            let value = prevRef?.current?.abn;
+            if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
+            updateSinglePersonState(e?.target?.name, value);
           }
         } else {
           errorNotification(`Please enter search text for ${e?.target?.name}`);
         }
-      } catch {
-        let value = prevRef?.current?.abn;
-        if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
-        updateSinglePersonState(e?.target?.name, value);
       }
     },
-    [companyState, updatePersonState, updateSinglePersonState, prevRef.current]
+    [
+      partners?.[index]?.stakeholderCountry?.value,
+      companyState?.clientId?.value,
+      updatePersonState,
+      updateSinglePersonState,
+      prevRef.current,
+    ]
   );
 
   const handleCheckBoxEvent = useCallback(
@@ -636,7 +786,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               type="text"
               placeholder={input.placeholder}
               name={input.name}
-              value={input?.value}
+              value={input?.value || ''}
               onChange={handleTextInputChange}
             />
           );
@@ -647,7 +797,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               type="email"
               placeholder={input.placeholder}
               name={input.name}
-              value={input?.value}
+              value={input?.value || ''}
               onChange={handleEmailChange}
             />
           );
@@ -662,7 +812,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               suffixClass="application-search-suffix"
               borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
-              value={input?.value}
+              value={input?.value || ''}
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
             />
@@ -676,7 +826,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
-              value={input?.value}
+              value={input?.value ?? []}
               isSearchable
               onChange={handleSelectInputChange}
             />
@@ -704,7 +854,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               onKeyDown={handleEntityNameSearch}
-              value={input?.value}
+              value={input?.value || ''}
               onChange={handleEntityChange}
             />
           );
@@ -791,7 +941,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     },
     [
       INPUTS,
-      COMPANY_INPUT,
+      FINAL_COMPANY_INPUTS,
       INDIVIDUAL_INPUT,
       index,
       partners,
@@ -830,7 +980,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     <>
       {drawerState.visible && (
         <Modal
-          hideModal={handleToggleDropdown}
+          hideModal={onCloseEntityTableModal}
           className="application-entity-name-modal"
           header="Search Results"
           closeIcon="cancel"
@@ -844,6 +994,10 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               <ApplicationEntityNameTable
                 data={entityNameSearchDropDownData?.data}
                 handleEntityNameSelect={handleEntityNameSelect}
+                selectedCountry={partners?.[index]?.stakeholderCountry?.value}
+                setCurrentPage={setCurrentPage}
+                requestNewPage={retryEntityNameRequest}
+                hasMoreRecords={entityNameSearchDropDownData?.hasMoreData}
               />
             ) : (
               <div className="no-record-found">No record found</div>
@@ -878,7 +1032,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
         <div className="application-person-step-accordion-item">
           {INPUTS.map(getComponentFromType)}
           {partners?.[index]?.type === 'company'
-            ? COMPANY_INPUT.map(getComponentFromType)
+            ? FINAL_COMPANY_INPUTS.map(getComponentFromType)
             : INDIVIDUAL_INPUT.map(getComponentFromType)}
         </div>
       </AccordionItem>

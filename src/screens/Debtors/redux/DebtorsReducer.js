@@ -100,6 +100,7 @@ const initialDebtorState = {
       entityType: '',
       entityName: '',
       tradingName: '',
+      stakeholderCountry: '',
       title: '',
       firstName: '',
       middleName: '',
@@ -121,7 +122,13 @@ const initialDebtorState = {
       postCode: '',
       errors: {},
     },
-    entityNameSearch: {},
+    entityNameSearch: {
+      isLoading: false,
+      error: false,
+      errorMessage: '',
+      data: [],
+      hasMoreData: false,
+    },
     stakeHolderDropDownData: {
       clients: [],
       debtors: [],
@@ -779,12 +786,45 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
 
-    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA:
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA: {
+      let entityNameSearchData = state?.stakeHolder?.entityNameSearch?.data ?? [];
+      let hasNoMoreRecords = false;
+
+      if (action?.data?.data) {
+        entityNameSearchData = [...entityNameSearchData, ...action?.data?.data];
+
+        if (state?.stakeHolder?.entityNameSearch?.data?.length === entityNameSearchData?.length)
+          hasNoMoreRecords = true;
+      }
+
       return {
         ...state,
         stakeHolder: {
           ...state?.stakeHolder,
-          entityNameSearch: action?.data,
+          entityNameSearch: {
+            ...state?.stakeHolder?.entityNameSearch,
+            data: entityNameSearchData,
+            hasMoreData: !hasNoMoreRecords,
+            isLoading: action?.data?.isLoading,
+            error: action?.data?.error,
+            errorMessage: action?.data?.errorMessage,
+          },
+        },
+      };
+    }
+
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.WIPE_OUT_ENTITY_TABLE_DATA:
+      return {
+        ...state,
+        stakeHolder: {
+          ...state?.stakeHolder,
+          entityNameSearch: {
+            isLoading: false,
+            error: false,
+            errorMessage: '',
+            data: [],
+            hasMoreData: false,
+          },
         },
       };
 

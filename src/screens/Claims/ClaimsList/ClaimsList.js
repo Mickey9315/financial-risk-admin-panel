@@ -73,13 +73,14 @@ const ClaimsList = () => {
   const claimsDefaultColumnList = useSelector(
     ({ claims }) => claims?.claimsDefaultColumnList ?? {}
   );
-  const { claimsListColumnSaveButtonLoaderAction, claimsListColumnResetButtonLoaderAction } =
-    useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  const {
+    claimsListColumnSaveButtonLoaderAction,
+    claimsListColumnResetButtonLoaderAction,
+  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
   const filterDropdownClient = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
-  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
-    () => claimsList,
-    [claimsList]
-  );
+  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(() => claimsList, [
+    claimsList,
+  ]);
 
   const { defaultFields, customFields } = useMemo(
     () =>
@@ -223,7 +224,6 @@ const ClaimsList = () => {
 
   const viewClaim = useCallback(
     id => {
-      console.log(id);
       history.replace(`claims/view/${id}`);
     },
     [history]

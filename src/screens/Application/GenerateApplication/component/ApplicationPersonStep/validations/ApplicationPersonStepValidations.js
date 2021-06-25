@@ -17,17 +17,45 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
     let preparedData = {};
     if (!isDisabled) {
       if (type === 'company') {
-        if (!item?.abn || item?.abn?.trim()?.length <= 0) {
-          validated = false;
-          errors.abn = 'Please enter ABN number before continue';
-        }
-        if (item?.abn && (!NUMBER_REGEX.test(item?.abn) || item?.abn?.trim()?.length !== 11)) {
-          validated = false;
-          errors.abn = 'Please enter valid ABN number';
-        }
-        if (item?.acn && (!NUMBER_REGEX.test(item?.acn) || item?.acn?.trim()?.length !== 9)) {
-          validated = false;
-          errors.acn = 'Please enter valid ACN number';
+        if (['AUS', 'NZL'].includes(item?.stakeholderCountry?.value)) {
+          if (!item?.abn || item?.abn?.trim()?.length <= 0) {
+            validated = false;
+            errors.abn = 'Please enter ABN number before continue';
+          }
+          if (
+            item?.abn &&
+            (!NUMBER_REGEX.test(item?.abn) ||
+              item?.abn?.trim()?.length < 11 ||
+              item?.abn?.trim().length > 13)
+          ) {
+            validated = false;
+            errors.abn = 'Please enter valid ABN number';
+          }
+          if (
+            item?.acn &&
+            (!NUMBER_REGEX.test(item?.acn) ||
+              item?.acn?.trim()?.length < 5 ||
+              item?.acn?.trim().length > 9)
+          ) {
+            validated = false;
+            errors.acn = 'Please enter valid ACN number';
+          }
+        } else {
+          if (
+            !item?.registrationNumber ||
+            item?.registrationNumber?.toString()?.trim()?.length <= 0
+          ) {
+            validated = false;
+            errors.registrationNumber = 'Please enter registration number before continue';
+          }
+          if (
+            item?.registrationNumber &&
+            (item?.registrationNumber?.length <= 5 ||
+              item?.registrationNumber?.toString()?.trim()?.length >= 30)
+          ) {
+            validated = false;
+            errors.registrationNumber = 'Please enter valid registration number';
+          }
         }
         if (
           !item?.entityName ||
@@ -40,6 +68,10 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         if (!item?.entityType || item?.entityType?.length <= 0) {
           validated = false;
           errors.entityType = 'Please select entity type before continue';
+        }
+        if (!item?.stakeholderCountry || item?.stakeholderCountry?.length <= 0) {
+          validated = false;
+          errors.stakeholderCountry = 'Please select country before continue';
         }
       }
       if (type === 'individual') {
@@ -91,6 +123,10 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
           validated = false;
           errors.driverLicenceNumber = 'Please enter driver valid licence number';
         }
+        if (!item?.streetNumber || item?.streetNumber?.length <= 0) {
+          validated = false;
+          errors.streetNumber = 'Please enter street number before continue';
+        }
         if (item?.streetNumber && !NUMBER_REGEX.test(item?.streetNumber)) {
           validated = false;
           errors.streetNumber = 'Street number should be number';
@@ -114,16 +150,30 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
       }
     }
     if (type === 'company' && validated) {
-      const { _id, abn, acn, entityType, entityName, tradingName } = item;
+      const {
+        _id,
+        abn,
+        acn,
+        entityType,
+        entityName,
+        tradingName,
+        stakeholderCountry,
+        registrationNumber,
+      } = item;
       preparedData = {
         _id,
         type,
-        abn,
-        acn,
         entityType: entityType?.value,
         entityName: entityName?.value,
         tradingName,
+        stakeholderCountry: { name: stakeholderCountry?.label, code: stakeholderCountry?.value },
       };
+      if (['AUS', 'NZL'].includes(stakeholderCountry?.value)) {
+        preparedData.abn = abn;
+        preparedData.acn = acn;
+      } else {
+        preparedData.registrationNumber = registrationNumber;
+      }
     } else if (type === 'individual' && validated) {
       const {
         _id,

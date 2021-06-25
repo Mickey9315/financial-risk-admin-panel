@@ -13,11 +13,21 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       validated = false;
       errors.abn = 'Please enter ABN number before continue';
     }
-    if (data?.abn && (!NUMBER_REGEX.test(data?.abn) || data?.abn?.trim()?.length !== 11)) {
+    if (
+      data?.abn &&
+      (!NUMBER_REGEX.test(data?.abn?.toString()?.trim()) ||
+        data?.abn?.trim()?.length < 11 ||
+        data?.abn?.trim().length > 13)
+    ) {
       validated = false;
       errors.abn = 'Please enter valid ABN number';
     }
-    if (data?.acn && (!NUMBER_REGEX.test(data?.acn) || data?.acn?.trim()?.length !== 9)) {
+    if (
+      data?.acn &&
+      (!NUMBER_REGEX.test(data?.acn?.toString()?.trim()) ||
+        data?.acn?.trim()?.length < 5 ||
+        data?.acn?.trim().length > 9)
+    ) {
       validated = false;
       errors.acn = 'Please enter valid ACN number';
     }
@@ -47,7 +57,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.country = 'Please select country before continue';
   }
-  if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber)) {
+  if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber?.toString()?.trim())) {
     validated = false;
     errors.streetNumber = 'Street number should be number';
   }
@@ -63,7 +73,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     !['AUS', 'NZL'].includes(data?.country?.value) &&
     data?.state &&
     !data.state.value &&
-    SPECIAL_CHARACTER_REGEX.test(data?.state)
+    SPECIAL_CHARACTER_REGEX.test(data?.state?.toString()?.trim())
   ) {
     validated = false;
     errors.state = 'Please enter valid state';
@@ -71,7 +81,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
   if (
     data?.state?.value &&
     !['AUS', 'NZL'].includes(data?.country?.value) &&
-    SPECIAL_CHARACTER_REGEX.test(data?.state.value)
+    SPECIAL_CHARACTER_REGEX.test(data?.state.value?.toString()?.trim())
   ) {
     validated = false;
     errors.state = 'Please enter valid state';
@@ -80,11 +90,11 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.postCode = 'Please enter post code before continue';
   }
-  if (data?.postCode && !NUMBER_REGEX.test(data?.postCode)) {
+  if (data?.postCode && !NUMBER_REGEX.test(data?.postCode?.toString()?.trim())) {
     validated = false;
     errors.postCode = 'Post code should be number';
   }
-  if (data?.phoneNumber && !NUMBER_REGEX.test(data?.phoneNumber)) {
+  if (data?.phoneNumber && !NUMBER_REGEX.test(data?.phoneNumber?.toString()?.trim())) {
     validated = false;
     errors.phoneNumber = 'Phone number should be number';
   }

@@ -1188,11 +1188,11 @@ export const getStakeHolderDropDownData = () => {
   };
 };
 
-export const getStakeHolderCompanyDataFromABNorACN = id => {
+export const getstakeholderCountryDataFromABNorACN = params => {
   return async () => {
     try {
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderCompanyDataFromABNorACN(
-        id
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getstakeholderCountryDataFromABNorACN(
+        params
       );
 
       if (response?.data?.status === 'SUCCESS') {
@@ -1216,20 +1216,18 @@ export const updateStakeHolderDataOnValueSelected = data => {
   };
 };
 
-export const searchStakeHolderCompanyEntityName = searchText => {
+export const searchstakeholderCountryEntityName = params => {
   return async dispatch => {
     try {
       dispatch({
         type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
         data: {
-          isLoading: true,
+          isLoading: params?.page === 0 && true,
           error: false,
           errorMessage: '',
-          data: [],
         },
       });
-      const params = { searchString: searchText };
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.searchStakeHolderCompanyEntityName(
+      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.searchstakeholderCountryEntityName(
         params
       );
 
@@ -1276,6 +1274,14 @@ export const searchStakeHolderCompanyEntityName = searchText => {
         });
       }
     }
+  };
+};
+
+export const resetEntityTableData = () => {
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.WIPE_OUT_ENTITY_TABLE_DATA,
+    });
   };
 };
 

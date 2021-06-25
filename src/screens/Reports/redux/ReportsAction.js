@@ -148,10 +148,11 @@ export const resetCurrentFilter = filterFor => {
   };
 };
 
-export const reportDownloadAction = async reportFor => {
+export const reportDownloadAction = async (reportFor, filters) => {
   startLoaderButtonOnRequest('reportDownloadButtonLoaderAction');
   const config = {
     columnFor: reportFor,
+    ...filters,
   };
   try {
     const response = await ReportsApiService.downloadReportList(config);

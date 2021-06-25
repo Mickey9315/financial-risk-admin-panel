@@ -392,13 +392,17 @@ const ViewReport = () => {
 
   // download
   const downloadReport = useCallback(async () => {
-    try {
-      const response = await reportDownloadAction(paramReport);
-      if (response) downloadAll(response);
-    } catch (e) {
-      /**/
+    if (docs?.length > 0) {
+      try {
+        const response = await reportDownloadAction(paramReport, filters);
+        if (response) downloadAll(response);
+      } catch (e) {
+        /**/
+      }
+    } else {
+      errorNotification('No records to download');
     }
-  }, [paramReport]);
+  }, [paramReport, filters, docs?.length]);
 
   return (
     <>

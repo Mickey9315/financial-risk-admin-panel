@@ -118,6 +118,7 @@ const initialApplicationList = {
       error: false,
       errorMessage: '',
       data: [],
+      hasMoreData: false,
     },
   },
 
@@ -261,17 +262,46 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA: {
-      const entityNameSearch = { ...action?.data };
-      const companyData = {
-        ...state?.companyData,
-        entityNameSearch,
-      };
+      let entityNameSearchData = state?.companyData?.entityNameSearch?.data ?? [];
+      let hasNoMoreRecords = false;
+
+      if (action?.data?.data) {
+        entityNameSearchData = [...entityNameSearchData, ...action?.data?.data];
+
+        if (state?.companyData?.entityNameSearch?.data?.length === entityNameSearchData?.length)
+          hasNoMoreRecords = true;
+      }
 
       return {
         ...state,
-        companyData,
+        companyData: {
+          ...state?.companyData,
+          entityNameSearch: {
+            ...state?.companyData?.entityNameSearch,
+            data: entityNameSearchData,
+            hasMoreData: !hasNoMoreRecords,
+            isLoading: action?.data?.isLoading,
+            error: action?.data?.error,
+            errorMessage: action?.data?.errorMessage,
+          },
+        },
       };
     }
+
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.WIPE_OUT_ENTITY_TABLE_DATA:
+      return {
+        ...state,
+        companyData: {
+          ...state?.companyData,
+          entityNameSearch: {
+            isLoading: false,
+            error: false,
+            errorMessage: '',
+            data: [],
+            hasMoreData: false,
+          },
+        },
+      };
 
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS: {
       return {

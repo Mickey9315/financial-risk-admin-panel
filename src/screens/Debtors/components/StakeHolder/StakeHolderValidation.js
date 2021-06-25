@@ -14,17 +14,42 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
   const errors = {};
   let preparedData = {};
   if (data?.type === 'company') {
-    if (!data?.abn || data?.abn?.trim()?.length <= 0) {
-      validated = false;
-      errors.abn = 'Please enter ABN number before continue';
-    }
-    if (data?.abn && (!NUMBER_REGEX.test(data?.abn) || data?.abn?.trim()?.length !== 11)) {
-      validated = false;
-      errors.abn = 'Please enter valid ABN number';
-    }
-    if (data?.acn && (!NUMBER_REGEX.test(data?.acn) || data?.acn?.trim()?.length !== 9)) {
-      validated = false;
-      errors.acn = 'Please enter valid ACN number';
+    if (['AUS', 'NZL'].includes(data?.stakeholderCountry?.value)) {
+      if (!data?.abn || data?.abn?.trim()?.length <= 0) {
+        validated = false;
+        errors.abn = 'Please enter ABN number before continue';
+      }
+      if (
+        data?.abn &&
+        (!NUMBER_REGEX.test(data?.abn) ||
+          data?.abn?.trim()?.length < 11 ||
+          data?.abn?.trim()?.length > 13)
+      ) {
+        validated = false;
+        errors.abn = 'Please enter valid ABN number';
+      }
+      if (
+        data?.acn &&
+        (!NUMBER_REGEX.test(data?.acn) ||
+          data?.acn?.trim()?.length < 5 ||
+          data?.acn?.trim()?.length > 9)
+      ) {
+        validated = false;
+        errors.acn = 'Please enter valid ACN number';
+      }
+    } else {
+      if (!data?.registrationNumber || data?.registrationNumber?.toString()?.trim()?.length <= 0) {
+        validated = false;
+        errors.registrationNumber = 'Please enter registration number before continue';
+      }
+      if (
+        data?.registrationNumber &&
+        (data?.registrationNumber?.length <= 5 ||
+          data?.registrationNumber?.toString()?.trim()?.length >= 30)
+      ) {
+        validated = false;
+        errors.registrationNumber = 'Please enter valid registration number';
+      }
     }
     if (
       !data?.entityName ||
@@ -37,6 +62,10 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
     if (!data?.entityType || data?.entityType?.length <= 0) {
       validated = false;
       errors.entityType = 'Please select entity type before continue';
+    }
+    if (!data?.stakeholderCountry || data?.stakeholderCountry?.length <= 0) {
+      validated = false;
+      errors.stakeholderCountry = 'Please select country before continue';
     }
   }
   if (data?.type === 'individual') {
@@ -114,15 +143,29 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
     }
   }
   if (data?.type === 'company' && validated) {
-    const { type, abn, acn, entityType, entityName, tradingName } = data;
-    preparedData = {
+    const {
       type,
       abn,
       acn,
+      entityType,
+      entityName,
+      tradingName,
+      stakeholderCountry,
+      registrationNumber,
+    } = data;
+    preparedData = {
+      type,
       entityType: entityType?.value,
       entityName: entityName?.value,
       tradingName,
+      stakeholderCountry: { name: stakeholderCountry?.label, code: stakeholderCountry?.value },
     };
+    if (['AUS', 'NZL'].includes(stakeholderCountry?.value)) {
+      preparedData.abn = abn;
+      preparedData.acn = acn;
+    } else {
+      preparedData.registrationNumber = registrationNumber;
+    }
   } else if (data?.type === 'individual' && validated) {
     const {
       type,

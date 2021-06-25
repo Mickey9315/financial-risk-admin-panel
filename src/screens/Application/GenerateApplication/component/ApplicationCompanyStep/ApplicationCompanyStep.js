@@ -6,6 +6,7 @@ import {
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
+  resetEntityTableData,
   searchApplicationCompanyEntityName,
   updateEditApplicationData,
   updateEditApplicationField,
@@ -81,6 +82,8 @@ const ApplicationCompanyStep = () => {
 
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState('');
 
+  const [currentPage, setCurrentPage] = useState(0);
+
   const toggleConfirmationModal = useCallback(
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
     [setShowConfirmModal]
@@ -154,7 +157,7 @@ const ApplicationCompanyStep = () => {
         data: debtors,
       },
       {
-        label: 'ABN*',
+        label: 'ABN/NZBN*',
         placeholder: '01234',
         type: 'search',
         isOr: isAusOrNew,
@@ -162,7 +165,7 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'ACN',
+        label: 'ACN/NCN',
         placeholder: '01234',
         type: 'search',
         name: 'acn',
@@ -338,11 +341,16 @@ const ApplicationCompanyStep = () => {
               })
             );
           } else if (companyState?.abn?.length > 0 || companyState?.abn?.length > 0) {
+            if (!companyState?.country || companyState?.country?.length === 0) {
+              errorNotification('Please select country before continue');
+              return;
+            }
             const searchString = companyState?.abn ?? companyState?.acn;
             response = await dispatch(
               getApplicationCompanyDataFromABNOrACN({
                 searchString,
                 clientId: data?.value,
+                country: companyState?.country?.value,
               })
             );
           } else {
@@ -411,9 +419,17 @@ const ApplicationCompanyStep = () => {
           errorNotification('Please select clientId before continue');
           return;
         }
+        if (!companyState?.country || companyState?.country?.length === 0) {
+          errorNotification('Please select country before continue');
+          return;
+        }
         if (ref?.value?.trim()?.length > 0) {
           const searchString = ref?.value;
-          const params = { searchString, clientId: companyState?.clientId?.value };
+          const params = {
+            searchString,
+            clientId: companyState?.clientId?.value,
+            country: companyState?.country?.value,
+          };
           const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
           const { resData } = handleApplicationErrors(response);
@@ -446,9 +462,17 @@ const ApplicationCompanyStep = () => {
             errorNotification('Please select clientId before continue');
             return;
           }
+          if (!companyState?.country || companyState?.country?.length === 0) {
+            errorNotification('Please select country before continue');
+            return;
+          }
           if (e?.target?.value?.trim()?.length > 0) {
             const searchString = e?.target?.value;
-            const params = { searchString, clientId: companyState?.clientId?.value };
+            const params = {
+              searchString,
+              clientId: companyState?.clientId?.value,
+              country: companyState?.country?.value,
+            };
             const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
             const { resData } = handleApplicationErrors(response);
@@ -494,6 +518,7 @@ const ApplicationCompanyStep = () => {
           searchString: ref?.value,
           country: companyState?.country?.value,
           clientId: companyState?.clientId?.value,
+          page: currentPage,
         };
         dispatch(searchApplicationCompanyEntityName(params));
       } else {
@@ -506,6 +531,7 @@ const ApplicationCompanyStep = () => {
       updateCompanyState,
       dispatchDrawerState,
       setSearchedEntityNameValue,
+      currentPage,
     ]
   );
 
@@ -529,6 +555,7 @@ const ApplicationCompanyStep = () => {
           const params = {
             searchString: e?.target?.value,
             country: companyState?.country?.value,
+            page: currentPage,
           };
           dispatch(searchApplicationCompanyEntityName(params));
         } else {
@@ -542,10 +569,11 @@ const ApplicationCompanyStep = () => {
       updateCompanyState,
       dispatchDrawerState,
       setSearchedEntityNameValue,
+      currentPage,
     ]
   );
 
-  const retryEntityNameRequest = useCallback(() => {
+  const retryEntityNameRequest = useCallback(async () => {
     if (searchedEntityNameValue.trim().length > 0) {
       if (!companyState?.clientId || companyState?.clientId?.length === 0) {
         errorNotification('Please select client before continue');
@@ -555,14 +583,19 @@ const ApplicationCompanyStep = () => {
         errorNotification('Please select country before continue');
         return;
       }
-      const params = {
-        searchString: searchedEntityNameValue,
-        country: companyState?.country?.value,
-        clientId: companyState?.clientId?.value,
-      };
-      dispatch(searchApplicationCompanyEntityName(params));
+      try {
+        const params = {
+          searchString: searchedEntityNameValue,
+          country: companyState?.country?.value,
+          clientId: companyState?.clientId?.value,
+          page: currentPage,
+        };
+        await dispatch(searchApplicationCompanyEntityName(params));
+      } catch (e) {
+        /**/
+      }
     }
-  }, [searchedEntityNameValue, companyState?.country, companyState?.clientId]);
+  }, [searchedEntityNameValue, companyState?.country, companyState?.clientId, currentPage]);
 
   const handleEntityChange = useCallback(event => {
     const { name, value } = event.target;
@@ -584,10 +617,21 @@ const ApplicationCompanyStep = () => {
     [dispatchDrawerState]
   );
 
+  const onCloseEntityTableModal = useCallback(() => {
+    handleToggleDropdown(false);
+    setCurrentPage(0);
+    setSearchedEntityNameValue('');
+    dispatch(resetEntityTableData());
+  }, []);
+
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const params = { searchString: data?.abn, clientId: companyState?.clientId?.value };
+        const params = {
+          searchString: data?.abn,
+          clientId: companyState?.clientId?.value,
+          country: companyState?.country?.value,
+        };
         const response = await dispatch(getApplicationCompanyDataFromABNOrACN(params));
 
         const { resData } = handleApplicationErrors(response);
@@ -598,20 +642,13 @@ const ApplicationCompanyStep = () => {
             acn: resData?.acn,
             abn: resData?.abn,
           };
+          onCloseEntityTableModal();
         }
       } catch (err) {
         handleApplicationErrors(err?.response);
       }
-      handleToggleDropdown(false);
-      setSearchedEntityNameValue('');
     },
-    [
-      companyState,
-      updateCompanyState,
-      setSearchedEntityNameValue,
-      handleToggleDropdown,
-      prevRef.current,
-    ]
+    [companyState, updateCompanyState, prevRef.current]
   );
 
   const getComponentFromType = useCallback(
@@ -800,7 +837,7 @@ const ApplicationCompanyStep = () => {
       )}
       {drawerState.visible && (
         <Modal
-          hideModal={handleToggleDropdown}
+          hideModal={onCloseEntityTableModal}
           className="application-entity-name-modal"
           header="Search Results"
           closeIcon="cancel"
@@ -814,6 +851,10 @@ const ApplicationCompanyStep = () => {
               <ApplicationEntityNameTable
                 data={entityNameSearchDropDownData?.data}
                 handleEntityNameSelect={handleEntityNameSelect}
+                selectedCountry={companyState?.country?.value}
+                setCurrentPage={setCurrentPage}
+                requestNewPage={retryEntityNameRequest}
+                hasMoreRecords={entityNameSearchDropDownData?.hasMoreData}
               />
             ) : (
               <div className="no-record-found">No record found</div>

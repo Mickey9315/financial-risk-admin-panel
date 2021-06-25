@@ -17,11 +17,12 @@ import {
   deleteStakeHolderDetails,
   getDebtorStakeHolderColumnNameList,
   getDebtorStakeHolderListData,
-  getStakeHolderCompanyDataFromABNorACN,
+  getstakeholderCountryDataFromABNorACN,
   getStakeHolderDetails,
   getStakeHolderDropDownData,
+  resetEntityTableData,
   saveDebtorStakeHolderColumnNameList,
-  searchStakeHolderCompanyEntityName,
+  searchstakeholderCountryEntityName,
   updateStakeHolderDataOnValueSelected,
   updateStakeHolderDetail,
 } from '../../redux/DebtorsAction';
@@ -63,6 +64,10 @@ const DebtorsStakeHolderTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isAusOrNewStakeHolder, setIsAusOrNewStakeHolder] = useState(false);
+
   const {
     stakeHolderList,
     debtorsStakeHolderColumnNameList,
@@ -254,8 +259,8 @@ const DebtorsStakeHolderTab = () => {
 
   useEffect(() => {
     const country = stakeHolder?.country?.value ?? '';
+    const stakeHolderCountry = stakeHolder?.stakeholderCountry?.value ?? '';
     let showDropDownInput = true;
-    // dispatch(updateStakeHolderDetail('state', []));
     switch (country) {
       case 'AUS':
       case 'NZL':
@@ -265,6 +270,16 @@ const DebtorsStakeHolderTab = () => {
         showDropDownInput = false;
         break;
     }
+    switch (stakeHolderCountry) {
+      case 'AUS':
+      case 'NZL':
+        setIsAusOrNewStakeHolder(true);
+        break;
+      default:
+        setIsAusOrNewStakeHolder(false);
+        break;
+    }
+
     setIsAusOrNew(showDropDownInput);
     if (!prevRef.current?.abn) {
       prevRef.current = { ...prevRef.current, abn: stakeHolder?.abn };
@@ -273,9 +288,8 @@ const DebtorsStakeHolderTab = () => {
       prevRef.current = { ...prevRef.current, acn: stakeHolder?.acn };
     }
   }, [
-    stakeHolder?.abn,
-    stakeHolder?.acn,
     stakeHolder?.country?.value,
+    stakeHolder?.stakeholderCountry?.value,
     prevRef,
     australianStates,
     newZealandStates,
@@ -312,11 +326,19 @@ const DebtorsStakeHolderTab = () => {
         type: 'blank',
       },
       {
-        label: 'Trading Name',
-        placeholder: 'Trading Name',
-        type: 'text',
-        name: 'tradingName',
-        value: stakeHolder?.tradingName,
+        label: 'Country*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'stakeholderCountry',
+        data: countryList,
+        value: stakeHolder?.stakeholderCountry,
+      },
+      {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'entityName',
+        name: 'entityName',
+        value: stakeHolder?.entityName?.value,
       },
       {
         label: 'Entity Type*',
@@ -327,25 +349,25 @@ const DebtorsStakeHolderTab = () => {
         value: stakeHolder?.entityType,
       },
       {
-        label: 'Entity Name*',
-        placeholder: 'Enter Entity',
-        type: 'entityName',
-        name: 'entityName',
-        value: stakeHolder?.entityName?.value,
-      },
-      {
-        label: 'ACN',
-        placeholder: '01234',
-        type: 'search',
-        name: 'acn',
-        value: stakeHolder?.acn,
-      },
-      {
-        label: 'ABN*',
+        label: 'ABN/NZBN*',
         placeholder: '01234',
         type: 'search',
         name: 'abn',
         value: stakeHolder?.abn,
+      },
+      {
+        label: 'Trading Name',
+        placeholder: 'Trading Name',
+        type: 'text',
+        name: 'tradingName',
+        value: stakeHolder?.tradingName,
+      },
+      {
+        label: 'ACN/NCN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
+        value: stakeHolder?.acn,
       },
       {
         type: 'blank',
@@ -353,6 +375,23 @@ const DebtorsStakeHolderTab = () => {
     ],
     [companyEntityType, stakeHolder]
   );
+
+  const FINAL_COMPANY_INPUTS = useMemo(() => {
+    if (isAusOrNewStakeHolder) {
+      return [...COMPANY_INPUT];
+    }
+    const filteredData = [...COMPANY_INPUT];
+    filteredData.splice(4, 1, {
+      label: 'Company Registration No.*',
+      placeholder: 'Registration no',
+      type: 'text',
+      name: 'registrationNumber',
+      value: stakeHolder?.registrationNumber,
+    });
+    filteredData.splice(6, 1);
+    return filteredData;
+  }, [COMPANY_INPUT, isAusOrNewStakeHolder, stakeHolder?.registrationNumber]);
+
   const INDIVIDUAL_INPUT = useMemo(
     () => [
       {
@@ -548,9 +587,20 @@ const DebtorsStakeHolderTab = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      updateStakeHolderSingleDetail(data?.name, data);
+      if (data.name === 'country' && stakeHolder?.type === 'company') {
+        const { label, value } = data;
+        updateStakeHolderSingleDetail('stakeholderCountry', {
+          label,
+          name: 'stakeholderCountry',
+          value,
+        });
+      } else if (data.name === 'country' && stakeHolder?.type === 'individual') {
+        if (['AUS', 'NZL'].includes(data.value)) updateStakeHolderSingleDetail('state', []);
+        else updateStakeHolderSingleDetail('state', '');
+        updateStakeHolderSingleDetail(data?.name, data);
+      } else updateStakeHolderSingleDetail(data?.name, data);
     },
-    [updateStakeHolderSingleDetail]
+    [updateStakeHolderSingleDetail, stakeHolder?.type]
   );
 
   const handleCheckBoxEvent = useCallback(
@@ -580,10 +630,19 @@ const DebtorsStakeHolderTab = () => {
 
   const handleSearchTextInputKeyDown = useCallback(
     async e => {
-      try {
-        if (e.key === 'Enter') {
-          if (e?.target?.value?.trim()?.length > 0) {
-            const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(e.target.value));
+      if (e.key === 'Enter') {
+        if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
+          errorNotification('Please select country before continue');
+          return;
+        }
+        if (e?.target?.value?.trim()?.length > 0) {
+          try {
+            const response = await dispatch(
+              getstakeholderCountryDataFromABNorACN({
+                searchString: e?.target?.value?.trim(),
+                country: stakeHolder?.stakeholderCountry?.value,
+              })
+            );
             if (response) {
               if (e?.target?.name === 'abn') {
                 prevRef.current.abn = response?.abn;
@@ -591,25 +650,39 @@ const DebtorsStakeHolderTab = () => {
                 prevRef.current.acn = response?.acn;
               }
               updateStakeHolderState(response);
-            } else {
-              errorNotification(`Please enter search text for ${e?.target?.name}`);
             }
+          } catch {
+            let value = prevRef?.current?.abn;
+            if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
+            updateStakeHolderSingleDetail(e?.target?.name, value);
           }
+        } else {
+          errorNotification(`Please enter search text for ${e?.target?.name}`);
         }
-      } catch {
-        let value = prevRef?.current?.abn;
-        if (e?.target?.name === 'acn') value = prevRef?.current?.acn;
-        updateStakeHolderSingleDetail(e?.target?.name, value);
       }
     },
-    [updateStakeHolderState, updateStakeHolderSingleDetail, prevRef.current]
+    [
+      updateStakeHolderState,
+      updateStakeHolderSingleDetail,
+      prevRef.current,
+      stakeHolder?.stakeholderCountry,
+    ]
   );
 
   const handleSearchTextOnSearchClick = useCallback(
     async ref => {
-      try {
-        if (ref?.value?.trim()?.length > 0) {
-          const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(ref.value));
+      if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
+        errorNotification('Please select country before continue');
+        return;
+      }
+      if (ref?.value?.trim()?.length > 0) {
+        try {
+          const response = await dispatch(
+            getstakeholderCountryDataFromABNorACN({
+              searchString: ref.value?.trim(),
+              country: stakeHolder?.stakeholderCountry?.value,
+            })
+          );
           if (response) {
             if (ref?.name === 'abn') {
               prevRef.current.abn = response?.abn;
@@ -618,56 +691,112 @@ const DebtorsStakeHolderTab = () => {
             }
             updateStakeHolderState(response);
           }
-        } else {
-          errorNotification(`Please enter search text for ${ref?.name}`);
+        } catch {
+          let value = prevRef?.current?.abn;
+          if (ref?.name === 'acn') value = prevRef?.current?.acn;
+          updateStakeHolderSingleDetail(ref?.name, value);
         }
-      } catch {
-        let value = prevRef?.current?.abn;
-        if (ref?.name === 'acn') value = prevRef?.current?.acn;
-        updateStakeHolderSingleDetail(ref?.name, value);
+      } else {
+        errorNotification(`Please enter search text for ${ref?.name}`);
       }
     },
-    [updateStakeHolderState, updateStakeHolderSingleDetail, prevRef.current]
+    [
+      updateStakeHolderState,
+      updateStakeHolderSingleDetail,
+      prevRef.current,
+      stakeHolder?.stakeholderCountry,
+    ]
   );
 
   const handleEntityNameSearch = useCallback(
     e => {
       if (e.key === 'Enter') {
+        if (!isAusOrNew) return;
+        if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
+          errorNotification('Please select country before continue');
+          return;
+        }
         if (e?.target?.value?.trim()?.length > 0) {
-          dispatchDrawerState({
-            type: DRAWER_ACTIONS.SHOW_DRAWER,
-            data: null,
-          });
-          setSearchedEntityNameValue(e?.target?.value?.toString());
-          dispatch(searchStakeHolderCompanyEntityName(e?.target?.value?.toString()));
+          try {
+            dispatchDrawerState({
+              type: DRAWER_ACTIONS.SHOW_DRAWER,
+              data: null,
+            });
+            setSearchedEntityNameValue(e?.target?.value?.trim()?.toString());
+            dispatch(
+              searchstakeholderCountryEntityName({
+                searchString: e?.target?.value?.trim(),
+                country: stakeHolder?.stakeholderCountry?.value,
+                page: currentPage,
+              })
+            );
+          } catch (err) {
+            /**/
+          }
         } else {
           errorNotification('Please enter search text for entity name');
         }
       }
     },
-    [stakeHolder, dispatchDrawerState, setSearchedEntityNameValue]
+    [stakeHolder, dispatchDrawerState, setSearchedEntityNameValue, currentPage, isAusOrNew]
   );
   const handleEntityNameOnSearchClick = useCallback(
     ref => {
+      if (!isAusOrNew) return;
+      if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
+        errorNotification('Please select country before continue');
+        return;
+      }
       if (ref?.value?.trim()?.length > 0) {
-        dispatchDrawerState({
-          type: DRAWER_ACTIONS.SHOW_DRAWER,
-          data: null,
-        });
-        setSearchedEntityNameValue(ref?.value?.toString());
-        dispatch(searchStakeHolderCompanyEntityName(ref?.value?.toString()));
+        try {
+          dispatchDrawerState({
+            type: DRAWER_ACTIONS.SHOW_DRAWER,
+            data: null,
+          });
+          setSearchedEntityNameValue(ref?.value?.toString());
+          dispatch(
+            searchstakeholderCountryEntityName({
+              searchString: ref.value?.trim(),
+              country: stakeHolder?.stakeholderCountry?.value,
+              page: currentPage,
+            })
+          );
+        } catch (e) {
+          /**/
+        }
       } else {
         errorNotification('Please enter search text for entity name');
       }
     },
-    [stakeHolder, dispatchDrawerState, setSearchedEntityNameValue]
+    [
+      stakeHolder,
+      dispatchDrawerState,
+      setSearchedEntityNameValue,
+      stakeHolder?.stakeholderCountry,
+      currentPage,
+      isAusOrNew,
+    ]
   );
 
-  const retryEntityNameRequest = useCallback(() => {
-    if (searchedEntityNameValue?.trim()?.length > 0) {
-      dispatch(searchStakeHolderCompanyEntityName(searchedEntityNameValue));
+  const retryEntityNameRequest = useCallback(async () => {
+    if (!isAusOrNew) return;
+    if (searchedEntityNameValue.trim().length > 0) {
+      if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
+        errorNotification('Please select country before continue');
+        return;
+      }
+      try {
+        const params = {
+          searchString: searchedEntityNameValue,
+          country: stakeHolder?.stakeholderCountry?.value,
+          page: currentPage,
+        };
+        await dispatch(searchstakeholderCountryEntityName(params));
+      } catch (e) {
+        /**/
+      }
     }
-  }, [searchedEntityNameValue]);
+  }, [searchedEntityNameValue, stakeHolder?.stakeholderCountry, currentPage, isAusOrNew]);
 
   const handleToggleDropdown = useCallback(
     value =>
@@ -680,29 +809,34 @@ const DebtorsStakeHolderTab = () => {
     [dispatchDrawerState]
   );
 
+  const onCloseEntityTableModal = useCallback(() => {
+    handleToggleDropdown(false);
+    setCurrentPage(0);
+    setSearchedEntityNameValue('');
+    dispatch(resetEntityTableData());
+  }, []);
+
   const handleEntityNameSelect = useCallback(
     async data => {
       try {
-        const response = await dispatch(getStakeHolderCompanyDataFromABNorACN(data.abn));
+        const response = await dispatch(
+          getstakeholderCountryDataFromABNorACN({
+            searchString: data?.abn,
+            country: stakeHolder?.stakeholderCountry?.value,
+            page: currentPage,
+          })
+        );
         if (response) {
           prevRef.current.abn = response?.abn;
           prevRef.current.acn = response?.acn;
           updateStakeHolderState(response);
-          handleToggleDropdown();
+          onCloseEntityTableModal();
         }
       } catch {
         /**/
       }
-      handleToggleDropdown(false);
-      setSearchedEntityNameValue('');
     },
-    [
-      prevRef.current,
-      stakeHolder,
-      updateStakeHolderState,
-      handleToggleDropdown,
-      setSearchedEntityNameValue,
-    ]
+    [prevRef.current, stakeHolder, updateStakeHolderState, onCloseEntityTableModal, currentPage]
   );
 
   const getComponentFromType = useCallback(
@@ -865,7 +999,7 @@ const DebtorsStakeHolderTab = () => {
     },
     [
       INPUTS,
-      COMPANY_INPUT,
+      FINAL_COMPANY_INPUTS,
       INDIVIDUAL_INPUT,
       stakeHolder,
       handleTextInputChange,
@@ -983,6 +1117,13 @@ const DebtorsStakeHolderTab = () => {
 
   const onClickAddStakeHolder = useCallback(() => {
     dispatch(changeStakeHolderPersonType('individual'));
+    dispatch(
+      updateStakeHolderDetail('stakeholderCountry', {
+        label: 'Australia',
+        name: 'country',
+        value: 'AUS',
+      })
+    );
     toggleAddStakeHolderModal();
   }, [toggleAddStakeHolderModal]);
 
@@ -1060,14 +1201,14 @@ const DebtorsStakeHolderTab = () => {
           <div className="debtor-stakeholder-modal">
             {INPUTS.map(getComponentFromType)}
             {stakeHolder?.type === 'company'
-              ? COMPANY_INPUT.map(getComponentFromType)
+              ? FINAL_COMPANY_INPUTS.map(getComponentFromType)
               : INDIVIDUAL_INPUT.map(getComponentFromType)}
           </div>
         </Modal>
       )}
       {drawerState.visible && (
         <Modal
-          hideModal={handleToggleDropdown}
+          hideModal={onCloseEntityTableModal}
           className="application-entity-name-modal"
           header="Search Results"
           closeIcon="cancel"
@@ -1081,6 +1222,10 @@ const DebtorsStakeHolderTab = () => {
               <ApplicationEntityNameTable
                 data={entityNameSearchedData?.data}
                 handleEntityNameSelect={handleEntityNameSelect}
+                selectedCountry={stakeHolder?.stakeholderCountry?.value}
+                setCurrentPage={setCurrentPage}
+                requestNewPage={retryEntityNameRequest}
+                hasMoreRecords={entityNameSearchedData?.hasMoreData}
               />
             ) : (
               <div className="no-record-found">No record found</div>

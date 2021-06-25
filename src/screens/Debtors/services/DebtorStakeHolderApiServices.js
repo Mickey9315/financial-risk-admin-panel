@@ -17,11 +17,12 @@ const DebtorStakeHolderApiServices = {
       ApiService.getData(DEBTORS_URLS.STAKE_HOLDER.STAKE_HOLDER_CRUD.DROP_DOWN_DATA_URL, {
         params,
       }),
-    getStakeHolderCompanyDataFromABNorACN: id =>
+    getstakeholderCountryDataFromABNorACN: params =>
       ApiService.getData(
-        `${DEBTORS_URLS.STAKE_HOLDER.STAKE_HOLDER_CRUD.SEARCH_APPLICATION_BY_ABN_ACN_DETAILS}${id}`
+        `${DEBTORS_URLS.STAKE_HOLDER.STAKE_HOLDER_CRUD.SEARCH_APPLICATION_BY_ABN_ACN_DETAILS}`,
+        { params }
       ),
-    searchStakeHolderCompanyEntityName: params =>
+    searchstakeholderCountryEntityName: params =>
       ApiService.getData(
         `${DEBTORS_URLS.STAKE_HOLDER.STAKE_HOLDER_CRUD.SEARCH_APPLICATION_ENTITY_TYPE}`,
         { params }
