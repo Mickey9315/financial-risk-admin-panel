@@ -8,23 +8,23 @@ import {
 import { LOGIN_REDUX_CONSTANTS } from '../../../screens/auth/login/redux/LoginReduxConstants';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../GeneralLoader/redux/GeneralLoaderAction';
 import { MY_WORK_REDUX_CONSTANTS } from '../../../screens/MyWork/redux/MyWorkReduxConstants';
 
 export const changePassword = async (oldPassword, newPassword) => {
   try {
-    startLoaderButtonOnRequest('changePasswordHeaderButtonLoaderAction');
+    startGeneralLoaderOnRequest('changePasswordHeaderButtonLoaderAction');
     const data = { oldPassword, newPassword };
     const response = await HeaderApiService.changePassword(data);
 
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Password changed successfully.');
-      stopLoaderButtonOnSuccessOrFail('changePasswordHeaderButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('changePasswordHeaderButtonLoaderAction');
     }
   } catch (e) {
-    stopLoaderButtonOnSuccessOrFail('changePasswordHeaderButtonLoaderAction');
+    stopGeneralLoaderOnSuccessOrFail('changePasswordHeaderButtonLoaderAction');
     displayErrors(e);
     throw Error();
   }
@@ -57,7 +57,7 @@ export const changeEditProfileData = data => {
 
 export const updateUserProfile = (name, contactNumber) => {
   return async dispatch => {
-    startLoaderButtonOnRequest('updateProfileHeaderButtonLoaderAction');
+    startGeneralLoaderOnRequest('updateProfileHeaderButtonLoaderAction');
     try {
       const data = {
         name,
@@ -67,10 +67,10 @@ export const updateUserProfile = (name, contactNumber) => {
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Profile updated successfully');
         dispatch(getLoggedUserDetails());
-        stopLoaderButtonOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
       displayErrors(e);
       throw Error();
     }
@@ -79,7 +79,7 @@ export const updateUserProfile = (name, contactNumber) => {
 export const uploadProfilePicture = (data, config) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('updateProfileHeaderButtonLoaderAction');
+      startGeneralLoaderOnRequest('updateProfileHeaderButtonLoaderAction');
 
       const response = await HeaderApiService.uploadUserProfilePicture(data, config);
       if (response?.data?.status === 'success') {
@@ -88,10 +88,10 @@ export const uploadProfilePicture = (data, config) => {
           data: response.data.data,
         });
         successNotification(response?.data?.message || 'Profile picture updated successfully');
-        stopLoaderButtonOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('updateProfileHeaderButtonLoaderAction');
       displayErrors(e);
       throw Error();
     }
@@ -100,7 +100,7 @@ export const uploadProfilePicture = (data, config) => {
 export const logoutUser = () => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('logoutHeaderButtonLoaderAction');
+      startGeneralLoaderOnRequest('logoutHeaderButtonLoaderAction');
 
       const response = await HeaderApiService.logoutUser();
 
@@ -109,10 +109,10 @@ export const logoutUser = () => {
           type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
         });
         successNotification(response?.data?.message || 'Logged out successfully.');
-        stopLoaderButtonOnSuccessOrFail('logoutHeaderButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('logoutHeaderButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('logoutHeaderButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('logoutHeaderButtonLoaderAction');
       displayErrors(e);
     }
   };

@@ -66,7 +66,7 @@ const DebtorTaskTab = () => {
     viewDebtorAddNewTaskButtonLoaderAction,
     viewDebtorUpdateTaskButtonLoaderAction,
     viewDebtorDeleteTaskButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { page, pages, total, limit, docs, headers, isLoading } = useMemo(() => taskList ?? {}, [
     taskList,

@@ -21,29 +21,11 @@ const initialClaims = {
 
 export const claims = (state = initialClaims, action) => {
   switch (action.type) {
-    case CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_REQUEST:
-      return {
-        ...state,
-        claimsList: {
-          ...state?.claimsList,
-          isLoading: true,
-        },
-      };
-
     case CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_SUCCESS:
       return {
         ...state,
         claimsList: {
           ...action?.data,
-          isLoading: false,
-        },
-      };
-
-    case CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_FAILURE:
-      return {
-        ...state,
-        claimsList: {
-          ...state?.claimsList,
           isLoading: false,
         },
       };
@@ -106,6 +88,13 @@ export const claims = (state = initialClaims, action) => {
       return {
         ...state,
         claimDetails: {},
+      };
+    }
+
+    case CLAIMS_REDUX_CONSTANTS.RESET_CLAIM_LIST_DATA: {
+      return {
+        ...state,
+        claimsList: initialClaims.claimsList,
       };
     }
 

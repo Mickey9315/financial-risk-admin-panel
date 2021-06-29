@@ -17,7 +17,7 @@ function ResetPassword() {
   const { token } = useQueryParams();
 
   const { resetPasswordButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const onChangePassword = e => {

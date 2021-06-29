@@ -15,28 +15,25 @@ import ClientApplicationApiService from '../services/ClientApplicationApiService
 import ClientTaskApiService from '../services/ClientTaskApiService';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { store } from '../../../redux/store';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      dispatch({
-        type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST,
-      });
+      startGeneralLoaderOnRequest('clientListLoader');
       const response = await ClientApiService.getAllClientList(params);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_SUCCESS,
           data: response.data.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('clientListLoader');
       }
     } catch (e) {
-      dispatch({
-        type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_FAILURE,
-      });
+      stopGeneralLoaderOnSuccessOrFail('clientListLoader');
       displayErrors(e);
     }
   };
@@ -58,17 +55,17 @@ export const resetClientListPaginationData = (page, pages, total, limit) => {
 export const getClientById = id => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('viewClientPageLoaderAction');
+      startGeneralLoaderOnRequest('viewClientPageLoaderAction');
       const response = await ClientApiService.getClientById(id);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.SELECTED_CLIENT_DATA,
           data: response.data.data,
         });
-        stopLoaderButtonOnSuccessOrFail('viewClientPageLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('viewClientPageLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('viewClientPageLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('viewClientPageLoaderAction');
       displayErrors(e);
     }
   };
@@ -155,7 +152,9 @@ export const changeClientColumnListStatus = data => {
 export const saveClientColumnListName = ({ clientColumnList = {}, isReset = false }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`clientListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+      startGeneralLoaderOnRequest(
+        `clientListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -174,7 +173,7 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `clientListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -188,12 +187,12 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
           data: clientColumnList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `clientListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `clientListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -204,16 +203,16 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
 export const syncClientData = id => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientSyncWithCRMButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientSyncWithCRMButtonLoaderAction`);
       const response = await ClientApiService.syncClientData(id);
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch(getClientById(id));
         successNotification(response?.data?.message || 'Client data updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(`viewClientSyncWithCRMButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientSyncWithCRMButtonLoaderAction`);
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientSyncWithCRMButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientSyncWithCRMButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -243,16 +242,16 @@ export const getClientContactListData = (id, params = { page: 1, limit: 15 }) =>
 export const syncClientContactListData = id => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientContactSyncWithCRMButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientContactSyncWithCRMButtonLoaderAction`);
       const response = await ClientContactApiService.syncClientContactData(id);
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch(getClientContactListData(id));
         successNotification(response?.data?.message || 'Client contact updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(`viewClientContactSyncWithCRMButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientContactSyncWithCRMButtonLoaderAction`);
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientContactSyncWithCRMButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientContactSyncWithCRMButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -293,7 +292,7 @@ export const saveClientContactColumnListName = ({
 }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `viewClientContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -314,7 +313,7 @@ export const saveClientContactColumnListName = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `viewClientContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -327,12 +326,12 @@ export const saveClientContactColumnListName = ({
           data: clientContactColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `viewClientContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `viewClientContactColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -401,7 +400,7 @@ export const saveClientPoliciesColumnListName = ({
 }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `viewClientPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -424,7 +423,7 @@ export const saveClientPoliciesColumnListName = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `viewClientPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -438,12 +437,12 @@ export const saveClientPoliciesColumnListName = ({
           data: clientPoliciesColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `viewClientPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `viewClientPoliciesColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -454,16 +453,16 @@ export const saveClientPoliciesColumnListName = ({
 export const syncClientPolicyListData = id => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientPoliciesSyncWithCRMButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientPoliciesSyncWithCRMButtonLoaderAction`);
       const response = await ClientPoliciesApiService.syncClientContactData(id);
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch(getClientContactListData(id));
         successNotification(response?.data?.message || 'Client policies updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(`viewClientPoliciesSyncWithCRMButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientPoliciesSyncWithCRMButtonLoaderAction`);
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientPoliciesSyncWithCRMButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientPoliciesSyncWithCRMButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -498,7 +497,7 @@ export const getClientNotesListDataAction = (id, params = { page: 1, limit: 15 }
 export const addClientNoteAction = (entityId, noteData) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientAddNewNoteButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientAddNewNoteButtonLoaderAction`);
       const { description, isPublic } = noteData;
       const data = {
         noteFor: 'client',
@@ -512,10 +511,10 @@ export const addClientNoteAction = (entityId, noteData) => {
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getClientNotesListDataAction(entityId));
         successNotification(response?.data?.message || 'Note added successfully.');
-        stopLoaderButtonOnSuccessOrFail(`viewClientAddNewNoteButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientAddNewNoteButtonLoaderAction`);
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientAddNewNoteButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientAddNewNoteButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -524,7 +523,7 @@ export const addClientNoteAction = (entityId, noteData) => {
 export const updateClientNoteAction = (entityId, noteData) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientUpdateNoteButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientUpdateNoteButtonLoaderAction`);
       const { noteId, description, isPublic } = noteData;
       const data = {
         noteFor: 'client',
@@ -538,10 +537,10 @@ export const updateClientNoteAction = (entityId, noteData) => {
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getClientNotesListDataAction(entityId));
         successNotification(response?.data?.message || 'Note updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(`viewClientUpdateNoteButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientUpdateNoteButtonLoaderAction`);
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientUpdateNoteButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientUpdateNoteButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -549,18 +548,18 @@ export const updateClientNoteAction = (entityId, noteData) => {
 
 export const deleteClientNoteAction = async (noteId, cb) => {
   try {
-    startLoaderButtonOnRequest(`viewClientDeleteNoteButtonLoaderAction`);
+    startGeneralLoaderOnRequest(`viewClientDeleteNoteButtonLoaderAction`);
     const response = await ClientNotesApiService.deleteClientNote(noteId);
 
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Note deleted successfully.');
-      stopLoaderButtonOnSuccessOrFail(`viewClientDeleteNoteButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientDeleteNoteButtonLoaderAction`);
       if (cb) {
         cb();
       }
     }
   } catch (e) {
-    stopLoaderButtonOnSuccessOrFail(`viewClientDeleteNoteButtonLoaderAction`);
+    stopGeneralLoaderOnSuccessOrFail(`viewClientDeleteNoteButtonLoaderAction`);
     displayErrors(e);
   }
 };
@@ -629,7 +628,7 @@ export const saveClientDocumentsColumnListName = ({
 }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `viewClientDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -652,7 +651,7 @@ export const saveClientDocumentsColumnListName = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `viewClientDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -667,12 +666,12 @@ export const saveClientDocumentsColumnListName = ({
           data: clientDocumentsColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `viewClientDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `viewClientDocumentColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -703,7 +702,7 @@ export const getDocumentTypeList = () => {
 export const uploadDocument = (data, config) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientUploadDocumentButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientUploadDocumentButtonLoaderAction`);
       const response = await ClientDocumentsApiService.uploadDocument(data, config);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
@@ -711,10 +710,10 @@ export const uploadDocument = (data, config) => {
           data: response.data.data,
         });
         successNotification(response?.data?.message || 'Document uploaded successfully.');
-        stopLoaderButtonOnSuccessOrFail(`viewClientUploadDocumentButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientUploadDocumentButtonLoaderAction`);
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientUploadDocumentButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientUploadDocumentButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -724,7 +723,7 @@ export const downloadDocuments = async data => {
   const str = data.toString();
 
   try {
-    startLoaderButtonOnRequest(`viewClientDownloadDocumentButtonLoaderAction`);
+    startGeneralLoaderOnRequest(`viewClientDownloadDocumentButtonLoaderAction`);
     const config = {
       documentIds: str,
       action: 'download',
@@ -732,11 +731,11 @@ export const downloadDocuments = async data => {
 
     const response = await ClientDocumentsApiService.downloadDocuments(config);
     if (response?.statusText === 'OK') {
-      stopLoaderButtonOnSuccessOrFail(`viewClientDownloadDocumentButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientDownloadDocumentButtonLoaderAction`);
       return response;
     }
   } catch (e) {
-    stopLoaderButtonOnSuccessOrFail(`viewClientDownloadDocumentButtonLoaderAction`);
+    stopGeneralLoaderOnSuccessOrFail(`viewClientDownloadDocumentButtonLoaderAction`);
     displayErrors(e);
   }
   return false;
@@ -744,17 +743,17 @@ export const downloadDocuments = async data => {
 
 export const deleteClientDocumentAction = async (docId, cb) => {
   try {
-    startLoaderButtonOnRequest(`viewClientDeleteDocumentButtonLoaderAction`);
+    startGeneralLoaderOnRequest(`viewClientDeleteDocumentButtonLoaderAction`);
     const response = await ClientDocumentsApiService.deleteClientDocument(docId);
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Document deleted successfully.');
-      stopLoaderButtonOnSuccessOrFail(`viewClientDeleteDocumentButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientDeleteDocumentButtonLoaderAction`);
       if (cb) {
         cb();
       }
     }
   } catch (e) {
-    stopLoaderButtonOnSuccessOrFail(`viewClientDeleteDocumentButtonLoaderAction`);
+    stopGeneralLoaderOnSuccessOrFail(`viewClientDeleteDocumentButtonLoaderAction`);
     displayErrors(e);
   }
 };
@@ -811,7 +810,7 @@ export const saveClientCreditLimitColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `viewClientCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -831,7 +830,7 @@ export const saveClientCreditLimitColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `viewClientCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -846,12 +845,12 @@ export const saveClientCreditLimitColumnNameList = ({
           data: clientCreditLimitColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `viewClientCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `viewClientCreditLimitColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -862,14 +861,14 @@ export const saveClientCreditLimitColumnNameList = ({
 export const downloadCreditLimitCSV = id => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('viewClientDownloadCreditLimitCSVButtonLoaderAction');
+      startGeneralLoaderOnRequest('viewClientDownloadCreditLimitCSVButtonLoaderAction');
       const response = await ClientCreditLimitApiService.downloadCreditLimitCSVFile(id);
       if (response?.statusText === 'OK') {
-        stopLoaderButtonOnSuccessOrFail(`viewClientDownloadCreditLimitCSVButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientDownloadCreditLimitCSVButtonLoaderAction`);
         return response;
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('viewClientDownloadCreditLimitCSVButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('viewClientDownloadCreditLimitCSVButtonLoaderAction');
       displayErrors(e);
       throw Error();
     }
@@ -936,7 +935,7 @@ export const saveClientApplicationColumnNameList = ({
 }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `viewClientApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -958,7 +957,7 @@ export const saveClientApplicationColumnNameList = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `viewClientApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -973,12 +972,12 @@ export const saveClientApplicationColumnNameList = ({
           data: clientApplicationColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `viewClientApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `viewClientApplicationColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -1045,7 +1044,7 @@ export const saveClientTaskColumnNameListName = ({
 }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `viewClientTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -1068,7 +1067,7 @@ export const saveClientTaskColumnNameListName = ({
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `viewClientTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -1082,12 +1081,12 @@ export const saveClientTaskColumnNameListName = ({
           data: clientTaskColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `viewClientTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `viewClientTaskColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -1156,18 +1155,18 @@ export const updateAddTaskStateFields = (name, value) => {
 export const saveTaskData = (data, cb) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientSaveNewTaskButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientSaveNewTaskButtonLoaderAction`);
       const response = await ClientTaskApiService.saveNewTask(data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_RESET_ADD_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task added successfully');
-        stopLoaderButtonOnSuccessOrFail(`viewClientSaveNewTaskButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientSaveNewTaskButtonLoaderAction`);
         cb();
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientSaveNewTaskButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientSaveNewTaskButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -1176,17 +1175,17 @@ export const saveTaskData = (data, cb) => {
 export const deleteTaskAction = (taskId, cb) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest(`viewClientDeleteTaskButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientDeleteTaskButtonLoaderAction`);
       const response = await ClientTaskApiService.deleteTask(taskId);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task deleted successfully.');
-        stopLoaderButtonOnSuccessOrFail(`viewClientDeleteTaskButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientDeleteTaskButtonLoaderAction`);
         if (cb) {
           cb();
         }
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientDeleteTaskButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientDeleteTaskButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -1211,18 +1210,18 @@ export const getClientTaskDetail = id => {
 export const updateTaskData = (id, data, cb) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`viewClientUpdateTaskButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`viewClientUpdateTaskButtonLoaderAction`);
       const response = await ClientTaskApiService.updateTask(id, data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_RESET_ADD_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task updated successfully');
-        stopLoaderButtonOnSuccessOrFail(`viewClientUpdateTaskButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`viewClientUpdateTaskButtonLoaderAction`);
         cb();
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`viewClientUpdateTaskButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`viewClientUpdateTaskButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -1231,14 +1230,14 @@ export const updateTaskData = (id, data, cb) => {
 export const modifyClientCreditLimit = (id, data) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('ViewClientModifyCreditLimitButtonLoaderAction');
+      startGeneralLoaderOnRequest('ViewClientModifyCreditLimitButtonLoaderAction');
       const response = await ClientCreditLimitApiService.modifyClientCreditLimitData(id, data);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Credit limit updated successfully');
-        stopLoaderButtonOnSuccessOrFail('ViewClientModifyCreditLimitButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('ViewClientModifyCreditLimitButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('ViewClientModifyCreditLimitButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('ViewClientModifyCreditLimitButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -1247,14 +1246,14 @@ export const modifyClientCreditLimit = (id, data) => {
 export const surrenderClientCreditLimit = (id, data) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('ViewClientSurrenderCreditLimitButtonLoaderAction');
+      startGeneralLoaderOnRequest('ViewClientSurrenderCreditLimitButtonLoaderAction');
       const response = await ClientCreditLimitApiService.surrenderClientCreditLimitData(id, data);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Credit limit surrendered successfully');
-        stopLoaderButtonOnSuccessOrFail('ViewClientSurrenderCreditLimitButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('ViewClientSurrenderCreditLimitButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('ViewClientSurrenderCreditLimitButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('ViewClientSurrenderCreditLimitButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -1267,10 +1266,18 @@ export const setViewClientActiveTabIndex = index => {
   });
 };
 
-export const resetPageData = () => {
-  return async dispatch => {
+export const resetClientListData = () => {
+  return dispatch => {
     dispatch({
-      type: CLIENT_REDUX_CONSTANTS.RESET_PAGE_DATA,
+      type: CLIENT_REDUX_CONSTANTS.RESET_CLIENT_LIST_DATA,
+    });
+  };
+};
+
+export const resetViewClientData = () => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.RESET_VIEW_CLIENT_DATA,
     });
   };
 };

@@ -12,8 +12,6 @@ const initialApplicationList = {
     page: 1,
     pages: 1,
     headers: [],
-    isLoading: true,
-    error: null,
   },
   applicationColumnNameList: {},
   applicationDefaultColumnNameList: {},
@@ -62,6 +60,7 @@ const initialApplicationList = {
       wipeOutDetails: false,
       registrationNo: '',
       errors: {},
+      isActive: true,
     },
     creditLimit: {
       isExtendedPaymentTerms: false,
@@ -153,35 +152,15 @@ const initialApplicationList = {
 
 export const application = (state = initialApplicationList, action) => {
   switch (action.type) {
-    case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_REQUEST:
-      return {
-        ...state,
-        applicationList: {
-          ...state?.applicationList,
-          isLoading: true,
-        },
-      };
-
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_SUCCESS:
       return {
         ...state,
         applicationList: {
           ...state?.applicationList,
           ...action?.data,
-          isLoading: false,
-          error: null,
         },
       };
 
-    case APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_FAILURE:
-      return {
-        ...state,
-        applicationList: {
-          ...state?.applicationList,
-          isLoading: false,
-          error: true,
-        },
-      };
     case APPLICATION_REDUX_CONSTANTS.RESET_APPLICATION_LIST_PAGINATION_DATA:
       return {
         ...state,
@@ -786,6 +765,12 @@ export const application = (state = initialApplicationList, action) => {
           ...action?.data,
           applicationStage: action.activeStep - 1,
         },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.RESET_APPLICATION_LIST_DATA:
+      return {
+        ...state,
+        applicationList: initialApplicationList.applicationList,
       };
 
     default:

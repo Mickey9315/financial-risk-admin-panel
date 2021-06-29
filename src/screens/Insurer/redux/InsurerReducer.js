@@ -39,27 +39,11 @@ const initialInsurer = {
 
 export const insurer = (state = initialInsurer, action) => {
   switch (action.type) {
-    case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_REQUEST_ACTION:
-      return {
-        ...state,
-        insurerList: {
-          ...state?.insurerList,
-          isLoading: true,
-        },
-      };
     case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_SUCCESS_ACTION:
       return {
         ...state,
         insurerList: {
           ...action?.data,
-          isLoading: false,
-        },
-      };
-    case INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_FAIL_ACTION:
-      return {
-        ...state,
-        insurerList: {
-          ...state?.insurerList,
           isLoading: false,
         },
       };
@@ -219,6 +203,20 @@ export const insurer = (state = initialInsurer, action) => {
         viewInsurerActiveTabIndex: action?.index,
       };
     }
+
+    case INSURER_VIEW_REDUX_CONSTANT.RESET_INSURER_LIST_DATA: {
+      return {
+        ...state,
+        insurerList: initialInsurer.insurerList,
+      };
+    }
+    case INSURER_VIEW_REDUX_CONSTANT.RESET_VIEW_INSURER_DATA: {
+      return {
+        ...state,
+        insurerViewData: initialInsurer.insurerViewData,
+      };
+    }
+
     default:
       return state;
   }

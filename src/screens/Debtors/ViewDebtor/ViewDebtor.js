@@ -4,18 +4,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import _ from 'lodash';
 import Tab from '../../../common/Tab/Tab';
 import {
   changeDebtorData,
   getDebtorById,
   getDebtorDropdownData,
+  resetViewDebtorData,
   setViewDebtorActiveTabIndex,
   updateDebtorData,
 } from '../redux/DebtorsAction';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import Button from '../../../common/Button/Button';
-import { DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
 import DebtorsCreditLimitTab from '../components/DebtorsCreditLimitTab';
@@ -81,8 +82,8 @@ const ViewInsurer = () => {
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
 
-  const { viewDebtorUpdateDebtorButtonLoaderAction, viewDebtorPageLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+  const { viewDebtorUpdateDebtorButtonLoaderAction, viewDebtorPageLoader } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const [isAUSOrNZL, setIsAUSOrNAL] = useState(false);
@@ -278,11 +279,8 @@ const ViewInsurer = () => {
   useEffect(() => {
     dispatch(getDebtorById(id));
     return () => {
-      dispatch({
-        type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_RESET_DEBTOR_DETAILS,
-        data: [],
-      });
       setViewDebtorActiveTabIndex(0);
+      dispatch(resetViewDebtorData());
     };
   }, [id]);
 
@@ -428,49 +426,52 @@ const ViewInsurer = () => {
 
   return (
     <>
-      {!viewDebtorPageLoaderAction ? (
-        <>
-          <div className="breadcrumb-button-row">
-            <div className="breadcrumb">
-              <span onClick={backToDebtorList}>Debtor List</span>
-              <span className="material-icons-round">navigate_next</span>
-              <span>View Debtor</span>
-            </div>
-            <div className="buttons-row">
-              {action === 'view' ? (
-                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
-                  <Button buttonType="primary" title="Edit" onClick={editDebtorClick} />
-                </UserPrivilegeWrapper>
-              ) : (
-                <>
-                  <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
-                  <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
-                    <Button
-                      buttonType="primary"
-                      title="Save"
-                      onClick={onClickUpdateDebtor}
-                      isLoading={viewDebtorUpdateDebtorButtonLoaderAction}
-                    />
-                  </UserPrivilegeWrapper>
-                </>
-              )}
-            </div>
-          </div>
-          {debtorData ? (
-            <div className="common-detail-container">
-              <div className="common-detail-grid">{finalInputs.map(getComponentFromType)}</div>
-            </div>
+      {!viewDebtorPageLoader ? (
+        (() =>
+          !_.isEmpty(debtorData) ? (
+            <>
+              <div className="breadcrumb-button-row">
+                <div className="breadcrumb">
+                  <span onClick={backToDebtorList}>Debtor List</span>
+                  <span className="material-icons-round">navigate_next</span>
+                  <span>View Debtor</span>
+                </div>
+                <div className="buttons-row">
+                  {action === 'view' ? (
+                    <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                      <Button buttonType="primary" title="Edit" onClick={editDebtorClick} />
+                    </UserPrivilegeWrapper>
+                  ) : (
+                    <>
+                      <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
+                      <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                        <Button
+                          buttonType="primary"
+                          title="Save"
+                          onClick={onClickUpdateDebtor}
+                          isLoading={viewDebtorUpdateDebtorButtonLoaderAction}
+                        />
+                      </UserPrivilegeWrapper>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="common-detail-container">
+                <div className="common-detail-grid">{finalInputs.map(getComponentFromType)}</div>
+              </div>
+
+              <Tab
+                tabs={FINAL_TABS}
+                tabActive={tabActive}
+                activeTabIndex={activeTabIndex}
+                className="mt-15"
+              />
+              <div className="common-white-container">{FINAL_COMPONENTS[activeTabIndex]}</div>
+            </>
           ) : (
-            <Loader />
-          )}
-          <Tab
-            tabs={FINAL_TABS}
-            tabActive={tabActive}
-            activeTabIndex={activeTabIndex}
-            className="mt-15"
-          />
-          <div className="common-white-container">{FINAL_COMPONENTS[activeTabIndex]}</div>
-        </>
+            <div className="no-record-found">No record found</div>
+          ))()
       ) : (
         <Loader />
       )}

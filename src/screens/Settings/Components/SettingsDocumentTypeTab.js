@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -11,14 +11,15 @@ import {
   getDocumentTypeDetailsById,
   getSettingDocumentTypeList,
   resetPageData,
+  resetSettingTabsData,
   updateDocumentFieldStatus,
   updateSettingDocType,
 } from '../redux/SettingAction';
 import Table from '../../../common/Table/Table';
-import Loader from '../../../common/Loader/Loader';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Pagination from '../../../common/Pagination/Pagination';
 import { errorNotification } from '../../../common/Toast';
+import Loader from '../../../common/Loader/Loader';
 
 const documentForOptions = [
   { label: 'Application', value: 'application', name: 'documentFor' },
@@ -58,16 +59,15 @@ const SettingsDocumentTypeTab = () => {
     settingAddNewDocumentTypeButtonLoaderAction,
     settingUpdateDocumentTypeButtonLoaderAction,
     settingDeleteDocumentTypeButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    settingDocumentListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { isLoading, error, total, pages, page, limit, docs, headers } = useMemo(
-    () => documentTypeListData ?? {},
-    [documentTypeListData]
-  );
-  const { documentTitle, documentFor } = useMemo(
-    () => documentTypeAddData ?? {},
-    [documentTypeAddData]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => documentTypeListData ?? {}, [
+    documentTypeListData,
+  ]);
+  const { documentTitle, documentFor } = useMemo(() => documentTypeAddData ?? {}, [
+    documentTypeAddData,
+  ]);
 
   const [docId, setDocId] = useState(null);
 
@@ -267,85 +267,89 @@ const SettingsDocumentTypeTab = () => {
   }, [history, total, pages, page, limit]);
 
   useEffect(() => {
-    return () => dispatch(resetPageData());
+    return () => {
+      dispatch(resetPageData());
+      dispatch(resetSettingTabsData());
+    };
   }, []);
 
   return (
     <>
-      <div className="settings-title-row">
-        <div className="title">Document Type List</div>
-        {!isLoading && <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />}
-      </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading ? (
-        docs ? (
-          <>
-            <div className="common-list-container">
-              <Table
-                align="left"
-                valign="center"
-                tableClass="main-list-table"
-                data={docs}
-                headers={headers}
-                haveActions
-                recordActionClick={recordActionClick}
+      {!settingDocumentListLoader ? (
+        (() =>
+          docs?.length > 0 ? (
+            <>
+              <div className="settings-title-row">
+                <div className="title">Document Type List</div>
+                <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />
+              </div>
+              <div className="common-list-container">
+                <Table
+                  align="left"
+                  valign="center"
+                  tableClass="main-list-table"
+                  data={docs}
+                  headers={headers}
+                  haveActions
+                  recordActionClick={recordActionClick}
+                />
+              </div>
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                pageActionClick={pageActionClick}
+                onSelectLimit={onSelectLimit}
               />
-            </div>
-            <Pagination
-              className="common-list-pagination"
-              total={total}
-              pages={pages}
-              page={page}
-              limit={limit}
-              pageActionClick={pageActionClick}
-              onSelectLimit={onSelectLimit}
-            />
-          </>
-        ) : (
-          <div className="no-record-found">{error}</div>
-        )
+
+              {(openAddDocModal || openEditDocModal) && (
+                <Modal
+                  header={openEditDocModal ? 'Edit Document Type' : 'Add Document Type'}
+                  buttons={openEditDocModal ? editDocButtons : addDocButtons}
+                  className="add-document-modal"
+                  hideModal={toggleAddDocModal}
+                >
+                  <div className="add-document-modal-body">
+                    <span>Document Type</span>
+                    <Input
+                      type="text"
+                      placeholder="Enter document type"
+                      value={documentTitle}
+                      onChange={handleDocumentTypeChange}
+                    />
+                    <span>Document For</span>
+                    <ReactSelect
+                      className="react-select-container"
+                      classNamePrefix="react-select"
+                      placeholder="Select"
+                      name="Document For"
+                      searchable={false}
+                      options={documentForOptions}
+                      value={documentFor}
+                      onChange={handleDocumentForChange}
+                    />
+                  </div>
+                </Modal>
+              )}
+              {showConfirmModal && (
+                <Modal
+                  header="Delete User"
+                  buttons={deleteDocumentButtons}
+                  hideModal={toggleConfirmationModal}
+                >
+                  <span className="confirmation-message">
+                    Are you sure you want to delete this document?
+                  </span>
+                </Modal>
+              )}
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
       ) : (
         <Loader />
-      )}
-      {(openAddDocModal || openEditDocModal) && (
-        <Modal
-          header={openEditDocModal ? 'Edit Document Type' : 'Add Document Type'}
-          buttons={openEditDocModal ? editDocButtons : addDocButtons}
-          className="add-document-modal"
-          hideModal={toggleAddDocModal}
-        >
-          <div className="add-document-modal-body">
-            <span>Document Type</span>
-            <Input
-              type="text"
-              placeholder="Enter document type"
-              value={documentTitle}
-              onChange={handleDocumentTypeChange}
-            />
-            <span>Document For</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="Document For"
-              searchable={false}
-              options={documentForOptions}
-              value={documentFor}
-              onChange={handleDocumentForChange}
-            />
-          </div>
-        </Modal>
-      )}
-      {showConfirmModal && (
-        <Modal
-          header="Delete User"
-          buttons={deleteDocumentButtons}
-          hideModal={toggleConfirmationModal}
-        >
-          <span className="confirmation-message">
-            Are you sure you want to delete this document?
-          </span>
-        </Modal>
       )}
     </>
   );

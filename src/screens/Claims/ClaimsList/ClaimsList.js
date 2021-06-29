@@ -12,6 +12,7 @@ import {
   getClaimsColumnsList,
   getClaimsEntityList,
   getClaimsListByFilter,
+  resetClaimListData,
   saveClaimsColumnsList,
 } from '../redux/ClaimsAction';
 import Loader from '../../../common/Loader/Loader';
@@ -76,11 +77,10 @@ const ClaimsList = () => {
   const {
     claimsListColumnSaveButtonLoaderAction,
     claimsListColumnResetButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    claimListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
   const filterDropdownClient = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
-  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(() => claimsList, [
-    claimsList,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(() => claimsList, [claimsList]);
 
   const { defaultFields, customFields } = useMemo(
     () =>
@@ -251,6 +251,9 @@ const ClaimsList = () => {
     getClaimsByFilter(data);
     dispatch(getClaimsColumnsList());
     dispatch(getClaimsEntityList());
+    return () => {
+      dispatch(resetClaimListData());
+    };
   }, []);
 
   return (
@@ -275,8 +278,7 @@ const ClaimsList = () => {
           <Button title="Add" buttonType="success" onClick={addClaims} />
         </div>
       </div>
-
-      {!isLoading && docs ? (
+      {!claimListLoader ? (
         (() =>
           docs?.length > 0 ? (
             <>
@@ -300,6 +302,39 @@ const ClaimsList = () => {
                 onSelectLimit={onSelectLimit}
                 pageActionClick={pageActionClick}
               />
+
+              {customFieldModal && (
+                <CustomFieldModal
+                  defaultFields={defaultFields}
+                  customFields={customFields}
+                  buttons={customFieldsModalButtons}
+                  onChangeSelectedColumn={onChangeSelectedColumn}
+                  toggleCustomField={toggleCustomField}
+                />
+              )}
+
+              {filterModal && (
+                <Modal
+                  headerIcon="filter_list"
+                  header="Filter"
+                  buttons={filterModalButtons}
+                  className="filter-modal application-filter-modal"
+                >
+                  <div className="filter-modal-row">
+                    <div className="form-title">Entity Type</div>
+                    <ReactSelect
+                      className="filter-select react-select-container"
+                      classNamePrefix="react-select"
+                      placeholder="Select"
+                      name="role"
+                      options={filterDropdownClient}
+                      value={entityNameSelectedValue}
+                      onChange={handleEntityNameFilterChange}
+                      isSearchable={false}
+                    />
+                  </div>
+                </Modal>
+              )}
             </>
           ) : (
             <div className="no-record-found">No record found</div>
@@ -307,41 +342,7 @@ const ClaimsList = () => {
       ) : (
         <Loader />
       )}
-
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          buttons={customFieldsModalButtons}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          toggleCustomField={toggleCustomField}
-        />
-      )}
-
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal application-filter-modal"
-        >
-          <div className="filter-modal-row">
-            <div className="form-title">Entity Type</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="role"
-              options={filterDropdownClient}
-              value={entityNameSelectedValue}
-              onChange={handleEntityNameFilterChange}
-              isSearchable={false}
-            />
-          </div>
-        </Modal>
-      )}
     </>
   );
 };
-
 export default ClaimsList;

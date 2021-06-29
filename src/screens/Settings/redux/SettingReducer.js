@@ -254,6 +254,10 @@ export const settingReducer = (state = initialSettingState, action) => {
       };
     }
 
+    case SETTING_REDUX_CONSTANTS.RESET_SETTING_TAB_DATA: {
+      return initialSettingState;
+    }
+
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
 

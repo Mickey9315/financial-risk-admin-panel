@@ -69,7 +69,7 @@ const ApplicationNotesAccordion = props => {
     viewApplicationEditNoteButtonLoaderAction,
     viewApplicationAddNewNoteButtonLoaderAction,
     viewApplicationDeleteNoteButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   // add task
   const [modifyNoteModal, setModifyNoteModal] = useState(false);

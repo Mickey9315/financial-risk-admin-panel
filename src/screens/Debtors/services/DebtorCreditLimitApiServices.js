@@ -13,6 +13,10 @@ const DebtorCreditLimitApiServices = {
   surrenderDebtorCreditLimitData: (id, data) =>
     ApiService.putData(`${DEBTORS_URLS.CREDIT_LIMIT.CREDIT_LIMIT_ACTIONS}${id}`, data),
   downloadCreditLimitCSVFile: id =>
-    ApiService.request(`${DEBTORS_URLS.CREDIT_LIMIT.DOWNLOAD_DEBTOR_CREDIT_LIMIT_CSV}${id}`),
+    ApiService.request({
+      url: `${DEBTORS_URLS.CREDIT_LIMIT.DOWNLOAD_DEBTOR_CREDIT_LIMIT_CSV}${id}`,
+      method: 'GET',
+      responseType: 'blob',
+    }),
 };
 export default DebtorCreditLimitApiServices;

@@ -35,7 +35,7 @@ const InsurerContactTab = () => {
     viewInsurerContactColumnSaveButtonLoaderAction,
     viewInsurerContactColumnResetButtonLoaderAction,
     viewInsurerSyncInsurerContactButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { docs, headers, pages, page, total, limit } = useMemo(() => contactList ?? {}, [
     contactList,

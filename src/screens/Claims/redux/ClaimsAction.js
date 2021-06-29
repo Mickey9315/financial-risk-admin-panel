@@ -1,29 +1,26 @@
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { CLAIMS_REDUX_CONSTANTS } from './ClaimsReduxConstants';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { ClaimsApiServices } from '../services/ClaimsApiService';
 
 export const getClaimsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      dispatch({
-        type: CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_REQUEST,
-      });
+      startGeneralLoaderOnRequest('claimListLoader');
       const response = await ClaimsApiServices.getClaimsListByFilter(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_SUCCESS,
           data: response.data.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('claimListLoader');
       }
     } catch (e) {
-      dispatch({
-        type: CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_FAILURE,
-      });
+      stopGeneralLoaderOnSuccessOrFail('claimListLoader');
       displayErrors(e);
     }
   };
@@ -62,7 +59,9 @@ export const changeClaimsColumnList = data => {
 export const saveClaimsColumnsList = ({ claimsColumnList = {}, isReset = false }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`claimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+      startGeneralLoaderOnRequest(
+        `claimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -82,7 +81,7 @@ export const saveClaimsColumnsList = ({ claimsColumnList = {}, isReset = false }
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `claimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -95,12 +94,12 @@ export const saveClaimsColumnsList = ({ claimsColumnList = {}, isReset = false }
           data: claimsColumnList,
         });
         successNotification('Columns updated successfully');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `claimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `claimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -156,6 +155,7 @@ export const addClaim = data => {
 export const getClaimDetails = id => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('viewClaimLoader');
       const response = await ClaimsApiServices.getClaimDetails(id);
 
       if (response.data.status === 'SUCCESS') {
@@ -163,10 +163,20 @@ export const getClaimDetails = id => {
           type: CLAIMS_REDUX_CONSTANTS.GET_CLAIM_DETAILS,
           data: response.data.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('viewClaimLoader');
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('viewClaimLoader');
       displayErrors(e);
     }
+  };
+};
+
+export const resetClaimListData = () => {
+  return dispatch => {
+    dispatch({
+      type: CLAIMS_REDUX_CONSTANTS.RESET_CLAIM_LIST_DATA,
+    });
   };
 };
 

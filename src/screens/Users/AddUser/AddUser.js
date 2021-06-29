@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
+import _ from 'lodash';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Checkbox from '../../../common/Checkbox/Checkbox';
@@ -42,7 +43,7 @@ const AddUser = () => {
     viewUserAddNewUserButtonLoaderAction,
     viewUserDeleteUserButtonLoaderAction,
     viewUserPageLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const filteredOrganisationList = useMemo(
     () => selectedUser?.moduleAccess?.filter(e => !e.isDefault) ?? [],
@@ -285,172 +286,179 @@ const AddUser = () => {
   return (
     <>
       {!viewUserPageLoaderAction ? (
-        <>
-          {showModal && (
-            <Modal
-              header={modalData.title}
-              buttons={modalData.buttons}
-              hideModal={toggleConfirmationModal}
-            >
-              <span className="confirmation-message">{modalData.description}</span>
-            </Modal>
-          )}
-          <div className="breadcrumb-button-row">
-            <div className="breadcrumb">
-              <span onClick={backToUser}>User List</span>
-              <span className="material-icons-round">navigate_next</span>
-              <span>{getBreadcrumbTitle} User</span>
-            </div>
-            <div className="buttons-row">
-              {action === 'view' ? (
-                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-                  <Button buttonType="primary" title="Edit" onClick={editUserClick} />
-                  <Button buttonType="danger" title="Delete" onClick={deleteModalButtonClick} />
-                </UserPrivilegeWrapper>
-              ) : (
-                <>
-                  <Button buttonType="primary-1" title="Close" onClick={backToUser} />
-                  <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-                    <Button
-                      buttonType="primary"
-                      title="Save"
-                      onClick={onClickAddUser}
-                      isLoading={
-                        action === 'add'
-                          ? viewUserAddNewUserButtonLoaderAction
-                          : viewUserUpdateUserButtonLoaderAction
-                      }
-                    />
-                  </UserPrivilegeWrapper>
-                </>
+        (() =>
+          !_.isEmpty(selectedUser) ? (
+            <>
+              {showModal && (
+                <Modal
+                  header={modalData.title}
+                  buttons={modalData.buttons}
+                  hideModal={toggleConfirmationModal}
+                >
+                  <span className="confirmation-message">{modalData.description}</span>
+                </Modal>
               )}
-            </div>
-          </div>
-          <div className="common-detail-container add-user-detail-container">
-            <div className="common-detail-grid">
-              <div className="common-detail-field">
-                <div className="common-detail-title">Name</div>
-                {action === 'view' ? (
-                  <span>{name}</span>
-                ) : (
-                  <Input
-                    type="text"
-                    placeholder="Jason Gatt"
-                    name="name"
-                    value={name}
-                    onChange={onChangeUserData}
-                  />
-                )}
-              </div>
-              <div className="common-detail-field">
-                <div className="common-detail-title">Email</div>
-                {action === 'view' ? (
-                  <span className="mail-id-value">{email}</span>
-                ) : (
-                  <Input
-                    type="email"
-                    placeholder="jason@trad.au"
-                    name="email"
-                    value={email}
-                    onChange={onChangeUserData}
-                  />
-                )}
-              </div>
-              <div className="common-detail-field">
-                <div className="common-detail-title">Role</div>
-                {action === 'view' ? (
-                  <span>{userRoleSelectedValue?.[0]?.label}</span>
-                ) : (
-                  <ReactSelect
-                    className={`react-select-container ${action === 'view' && 'disabled-control'}`}
-                    classNamePrefix="react-select"
-                    placeholder="Select"
-                    name="role"
-                    options={USER_ROLES}
-                    value={userRoleSelectedValue}
-                    onChange={onChangeUserRole}
-                    searchable={false}
-                  />
-                )}
-              </div>
-              <div className="common-detail-field">
-                <div className="common-detail-title">Phone Number</div>
-                {action === 'view' ? (
-                  <span>{contactNumber}</span>
-                ) : (
-                  <Input
-                    name="contactNumber"
-                    value={contactNumber}
-                    type="text"
-                    placeholder="1234567890"
-                    onChange={onChangeUserData}
-                  />
-                )}
-              </div>
-              <div className="common-detail-field">
-                <div className="common-detail-title">Max credit limit approval</div>
-                {action === 'view' ? (
-                  <span>{maxCreditLimit}</span>
-                ) : (
-                  <Input
-                    name="maxCreditLimit"
-                    value={maxCreditLimit}
-                    type="text"
-                    placeholder="Enter credit limit"
-                    onChange={onChangeUserData}
-                  />
-                )}
-              </div>
-              {role !== 'superAdmin' && (
-                <div className="common-detail-field user-select-client">
-                  <div className="common-detail-title">Select Client</div>
-                  <ReactSelect
-                    isMulti
-                    value={clientIds}
-                    onChange={clientSelected}
-                    options={clients}
-                    isDisabled={action === 'view' || role === 'superAdmin'}
-                    className="react-select-container isMulti-react-select"
-                    classNamePrefix="react-select"
-                    color="#003A78"
-                    placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
-                    dropdownHandle={false}
-                    keepSelectedInList={false}
-                  />
+              <div className="breadcrumb-button-row">
+                <div className="breadcrumb">
+                  <span onClick={backToUser}>User List</span>
+                  <span className="material-icons-round">navigate_next</span>
+                  <span>{getBreadcrumbTitle} User</span>
                 </div>
-              )}
-            </div>
-          </div>
-          <div className="module-container">
-            {filteredOrganisationList.map(module => (
-              <div key={module.label} className="module">
-                <div className="module-title">{module.label}</div>
-                {USER_MODULE_ACCESS.map(access => (
-                  <Checkbox
-                    key={access.label}
-                    disabled={
-                      action === 'view' ||
-                      (module?.accessTypes?.includes('full-access') &&
-                        (access.value === 'read' || access.value === 'write')) ||
-                      (module?.accessTypes?.includes('write') && access.value === 'read')
-                    }
-                    title={access.label}
-                    name={access.value}
-                    className={`${
-                      (action === 'view' ||
-                        (module?.accessTypes?.includes('full-access') &&
-                          (access.value === 'read' || access.value === 'write')) ||
-                        (module?.accessTypes?.includes('write') && access.value === 'read')) &&
-                      'checkbox-disabled'
-                    }`}
-                    checked={module.accessTypes.includes(access.value)}
-                    onChange={() => onChangeUserAccess(module, access)}
-                  />
+                <div className="buttons-row">
+                  {action === 'view' ? (
+                    <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                      <Button buttonType="primary" title="Edit" onClick={editUserClick} />
+                      <Button buttonType="danger" title="Delete" onClick={deleteModalButtonClick} />
+                    </UserPrivilegeWrapper>
+                  ) : (
+                    <>
+                      <Button buttonType="primary-1" title="Close" onClick={backToUser} />
+                      <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                        <Button
+                          buttonType="primary"
+                          title="Save"
+                          onClick={onClickAddUser}
+                          isLoading={
+                            action === 'add'
+                              ? viewUserAddNewUserButtonLoaderAction
+                              : viewUserUpdateUserButtonLoaderAction
+                          }
+                        />
+                      </UserPrivilegeWrapper>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="common-detail-container add-user-detail-container">
+                <div className="common-detail-grid">
+                  <div className="common-detail-field">
+                    <div className="common-detail-title">Name</div>
+                    {action === 'view' ? (
+                      <span>{name}</span>
+                    ) : (
+                      <Input
+                        type="text"
+                        placeholder="Jason Gatt"
+                        name="name"
+                        value={name}
+                        onChange={onChangeUserData}
+                      />
+                    )}
+                  </div>
+                  <div className="common-detail-field">
+                    <div className="common-detail-title">Email</div>
+                    {action === 'view' ? (
+                      <span className="mail-id-value">{email}</span>
+                    ) : (
+                      <Input
+                        type="email"
+                        placeholder="jason@trad.au"
+                        name="email"
+                        value={email}
+                        onChange={onChangeUserData}
+                      />
+                    )}
+                  </div>
+                  <div className="common-detail-field">
+                    <div className="common-detail-title">Role</div>
+                    {action === 'view' ? (
+                      <span>{userRoleSelectedValue?.[0]?.label}</span>
+                    ) : (
+                      <ReactSelect
+                        className={`react-select-container ${
+                          action === 'view' && 'disabled-control'
+                        }`}
+                        classNamePrefix="react-select"
+                        placeholder="Select"
+                        name="role"
+                        options={USER_ROLES}
+                        value={userRoleSelectedValue}
+                        onChange={onChangeUserRole}
+                        searchable={false}
+                      />
+                    )}
+                  </div>
+                  <div className="common-detail-field">
+                    <div className="common-detail-title">Phone Number</div>
+                    {action === 'view' ? (
+                      <span>{contactNumber}</span>
+                    ) : (
+                      <Input
+                        name="contactNumber"
+                        value={contactNumber}
+                        type="text"
+                        placeholder="1234567890"
+                        onChange={onChangeUserData}
+                      />
+                    )}
+                  </div>
+                  <div className="common-detail-field">
+                    <div className="common-detail-title">Max credit limit approval</div>
+                    {action === 'view' ? (
+                      <span>{maxCreditLimit}</span>
+                    ) : (
+                      <Input
+                        name="maxCreditLimit"
+                        value={maxCreditLimit}
+                        type="text"
+                        placeholder="Enter credit limit"
+                        onChange={onChangeUserData}
+                      />
+                    )}
+                  </div>
+                  {role !== 'superAdmin' && (
+                    <div className="common-detail-field user-select-client">
+                      <div className="common-detail-title">Select Client</div>
+                      <ReactSelect
+                        isMulti
+                        value={clientIds}
+                        onChange={clientSelected}
+                        options={clients}
+                        isDisabled={action === 'view' || role === 'superAdmin'}
+                        className="react-select-container isMulti-react-select"
+                        classNamePrefix="react-select"
+                        color="#003A78"
+                        placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
+                        dropdownHandle={false}
+                        keepSelectedInList={false}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="module-container">
+                {filteredOrganisationList.map(module => (
+                  <div key={module.label} className="module">
+                    <div className="module-title">{module.label}</div>
+                    {USER_MODULE_ACCESS.map(access => (
+                      <Checkbox
+                        key={access.label}
+                        disabled={
+                          action === 'view' ||
+                          (module?.accessTypes?.includes('full-access') &&
+                            (access.value === 'read' || access.value === 'write')) ||
+                          (module?.accessTypes?.includes('write') && access.value === 'read')
+                        }
+                        title={access.label}
+                        name={access.value}
+                        className={`${
+                          (action === 'view' ||
+                            (module?.accessTypes?.includes('full-access') &&
+                              (access.value === 'read' || access.value === 'write')) ||
+                            (module?.accessTypes?.includes('write') && access.value === 'read')) &&
+                          'checkbox-disabled'
+                        }`}
+                        checked={module.accessTypes.includes(access.value)}
+                        onChange={() => onChangeUserAccess(module, access)}
+                      />
+                    ))}
+                  </div>
                 ))}
               </div>
-            ))}
-          </div>
-        </>
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
       ) : (
         <Loader />
       )}

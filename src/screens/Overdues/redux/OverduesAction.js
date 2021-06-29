@@ -3,9 +3,9 @@ import { OverdueApiServices } from '../services/OverdueApiServices';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { successNotification } from '../../../common/Toast';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 
 export const getEntityDetails = () => {
   return async dispatch => {
@@ -60,17 +60,17 @@ export const addNewOverdueDetails = data => {
 export const getOverdueList = params => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('overdueListPageLoaderAction');
+      startGeneralLoaderOnRequest('overdueListPageLoaderAction');
       const response = await OverdueApiServices.getOverdueList(params);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: OVERDUE_REDUX_CONSTANTS.GET_OVERDUE_LIST,
           data: response?.data?.data,
         });
-        stopLoaderButtonOnSuccessOrFail('overdueListPageLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('overdueListPageLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('overdueListPageLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('overdueListPageLoaderAction');
       displayErrors(e);
     }
   };
@@ -78,7 +78,7 @@ export const getOverdueList = params => {
 export const getOverdueListByDate = params => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('addOverduePageLoaderAction');
+      startGeneralLoaderOnRequest('addOverduePageLoaderAction');
       const response = await OverdueApiServices.getOverdueListByDate(params);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
@@ -89,10 +89,10 @@ export const getOverdueListByDate = params => {
           type: OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.COPY_OVERDUE_LIST_BY_DATE,
           data: response?.data?.data,
         });
-        stopLoaderButtonOnSuccessOrFail('addOverduePageLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('addOverduePageLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('addOverduePageLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('addOverduePageLoaderAction');
       displayErrors(e);
     }
   };
@@ -152,7 +152,7 @@ export const amendOverdue = (id, data) => {
 export const saveOverdueList = data => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('saveOverdueToBackEndPageLoaderAction');
+      startGeneralLoaderOnRequest('saveOverdueToBackEndPageLoaderAction');
       const response = await OverdueApiServices.saveOverdueList(data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
@@ -164,12 +164,20 @@ export const saveOverdueList = data => {
           data,
         });
         successNotification(response?.data?.message ?? 'Overdue saved successfully');
-        stopLoaderButtonOnSuccessOrFail('saveOverdueToBackEndPageLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('saveOverdueToBackEndPageLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('saveOverdueToBackEndPageLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('saveOverdueToBackEndPageLoaderAction');
       displayErrors(e);
       throw Error();
     }
+  };
+};
+
+export const resetOverdueListData = () => {
+  return dispatch => {
+    dispatch({
+      type: OVERDUE_REDUX_CONSTANTS.RESET_OVERDUE_LIST_DATA,
+    });
   };
 };

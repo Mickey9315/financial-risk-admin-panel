@@ -37,7 +37,7 @@ const AddOverdues = () => {
   );
 
   const { addOverduePageLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const toggleOverdueFormModal = useCallback(() => {
@@ -93,7 +93,7 @@ const AddOverdues = () => {
   );
 
   const { saveOverdueToBackEndPageLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const getOverdueList = useCallback(async () => {

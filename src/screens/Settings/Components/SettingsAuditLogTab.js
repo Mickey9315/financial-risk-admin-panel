@@ -33,17 +33,17 @@ const SettingsAuditLogTab = () => {
   const {
     settingAuditLogColumnSaveButtonLoaderAction,
     settingAuditLogColumnResetButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    settingAuditLogTabLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { defaultFields, customFields } = useMemo(
     () => auditLogColumnNameList ?? { defaultFields: [], customFields: [] },
     [auditLogColumnNameList]
   );
   const dispatch = useDispatch();
-  const { isLoading, total, pages, page, limit, docs, headers } = useMemo(
-    () => auditLogList ?? {},
-    [auditLogList]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => auditLogList ?? {}, [
+    auditLogList,
+  ]);
   const [filterModal, setFilterModal] = useState(false);
   const AUDIT_LOG_FILTER_REDUCER_ACTIONS = {
     UPDATE_DATA: 'UPDATE_DATA',
@@ -182,7 +182,7 @@ const SettingsAuditLogTab = () => {
 
   useEffect(() => {
     dispatch(getAuditUserName());
-    return dispatch(resetAuditLogList());
+    return () => dispatch(resetAuditLogList());
   }, []);
 
   const onSelectLimit = useCallback(
@@ -418,131 +418,130 @@ const SettingsAuditLogTab = () => {
 
   return (
     <>
-      <div className="settings-title-row">
-        <div className="title">Audit Logs List</div>
-        {!isLoading && docs && (
-          <div className="buttons-row">
-            <IconButton
-              buttonType="secondary"
-              title="filter_list"
-              onClick={() => toggleFilterModal()}
-            />
-            <IconButton
-              buttonType="primary"
-              title="format_line_spacing"
-              onClick={() => toggleCustomField()}
-            />
-          </div>
-        )}
-      </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading && docs ? (
-        docs.length > 0 ? (
-          <>
-            <div className="common-list-container settings-audit-log-list-container">
-              <Table data={docs} tableClass="main-list-table" headers={headers} />
-            </div>
-            <Pagination
-              className="common-list-pagination"
-              total={total}
-              pages={pages}
-              page={page}
-              limit={limit}
-              onSelectLimit={onSelectLimit}
-              pageActionClick={pageActionClick}
-            />
-          </>
-        ) : (
-          <div className="no-record-found">No record found</div>
-        )
+      {!settingAuditLogTabLoader ? (
+        (() =>
+          docs?.length > 0 ? (
+            <>
+              {' '}
+              <div className="settings-title-row">
+                <div className="title">Audit Logs List</div>
+                <div className="buttons-row">
+                  <IconButton
+                    buttonType="secondary"
+                    title="filter_list"
+                    onClick={() => toggleFilterModal()}
+                  />
+                  <IconButton
+                    buttonType="primary"
+                    title="format_line_spacing"
+                    onClick={() => toggleCustomField()}
+                  />
+                </div>
+              </div>
+              <div className="common-list-container settings-audit-log-list-container">
+                <Table data={docs} tableClass="main-list-table" headers={headers} />
+              </div>
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                onSelectLimit={onSelectLimit}
+                pageActionClick={pageActionClick}
+              />
+              {filterModal && (
+                <Modal
+                  headerIcon="filter_list"
+                  header="Filter"
+                  buttons={filterModalButtons}
+                  className="filter-modal"
+                  hideModal={toggleFilterModal}
+                >
+                  <div className="filter-modal-row">
+                    <div className="form-title">Module</div>
+                    <ReactSelect
+                      className="filter-select react-select-container"
+                      classNamePrefix="react-select"
+                      placeholder="Select module"
+                      name="entityType"
+                      value={entityTypeSelectedValue}
+                      options={entityTypeOptions}
+                      onChange={handleEntityTypeFilterChange}
+                      isSearchable={false}
+                    />
+                  </div>
+                  <div className="filter-modal-row">
+                    <div className="form-title">User Name</div>
+                    <ReactSelect
+                      className="filter-select react-select-container"
+                      classNamePrefix="react-select"
+                      placeholder="Select user name"
+                      name="userRefId"
+                      options={userNameOptions}
+                      value={userNameSelectedValue}
+                      onChange={handleUserNameFilterChange}
+                      isSearchable={false}
+                    />
+                  </div>
+                  <div className="filter-modal-row">
+                    <div className="form-title">Action Type</div>
+                    <ReactSelect
+                      className="filter-select react-select-container"
+                      classNamePrefix="react-select"
+                      placeholder="Select action type"
+                      name="actionType"
+                      value={actionTypeSelectedValue}
+                      options={actionTypeOptions}
+                      onChange={handleActionTypeFilterChange}
+                      isSearchable={false}
+                    />
+                  </div>
+                  <div className="filter-modal-row">
+                    <div className="form-title">Date</div>
+                    <div className="date-picker-container filter-date-picker-container mr-15">
+                      <DatePicker
+                        className="filter-date-picker"
+                        selected={startDate}
+                        showMonthDropdown
+                        showYearDropdown
+                        scrollableYearDropdown
+                        onChange={handleStartDateChange}
+                        placeholderText="From Date"
+                        dateFormat="dd/MM/yyyy"
+                      />
+                      <span className="material-icons-round">event_available</span>
+                    </div>
+                    <div className="date-picker-container filter-date-picker-container">
+                      <DatePicker
+                        className="filter-date-picker"
+                        selected={endDate}
+                        showMonthDropdown
+                        showYearDropdown
+                        scrollableYearDropdown
+                        onChange={handleEndDateChange}
+                        placeholderText="To Date"
+                        dateFormat="dd/MM/yyyy"
+                      />
+                      <span className="material-icons-round">event_available</span>
+                    </div>
+                  </div>
+                </Modal>
+              )}
+              {customFieldModal && (
+                <CustomFieldModal
+                  defaultFields={defaultFields}
+                  customFields={customFields}
+                  onChangeSelectedColumn={onChangeSelectedColumn}
+                  buttons={customFieldsModalButtons}
+                />
+              )}
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
       ) : (
         <Loader />
-      )}
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal"
-          hideModal={toggleFilterModal}
-        >
-          <div className="filter-modal-row">
-            <div className="form-title">Module</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select module"
-              name="entityType"
-              value={entityTypeSelectedValue}
-              options={entityTypeOptions}
-              onChange={handleEntityTypeFilterChange}
-              isSearchable={false}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title">User Name</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select user name"
-              name="userRefId"
-              options={userNameOptions}
-              value={userNameSelectedValue}
-              onChange={handleUserNameFilterChange}
-              isSearchable={false}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title">Action Type</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select action type"
-              name="actionType"
-              value={actionTypeSelectedValue}
-              options={actionTypeOptions}
-              onChange={handleActionTypeFilterChange}
-              isSearchable={false}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title">Date</div>
-            <div className="date-picker-container filter-date-picker-container mr-15">
-              <DatePicker
-                className="filter-date-picker"
-                selected={startDate}
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                onChange={handleStartDateChange}
-                placeholderText="From Date"
-                dateFormat="dd/MM/yyyy"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-            <div className="date-picker-container filter-date-picker-container">
-              <DatePicker
-                className="filter-date-picker"
-                selected={endDate}
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                onChange={handleEndDateChange}
-                placeholderText="To Date"
-                dateFormat="dd/MM/yyyy"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-          </div>
-        </Modal>
-      )}
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={customFieldsModalButtons}
-        />
       )}
     </>
   );

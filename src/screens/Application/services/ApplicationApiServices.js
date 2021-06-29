@@ -13,5 +13,12 @@ const ApplicationApiServices = {
     ApiService.putData(`${APPLICATION_URLS.APPLICATION_SAVE_STEP_DATA}`, data),
   getApplicationDetail: appId =>
     ApiService.getData(`${APPLICATION_URLS.GET_APPLICATION_DETAILS_URL}${appId}`),
+  downloadApplicationList: params =>
+    ApiService.request({
+      url: `${APPLICATION_URLS.DOWNLOAD_APPLICATION}`,
+      params,
+      method: 'GET',
+      responseType: 'blob',
+    }),
 };
 export default ApplicationApiServices;

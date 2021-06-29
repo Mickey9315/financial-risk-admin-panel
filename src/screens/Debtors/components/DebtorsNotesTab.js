@@ -80,7 +80,7 @@ const DebtorsNotesTab = () => {
     viewDebtorAddNewNoteButtonLoaderAction,
     viewDebtorUpdateNoteButtonLoaderAction,
     viewDebtorDeleteNoteButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => debtorsNotesList ?? {},

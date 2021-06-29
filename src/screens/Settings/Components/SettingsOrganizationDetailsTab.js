@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 import Input from '../../../common/Input/Input';
 import Button from '../../../common/Button/Button';
 import Loader from '../../../common/Loader/Loader';
 import {
   changeOrganizationDetails,
   getOrganizationDetails,
+  resetSettingTabsData,
   updateOrganizationDetails,
 } from '../redux/SettingAction';
 import { errorNotification } from '../../../common/Toast';
@@ -15,15 +17,15 @@ const SettingsOrganizationDetailsTab = () => {
     ({ settingReducer }) => settingReducer?.organizationDetails ?? {}
   );
 
-  const { settingUpdateOrganizationDetailsButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
-  );
+  const {
+    settingUpdateOrganizationDetailsButtonLoaderAction,
+    settingOrganizationTabLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getOrganizationDetails());
   }, []);
-  const { isLoading } = useMemo(() => organizationDetail ?? {}, [organizationDetail]);
 
   const [isEdit, setIsEdit] = useState(false);
 
@@ -102,62 +104,74 @@ const SettingsOrganizationDetailsTab = () => {
     }
   }, [setIsEdit]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetSettingTabsData());
+    };
+  }, []);
+
   return (
     <>
-      <div className="d-flex just-end mt-15">
-        {!isLoading && !isEdit && (
-          <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />
-        )}
-        {isEdit && (
-          <div className="buttons-row">
-            <Button
-              buttonType="primary"
-              title="Save"
-              onClick={onSaveOrganizationDetails}
-              isLoading={settingUpdateOrganizationDetailsButtonLoaderAction}
-            />
-            <Button buttonType="danger" title="Cancel" onClick={onCancelEdit} />
-          </div>
-        )}
-      </div>
-      <div className="common-white-container settings-organization-details">
-        {!isLoading ? (
-          <div className="settings-organization-details-row">
-            {settingsOrganizationDetails.map((detail, index) => (
-              <>
-                <span>{detail.title}</span>
-                <div>
-                  {isEdit ? (
-                    <Input
-                      type="text"
-                      name={detail.name}
-                      placeholder={detail.placeholder}
-                      onChange={e => onChangeOrganization(e)}
-                      value={detail?.value}
+      {!settingOrganizationTabLoader ? (
+        (() =>
+          !_.isEmpty(organizationDetail) ? (
+            <>
+              <div className="d-flex just-end mt-15">
+                <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />
+                {isEdit && (
+                  <div className="buttons-row">
+                    <Button
+                      buttonType="primary"
+                      title="Save"
+                      onClick={onSaveOrganizationDetails}
+                      isLoading={settingUpdateOrganizationDetailsButtonLoaderAction}
                     />
-                  ) : (
-                    <div
-                      className={`settings-organization-details-value ${
-                        detail?.title === 'website' || ('email' && 'mail-id-value')
-                      }`}
-                    >
-                      {detail?.value}
-                    </div>
-                  )}
+                    <Button buttonType="danger" title="Cancel" onClick={onCancelEdit} />
+                  </div>
+                )}
+              </div>
+              <div className="common-white-container settings-organization-details">
+                <div className="settings-organization-details-row">
+                  {settingsOrganizationDetails.map((detail, index) => (
+                    <>
+                      <span>{detail.title}</span>
+                      <div>
+                        {isEdit ? (
+                          <Input
+                            type="text"
+                            name={detail.name}
+                            placeholder={detail.placeholder}
+                            onChange={e => onChangeOrganization(e)}
+                            value={detail?.value}
+                          />
+                        ) : (
+                          <div
+                            className={`settings-organization-details-value ${
+                              detail?.title === 'website' || ('email' && 'mail-id-value')
+                            }`}
+                          >
+                            {detail?.value}
+                          </div>
+                        )}
 
-                  {errorElementList.includes(index) && (
-                    <div className="settings-no-value-error">Please enter {detail.errorName}.</div>
-                  )}
+                        {errorElementList.includes(index) && (
+                          <div className="settings-no-value-error">
+                            Please enter {detail.errorName}.
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ))}
                 </div>
-              </>
-            ))}
-          </div>
-        ) : (
-          <Loader />
-        )}
-      </div>
+              </div>
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
+      ) : (
+        <Loader />
+      )}
     </>
   );
 };
-
 export default SettingsOrganizationDetailsTab;

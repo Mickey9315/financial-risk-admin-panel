@@ -13,6 +13,7 @@ import {
   getReportsClientDropdownData,
   reportDownloadAction,
   resetCurrentFilter,
+  resetReportListData,
   saveReportColumnList,
 } from '../redux/ReportsAction';
 import Table from '../../../common/Table/Table';
@@ -42,11 +43,10 @@ const ViewReport = () => {
     reportListColumnSaveButtonLoaderAction,
     reportListColumnResetButtonLoaderAction,
     reportDownloadButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    viewReportListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { docs, headers, page, limit, pages, total, isLoading } = useMemo(() => reportList, [
-    reportList,
-  ]);
+  const { docs, headers, page, limit, pages, total } = useMemo(() => reportList, [reportList]);
   const reportName = useMemo(() => {
     const selectedReport = reportType.filter(report => report?.url === paramReport);
     return selectedReport ? selectedReport?.[0]?.name : '';
@@ -367,6 +367,12 @@ const ViewReport = () => {
     dispatch(getReportColumnList(paramReport));
   }, []);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetReportListData());
+    };
+  }, []);
+
   // for params in url
   useEffect(() => {
     const params = {
@@ -451,7 +457,7 @@ const ViewReport = () => {
           />
         </div>
       </div>
-      {!isLoading && docs ? (
+      {!viewReportListLoader ? (
         (() =>
           docs?.length > 0 ? (
             <>
@@ -473,31 +479,34 @@ const ViewReport = () => {
                 pageActionClick={pageActionClick}
                 onSelectLimit={onSelectLimit}
               />
+
+              {customFieldModal && (
+                <CustomFieldModal
+                  defaultFields={defaultFields}
+                  customFields={customFields}
+                  onChangeSelectedColumn={onChangeSelectedColumn}
+                  buttons={customFieldsModalButtons}
+                  toggleCustomField={toggleCustomField}
+                />
+              )}
+              {filterModal && (
+                <Modal
+                  headerIcon="filter_list"
+                  header="Filter"
+                  buttons={filterModalButtons}
+                  className="filter-modal overdue-filter-modal"
+                >
+                  <>
+                    {reportFilters?.[currentFilter.filter]?.filterInputs?.map(getComponentFromType)}
+                  </>
+                </Modal>
+              )}
             </>
           ) : (
             <div className="no-record-found">No record found</div>
           ))()
       ) : (
         <Loader />
-      )}
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={customFieldsModalButtons}
-          toggleCustomField={toggleCustomField}
-        />
-      )}
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal overdue-filter-modal"
-        >
-          <>{reportFilters?.[currentFilter.filter]?.filterInputs?.map(getComponentFromType)}</>
-        </Modal>
       )}
     </>
   );

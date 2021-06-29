@@ -6,9 +6,9 @@ import SettingApiIntegrationService from '../services/SettingApiIntegrationServi
 import SettingAuditLogApiService from '../services/SettingAuditLogApiService';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { store } from '../../../redux/store';
 
 export const fetchDocRequest = () => ({
@@ -87,13 +87,14 @@ export const getAuditUserList = data => ({
 export const getSettingDocumentTypeList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      dispatch(fetchDocRequest());
+      startGeneralLoaderOnRequest('settingDocumentListLoader');
       const response = await SettingDocumentTypeApiServices.getDocumentListData(params);
       if (response.data.status === 'SUCCESS') {
         dispatch(fetchDocSuccess(response.data.data));
+        stopGeneralLoaderOnSuccessOrFail('settingDocumentListLoader');
       }
     } catch (e) {
-      dispatch(fetchDocFailure());
+      stopGeneralLoaderOnSuccessOrFail('settingDocumentListLoader');
       displayErrors(e);
     }
   };
@@ -114,15 +115,15 @@ export const updateDocumentFieldStatus = (name, value) => {
 export const addNewSettingDocType = (data, cb) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('settingAddNewDocumentTypeButtonLoaderAction');
+      startGeneralLoaderOnRequest('settingAddNewDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.addNewDocumentType(data);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'New document type added successfully');
-        stopLoaderButtonOnSuccessOrFail('settingAddNewDocumentTypeButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('settingAddNewDocumentTypeButtonLoaderAction');
         cb();
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('settingAddNewDocumentTypeButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('settingAddNewDocumentTypeButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -144,15 +145,15 @@ export const getDocumentTypeDetailsById = id => {
 export const updateSettingDocType = (id, data, cb) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('settingUpdateDocumentTypeButtonLoaderAction');
+      startGeneralLoaderOnRequest('settingUpdateDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.editDocumentTypeById(id, data);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Document type updated successfully');
-        stopLoaderButtonOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
         cb();
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -161,17 +162,17 @@ export const updateSettingDocType = (id, data, cb) => {
 export const deleteSettingDocumentType = (id, cb) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('settingDeleteDocumentTypeButtonLoaderAction');
+      startGeneralLoaderOnRequest('settingDeleteDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.deleteDocumentType(id);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Document type deleted successfully.');
-        stopLoaderButtonOnSuccessOrFail('settingDeleteDocumentTypeButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('settingDeleteDocumentTypeButtonLoaderAction');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('settingDeleteDocumentTypeButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('settingDeleteDocumentTypeButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -180,11 +181,15 @@ export const deleteSettingDocumentType = (id, cb) => {
 export const getApiIntegration = data => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('settingApiIntegrationDetailsLoader');
       const response = await SettingApiIntegrationService.getApiIntegrationDetails(data);
       if (response.data.status === 'SUCCESS') {
         dispatch(fetchApiIntegrationSuccess(response.data.data.integration));
+
+        stopGeneralLoaderOnSuccessOrFail('settingApiIntegrationDetailsLoader');
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('settingApiIntegrationDetailsLoader');
       displayErrors(e);
     }
   };
@@ -203,17 +208,17 @@ export const changeApiIntegrationDetails = data => {
 export const updateApiIntegrationDetails = data => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`settingApiIntegrationButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`settingApiIntegrationButtonLoaderAction`);
       const response = await SettingApiIntegrationService.updateApiIntegrationDetails(data);
       if (response.data.status === 'SUCCESS') {
         successNotification(
           response?.data?.message || 'API integration details tested successfully'
         );
-        stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
         dispatch(updateApiIntegration(data));
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -222,16 +227,16 @@ export const updateApiIntegrationDetails = data => {
 export const testApiIntegrationDetails = params => {
   return async () => {
     try {
-      startLoaderButtonOnRequest(`settingApiIntegrationTestButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`settingApiIntegrationTestButtonLoaderAction`);
       const response = await SettingApiIntegrationService.testApiIntegrationDetails(params);
       if (response.data.status === 'SUCCESS') {
         successNotification(
           response?.data?.message || 'API integration details updated successfully'
         );
-        stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationTestButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(`settingApiIntegrationTestButtonLoaderAction`);
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(`settingApiIntegrationTestButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`settingApiIntegrationTestButtonLoaderAction`);
       displayErrors(e);
     }
   };
@@ -240,11 +245,14 @@ export const testApiIntegrationDetails = params => {
 export const getOrganizationDetails = data => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('settingOrganizationTabLoader');
       const response = await SettingOrganizationDetailsApiService.getOrganizationDetails(data);
       if (response.data.status === 'SUCCESS') {
         dispatch(fetchOrgDetailSuccess(response.data.data));
+        stopGeneralLoaderOnSuccessOrFail('settingOrganizationTabLoader');
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('settingOrganizationTabLoader');
       displayErrors(e);
     }
   };
@@ -264,17 +272,17 @@ export const changeOrganizationDetails = data => {
 export const updateOrganizationDetails = data => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('settingUpdateOrganizationDetailsButtonLoaderAction');
+      startGeneralLoaderOnRequest('settingUpdateOrganizationDetailsButtonLoaderAction');
       const response = await SettingOrganizationDetailsApiService.updateOrganizationDetails(data);
       if (response.data.status === 'SUCCESS') {
         dispatch(updateOrgDetails(response.data.data));
         successNotification(
           response?.data?.message || 'Organization details updated successfully.'
         );
-        stopLoaderButtonOnSuccessOrFail('settingUpdateOrganizationDetailsButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('settingUpdateOrganizationDetailsButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('settingUpdateOrganizationDetailsButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('settingUpdateOrganizationDetailsButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -283,13 +291,14 @@ export const updateOrganizationDetails = data => {
 export const getAuditLogsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      dispatch({ type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_REQUEST });
+      startGeneralLoaderOnRequest('settingAuditLogTabLoader');
       const response = await SettingAuditLogApiService.getAuditLogList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch(fetchAuditLogList(response.data.data));
+        stopGeneralLoaderOnSuccessOrFail('settingAuditLogTabLoader');
       }
     } catch (e) {
-      dispatch({ type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.FETCH_AUDIT_LOG_LIST_FAIL });
+      stopGeneralLoaderOnSuccessOrFail('settingAuditLogTabLoader');
       displayErrors(e);
     }
   };
@@ -327,7 +336,7 @@ export const changeAuditLogColumnListStatus = data => {
 export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -348,7 +357,7 @@ export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isRese
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -361,12 +370,12 @@ export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isRese
           type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_DEFAULT_COLUMN_LIST_ACTION,
           data: auditLogColumnNameList,
         });
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `settingAuditLogColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -398,4 +407,12 @@ export const setSettingActiveTabIndex = index => {
     type: SETTING_REDUX_CONSTANTS.SETTING_ACTIVE_TAB_INDEX,
     index,
   });
+};
+
+export const resetSettingTabsData = () => {
+  return dispatch => {
+    dispatch({
+      type: SETTING_REDUX_CONSTANTS.RESET_SETTING_TAB_DATA,
+    });
+  };
 };

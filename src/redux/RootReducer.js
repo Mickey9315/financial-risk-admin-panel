@@ -27,7 +27,7 @@ import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
 import { clearAuthToken } from '../helpers/LocalStorageHelper';
-import { loaderButtonReducer } from '../common/LoaderButton/redux/LoaderButtonReducer';
+import { generalLoaderReducer } from '../common/GeneralLoader/redux/GeneralLoaderReducer';
 import { dashboard } from '../screens/Dashboard/redux/DashboardReducer';
 import { overdue } from '../screens/Overdues/redux/OverduesReducer';
 import { claims } from '../screens/Claims/redux/ClaimsReducer';
@@ -51,7 +51,7 @@ const appReducer = combineReducers({
   debtorsManagement,
   myWorkReducer,
   settingReducer,
-  loaderButtonReducer,
+  generalLoaderReducer,
   headerNotificationReducer,
   globalSearchReducer,
   overdue,

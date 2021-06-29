@@ -12,6 +12,7 @@ import {
   getDebtorDropdownData,
   getDebtorsColumnNameList,
   getDebtorsList,
+  resetDebtorListData,
   resetDebtorListPaginationData,
   saveDebtorsColumnListName,
 } from '../redux/DebtorsAction';
@@ -52,17 +53,19 @@ const DebtorsList = () => {
   const { debtorsColumnNameList, debtorsDefaultColumnNameList } = useSelector(
     ({ debtorsManagement }) => debtorsManagement ?? {}
   );
-  const { docs, headers, page, pages, limit, total, isLoading } = useMemo(
-    () => debtorListWithPageData ?? {},
-    [debtorListWithPageData]
-  );
+  const { docs, headers, page, pages, limit, total } = useMemo(() => debtorListWithPageData ?? {}, [
+    debtorListWithPageData,
+  ]);
 
   const debtorDropDownData = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
 
-  const { DebtorListColumnSaveButtonLoaderAction, DebtorListColumnResetButtonLoaderAction } =
-    useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  const {
+    DebtorListColumnSaveButtonLoaderAction,
+    DebtorListColumnResetButtonLoaderAction,
+    debtorListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { entityType } = useMemo(() => filter, [filter]);
@@ -263,98 +266,101 @@ const DebtorsList = () => {
     dispatch(getDebtorDropdownData());
   }, []);
 
-  const onClickViewDebtor = useCallback(
-    id => history.replace(`debtors/debtor/view/${id}`),
-    [history]
-  );
+  const onClickViewDebtor = useCallback(id => history.replace(`debtors/debtor/view/${id}`), [
+    history,
+  ]);
 
   useEffect(() => {
-    return dispatch(resetDebtorListPaginationData(page, pages, total, limit));
+    return () => {
+      dispatch(resetDebtorListPaginationData(page, pages, total, limit));
+      dispatch(resetDebtorListData());
+    };
   }, []);
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-header-name">Debtor List</div>
-        {!isLoading && docs && (
-          <div className="page-header-button-container">
-            <IconButton
-              buttonType="secondary"
-              title="filter_list"
-              className="mr-10"
-              buttonTitle="Click to apply filters on user list"
-              onClick={() => toggleFilterModal()}
-            />
-            <IconButton
-              buttonType="primary"
-              title="format_line_spacing"
-              buttonTitle="Click to select custom fields"
-              onClick={() => toggleCustomField()}
-            />
-          </div>
-        )}
-      </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading && docs ? (
-        docs.length > 0 ? (
-          <>
-            <div className="common-list-container">
-              <Table
-                align="left"
-                valign="center"
-                tableClass="main-list-table"
-                data={docs}
-                headers={headers}
-                recordSelected={onClickViewDebtor}
-                rowClass="cursor-pointer"
+      {!debtorListLoader ? (
+        <>
+          <div className="page-header">
+            <div className="page-header-name">Debtor List</div>
+            <div className="page-header-button-container">
+              <IconButton
+                buttonType="secondary"
+                title="filter_list"
+                className="mr-10"
+                buttonTitle="Click to apply filters on user list"
+                onClick={() => toggleFilterModal()}
+              />
+              <IconButton
+                buttonType="primary"
+                title="format_line_spacing"
+                buttonTitle="Click to select custom fields"
+                onClick={() => toggleCustomField()}
               />
             </div>
-            <Pagination
-              className="common-list-pagination"
-              total={total}
-              pages={pages}
-              page={page}
-              limit={limit}
-              pageActionClick={pageActionClick}
-              onSelectLimit={onSelectLimit}
+          </div>
+
+          {docs?.length > 0 ? (
+            <>
+              <div className="common-list-container">
+                <Table
+                  align="left"
+                  valign="center"
+                  tableClass="main-list-table"
+                  data={docs}
+                  headers={headers}
+                  recordSelected={onClickViewDebtor}
+                  rowClass="cursor-pointer"
+                />
+              </div>
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                pageActionClick={pageActionClick}
+                onSelectLimit={onSelectLimit}
+              />
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          )}
+
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              buttons={customFieldsModalButtons}
+              toggleCustomField={toggleCustomField}
             />
-          </>
-        ) : (
-          <div className="no-record-found">No record found</div>
-        )
+          )}
+          {filterModal && (
+            <Modal
+              headerIcon="filter_list"
+              header="Filter"
+              buttons={filterModalButtons}
+              className="filter-modal application-filter-modal"
+            >
+              <div className="filter-modal-row">
+                <div className="form-title">Entity Type</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="role"
+                  options={debtorDropDownData?.entityType}
+                  value={entityTypeSelectedValue}
+                  onChange={handleEntityTypeFilterChange}
+                  isSearchable={false}
+                />
+              </div>
+            </Modal>
+          )}
+        </>
       ) : (
         <Loader />
-      )}
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={customFieldsModalButtons}
-          toggleCustomField={toggleCustomField}
-        />
-      )}
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal application-filter-modal"
-        >
-          <div className="filter-modal-row">
-            <div className="form-title">Entity Type</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="role"
-              options={debtorDropDownData?.entityType}
-              value={entityTypeSelectedValue}
-              onChange={handleEntityTypeFilterChange}
-              isSearchable={false}
-            />
-          </div>
-        </Modal>
       )}
     </>
   );

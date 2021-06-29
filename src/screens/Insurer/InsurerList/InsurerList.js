@@ -11,6 +11,7 @@ import {
   getInsurerColumnNameList,
   getInsurerListByFilter,
   getListFromCrm,
+  resetInsurerListData,
   resetInsurerListPaginationData,
   saveInsurerColumnListName,
 } from '../redux/InsurerAction';
@@ -28,9 +29,9 @@ import {
 import InsurerApiService from '../services/InsurerApiService';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 
 const InsurerList = () => {
   const history = useHistory();
@@ -45,9 +46,10 @@ const InsurerList = () => {
     insurerListColumnSaveButtonLoaderAction,
     insurerListColumnResetButtonLoaderAction,
     insurerListAddFromCRMButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    insurerListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, isLoading, docs, headers } = useMemo(
+  const { total, pages, page, limit, docs, headers } = useMemo(
     () => insurerListWithPageData ?? {},
     [insurerListWithPageData]
   );
@@ -182,7 +184,10 @@ const InsurerList = () => {
 
     getInsurerList({ ...params });
     dispatch(getInsurerColumnNameList());
-    return dispatch(resetInsurerListPaginationData(page, pages, limit, total));
+    return () => {
+      dispatch(resetInsurerListPaginationData(page, pages, limit, total));
+      dispatch(resetInsurerListData());
+    };
   }, []);
 
   /** *
@@ -213,19 +218,19 @@ const InsurerList = () => {
     };
     try {
       if (data?.crmIds?.length > 0) {
-        startLoaderButtonOnRequest('insurerListAddFromCRMButtonLoaderAction');
+        startGeneralLoaderOnRequest('insurerListAddFromCRMButtonLoaderAction');
         InsurerApiService.addInsurerListFromCrm(data)
           .then(res => {
             if (res?.data?.status === 'SUCCESS') {
               successNotification(res?.data?.message ?? 'Insurer data synced successfully');
               getInsurerList();
-              stopLoaderButtonOnSuccessOrFail('insurerListAddFromCRMButtonLoaderAction');
+              stopGeneralLoaderOnSuccessOrFail('insurerListAddFromCRMButtonLoaderAction');
               toggleAddFromCRM();
             }
           })
           .catch(e => {
             errorNotification(e?.data?.message ?? 'Internal server error');
-            stopLoaderButtonOnSuccessOrFail('insurerListAddFromCRMButtonLoaderAction');
+            stopGeneralLoaderOnSuccessOrFail('insurerListAddFromCRMButtonLoaderAction');
           });
       } else {
         errorNotification('Please select insurer to Add');
@@ -276,101 +281,99 @@ const InsurerList = () => {
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-header-name">Insurer List</div>
-        {!isLoading && docs && (
-          <div className="page-header-button-container">
-            <IconButton
-              buttonType="primary"
-              title="format_line_spacing"
-              className="mr-10"
-              buttonTitle="Click to select custom fields"
-              onClick={() => toggleCustomField()}
-            />
-            <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
-          </div>
-        )}
-      </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading && docs ? (
-        docs.length > 0 ? (
-          <>
-            <div className="common-list-container">
-              <Table
-                align="left"
-                valign="center"
-                tableClass="main-list-table"
-                data={docs}
-                headers={headers}
-                recordSelected={onSelectInsurerRecord}
-                recordActionClick={() => {}}
-                rowClass="cursor-pointer"
+      {!insurerListLoader ? (
+        <>
+          <div className="page-header">
+            <div className="page-header-name">Insurer List</div>
+            <div className="page-header-button-container">
+              <IconButton
+                buttonType="primary"
+                title="format_line_spacing"
+                className="mr-10"
+                buttonTitle="Click to select custom fields"
+                onClick={() => toggleCustomField()}
               />
+              <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
             </div>
-            <Pagination
-              className="common-list-pagination"
-              total={total}
-              pages={pages}
-              page={page}
-              limit={limit}
-              pageActionClick={pageActionClick}
-              onSelectLimit={onSelectLimit}
-            />
-          </>
-        ) : (
-          <div className="no-record-found">No record found</div>
-        )
-      ) : (
-        <Loader />
-      )}
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={customFieldsModalButtons}
-        />
-      )}
-      {addFromCRM && (
-        <Modal
-          header="Add From CRM"
-          className="add-to-crm-modal"
-          buttons={addToCRMButtons}
-          hideModal={toggleAddFromCRM}
-        >
-          <BigInput
-            ref={searchInputRef}
-            prefix="search"
-            prefixClass="font-placeholder"
-            placeholder="Search clients"
-            type="text"
-            onKeyDown={_.debounce(checkIfEnterKeyPressed, 1000)}
-          />
-          {!isModalLoading ? (
+          </div>
+          {docs?.length > 0 ? (
             <>
-              {/* <Checkbox title="Name" className="check-all-crmList" /> */}
-              <div className="crm-checkbox-list-container">
-                {syncListFromCrm && syncListFromCrm?.length > 0 ? (
-                  syncListFromCrm?.map(crm => (
-                    <Checkbox
-                      title={crm?.name}
-                      className="crm-checkbox-list"
-                      checked={crmIds?.includes(crm?.crmId?.toString())}
-                      onChange={() => selectInsurerFromCrm(crm?.crmId?.toString())}
-                    />
-                  ))
-                ) : (
-                  <div className="no-record-found">No record found</div>
-                )}
+              <div className="common-list-container">
+                <Table
+                  align="left"
+                  valign="center"
+                  tableClass="main-list-table"
+                  data={docs}
+                  headers={headers}
+                  recordSelected={onSelectInsurerRecord}
+                  recordActionClick={() => {}}
+                  rowClass="cursor-pointer"
+                />
               </div>
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                pageActionClick={pageActionClick}
+                onSelectLimit={onSelectLimit}
+              />
             </>
           ) : (
-            <Loader />
+            <div className="no-record-found">No record found</div>
           )}
-        </Modal>
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              buttons={customFieldsModalButtons}
+            />
+          )}
+          {addFromCRM && (
+            <Modal
+              header="Add From CRM"
+              className="add-to-crm-modal"
+              buttons={addToCRMButtons}
+              hideModal={toggleAddFromCRM}
+            >
+              <BigInput
+                ref={searchInputRef}
+                prefix="search"
+                prefixClass="font-placeholder"
+                placeholder="Search clients"
+                type="text"
+                onKeyDown={_.debounce(checkIfEnterKeyPressed, 1000)}
+              />
+              {!isModalLoading ? (
+                <>
+                  {/* <Checkbox title="Name" className="check-all-crmList" /> */}
+                  <div className="crm-checkbox-list-container">
+                    {syncListFromCrm && syncListFromCrm?.length > 0 ? (
+                      syncListFromCrm?.map(crm => (
+                        <Checkbox
+                          title={crm?.name}
+                          className="crm-checkbox-list"
+                          checked={crmIds?.includes(crm?.crmId?.toString())}
+                          onChange={() => selectInsurerFromCrm(crm?.crmId?.toString())}
+                        />
+                      ))
+                    ) : (
+                      <div className="no-record-found">No record found</div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Loader />
+              )}
+            </Modal>
+          )}
+        </>
+      ) : (
+        <Loader />
       )}
     </>
   );
 };
-
 export default InsurerList;

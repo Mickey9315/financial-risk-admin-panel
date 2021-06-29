@@ -6,15 +6,15 @@ import {
 } from '../../../../helpers/LocalStorageHelper';
 import { getLoggedUserDetails } from '../../../../common/Header/redux/HeaderAction';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { displayErrors } from '../../../../helpers/ErrorNotifyHelper';
 
 export const loginUser = ({ email, password }, rememberMe) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('logInButtonLoaderAction');
+      startGeneralLoaderOnRequest('logInButtonLoaderAction');
       const data = { userId: email.toLowerCase().trim(), password: password.trim() };
       const response = await AuthApiService.loginUser(data);
 
@@ -29,10 +29,10 @@ export const loginUser = ({ email, password }, rememberMe) => {
 
         successNotification('Login successfully.');
         await dispatch(getLoggedUserDetails());
-        stopLoaderButtonOnSuccessOrFail('logInButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('logInButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('logInButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('logInButtonLoaderAction');
       displayErrors(e);
       throw Error();
     }

@@ -9,27 +9,24 @@ import {
 } from './UserManagementReduxConstants';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 
 export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
-      dispatch({
-        type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_REQUEST,
-      });
+      startGeneralLoaderOnRequest('userListLoader');
       const response = await UserManagementApiService.getAllUserListByFilter(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS,
           data: response.data.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('userListLoader');
       }
     } catch (e) {
-      dispatch({
-        type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_FAILURE,
-      });
+      stopGeneralLoaderOnSuccessOrFail('userListLoader');
       displayErrors(e);
     }
   };
@@ -77,7 +74,7 @@ export const getUserColumnListName = () => {
 export const saveUserColumnListName = ({ userColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`UserListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+      startGeneralLoaderOnRequest(`UserListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
       let data = {
         isReset: true,
         columns: [],
@@ -95,7 +92,7 @@ export const saveUserColumnListName = ({ userColumnNameList = {}, isReset = fals
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `UserListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -109,12 +106,12 @@ export const saveUserColumnListName = ({ userColumnNameList = {}, isReset = fals
           data: userColumnNameList,
         });
         successNotification(response?.data?.message ?? 'Columns updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `UserListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `UserListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -150,17 +147,17 @@ export const setNewUserInitialStates = moduleAccess => {
 export const getSelectedUserData = id => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('viewUserPageLoaderAction');
+      startGeneralLoaderOnRequest('viewUserPageLoaderAction');
       const response = await UserManagementApiService.getSelectedUserData(id);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
           data: response.data.data,
         });
-        stopLoaderButtonOnSuccessOrFail('viewUserPageLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('viewUserPageLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('viewUserPageLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('viewUserPageLoaderAction');
       displayErrors(e);
     }
   };
@@ -221,7 +218,7 @@ export const changeUserManageAccess = data => {
 export const addNewUser = data => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('viewUserAddNewUserButtonLoaderAction');
+      startGeneralLoaderOnRequest('viewUserAddNewUserButtonLoaderAction');
       const finalData = {
         ...data,
         clientIds: data.clientIds ? data.clientIds.map(e => e.value) : [],
@@ -231,11 +228,11 @@ export const addNewUser = data => {
 
       if (response.data.status === 'SUCCESS') {
         successNotification('Added user successfully.');
-        stopLoaderButtonOnSuccessOrFail('viewUserAddNewUserButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('viewUserAddNewUserButtonLoaderAction');
         dispatch(getUserManagementListByFilter());
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('viewUserAddNewUserButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('viewUserAddNewUserButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -244,7 +241,7 @@ export const addNewUser = data => {
 export const updateUserDetails = (id, data) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('viewUserUpdateUserButtonLoaderAction');
+      startGeneralLoaderOnRequest('viewUserUpdateUserButtonLoaderAction');
       const finalData = {
         ...data,
         clientIds: data.clientIds ? data.clientIds.map(e => e.value) : [],
@@ -256,10 +253,10 @@ export const updateUserDetails = (id, data) => {
 
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'User details updated successfully.');
-        stopLoaderButtonOnSuccessOrFail('viewUserUpdateUserButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('viewUserUpdateUserButtonLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('viewUserUpdateUserButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('viewUserUpdateUserButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -268,16 +265,16 @@ export const updateUserDetails = (id, data) => {
 export const deleteUserDetails = (id, params) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('viewUserDeleteUserButtonLoaderAction');
+      startGeneralLoaderOnRequest('viewUserDeleteUserButtonLoaderAction');
       const response = await UserManagementApiService.deleteUser(id);
 
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'User deleted successfully.');
-        stopLoaderButtonOnSuccessOrFail('viewUserDeleteUserButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('viewUserDeleteUserButtonLoaderAction');
         dispatch(getUserManagementListByFilter(params));
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('viewUserDeleteUserButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('viewUserDeleteUserButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -291,6 +288,22 @@ export const resetUserListPaginationData = (page, limit, pages, total) => {
       limit,
       pages,
       total,
+    });
+  };
+};
+
+export const resetUserListData = () => {
+  return dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_REDUX_CONSTANTS.RESET_USER_LIST_DATA,
+    });
+  };
+};
+
+export const resetViewUserData = () => {
+  return dispatch => {
+    dispatch({
+      type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.RESET_VIEW_USER_DATA,
     });
   };
 };

@@ -17,6 +17,7 @@ import {
   getClientFilter,
   getClientList,
   getListFromCrm,
+  resetClientListData,
   resetClientListPaginationData,
   saveClientColumnListName,
 } from '../redux/ClientAction';
@@ -32,9 +33,9 @@ import {
 } from '../redux/ClientReduxConstants';
 import Loader from '../../../common/Loader/Loader';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
 const initialFilterState = {
@@ -81,14 +82,13 @@ const ClientList = () => {
     clientListColumnSaveButtonLoaderAction,
     clientListColumnResetButtonLoaderAction,
     clientListAddFromCRMButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    clientListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
 
-  const { docs, isLoading, headers } = useMemo(() => clientListWithPageData ?? {}, [
-    clientListWithPageData,
-  ]);
+  const { docs, headers } = useMemo(() => clientListWithPageData ?? {}, [clientListWithPageData]);
   const [crmIds, setCrmIds] = useState([]);
   useEffect(() => {
     dispatch(getClientFilter());
@@ -352,7 +352,7 @@ const ClientList = () => {
     };
     try {
       if (data.crmIds.length > 0) {
-        startLoaderButtonOnRequest('clientListAddFromCRMButtonLoaderAction');
+        startGeneralLoaderOnRequest('clientListAddFromCRMButtonLoaderAction');
         ClientApiService.updateClientListFromCrm(data)
           .then(res => {
             if (res.data.status === 'SUCCESS') {
@@ -363,13 +363,13 @@ const ClientList = () => {
                 type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
                 data: [],
               });
-              stopLoaderButtonOnSuccessOrFail('clientListAddFromCRMButtonLoaderAction');
+              stopGeneralLoaderOnSuccessOrFail('clientListAddFromCRMButtonLoaderAction');
             }
             setCrmIds([]);
           })
           .catch(e => {
             displayErrors(e);
-            stopLoaderButtonOnSuccessOrFail('clientListAddFromCRMButtonLoaderAction');
+            stopGeneralLoaderOnSuccessOrFail('clientListAddFromCRMButtonLoaderAction');
           });
       } else {
         errorNotification('Select at least one client to Add');
@@ -501,184 +501,186 @@ const ClientList = () => {
   );
 
   useEffect(() => {
-    return dispatch(resetClientListPaginationData(page, pages, total, limit));
+    return () => {
+      dispatch(resetClientListPaginationData(page, pages, total, limit));
+      dispatch(resetClientListData());
+    };
   }, []);
   return (
     <>
-      <div className="page-header">
-        <div className="page-header-name">Client List</div>
-        {!isLoading && docs && (
-          <div className="page-header-button-container">
-            <IconButton
-              buttonType="secondary"
-              title="filter_list"
-              className="mr-10"
-              onClick={toggleFilterModal}
-            />
-            <IconButton
-              buttonType="primary"
-              title="format_line_spacing"
-              className="mr-10"
-              onClick={() => toggleCustomField()}
-            />
-            <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
-          </div>
-        )}
-      </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading && docs ? (
-        docs.length > 0 ? (
-          <>
-            <div className="common-list-container">
-              <Table
-                align="left"
-                valign="center"
-                tableClass="main-list-table"
-                recordSelected={openViewClient}
-                data={docs}
-                headers={headers}
-                rowClass="client-list-row"
+      {!clientListLoader ? (
+        <>
+          <div className="page-header">
+            <div className="page-header-name">Client List</div>
+            <div className="page-header-button-container">
+              <IconButton
+                buttonType="secondary"
+                title="filter_list"
+                className="mr-10"
+                onClick={toggleFilterModal}
               />
+              <IconButton
+                buttonType="primary"
+                title="format_line_spacing"
+                className="mr-10"
+                onClick={() => toggleCustomField()}
+              />
+              <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
             </div>
-            <Pagination
-              className="common-list-pagination"
-              total={total}
-              pages={pages}
-              page={page}
-              limit={limit}
-              pageActionClick={pageActionClick}
-              onSelectLimit={onSelectLimit}
-            />
-          </>
-        ) : (
-          <div className="no-record-found">No record found</div>
-        )
-      ) : (
-        <Loader />
-      )}
+          </div>
 
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal"
-          hideModal={toggleFilterModal}
-        >
-          <div className="filter-modal-row">
-            <div className="form-title client-filter-title">Service Manager Name</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="serviceManagerId"
-              options={serviceManagerFilterListData}
-              value={clientServiceManagerSelectedValue}
-              onChange={handleServiceManagerFilterChange}
-              isSearchable={false}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title client-filter-title">Risk Analyst Name</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="riskAnalystId"
-              options={riskAnalystFilterListData}
-              value={clientRiskAnalystSelectedValue}
-              onChange={handleRiskAnalystFilterChange}
-              isSearchable={false}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title client-filter-title">Date</div>
-            <div className="date-picker-container filter-date-picker-container mr-15">
-              <DatePicker
-                className="filter-date-picker"
-                selected={startDate}
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                onChange={handleStartDateChange}
-                placeholderText="From Date"
-                dateFormat="dd/MM/yyyy"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-            <div className="date-picker-container filter-date-picker-container">
-              <DatePicker
-                className="filter-date-picker"
-                selected={endDate}
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                onChange={handleEndDateChange}
-                placeholderText="To Date"
-                dateFormat="dd/MM/yyyy"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-          </div>
-        </Modal>
-      )}
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={customFieldsModalButtons}
-          toggleCustomField={toggleCustomField}
-        />
-      )}
-      {addFromCRM && (
-        <Modal
-          header="Add From CRM"
-          className="add-to-crm-modal"
-          buttons={addToCRMButtons}
-          hideModal={onClickAddFromCRM}
-        >
-          <BigInput
-            ref={searchInputRef}
-            prefix="search"
-            prefixClass="font-placeholder"
-            placeholder="Search clients"
-            type="text"
-            onChange={_.debounce(checkIfEnterKeyPressed, 1000)}
-          />
-          {!isModalLoading ? (
+          {docs?.length > 0 ? (
             <>
-              {/* eslint-disable-next-line no-nested-ternary */}
-              {syncListFromCrm.length > 0 ? (
-                <>
-                  {/* <Checkbox title="Name" className="check-all-crmList" /> */}
-                  <Checkbox
-                    title="Add All"
-                    className="check-all-crmList"
-                    onChange={e => selectAllClientsFromCrm(e)}
-                  />
-                  <div className="crm-checkbox-list-container">
-                    {syncListFromCrm.map(crm => (
-                      <Checkbox
-                        title={crm.name}
-                        className="crm-checkbox-list"
-                        checked={crmIds?.includes(crm?.crmId?.toString())}
-                        onChange={() => selectClientFromCrm(crm?.crmId?.toString())}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="no-record-found">No record found</div>
-              )}
+              <div className="common-list-container">
+                <Table
+                  align="left"
+                  valign="center"
+                  tableClass="main-list-table"
+                  recordSelected={openViewClient}
+                  data={docs}
+                  headers={headers}
+                  rowClass="client-list-row"
+                />
+              </div>
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                pageActionClick={pageActionClick}
+                onSelectLimit={onSelectLimit}
+              />
             </>
           ) : (
-            <Loader />
+            <div className="no-record-found">No record found</div>
           )}
-        </Modal>
+
+          {filterModal && (
+            <Modal
+              headerIcon="filter_list"
+              header="Filter"
+              buttons={filterModalButtons}
+              className="filter-modal"
+              hideModal={toggleFilterModal}
+            >
+              <div className="filter-modal-row">
+                <div className="form-title client-filter-title">Service Manager Name</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="serviceManagerId"
+                  options={serviceManagerFilterListData}
+                  value={clientServiceManagerSelectedValue}
+                  onChange={handleServiceManagerFilterChange}
+                  isSearchable={false}
+                />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title client-filter-title">Risk Analyst Name</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="riskAnalystId"
+                  options={riskAnalystFilterListData}
+                  value={clientRiskAnalystSelectedValue}
+                  onChange={handleRiskAnalystFilterChange}
+                  isSearchable={false}
+                />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title client-filter-title">Date</div>
+                <div className="date-picker-container filter-date-picker-container mr-15">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={startDate}
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={handleStartDateChange}
+                    placeholderText="From Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+                <div className="date-picker-container filter-date-picker-container">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={endDate}
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={handleEndDateChange}
+                    placeholderText="To Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+              </div>
+            </Modal>
+          )}
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              buttons={customFieldsModalButtons}
+              toggleCustomField={toggleCustomField}
+            />
+          )}
+          {addFromCRM && (
+            <Modal
+              header="Add From CRM"
+              className="add-to-crm-modal"
+              buttons={addToCRMButtons}
+              hideModal={onClickAddFromCRM}
+            >
+              <BigInput
+                ref={searchInputRef}
+                prefix="search"
+                prefixClass="font-placeholder"
+                placeholder="Search clients"
+                type="text"
+                onChange={_.debounce(checkIfEnterKeyPressed, 1000)}
+              />
+              {!isModalLoading ? (
+                <>
+                  {/* eslint-disable-next-line no-nested-ternary */}
+                  {syncListFromCrm.length > 0 ? (
+                    <>
+                      {/* <Checkbox title="Name" className="check-all-crmList" /> */}
+                      <Checkbox
+                        title="Add All"
+                        className="check-all-crmList"
+                        onChange={e => selectAllClientsFromCrm(e)}
+                      />
+                      <div className="crm-checkbox-list-container">
+                        {syncListFromCrm.map(crm => (
+                          <Checkbox
+                            title={crm.name}
+                            className="crm-checkbox-list"
+                            checked={crmIds?.includes(crm?.crmId?.toString())}
+                            onChange={() => selectClientFromCrm(crm?.crmId?.toString())}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="no-record-found">No record found</div>
+                  )}
+                </>
+              ) : (
+                <Loader />
+              )}
+            </Modal>
+          )}
+        </>
+      ) : (
+        <Loader />
       )}
     </>
   );
 };
-
 export default ClientList;

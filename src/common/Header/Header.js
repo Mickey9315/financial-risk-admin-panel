@@ -59,7 +59,7 @@ const Header = () => {
     updateProfileHeaderButtonLoaderAction,
     resetPasswordHeaderButtonLoaderAction,
     logoutHeaderButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   /*
   Global Search Data */

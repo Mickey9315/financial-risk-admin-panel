@@ -66,7 +66,7 @@ const GenerateApplication = () => {
   const { applicationId } = useQueryParams();
 
   const { generateApplicationPageLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   // for stepper components

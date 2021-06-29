@@ -120,7 +120,7 @@ const ClientDocumentsTab = () => {
     viewClientUploadDocumentButtonLoaderAction,
     viewClientDownloadDocumentButtonLoaderAction,
     viewClientDeleteDocumentButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers } = useMemo(() => documentsList ?? {}, [
     documentsList,

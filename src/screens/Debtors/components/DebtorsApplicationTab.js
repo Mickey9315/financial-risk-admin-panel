@@ -31,7 +31,7 @@ const DebtorsApplicationTab = () => {
   const {
     viewDebtorApplicationColumnSaveButtonLoaderAction,
     viewDebtorApplicationColumnResetButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
     () => applicationList ?? {},

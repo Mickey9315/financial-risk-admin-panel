@@ -104,7 +104,7 @@ const ApplicationTaskAccordion = props => {
     viewApplicationDeleteTaskButtonLoaderAction,
     viewApplicationAddNewTaskButtonLoaderAction,
     viewApplicationUpdateTaskButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { assigneeList, entityList } = useMemo(() => taskDropDownData, [taskDropDownData]);
   const { _id } = useMemo(() => loggedUserDetail, [loggedUserDetail]);

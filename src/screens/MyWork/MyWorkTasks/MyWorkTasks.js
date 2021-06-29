@@ -14,6 +14,7 @@ import {
   getTaskListByFilter,
   getTaskListColumnList,
   resetMyWorkPaginationData,
+  resetMyWorkTaskData,
   saveTaskListColumnListName,
 } from '../redux/MyWorkAction';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
@@ -66,10 +67,9 @@ const MyWorkTasks = () => {
   const history = useHistory();
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
-  const { total, pages, page, limit, headers, docs, isLoading } = useMemo(
-    () => taskListData ?? {},
-    [taskListData]
-  );
+  const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? {}, [
+    taskListData,
+  ]);
 
   const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(() => taskData ?? {}, [
     taskData,
@@ -85,7 +85,8 @@ const MyWorkTasks = () => {
     myWorkTaskColumnsSaveButtonLoaderAction,
     myWorkTaskColumnsResetButtonLoaderAction,
     myWorkTaskDeleteTaskButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    myWorkTasksListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const handlePriorityFilterChange = useCallback(
     event => {
@@ -438,7 +439,10 @@ const MyWorkTasks = () => {
 
   useEffect(() => {
     getTaskListOnRefresh();
-    return dispatch(resetMyWorkPaginationData(page, pages, limit, total));
+    return () => {
+      dispatch(resetMyWorkPaginationData(page, pages, limit, total));
+      dispatch(resetMyWorkTaskData());
+    };
   }, []);
 
   const addTask = useCallback(() => {
@@ -447,9 +451,9 @@ const MyWorkTasks = () => {
 
   return (
     <>
-      <div className="my-work-task-action-row">
-        {!isLoading && docs && (
-          <>
+      {!myWorkTasksListLoader ? (
+        <>
+          <div className="my-work-task-action-row">
             <IconButton
               buttonType="secondary"
               title="filter_list"
@@ -465,127 +469,131 @@ const MyWorkTasks = () => {
               onClick={toggleCustomField}
             />
             <Button buttonType="success" title="Add" onClick={addTask} />
-          </>
-        )}
-      </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading && docs ? (
-        docs.length > 0 ? (
-          <>
-            <div className="common-list-container" style={{ maxHeight: 'calc(100vh - 15.75rem)' }}>
-              <Table
-                align="left"
-                valign="center"
-                tableClass="main-list-table"
-                data={docs}
-                headers={headers}
-                rowClass="cursor-pointer task-row"
-                extraColumns={deleteTaskColumn}
-                refreshData={getTaskListOnRefresh}
-                recordSelected={onSelectTaskRecord}
-                // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+          </div>
+          {docs?.length > 0 ? (
+            <>
+              <div
+                className="common-list-container"
+                style={{ maxHeight: 'calc(100vh - 15.75rem)' }}
+              >
+                <Table
+                  align="left"
+                  valign="center"
+                  tableClass="main-list-table"
+                  data={docs}
+                  headers={headers}
+                  rowClass="cursor-pointer task-row"
+                  extraColumns={deleteTaskColumn}
+                  refreshData={getTaskListOnRefresh}
+                  recordSelected={onSelectTaskRecord}
+                  // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
+                />
+              </div>
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                pageActionClick={pageActionClick}
+                onSelectLimit={onSelectLimit}
               />
-            </div>
-            <Pagination
-              className="common-list-pagination"
-              total={total}
-              pages={pages}
-              page={page}
-              limit={limit}
-              pageActionClick={pageActionClick}
-              onSelectLimit={onSelectLimit}
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          )}
+          {showConfirmModal && (
+            <Modal
+              header="Delete Task"
+              buttons={deleteTaskButtons}
+              hideModal={toggleConfirmationModal}
+            >
+              <span className="confirmation-message">
+                Are you sure you want to delete this Task?
+              </span>
+            </Modal>
+          )}
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              buttons={customFieldsModalButtons}
             />
-          </>
-        ) : (
-          <>
-            <div className="no-record-found">No Record Found</div>
-          </>
-        )
+          )}
+          {filterModal && (
+            <Modal
+              headerIcon="filter_list"
+              header="Filter"
+              buttons={filterModalButtons}
+              className="filter-modal application-filter-modal"
+            >
+              <div className="filter-modal-row">
+                <div className="form-title">Priority</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="role"
+                  options={priorityListData}
+                  value={getSelectedValue?.selectedPriority ?? {}}
+                  onChange={handlePriorityFilterChange}
+                  isSearchable={false}
+                />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title">Completed Task</div>
+                <Checkbox checked={isCompleted} onChange={e => handleIsCompletedFilterChange(e)} />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title">Due Date</div>
+                <div className="date-picker-container filter-date-picker-container mr-15">
+                  <DatePicker
+                    dateFormat="dd/MM/yyyy"
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    className="filter-date-picker"
+                    selected={startDate}
+                    onChange={handleStartDateChange}
+                    placeholderText="From Date"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+                <div className="date-picker-container filter-date-picker-container">
+                  <DatePicker
+                    dateFormat="dd/MM/yyyy"
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    className="filter-date-picker"
+                    selected={endDate}
+                    onChange={handleEndDateChange}
+                    placeholderText="To Date"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+              </div>
+              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                <div className="filter-modal-row">
+                  <div className="form-title">Assignee</div>
+                  <ReactSelect
+                    className="filter-select react-select-container"
+                    classNamePrefix="react-select"
+                    placeholder="Select"
+                    name="role"
+                    options={assigneeList}
+                    value={getSelectedValue?.selectedAssignee ?? {}}
+                    onChange={handleAssigneeFilterChange}
+                    isSearchable={false}
+                  />
+                </div>
+              </UserPrivilegeWrapper>
+            </Modal>
+          )}
+        </>
       ) : (
         <Loader />
-      )}
-      {showConfirmModal && (
-        <Modal header="Delete Task" buttons={deleteTaskButtons} hideModal={toggleConfirmationModal}>
-          <span className="confirmation-message">Are you sure you want to delete this Task?</span>
-        </Modal>
-      )}
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={customFieldsModalButtons}
-        />
-      )}
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal application-filter-modal"
-        >
-          <div className="filter-modal-row">
-            <div className="form-title">Priority</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="role"
-              options={priorityListData}
-              value={getSelectedValue?.selectedPriority ?? {}}
-              onChange={handlePriorityFilterChange}
-              isSearchable={false}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title">Completed Task</div>
-            <Checkbox checked={isCompleted} onChange={e => handleIsCompletedFilterChange(e)} />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title">Due Date</div>
-            <div className="date-picker-container filter-date-picker-container mr-15">
-              <DatePicker
-                dateFormat="dd/MM/yyyy"
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                className="filter-date-picker"
-                selected={startDate}
-                onChange={handleStartDateChange}
-                placeholderText="From Date"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-            <div className="date-picker-container filter-date-picker-container">
-              <DatePicker
-                dateFormat="dd/MM/yyyy"
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                className="filter-date-picker"
-                selected={endDate}
-                onChange={handleEndDateChange}
-                placeholderText="To Date"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-          </div>
-          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-            <div className="filter-modal-row">
-              <div className="form-title">Assignee</div>
-              <ReactSelect
-                className="filter-select react-select-container"
-                classNamePrefix="react-select"
-                placeholder="Select"
-                name="role"
-                options={assigneeList}
-                value={getSelectedValue?.selectedAssignee ?? {}}
-                onChange={handleAssigneeFilterChange}
-                isSearchable={false}
-              />
-            </div>
-          </UserPrivilegeWrapper>
-        </Modal>
       )}
     </>
   );

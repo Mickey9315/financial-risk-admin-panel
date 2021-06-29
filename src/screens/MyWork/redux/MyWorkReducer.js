@@ -10,7 +10,6 @@ const initialMyWork = {
       page: 1,
       pages: 1,
       headers: [],
-      isLoading: true,
     },
     addTask: {
       title: '',
@@ -40,18 +39,6 @@ const initialMyWork = {
 
 export const myWorkReducer = (state = initialMyWork, action) => {
   switch (action.type) {
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_REQUEST_ACTION:
-      return {
-        ...state,
-        task: {
-          ...state?.task,
-          taskList: {
-            ...state?.task?.taskList,
-            isLoading: true,
-          },
-        },
-      };
-
     case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_SUCCESS_ACTION:
       return {
         ...state,
@@ -59,19 +46,6 @@ export const myWorkReducer = (state = initialMyWork, action) => {
           ...state?.task,
           taskList: {
             ...action?.data,
-            isLoading: false,
-          },
-        },
-      };
-
-    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_FAIL_ACTION:
-      return {
-        ...state,
-        task: {
-          ...state?.task,
-          taskList: {
-            ...state?.task?.taskList,
-            isLoading: false,
           },
         },
       };
@@ -185,6 +159,15 @@ export const myWorkReducer = (state = initialMyWork, action) => {
             pages: action?.pages,
             total: action?.total,
           },
+        },
+      };
+    }
+
+    case MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_DATA: {
+      return {
+        ...state,
+        task: {
+          ...initialMyWork.task,
         },
       };
     }
@@ -382,7 +365,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
       return {
         ...state,
         notification: {
-          ...state.notification,
+          ...state?.notification,
           notificationList: [...new Set([...newNotificationList, ...notificationList])],
         },
       };

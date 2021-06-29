@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import moment from 'moment';
+import _ from 'lodash';
 import Button from '../../../common/Button/Button';
 import Tab from '../../../common/Tab/Tab';
 import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
 import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
 import {
   getClientById,
+  resetViewClientData,
   setViewClientActiveTabIndex,
   syncClientData,
   updateSelectedClientData,
@@ -56,7 +58,7 @@ const ViewClient = () => {
   );
 
   const { viewClientSyncWithCRMButtonLoaderAction, viewClientPageLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const tabActive = index => {
@@ -115,7 +117,10 @@ const ViewClient = () => {
 
   useEffect(() => {
     dispatch(getClientById(id));
-    return () => setViewClientActiveTabIndex(0);
+    return () => {
+      setViewClientActiveTabIndex(0);
+      dispatch(resetViewClientData());
+    };
   }, [id]);
 
   useEffect(() => {
@@ -205,99 +210,106 @@ const ViewClient = () => {
   return (
     <>
       {!viewClientPageLoaderAction ? (
-        <>
-          <div className="breadcrumb-button-row">
-            <div className="breadcrumb">
-              <span onClick={backToClient}>Client List</span>
-              <span className="material-icons-round">navigate_next</span>
-              <span>View Client</span>
-            </div>
-            <div className="buttons-row">
-              <Button
-                buttonType="secondary"
-                title="Sync With CRM"
-                onClick={syncClientDataClick}
-                isLoading={viewClientSyncWithCRMButtonLoaderAction}
+        (() =>
+          !_.isEmpty(viewClientData) ? (
+            <>
+              <div className="breadcrumb-button-row">
+                <div className="breadcrumb">
+                  <span onClick={backToClient}>Client List</span>
+                  <span className="material-icons-round">navigate_next</span>
+                  <span>View Client</span>
+                </div>
+                <div className="buttons-row">
+                  <Button
+                    buttonType="secondary"
+                    title="Sync With CRM"
+                    onClick={syncClientDataClick}
+                    isLoading={viewClientSyncWithCRMButtonLoaderAction}
+                  />
+                </div>
+              </div>
+              <div className="common-white-container client-details-container">
+                <span>Name</span>
+                <div className="client-detail">{viewClientData?.name || 'No name added'}</div>
+                <span>Address</span>
+                <div className="client-detail">
+                  {viewClientData?.address?.city || 'No address added'}
+                </div>
+                <span>Phone</span>
+                <div className="client-detail">
+                  {viewClientData?.contactNumber || 'No phone number added'}
+                </div>
+                <span>ABN</span>
+                <div className="client-detail">{viewClientData?.abn || 'No ABN number added'}</div>
+                <span>ACN</span>
+                <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
+                <span>Referred By</span>
+                <div className="client-detail">{viewClientData?.referredBy || 'N/A'}</div>
+                <span>Risk Person</span>
+                <ReactSelect
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="riskAnalystId"
+                  options={riskAnalysts}
+                  value={riskAnalystId || []}
+                  onChange={onChangeAssignee}
+                  isSearchable
+                />
+                <span>Service Person</span>
+                <ReactSelect
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="serviceManagerId"
+                  options={serviceManagers}
+                  value={serviceManagerId || []}
+                  onChange={onChangeAssignee}
+                  isSearchable
+                />
+                <span>Insurer Name</span>
+                <div className="client-detail">{viewClientData?.insurerId?.name || 'N/A'}</div>
+                <span>Sales Person</span>
+                <div className="client-detail">
+                  {viewClientData?.salesPerson || 'No sales person added'}
+                </div>
+                <span>IBIS Sector</span>
+                <div className="client-detail">
+                  {viewClientData?.sector || 'No IBIS sector added'}
+                </div>
+                <span>Website</span>
+                <div className="client-detail mail-id-value">
+                  {viewClientData?.website || 'No website added'}
+                </div>
+                <span>Trading As</span>
+                <div className="client-detail">{viewClientData?.tradingName || 'N/A'}</div>
+                <span>Inception Date</span>
+                <div className="client-detail">
+                  {moment(viewClientData?.inceptionDate).format('DD/MM/YYYY') || 'N/A'}
+                </div>
+                <span>Expiry Date</span>
+                <div className="client-detail">
+                  {moment(viewClientData?.expiryDate).format('DD/MM/YYYY') || 'N/A'}
+                </div>
+                <span>Automate Applications</span>
+                <Switch
+                  id="automate-applications"
+                  name="isAutoApproveAllowed"
+                  checked={isAutoApproveAllowed}
+                  onChange={onChangeApplicationAutomationSwitch}
+                />
+              </div>
+              <Tab
+                tabs={tabs}
+                tabActive={tabActive}
+                activeTabIndex={activeTabIndex}
+                className="mt-15"
               />
-            </div>
-          </div>
-          <div className="common-white-container client-details-container">
-            <span>Name</span>
-            <div className="client-detail">{viewClientData?.name || 'No name added'}</div>
-            <span>Address</span>
-            <div className="client-detail">
-              {viewClientData?.address?.city || 'No address added'}
-            </div>
-            <span>Phone</span>
-            <div className="client-detail">
-              {viewClientData?.contactNumber || 'No phone number added'}
-            </div>
-            <span>ABN</span>
-            <div className="client-detail">{viewClientData?.abn || 'No ABN number added'}</div>
-            <span>ACN</span>
-            <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
-            <span>Referred By</span>
-            <div className="client-detail">{viewClientData?.referredBy || 'N/A'}</div>
-            <span>Risk Person</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="riskAnalystId"
-              options={riskAnalysts}
-              value={riskAnalystId || []}
-              onChange={onChangeAssignee}
-              isSearchable
-            />
-            <span>Service Person</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="serviceManagerId"
-              options={serviceManagers}
-              value={serviceManagerId || []}
-              onChange={onChangeAssignee}
-              isSearchable
-            />
-            <span>Insurer Name</span>
-            <div className="client-detail">{viewClientData?.insurerId?.name || 'N/A'}</div>
-            <span>Sales Person</span>
-            <div className="client-detail">
-              {viewClientData?.salesPerson || 'No sales person added'}
-            </div>
-            <span>IBIS Sector</span>
-            <div className="client-detail">{viewClientData?.sector || 'No IBIS sector added'}</div>
-            <span>Website</span>
-            <div className="client-detail mail-id-value">
-              {viewClientData?.website || 'No website added'}
-            </div>
-            <span>Trading As</span>
-            <div className="client-detail">{viewClientData?.tradingName || 'N/A'}</div>
-            <span>Inception Date</span>
-            <div className="client-detail">
-              {moment(viewClientData?.inceptionDate).format('DD/MM/YYYY') || 'N/A'}
-            </div>
-            <span>Expiry Date</span>
-            <div className="client-detail">
-              {moment(viewClientData?.expiryDate).format('DD/MM/YYYY') || 'N/A'}
-            </div>
-            <span>Automate Applications</span>
-            <Switch
-              id="automate-applications"
-              name="isAutoApproveAllowed"
-              checked={isAutoApproveAllowed}
-              onChange={onChangeApplicationAutomationSwitch}
-            />
-          </div>
-          <Tab
-            tabs={tabs}
-            tabActive={tabActive}
-            activeTabIndex={activeTabIndex}
-            className="mt-15"
-          />
-          <div className="common-white-container">{tabComponent[activeTabIndex]}</div>
-        </>
+              <div className="common-white-container">{tabComponent[activeTabIndex]}</div>
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
       ) : (
         <Loader />
       )}

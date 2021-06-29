@@ -161,6 +161,13 @@ export const overdue = (state = initialOverdueState, action) => {
       };
     }
 
+    case OVERDUE_REDUX_CONSTANTS.RESET_OVERDUE_LIST_DATA: {
+      return {
+        ...state,
+        overdueList: initialOverdueState.overdueList,
+      };
+    }
+
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return null;
     default:

@@ -4,6 +4,7 @@ import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import Accordion from '../../../common/Accordion/Accordion';
 import {
   changeApplicationStatus,
@@ -13,6 +14,7 @@ import {
   getApplicationReportsListData,
   getApplicationReportsListForFetch,
   getApplicationTaskDefaultEntityDropDownData,
+  getApplicationTaskList,
   getAssigneeDropDownData,
   getViewApplicationDocumentTypeList,
   resetApplicationDetail,
@@ -64,9 +66,11 @@ const ViewApplication = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const viewApplicationData = useSelector(({ application }) => application?.viewApplication ?? {});
-  const { applicationDetail, isLoading } = useMemo(() => viewApplicationData, [
-    viewApplicationData,
-  ]);
+  const { applicationDetail } = useMemo(() => viewApplicationData, [viewApplicationData]);
+
+  const { viewApplicationPageLoader } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+  );
 
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
@@ -112,6 +116,7 @@ const ViewApplication = () => {
     dispatch(getApplicationNotesList(id));
     dispatch(getApplicationModuleList(id));
     dispatch(getViewApplicationDocumentTypeList());
+    dispatch(getApplicationTaskList(id));
     return () => dispatch(resetApplicationDetail());
   }, [id]);
 
@@ -371,200 +376,213 @@ const ViewApplication = () => {
 
   return (
     <>
-      {!isLoading ? (
-        <>
-          <div className="breadcrumb mt-10">
-            <span onClick={backToApplicationList}>Application List</span>
-            <span className="material-icons-round">navigate_next</span>
-            <span>View Application</span>
-          </div>
-          <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
-          <div className="view-application-container">
-            <div className="view-application-details-left">
-              <div className="common-white-container">
-                <div className="">Status</div>
-                <div className="application-status-grid">
-                  <div>
-                    <div className="view-application-status">
-                      {isApprovedOrDeclined ? (
-                        <div>
-                          {['APPROVED'].includes(status?.value) && (
-                            <div className="application-status approved-application-status">
-                              {status?.label}
+      {!viewApplicationPageLoader ? (
+        (() =>
+          !_.isEmpty(applicationDetail) ? (
+            <>
+              <div className="breadcrumb mt-10">
+                <span onClick={backToApplicationList}>Application List</span>
+                <span className="material-icons-round">navigate_next</span>
+                <span>View Application</span>
+              </div>
+              <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
+              <div className="view-application-container">
+                <div className="view-application-details-left">
+                  <div className="common-white-container">
+                    <div className="">Status</div>
+                    <div className="application-status-grid">
+                      <div>
+                        <div className="view-application-status">
+                          {isApprovedOrDeclined ? (
+                            <div>
+                              {['APPROVED'].includes(status?.value) && (
+                                <div className="application-status approved-application-status">
+                                  {status?.label}
+                                </div>
+                              )}
+                              {['DECLINED'].includes(status?.value) && (
+                                <div className="application-status declined-application-status">
+                                  {status?.label}
+                                </div>
+                              )}
                             </div>
+                          ) : (
+                            <ReactSelect
+                              className="react-select-container"
+                              classNamePrefix="react-select"
+                              placeholder="Select Status"
+                              name="applicationStatus"
+                              value={!isApprovedOrDeclined ? status : []}
+                              options={applicationDetail?.applicationStatus}
+                              isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
+                              onChange={handleApplicationStatusChange}
+                            />
                           )}
-                          {['DECLINED'].includes(status?.value) && (
-                            <div className="application-status declined-application-status">
-                              {status?.label}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <ReactSelect
-                          className="react-select-container"
-                          classNamePrefix="react-select"
-                          placeholder="Select Status"
-                          name="applicationStatus"
-                          value={!isApprovedOrDeclined ? status : []}
-                          options={applicationDetail?.applicationStatus}
-                          isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
-                          onChange={handleApplicationStatusChange}
-                        />
-                      )}
 
-                      {!isAllowToUpdate && !isApprovedOrDeclined && (
-                        <div className="ui-state-error">
-                          You don&apos;t have access to approve application, please contact admin
-                          that.
+                          {!isAllowToUpdate && !isApprovedOrDeclined && (
+                            <div className="ui-state-error">
+                              You don&apos;t have access to approve application, please contact
+                              admin that.
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
+                      {isAllowToUpdate && rightSideStatusButtons}
+                    </div>
+                    <div className="application-details-grid">
+                      {applicationDetails?.map(detail => (
+                        <div>
+                          <div className="font-field mb-5">{detail?.title}</div>
+                          {detail?.type === 'text' && (
+                            <div className="detail">{detail.value || '-'}</div>
+                          )}
+                          {detail?.type === 'link' && (
+                            <div
+                              style={{
+                                textDecoration: detail?.value?.value && 'underline',
+                                cursor: 'pointer',
+                              }}
+                              className="detail"
+                              onClick={() => {
+                                handleDrawerState(
+                                  detail?.value?._id,
+                                  applicationDetail?.headers?.filter(
+                                    header => header?.name === detail?.name
+                                  )
+                                );
+                              }}
+                            >
+                              {detail?.value?.value || '-'}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {blockers?.length > 0 && (
+                      <>
+                        <div className="blockers-title">Blockers</div>
+
+                        {blockers.map(blocker => (
+                          <div className="guideline" key={Math.random()}>
+                            {blocker}
+                          </div>
+                        ))}
+                      </>
+                    )}
+                    <div className="current-business-address-title">Current Business Address</div>
+                    <div className="current-business-address">
+                      <div className="font-field mr-15">Address</div>
+                      <div className="font-primary">{applicationDetail?.address || '-'}</div>
+                    </div>
+                    <div className="view-application-question">
+                      Any extended payment terms outside your policy standard terms?
+                    </div>
+                    <div className="view-application-answer">
+                      {applicationDetail?.isExtendedPaymentTerms
+                        ? applicationDetail?.extendedPaymentTermsDetails
+                        : ' No'}
+                    </div>
+                    <div className="view-application-question">
+                      Any overdue amounts passed your maximum extension period / Credit period?
+                    </div>
+                    <div className="view-application-answer">
+                      {applicationDetail?.isPassedOverdueAmount
+                        ? applicationDetail?.passedOverdueDetails
+                        : ' No'}
                     </div>
                   </div>
-                  {isAllowToUpdate && rightSideStatusButtons}
                 </div>
-                <div className="application-details-grid">
-                  {applicationDetails?.map(detail => (
-                    <div>
-                      <div className="font-field mb-5">{detail?.title}</div>
-                      {detail?.type === 'text' && (
-                        <div className="detail">{detail.value || '-'}</div>
+                <div className="view-application-details-right">
+                  <div className="common-white-container">
+                    <Accordion className="view-application-accordion">
+                      {isAUSOrNZL && (
+                        <ApplicationReportAccordion debtorId={debtorId?.[0]?._id} index={0} />
                       )}
-                      {detail?.type === 'link' && (
-                        <div
-                          style={{
-                            textDecoration: detail?.value?.value && 'underline',
-                            cursor: 'pointer',
-                          }}
-                          className="detail"
-                          onClick={() => {
-                            handleDrawerState(
-                              detail?.value?._id,
-                              applicationDetail?.headers?.filter(
-                                header => header?.name === detail?.name
-                              )
-                            );
-                          }}
-                        >
-                          {detail?.value?.value || '-'}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      <ApplicationTaskAccordion applicationId={id} index={1} />
+                      <ApplicationNotesAccordion applicationId={id} index={2} />
+                      <ApplicationAlertsAccordion index={3} />
+                      <ApplicationDocumentsAccordion applicationId={id} index={4} />
+                      <ApplicationLogsAccordion index={5} />
+                    </Accordion>
+                  </div>
                 </div>
-                {blockers?.length > 0 && (
-                  <>
-                    <div className="blockers-title">Blockers</div>
-
-                    {blockers.map(blocker => (
-                      <div className="guideline" key={Math.random()}>
-                        {blocker}
+              </div>
+              {showConfirmModal && (
+                <Modal
+                  className="add-to-crm-modal"
+                  header="Application Status"
+                  buttons={changeStatusButton}
+                  hideModal={toggleConfirmationModal}
+                >
+                  {notesListLength > 0 || statusToChange?.value !== 'DECLINED' ? (
+                    <span className="confirmation-message">
+                      Are you sure you want to {statusToChange?.label} this application? Dont forget
+                      to put add a Note.
+                    </span>
+                  ) : (
+                    <>
+                      <div className="font-field mb-30">
+                        Are you sure you want to decline this application?
                       </div>
-                    ))}
-                  </>
-                )}
-                <div className="current-business-address-title">Current Business Address</div>
-                <div className="current-business-address">
-                  <div className="font-field mr-15">Address</div>
-                  <div className="font-primary">{applicationDetail?.address || '-'}</div>
-                </div>
-                <div className="view-application-question">
-                  Any extended payment terms outside your policy standard terms?
-                </div>
-                <div className="view-application-answer">
-                  {applicationDetail?.isExtendedPaymentTerms
-                    ? applicationDetail?.extendedPaymentTermsDetails
-                    : ' No'}
-                </div>
-                <div className="view-application-question">
-                  Any overdue amounts passed your maximum extension period / Credit period?
-                </div>
-                <div className="view-application-answer">
-                  {applicationDetail?.isPassedOverdueAmount
-                    ? applicationDetail?.passedOverdueDetails
-                    : ' No'}
-                </div>
-              </div>
-            </div>
-            <div className="view-application-details-right">
-              <div className="common-white-container">
-                <Accordion className="view-application-accordion">
-                  {isAUSOrNZL && (
-                    <ApplicationReportAccordion debtorId={debtorId?.[0]?._id} index={0} />
+                      <div className="add-notes-popup-container">
+                        <span>Description</span>
+                        <Input
+                          prefixClass="font-placeholder"
+                          placeholder="Note description"
+                          name="description"
+                          type="text"
+                          value={declinedNoteData?.description}
+                          onChange={e => {
+                            setDeclinedNoteData({
+                              ...declinedNoteData,
+                              description: e?.target?.value,
+                            });
+                          }}
+                        />
+                        <span>Private/Public</span>
+                        <Switch
+                          id="selected-note"
+                          name="isPublic"
+                          checked={declinedNoteData.isPublic}
+                          onChange={e => {
+                            setDeclinedNoteData({
+                              ...declinedNoteData,
+                              isPublic: e.target.checked,
+                            });
+                          }}
+                        />
+                      </div>
+                    </>
                   )}
-                  <ApplicationTaskAccordion applicationId={id} index={1} />
-                  <ApplicationNotesAccordion applicationId={id} index={2} />
-                  <ApplicationAlertsAccordion index={3} />
-                  <ApplicationDocumentsAccordion applicationId={id} index={4} />
-                  <ApplicationLogsAccordion index={5} />
-                </Accordion>
-              </div>
-            </div>
-          </div>
-        </>
+                </Modal>
+              )}
+              {modifyLimitModal && (
+                <Modal
+                  header="Approve Application"
+                  buttons={modifyLimitButtons}
+                  hideModal={toggleModifyLimitModal}
+                >
+                  <div className="modify-credit-limit-container align-center">
+                    <span>Credit Limit</span>
+                    <Input
+                      prefixClass="font-placeholder"
+                      placeholder="New Credit Limit"
+                      name="creditLimit"
+                      type="text"
+                      value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
+                      onChange={e =>
+                        setNewCreditLimit(e?.target?.value?.toString()?.replaceAll(',', ''))
+                      }
+                    />
+                  </div>
+                </Modal>
+              )}
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
       ) : (
         <Loader />
-      )}
-      {showConfirmModal && (
-        <Modal
-          className="add-to-crm-modal"
-          header="Application Status"
-          buttons={changeStatusButton}
-          hideModal={toggleConfirmationModal}
-        >
-          {notesListLength > 0 || statusToChange?.value !== 'DECLINED' ? (
-            <span className="confirmation-message">
-              Are you sure you want to {statusToChange?.label} this application? Dont forget to put
-              add a Note.
-            </span>
-          ) : (
-            <>
-              <div className="font-field mb-30">
-                Are you sure you want to decline this application?
-              </div>
-              <div className="add-notes-popup-container">
-                <span>Description</span>
-                <Input
-                  prefixClass="font-placeholder"
-                  placeholder="Note description"
-                  name="description"
-                  type="text"
-                  value={declinedNoteData?.description}
-                  onChange={e => {
-                    setDeclinedNoteData({ ...declinedNoteData, description: e?.target?.value });
-                  }}
-                />
-                <span>Private/Public</span>
-                <Switch
-                  id="selected-note"
-                  name="isPublic"
-                  checked={declinedNoteData.isPublic}
-                  onChange={e => {
-                    setDeclinedNoteData({ ...declinedNoteData, isPublic: e.target.checked });
-                  }}
-                />
-              </div>
-            </>
-          )}
-        </Modal>
-      )}
-      {modifyLimitModal && (
-        <Modal
-          header="Approve Application"
-          buttons={modifyLimitButtons}
-          hideModal={toggleModifyLimitModal}
-        >
-          <div className="modify-credit-limit-container align-center">
-            <span>Credit Limit</span>
-            <Input
-              prefixClass="font-placeholder"
-              placeholder="New Credit Limit"
-              name="creditLimit"
-              type="text"
-              value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
-              onChange={e => setNewCreditLimit(e?.target?.value?.toString()?.replaceAll(',', ''))}
-            />
-          </div>
-        </Modal>
       )}
     </>
   );

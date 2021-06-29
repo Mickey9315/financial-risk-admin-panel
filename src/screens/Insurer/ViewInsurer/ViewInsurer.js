@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 import Tab from '../../../common/Tab/Tab';
 import {
   getInsurerById,
+  resetInsurerViewData,
   setViewInsurerActiveTabIndex,
   syncInsurerData,
 } from '../redux/InsurerAction';
@@ -34,7 +36,7 @@ const ViewInsurer = () => {
   );
   const insurerData = useSelector(({ insurer }) => insurer?.insurerViewData ?? {});
   const { viewInsurerSyncInsurerDataButtonLoaderAction, viewInsurerPageLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const finalTabs = useMemo(() => {
@@ -58,7 +60,10 @@ const ViewInsurer = () => {
   ]);
   useEffect(() => {
     dispatch(getInsurerById(id));
-    return () => setViewInsurerActiveTabIndex(0);
+    return () => {
+      setViewInsurerActiveTabIndex(0);
+      dispatch(resetInsurerViewData());
+    };
   }, [id]);
 
   useEffect(() => {
@@ -79,7 +84,7 @@ const ViewInsurer = () => {
               <span className="material-icons-round">navigate_next</span>
               <span>View Insurer</span>
             </div>
-            {!insurerData?.isDefault && (
+            {!_.isEmpty(insurerData) && !insurerData?.isDefault && (
               <div className="buttons-row">
                 <Button
                   buttonType="secondary"
@@ -90,55 +95,60 @@ const ViewInsurer = () => {
               </div>
             )}
           </div>
-
-          <div className="common-detail-container">
-            <div className="common-detail-grid view-insurer-grid">
-              <div className="common-detail-field">
-                <span className="common-detail-title">Name</span>
-                <span className="view-insurer-value">{name ?? '-'}</span>
+          {!_.isEmpty(insurerData) ? (
+            <>
+              <div className="common-detail-container">
+                <div className="common-detail-grid view-insurer-grid">
+                  <div className="common-detail-field">
+                    <span className="common-detail-title">Name</span>
+                    <span className="view-insurer-value">{name ?? '-'}</span>
+                  </div>
+                  <div className="common-detail-field">
+                    <span className="common-detail-title">Address</span>
+                    <span className="view-insurer-value">{`${
+                      address
+                        ? `${address?.addressLine}${address?.addressLine && ' '}${address?.city}${
+                            address?.city && ', '
+                          }${address?.country}`
+                        : '-'
+                    }`}</span>
+                  </div>
+                  <div className="common-detail-field">
+                    <span className="common-detail-title">Phone Number</span>
+                    <span className="view-insurer-value">
+                      {contactNumber?.toString()?.trim()?.length > 0 ? contactNumber : '-'}
+                    </span>
+                  </div>
+                  <div className="common-detail-field">
+                    <span className="common-detail-title">Email</span>
+                    <span className="view-insurer-value mail-id-value">{email ?? '-'}</span>
+                  </div>
+                  <div className="common-detail-field view-insurer-website">
+                    <span className="common-detail-title">Website</span>
+                    <a
+                      href={website ?? ''}
+                      target="_blank"
+                      className="mail-id-value"
+                      rel="noreferrer"
+                      name="website"
+                      placeholder="No value"
+                    >
+                      {website?.toString()?.trim()?.length > 0 ? website : '-'}
+                    </a>
+                  </div>
+                </div>
               </div>
-              <div className="common-detail-field">
-                <span className="common-detail-title">Address</span>
-                <span className="view-insurer-value">{`${
-                  address
-                    ? `${address?.addressLine}${address?.addressLine && ' '}${address?.city}${
-                        address?.city && ', '
-                      }${address?.country}`
-                    : '-'
-                }`}</span>
-              </div>
-              <div className="common-detail-field">
-                <span className="common-detail-title">Phone Number</span>
-                <span className="view-insurer-value">
-                  {contactNumber?.toString()?.trim()?.length > 0 ? contactNumber : '-'}
-                </span>
-              </div>
-              <div className="common-detail-field">
-                <span className="common-detail-title">Email</span>
-                <span className="view-insurer-value mail-id-value">{email ?? '-'}</span>
-              </div>
-              <div className="common-detail-field view-insurer-website">
-                <span className="common-detail-title">Website</span>
-                <a
-                  href={website ?? ''}
-                  target="_blank"
-                  className="mail-id-value"
-                  rel="noreferrer"
-                  name="website"
-                  placeholder="No value"
-                >
-                  {website?.toString()?.trim()?.length > 0 ? website : '-'}
-                </a>
-              </div>
-            </div>
-          </div>
-          <Tab
-            tabs={finalTabs}
-            tabActive={tabActive}
-            activeTabIndex={activeTabIndex}
-            className="mt-15"
-          />
-          <div className="common-white-container">{finalComponents[activeTabIndex]}</div>
+              <Tab
+                tabs={finalTabs}
+                tabActive={tabActive}
+                activeTabIndex={activeTabIndex}
+                className="mt-15"
+              />
+              <div className="common-white-container">{finalComponents[activeTabIndex]}</div>
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          )}
         </>
       ) : (
         <Loader />
@@ -146,5 +156,4 @@ const ViewInsurer = () => {
     </>
   );
 };
-
 export default ViewInsurer;

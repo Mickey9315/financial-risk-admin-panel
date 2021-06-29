@@ -42,7 +42,7 @@ const DebtorsCreditLimitTab = () => {
     ViewDebtorSurrenderCreditLimitButtonLoaderAction,
     ViewDebtorModifyCreditLimitButtonLoaderAction,
     viewDebtorDownloadCreditLimitCSVButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
     () => creditLimitList ?? {},
@@ -171,7 +171,7 @@ const DebtorsCreditLimitTab = () => {
   }, [id]);
 
   const onClickDownloadButton = useCallback(async () => {
-    if (docs?.length === 0) {
+    if (docs?.length > 0) {
       try {
         const res = await dispatch(downloadCreditLimitCSV(id));
         if (res) downloadAll(res);

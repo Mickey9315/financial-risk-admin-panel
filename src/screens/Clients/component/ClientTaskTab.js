@@ -66,7 +66,7 @@ const ClientTaskTab = () => {
     viewClientSaveNewTaskButtonLoaderAction,
     viewClientUpdateTaskButtonLoaderAction,
     viewClientDeleteTaskButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { page, pages, total, limit, docs, headers } = useMemo(() => taskList ?? {}, [taskList]);
   const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [

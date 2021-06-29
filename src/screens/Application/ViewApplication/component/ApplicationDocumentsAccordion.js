@@ -69,7 +69,7 @@ const ApplicationDocumentsAccordion = props => {
   const {
     viewDocumentUploadDocumentButtonLoaderAction,
     viewDocumentDeleteDocumentButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   // upload doc
   const [uploadModel, setUploadModel] = useState(false);

@@ -290,7 +290,6 @@ const initialReports = {
     page: 1,
     pages: 1,
     headers: [],
-    isLoading: false,
   },
 
   reportFilters: {},
@@ -303,29 +302,11 @@ const initialReports = {
 
 export const reports = (state = initialReports, action) => {
   switch (action.type) {
-    case REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_REQUEST:
-      return {
-        ...state,
-        reportsList: {
-          ...state?.reportsList,
-          isLoading: true,
-        },
-      };
-
     case REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS:
       return {
         ...state,
         reportsList: {
           ...action.data,
-          isLoading: false,
-        },
-      };
-
-    case REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_FAILURE:
-      return {
-        ...state,
-        reportsList: {
-          ...state?.reportsList,
           isLoading: false,
         },
       };
@@ -396,6 +377,12 @@ export const reports = (state = initialReports, action) => {
           ...state.reportFilters,
           [action.filterFor]: initialFilterState[action.filterFor],
         },
+      };
+
+    case REPORTS_REDUX_CONSTANTS.RESET_REPORT_LIST_DATA:
+      return {
+        ...state,
+        reportsList: initialReports.reportsList,
       };
 
     default:

@@ -22,9 +22,9 @@ import Checkbox from '../../../common/Checkbox/Checkbox';
 import { INSURER_VIEW_REDUX_CONSTANT } from '../redux/InsurerReduxConstants';
 import InsurerPoliciesApiServices from '../services/InsurerPoliciesApiServices';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 
 const InsurerPoliciesTab = () => {
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const InsurerPoliciesTab = () => {
     viewInsurerPoliciesColumnResetButtonLoaderAction,
     viewInsurerPoliciesColumnSaveButtonLoaderAction,
     viewInsurerPoliciesSyncWithCRMButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
     policiesList,
@@ -183,18 +183,18 @@ const InsurerPoliciesTab = () => {
     };
     try {
       if (data?.clientIds?.length > 0) {
-        startLoaderButtonOnRequest('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
+        startGeneralLoaderOnRequest('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
         InsurerPoliciesApiServices.syncInsurerPolicyList(id, data)
           .then(res => {
             if (res?.data?.status === 'SUCCESS') {
               successNotification(res?.data?.message ?? 'Policies synced successfully.');
               getInsurerPoliciesList();
-              stopLoaderButtonOnSuccessOrFail('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
+              stopGeneralLoaderOnSuccessOrFail('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
               toggleSyncWithCRM();
             }
           })
           .catch(e => {
-            stopLoaderButtonOnSuccessOrFail('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
+            stopGeneralLoaderOnSuccessOrFail('viewInsurerPoliciesSyncWithCRMButtonLoaderAction');
             errorNotification(e?.data?.message ?? 'Failed');
           });
       } else {

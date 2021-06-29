@@ -19,12 +19,15 @@ export const addOverdueValidations = async (
   const errors = {};
   let preparedData = {};
 
-  if (data?.acn && (!NUMBER_REGEX.test(data?.acn) || data?.acn?.trim()?.length !== 9)) {
+  if (
+    data?.acn &&
+    (!NUMBER_REGEX.test(data?.acn) || data?.acn?.trim()?.length < 5 || data?.acn?.trim().length > 9)
+  ) {
     validated = false;
     errors.acn = 'Please enter valid ACN number';
   }
 
-  if (data?.debtorId.length <= 0 && !data?.acn && data?.acn?.trim()?.length <= 0) {
+  if (data?.debtorId?.length <= 0 && !data?.acn && data?.acn?.trim()?.length <= 0) {
     validated = false;
     errors.acn = 'You have to provide at least one - either a debtor or ACN number';
   }

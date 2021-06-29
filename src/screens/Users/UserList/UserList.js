@@ -14,6 +14,7 @@ import {
   deleteUserDetails,
   getUserColumnListName,
   getUserManagementListByFilter,
+  resetUserListData,
   resetUserListPaginationData,
   saveUserColumnListName,
 } from '../redux/UserManagementAction';
@@ -65,15 +66,15 @@ const UserList = () => {
     UserListColumnSaveButtonLoaderAction,
     UserListColumnResetButtonLoaderAction,
     viewUserDeleteUserButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+    userListLoader,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
   const [deleteId, setDeleteId] = useState(null);
   const { role, startDate, endDate } = useMemo(() => filter ?? {}, [filter]);
-  const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
-    () => userListWithPageData ?? {},
-    [userListWithPageData]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData ?? {}, [
+    userListWithPageData,
+  ]);
 
   const handleStartDateChange = useCallback(
     date => {
@@ -346,7 +347,10 @@ const UserList = () => {
 
     getUserManagementByFilter({ ...params, ...filters });
     dispatch(getUserColumnListName());
-    return dispatch(resetUserListPaginationData(page, limit, pages, total));
+    return () => {
+      dispatch(resetUserListPaginationData(page, limit, pages, total));
+      dispatch(resetUserListData());
+    };
   }, []);
 
   useUrlParamsUpdate({
@@ -366,132 +370,136 @@ const UserList = () => {
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-header-name">User List</div>
-        {!isLoading && docs && (
-          <div className="page-header-button-container">
-            <IconButton
-              buttonType="secondary"
-              title="filter_list"
-              className="mr-10"
-              buttonTitle="Click to apply filters on user list"
-              onClick={() => toggleFilterModal()}
-            />
-            <IconButton
-              buttonType="primary"
-              title="format_line_spacing"
-              className="mr-10"
-              buttonTitle="Click to select custom fields"
-              onClick={() => toggleCustomField()}
-            />
-            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-              <Button title="Add User" buttonType="success" onClick={openAddUser} />
-            </UserPrivilegeWrapper>
-          </div>
-        )}
-      </div>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {!isLoading && docs ? (
-        docs.length > 0 ? (
-          <>
-            <div className="common-list-container">
-              <Table
-                align="left"
-                valign="center"
-                tableClass="main-list-table"
-                data={docs}
-                headers={headers}
-                recordSelected={onSelectUserRecord}
-                recordActionClick={onSelectUserRecordActionClick}
-                rowClass="cursor-pointer"
-                haveActions
+      {!userListLoader ? (
+        <>
+          <div className="page-header">
+            <div className="page-header-name">User List</div>
+            <div className="page-header-button-container">
+              <IconButton
+                buttonType="secondary"
+                title="filter_list"
+                className="mr-10"
+                buttonTitle="Click to apply filters on user list"
+                onClick={() => toggleFilterModal()}
               />
+              <IconButton
+                buttonType="primary"
+                title="format_line_spacing"
+                className="mr-10"
+                buttonTitle="Click to select custom fields"
+                onClick={() => toggleCustomField()}
+              />
+              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                <Button title="Add User" buttonType="success" onClick={openAddUser} />
+              </UserPrivilegeWrapper>
             </div>
-            <Pagination
-              className="common-list-pagination"
-              total={total}
-              pages={pages}
-              page={page}
-              limit={limit}
-              pageActionClick={pageActionClick}
-              onSelectLimit={onSelectLimit}
+          </div>
+          {docs.length > 0 ? (
+            <>
+              <div className="common-list-container">
+                <Table
+                  align="left"
+                  valign="center"
+                  tableClass="main-list-table"
+                  data={docs}
+                  headers={headers}
+                  recordSelected={onSelectUserRecord}
+                  recordActionClick={onSelectUserRecordActionClick}
+                  rowClass="cursor-pointer"
+                  haveActions
+                />
+              </div>
+              <Pagination
+                className="common-list-pagination"
+                total={total}
+                pages={pages}
+                page={page}
+                limit={limit}
+                pageActionClick={pageActionClick}
+                onSelectLimit={onSelectLimit}
+              />
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          )}
+
+          {filterModal && (
+            <Modal
+              headerIcon="filter_list"
+              header="Filter"
+              buttons={filterModalButtons}
+              className="filter-modal"
+              hideModal={toggleFilterModal}
+            >
+              <div className="filter-modal-row">
+                <div className="form-title">Role</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="role"
+                  options={USER_ROLES}
+                  value={userRoleSelectedValue}
+                  onChange={handleFilterChange}
+                  searchable={false}
+                />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title">Date</div>
+                <div className="date-picker-container filter-date-picker-container mr-15">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={startDate}
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={handleStartDateChange}
+                    placeholderText="From Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+                <div className="date-picker-container filter-date-picker-container">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={endDate}
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={handleEndDateChange}
+                    placeholderText="To Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+              </div>
+            </Modal>
+          )}
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              buttons={customFieldsModalButtons}
+              toggleCustomField={toggleCustomField}
             />
-          </>
-        ) : (
-          <div className="no-record-found">No record found</div>
-        )
+          )}
+          {deleteModal && (
+            <Modal
+              header="Delete User"
+              buttons={deleteUserButtons}
+              hideModal={toggleConfirmationModal}
+            >
+              <span className="confirmation-message">
+                Are you sure you want to delete this user?
+              </span>
+            </Modal>
+          )}
+        </>
       ) : (
         <Loader />
-      )}
-
-      {filterModal && (
-        <Modal
-          headerIcon="filter_list"
-          header="Filter"
-          buttons={filterModalButtons}
-          className="filter-modal"
-          hideModal={toggleFilterModal}
-        >
-          <div className="filter-modal-row">
-            <div className="form-title">Role</div>
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select"
-              name="role"
-              options={USER_ROLES}
-              value={userRoleSelectedValue}
-              onChange={handleFilterChange}
-              searchable={false}
-            />
-          </div>
-          <div className="filter-modal-row">
-            <div className="form-title">Date</div>
-            <div className="date-picker-container filter-date-picker-container mr-15">
-              <DatePicker
-                className="filter-date-picker"
-                selected={startDate}
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                onChange={handleStartDateChange}
-                placeholderText="From Date"
-                dateFormat="dd/MM/yyyy"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-            <div className="date-picker-container filter-date-picker-container">
-              <DatePicker
-                className="filter-date-picker"
-                selected={endDate}
-                showMonthDropdown
-                showYearDropdown
-                scrollableYearDropdown
-                onChange={handleEndDateChange}
-                placeholderText="To Date"
-                dateFormat="dd/MM/yyyy"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-          </div>
-        </Modal>
-      )}
-      {customFieldModal && (
-        <CustomFieldModal
-          defaultFields={defaultFields}
-          customFields={customFields}
-          onChangeSelectedColumn={onChangeSelectedColumn}
-          buttons={customFieldsModalButtons}
-          toggleCustomField={toggleCustomField}
-        />
-      )}
-      {deleteModal && (
-        <Modal header="Delete User" buttons={deleteUserButtons} hideModal={toggleConfirmationModal}>
-          <span className="confirmation-message">Are you sure you want to delete this user?</span>
-        </Modal>
       )}
     </>
   );
 };
-
 export default UserList;

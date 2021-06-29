@@ -48,7 +48,7 @@ const MyWorkAddTask = () => {
   ]);
 
   const { myWorkSaveNewTaskLoaderButtonAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const INPUTS = useMemo(

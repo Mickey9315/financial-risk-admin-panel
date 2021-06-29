@@ -21,7 +21,7 @@ const ApplicationReportAccordion = props => {
   );
 
   const { viewApplicationFetchReportButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const reportListData = useMemo(() => reportList?.docs ?? [], [reportList]);

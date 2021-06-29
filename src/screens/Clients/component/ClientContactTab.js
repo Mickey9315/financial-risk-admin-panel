@@ -35,7 +35,7 @@ const ClientContactsTab = () => {
     viewClientContactColumnSaveButtonLoaderAction,
     viewClientContactColumnResetButtonLoaderAction,
     viewClientContactSyncWithCRMButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers } = useMemo(() => contactList ?? {}, [
     contactList,

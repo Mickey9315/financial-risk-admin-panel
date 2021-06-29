@@ -235,12 +235,6 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           [`${action.name}`]: action?.value,
         },
       };
-    case DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_RESET_DEBTOR_DETAILS:
-      return {
-        ...state,
-        selectedDebtorData: {},
-      };
-
     // DEBTORS NOTES
 
     case DEBTORS_REDUX_CONSTANTS.NOTES.FETCH_DEBTOR_NOTES_LIST_SUCCESS:
@@ -980,6 +974,18 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
     }
+
+    case DEBTORS_REDUX_CONSTANTS.RESET_DEBTOR_LIST_DATA:
+      return {
+        ...state,
+        debtorsList: initialDebtorState.debtorsList,
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.RESET_DEBTOR_VIEW_DATA:
+      return {
+        ...state,
+        selectedDebtorData: {},
+      };
 
     default:
       return state;

@@ -2,28 +2,25 @@ import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { ReportsApiService } from '../services/ReportsApiService';
 import { REPORTS_REDUX_CONSTANTS } from './ReportsReduxConstants';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
 
 export const getReportList = params => {
   return async dispatch => {
     try {
-      dispatch({
-        type: REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_REQUEST,
-      });
+      startGeneralLoaderOnRequest('viewReportListLoader');
       const response = await ReportsApiService.getReportsList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS,
           data: response.data.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('viewReportListLoader');
       }
     } catch (e) {
-      dispatch({
-        type: REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_FAILURE,
-      });
+      stopGeneralLoaderOnSuccessOrFail('viewReportListLoader');
       displayErrors(e);
     }
   };
@@ -64,7 +61,9 @@ export const changeReportColumnList = data => {
 export const saveReportColumnList = ({ reportColumnList = {}, isReset = false, reportFor }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(`reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+      startGeneralLoaderOnRequest(
+        `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
@@ -84,7 +83,7 @@ export const saveReportColumnList = ({ reportColumnList = {}, isReset = false, r
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -97,12 +96,12 @@ export const saveReportColumnList = ({ reportColumnList = {}, isReset = false, r
           data: reportColumnList,
         });
         successNotification('Columns updated successfully');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -149,7 +148,7 @@ export const resetCurrentFilter = filterFor => {
 };
 
 export const reportDownloadAction = async (reportFor, filters) => {
-  startLoaderButtonOnRequest('reportDownloadButtonLoaderAction');
+  startGeneralLoaderOnRequest('reportDownloadButtonLoaderAction');
   const config = {
     columnFor: reportFor,
     ...filters,
@@ -157,12 +156,20 @@ export const reportDownloadAction = async (reportFor, filters) => {
   try {
     const response = await ReportsApiService.downloadReportList(config);
     if (response?.statusText === 'OK') {
-      stopLoaderButtonOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
       return response;
     }
   } catch (e) {
-    stopLoaderButtonOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
+    stopGeneralLoaderOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
     displayErrors(e);
   }
   return false;
+};
+
+export const resetReportListData = () => {
+  return dispatch => {
+    dispatch({
+      type: REPORTS_REDUX_CONSTANTS.RESET_REPORT_LIST_DATA,
+    });
+  };
 };

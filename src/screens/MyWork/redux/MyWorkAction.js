@@ -3,31 +3,28 @@ import { MY_WORK_REDUX_CONSTANTS } from './MyWorkReduxConstants';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 
 export const getTaskListByFilter = (params = {}) => {
   return async dispatch => {
+    startGeneralLoaderOnRequest('myWorkTasksListLoader');
     const param = {
       ...params,
       columnFor: 'task',
     };
     try {
-      dispatch({
-        type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_REQUEST_ACTION,
-      });
       const response = await MyWorkApiServices.getTaskListData(param);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_SUCCESS_ACTION,
           data: response.data.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('myWorkTasksListLoader');
       }
     } catch (e) {
-      dispatch({
-        type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_FAIL_ACTION,
-      });
+      stopGeneralLoaderOnSuccessOrFail('myWorkTasksListLoader');
       displayErrors(e);
     }
   };
@@ -100,18 +97,18 @@ export const updateAddTaskStateFields = (name, value) => {
 export const saveTaskData = (data, backToTask) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('myWorkSaveNewTaskLoaderButtonAction');
+      startGeneralLoaderOnRequest('myWorkSaveNewTaskLoaderButtonAction');
       const response = await MyWorkApiServices.saveNewTask(data);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task created successfully');
-        stopLoaderButtonOnSuccessOrFail('myWorkSaveNewTaskLoaderButtonAction');
+        stopGeneralLoaderOnSuccessOrFail('myWorkSaveNewTaskLoaderButtonAction');
         backToTask();
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('myWorkSaveNewTaskLoaderButtonAction');
+      stopGeneralLoaderOnSuccessOrFail('myWorkSaveNewTaskLoaderButtonAction');
       displayErrors(e);
     }
   };
@@ -167,7 +164,7 @@ export const changeTaskListColumnStatus = data => {
 export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = false }) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest(
+      startGeneralLoaderOnRequest(
         `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       let data = {
@@ -189,7 +186,7 @@ export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = 
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopLoaderButtonOnSuccessOrFail(
+          stopGeneralLoaderOnSuccessOrFail(
             `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
           );
           throw Error();
@@ -204,12 +201,12 @@ export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = 
           data: taskColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
-        stopLoaderButtonOnSuccessOrFail(
+        stopGeneralLoaderOnSuccessOrFail(
           `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
         );
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail(
+      stopGeneralLoaderOnSuccessOrFail(
         `myWorkTaskColumns${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
       );
       displayErrors(e);
@@ -237,17 +234,17 @@ export const getTaskFilter = () => {
 export const deleteTaskAction = (taskId, cb) => {
   return async () => {
     try {
-      startLoaderButtonOnRequest('myWorkTaskDeleteTaskButtonLoaderAction');
+      startGeneralLoaderOnRequest('myWorkTaskDeleteTaskButtonLoaderAction');
       const response = await MyWorkApiServices.deleteTask(taskId);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task deleted successfully.');
-        stopLoaderButtonOnSuccessOrFail('myWorkTaskDeleteTaskButtonLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('myWorkTaskDeleteTaskButtonLoaderAction');
         if (cb) {
           cb();
         }
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('myWorkTaskDeleteTaskButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('myWorkTaskDeleteTaskButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -256,17 +253,17 @@ export const deleteTaskAction = (taskId, cb) => {
 export const getTaskById = id => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('myWorkViewTaskLoaderAction');
+      startGeneralLoaderOnRequest('myWorkViewTaskLoaderAction');
       const response = await MyWorkApiServices.getTaskDetailById(id);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_DETAIL_BY_ID_ACTION,
           data: response.data.data,
         });
-        stopLoaderButtonOnSuccessOrFail('myWorkViewTaskLoaderAction');
+        stopGeneralLoaderOnSuccessOrFail('myWorkViewTaskLoaderAction');
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('myWorkViewTaskLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('myWorkViewTaskLoaderAction');
       displayErrors(e);
     }
   };
@@ -275,11 +272,11 @@ export const getTaskById = id => {
 export const markTaskAsComplete = (id, data) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('myWorkCompleteTaskLoaderButtonAction');
+      startGeneralLoaderOnRequest('myWorkCompleteTaskLoaderButtonAction');
       const response = await MyWorkApiServices.updateTask(id, data);
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Task updated successfully.');
-        stopLoaderButtonOnSuccessOrFail('myWorkCompleteTaskLoaderButtonAction');
+        stopGeneralLoaderOnSuccessOrFail('myWorkCompleteTaskLoaderButtonAction');
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_EDIT_TASK_FIELD_ACTION,
           name: 'isCompleted',
@@ -287,7 +284,7 @@ export const markTaskAsComplete = (id, data) => {
         });
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('myWorkCompleteTaskLoaderButtonAction');
+      stopGeneralLoaderOnSuccessOrFail('myWorkCompleteTaskLoaderButtonAction');
       displayErrors(e);
     }
   };
@@ -306,7 +303,7 @@ export const updateEditTaskStateFields = (name, value) => {
 export const editTaskData = (id, data, backToTask) => {
   return async dispatch => {
     try {
-      startLoaderButtonOnRequest('myWorkEditTaskLoaderButtonAction');
+      startGeneralLoaderOnRequest('myWorkEditTaskLoaderButtonAction');
 
       const response = await MyWorkApiServices.updateTask(id, data);
       if (response.data.status === 'SUCCESS') {
@@ -314,12 +311,12 @@ export const editTaskData = (id, data, backToTask) => {
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
         });
         successNotification(response?.data?.message || 'Task updated successfully');
-        stopLoaderButtonOnSuccessOrFail('myWorkEditTaskLoaderButtonAction');
+        stopGeneralLoaderOnSuccessOrFail('myWorkEditTaskLoaderButtonAction');
 
         backToTask();
       }
     } catch (e) {
-      stopLoaderButtonOnSuccessOrFail('myWorkEditTaskLoaderButtonAction');
+      stopGeneralLoaderOnSuccessOrFail('myWorkEditTaskLoaderButtonAction');
       displayErrors(e);
     }
   };
@@ -367,6 +364,14 @@ export const clearNotificationData = () => {
   return dispatch => {
     dispatch({
       type: MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS.CLEAR_NOTIFICATION_DATA,
+    });
+  };
+};
+
+export const resetMyWorkTaskData = () => {
+  return dispatch => {
+    dispatch({
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_DATA,
     });
   };
 };

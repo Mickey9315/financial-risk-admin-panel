@@ -20,7 +20,7 @@ function LoginScreen() {
   const [password, setPassword] = useState('');
   const [rememberUser, setRememberUser] = useState(false);
   const { logInButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const onClickLogin = async () => {

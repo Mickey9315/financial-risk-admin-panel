@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 import Button from '../../../../common/Button/Button';
 import Input from '../../../../common/Input/Input';
 import {
@@ -54,7 +55,7 @@ const MyWorkAddTask = () => {
   const { assigneeList, entityList } = useMemo(() => dropDownData, [dropDownData]);
 
   const { myWorkEditTaskLoaderButtonAction, myWorkViewTaskLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const INPUTS = useMemo(
@@ -303,29 +304,33 @@ const MyWorkAddTask = () => {
 
   return (
     <>
-      {' '}
       {!myWorkViewTaskLoaderAction ? (
-        <>
-          <div className="breadcrumb-button-row">
-            <div className="breadcrumb">
-              <span onClick={backToTaskList}>Task List</span>
-              <span className="material-icons-round">navigate_next</span>
-              <span>Edit Task</span>
-            </div>
-            <div className="buttons-row">
-              <Button buttonType="primary-1" title="Close" onClick={onCloseEditTask} />
-              <Button
-                buttonType="primary"
-                title="Save"
-                onClick={onSaveTask}
-                isLoading={myWorkEditTaskLoaderButtonAction}
-              />
-            </div>
-          </div>
-          <div className="common-white-container my-work-add-task-container">
-            {INPUTS.map(getComponentFromType)}
-          </div>
-        </>
+        (() =>
+          !_.isEmpty(taskDetails) ? (
+            <>
+              <div className="breadcrumb-button-row">
+                <div className="breadcrumb">
+                  <span onClick={backToTaskList}>Task List</span>
+                  <span className="material-icons-round">navigate_next</span>
+                  <span>Edit Task</span>
+                </div>
+                <div className="buttons-row">
+                  <Button buttonType="primary-1" title="Close" onClick={onCloseEditTask} />
+                  <Button
+                    buttonType="primary"
+                    title="Save"
+                    onClick={onSaveTask}
+                    isLoading={myWorkEditTaskLoaderButtonAction}
+                  />
+                </div>
+              </div>
+              <div className="common-white-container my-work-add-task-container">
+                {INPUTS.map(getComponentFromType)}
+              </div>
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
       ) : (
         <Loader />
       )}

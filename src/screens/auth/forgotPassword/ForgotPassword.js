@@ -14,7 +14,7 @@ function ForgotPassword() {
   const history = useHistory();
 
   const { forgotPasswordButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? {}
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? {}
   );
 
   const onChangeEmail = e => {

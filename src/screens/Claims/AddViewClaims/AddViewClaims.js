@@ -4,6 +4,7 @@ import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+import _ from 'lodash';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Switch from '../../../common/Switch/Switch';
@@ -32,8 +33,11 @@ const AddViewClaims = () => {
   const claimDetails = useSelector(({ claims }) => claims?.claimDetails ?? {});
   const backToClaimsList = useCallback(() => {
     history.replace('/claims');
-    dispatch(resetClaimDetails());
   }, [history]);
+
+  const { viewClaimLoader } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+  );
 
   const claimClientList = clientList?.map(client => {
     return { name: 'accountid', label: client?.label, value: client?.value };
@@ -397,43 +401,42 @@ const AddViewClaims = () => {
   useEffect(() => {
     dispatch(getClaimsEntityList());
     dispatch(getClaimDetails(id));
+    return () => {
+      dispatch(resetClaimDetails());
+    };
   }, []);
 
   return (
     <>
-      <div className="breadcrumb-button-row">
-        <div className="breadcrumb">
-          <span onClick={backToClaimsList}>Claims List</span>
-          <span className="material-icons-round">navigate_next</span>
-          <span>{type === 'view' ? 'View' : 'New'} Claim</span>
-        </div>
-      </div>
-      {type === 'view' ? (
+      {!viewClaimLoader ? (
         (() =>
-          claimDetails && Object.entries(claimDetails).length > 0 ? (
-            <div
-              className={`common-white-container add-claims-content ${
-                type === 'view' && 'view-claim-content'
-              }`}
-            >
-              {inputClaims.map(getComponentByType)}
-            </div>
+          !_.isEmpty(claimDetails) ? (
+            <>
+              <div className="breadcrumb-button-row">
+                <div className="breadcrumb">
+                  <span onClick={backToClaimsList}>Claims List</span>
+                  <span className="material-icons-round">navigate_next</span>
+                  <span>{type === 'view' ? 'View' : 'New'} Claim</span>
+                </div>
+              </div>
+              <div
+                className={`common-white-container add-claims-content ${
+                  type === 'view' && 'view-claim-content'
+                }`}
+              >
+                {inputClaims.map(getComponentByType)}
+              </div>
+              {type === 'add' && (
+                <div className="add-overdues-save-button">
+                  <Button buttonType="primary" title="Save" onClick={onAddClaim} />
+                </div>
+              )}
+            </>
           ) : (
-            <Loader />
+            <div className="no-record-found">No record found</div>
           ))()
       ) : (
-        <div
-          className={`common-white-container add-claims-content ${
-            type === 'view' && 'view-claim-content'
-          }`}
-        >
-          {inputClaims.map(getComponentByType)}
-        </div>
-      )}
-      {type === 'add' && (
-        <div className="add-overdues-save-button">
-          <Button buttonType="primary" title="Save" onClick={onAddClaim} />
-        </div>
+        <Loader />
       )}
     </>
   );

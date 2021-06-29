@@ -81,7 +81,7 @@ const ClientNotesTab = () => {
     viewClientAddNewNoteButtonLoaderAction,
     viewClientUpdateNoteButtonLoaderAction,
     viewClientDeleteNoteButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList ?? {}, [
     clientNotesList,

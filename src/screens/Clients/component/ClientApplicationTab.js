@@ -30,7 +30,7 @@ const ClientApplicationTab = () => {
   const {
     viewClientApplicationColumnSaveButtonLoaderAction,
     viewClientApplicationColumnResetButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit } = useMemo(() => applicationList ?? {}, [
     applicationList,

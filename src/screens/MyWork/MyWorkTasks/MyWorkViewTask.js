@@ -18,7 +18,7 @@ const MyWorkAddTask = () => {
   const taskDetails = useSelector(({ myWorkReducer }) => myWorkReducer?.task?.taskDetail ?? {});
 
   const { myWorkCompleteTaskLoaderButtonAction, myWorkViewTaskLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const INPUTS = useMemo(

@@ -36,7 +36,7 @@ const ClientPoliciesTab = () => {
     viewClientPoliciesColumnSaveButtonLoaderAction,
     viewClientPoliciesColumnResetButtonLoaderAction,
     viewClientPoliciesSyncWithCRMButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
     policiesList,

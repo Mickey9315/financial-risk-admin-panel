@@ -38,7 +38,7 @@ const DebtorsReportsTab = () => {
     viewDebtorReportsColumnSaveButtonLoaderAction,
     viewDebtorReportsColumnResetButtonLoaderAction,
     viewDebtorFetchReportButtonLoaderAction,
-  } = useSelector(({ loaderButtonReducer }) => loaderButtonReducer ?? false);
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(() => reportsList ?? {}, [
     reportsList,

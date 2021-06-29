@@ -1,25 +1,30 @@
-import {DASHBOARD_REDUX_CONSTANTS} from "./DashboardReduxConstants";
+import { DASHBOARD_REDUX_CONSTANTS } from './DashboardReduxConstants';
 
 const initialDashboardData = {
-    dashboardDetails: {},
-    dashboardUserList: []
-}
+  dashboardDetails: {},
+  dashboardUserList: [],
+};
 
-export const dashboard = (state=initialDashboardData, action) =>{
-    switch(action.type) {
-        case DASHBOARD_REDUX_CONSTANTS.DASHBOARD_USER_LIST_DETAILS:
-            return {
-                ...state,
-                dashboardUserList: action.data
-            }
+export const dashboard = (state = initialDashboardData, action) => {
+  switch (action.type) {
+    case DASHBOARD_REDUX_CONSTANTS.DASHBOARD_USER_LIST_DETAILS:
+      return {
+        ...state,
+        dashboardUserList: action.data,
+      };
 
-        case DASHBOARD_REDUX_CONSTANTS.DASHBOARD_DETAILS:
-            return {
-                ...state,
-                dashboardDetails: action.data
-            }
+    case DASHBOARD_REDUX_CONSTANTS.DASHBOARD_DETAILS:
+      return {
+        ...state,
+        dashboardDetails: action.data,
+      };
 
-        default:
-            return state;
-    }
-}
+    case DASHBOARD_REDUX_CONSTANTS.RESET_DASHBOARD_DETAILS:
+      return {
+        ...initialDashboardData,
+      };
+
+    default:
+      return state;
+  }
+};

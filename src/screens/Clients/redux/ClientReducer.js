@@ -71,27 +71,18 @@ const initialClientManagementColumnList = {
 
 export const clientManagement = (state = initialClientListState, action) => {
   switch (action.type) {
-    case CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_REQUEST:
-      return {
-        ...state,
-        clientList: {
-          ...initialClientListState?.clientList,
-          isLoading: true,
-        },
-      };
     case CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_SUCCESS:
       return {
         ...state,
         clientList: { ...state?.clientList, ...action?.data, isLoading: false, error: null },
       };
-    case CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_FAILURE:
+
+    case CLIENT_REDUX_CONSTANTS.RESET_CLIENT_LIST_DATA:
       return {
         ...state,
-        clientList: {
-          ...initialClientListState?.clientList,
-          isLoading: false,
-        },
+        clientList: initialClientListState.clientList,
       };
+
     case CLIENT_REDUX_CONSTANTS.CLIENT_LIST_USER_ACTION:
       return {
         ...state,
@@ -111,6 +102,12 @@ export const clientManagement = (state = initialClientListState, action) => {
       return {
         ...state,
         selectedClient: action?.data,
+      };
+
+    case CLIENT_REDUX_CONSTANTS.RESET_VIEW_CLIENT_DATA:
+      return {
+        ...state,
+        selectedClient: {},
       };
 
     /*

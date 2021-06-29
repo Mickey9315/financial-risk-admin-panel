@@ -1,23 +1,23 @@
 import AuthApiService from '../../services/AuthApiService';
 import { successNotification } from '../../../../common/Toast';
 import {
-  startLoaderButtonOnRequest,
-  stopLoaderButtonOnSuccessOrFail,
-} from '../../../../common/LoaderButton/redux/LoaderButtonAction';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail,
+} from '../../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { displayErrors } from '../../../../helpers/ErrorNotifyHelper';
 
 export const resetPassword = async (token, password) => {
   try {
-    startLoaderButtonOnRequest('resetPasswordButtonLoaderAction');
+    startGeneralLoaderOnRequest('resetPasswordButtonLoaderAction');
     const data = { token, password };
     const response = await AuthApiService.resetPassword(data);
 
     if (response.data.status === 'SUCCESS') {
       successNotification('Password changed successfully.');
-      stopLoaderButtonOnSuccessOrFail('resetPasswordButtonLoaderAction');
+      stopGeneralLoaderOnSuccessOrFail('resetPasswordButtonLoaderAction');
     }
   } catch (e) {
-    stopLoaderButtonOnSuccessOrFail('resetPasswordButtonLoaderAction');
+    stopGeneralLoaderOnSuccessOrFail('resetPasswordButtonLoaderAction');
     displayErrors(e);
     throw Error();
   }

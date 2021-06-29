@@ -14,7 +14,7 @@ function SetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const { setPasswordButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const history = useHistory();

@@ -17,7 +17,7 @@ const Stepper = props => {
   );
 
   const { generateApplicationSaveAndNextButtonLoaderAction } = useSelector(
-    ({ loaderButtonReducer }) => loaderButtonReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const {
