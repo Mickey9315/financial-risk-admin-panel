@@ -6,8 +6,6 @@ import moment from 'moment';
 import _ from 'lodash';
 import Button from '../../../common/Button/Button';
 import Tab from '../../../common/Tab/Tab';
-import OverDuesTab from '../../../common/Tab/OverduesTab/OverduesTab';
-import ClaimsTab from '../../../common/Tab/ClaimsTab/ClaimsTab';
 import {
   getClientById,
   resetViewClientData,
@@ -24,6 +22,8 @@ import ClientApplicationTab from '../component/ClientApplicationTab';
 import ClientTaskTab from '../component/ClientTaskTab';
 import Switch from '../../../common/Switch/Switch';
 import Loader from '../../../common/Loader/Loader';
+import ClientOverdueTab from '../component/ClientOverdueTab';
+import ClientClaimsTab from '../component/ClientClaimsTab';
 
 const initialAssigneeState = {
   riskAnalystId: [],
@@ -199,8 +199,8 @@ const ViewClient = () => {
     <ClientContactTab />,
     <ClientCreditLimitTab />,
     <ClientApplicationTab />,
-    <OverDuesTab />,
-    <ClaimsTab />,
+    <ClientOverdueTab />,
+    <ClientClaimsTab />,
     <ClientTaskTab />,
     <ClientPoliciesTab />,
     <ClientDocumentsTab />,
@@ -229,6 +229,8 @@ const ViewClient = () => {
                 </div>
               </div>
               <div className="common-white-container client-details-container">
+                <span>Client Code</span>
+                <div className="client-detail">{viewClientData?.clientCode || 'N/A'}</div>
                 <span>Name</span>
                 <div className="client-detail">{viewClientData?.name || 'No name added'}</div>
                 <span>Address</span>
@@ -243,8 +245,6 @@ const ViewClient = () => {
                 <div className="client-detail">{viewClientData?.abn || 'No ABN number added'}</div>
                 <span>ACN</span>
                 <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
-                <span>Referred By</span>
-                <div className="client-detail">{viewClientData?.referredBy || 'N/A'}</div>
                 <span>Risk Person</span>
                 <ReactSelect
                   className="react-select-container"
@@ -283,6 +283,8 @@ const ViewClient = () => {
                 </div>
                 <span>Trading As</span>
                 <div className="client-detail">{viewClientData?.tradingName || 'N/A'}</div>
+                <span>Referred By</span>
+                <div className="client-detail">{viewClientData?.referredBy || 'N/A'}</div>
                 <span>Inception Date</span>
                 <div className="client-detail">
                   {moment(viewClientData?.inceptionDate).format('DD/MM/YYYY') || 'N/A'}

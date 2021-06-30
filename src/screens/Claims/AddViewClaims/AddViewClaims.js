@@ -4,7 +4,6 @@ import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import _ from 'lodash';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
 import Switch from '../../../common/Switch/Switch';
@@ -24,16 +23,25 @@ import {
 } from '../redux/ClaimsAction';
 import { addClaimsValidations } from './AddClaimsValidations';
 import Loader from '../../../common/Loader/Loader';
+import { setViewClientActiveTabIndex } from '../../Clients/redux/ClientAction';
 
 const AddViewClaims = () => {
   const history = useHistory();
+  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
+    history,
+  ]);
   const dispatch = useDispatch();
   const { type, id } = useParams();
   const clientList = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
   const claimDetails = useSelector(({ claims }) => claims?.claimDetails ?? {});
   const backToClaimsList = useCallback(() => {
-    history.replace('/claims');
-  }, [history]);
+    if (isRedirected) {
+      if (redirectedFrom === 'client') {
+        setViewClientActiveTabIndex(4);
+        history.replace(`/clients/client/view/${fromId}`);
+      }
+    } else history.replace('/claims');
+  }, [history, isRedirected, redirectedFrom, fromId]);
 
   const { viewClaimLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
@@ -395,46 +403,45 @@ const AddViewClaims = () => {
   );
 
   const onAddClaim = useCallback(async () => {
-    await addClaimsValidations(dispatch, claimDetails, history);
-  }, [claimDetails]);
+    await addClaimsValidations(dispatch, claimDetails, backToClaimsList);
+  }, [claimDetails, backToClaimsList]);
 
   useEffect(() => {
-    dispatch(getClaimsEntityList());
-    dispatch(getClaimDetails(id));
     return () => {
       dispatch(resetClaimDetails());
     };
   }, []);
 
+  useEffect(() => {
+    dispatch(getClaimsEntityList());
+    if (type === 'view') dispatch(getClaimDetails(id));
+  }, [id, type]);
+
   return (
     <>
       {!viewClaimLoader ? (
-        (() =>
-          !_.isEmpty(claimDetails) ? (
-            <>
-              <div className="breadcrumb-button-row">
-                <div className="breadcrumb">
-                  <span onClick={backToClaimsList}>Claims List</span>
-                  <span className="material-icons-round">navigate_next</span>
-                  <span>{type === 'view' ? 'View' : 'New'} Claim</span>
-                </div>
-              </div>
-              <div
-                className={`common-white-container add-claims-content ${
-                  type === 'view' && 'view-claim-content'
-                }`}
-              >
-                {inputClaims.map(getComponentByType)}
-              </div>
-              {type === 'add' && (
-                <div className="add-overdues-save-button">
-                  <Button buttonType="primary" title="Save" onClick={onAddClaim} />
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="no-record-found">No record found</div>
-          ))()
+        <>
+          {' '}
+          <div className="breadcrumb-button-row">
+            <div className="breadcrumb">
+              <span onClick={backToClaimsList}>Claims List</span>
+              <span className="material-icons-round">navigate_next</span>
+              <span>{type === 'view' ? 'View' : 'New'} Claim</span>
+            </div>
+          </div>
+          <div
+            className={`common-white-container add-claims-content ${
+              type === 'view' && 'view-claim-content'
+            }`}
+          >
+            {inputClaims.map(getComponentByType)}
+          </div>
+          {type === 'add' && (
+            <div className="add-overdues-save-button">
+              <Button buttonType="primary" title="Save" onClick={onAddClaim} />
+            </div>
+          )}
+        </>
       ) : (
         <Loader />
       )}

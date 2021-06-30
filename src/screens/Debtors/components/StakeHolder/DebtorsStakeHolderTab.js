@@ -392,12 +392,6 @@ const DebtorsStakeHolderTab = () => {
     return filteredData;
   }, [COMPANY_INPUT, isAusOrNewStakeHolder, stakeHolder?.registrationNumber]);
 
-  console.log(
-    isEdit,
-    titleDropDown,
-    stakeHolder?.title,
-    titleDropDown?.filter(title => title.value === stakeHolder?.title)
-  );
 
   const INDIVIDUAL_INPUT = useMemo(
     () => [
@@ -1109,7 +1103,6 @@ const DebtorsStakeHolderTab = () => {
     ]
   );
 
-  console.log(entityType);
 
   const onStakeHolderDelete = useCallback(
     stakeHolderId => {

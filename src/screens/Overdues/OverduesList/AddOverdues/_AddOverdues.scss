@@ -36,9 +36,13 @@
     }
   }
 
-  .add-overdue-textarea {
+  .add-overdue-textarea{
     grid-column: 2;
     grid-row: 7/span 7;
+  }
+  .add-overdue-textarea.overdue-analyst-comment{
+    grid-column: 2;
+    grid-row: 10/span 10;
   }
 
   .add-overdue-amount-input, .add-overdue-total-amount {

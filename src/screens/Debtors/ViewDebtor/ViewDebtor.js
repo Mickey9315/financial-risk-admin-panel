@@ -21,20 +21,18 @@ import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
 import DebtorsCreditLimitTab from '../components/DebtorsCreditLimitTab';
 import DebtorsApplicationTab from '../components/DebtorsApplicationTab';
-import DebtorsOverduesTab from '../components/DebtorsOverduesTab';
-import DebtorsClaimsTab from '../components/DebtorsClaimsTab';
 import DebtorsDocumentsTab from '../components/DebtorsDocumentsTab';
 import DebtorsNotesTab from '../components/DebtorsNotesTab';
 import DebtorsReportsTab from '../components/DebtorsReportsTab';
 import DebtorsTasksTab from '../components/DebtorsTasksTab';
 import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderTab';
+import DebtorOverdueTab from '../components/DebtorOverdueTab';
 
 const VIEW_DEBTOR_TABS = [
   <DebtorsCreditLimitTab />,
   <DebtorsStakeHolderTab />,
   <DebtorsApplicationTab />,
-  <DebtorsOverduesTab />,
-  <DebtorsClaimsTab />,
+  <DebtorOverdueTab />,
   <DebtorsTasksTab />,
   <DebtorsDocumentsTab />,
   <DebtorsNotesTab />,
@@ -64,7 +62,6 @@ const ViewInsurer = () => {
     'Stakeholder',
     'Application',
     'Overdues',
-    'Claims',
     'Tasks',
     'Documents',
     'Notes',
@@ -119,7 +116,23 @@ const ViewInsurer = () => {
     () => [
       {
         isEditable: false,
-        label: 'ABN*',
+        label: 'Debtor Code',
+        placeholder: '-',
+        type: 'text',
+        name: 'debtorCode',
+        value: debtorData?.debtorCode || '-',
+      },
+      {
+        isEditable: false,
+        label: 'Entity Name',
+        placeholder: 'Enter entity name',
+        type: 'text',
+        name: 'entityName',
+        value: debtorData?.entityName || '-',
+      },
+      {
+        isEditable: false,
+        label: 'ABN/NZBN*',
         placeholder: 'Enter ABN number',
         type: 'text',
         name: 'abn',
@@ -127,7 +140,7 @@ const ViewInsurer = () => {
       },
       {
         isEditable: false,
-        label: 'ACN',
+        label: 'ACN/NCN',
         placeholder: 'Enter ACN number',
         type: 'text',
         name: 'acn',
@@ -141,14 +154,6 @@ const ViewInsurer = () => {
         name: 'entityType',
         data: [],
         value: debtorData?.entityType?.label || '-',
-      },
-      {
-        isEditable: false,
-        label: 'Entity Name',
-        placeholder: 'Enter entity name',
-        type: 'text',
-        name: 'entityName',
-        value: debtorData?.entityName || '-',
       },
       {
         isEditable: true,
@@ -265,7 +270,7 @@ const ViewInsurer = () => {
       return [...INPUTS];
     }
     const filteredData = [...INPUTS];
-    filteredData.splice(0, 2, {
+    filteredData.splice(2, 2, {
       isEditable: false,
       label: 'Registration No.*',
       placeholder: 'Registration No',

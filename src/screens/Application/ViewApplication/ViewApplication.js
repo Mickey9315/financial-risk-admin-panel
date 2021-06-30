@@ -192,7 +192,7 @@ const ViewApplication = () => {
         type: 'link',
       },
       {
-        title: 'ABN/NCBN',
+        title: 'ABN/NZBN',
         value: abn,
         name: 'abn',
         type: 'text',

@@ -146,6 +146,15 @@ export const CLIENT_URLS = {
       GET_CLIENT_TASK_DETAIL: `${BASE_URL}task/details/`,
     },
   },
+  CLIENT_OVERDUE: {
+    GET_CLIENT_OVERDUE_LIST: `${BASE_URL}overdue/`,
+    GET_CLIENT_CLAIMS_ENTITY_LIST: `${BASE_URL}overdue/entity-list/`,
+  },
+  CLIENT_CLAIMS: {
+    CLIENT_CLAIMS_LIST: `${BASE_URL}claim/`,
+    CLIENT_CLAIMS_COLUMN_LIST: `${BASE_URL}claim/column-name/`,
+    UPDATE_CLIENT_CLAIMS_COLUMN_LIST: `${BASE_URL}claim/column-name/`,
+  },
 };
 
 export const INSURER_URLS = {
@@ -236,6 +245,10 @@ export const DEBTORS_URLS = {
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}credit-report/column-name/`,
     DEBTOR_REPORTS_LIST_FOR_FETCH: `${BASE_URL}credit-report/list/`,
     FETCH_SELECTED_REPORTS_FOR_DEBTOR: `${BASE_URL}credit-report/generate/`,
+  },
+  DEBTOR_OVERDUE: {
+    GET_DEBTOR_OVERDUE_LIST: `${BASE_URL}overdue/`,
+    GET_DEBTOR_OVERDUE_ENTITY_LIST: `${BASE_URL}overdue/entity-list/`,
   },
 };
 

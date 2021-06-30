@@ -20,9 +20,14 @@ import AddOverdueTable from './AddOverdueTable';
 import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import Loader from '../../../../common/Loader/Loader';
 import { OVERDUE_REDUX_CONSTANTS } from '../../redux/OverduesReduxConstants';
+import { setViewClientActiveTabIndex } from '../../../Clients/redux/ClientAction';
+import { setViewDebtorActiveTabIndex } from '../../../Debtors/redux/DebtorsAction';
 
 const AddOverdues = () => {
   const history = useHistory();
+  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
+    history,
+  ]);
   const { id, period } = useParams();
   const dispatch = useDispatch();
   const [overdueFormModal, setOverdueFormModal] = useState(false);
@@ -170,7 +175,7 @@ const AddOverdues = () => {
         value: moment(period, 'MMMM-YYYY').format('MMMM-YYYY'),
       },
       {
-        title: 'ACN*',
+        title: 'ACN/NCN*',
         name: 'acn',
         type: 'text',
         placeholder: 'Enter ACN ',
@@ -220,6 +225,13 @@ const AddOverdues = () => {
         name: 'clientComment',
         type: 'textarea',
         value: overdueDetails?.clientComment ?? '',
+      },
+      {
+        title: 'Analyst Comment',
+        name: 'analystComment',
+        type: 'textarea',
+        class: 'overdue-analyst-comment',
+        value: overdueDetails?.analystComment ?? '',
       },
       {
         title: '30 days',
@@ -357,6 +369,7 @@ const AddOverdues = () => {
               name={input.name}
               value={input?.value}
               rows={5}
+              className={input?.class}
               placeholder={input.placeholder}
               onChange={handleTextInputChange}
             />
@@ -392,7 +405,7 @@ const AddOverdues = () => {
         <div
           className={`add-overdue-field-container ${
             input.type === 'textarea' && 'add-overdue-textarea'
-          }`}
+          } ${input?.class}`}
         >
           {input.name && (
             <div
@@ -410,9 +423,18 @@ const AddOverdues = () => {
     [overdueDetails, handleDateInputChange, handleSelectInputChange, handleTextInputChange, period]
   );
 
-  const backToOverduesList = () => {
-    history.replace('/over-dues');
-  };
+  const backToOverdueList = useCallback(() => {
+    if (isRedirected) {
+      if (redirectedFrom === 'client') {
+        setViewClientActiveTabIndex(3);
+        history.replace(`/clients/client/view/${fromId}`);
+      }
+      if (redirectedFrom === 'debtor') {
+        setViewDebtorActiveTabIndex(3);
+        history.replace(`/debtors/debtor/view/${fromId}`);
+      }
+    } else history.replace('/over-dues');
+  }, [isRedirected, redirectedFrom, fromId]);
 
   const getMonthYearSeparated = period.split('-');
   const selectedMonth = getMonthYearSeparated[0];
@@ -499,16 +521,17 @@ const AddOverdues = () => {
           data.currentAmount = doc?.currentAmount;
           if (doc?.overdueAction) data.overdueAction = doc?.overdueAction;
           if (doc?.clientComment) data.clientComment = doc?.clientComment;
+          if (doc?.analystComment) data.analystComment = doc?.analystComment;
           return data;
         });
         await dispatch(saveOverdueList({ list: finalData }));
         if (isPrompt) setIsPrompt(false);
-        history.replace('/over-dues');
+        backToOverdueList();
       } catch (e) {
         /**/
       }
     }
-  }, [toggleSaveAlertModal, docs, isPrompt, setIsPrompt]);
+  }, [toggleSaveAlertModal, docs, isPrompt, setIsPrompt, backToOverdueList]);
 
   const alertOnLeftModalButtons = useMemo(
     () => [
@@ -522,9 +545,9 @@ const AddOverdues = () => {
               data: overdueListByDateCopy,
             });
             setIsPrompt(false);
-            history.replace('/over-dues');
+            backToOverdueList();
           } else {
-            history.replace('/over-dues');
+            backToOverdueList();
           }
         },
       },
@@ -534,7 +557,7 @@ const AddOverdues = () => {
         onClick: onCLickOverdueSave,
       },
     ],
-    [onCLickOverdueSave, overdueListByDateCopy, isPrompt, setIsPrompt]
+    [onCLickOverdueSave, overdueListByDateCopy, isPrompt, setIsPrompt, backToOverdueList]
   );
 
   const handleBlockedRoute = useCallback(() => {
@@ -553,7 +576,7 @@ const AddOverdues = () => {
         <>
           <div className="breadcrumb-button-row mt-15">
             <div className="breadcrumb">
-              <span onClick={backToOverduesList}>List of Overdues List</span>
+              <span onClick={backToOverdueList}>Overdues List</span>
               <span className="material-icons-round">navigate_next</span>
               <span>
                 {selectedMonth} {selectedYear}

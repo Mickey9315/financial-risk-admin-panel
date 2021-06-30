@@ -59,6 +59,15 @@ const initialClientListState = {
       defaultEntityList: [],
     },
   },
+  overdue: {
+    overdueList: {},
+    entityList: {},
+  },
+  claims: {
+    claimsList: {},
+    claimsColumnList: {},
+    claimsDefaultColumnList: {},
+  },
 };
 const initialClientManagementClientListState = {
   riskAnalystList: [],
@@ -542,6 +551,89 @@ export const clientManagement = (state = initialClientListState, action) => {
       return {
         ...state,
         viewClientActiveTabIndex: action?.index,
+      };
+    }
+
+    // overdue
+
+    case CLIENT_REDUX_CONSTANTS.CLIENT_OVERDUE.GET_CLIENT_OVERDUE_LIST:
+      return {
+        ...state,
+        overdue: {
+          ...state?.overdue,
+          overdueList: action?.data,
+        },
+      };
+    case CLIENT_REDUX_CONSTANTS.CLIENT_OVERDUE.GET_CLIENT_OVERDUE_ENTITY_LIST: {
+      const entityList = { ...state?.overdue?.overdueDetails?.entityList };
+      Object.entries(action?.data)?.forEach(([key, value]) => {
+        entityList[key] = value?.map(entity => ({
+          label: entity?.name,
+          name: key,
+          value: entity?._id,
+          acn: entity?.acn,
+        }));
+      });
+      return {
+        ...state,
+        overdue: {
+          ...state?.overdue,
+          entityList,
+        },
+      };
+    }
+
+    case CLIENT_REDUX_CONSTANTS.CLIENT_OVERDUE.RESET_CLIENT_OVERDUE_LIST_DATA: {
+      return {
+        ...state,
+        overdue: {
+          ...state?.overdue,
+          overdueList: initialClientListState?.overdue?.overdueList,
+        },
+      };
+    }
+
+    case CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.CLIENT_CLAIMS_LIST_SUCCESS:
+      return {
+        ...state,
+        claims: {
+          ...state?.claims,
+          claimsList: action?.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.GET_CLIENT_CLAIMS_COLUMNS_LIST:
+      return {
+        ...state,
+        claims: {
+          ...state?.claims,
+          claimsColumnList: action.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.GET_CLIENT_CLAIMS_DEFAULT_COLUMN_LIST:
+      return {
+        ...state,
+        claims: {
+          ...state?.claims,
+          claimsDefaultColumnList: action.data,
+        },
+      };
+
+    case CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.UPDATE_CLIENT_CLAIMS_COLUMNS_LIST: {
+      const columnList = {
+        ...state?.claims?.claimsColumnList,
+      };
+      const { type, name, value } = action?.data;
+      columnList[type] = columnList[type].map(field =>
+        field.name === name ? { ...field, isChecked: value } : field
+      );
+      return {
+        ...state,
+        claims: {
+          ...state?.claims,
+          claimsColumnList: columnList,
+        },
       };
     }
 

@@ -19,6 +19,8 @@ import {
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { store } from '../../../redux/store';
+import { ClientOverdueApiServices } from '../services/ClientOverdueApiService';
+import { ClientClaimsApiServices } from '../services/ClientClaimsApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1278,6 +1280,168 @@ export const resetViewClientData = () => {
   return dispatch => {
     dispatch({
       type: CLIENT_REDUX_CONSTANTS.RESET_VIEW_CLIENT_DATA,
+    });
+  };
+};
+
+// overdue
+export const getClientOverdueList = (param, id) => {
+  return async dispatch => {
+    try {
+      const params = {
+        entityType: 'client',
+        ...param,
+      };
+      startGeneralLoaderOnRequest('clientOverdueListPageLoaderAction');
+      const response = await ClientOverdueApiServices.getClientOverdueList(params, id);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CLIENT_OVERDUE.GET_CLIENT_OVERDUE_LIST,
+          data: response?.data?.data,
+        });
+        stopGeneralLoaderOnSuccessOrFail('clientOverdueListPageLoaderAction');
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('clientOverdueListPageLoaderAction');
+      displayErrors(e);
+    }
+  };
+};
+
+export const getClientOverdueEntityDetails = () => {
+  return async dispatch => {
+    try {
+      const response = await ClientOverdueApiServices.getClientOverdueEntityListData();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CLIENT_OVERDUE.GET_CLIENT_OVERDUE_ENTITY_LIST,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const resetClientOverdueListData = () => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.CLIENT_OVERDUE.RESET_CLIENT_OVERDUE_LIST_DATA,
+    });
+  };
+};
+
+// claims
+export const getClientClaimsListByFilter = (param = { page: 1, limit: 15 }, id) => {
+  return async dispatch => {
+    try {
+      const params = {
+        clientId: id,
+        ...param,
+      };
+      startGeneralLoaderOnRequest('clientClaimListLoader');
+      const response = await ClientClaimsApiServices.getClientClaimsListByFilter(params);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.CLIENT_CLAIMS_LIST_SUCCESS,
+          data: response.data.data,
+        });
+        stopGeneralLoaderOnSuccessOrFail('clientClaimListLoader');
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('clientClaimListLoader');
+      displayErrors(e);
+    }
+  };
+};
+
+export const getClientClaimsColumnsList = () => {
+  const param = {
+    columnFor: 'claim',
+  };
+  return async dispatch => {
+    try {
+      const response = await ClientClaimsApiServices.getClientClaimsColumnList(param);
+      dispatch({
+        type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.GET_CLIENT_CLAIMS_COLUMNS_LIST,
+        data: response.data.data,
+      });
+      dispatch({
+        type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.GET_CLIENT_CLAIMS_DEFAULT_COLUMN_LIST,
+        data: response.data.data,
+      });
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const changeClientClaimsColumnList = data => {
+  return async dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.UPDATE_CLIENT_CLAIMS_COLUMNS_LIST,
+      data,
+    });
+  };
+};
+
+export const saveClientClaimsColumnsList = ({ claimsColumnList = {}, isReset = false }) => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest(
+        `clientClaimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
+      let data = {
+        isReset: true,
+        columns: [],
+        columnFor: 'claim',
+      };
+      if (!isReset) {
+        const defaultFields = claimsColumnList.defaultFields
+          .filter(field => field.isChecked)
+          .map(field => field.name);
+        const customFields = claimsColumnList.customFields
+          .filter(field => field.isChecked)
+          .map(field => field.name);
+        data = {
+          isReset: false,
+          columns: [...defaultFields, ...customFields],
+          columnFor: 'claim',
+        };
+        if (data.columns.length < 1) {
+          errorNotification('Please select at least one column to continue.');
+          stopGeneralLoaderOnSuccessOrFail(
+            `clientClaimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
+          throw Error();
+        }
+      }
+      const response = await ClientClaimsApiServices.updateClientClaimsColumnList(data);
+      if (response.data.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.GET_CLIENT_CLAIMS_DEFAULT_COLUMN_LIST,
+          data: claimsColumnList,
+        });
+        successNotification('Columns updated successfully');
+        stopGeneralLoaderOnSuccessOrFail(
+          `clientClaimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail(
+        `clientClaimsListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
+      displayErrors(e);
+      throw Error();
+    }
+  };
+};
+
+export const resetClientClaimListData = () => {
+  return dispatch => {
+    dispatch({
+      type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.RESET_CLIENT_CLAIM_LIST_DATA,
     });
   };
 };

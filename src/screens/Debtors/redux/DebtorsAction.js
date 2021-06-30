@@ -18,6 +18,7 @@ import {
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { store } from '../../../redux/store';
 import DebtorsReportsApiServices from '../services/DebtorsReportsApiServices';
+import { DebtorOverdueApiServices } from '../services/DebtorOverdueApiServices';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1520,6 +1521,54 @@ export const resetViewDebtorData = () => {
   return dispatch => {
     dispatch({
       type: DEBTORS_REDUX_CONSTANTS.RESET_DEBTOR_VIEW_DATA,
+    });
+  };
+};
+
+// overdue
+export const getDebtorOverdueList = (param, id) => {
+  return async dispatch => {
+    try {
+      const params = {
+        entityType: 'debtor',
+        ...param,
+      };
+      startGeneralLoaderOnRequest('debtorOverdueListPageLoaderAction');
+      const response = await DebtorOverdueApiServices.getDebtorOverdueList(params, id);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.DEBTOR_OVERDUE.GET_DEBTOR_OVERDUE_LIST,
+          data: response?.data?.data,
+        });
+        stopGeneralLoaderOnSuccessOrFail('debtorOverdueListPageLoaderAction');
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('debtorOverdueListPageLoaderAction');
+      displayErrors(e);
+    }
+  };
+};
+
+export const getDebtorOverdueEntityDetails = () => {
+  return async dispatch => {
+    try {
+      const response = await DebtorOverdueApiServices.getDebtorOverdueEntityListData();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.DEBTOR_OVERDUE.GET_DEBTOR_OVERDUE_ENTITY_LIST,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const resetDebtorOverdueListData = () => {
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.DEBTOR_OVERDUE.RESET_DEBTOR_OVERDUE_LIST_DATA,
     });
   };
 };

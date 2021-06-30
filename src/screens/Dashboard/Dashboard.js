@@ -38,7 +38,6 @@ const Dashboard = () => {
     return () => dispatch(resetDashboardDetails());
   }, []);
 
-  console.log(dashboardDetails);
 
   return (
     <>

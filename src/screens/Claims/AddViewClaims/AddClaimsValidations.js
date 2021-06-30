@@ -2,7 +2,7 @@ import { NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { addClaim, handleClaimChange } from '../redux/ClaimsAction';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
-export const addClaimsValidations = async (dispatch, data, history) => {
+export const addClaimsValidations = async (dispatch, data, backToClaimList) => {
   let validated = true;
   const errors = {};
   let preparedData = {};
@@ -115,7 +115,7 @@ export const addClaimsValidations = async (dispatch, data, history) => {
     const finalData = { ...preparedData };
     try {
       await dispatch(addClaim(finalData));
-      history.replace('/claims');
+      backToClaimList();
     } catch (e) {
       displayErrors(e);
     }

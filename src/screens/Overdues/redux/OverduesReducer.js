@@ -15,6 +15,7 @@ const initialOverdueState = {
     insurerId: [],
     monthString: '',
     clientComment: '',
+    analystComment: '',
     currentAmount: '',
     thirtyDaysAmount: '',
     sixtyDaysAmount: '',

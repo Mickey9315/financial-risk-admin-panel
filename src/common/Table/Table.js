@@ -532,7 +532,7 @@ function TableLinkDrawer(props) {
       case 'date':
         return row?.value ? moment(row?.value)?.format('DD-MMM-YYYY') : '-';
       default:
-        return row?.value ?? '-';
+        return row?.value || '-';
     }
   };
 

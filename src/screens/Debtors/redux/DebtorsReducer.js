@@ -153,6 +153,10 @@ const initialDebtorState = {
     debtorsReportsColumnNameList: {},
     debtorsReportsDefaultColumnNameList: {},
   },
+  overdue: {
+    overdueList: {},
+    entityList: {},
+  },
 };
 
 export const debtorsManagement = (state = initialDebtorState, action) => {
@@ -980,6 +984,45 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         debtorsList: initialDebtorState.debtorsList,
       };
+
+    // overdue
+
+    case DEBTORS_REDUX_CONSTANTS.DEBTOR_OVERDUE.GET_DEBTOR_OVERDUE_LIST:
+      return {
+        ...state,
+        overdue: {
+          ...state?.overdue,
+          overdueList: action?.data,
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.DEBTOR_OVERDUE.GET_DEBTOR_OVERDUE_ENTITY_LIST: {
+      const entityList = { ...state?.overdue?.overdueDetails?.entityList };
+      Object.entries(action?.data)?.forEach(([key, value]) => {
+        entityList[key] = value?.map(entity => ({
+          label: entity?.name,
+          name: key,
+          value: entity?._id,
+          acn: entity?.acn,
+        }));
+      });
+      return {
+        ...state,
+        overdue: {
+          ...state?.overdue,
+          entityList,
+        },
+      };
+    }
+
+    case DEBTORS_REDUX_CONSTANTS.DEBTOR_OVERDUE.RESET_DEBTOR_OVERDUE_LIST_DATA: {
+      return {
+        ...state,
+        overdue: {
+          ...state?.overdue,
+          overdueList: initialDebtorState?.overdue?.overdueList,
+        },
+      };
+    }
 
     case DEBTORS_REDUX_CONSTANTS.RESET_DEBTOR_VIEW_DATA:
       return {
