@@ -28,33 +28,8 @@ import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivi
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import { MY_WORK_REDUX_CONSTANTS } from '../redux/MyWorkReduxConstants';
 import { errorNotification } from '../../../common/Toast';
-
-const initialFilterState = {
-  priority: '',
-  isCompleted: null,
-  startDate: null,
-  endDate: null,
-  assigneeId: '',
-};
-
-const TASK_FILTER_REDUCER_ACTIONS = {
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function filterReducer(state, action) {
-  switch (action.type) {
-    case TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        ...state,
-        [`${action.name}`]: action.value,
-      };
-    case TASK_FILTER_REDUCER_ACTIONS.RESET_STATE:
-      return { ...initialFilterState };
-    default:
-      return state;
-  }
-}
+import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
+import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 
 const priorityListData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -76,10 +51,11 @@ const MyWorkTasks = () => {
   ]);
   const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
 
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const { priority, isCompleted, startDate, endDate, assigneeId } = useMemo(() => filter ?? {}, [
-    filter,
-  ]);
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
+    tempFilter: {},
+    finalFilter: {},
+  });
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
 
   const {
     myWorkTaskColumnsSaveButtonLoaderAction,
@@ -88,57 +64,45 @@ const MyWorkTasks = () => {
     myWorkTasksListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const handlePriorityFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'priority',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
-  const handleAssigneeFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'assigneeId',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handlePriorityFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'priority',
+      value: event?.value,
+    });
+  }, []);
+  const handleAssigneeFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'assigneeId',
+      value: event?.value,
+    });
+  }, []);
   const handleIsCompletedFilterChange = useCallback(
     event => {
       dispatchFilter({
-        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'isCompleted',
         value: event.target.checked,
       });
     },
-    [dispatchFilter, isCompleted]
+    [tempFilter?.isCompleted]
   );
 
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleStartDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'startDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
+  const handleEndDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'endDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
 
   const resetFilterDates = useCallback(() => {
     handleStartDateChange(null);
@@ -147,23 +111,31 @@ const MyWorkTasks = () => {
 
   const getTaskList = useCallback(
     async (params = {}, cb) => {
-      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+      if (
+        tempFilter?.startDate &&
+        tempFilter?.endDate &&
+        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+      ) {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          priority: (priority?.length ?? -1) > 0 ? priority : undefined,
-          isCompleted: isCompleted || undefined,
-          assigneeId: (assigneeId?.length ?? -1) > 0 ? assigneeId : undefined,
-          startDate: startDate ?? undefined,
-          endDate: endDate ?? undefined,
+          priority: (tempFilter?.priority?.length ?? -1) > 0 ? tempFilter?.priority : undefined,
+          isCompleted: tempFilter?.isCompleted || undefined,
+          assigneeId:
+            (tempFilter?.assigneeId?.length ?? -1) > 0 ? tempFilter?.assigneeId : undefined,
+          startDate: tempFilter?.startDate ?? undefined,
+          endDate: tempFilter?.endDate ?? undefined,
           columnFor: 'task',
           ...params,
         };
         try {
           await dispatch(getTaskListByFilter(data));
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+          });
           if (cb && typeof cb === 'function') {
             cb();
           }
@@ -172,14 +144,14 @@ const MyWorkTasks = () => {
         }
       }
     },
-    [total, pages, page, limit, priority, isCompleted, assigneeId, startDate, endDate, filter]
+    [total, pages, page, limit, { ...tempFilter }]
   );
 
   const getSelectedValue = useMemo(() => {
-    const selectedPriority = priorityListData?.filter(e => e?.value === priority) ?? {};
-    const selectedAssignee = assigneeList?.filter(e => e?.value === assigneeId) ?? {};
+    const selectedPriority = priorityListData?.filter(e => e?.value === tempFilter?.priority) ?? {};
+    const selectedAssignee = assigneeList?.filter(e => e?.value === tempFilter?.assigneeId) ?? {};
     return { selectedPriority, selectedAssignee };
-  }, [priorityListData, assigneeList, priority, assigneeId]);
+  }, [priorityListData, assigneeList, tempFilter?.priority, tempFilter?.assigneeId]);
 
   const onSelectTaskRecord = useCallback(
     id => {
@@ -198,24 +170,6 @@ const MyWorkTasks = () => {
     endDate: paramEndDate,
   } = useQueryParams();
 
-  useEffect(() => {
-    const params = {
-      page: page ?? 1,
-      limit: limit ?? 15,
-      priority: priority?.length > 0 ?? -1 ? priority : undefined,
-      isCompleted: isCompleted || undefined,
-      assigneeId: assigneeId?.length > 0 ?? -1 ? assigneeId : undefined,
-      startDate: startDate ? new Date(startDate)?.toUTCString() : undefined,
-      endDate: endDate ? new Date(endDate)?.toUTCString() : undefined,
-    };
-    const url = Object.entries(params)
-      .filter(arr => arr[1] !== undefined)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-
-    history.push(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, priority, isCompleted, assigneeId, startDate, endDate]);
-
   const getTaskListOnRefresh = useCallback(() => {
     const params = {
       page: page ?? paramPage ?? 1,
@@ -225,19 +179,18 @@ const MyWorkTasks = () => {
       priority: (paramPriority?.trim()?.length ?? -1) > 0 ? paramPriority : undefined,
       isCompleted: paramIsCompleted || undefined,
       assigneeId: (paramAssigneeId?.trim()?.length ?? -1) > 0 ? paramAssigneeId : undefined,
-      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
-      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+      startDate: paramStartDate ?? undefined,
+      endDate: paramEndDate ?? undefined,
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
-        type: TASK_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
     });
     getTaskList({ ...params, ...filters });
   }, [
-    dispatchFilter,
     paramLimit,
     paramPage,
     paramEndDate,
@@ -247,6 +200,19 @@ const MyWorkTasks = () => {
     paramPriority,
     getTaskList,
   ]);
+
+  useUrlParamsUpdate(
+    {
+      page: page ?? 1,
+      limit: limit ?? 15,
+      priority: finalFilter?.priority?.length > 0 ?? -1 ? finalFilter?.priority : undefined,
+      isCompleted: finalFilter?.isCompleted || undefined,
+      assigneeId: finalFilter?.assigneeId?.length > 0 ?? -1 ? finalFilter?.assigneeId : undefined,
+      startDate: finalFilter?.startDate ?? undefined,
+      endDate: finalFilter?.endDate ?? undefined,
+    },
+    [{ ...finalFilter }, page, limit]
+  );
 
   const [deleteTaskData, setDeleteTaskData] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -400,6 +366,9 @@ const MyWorkTasks = () => {
   );
 
   const closeFilterOnClick = useCallback(() => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+    });
     toggleFilterModal();
   }, [toggleFilterModal]);
 
@@ -410,10 +379,10 @@ const MyWorkTasks = () => {
 
   const resetFilterOnClick = useCallback(() => {
     dispatchFilter({
-      type: TASK_FILTER_REDUCER_ACTIONS.RESET_STATE,
+      type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
     applyFilterOnClick();
-  }, [dispatchFilter]);
+  }, []);
 
   const filterModalButtons = useMemo(
     () => [
@@ -538,12 +507,15 @@ const MyWorkTasks = () => {
                   options={priorityListData}
                   value={getSelectedValue?.selectedPriority ?? {}}
                   onChange={handlePriorityFilterChange}
-                  isSearchable={false}
+                  isSearchable
                 />
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Completed Task</div>
-                <Checkbox checked={isCompleted} onChange={e => handleIsCompletedFilterChange(e)} />
+                <Checkbox
+                  checked={tempFilter?.isCompleted}
+                  onChange={e => handleIsCompletedFilterChange(e)}
+                />
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Due Date</div>
@@ -554,7 +526,7 @@ const MyWorkTasks = () => {
                     showYearDropdown
                     scrollableYearDropdown
                     className="filter-date-picker"
-                    selected={startDate}
+                    selected={tempFilter?.startDate ? new Date(tempFilter?.startDate) : null}
                     onChange={handleStartDateChange}
                     placeholderText="From Date"
                   />
@@ -567,7 +539,7 @@ const MyWorkTasks = () => {
                     showYearDropdown
                     scrollableYearDropdown
                     className="filter-date-picker"
-                    selected={endDate}
+                    selected={tempFilter?.endDate ? new Date(tempFilter?.endDate) : null}
                     onChange={handleEndDateChange}
                     placeholderText="To Date"
                   />
@@ -585,7 +557,7 @@ const MyWorkTasks = () => {
                     options={assigneeList}
                     value={getSelectedValue?.selectedAssignee ?? {}}
                     onChange={handleAssigneeFilterChange}
-                    isSearchable={false}
+                    isSearchable
                   />
                 </div>
               </UserPrivilegeWrapper>

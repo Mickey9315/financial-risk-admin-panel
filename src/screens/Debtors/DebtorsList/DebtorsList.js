@@ -21,28 +21,8 @@ import Modal from '../../../common/Modal/Modal';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import { errorNotification } from '../../../common/Toast';
 import { DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
-
-const initialFilterState = {
-  entityType: '',
-};
-const DEBTORS_FILTER_REDUCER_ACTIONS = {
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function filterReducer(state, action) {
-  switch (action.type) {
-    case DEBTORS_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        ...state,
-        [`${action.name}`]: action.value,
-      };
-    case DEBTORS_FILTER_REDUCER_ACTIONS.RESET_STATE:
-      return { ...initialFilterState };
-    default:
-      return state;
-  }
-}
+import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
+import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 
 const DebtorsList = () => {
   const history = useHistory();
@@ -67,45 +47,49 @@ const DebtorsList = () => {
     debtorListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const { entityType } = useMemo(() => filter, [filter]);
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
+    tempFilter: {},
+    finalFilter: {},
+  });
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
 
-  const handleEntityTypeFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: DEBTORS_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'entityType',
-        value: event.value,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleEntityTypeFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'entityType',
+      value: event.value,
+    });
+  }, []);
 
   const getDebtorsListByFilter = useCallback(
-    (params = {}, cb) => {
+    async (params = {}, cb) => {
       const data = {
         page: page ?? 1,
         limit: limit ?? 15,
-        entityType: (entityType?.trim()?.length ?? -1) > 0 ? entityType : undefined,
+        entityType:
+          (tempFilter?.entityType?.trim()?.length ?? -1) > 0 ? tempFilter?.entityType : undefined,
         ...params,
       };
-      dispatch(getDebtorsList(data));
+      await dispatch(getDebtorsList(data));
+      dispatchFilter({
+        type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+      });
       if (cb && typeof cb === 'function') {
         cb();
       }
     },
-    [page, limit, entityType, filter]
+    [page, limit, tempFilter?.entityType]
   );
 
   const pageActionClick = useCallback(
-    newPage => {
-      getDebtorsListByFilter({ page: newPage, limit });
+    async newPage => {
+      await getDebtorsListByFilter({ page: newPage, limit });
     },
     [limit, getDebtorsListByFilter]
   );
   const onSelectLimit = useCallback(
-    newLimit => {
-      getDebtorsListByFilter({ page: 1, limit: newLimit });
+    async newLimit => {
+      await getDebtorsListByFilter({ page: 1, limit: newLimit });
     },
     [getDebtorsListByFilter]
   );
@@ -134,7 +118,7 @@ const DebtorsList = () => {
       const isBothEqual = _.isEqual(debtorsColumnNameList, debtorsDefaultColumnNameList);
       if (!isBothEqual) {
         await dispatch(saveDebtorsColumnListName({ debtorsColumnNameList }));
-        getDebtorsListByFilter();
+        await getDebtorsListByFilter();
       } else {
         errorNotification('Please select different columns to apply changes.');
         throw Error();
@@ -154,7 +138,7 @@ const DebtorsList = () => {
     try {
       await dispatch(saveDebtorsColumnListName({ isReset: true }));
       dispatch(getDebtorsColumnNameList());
-      getDebtorsListByFilter();
+      await getDebtorsListByFilter();
       toggleCustomField();
     } catch (e) {
       /**/
@@ -200,16 +184,16 @@ const DebtorsList = () => {
     [setFilterModal]
   );
 
-  const onClickApplyFilter = useCallback(() => {
+  const onClickApplyFilter = useCallback(async () => {
     toggleFilterModal();
-    getDebtorsListByFilter({ page: 1, limit });
+    await getDebtorsListByFilter({ page: 1, limit });
   }, [getDebtorsListByFilter, toggleFilterModal]);
 
-  const onClickResetFilter = useCallback(() => {
+  const onClickResetFilter = useCallback(async () => {
     dispatchFilter({
-      type: DEBTORS_FILTER_REDUCER_ACTIONS.RESET_STATE,
+      type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
-    onClickApplyFilter();
+    await onClickApplyFilter();
   }, [dispatchFilter]);
 
   const filterModalButtons = useMemo(
@@ -219,34 +203,39 @@ const DebtorsList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetFilter,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+          });
+          toggleFilterModal();
+        },
+      },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
   const entityTypeSelectedValue = useMemo(() => {
     const foundValue = debtorDropDownData?.entityType?.find(e => {
-      return e.value === entityType;
+      return e.value === tempFilter?.entityType;
     });
     return foundValue || '';
-  }, [entityType, debtorDropDownData]);
+  }, [tempFilter?.entityType, debtorDropDownData]);
 
-  useEffect(() => {
-    const params = {
+  useUrlParamsUpdate(
+    {
       page: page ?? 1,
       limit: limit ?? 15,
-      entityType: (entityType?.trim()?.length ?? -1) > 0 ? entityType : undefined,
-    };
-    const url = Object.entries(params)
-      .filter(arr => arr[1] !== undefined)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-
-    history.replace(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, entityType]);
+      entityType:
+        (finalFilter?.entityType?.trim()?.length ?? -1) > 0 ? finalFilter?.entityType : undefined,
+    },
+    [page, limit, { ...finalFilter }]
+  );
 
   const { page: paramPage, limit: paramLimit, entityType: paramEntity } = useQueryParams();
-  useEffect(() => {
+  useEffect(async () => {
     const params = {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
@@ -256,12 +245,12 @@ const DebtorsList = () => {
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
-        type: DEBTORS_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
     });
-    getDebtorsListByFilter({ ...params, ...filters });
+    await getDebtorsListByFilter({ ...params, ...filters });
     dispatch(getDebtorsColumnNameList());
     dispatch(getDebtorDropdownData());
   }, []);
@@ -353,7 +342,7 @@ const DebtorsList = () => {
                   options={debtorDropDownData?.entityType}
                   value={entityTypeSelectedValue}
                   onChange={handleEntityTypeFilterChange}
-                  isSearchable={false}
+                  isSearchable
                 />
               </div>
             </Modal>

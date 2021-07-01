@@ -28,31 +28,7 @@ import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivi
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import { USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
-
-const initialFilterState = {
-  role: '',
-  startDate: null,
-  endDate: null,
-};
-
-const USER_FILTER_REDUCER_ACTIONS = {
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function filterReducer(state, action) {
-  switch (action.type) {
-    case USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        ...state,
-        [`${action.name}`]: action.value,
-      };
-    case USER_FILTER_REDUCER_ACTIONS.RESET_STATE:
-      return { ...initialFilterState };
-    default:
-      return state;
-  }
-}
+import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 
 const UserList = () => {
   const history = useHistory();
@@ -69,34 +45,31 @@ const UserList = () => {
     userListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
+    tempFilter: {},
+    finalFilter: {},
+  });
   const [deleteId, setDeleteId] = useState(null);
-  const { role, startDate, endDate } = useMemo(() => filter ?? {}, [filter]);
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
   const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData ?? {}, [
     userListWithPageData,
   ]);
 
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleStartDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'startDate',
+      value: date,
+    });
+  }, []);
 
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleEndDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'endDate',
+      value: date,
+    });
+  }, []);
 
   const resetFilterDates = useCallback(() => {
     handleStartDateChange(null);
@@ -105,39 +78,39 @@ const UserList = () => {
 
   const getUserManagementByFilter = useCallback(
     (params = {}, cb) => {
-      if (moment(startDate)?.isAfter(endDate)) {
+      if (moment(tempFilter?.startDate)?.isAfter(tempFilter?.endDate)) {
         errorNotification('From date should be earlier than to date');
         resetFilterDates();
       } else {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          role: (role?.trim()?.length ?? -1) > 0 ? role : undefined,
-          startDate: startDate ?? undefined,
-          endDate: endDate ?? undefined,
+          role: (tempFilter?.role?.trim()?.length ?? -1) > 0 ? tempFilter?.role : undefined,
+          startDate: tempFilter?.startDate ?? undefined,
+          endDate: tempFilter?.endDate ?? undefined,
           ...params,
         };
         dispatch(getUserManagementListByFilter(data));
+        dispatchFilter({
+          type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+        });
         if (cb && typeof cb === 'function') {
           cb();
         }
       }
     },
-    [page, limit, role, startDate, endDate, resetFilterDates]
+    [page, limit, resetFilterDates, { ...tempFilter }]
   );
 
-  const handleFilterChange = useCallback(
-    event => {
-      if (event?.value) {
-        dispatchFilter({
-          type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-          name: 'role',
-          value: event.value,
-        });
-      }
-    },
-    [dispatchFilter]
-  );
+  const handleFilterChange = useCallback(event => {
+    if (event?.value) {
+      dispatchFilter({
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'role',
+        value: event.value,
+      });
+    }
+  }, []);
 
   const onSelectLimit = useCallback(
     newLimit => {
@@ -165,7 +138,7 @@ const UserList = () => {
   }, [getUserManagementByFilter, toggleFilterModal]);
 
   const onClickResetFilterUserList = useCallback(() => {
-    dispatchFilter({ type: USER_FILTER_REDUCER_ACTIONS.RESET_STATE });
+    dispatchFilter({ type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE });
     onClickApplyFilter();
   }, [dispatchFilter]);
 
@@ -176,7 +149,16 @@ const UserList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetFilterUserList,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+          });
+          toggleFilterModal();
+        },
+      },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
     [toggleFilterModal, onClickApplyFilter, onClickResetFilterUserList]
@@ -276,14 +258,8 @@ const UserList = () => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            const data = {
-              page: page ?? 1,
-              limit: limit ?? 15,
-              role: role && role?.length > 0 ? role.trim() : undefined,
-              startDate: startDate ?? undefined,
-              endDate: endDate ?? undefined,
-            };
-            await dispatch(deleteUserDetails(deleteId, data));
+            await dispatch(deleteUserDetails(deleteId));
+            getUserManagementByFilter();
             toggleConfirmationModal(false);
             setDeleteId(null);
           } catch (e) {
@@ -298,9 +274,6 @@ const UserList = () => {
       setDeleteId,
       page,
       limit,
-      role,
-      startDate,
-      endDate,
       viewUserDeleteUserButtonLoaderAction,
       deleteId,
     ]
@@ -339,7 +312,7 @@ const UserList = () => {
 
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
-        type: USER_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
@@ -353,20 +326,27 @@ const UserList = () => {
     };
   }, []);
 
-  useUrlParamsUpdate({
-    page: page ?? 1,
-    limit: limit ?? 15,
-    role: role?.length > 0 ?? false ? role?.trim() : undefined,
-    startDate: startDate ? new Date(startDate)?.toISOString() : undefined,
-    endDate: endDate ? new Date(endDate)?.toISOString() : undefined,
-  });
+  useUrlParamsUpdate(
+    {
+      page: page ?? 1,
+      limit: limit ?? 15,
+      role: finalFilter?.role?.length > 0 ?? false ? finalFilter?.role?.trim() : undefined,
+      startDate: finalFilter?.startDate
+        ? new Date(finalFilter?.startDate)?.toISOString()
+        : undefined,
+      endDate: finalFilter?.endDate ? new Date(finalFilter?.endDate)?.toISOString() : undefined,
+    },
+    [page, limit, { ...finalFilter }]
+  );
 
   const userRoleSelectedValue = useMemo(() => {
     const foundValue = USER_ROLES.find(e => {
-      return (e?.value ?? '') === role;
+      return (e?.value ?? '') === tempFilter?.role;
     });
     return foundValue ?? [];
-  }, [role]);
+  }, [tempFilter?.role]);
+
+  console.log(userRoleSelectedValue, tempFilter?.role);
 
   return (
     <>
@@ -394,7 +374,7 @@ const UserList = () => {
               </UserPrivilegeWrapper>
             </div>
           </div>
-          {docs.length > 0 ? (
+          {docs?.length > 0 ? (
             <>
               <div className="common-list-container">
                 <Table
@@ -449,7 +429,7 @@ const UserList = () => {
                 <div className="date-picker-container filter-date-picker-container mr-15">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={startDate}
+                    selected={tempFilter?.startDate ? new Date(tempFilter?.startDate) : null}
                     showMonthDropdown
                     showYearDropdown
                     scrollableYearDropdown
@@ -462,7 +442,7 @@ const UserList = () => {
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={endDate}
+                    selected={tempFilter?.endDate ? new Date(tempFilter?.endDate) : null}
                     showMonthDropdown
                     showYearDropdown
                     scrollableYearDropdown

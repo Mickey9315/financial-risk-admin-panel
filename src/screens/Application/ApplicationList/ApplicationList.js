@@ -28,36 +28,8 @@ import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
 import { APPLICATION_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/ApplicationReduxConstants';
 import { downloadAll } from '../../../helpers/DownloadHelper';
-
-const initialFilterState = {
-  entity: '',
-  clientId: '',
-  debtorId: '',
-  status: '',
-  minCreditLimit: '',
-  maxCreditLimit: '',
-  startDate: null,
-  endDate: null,
-};
-
-const APPLICATION_FILTER_REDUCER_ACTIONS = {
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function filterReducer(state = initialFilterState, action) {
-  switch (action.type) {
-    case APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        ...state,
-        [`${action?.name}`]: action?.value,
-      };
-    case APPLICATION_FILTER_REDUCER_ACTIONS.RESET_STATE:
-      return { ...initialFilterState };
-    default:
-      return state;
-  }
-}
+import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
+import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 
 const ApplicationList = () => {
   const history = useHistory();
@@ -65,7 +37,7 @@ const ApplicationList = () => {
   const {
     page: paramPage,
     limit: paramLimit,
-    entityType: paramEntity,
+    entityType: paramEntityType,
     clientId: paramClientId,
     debtorId: paramDebtorId,
     status: paramStatus,
@@ -96,108 +68,91 @@ const ApplicationList = () => {
     applicationDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const {
-    entity,
-    clientId,
-    debtorId,
-    status,
-    minCreditLimit,
-    maxCreditLimit,
-    startDate,
-    endDate,
-  } = useMemo(() => filter ?? {}, [filter]);
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
+    tempFilter: {},
+    finalFilter: {},
+  });
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
 
   const appliedFilters = useMemo(() => {
     return {
-      entityType: entity && entity.trim().length > 0 ? entity : undefined,
-      clientId: clientId && clientId.trim().length > 0 ? clientId : undefined,
-      debtorId: debtorId && debtorId.trim().length > 0 ? debtorId : undefined,
-      status: (status?.trim()?.length ?? -1) > 0 ? status : undefined,
+      entityType:
+        tempFilter?.entityType?.toString()?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
+      clientId:
+        tempFilter?.clientId?.toString()?.trim()?.length > 0 ? tempFilter?.clientId : undefined,
+      debtorId:
+        tempFilter?.debtorId?.toString()?.trim()?.length > 0 ? tempFilter?.debtorId : undefined,
+      status: tempFilter?.status?.toString()?.trim()?.length > 0 ? tempFilter?.status : undefined,
       minCreditLimit:
-        minCreditLimit && minCreditLimit.trim().length > 0 ? minCreditLimit : undefined,
+        tempFilter?.minCreditLimit?.toString()?.trim()?.length > 0
+          ? tempFilter?.minCreditLimit
+          : undefined,
       maxCreditLimit:
-        maxCreditLimit && maxCreditLimit.trim().length > 0 ? maxCreditLimit : undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
+        tempFilter?.maxCreditLimit?.toString()?.trim()?.length > 0
+          ? tempFilter?.maxCreditLimit
+          : undefined,
+      startDate: tempFilter?.startDate || undefined,
+      endDate: tempFilter?.endDate || undefined,
     };
-  }, [entity, clientId, debtorId, minCreditLimit, maxCreditLimit, status, startDate, endDate]);
+  }, [{ ...tempFilter }]);
 
   useEffect(() => {
     dispatch(getApplicationFilter());
   }, []);
 
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleStartDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'startDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
 
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleEndDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'endDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
 
   const resetFilterDates = useCallback(() => {
     handleStartDateChange(null);
     handleEndDateChange(null);
   }, [handleStartDateChange, handleEndDateChange]);
 
-  const handleEntityTypeFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'entity',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
-  const handleClientIdFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'clientId',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
-  const handleDebtorIdFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'debtorId',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
-  const handleApplicationStatusFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'status',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleEntityTypeFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'entityType',
+      value: event?.value,
+    });
+  }, []);
+  const handleClientIdFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'clientId',
+      value: event?.value,
+    });
+  }, []);
+  const handleDebtorIdFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'debtorId',
+      value: event?.value,
+    });
+  }, []);
+  const handleApplicationStatusFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'status',
+      value: event?.value,
+    });
+  }, []);
   const handleMinLimitChange = useCallback(
     event => {
       dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'minCreditLimit',
         value: event?.target?.value,
       });
@@ -207,7 +162,7 @@ const ApplicationList = () => {
   const handleMaxLimitChange = useCallback(
     event => {
       dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'maxCreditLimit',
         value: event?.target?.value,
       });
@@ -217,7 +172,11 @@ const ApplicationList = () => {
 
   const getApplicationsByFilter = useCallback(
     async (params = {}, cb) => {
-      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+      if (
+        tempFilter?.startDate &&
+        tempFilter?.endDate &&
+        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+      ) {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
@@ -229,6 +188,9 @@ const ApplicationList = () => {
         };
         try {
           await dispatch(getApplicationsListByFilter(data));
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+          });
           if (cb && typeof cb === 'function') {
             cb();
           }
@@ -237,20 +199,20 @@ const ApplicationList = () => {
         }
       }
     },
-    [page, limit, appliedFilters]
+    [page, limit, appliedFilters, tempFilter?.startDate, tempFilter?.endDate]
   );
 
   // on record limit changed
   const onSelectLimit = useCallback(
-    newLimit => {
-      getApplicationsByFilter({ page: 1, limit: newLimit });
+    async newLimit => {
+      await getApplicationsByFilter({ page: 1, limit: newLimit });
     },
     [getApplicationsByFilter]
   );
   // on pagination changed
   const pageActionClick = useCallback(
-    newPage => {
-      getApplicationsByFilter({ page: newPage, limit });
+    async newPage => {
+      await getApplicationsByFilter({ page: newPage, limit });
     },
     [getApplicationsByFilter, limit]
   );
@@ -260,16 +222,16 @@ const ApplicationList = () => {
     value => setFilterModal(value !== undefined ? value : e => !e),
     [setFilterModal]
   );
-  const onClickApplyFilter = useCallback(() => {
+  const onClickApplyFilter = useCallback(async () => {
     toggleFilterModal();
-    getApplicationsByFilter({ page: 1, limit });
+    await getApplicationsByFilter({ page: 1, limit });
   }, [getApplicationsByFilter, toggleFilterModal, page, limit]);
 
-  const onClickResetFilter = useCallback(() => {
+  const onClickResetFilter = useCallback(async () => {
     dispatchFilter({
-      type: APPLICATION_FILTER_REDUCER_ACTIONS.RESET_STATE,
+      type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
-    onClickApplyFilter();
+    await onClickApplyFilter();
   }, [dispatchFilter]);
 
   const filterModalButtons = useMemo(
@@ -279,7 +241,16 @@ const ApplicationList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetFilter,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+          });
+          toggleFilterModal();
+        },
+      },
       {
         title: 'Apply',
         buttonType: 'primary',
@@ -298,7 +269,7 @@ const ApplicationList = () => {
       const isBothEqual = _.isEqual(applicationColumnNameList, applicationDefaultColumnNameList);
       if (!isBothEqual) {
         await dispatch(saveApplicationColumnNameList({ applicationColumnNameList }));
-        getApplicationsByFilter();
+        await getApplicationsByFilter();
       } else {
         errorNotification('Please select different columns to apply changes.');
         throw Error();
@@ -317,7 +288,7 @@ const ApplicationList = () => {
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveApplicationColumnNameList({ isReset: true }));
     dispatch(getApplicationColumnNameList());
-    getApplicationsByFilter();
+    await getApplicationsByFilter();
     toggleCustomField();
   }, [toggleCustomField, getApplicationsByFilter]);
 
@@ -364,13 +335,13 @@ const ApplicationList = () => {
     dispatch(changeApplicationColumnNameList(data));
   }, []);
 
-  useEffect(() => {
+  useEffect(async () => {
     const params = {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
-      entityType: (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : undefined,
+      entityType: (paramEntityType?.trim()?.length ?? -1) > 0 ? paramEntityType : undefined,
       clientId: (paramClientId?.trim()?.length ?? -1) > 0 ? paramClientId : undefined,
       debtorId: (paramDebtorId?.trim()?.length ?? -1) > 0 ? paramDebtorId : undefined,
       status: (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : undefined,
@@ -378,17 +349,17 @@ const ApplicationList = () => {
         (paramMinCreditLimit?.trim()?.length ?? -1) > 0 ? paramMinCreditLimit : undefined,
       maxCreditLimit:
         (paramMaxCreditLimit?.trim()?.length ?? -1) > 0 ? paramMaxCreditLimit : undefined,
-      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
-      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+      startDate: paramStartDate || undefined,
+      endDate: paramEndDate || undefined,
     };
     Object.entries(filters)?.forEach(([name, value]) => {
       dispatchFilter({
-        type: APPLICATION_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
     });
-    getApplicationsByFilter({ ...params, ...filters });
+    await getApplicationsByFilter({ ...params, ...filters });
     dispatch(getApplicationColumnNameList());
   }, []);
 
@@ -404,43 +375,57 @@ const ApplicationList = () => {
   }, []);
 
   // for params in url
-  useEffect(() => {
-    const params = {
+  useUrlParamsUpdate(
+    {
       page: page ?? 1,
       limit: limit ?? 15,
-      ...appliedFilters,
-    };
-    const url = Object.entries(params)
-      ?.filter(arr => arr[1] !== undefined)
-      ?.map(([k, v]) => `${k}=${v}`)
-      ?.join('&');
-    history.push(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, appliedFilters]);
+      entityType:
+        finalFilter?.entityType?.toString()?.trim()?.length > 0
+          ? finalFilter?.entityType
+          : undefined,
+      clientId:
+        finalFilter?.clientId?.toString()?.trim()?.length > 0 ? finalFilter?.clientId : undefined,
+      debtorId:
+        finalFilter?.debtorId?.toString()?.trim()?.length > 0 ? finalFilter?.debtorId : undefined,
+      status: finalFilter?.status?.toString()?.trim()?.length > 0 ? finalFilter?.status : undefined,
+      minCreditLimit:
+        finalFilter?.minCreditLimit?.toString()?.trim()?.length > 0
+          ? finalFilter?.minCreditLimit
+          : undefined,
+      maxCreditLimit:
+        finalFilter?.maxCreditLimit?.toString()?.trim()?.length > 0
+          ? finalFilter?.maxCreditLimit
+          : undefined,
+      startDate: finalFilter?.startDate || undefined,
+      endDate: finalFilter?.endDate || undefined,
+    },
+    [page, limit, { ...finalFilter }]
+  );
 
   const entityTypeSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.entityType?.find(e => {
-      return (e?.value ?? '') === entity;
+      return (e?.value ?? '') === tempFilter?.entityType;
     });
     return foundValue ?? [];
-  }, [entity, dropdownData]);
+  }, [tempFilter?.entityType, dropdownData]);
   const clientIdSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.clients?.find(e => {
-      return (e?.value ?? '') === clientId;
+      return (e?.value ?? '') === tempFilter?.clientId;
     });
     return foundValue ?? [];
-  }, [clientId, dropdownData]);
+  }, [tempFilter?.clientId, dropdownData]);
   const debtorIdSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.debtors?.find(e => {
-      return (e?.value ?? '') === debtorId;
+      return (e?.value ?? '') === tempFilter?.debtorId;
     });
     return foundValue ?? [];
-  }, [debtorId, dropdownData]);
+  }, [tempFilter?.debtorId, dropdownData]);
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.find(e => {
-      return (e?.value ?? '') === status;
+      return (e?.value ?? '') === tempFilter?.status;
     });
     return foundValue ?? [];
-  }, [status, dropdownData]);
+  }, [tempFilter?.status, dropdownData]);
 
   // eslint-disable-next-line no-shadow
   const viewApplicationOnSelectRecord = useCallback((id, data) => {
@@ -595,7 +580,7 @@ const ApplicationList = () => {
                 <Input
                   type="text"
                   name="min-limit"
-                  value={minCreditLimit}
+                  value={tempFilter?.minCreditLimit}
                   placeholder="3000"
                   onChange={handleMinLimitChange}
                 />
@@ -605,7 +590,7 @@ const ApplicationList = () => {
                 <Input
                   type="text"
                   name="max-limit"
-                  value={maxCreditLimit}
+                  value={tempFilter?.maxCreditLimit}
                   placeholder="100000"
                   onChange={handleMaxLimitChange}
                 />
@@ -615,7 +600,7 @@ const ApplicationList = () => {
                 <div className="date-picker-container filter-date-picker-container mr-15">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={startDate}
+                    selected={tempFilter?.startDate ? new Date(tempFilter?.startDate) : null}
                     onChange={handleStartDateChange}
                     placeholderText="From Date"
                     showMonthDropdown
@@ -628,7 +613,7 @@ const ApplicationList = () => {
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={endDate}
+                    selected={tempFilter?.endDate ? new Date(tempFilter?.endDate) : null}
                     onChange={handleEndDateChange}
                     placeholderText="To Date"
                     showMonthDropdown

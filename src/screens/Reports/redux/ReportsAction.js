@@ -173,3 +173,12 @@ export const resetReportListData = () => {
     });
   };
 };
+
+export const applyFinalFilter = filterFor => {
+  return dispatch => {
+    dispatch({
+      type: REPORTS_REDUX_CONSTANTS.APPLY_REPORT_FILTER_ACTION,
+      filterFor,
+    });
+  };
+};

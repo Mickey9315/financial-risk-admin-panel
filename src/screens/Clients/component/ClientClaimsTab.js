@@ -36,7 +36,9 @@ const ClientClaimsTab = () => {
     clientClaimListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => claimsList, [claimsList]);
+  const { total, pages, page, limit, docs, headers } = useMemo(() => claimsList ?? {}, [
+    claimsList,
+  ]);
 
   const { defaultFields, customFields } = useMemo(
     () =>
@@ -150,19 +152,18 @@ const ClientClaimsTab = () => {
     };
   }, []);
 
-  // const checkIfEnterKeyPressed = e => {
-  //   const searchKeyword = searchInputRef?.current?.value;
-  //   if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
-  //     getClientApplicationList();
-  //   } else if (e.key === 'Enter') {
-  //     if (searchKeyword?.trim()?.toString()?.length !== 0) {
-  //       getClientApplicationList({ search: searchKeyword?.trim()?.toString() });
-  //     } else {
-  //       errorNotification('Please enter any value than press enter');
-  //     }
-  //   }
-  // };
-
+  const checkIfEnterKeyPressed = async e => {
+    const searchKeyword = searchInputRef?.current?.value;
+    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
+      await getClaimsByFilter();
+    } else if (e.key === 'Enter') {
+      if (searchKeyword?.trim()?.toString()?.length !== 0) {
+        await getClaimsByFilter({ search: searchKeyword?.trim()?.toString() });
+      } else {
+        errorNotification('Please enter any value than press enter');
+      }
+    }
+  };
 
   return (
     <>
@@ -177,7 +178,7 @@ const ClientClaimsTab = () => {
             prefix="search"
             prefixClass="font-placeholder"
             placeholder="Search here"
-            // onKeyUp={checkIfEnterKeyPressed}
+            onKeyUp={checkIfEnterKeyPressed}
           />
           <IconButton
             buttonType="primary"

@@ -396,7 +396,7 @@ const ClientTaskTab = () => {
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
-                isSearchable={false}
+                isSearchable
                 value={selectedValues}
                 onChange={handleOnChange}
               />

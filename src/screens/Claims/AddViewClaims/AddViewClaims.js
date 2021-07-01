@@ -43,7 +43,7 @@ const AddViewClaims = () => {
     } else history.replace('/claims');
   }, [history, isRedirected, redirectedFrom, fromId]);
 
-  const { viewClaimLoader } = useSelector(
+  const { viewClaimLoader, saveClaimsButtonLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
@@ -438,7 +438,12 @@ const AddViewClaims = () => {
           </div>
           {type === 'add' && (
             <div className="add-overdues-save-button">
-              <Button buttonType="primary" title="Save" onClick={onAddClaim} />
+              <Button
+                buttonType="primary"
+                title="Save"
+                onClick={onAddClaim}
+                isLoading={saveClaimsButtonLoaderAction}
+              />
             </div>
           )}
         </>

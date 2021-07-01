@@ -48,7 +48,7 @@ const initialFilterState = {
         ],
       },
     ],
-    filterValues: {
+    tempFilter: {
       riskAnalystId: '',
       serviceManagerId: '',
       inceptionStartDate: null,
@@ -56,6 +56,7 @@ const initialFilterState = {
       expiryStartDate: null,
       expiryEndDate: null,
     },
+    finalFilter: {},
   },
   limitList: {
     filterInputs: [
@@ -82,11 +83,12 @@ const initialFilterState = {
         ],
       },
     ],
-    filterValues: {
+    tempFilter: {
       clientIds: '',
       startDate: null,
       endDate: null,
     },
+    finalFilter: {},
   },
   pendingApplications: {
     filterInputs: [
@@ -119,12 +121,13 @@ const initialFilterState = {
         ],
       },
     ],
-    filterValues: {
+    tempFilter: {
       clientIds: '',
       debtorId: '',
       startDate: null,
       endDate: null,
     },
+    finalFilter: {},
   },
   usageReport: {
     filterInputs: [
@@ -153,12 +156,13 @@ const initialFilterState = {
         placeHolder: 'Select service manager',
       },
     ],
-    filterValues: {
+    tempFilter: {
       clientIds: '',
       debtorId: '',
       riskAnalystId: '',
       serviceManagerId: '',
     },
+    finalFilter: {},
   },
   usagePerClient: {
     filterInputs: [
@@ -169,9 +173,10 @@ const initialFilterState = {
         placeHolder: 'Select clients',
       },
     ],
-    filterValues: {
+    tempFilter: {
       clientIds: '',
     },
+    finalFilter: {},
   },
   limitHistory: {
     filterInputs: [
@@ -204,12 +209,13 @@ const initialFilterState = {
         ],
       },
     ],
-    filterValues: {
+    tempFilter: {
       clientIds: '',
       debtorId: '',
       startDate: null,
       endDate: null,
     },
+    finalFilter: {},
   },
   claimsReport: {
     filterInputs: [
@@ -220,9 +226,10 @@ const initialFilterState = {
         placeHolder: 'Select clients',
       },
     ],
-    filterValues: {
+    tempFilter: {
       clientIds: '',
     },
+    finalFilter: {},
   },
   reviewReport: {
     filterInputs: [
@@ -271,7 +278,7 @@ const initialFilterState = {
         ],
       },
     ],
-    filterValues: {
+    tempFilter: {
       clientIds: '',
       debtorId: '',
       limitStartDate: null,
@@ -279,6 +286,7 @@ const initialFilterState = {
       reportStartDate: null,
       reportEndDate: null,
     },
+    finalFilter: {},
   },
 };
 
@@ -362,10 +370,34 @@ export const reports = (state = initialReports, action) => {
           ...state.reportFilters,
           [action?.filterFor]: {
             ...state.reportFilters[action?.filterFor],
-            filterValues: {
-              ...state.reportFilters[action?.filterFor].filterValues,
+            tempFilter: {
+              ...state.reportFilters[action?.filterFor].tempFilter,
               [action.name]: action.value,
             },
+          },
+        },
+      };
+
+    case REPORTS_REDUX_CONSTANTS.APPLY_REPORT_FILTER_ACTION:
+      return {
+        ...state,
+        reportFilters: {
+          ...state.reportFilters,
+          [action?.filterFor]: {
+            ...state.reportFilters[action?.filterFor],
+            finalFilter: state.reportFilters[action?.filterFor].tempFilter,
+          },
+        },
+      };
+
+    case REPORTS_REDUX_CONSTANTS.CLOSE_REPORT_FILTER_ACTION:
+      return {
+        ...state,
+        reportFilters: {
+          ...state.reportFilters,
+          [action?.filterFor]: {
+            ...state.reportFilters[action?.filterFor],
+            tempFilter: state.reportFilters[action?.filterFor].finalFilter,
           },
         },
       };

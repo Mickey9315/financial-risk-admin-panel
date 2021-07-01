@@ -262,8 +262,8 @@ export const updateUserDetails = (id, data) => {
   };
 };
 
-export const deleteUserDetails = (id, params) => {
-  return async dispatch => {
+export const deleteUserDetails = id => {
+  return async () => {
     try {
       startGeneralLoaderOnRequest('viewUserDeleteUserButtonLoaderAction');
       const response = await UserManagementApiService.deleteUser(id);
@@ -271,7 +271,6 @@ export const deleteUserDetails = (id, params) => {
       if (response.data.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'User deleted successfully.');
         stopGeneralLoaderOnSuccessOrFail('viewUserDeleteUserButtonLoaderAction');
-        dispatch(getUserManagementListByFilter(params));
       }
     } catch (e) {
       stopGeneralLoaderOnSuccessOrFail('viewUserDeleteUserButtonLoaderAction');

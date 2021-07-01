@@ -96,7 +96,6 @@ const ViewApplication = () => {
     blockers,
     _id,
     country,
-    notesListLength,
     registrationNumber,
     acn,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
@@ -243,39 +242,89 @@ const ViewApplication = () => {
 
   const [newCreditLimit, setNewCreditLimit] = useState('');
   const [modifyLimitModal, setModifyLimitModal] = useState(false);
+  const [isLimitNote, setIsLimitNote] = useState(false);
+  const [approveNoteData, setApproveNoteData] = useState({ description: '', isPublic: false });
   const toggleModifyLimitModal = useCallback(() => {
     setModifyLimitModal(!modifyLimitModal);
   }, [modifyLimitModal]);
 
+  const onChangeCreditLimit = useCallback(
+    e => {
+      const val = e?.target?.value?.toString()?.replaceAll(',', '');
+      setNewCreditLimit(val);
+      if (val < creditLimit) {
+        setIsLimitNote(true);
+      } else {
+        setIsLimitNote(false);
+      }
+    },
+    [creditLimit]
+  );
+
   const modifyLimit = useCallback(async () => {
     if (newCreditLimit?.toString()?.trim().length <= 0) {
-      errorNotification('Please provide new credit limit');
-    } else if (newCreditLimit && !newCreditLimit?.toString()?.match(NUMBER_REGEX)) {
+      errorNotification('Please provide credit limit');
+    } else if (newCreditLimit && !newCreditLimit?.toString()?.trim()?.match(NUMBER_REGEX)) {
       errorNotification('Please provide valid credit limit');
+    } else if (newCreditLimit > creditLimit) {
+      errorNotification("Can't approve more credit limit than requested");
     } else {
       try {
-        const data = {
-          creditLimit: newCreditLimit,
-          status: statusToChange?.value,
-        };
-        await dispatch(changeApplicationStatus(id, data, statusToChange));
-        toggleModifyLimitModal();
+        if (!isLimitNote) {
+          const data = {
+            creditLimit: newCreditLimit?.toString()?.trim(),
+            status: statusToChange?.value,
+          };
+          await dispatch(changeApplicationStatus(id, data, statusToChange));
+          toggleModifyLimitModal();
+        } else if (isLimitNote) {
+          if (approveNoteData?.description?.trim()?.length > 0) {
+            const data = {
+              creditLimit: newCreditLimit?.toString()?.trim(),
+              description: approveNoteData?.description,
+              isPublic: approveNoteData?.isPublic,
+              status: statusToChange?.value,
+            };
+            await dispatch(changeApplicationStatus(id, data, statusToChange));
+            dispatch(getApplicationNotesList(id));
+            toggleModifyLimitModal();
+          } else {
+            errorNotification('Please Enter Description');
+          }
+        }
       } catch (e) {
         /**/
       }
     }
-  }, [newCreditLimit, toggleModifyLimitModal, statusToChange, id]);
+  }, [
+    newCreditLimit,
+    toggleModifyLimitModal,
+    statusToChange,
+    id,
+    creditLimit,
+    approveNoteData,
+    isLimitNote,
+  ]);
 
   const modifyLimitButtons = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleModifyLimitModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          toggleModifyLimitModal();
+          setNewCreditLimit(creditLimit);
+          setApproveNoteData({ description: '', isPublic: false });
+          setIsLimitNote(false);
+        },
+      },
       {
         title: 'Save',
         buttonType: 'primary',
         onClick: modifyLimit,
       },
     ],
-    [toggleModifyLimitModal, modifyLimit]
+    [toggleModifyLimitModal, modifyLimit, creditLimit]
   );
 
   const handleApplicationStatusChange = useCallback(
@@ -317,7 +366,7 @@ const ViewApplication = () => {
         buttonType: 'danger',
         onClick: async () => {
           try {
-            if (notesListLength > 0 || statusToChange?.value !== 'DECLINED') {
+            if (statusToChange?.value !== 'DECLINED') {
               await dispatch(
                 changeApplicationStatus(_id, { status: statusToChange?.value }, statusToChange)
               );
@@ -514,7 +563,7 @@ const ViewApplication = () => {
                   buttons={changeStatusButton}
                   hideModal={toggleConfirmationModal}
                 >
-                  {notesListLength > 0 || statusToChange?.value !== 'DECLINED' ? (
+                  {statusToChange?.value !== 'DECLINED' ? (
                     <span className="confirmation-message">
                       Are you sure you want to {statusToChange?.label} this application? Dont forget
                       to put add a Note.
@@ -570,11 +619,39 @@ const ViewApplication = () => {
                       name="creditLimit"
                       type="text"
                       value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
-                      onChange={e =>
-                        setNewCreditLimit(e?.target?.value?.toString()?.replaceAll(',', ''))
-                      }
+                      onChange={onChangeCreditLimit}
                     />
                   </div>
+                  {isLimitNote && (
+                    <div className="add-notes-popup-container mt-15">
+                      <span>Description</span>
+                      <Input
+                        prefixClass="font-placeholder"
+                        placeholder="Note description"
+                        name="description"
+                        type="text"
+                        value={approveNoteData?.description}
+                        onChange={e => {
+                          setApproveNoteData({
+                            ...approveNoteData,
+                            description: e?.target?.value,
+                          });
+                        }}
+                      />
+                      <span>Private/Public</span>
+                      <Switch
+                        id="selected-note"
+                        name="isPublic"
+                        checked={approveNoteData.isPublic}
+                        onChange={e => {
+                          setApproveNoteData({
+                            ...approveNoteData,
+                            isPublic: e.target.checked,
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
                 </Modal>
               )}
             </>

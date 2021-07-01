@@ -392,7 +392,6 @@ const DebtorsStakeHolderTab = () => {
     return filteredData;
   }, [COMPANY_INPUT, isAusOrNewStakeHolder, stakeHolder?.registrationNumber]);
 
-
   const INDIVIDUAL_INPUT = useMemo(
     () => [
       {
@@ -713,7 +712,7 @@ const DebtorsStakeHolderTab = () => {
   const handleEntityNameSearch = useCallback(
     e => {
       if (e.key === 'Enter') {
-        if (!isAusOrNew) return;
+        if (!isAusOrNewStakeHolder) return;
         if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
           errorNotification('Please select country before continue');
           return;
@@ -740,11 +739,17 @@ const DebtorsStakeHolderTab = () => {
         }
       }
     },
-    [stakeHolder, dispatchDrawerState, setSearchedEntityNameValue, currentPage, isAusOrNew]
+    [
+      stakeHolder,
+      dispatchDrawerState,
+      setSearchedEntityNameValue,
+      currentPage,
+      isAusOrNewStakeHolder,
+    ]
   );
   const handleEntityNameOnSearchClick = useCallback(
     ref => {
-      if (!isAusOrNew) return;
+      if (!isAusOrNewStakeHolder) return;
       if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
         errorNotification('Please select country before continue');
         return;
@@ -776,12 +781,12 @@ const DebtorsStakeHolderTab = () => {
       setSearchedEntityNameValue,
       stakeHolder?.stakeholderCountry,
       currentPage,
-      isAusOrNew,
+      isAusOrNewStakeHolder,
     ]
   );
 
   const retryEntityNameRequest = useCallback(async () => {
-    if (!isAusOrNew) return;
+    if (!isAusOrNewStakeHolder) return;
     if (searchedEntityNameValue.trim().length > 0) {
       if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
         errorNotification('Please select country before continue');
@@ -798,7 +803,12 @@ const DebtorsStakeHolderTab = () => {
         /**/
       }
     }
-  }, [searchedEntityNameValue, stakeHolder?.stakeholderCountry, currentPage, isAusOrNew]);
+  }, [
+    searchedEntityNameValue,
+    stakeHolder?.stakeholderCountry,
+    currentPage,
+    isAusOrNewStakeHolder,
+  ]);
 
   const handleToggleDropdown = useCallback(
     value =>
@@ -1103,7 +1113,6 @@ const DebtorsStakeHolderTab = () => {
     ]
   );
 
-
   const onStakeHolderDelete = useCallback(
     stakeHolderId => {
       if (docs?.length <= 2 && entityType.label === 'Partnership') {
@@ -1143,6 +1152,17 @@ const DebtorsStakeHolderTab = () => {
     toggleAddStakeHolderModal();
   }, [toggleAddStakeHolderModal]);
 
+  console.log(entityType?.value);
+
+  const addStakeHolderButton = useMemo(() => {
+    if (entityType?.value === 'SOLE_TRADER') {
+      if (docs?.length <= 0)
+        return <Button buttonType="success" title="Add" onClick={onClickAddStakeHolder} />;
+      return null;
+    }
+    return <Button buttonType="success" title="Add" onClick={onClickAddStakeHolder} />;
+  }, [entityType?.value, docs, onClickAddStakeHolder]);
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -1163,7 +1183,7 @@ const DebtorsStakeHolderTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="success" title="Add" onClick={onClickAddStakeHolder} />
+          {addStakeHolderButton}
         </div>
       </div>
       {!isLoading && docs ? (

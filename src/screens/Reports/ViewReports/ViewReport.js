@@ -6,6 +6,7 @@ import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { reportType } from '../../../helpers/reportTypeHelper';
 import {
+  applyFinalFilter,
   changeReportColumnList,
   changeReportsFilterFields,
   getReportColumnList,
@@ -72,9 +73,22 @@ const ViewReport = () => {
     [setCustomFieldModal]
   );
 
-  const filters = useMemo(() => {
+  const tempFilters = useMemo(() => {
     const params = {};
-    Object.entries(reportFilters?.[currentFilter.filter]?.filterValues ?? {})?.forEach(
+    Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(
+      ([key, value]) => {
+        params[key] = value || undefined;
+      }
+    );
+    if (currentFilter.filter === 'reviewReport') {
+      params.date = reviewReportFilterDate || undefined;
+    }
+    return { ...params };
+  }, [reportFilters, currentFilter, reviewReportFilterDate]);
+
+  const finalFilters = useMemo(() => {
+    const params = {};
+    Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(
       ([key, value]) => {
         params[key] = value || undefined;
       }
@@ -94,13 +108,14 @@ const ViewReport = () => {
         limit: limit ?? 15,
         columnFor: paramReport ?? '',
         ...initialParams,
-        ...filters,
+        ...tempFilters,
       };
       if (currentFilter.filter === 'reviewReport') {
         params.date = reviewReportFilterDate || undefined;
       }
       try {
         await dispatch(getReportList(params));
+        dispatch(applyFinalFilter(currentFilter.filter));
         if (cb && typeof cb === 'function') {
           cb();
         }
@@ -108,7 +123,7 @@ const ViewReport = () => {
         /**/
       }
     },
-    [reportList, page, limit, filters, currentFilter, reviewReportFilterDate]
+    [reportList, page, limit, tempFilters, currentFilter, reviewReportFilterDate]
   );
 
   const onClickCloseColumnSelection = useCallback(() => {
@@ -214,7 +229,7 @@ const ViewReport = () => {
   );
 
   const getClientSelectedValues = useMemo(() => {
-    const clients = reportFilters?.[currentFilter.filter]?.filterValues?.clientIds?.split(',');
+    const clients = reportFilters?.[currentFilter.filter]?.tempFilter?.clientIds?.split(',');
     const selectedClients = [];
     if (currentFilter.filter === 'claimsReport') {
       reportEntityListData?.clientIds?.forEach(data => {
@@ -263,7 +278,7 @@ const ViewReport = () => {
               options={reportEntityListData?.[input.name]}
               value={reportEntityListData?.[input.name].find(
                 data =>
-                  data?.value === reportFilters?.[currentFilter.filter]?.filterValues[input.name]
+                  data?.value === reportFilters?.[currentFilter.filter]?.tempFilter[input.name]
               )}
               onChange={handleSelectInputChange}
             />
@@ -288,8 +303,8 @@ const ViewReport = () => {
                 name={date.name}
                 className="filter-date-picker"
                 selected={
-                  reportFilters?.[currentFilter.filter]?.filterValues[date.name]
-                    ? new Date(reportFilters?.[currentFilter.filter]?.filterValues[date.name])
+                  reportFilters?.[currentFilter.filter]?.tempFilter[date.name]
+                    ? new Date(reportFilters?.[currentFilter.filter]?.tempFilter[date.name])
                     : null
                 }
                 onChange={selectedDate => handleDateInputChange(date.name, selectedDate)}
@@ -344,14 +359,24 @@ const ViewReport = () => {
         buttonType: 'outlined-primary',
         onClick: resetReportsFilter,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatch({
+            type: REPORTS_REDUX_CONSTANTS.CLOSE_REPORT_FILTER_ACTION,
+            filterFor: currentFilter.filter,
+          });
+          toggleFilterModal();
+        },
+      },
       {
         title: 'Apply',
         buttonType: 'primary',
         onClick: applyReportsFilter,
       },
     ],
-    [toggleFilterModal, applyReportsFilter, resetReportsFilter]
+    [toggleFilterModal, applyReportsFilter, resetReportsFilter, currentFilter]
   );
 
   useEffect(async () => {
@@ -378,14 +403,14 @@ const ViewReport = () => {
     const params = {
       page: page ?? 1,
       limit: limit ?? 15,
-      ...filters,
+      ...finalFilters,
     };
     const url = Object.entries(params)
       ?.filter(arr => arr[1] !== undefined)
       ?.map(([k, v]) => `${k}=${v}`)
       ?.join('&');
     history.push(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, filters]);
+  }, [history, total, pages, page, limit, finalFilters]);
 
   // extra filter for reviewReport
   const handleSelectDateChange = useCallback(
@@ -400,7 +425,7 @@ const ViewReport = () => {
   const downloadReport = useCallback(async () => {
     if (docs?.length > 0) {
       try {
-        const response = await reportDownloadAction(paramReport, filters);
+        const response = await reportDownloadAction(paramReport, tempFilters);
         if (response) downloadAll(response);
       } catch (e) {
         /**/
@@ -408,58 +433,58 @@ const ViewReport = () => {
     } else {
       errorNotification('No records to download');
     }
-  }, [paramReport, filters, docs?.length]);
+  }, [paramReport, tempFilters, docs?.length]);
 
   return (
     <>
-      <div className="breadcrumb-button-row">
-        <div className="breadcrumb">
-          <span onClick={backToReports}>Reports</span>
-          <span className="material-icons-round">navigate_next</span>
-          <span>{reportName}</span>
-        </div>
-        <div className="page-header-button-container">
-          {currentFilter.filter === 'reviewReport' && (
-            <div className="date-picker-container month-year-picker filter-date-picker-container mr-15 review-report-month-picker">
-              <DatePicker
-                selected={new Date(reviewReportFilterDate)}
-                onChange={handleSelectDateChange}
-                showMonthYearPicker
-                showFullMonthYearPicker
-                placeholderText="Select Month"
-                dateFormat="MMM yyyy"
-              />
-              <span className="material-icons-round">event_available</span>
-            </div>
-          )}
-          {['limit-list', 'pending-application'].includes(paramReport) && (
-            <IconButton
-              buttonType="primary"
-              title="cloud_download"
-              className="mr-10"
-              buttonTitle={`Click to download ${reportName}`}
-              onClick={downloadReport}
-              isLoading={reportDownloadButtonLoaderAction}
-            />
-          )}
-          <IconButton
-            buttonType="secondary"
-            title="filter_list"
-            className="mr-10"
-            buttonTitle={`Click to apply filters on ${reportName}`}
-            onClick={toggleFilterModal}
-          />
-          <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            buttonTitle="Click to select custom fields"
-            onClick={toggleCustomField}
-          />
-        </div>
-      </div>
       {!viewReportListLoader ? (
-        (() =>
-          docs?.length > 0 ? (
+        <>
+          <div className="breadcrumb-button-row">
+            <div className="breadcrumb">
+              <span onClick={backToReports}>Reports</span>
+              <span className="material-icons-round">navigate_next</span>
+              <span>{reportName}</span>
+            </div>
+            <div className="page-header-button-container">
+              {currentFilter.filter === 'reviewReport' && (
+                <div className="date-picker-container month-year-picker filter-date-picker-container mr-15 review-report-month-picker">
+                  <DatePicker
+                    selected={new Date(reviewReportFilterDate)}
+                    onChange={handleSelectDateChange}
+                    showMonthYearPicker
+                    showFullMonthYearPicker
+                    placeholderText="Select Month"
+                    dateFormat="MMM yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+              )}
+              {['limit-list', 'pending-application'].includes(paramReport) && (
+                <IconButton
+                  buttonType="primary"
+                  title="cloud_download"
+                  className="mr-10"
+                  buttonTitle={`Click to download ${reportName}`}
+                  onClick={downloadReport}
+                  isLoading={reportDownloadButtonLoaderAction}
+                />
+              )}
+              <IconButton
+                buttonType="secondary"
+                title="filter_list"
+                className="mr-10"
+                buttonTitle={`Click to apply tempFilters on ${reportName}`}
+                onClick={toggleFilterModal}
+              />
+              <IconButton
+                buttonType="primary"
+                title="format_line_spacing"
+                buttonTitle="Click to select custom fields"
+                onClick={toggleCustomField}
+              />
+            </div>
+          </div>
+          {docs?.length > 0 ? (
             <>
               <div className="common-list-container">
                 <Table
@@ -479,32 +504,31 @@ const ViewReport = () => {
                 pageActionClick={pageActionClick}
                 onSelectLimit={onSelectLimit}
               />
-
-              {customFieldModal && (
-                <CustomFieldModal
-                  defaultFields={defaultFields}
-                  customFields={customFields}
-                  onChangeSelectedColumn={onChangeSelectedColumn}
-                  buttons={customFieldsModalButtons}
-                  toggleCustomField={toggleCustomField}
-                />
-              )}
-              {filterModal && (
-                <Modal
-                  headerIcon="filter_list"
-                  header="Filter"
-                  buttons={filterModalButtons}
-                  className="filter-modal overdue-filter-modal"
-                >
-                  <>
-                    {reportFilters?.[currentFilter.filter]?.filterInputs?.map(getComponentFromType)}
-                  </>
-                </Modal>
-              )}
             </>
           ) : (
             <div className="no-record-found">No record found</div>
-          ))()
+          )}
+
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              buttons={customFieldsModalButtons}
+              toggleCustomField={toggleCustomField}
+            />
+          )}
+          {filterModal && (
+            <Modal
+              headerIcon="filter_list"
+              header="Filter"
+              buttons={filterModalButtons}
+              className="filter-modal overdue-filter-modal"
+            >
+              <>{reportFilters?.[currentFilter.filter]?.filterInputs?.map(getComponentFromType)}</>
+            </Modal>
+          )}
+        </>
       ) : (
         <Loader />
       )}

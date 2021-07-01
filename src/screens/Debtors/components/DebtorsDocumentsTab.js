@@ -557,7 +557,7 @@ const DebtorsDocumentsTab = () => {
               options={documentTypeOptions}
               value={documentType}
               onChange={handleDocumentChange}
-              isSearchable={false}
+              isSearchable
             />
             <span>Please upload your documents here</span>
             <FileUpload

@@ -468,7 +468,7 @@ const SettingsAuditLogTab = () => {
                       value={entityTypeSelectedValue}
                       options={entityTypeOptions}
                       onChange={handleEntityTypeFilterChange}
-                      isSearchable={false}
+                      isSearchable
                     />
                   </div>
                   <div className="filter-modal-row">
@@ -481,7 +481,7 @@ const SettingsAuditLogTab = () => {
                       options={userNameOptions}
                       value={userNameSelectedValue}
                       onChange={handleUserNameFilterChange}
-                      isSearchable={false}
+                      isSearchable
                     />
                   </div>
                   <div className="filter-modal-row">
@@ -494,7 +494,7 @@ const SettingsAuditLogTab = () => {
                       value={actionTypeSelectedValue}
                       options={actionTypeOptions}
                       onChange={handleActionTypeFilterChange}
-                      isSearchable={false}
+                      isSearchable
                     />
                   </div>
                   <div className="filter-modal-row">

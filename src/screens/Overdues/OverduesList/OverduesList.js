@@ -24,17 +24,17 @@ const OverduesList = () => {
   const [newSubmissionDetails, setNewSubmissionDetails] = useState({});
   const [newSubmissionModal, setNewSubmissionModal] = useState(false);
   const [filter, dispatchFilter] = useReducer(filterReducer, {
-    temp: {},
-    final: {},
+    tempFilter: {},
+    finalFilter: {},
   });
 
   const entityList = useSelector(({ overdue }) => overdue?.entityList ?? {});
 
-  const { temp, final } = useMemo(() => filter ?? {}, [filter]);
-
   const { overdueListPageLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
+
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
 
   const {
     page: paramPage,
@@ -109,10 +109,10 @@ const OverduesList = () => {
 
   const debtorIdSelectedValue = useMemo(() => {
     const foundValue = entityList?.debtorId?.find(e => {
-      return (e?.value ?? '') === temp?.debtorId;
+      return (e?.value ?? '') === tempFilter?.debtorId;
     });
     return foundValue ?? [];
-  }, [temp?.debtorId, entityList]);
+  }, [tempFilter?.debtorId, entityList]);
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
@@ -122,24 +122,29 @@ const OverduesList = () => {
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
-      if (temp?.startDate && temp?.endDate && moment(temp?.endDate).isBefore(temp?.startDate)) {
+      if (
+        tempFilter?.startDate &&
+        tempFilter?.endDate &&
+        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+      ) {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          debtorId: (temp?.debtorId?.trim()?.length ?? -1) > 0 ? temp?.debtorId : undefined,
+          debtorId:
+            (tempFilter?.debtorId?.trim()?.length ?? -1) > 0 ? tempFilter?.debtorId : undefined,
           minOutstandingAmount:
-            (temp?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
-              ? temp?.minOutstandingAmount
+            (tempFilter?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
+              ? tempFilter?.minOutstandingAmount
               : undefined,
           maxOutstandingAmount:
-            (temp?.maxOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
-              ? temp?.maxOutstandingAmount
+            (tempFilter?.maxOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
+              ? tempFilter?.maxOutstandingAmount
               : undefined,
-          startDate: temp?.startDate ?? undefined,
-          endDate: temp?.endDate ?? undefined,
+          startDate: tempFilter?.startDate ?? undefined,
+          endDate: tempFilter?.endDate ?? undefined,
           ...params,
         };
         try {
@@ -155,15 +160,7 @@ const OverduesList = () => {
         }
       }
     },
-    [
-      page,
-      limit,
-      temp?.endDate,
-      temp?.startDate,
-      temp?.maxOutstandingAmount,
-      temp?.minOutstandingAmount,
-      temp?.debtorId,
-    ]
+    [page, limit, { ...tempFilter }]
   );
 
   const [filterModal, setFilterModal] = useState(false);
@@ -245,29 +242,20 @@ const OverduesList = () => {
     {
       page: page ?? 1,
       limit: limit ?? 15,
-      debtorId: (final?.debtorId?.trim()?.length ?? -1) > 0 ? final?.debtorId : undefined,
+      debtorId:
+        (finalFilter?.debtorId?.trim()?.length ?? -1) > 0 ? finalFilter?.debtorId : undefined,
       minOutstandingAmount:
-        (final?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
-          ? final?.minOutstandingAmount
+        (finalFilter?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
+          ? finalFilter?.minOutstandingAmount
           : undefined,
       maxOutstandingAmount:
-        (final?.maxOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
-          ? final?.maxOutstandingAmount
+        (finalFilter?.maxOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
+          ? finalFilter?.maxOutstandingAmount
           : undefined,
-      startDate: final?.startDate ?? undefined,
-      endDate: final?.endDate ?? undefined,
+      startDate: finalFilter?.startDate ?? undefined,
+      endDate: finalFilter?.endDate ?? undefined,
     },
-    [
-      total,
-      pages,
-      page,
-      limit,
-      final?.endDate,
-      final?.startDate,
-      final?.maxOutstandingAmount,
-      final?.minOutstandingAmount,
-      final?.debtorId,
-    ]
+    [total, pages, page, limit, { ...finalFilter }]
   );
 
   const pageActionClick = useCallback(
@@ -427,8 +415,8 @@ const OverduesList = () => {
                   type="text"
                   name="min-limit"
                   value={
-                    temp?.minOutstandingAmount
-                      ? NumberCommaSeparator(temp?.minOutstandingAmount)
+                    tempFilter?.minOutstandingAmount
+                      ? NumberCommaSeparator(tempFilter?.minOutstandingAmount)
                       : undefined
                   }
                   placeholder="0"
@@ -441,8 +429,8 @@ const OverduesList = () => {
                   type="text"
                   name="max-limit"
                   value={
-                    temp?.maxOutstandingAmount
-                      ? NumberCommaSeparator(temp?.maxOutstandingAmount)
+                    tempFilter?.maxOutstandingAmount
+                      ? NumberCommaSeparator(tempFilter?.maxOutstandingAmount)
                       : undefined
                   }
                   placeholder="0"
@@ -454,7 +442,7 @@ const OverduesList = () => {
                 <div className="date-picker-container month-year-picker">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={temp?.startDate ? new Date(temp?.startDate) : null}
+                    selected={tempFilter?.startDate ? new Date(tempFilter?.startDate) : null}
                     onChange={handleStartDateChange}
                     placeholderText="From Date"
                     dateFormat="MM/yyyy"
@@ -467,7 +455,7 @@ const OverduesList = () => {
                 <div className="date-picker-container month-year-picker">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={temp.endDate ? new Date(temp?.endDate) : null}
+                    selected={tempFilter.endDate ? new Date(tempFilter?.endDate) : null}
                     onChange={handleEndDateChange}
                     placeholderText="To Date"
                     dateFormat="MM/yyyy"

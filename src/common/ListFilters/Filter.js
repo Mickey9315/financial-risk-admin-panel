@@ -1,6 +1,6 @@
 const initialFilterState = {
-  temp: {},
-  final: {},
+  tempFilter: {},
+  finalFilter: {},
 };
 
 export const LIST_FILTER_REDUCER_ACTIONS = {
@@ -15,20 +15,20 @@ export function filterReducer(state, action) {
     case LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
       return {
         ...state,
-        temp: {
-          ...state.temp,
+        tempFilter: {
+          ...state.tempFilter,
           [`${action.name}`]: action.value,
         },
       };
     case LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA:
       return {
         ...state,
-        final: { ...state.temp },
+        finalFilter: { ...state.tempFilter },
       };
     case LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER:
       return {
         ...state,
-        temp: { ...state.final },
+        tempFilter: { ...state.finalFilter },
       };
     case LIST_FILTER_REDUCER_ACTIONS.RESET_STATE:
       return { ...initialFilterState };

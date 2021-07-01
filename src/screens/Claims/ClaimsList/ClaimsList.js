@@ -22,30 +22,7 @@ import { errorNotification } from '../../../common/Toast';
 import { CLAIMS_REDUX_CONSTANTS } from '../redux/ClaimsReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
-
-const initialFilterState = { clientId: '' };
-
-const CLAIMS_FILTER_REDUCER_ACTIONS = {
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function filterReducer(state, action) {
-  switch (action.type) {
-    case CLAIMS_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        [`${action.name}`]: action.value,
-      };
-
-    case CLAIMS_FILTER_REDUCER_ACTIONS.RESET_STATE:
-      return {
-        ...initialFilterState,
-      };
-
-    default:
-      return state;
-  }
-}
+import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 
 const ClaimsList = () => {
   const dispatch = useDispatch();
@@ -57,18 +34,18 @@ const ClaimsList = () => {
     [setFilterModal]
   );
 
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const { clientId } = useMemo(() => filter, [filter]);
-  const handleEntityNameFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: CLAIMS_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'clientId',
-        value: event.value,
-      });
-    },
-    [dispatchFilter]
-  );
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
+    tempFilter: {},
+    finalFilter: {},
+  });
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
+  const handleEntityNameFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'clientId',
+      value: event.value,
+    });
+  }, []);
   const claimsList = useSelector(({ claims }) => claims?.claimsList ?? {});
   const claimsColumnList = useSelector(({ claims }) => claims?.claimsColumnList ?? {});
   const claimsDefaultColumnList = useSelector(
@@ -98,12 +75,18 @@ const ClaimsList = () => {
       const params = {
         page: page ?? 1,
         limit: limit ?? 15,
-        clientId: (clientId?.trim()?.length ?? -1) > 0 ? clientId : undefined,
+        clientId:
+          (tempFilter?.clientId?.toString()?.trim()?.length ?? -1) > 0
+            ? tempFilter?.clientId
+            : undefined,
         ...initialParams,
       };
       dispatch(getClaimsListByFilter(params));
+      dispatchFilter({
+        type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+      });
     },
-    [page, limit, clientId, filter]
+    [page, limit, tempFilter?.clientId]
   );
 
   const onClickApplyFilter = useCallback(() => {
@@ -113,10 +96,10 @@ const ClaimsList = () => {
 
   const onClickResetFilter = useCallback(() => {
     dispatchFilter({
-      type: CLAIMS_FILTER_REDUCER_ACTIONS.RESET_STATE,
+      type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
     onClickApplyFilter();
-  }, [dispatchFilter]);
+  }, []);
 
   const filterModalButtons = useMemo(
     () => [
@@ -125,18 +108,27 @@ const ClaimsList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetFilter,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+          });
+          toggleFilterModal();
+        },
+      },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
 
   const entityNameSelectedValue = useMemo(() => {
-    const foundValue = filterDropdownClient?.find(e => {
-      return e.value === clientId;
+    const foundValue = filterDropdownClient?.filter(e => {
+      return e.value === tempFilter?.clientId;
     });
-    return foundValue || '';
-  }, [clientId, filterDropdownClient]);
+    return foundValue || [];
+  }, [tempFilter?.clientId, filterDropdownClient]);
 
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
@@ -229,11 +221,17 @@ const ClaimsList = () => {
     [history]
   );
 
-  useUrlParamsUpdate({
-    page: page ?? 1,
-    limit: limit ?? 15,
-    entityType: (clientId?.trim()?.length ?? -1) > 0 ? clientId : undefined,
-  });
+  useUrlParamsUpdate(
+    {
+      page: page ?? 1,
+      limit: limit ?? 15,
+      entityType:
+        (finalFilter?.clientId?.toString()?.trim()?.length ?? -1) > 0
+          ? finalFilter?.clientId
+          : undefined,
+    },
+    [page, limit, { ...finalFilter }]
+  );
 
   useEffect(() => {
     const data = {
@@ -243,7 +241,7 @@ const ClaimsList = () => {
     };
     Object.entries(filter).forEach(([name, value]) => {
       dispatchFilter({
-        type: CLAIMS_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
@@ -258,29 +256,29 @@ const ClaimsList = () => {
 
   return (
     <>
-      <div className="page-header">
-        <div className="page-header-name">Claims List</div>
-        <div className="page-header-button-container">
-          <IconButton
-            buttonType="secondary"
-            title="filter_list"
-            className="mr-10"
-            buttonTitle="Click to apply filters on claim list"
-            onClick={() => toggleFilterModal()}
-          />
-          <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            className="mr-10"
-            buttonTitle="Click to select custom fields"
-            onClick={() => toggleCustomField()}
-          />
-          <Button title="Add" buttonType="success" onClick={addClaims} />
-        </div>
-      </div>
       {!claimListLoader ? (
-        (() =>
-          docs?.length > 0 ? (
+        <>
+          <div className="page-header">
+            <div className="page-header-name">Claims List</div>
+            <div className="page-header-button-container">
+              <IconButton
+                buttonType="secondary"
+                title="filter_list"
+                className="mr-10"
+                buttonTitle="Click to apply filters on claim list"
+                onClick={() => toggleFilterModal()}
+              />
+              <IconButton
+                buttonType="primary"
+                title="format_line_spacing"
+                className="mr-10"
+                buttonTitle="Click to select custom fields"
+                onClick={() => toggleCustomField()}
+              />
+              <Button title="Add" buttonType="success" onClick={addClaims} />
+            </div>
+          </div>
+          {docs?.length > 0 ? (
             <>
               <div className="common-list-container">
                 <Table
@@ -302,43 +300,42 @@ const ClaimsList = () => {
                 onSelectLimit={onSelectLimit}
                 pageActionClick={pageActionClick}
               />
-
-              {customFieldModal && (
-                <CustomFieldModal
-                  defaultFields={defaultFields}
-                  customFields={customFields}
-                  buttons={customFieldsModalButtons}
-                  onChangeSelectedColumn={onChangeSelectedColumn}
-                  toggleCustomField={toggleCustomField}
-                />
-              )}
-
-              {filterModal && (
-                <Modal
-                  headerIcon="filter_list"
-                  header="Filter"
-                  buttons={filterModalButtons}
-                  className="filter-modal application-filter-modal"
-                >
-                  <div className="filter-modal-row">
-                    <div className="form-title">Entity Type</div>
-                    <ReactSelect
-                      className="filter-select react-select-container"
-                      classNamePrefix="react-select"
-                      placeholder="Select"
-                      name="role"
-                      options={filterDropdownClient}
-                      value={entityNameSelectedValue}
-                      onChange={handleEntityNameFilterChange}
-                      isSearchable={false}
-                    />
-                  </div>
-                </Modal>
-              )}
             </>
           ) : (
             <div className="no-record-found">No record found</div>
-          ))()
+          )}
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              buttons={customFieldsModalButtons}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              toggleCustomField={toggleCustomField}
+            />
+          )}
+          {filterModal && (
+            <Modal
+              headerIcon="filter_list"
+              header="Filter"
+              buttons={filterModalButtons}
+              className="filter-modal application-filter-modal"
+            >
+              <div className="filter-modal-row">
+                <div className="form-title">Clients</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select"
+                  name="role"
+                  options={filterDropdownClient}
+                  value={entityNameSelectedValue}
+                  onChange={handleEntityNameFilterChange}
+                  isSearchable
+                />
+              </div>
+            </Modal>
+          )}
+        </>
       ) : (
         <Loader />
       )}

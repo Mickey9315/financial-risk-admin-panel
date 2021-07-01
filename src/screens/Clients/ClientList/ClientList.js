@@ -37,32 +37,8 @@ import {
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
-
-const initialFilterState = {
-  riskAnalystId: '',
-  serviceManagerId: '',
-  startDate: null,
-  endDate: null,
-};
-
-const CLIENT_FILTER_REDUCER_ACTIONS = {
-  UPDATE_DATA: 'UPDATE_DATA',
-  RESET_STATE: 'RESET_STATE',
-};
-
-function filterReducer(state, action) {
-  switch (action.type) {
-    case CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-      return {
-        ...state,
-        [`${action.name}`]: action.value,
-      };
-    case CLIENT_FILTER_REDUCER_ACTIONS.RESET_STATE:
-      return { ...initialFilterState };
-    default:
-      return state;
-  }
-}
+import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
+import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 
 const ClientList = () => {
   const history = useHistory();
@@ -85,8 +61,11 @@ const ClientList = () => {
     clientListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const { riskAnalystId, serviceManagerId, startDate, endDate } = useMemo(() => filter, [filter]);
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
+    tempFilter: {},
+    finalFilter: {},
+  });
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
 
   const { docs, headers } = useMemo(() => clientListWithPageData ?? {}, [clientListWithPageData]);
   const [crmIds, setCrmIds] = useState([]);
@@ -125,27 +104,21 @@ const ClientList = () => {
     clientListWithPageData,
   ]);
 
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleStartDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'startDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
 
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleEndDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'endDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
   const resetFilterDates = useCallback(() => {
     handleStartDateChange(null);
     handleEndDateChange(null);
@@ -153,30 +126,42 @@ const ClientList = () => {
 
   const getClientListByFilter = useCallback(
     async (params = {}, cb) => {
-      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+      if (
+        tempFilter?.startDate &&
+        tempFilter?.endDate &&
+        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+      ) {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          riskAnalystId: (riskAnalystId?.trim()?.length ?? -1) > 0 ? riskAnalystId : undefined,
+          riskAnalystId:
+            (tempFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
+              ? tempFilter?.riskAnalystId
+              : undefined,
           serviceManagerId:
-            (serviceManagerId?.trim()?.length ?? -1) > 0 ? serviceManagerId : undefined,
-          startDate: startDate ?? undefined,
-          endDate: endDate ?? undefined,
+            (tempFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
+              ? tempFilter?.serviceManagerId
+              : undefined,
+          startDate: tempFilter?.startDate ?? undefined,
+          endDate: tempFilter?.endDate ?? undefined,
           ...params,
         };
         await dispatch(getClientList(data));
+        dispatchFilter({
+          type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+        });
         if (cb && typeof cb === 'function') {
           cb();
         }
       }
     },
-    [page, limit, riskAnalystId, serviceManagerId, startDate, endDate, filter]
+    [page, limit, { ...tempFilter }]
   );
 
-  useEffect(() => {
+  useEffect(async () => {
     const params = {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
@@ -192,42 +177,43 @@ const ClientList = () => {
 
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
-        type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
     });
 
-    getClientListByFilter({ ...params, ...filters });
+    await getClientListByFilter({ ...params, ...filters });
     dispatch(getClientColumnListName());
   }, []);
 
-  useEffect(() => {
-    const params = {
+  useUrlParamsUpdate(
+    {
       page: page ?? 1,
       limit: limit ?? 15,
-      riskAnalystId: (riskAnalystId?.trim()?.length ?? -1) > 0 ? riskAnalystId : undefined,
-      serviceManagerId: (serviceManagerId?.trim()?.length ?? -1) > 0 ? serviceManagerId : undefined,
-      startDate: startDate ? new Date(startDate).toISOString() : undefined,
-      endDate: endDate ? new Date(endDate).toISOString() : undefined,
-    };
-    const url = Object.entries(params)
-      .filter(arr => arr[1] !== undefined)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-
-    history.replace(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, riskAnalystId, serviceManagerId, startDate, endDate]);
+      riskAnalystId:
+        (finalFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
+          ? finalFilter?.riskAnalystId
+          : undefined,
+      serviceManagerId:
+        (finalFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
+          ? finalFilter?.serviceManagerId
+          : undefined,
+      startDate: finalFilter?.startDate || undefined,
+      endDate: finalFilter?.endDate || undefined,
+    },
+    [page, limit, { ...finalFilter }]
+  );
 
   const pageActionClick = useCallback(
-    newPage => {
-      getClientListByFilter({ page: newPage, limit });
+    async newPage => {
+      await getClientListByFilter({ page: newPage, limit });
     },
     [limit, getClientListByFilter]
   );
   const onSelectLimit = useCallback(
-    newLimit => {
-      getClientListByFilter({ page: 1, limit: newLimit });
+    async newLimit => {
+      await getClientListByFilter({ page: 1, limit: newLimit });
     },
     [getClientListByFilter]
   );
@@ -237,15 +223,15 @@ const ClientList = () => {
     [setFilterModal]
   );
 
-  const onClickApplyFilter = useCallback(() => {
+  const onClickApplyFilter = useCallback(async () => {
     toggleFilterModal();
-    getClientListByFilter({ page: 1, limit });
+    await getClientListByFilter({ page: 1, limit });
   }, [getClientListByFilter, page, limit, toggleFilterModal]);
 
-  const onClickResetFilterClientList = useCallback(() => {
-    dispatchFilter({ type: CLIENT_FILTER_REDUCER_ACTIONS.RESET_STATE });
-    onClickApplyFilter();
-  }, [dispatchFilter]);
+  const onClickResetFilterClientList = useCallback(async () => {
+    dispatchFilter({ type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE });
+    await onClickApplyFilter();
+  }, []);
 
   const filterModalButtons = useMemo(
     () => [
@@ -254,7 +240,16 @@ const ClientList = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetFilterClientList,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+          });
+          toggleFilterModal();
+        },
+      },
       {
         title: 'Apply',
         buttonType: 'primary',
@@ -423,34 +418,28 @@ const ClientList = () => {
     }
   }, [searchInputRef, setIsModalLoading, setCrmIds]);
 
-  const handleRiskAnalystFilterChange = useCallback(
-    event => {
-      if (event && event.value) {
-        dispatchFilter({
-          type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-          name: 'riskAnalystId',
-          value: event.value,
-        });
-      }
-    },
-    [dispatchFilter]
-  );
-  const handleServiceManagerFilterChange = useCallback(
-    event => {
-      if (event && event.value) {
-        dispatchFilter({
-          type: CLIENT_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-          name: 'serviceManagerId',
-          value: event.value,
-        });
-      }
-    },
-    [dispatchFilter]
-  );
+  const handleRiskAnalystFilterChange = useCallback(event => {
+    if (event && event.value) {
+      dispatchFilter({
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'riskAnalystId',
+        value: event.value,
+      });
+    }
+  }, []);
+  const handleServiceManagerFilterChange = useCallback(event => {
+    if (event && event.value) {
+      dispatchFilter({
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'serviceManagerId',
+        value: event.value,
+      });
+    }
+  }, []);
 
   const clientRiskAnalystSelectedValue = useMemo(() => {
     const foundValue = filterList?.riskAnalystList?.find(e => {
-      return e._id === riskAnalystId;
+      return e._id === tempFilter?.riskAnalystId;
     });
     return foundValue
       ? [
@@ -460,11 +449,11 @@ const ClientList = () => {
           },
         ]
       : [];
-  }, [filterList, riskAnalystId]);
+  }, [filterList, tempFilter?.riskAnalystId]);
 
   const clientServiceManagerSelectedValue = useMemo(() => {
     const foundValue = filterList?.serviceManagerList?.find(e => {
-      return e._id === serviceManagerId;
+      return e._id === tempFilter?.serviceManagerId;
     });
     return foundValue
       ? [
@@ -474,7 +463,7 @@ const ClientList = () => {
           },
         ]
       : [];
-  }, [filterList, serviceManagerId]);
+  }, [filterList, tempFilter?.serviceManagerId]);
   const selectClientFromCrm = useCallback(
     crmId => {
       let arr = [...crmIds];
@@ -574,7 +563,7 @@ const ClientList = () => {
                   options={serviceManagerFilterListData}
                   value={clientServiceManagerSelectedValue}
                   onChange={handleServiceManagerFilterChange}
-                  isSearchable={false}
+                  isSearchable
                 />
               </div>
               <div className="filter-modal-row">
@@ -587,7 +576,7 @@ const ClientList = () => {
                   options={riskAnalystFilterListData}
                   value={clientRiskAnalystSelectedValue}
                   onChange={handleRiskAnalystFilterChange}
-                  isSearchable={false}
+                  isSearchable
                 />
               </div>
               <div className="filter-modal-row">
@@ -595,7 +584,7 @@ const ClientList = () => {
                 <div className="date-picker-container filter-date-picker-container mr-15">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={startDate}
+                    selected={tempFilter?.startDate ? new Date(tempFilter?.startDate) : null}
                     showMonthDropdown
                     showYearDropdown
                     scrollableYearDropdown
@@ -608,7 +597,7 @@ const ClientList = () => {
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={endDate}
+                    selected={tempFilter?.endDate ? new Date(tempFilter?.endDate) : null}
                     showMonthDropdown
                     showYearDropdown
                     scrollableYearDropdown

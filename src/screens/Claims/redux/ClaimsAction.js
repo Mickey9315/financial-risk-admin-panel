@@ -138,6 +138,7 @@ export const handleClaimChange = (name, value) => {
 export const addClaim = data => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('saveClaimsButtonLoaderAction');
       const response = await ClaimsApiServices.addClaim(data);
 
       if (response.data.status === 'SUCCESS') {
@@ -145,8 +146,10 @@ export const addClaim = data => {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.RESET_CLAIMS_DETAILS,
         });
+        stopGeneralLoaderOnSuccessOrFail('saveClaimsButtonLoaderAction');
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('saveClaimsButtonLoaderAction');
       displayErrors(e);
     }
   };

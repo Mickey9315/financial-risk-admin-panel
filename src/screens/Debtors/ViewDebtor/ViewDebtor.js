@@ -382,7 +382,7 @@ const ViewInsurer = () => {
                   placeholder={action === 'view' || !input.isEditable ? '-' : input.placeholder}
                   options={input.data}
                   value={input?.value}
-                  isSearchable={false}
+                  isSearchable
                   onChange={handleOnSelectInputChange}
                   isDisabled={action === 'view' || !input.isEditable}
                 />

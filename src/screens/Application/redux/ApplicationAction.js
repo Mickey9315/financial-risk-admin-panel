@@ -1003,6 +1003,7 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
       }
     } catch (e) {
       displayErrors(e);
+      throw Error();
     }
   };
 };
