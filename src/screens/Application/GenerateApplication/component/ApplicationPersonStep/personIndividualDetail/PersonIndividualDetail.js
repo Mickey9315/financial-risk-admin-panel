@@ -561,6 +561,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
             clientId: companyState?.clientId?.value,
             country: partners?.[index]?.stakeholderCountry?.value,
             page: currentPage,
+            step: 'person',
           };
           dispatch(searchApplicationCompanyEntityName(params));
         } catch (e) {
@@ -604,6 +605,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
               clientId: companyState?.clientId?.value,
               country: partners?.[index]?.stakeholderCountry?.value,
               page: currentPage,
+              step: 'person',
             };
             dispatch(searchApplicationCompanyEntityName(params));
           } catch (err) {
@@ -640,6 +642,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
           clientId: companyState?.clientId?.value,
           country: partners?.[index]?.stakeholderCountry?.value,
           page: currentPage,
+          step: 'person',
         };
         await dispatch(searchApplicationCompanyEntityName(params));
       } catch (e) {

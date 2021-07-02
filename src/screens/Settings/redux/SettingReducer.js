@@ -6,7 +6,7 @@ const initialSettingState = {
   documentType: {
     docs: [],
     total: 0,
-    limit: 0,
+    limit: 15,
     page: 1,
     pages: 1,
     headers: [],
@@ -42,7 +42,7 @@ const initialSettingState = {
   auditLogList: {
     docs: [],
     total: 0,
-    limit: 0,
+    limit: 15,
     page: 1,
     pages: 1,
     headers: [],

@@ -170,9 +170,7 @@ const ApplicationConfirmationStep = () => {
             label: 'tradingName',
             type: 'text',
           },
-          {
-            type: 'blank',
-          },
+
           {
             title: 'Entity Type*',
             value: person?.entityType || '-',
@@ -196,6 +194,12 @@ const ApplicationConfirmationStep = () => {
             value: person?.abn || '-',
             label: 'abn',
             type: 'text',
+          },
+          {
+            title: 'country',
+            value: person?.stakeholderCountry || '-',
+            label: 'country',
+            type: 'select',
           },
 
           { type: 'line' },

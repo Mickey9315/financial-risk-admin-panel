@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import moment from 'moment';
-import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import ReactSelect from 'react-select';
@@ -22,6 +21,8 @@ import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomField
 import Modal from '../../../common/Modal/Modal';
 import { errorNotification } from '../../../common/Toast';
 import { SETTING_REDUX_CONSTANTS } from '../redux/SettingReduxConstants';
+import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
+import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 
 const SettingsAuditLogTab = () => {
   const { auditLogList, auditLogColumnNameList, auditLogDefaultColumnNameList } = useSelector(
@@ -45,86 +46,51 @@ const SettingsAuditLogTab = () => {
     auditLogList,
   ]);
   const [filterModal, setFilterModal] = useState(false);
-  const AUDIT_LOG_FILTER_REDUCER_ACTIONS = {
-    UPDATE_DATA: 'UPDATE_DATA',
-    RESET_STATE: 'RESET_STATE',
-  };
-  const initialFilterState = {
-    entityType: '',
-    userRefId: '',
-    actionType: '',
-    startDate: null,
-    endDate: null,
-  };
-  function filterReducer(state, action) {
-    switch (action.type) {
-      case AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA:
-        return {
-          ...state,
-          [`${action.name}`]: action.value,
-        };
-      case AUDIT_LOG_FILTER_REDUCER_ACTIONS.RESET_STATE:
-        return { ...initialFilterState };
-      default:
-        return state;
-    }
-  }
-  const [filter, dispatchFilter] = useReducer(filterReducer, initialFilterState);
-  const { entityType, userRefId, actionType, startDate, endDate } = useMemo(() => filter, [filter]);
-  const handleStartDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'startDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
 
-  const handleEndDateChange = useCallback(
-    date => {
-      dispatchFilter({
-        type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'endDate',
-        value: date,
-      });
-    },
-    [dispatchFilter]
-  );
+  const [filter, dispatchFilter] = useReducer(filterReducer, {
+    tempFilter: {},
+    finalFilter: {},
+  });
+  const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
+  const handleStartDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'startDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
 
-  const handleEntityTypeFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'entityType',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleEndDateChange = useCallback(date => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'endDate',
+      value: new Date(date).toISOString(),
+    });
+  }, []);
 
-  const handleUserNameFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'userRefId',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleEntityTypeFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'entityType',
+      value: event?.value,
+    });
+  }, []);
 
-  const handleActionTypeFilterChange = useCallback(
-    event => {
-      dispatchFilter({
-        type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-        name: 'actionType',
-        value: event?.value,
-      });
-    },
-    [dispatchFilter]
-  );
+  const handleUserNameFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'userRefId',
+      value: event?.value,
+    });
+  }, []);
+
+  const handleActionTypeFilterChange = useCallback(event => {
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'actionType',
+      value: event?.value,
+    });
+  }, []);
 
   const resetFilterDates = useCallback(() => {
     handleStartDateChange(null);
@@ -133,27 +99,36 @@ const SettingsAuditLogTab = () => {
 
   const getAuditLogListByFilter = useCallback(
     (params = {}, cb) => {
-      if (startDate && endDate && moment(endDate).isBefore(startDate)) {
+      if (
+        tempFilter?.startDate &&
+        tempFilter?.endDate &&
+        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+      ) {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
-          page: page ?? 1,
-          limit: limit ?? 15,
-          entityType: entityType && entityType.trim().length > 0 ? entityType : undefined,
-          userRefId: userRefId && userRefId.trim().length > 0 ? userRefId : undefined,
-          actionType: actionType && actionType.trim().length > 0 ? actionType : undefined,
-          startDate: startDate ?? undefined,
-          endDate: endDate || undefined,
+          page: page || 1,
+          limit: limit || 15,
+          entityType:
+            tempFilter?.entityType?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
+          userRefId: tempFilter?.userRefId?.trim()?.length > 0 ? tempFilter?.userRefId : undefined,
+          actionType:
+            tempFilter?.actionType?.trim()?.length > 0 ? tempFilter?.actionType : undefined,
+          startDate: tempFilter?.startDate ?? undefined,
+          endDate: tempFilter?.endDate || undefined,
           ...params,
         };
         dispatch(getAuditLogsList(data));
+        dispatchFilter({
+          type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+        });
         if (cb && typeof cb === 'function') {
           cb();
         }
       }
     },
-    [page, limit, entityType, actionType, userRefId, startDate, endDate]
+    [page, limit, { ...tempFilter }]
   );
 
   const toggleFilterModal = useCallback(
@@ -166,7 +141,7 @@ const SettingsAuditLogTab = () => {
   }, [getAuditLogListByFilter, toggleFilterModal]);
 
   const onClickResetFilterAuditLogList = useCallback(() => {
-    dispatchFilter({ type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.RESET_STATE });
+    dispatchFilter({ type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE });
     onClickApplyFilter();
   }, [dispatchFilter]);
 
@@ -270,25 +245,26 @@ const SettingsAuditLogTab = () => {
       settingAuditLogColumnResetButtonLoaderAction,
     ]
   );
-  const history = useHistory();
 
-  useEffect(() => {
-    const params = {
+  useUrlParamsUpdate(
+    {
       page: page || 1,
       limit: limit || 15,
-      actionType: actionType && actionType.toString().trim().length > 0 ? actionType : undefined,
-      userRefId: userRefId && userRefId.toString().trim().length > 0 ? userRefId : undefined,
-      entityType: entityType && entityType.toString().trim().length > 0 ? entityType : undefined,
-      startDate: startDate ? new Date(startDate).toISOString() : undefined,
-      endDate: endDate ? new Date(endDate).toISOString() : undefined,
-    };
-    const url = Object.entries(params)
-      .filter(arr => arr[1] !== undefined)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-
-    history.replace(`${history.location.pathname}?${url}`);
-  }, [history, total, pages, page, limit, actionType, userRefId, entityType, startDate, endDate]);
+      actionType:
+        finalFilter?.actionType?.toString()?.trim()?.length > 0
+          ? finalFilter?.actionType
+          : undefined,
+      entityType:
+        finalFilter?.entityType?.toString()?.trim()?.length > 0
+          ? finalFilter?.entityType
+          : undefined,
+      userRefId:
+        finalFilter?.userRefId?.toString()?.trim()?.length > 0 ? finalFilter?.userRefId : undefined,
+      startDate: finalFilter?.startDate || undefined,
+      endDate: finalFilter?.endDate || undefined,
+    },
+    [page, limit, { ...finalFilter }]
+  );
 
   useEffect(() => {
     const params = {
@@ -312,7 +288,7 @@ const SettingsAuditLogTab = () => {
 
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
-        type: AUDIT_LOG_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
@@ -329,7 +305,16 @@ const SettingsAuditLogTab = () => {
         buttonType: 'outlined-primary',
         onClick: onClickResetFilterAuditLogList,
       },
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleFilterModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          toggleFilterModal();
+          dispatchFilter({
+            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+          });
+        },
+      },
       { title: 'Apply', buttonType: 'primary', onClick: onClickApplyFilter },
     ],
     [toggleFilterModal, onClickApplyFilter]
@@ -397,47 +382,46 @@ const SettingsAuditLogTab = () => {
 
   const entityTypeSelectedValue = useMemo(() => {
     const selectedEntityType = entityTypeOptions.find(e => {
-      return e.value === entityType;
+      return e.value === tempFilter?.entityType;
     });
     return selectedEntityType ? [selectedEntityType] : [];
-  }, [filter, entityType]);
+  }, [filter, tempFilter?.entityType]);
 
   const userNameSelectedValue = useMemo(() => {
     const selectedUserName = userNameList?.find(e => {
-      return e._id === userRefId;
+      return e._id === tempFilter?.userRefId;
     });
     return selectedUserName ? [{ label: selectedUserName.name, value: selectedUserName._id }] : [];
-  }, [filter, userRefId]);
+  }, [filter, tempFilter?.userRefId]);
 
   const actionTypeSelectedValue = useMemo(() => {
     const selectedActiontype = actionTypeOptions.find(e => {
-      return e.value === actionType;
+      return e.value === tempFilter?.actionType;
     });
     return selectedActiontype ? [selectedActiontype] : [];
-  }, [filter, actionType]);
+  }, [filter, tempFilter?.actionType]);
 
   return (
     <>
       {!settingAuditLogTabLoader ? (
-        (() =>
-          docs?.length > 0 ? (
+        <>
+          <div className="settings-title-row">
+            <div className="title">Audit Logs List</div>
+            <div className="buttons-row">
+              <IconButton
+                buttonType="secondary"
+                title="filter_list"
+                onClick={() => toggleFilterModal()}
+              />
+              <IconButton
+                buttonType="primary"
+                title="format_line_spacing"
+                onClick={() => toggleCustomField()}
+              />
+            </div>
+          </div>
+          {docs?.length > 0 ? (
             <>
-              {' '}
-              <div className="settings-title-row">
-                <div className="title">Audit Logs List</div>
-                <div className="buttons-row">
-                  <IconButton
-                    buttonType="secondary"
-                    title="filter_list"
-                    onClick={() => toggleFilterModal()}
-                  />
-                  <IconButton
-                    buttonType="primary"
-                    title="format_line_spacing"
-                    onClick={() => toggleCustomField()}
-                  />
-                </div>
-              </div>
               <div className="common-list-container settings-audit-log-list-container">
                 <Table data={docs} tableClass="main-list-table" headers={headers} />
               </div>
@@ -450,96 +434,97 @@ const SettingsAuditLogTab = () => {
                 onSelectLimit={onSelectLimit}
                 pageActionClick={pageActionClick}
               />
-              {filterModal && (
-                <Modal
-                  headerIcon="filter_list"
-                  header="Filter"
-                  buttons={filterModalButtons}
-                  className="filter-modal"
-                  hideModal={toggleFilterModal}
-                >
-                  <div className="filter-modal-row">
-                    <div className="form-title">Module</div>
-                    <ReactSelect
-                      className="filter-select react-select-container"
-                      classNamePrefix="react-select"
-                      placeholder="Select module"
-                      name="entityType"
-                      value={entityTypeSelectedValue}
-                      options={entityTypeOptions}
-                      onChange={handleEntityTypeFilterChange}
-                      isSearchable
-                    />
-                  </div>
-                  <div className="filter-modal-row">
-                    <div className="form-title">User Name</div>
-                    <ReactSelect
-                      className="filter-select react-select-container"
-                      classNamePrefix="react-select"
-                      placeholder="Select user name"
-                      name="userRefId"
-                      options={userNameOptions}
-                      value={userNameSelectedValue}
-                      onChange={handleUserNameFilterChange}
-                      isSearchable
-                    />
-                  </div>
-                  <div className="filter-modal-row">
-                    <div className="form-title">Action Type</div>
-                    <ReactSelect
-                      className="filter-select react-select-container"
-                      classNamePrefix="react-select"
-                      placeholder="Select action type"
-                      name="actionType"
-                      value={actionTypeSelectedValue}
-                      options={actionTypeOptions}
-                      onChange={handleActionTypeFilterChange}
-                      isSearchable
-                    />
-                  </div>
-                  <div className="filter-modal-row">
-                    <div className="form-title">Date</div>
-                    <div className="date-picker-container filter-date-picker-container mr-15">
-                      <DatePicker
-                        className="filter-date-picker"
-                        selected={startDate}
-                        showMonthDropdown
-                        showYearDropdown
-                        scrollableYearDropdown
-                        onChange={handleStartDateChange}
-                        placeholderText="From Date"
-                        dateFormat="dd/MM/yyyy"
-                      />
-                      <span className="material-icons-round">event_available</span>
-                    </div>
-                    <div className="date-picker-container filter-date-picker-container">
-                      <DatePicker
-                        className="filter-date-picker"
-                        selected={endDate}
-                        showMonthDropdown
-                        showYearDropdown
-                        scrollableYearDropdown
-                        onChange={handleEndDateChange}
-                        placeholderText="To Date"
-                        dateFormat="dd/MM/yyyy"
-                      />
-                      <span className="material-icons-round">event_available</span>
-                    </div>
-                  </div>
-                </Modal>
-              )}
-              {customFieldModal && (
-                <CustomFieldModal
-                  defaultFields={defaultFields}
-                  customFields={customFields}
-                  onChangeSelectedColumn={onChangeSelectedColumn}
-                  buttons={customFieldsModalButtons}
-                />
-              )}
             </>
           ) : (
             <div className="no-record-found">No record found</div>
-          ))()
+          )}
+          {filterModal && (
+            <Modal
+              headerIcon="filter_list"
+              header="Filter"
+              buttons={filterModalButtons}
+              className="filter-modal"
+              hideModal={toggleFilterModal}
+            >
+              <div className="filter-modal-row">
+                <div className="form-title">Module</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select module"
+                  name="entityType"
+                  value={entityTypeSelectedValue}
+                  options={entityTypeOptions}
+                  onChange={handleEntityTypeFilterChange}
+                  isSearchable
+                />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title">User Name</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select user name"
+                  name="userRefId"
+                  options={userNameOptions}
+                  value={userNameSelectedValue}
+                  onChange={handleUserNameFilterChange}
+                  isSearchable
+                />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title">Action Type</div>
+                <ReactSelect
+                  className="filter-select react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select action type"
+                  name="actionType"
+                  value={actionTypeSelectedValue}
+                  options={actionTypeOptions}
+                  onChange={handleActionTypeFilterChange}
+                  isSearchable
+                />
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title">Date</div>
+                <div className="date-picker-container filter-date-picker-container mr-15">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={tempFilter?.startDate ? new Date(tempFilter?.startDate) : null}
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={handleStartDateChange}
+                    placeholderText="From Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+                <div className="date-picker-container filter-date-picker-container">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={tempFilter?.endDate ? new Date(tempFilter?.endDate) : null}
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={handleEndDateChange}
+                    placeholderText="To Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+              </div>
+            </Modal>
+          )}
+          {customFieldModal && (
+            <CustomFieldModal
+              defaultFields={defaultFields}
+              customFields={customFields}
+              onChangeSelectedColumn={onChangeSelectedColumn}
+              buttons={customFieldsModalButtons}
+            />
+          )}
+        </>
       ) : (
         <Loader />
       )}

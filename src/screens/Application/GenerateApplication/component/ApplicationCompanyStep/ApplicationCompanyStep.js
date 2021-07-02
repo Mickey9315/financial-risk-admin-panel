@@ -519,6 +519,7 @@ const ApplicationCompanyStep = () => {
           country: companyState?.country?.value,
           clientId: companyState?.clientId?.value,
           page: currentPage,
+          step: 'company',
         };
         dispatch(searchApplicationCompanyEntityName(params));
       } else {
@@ -556,6 +557,7 @@ const ApplicationCompanyStep = () => {
             searchString: e?.target?.value,
             country: companyState?.country?.value,
             page: currentPage,
+            step: 'company',
           };
           dispatch(searchApplicationCompanyEntityName(params));
         } else {
@@ -589,6 +591,7 @@ const ApplicationCompanyStep = () => {
           country: companyState?.country?.value,
           clientId: companyState?.clientId?.value,
           page: currentPage,
+          step: 'company',
         };
         await dispatch(searchApplicationCompanyEntityName(params));
       } catch (e) {
