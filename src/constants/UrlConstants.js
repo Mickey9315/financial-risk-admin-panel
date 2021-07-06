@@ -83,6 +83,11 @@ export const APPLICATION_URLS = {
       FETCH_SELECTED_REPORTS_FOR_APPLICATION: `${BASE_URL}credit-report/generate/`,
     },
   },
+  // import application
+  IMPORT_APPLICATION_URLS: {
+    DOWNLOAD_SAMPLE: `${BASE_URL}import-application-dump/sample-file/`,
+    UPLOAD_DUMP: `${BASE_URL}import-application-dump/`,
+  },
 };
 
 export const ORGANISATION_MODULE_URLS = {

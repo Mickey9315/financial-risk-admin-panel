@@ -49,6 +49,7 @@ const Table = props => {
     valign,
     headers,
     extraColumns,
+    stepperColumn,
     tableButtonActions,
     headerClass,
     data,
@@ -223,7 +224,7 @@ const Table = props => {
                   {heading.label}
                 </th>
               ))}
-            {(haveActions || extraColumns.length > 0) && (
+            {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) && (
               <th style={{ position: 'sticky', right: 0 }} />
             )}
             {tableButtonActions.length > 0 && <th align={align}>Credit Limit Actions</th>}
@@ -238,6 +239,7 @@ const Table = props => {
               valign={valign}
               dataIndex={index}
               extraColumns={extraColumns}
+              stepperColumn={stepperColumn}
               tableButtonActions={tableButtonActions}
               rowClass={rowClass}
               recordSelected={recordSelected}
@@ -264,6 +266,7 @@ Table.propTypes = {
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   headers: PropTypes.array,
   extraColumns: PropTypes.arrayOf(PropTypes.element),
+  stepperColumn: PropTypes.arrayOf(PropTypes.element),
   tableButtonActions: PropTypes.arrayOf(PropTypes.element),
   headerClass: PropTypes.string,
   data: PropTypes.array,
@@ -285,6 +288,7 @@ Table.defaultProps = {
   headerClass: '',
   data: [],
   extraColumns: [],
+  stepperColumn: [],
   tableButtonActions: [],
   rowClass: '',
   haveActions: false,
@@ -311,6 +315,7 @@ function Row(props) {
     isRowExpanded,
     haveActions,
     extraColumns,
+    stepperColumn,
     tableButtonActions,
     recordActionClick,
     showCheckbox,
@@ -441,6 +446,18 @@ function Row(props) {
             </span>
           </td>
         )}
+        {stepperColumn.map((element, index) => (
+          <td
+            key={index.toString()}
+            width={10}
+            align={align}
+            valign={valign}
+            style={{ position: 'sticky', right: 0 }}
+            className={dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}
+          >
+            {element(data)}
+          </td>
+        ))}
         {extraColumns.map((element, index) => (
           <td
             key={index.toString()}
@@ -488,6 +505,7 @@ Row.propTypes = {
   valign: PropTypes.oneOf(['top', 'center', 'bottom']),
   data: PropTypes.object,
   extraColumns: PropTypes.arrayOf(PropTypes.func),
+  stepperColumn: PropTypes.arrayOf(PropTypes.func),
   tableButtonActions: PropTypes.arrayOf(PropTypes.func),
   rowClass: PropTypes.string,
   dataIndex: PropTypes.number,
@@ -507,6 +525,7 @@ Row.defaultProps = {
   align: 'left',
   valign: 'left',
   data: {},
+  stepperColumn: [],
   extraColumns: [],
   tableButtonActions: [],
   rowClass: '',

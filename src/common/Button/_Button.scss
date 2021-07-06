@@ -6,6 +6,8 @@
   border: 1px solid $primary-color;
   outline: none;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
 }
 .button:disabled{
   cursor: not-allowed;

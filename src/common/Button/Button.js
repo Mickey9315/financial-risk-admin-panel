@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Button = props => {
-  const { isLoading, title, buttonType, className, ...restProps } = props;
+  const { isLoading, title, buttonType, className, children, ...restProps } = props;
   const buttonClass = `button ${buttonType}-button ${className}`;
 
   return (
     <button type="button" className={buttonClass} {...restProps} disabled={isLoading}>
       <div className={isLoading && 'button-loader'}>{!isLoading && title}</div>
+      {children}
     </button>
   );
 };
@@ -28,6 +29,7 @@ Button.propTypes = {
   ]).isRequired,
   className: PropTypes.string,
   isLoading: PropTypes.bool,
+  children: PropTypes.element.isRequired,
 };
 
 Button.defaultProps = {

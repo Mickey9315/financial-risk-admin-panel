@@ -13,6 +13,7 @@ import {
   startGeneralLoaderOnRequest,
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import ImportApplicationApiServices from '../services/ImportApplicationApiServices';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1108,4 +1109,117 @@ export const applicationDownloadAction = async filters => {
     displayErrors(e);
   }
   return false;
+};
+
+// import application
+
+export const importApplicaionGoToNextStep = () => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.GO_TO_NEXT_STEP,
+    });
+  };
+};
+
+export const setImportedFile = file => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.SET_FILE,
+      file,
+    });
+  };
+};
+export const updateImportApplicationData = (step, error) => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ERROR,
+      step,
+      error,
+    });
+  };
+};
+
+export const importApplicationUploadDump = (data, config) => {
+  return async dispatch => {
+    try {
+      const response = await ImportApplicationApiServices.uploadApplicationDump(data, config);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ON_SUCCESS,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      if (e?.response?.data?.status === 'MISSING_HEADERS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ERROR,
+          step: 'importFile',
+          error: e?.response?.data?.message,
+        });
+      } else {
+        displayErrors(e);
+      }
+      throw Error();
+    }
+  };
+};
+
+export const importApplicationSaveAndNext = (importId, stepName) => {
+  return async dispatch => {
+    try {
+      const response = await ImportApplicationApiServices.importApplicationSaveAndNext(
+        importId,
+        stepName
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ON_SUCCESS,
+          data: response?.data?.data,
+        });
+        return true;
+      }
+      return true;
+    } catch (e) {
+      displayErrors(e);
+      throw Error();
+    }
+  };
+};
+
+export const resetImportApplicationStepper = () => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.RESET_STEPPER_DATA,
+    });
+  };
+};
+
+export const deleteImportedFile = () => {
+  return dispatch => {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.DELETE_IMPORTED_FILE,
+    });
+  };
+};
+
+export const downloadIASample = async () => {
+  try {
+    const response = await ImportApplicationApiServices.downloadSample();
+    if (response?.statusText === 'OK') {
+      return response;
+    }
+  } catch (e) {
+    displayErrors(e);
+  }
+  return false;
+};
+
+export const deleteDumpFromBackend = dumpId => {
+  return async () => {
+    try {
+      await ImportApplicationApiServices.deleteApplicationDump(dumpId);
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
 };

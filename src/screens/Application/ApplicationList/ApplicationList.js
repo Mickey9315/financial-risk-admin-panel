@@ -30,6 +30,7 @@ import { APPLICATION_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/ApplicationRed
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
+import ImportApplicationModal from '../ImportApplication/ImportApplicationModal';
 
 const ApplicationList = () => {
   const history = useHistory();
@@ -463,8 +464,9 @@ const ApplicationList = () => {
           <div className="page-header">
             <div className="page-header-name">Application List</div>
             <div className="page-header-button-container">
+              <ImportApplicationModal />
               <IconButton
-                buttonType="primary"
+                buttonType="primary-1"
                 title="cloud_download"
                 className="mr-10"
                 buttonTitle="Click to download applications"

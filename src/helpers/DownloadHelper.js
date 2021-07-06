@@ -6,7 +6,7 @@ export const downloadAll = response => {
 
     const fileName =
       response?.headers?.['content-disposition']?.split('filename=')[1] ||
-      `credit_limit_${new Date().getTime()}`;
+      `credit_limit_${new Date().getTime()}.csv`;
 
     link.setAttribute('download', fileName);
     link.setAttribute('target', '__blank');

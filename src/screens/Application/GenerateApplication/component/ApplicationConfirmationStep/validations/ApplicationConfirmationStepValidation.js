@@ -6,6 +6,7 @@ export const applicationConfirmationStepValidations = async (
   editApplicationData,
   history
 ) => {
+  console.log(data);
   let validated = true;
   if (validated) {
     const finalData = {
@@ -16,7 +17,7 @@ export const applicationConfirmationStepValidations = async (
       await dispatch(saveApplicationStepDataToBackend(finalData));
       history.replace('/applications');
     } catch (e) {
-      throw Error()
+      throw Error();
     }
     validated = true;
   }

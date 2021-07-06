@@ -5,6 +5,11 @@
 @import "src/screens/Application/GenerateApplication/component/ApplicationPersonStep/ApplicationPersonStep";
 @import "src/screens/Application/GenerateApplication/component/components/ApplicationEntityNameModal/ApplicationEntityNameModal";
 @import "src/screens/Application/ViewApplication/ViewApplication";
+@import "src/screens/Application/ImportApplication/ImportApplicationModal";
+@import "src/screens/Application/ImportApplication/Components/ImportApplicationDownloadSample/ImportApplicationDownloadSample";
+@import "src/screens/Application/ImportApplication/Components/ImportAplicationImportStep/ImportApplicationImportStep";
+@import "src/screens/Application/ImportApplication/Components/ImportApplicationValidateStep/ImportApplicationValidateStep";
+@import "src/screens/Application/ImportApplication/Components/ImportApplicationGenerateApplicationStep/ImportApplicationGenerateApplication";
 @import "src/screens/auth/common/CommonAuthScreen/CommonAuthScreen";
 @import "src/screens/auth/forgotPassword/ForgotPassword";
 @import "src/screens/auth/login/LoginScreen";

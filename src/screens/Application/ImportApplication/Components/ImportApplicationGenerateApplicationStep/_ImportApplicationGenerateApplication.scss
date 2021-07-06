@@ -1,0 +1,25 @@
+.ia-generate-step{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .ia-generate-status-count{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    background-color: $background-color;
+    border-radius: 10px;
+    .ia-import-status{
+      display: flex;
+      align-items: center;
+    }
+  }
+  .ia-validate-table{
+    width: 100%;
+    max-height: 280px;
+    background-color: $background-color;
+    border-radius: 10px;
+    overflow: auto;
+  }
+}

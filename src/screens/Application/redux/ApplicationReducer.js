@@ -148,6 +148,15 @@ const initialApplicationList = {
       defaultEntityList: [],
     },
   },
+  importApplication: {
+    activeStep: 0,
+    importId: '',
+    importFile: {
+      file: null,
+      error: '',
+    },
+    importData: {},
+  },
 };
 
 export const application = (state = initialApplicationList, action) => {
@@ -763,7 +772,7 @@ export const application = (state = initialApplicationList, action) => {
         editApplication: {
           ...state?.editApplication,
           ...action?.data,
-          applicationStage: action.activeStep - 1,
+          applicationStage: action?.activeStep - 1,
         },
       };
 
@@ -771,6 +780,72 @@ export const application = (state = initialApplicationList, action) => {
       return {
         ...state,
         applicationList: initialApplicationList.applicationList,
+      };
+
+    // import application
+
+    case APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.GO_TO_NEXT_STEP:
+      console.log(state?.importApplication?.activeStep);
+      return {
+        ...state,
+        importApplication: {
+          ...state?.importApplication,
+          activeStep: (state?.importApplication?.activeStep ?? 0) + 1,
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.SET_FILE:
+      return {
+        ...state,
+        importApplication: {
+          ...state?.importApplication,
+          importFile: {
+            ...state?.importApplication?.importFile,
+            file: action.file,
+          },
+        },
+      };
+    case APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ERROR:
+      return {
+        ...state,
+        importApplication: {
+          ...state?.importApplication,
+          [action.step]: {
+            ...state?.importApplication?.[action.step],
+            error: action.error,
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.RESET_STEPPER_DATA:
+      return {
+        ...state,
+        importApplication: initialApplicationList.importApplication,
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.DELETE_IMPORTED_FILE:
+      return {
+        ...state,
+        importApplication: {
+          ...state?.importApplication,
+          importFile: {
+            ...state?.importApplication?.importFile,
+            file: null,
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ON_SUCCESS:
+      // eslint-disable-next-line no-case-declarations
+      let id = state?.importApplication?.importId;
+      if (action?.data?.importId) id = action?.data?.importId;
+      return {
+        ...state,
+        importApplication: {
+          ...state?.importApplication,
+          importId: id,
+          importData: action.data,
+        },
       };
 
     default:

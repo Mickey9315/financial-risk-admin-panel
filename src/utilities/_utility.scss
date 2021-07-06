@@ -24,6 +24,12 @@
 .f-16 {
   font-size: $title;
 }
+.f-h1{
+  font-size: $h1;
+}
+.f-h2{
+  font-size: $h2;
+}
 
 .font-primary {
   color: $primary-color;
@@ -35,6 +41,10 @@
 
 .font-placeholder {
   color: $placeholder-color;
+}
+
+.font-success {
+  color: $success-color;
 }
 
 .font-field {

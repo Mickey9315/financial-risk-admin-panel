@@ -19,6 +19,8 @@
     padding: 0;
     overflow: auto;
 
+      tr:hover {background-color: $background-color}
+
     .application-entity-name-modal-search-records {
       max-height: calc(70vh - 80px);
       overflow: auto;
