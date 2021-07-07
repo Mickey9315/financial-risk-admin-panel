@@ -12,7 +12,7 @@ export const getClaimsListByFilter = (params = { page: 1, limit: 15 }) => {
     try {
       startGeneralLoaderOnRequest('claimListLoader');
       const response = await ClaimsApiServices.getClaimsListByFilter(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_SUCCESS,
           data: response.data.data,
@@ -88,7 +88,7 @@ export const saveClaimsColumnsList = ({ claimsColumnList = {}, isReset = false }
         }
       }
       const response = await ClaimsApiServices.updateClaimsColumnList(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_DEFAULT_COLUMN_LIST,
           data: claimsColumnList,
@@ -113,7 +113,7 @@ export const getClaimsEntityList = () => {
     try {
       const response = await ClaimsApiServices.getClaimsEntityList();
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_ENTITY_LIST,
           data: response.data.data,
@@ -141,7 +141,7 @@ export const addClaim = data => {
       startGeneralLoaderOnRequest('saveClaimsButtonLoaderAction');
       const response = await ClaimsApiServices.addClaim(data);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Claim added successfully');
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.RESET_CLAIMS_DETAILS,
@@ -161,7 +161,7 @@ export const getClaimDetails = id => {
       startGeneralLoaderOnRequest('viewClaimLoader');
       const response = await ClaimsApiServices.getClaimDetails(id);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.GET_CLAIM_DETAILS,
           data: response.data.data,

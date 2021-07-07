@@ -108,7 +108,7 @@ const Table = props => {
             [`${header.name}`]: value,
           },
         });
-        if (response.data.status === 'SUCCESS') {
+        if (response?.data?.status === 'SUCCESS') {
           successNotification(response?.data?.message ?? 'Success');
           refreshData();
         }
@@ -126,7 +126,7 @@ const Table = props => {
         method: header.request.method,
         id: row._id,
       });
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         const url = response.data.data;
         window.open(url);
       }

@@ -13,7 +13,7 @@ export const verifyOtp = async (email, verificationOtp) => {
     const data = { email, verificationOtp };
     const response = await AuthApiService.verifyOtp(data);
 
-    if (response.data.status === 'SUCCESS') {
+    if (response?.data?.status === 'SUCCESS') {
       const { token } = response.data;
       successNotification('OTP verified successfully.');
       stopGeneralLoaderOnSuccessOrFail('verifyOTPButtonLoaderAction');
@@ -34,7 +34,7 @@ export const resendOtp = async email => {
     const data = { email };
     const response = await AuthApiService.resentOtp(data);
 
-    if (response.data.status === 'SUCCESS') {
+    if (response?.data?.status === 'SUCCESS') {
       successNotification('OTP sent successfully.');
       stopGeneralLoaderOnSuccessOrFail('resendOTPButtonLoaderAction');
     }

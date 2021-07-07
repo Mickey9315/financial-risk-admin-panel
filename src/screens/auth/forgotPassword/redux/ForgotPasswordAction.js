@@ -12,7 +12,7 @@ export const forgotPassword = async email => {
     const data = { email };
     const response = await AuthApiService.forgotPassword(data);
 
-    if (response.data.status === 'SUCCESS') {
+    if (response?.data?.status === 'SUCCESS') {
       successNotification('OTP has been sent successfully to your registered email address.');
       stopGeneralLoaderOnSuccessOrFail('forgotPasswordButtonLoaderAction');
     }

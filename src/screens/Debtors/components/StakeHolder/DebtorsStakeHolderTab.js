@@ -712,11 +712,11 @@ const DebtorsStakeHolderTab = () => {
   const handleEntityNameSearch = useCallback(
     e => {
       if (e.key === 'Enter') {
-        if (!isAusOrNewStakeHolder) return;
         if (!stakeHolder?.stakeholderCountry || stakeHolder?.stakeholderCountry?.length === 0) {
           errorNotification('Please select country before continue');
           return;
         }
+        if (!isAusOrNewStakeHolder) return;
         if (e?.target?.value?.trim()?.length > 0) {
           try {
             dispatchDrawerState({
@@ -1151,8 +1151,6 @@ const DebtorsStakeHolderTab = () => {
     );
     toggleAddStakeHolderModal();
   }, [toggleAddStakeHolderModal]);
-
-  console.log(entityType?.value);
 
   const addStakeHolderButton = useMemo(() => {
     if (entityType?.value === 'SOLE_TRADER') {

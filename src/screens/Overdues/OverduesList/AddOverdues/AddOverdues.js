@@ -378,7 +378,7 @@ const AddOverdues = () => {
         case 'total-amount':
           component = (
             <div className="add-overdue-total-amount">
-              {input?.value ? NumberCommaSeparator(input?.value) : 0}
+              {input?.value && input.value !== 'NaN' ? NumberCommaSeparator(input?.value) : 0}
             </div>
           );
           break;

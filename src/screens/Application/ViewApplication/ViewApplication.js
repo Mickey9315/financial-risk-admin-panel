@@ -328,12 +328,16 @@ const ViewApplication = () => {
   );
 
   const handleApplicationStatusChange = useCallback(
-    e => {
+    async e => {
       if (['CANCELLED', 'SURRENDERED', 'WITHDRAWN'].includes(e?.value)) {
         setStatusToChange(e);
         toggleConfirmationModal();
       } else {
-        dispatch(changeApplicationStatus(_id, { status: e?.value }, e));
+        try {
+          await dispatch(changeApplicationStatus(_id, { status: e?.value }, e));
+        } catch (err) {
+          /**/
+        }
       }
     },
     [toggleConfirmationModal, _id, setStatusToChange, statusToChange]
@@ -607,6 +611,7 @@ const ViewApplication = () => {
               )}
               {modifyLimitModal && (
                 <Modal
+                  className="add-to-crm-modal"
                   header="Approve Application"
                   buttons={modifyLimitButtons}
                   hideModal={toggleModifyLimitModal}

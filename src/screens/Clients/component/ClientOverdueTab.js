@@ -136,29 +136,29 @@ const ClientOverdueTab = () => {
   };
   return (
     <>
-      <div className="tab-content-header-row">
-        <div className="tab-content-header">Overdue</div>
-        <div className="buttons-row">
-          <BigInput
-            ref={searchInputRef}
-            type="text"
-            className="search"
-            borderClass="tab-search"
-            prefix="search"
-            prefixClass="font-placeholder"
-            placeholder="Search here"
-            onKeyUp={checkIfEnterKeyPressed}
-          />
-          <Button
-            buttonType="success"
-            title="New Submission"
-            onClick={() => setNewSubmissionModal(e => !e)}
-          />
-        </div>
-      </div>
       {!clientOverdueListPageLoaderAction ? (
-        (() =>
-          docs?.length > 0 ? (
+        <>
+          <div className="tab-content-header-row">
+            <div className="tab-content-header">Overdue</div>
+            <div className="buttons-row">
+              <BigInput
+                ref={searchInputRef}
+                type="text"
+                className="search"
+                borderClass="tab-search"
+                prefix="search"
+                prefixClass="font-placeholder"
+                placeholder="Search here"
+                onKeyUp={checkIfEnterKeyPressed}
+              />
+              <Button
+                buttonType="success"
+                title="New Submission"
+                onClick={() => setNewSubmissionModal(e => !e)}
+              />
+            </div>
+          </div>
+          {docs?.length > 0 ? (
             <>
               <div className="common-list-container">
                 <Table
@@ -179,46 +179,45 @@ const ClientOverdueTab = () => {
                 pageActionClick={pageActionClick}
                 onSelectLimit={onSelectLimit}
               />
-              {newSubmissionModal && (
-                <Modal
-                  header="New Submission"
-                  className="new-submission-modal"
-                  headerClassName="left-aligned-modal-header"
-                  buttons={newSubmissionButtons}
-                  hideModal={onCloseNewSubmissionModal}
-                >
-                  <ReactSelect
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                    placeholder="Select Client"
-                    name="role"
-                    options={entityList?.clientId}
-                    value={newSubmissionDetails?.clientId}
-                    onChange={e =>
-                      setNewSubmissionDetails({ ...newSubmissionDetails, clientId: e })
-                    }
-                    isSearchble
-                  />
-                  <div className="date-picker-container month-year-picker">
-                    <DatePicker
-                      placeholderText="Select month and year"
-                      onChange={date =>
-                        setNewSubmissionDetails({ ...newSubmissionDetails, submissionDate: date })
-                      }
-                      dateFormat="MM/yyyy"
-                      selected={newSubmissionDetails?.submissionDate}
-                      showMonthYearPicker
-                      showYearDropdown
-                      showFullMonthYearPicker
-                    />
-                    <span className="material-icons-round">expand_more</span>
-                  </div>
-                </Modal>
-              )}
             </>
           ) : (
             <div className="no-record-found">No record found</div>
-          ))()
+          )}
+          {newSubmissionModal && (
+            <Modal
+              header="New Submission"
+              className="new-submission-modal"
+              headerClassName="left-aligned-modal-header"
+              buttons={newSubmissionButtons}
+              hideModal={onCloseNewSubmissionModal}
+            >
+              <ReactSelect
+                className="react-select-container"
+                classNamePrefix="react-select"
+                placeholder="Select Client"
+                name="role"
+                options={entityList?.clientId}
+                value={newSubmissionDetails?.clientId}
+                onChange={e => setNewSubmissionDetails({ ...newSubmissionDetails, clientId: e })}
+                isSearchble
+              />
+              <div className="date-picker-container month-year-picker">
+                <DatePicker
+                  placeholderText="Select month and year"
+                  onChange={date =>
+                    setNewSubmissionDetails({ ...newSubmissionDetails, submissionDate: date })
+                  }
+                  dateFormat="MM/yyyy"
+                  selected={newSubmissionDetails?.submissionDate}
+                  showMonthYearPicker
+                  showYearDropdown
+                  showFullMonthYearPicker
+                />
+                <span className="material-icons-round">expand_more</span>
+              </div>
+            </Modal>
+          )}
+        </>
       ) : (
         <Loader />
       )}

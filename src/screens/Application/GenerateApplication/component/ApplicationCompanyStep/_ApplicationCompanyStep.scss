@@ -24,6 +24,10 @@
     .application-entity-name-modal-search-records {
       max-height: calc(70vh - 80px);
       overflow: auto;
+
+      .table-class {
+        width: calc(100% - 6px);
+      }
     }
   }
 

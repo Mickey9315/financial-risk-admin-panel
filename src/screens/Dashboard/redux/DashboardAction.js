@@ -10,7 +10,7 @@ export const getDashboardUserList = () => {
   return async dispatch => {
     try {
       const response = await DashboardApiService.getDashboardUserList();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DASHBOARD_REDUX_CONSTANTS.DASHBOARD_USER_LIST_DETAILS,
           data: response.data.data,
@@ -28,7 +28,7 @@ export const getDashboardDetails = param => {
     try {
       startGeneralLoaderOnRequest('dashboardDetailsLoader');
       const response = await DashboardApiService.getDashboardDetails(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DASHBOARD_REDUX_CONSTANTS.DASHBOARD_DETAILS,
           data: response.data.data,

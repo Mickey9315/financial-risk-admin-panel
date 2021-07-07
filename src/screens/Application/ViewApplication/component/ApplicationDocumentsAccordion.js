@@ -293,7 +293,16 @@ const ApplicationDocumentsAccordion = props => {
   return (
     <>
       {applicationDocsList !== undefined && (
-        <AccordionItem index={index} header="Documents" suffix="expand_more">
+        <AccordionItem
+          index={index}
+          header="Documents"
+          count={
+            applicationDocsList?.length < 10
+              ? `0${applicationDocsList?.length}`
+              : applicationDocsList?.length
+          }
+          suffix="expand_more"
+        >
           <IconButton
             buttonType="primary-1"
             title="cloud_upload"

@@ -14,7 +14,16 @@ const ApplicationLogsAccordion = props => {
   return (
     <>
       {applicationLogsList !== undefined && (
-        <AccordionItem index={index} header="Logs" suffix="expand_more">
+        <AccordionItem
+          index={index}
+          header="Logs"
+          count={
+            applicationLogsList?.length < 10
+              ? `0${applicationLogsList?.length}`
+              : applicationLogsList?.length
+          }
+          suffix="expand_more"
+        >
           {applicationLogsList &&
             applicationLogsList.map(log => (
               <div className="common-accordion-item-content-box" key={log._id}>

@@ -16,7 +16,7 @@ export const getTaskListByFilter = (params = {}) => {
     };
     try {
       const response = await MyWorkApiServices.getTaskListData(param);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_SUCCESS_ACTION,
           data: response.data.data,
@@ -34,7 +34,7 @@ export const getAssigneeDropDownData = () => {
   return async dispatch => {
     try {
       const response = await MyWorkApiServices.getAssigneeDropDownData();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
@@ -52,7 +52,7 @@ export const getEntityDropDownData = params => {
   return async dispatch => {
     try {
       const response = await MyWorkApiServices.getEntityDropDownData(params);
-      if (response.data.status === 'SUCCESS' && response.data.data) {
+      if (response?.data?.status === 'SUCCESS' && response.data.data) {
         dispatch({
           type:
             MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
@@ -99,7 +99,7 @@ export const saveTaskData = (data, backToTask) => {
     try {
       startGeneralLoaderOnRequest('myWorkSaveNewTaskLoaderButtonAction');
       const response = await MyWorkApiServices.saveNewTask(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_ADD_TASK_STATE_ACTION,
         });
@@ -133,7 +133,7 @@ export const getTaskListColumnList = () => {
         columnFor: 'task',
       };
       const response = await MyWorkApiServices.getColumnNameList(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.TASK_COLUMN_NAME_LIST_ACTION,
           data: response.data.data,
@@ -193,7 +193,7 @@ export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = 
         }
       }
       const response = await MyWorkApiServices.saveColumnNameList(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
@@ -218,7 +218,7 @@ export const getTaskFilter = () => {
   return async dispatch => {
     try {
       const response = await MyWorkApiServices.getAssigneeDropDownData();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_FOR_FILTER,
@@ -236,7 +236,7 @@ export const deleteTaskAction = (taskId, cb) => {
     try {
       startGeneralLoaderOnRequest('myWorkTaskDeleteTaskButtonLoaderAction');
       const response = await MyWorkApiServices.deleteTask(taskId);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Task deleted successfully.');
         stopGeneralLoaderOnSuccessOrFail('myWorkTaskDeleteTaskButtonLoaderAction');
         if (cb) {
@@ -255,7 +255,7 @@ export const getTaskById = id => {
     try {
       startGeneralLoaderOnRequest('myWorkViewTaskLoaderAction');
       const response = await MyWorkApiServices.getTaskDetailById(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_DETAIL_BY_ID_ACTION,
           data: response.data.data,
@@ -274,7 +274,7 @@ export const markTaskAsComplete = (id, data) => {
     try {
       startGeneralLoaderOnRequest('myWorkCompleteTaskLoaderButtonAction');
       const response = await MyWorkApiServices.updateTask(id, data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Task updated successfully.');
         stopGeneralLoaderOnSuccessOrFail('myWorkCompleteTaskLoaderButtonAction');
         dispatch({
@@ -306,7 +306,7 @@ export const editTaskData = (id, data, backToTask) => {
       startGeneralLoaderOnRequest('myWorkEditTaskLoaderButtonAction');
 
       const response = await MyWorkApiServices.updateTask(id, data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_EDIT_TASK_STATE_ACTION,
         });

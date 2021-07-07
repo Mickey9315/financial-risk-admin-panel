@@ -99,7 +99,14 @@ const ApplicationReportAccordion = props => {
           </div>
         </Modal>
       )}
-      <AccordionItem index={index} header="Reports" suffix="expand_more">
+      <AccordionItem
+        index={index}
+        header="Reports"
+        count={
+          reportList?.docs?.length < 10 ? `0${reportList?.docs?.length}` : reportList?.docs?.length
+        }
+        suffix="expand_more"
+      >
         <Button
           buttonType="primary-1"
           title="Fetch Report"

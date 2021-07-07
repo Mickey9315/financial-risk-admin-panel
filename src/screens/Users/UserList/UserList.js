@@ -346,8 +346,6 @@ const UserList = () => {
     return foundValue ?? [];
   }, [tempFilter?.role]);
 
-  console.log(userRoleSelectedValue, tempFilter?.role);
-
   return (
     <>
       {!userListLoader ? (

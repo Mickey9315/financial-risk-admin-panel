@@ -21,7 +21,7 @@ export const getInsurerListByFilter = (params = { page: 1, limit: 15 }) => {
     try {
       startGeneralLoaderOnRequest('insurerListLoader');
       const response = await InsurerApiService.getAllInsurerListData(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_SUCCESS_ACTION,
           data: response.data.data,
@@ -39,7 +39,7 @@ export const getInsurerColumnNameList = () => {
   return async dispatch => {
     try {
       const response = await InsurerApiService.getInsurerColumnListName();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_COLUMN_LIST_ACTION,
           data: response.data.data,
@@ -94,7 +94,7 @@ export const saveInsurerColumnListName = ({ insurerColumnNameList = {}, isReset 
         }
       }
       const response = await InsurerApiService.updateInsurerColumnListName(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_DEFAULT_COLUMN_LIST_ACTION,
           data: insurerColumnNameList,
@@ -118,7 +118,7 @@ export const getInsurerById = id => {
     try {
       startGeneralLoaderOnRequest('viewInsurerPageLoaderAction');
       const response = await InsurerApiService.getSelectedInsurerData(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.VIEW_INSURER_DATA,
           data: response.data.data,
@@ -136,7 +136,7 @@ export const getInsurerContactListData = (id, params = { page: 1, limit: 15 }) =
   return async dispatch => {
     try {
       const response = await InsurerContactApiServices.getInsurerContactList(id, params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_LIST_USER_ACTION,
           data: response.data.data,
@@ -152,7 +152,7 @@ export const getInsurerContactColumnNameList = () => {
   return async dispatch => {
     try {
       const response = await InsurerContactApiServices.getInsurerContactColumnListName();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_COLUMN_LIST_ACTION,
           data: response.data.data,

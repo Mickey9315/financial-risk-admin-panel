@@ -15,8 +15,8 @@ export const successNotification = message => {
   notify.show(message, TOAST_TYPE.success, TOAST_TIMEOUT, SUCCESS_TOAST_COLOR);
 };
 
-export const errorNotification = message => {
-  notify.show(message, TOAST_TYPE.error, TOAST_TIMEOUT, ERROR_TOAST_COLOR);
+export const errorNotification = (message, timeOut = TOAST_TIMEOUT) => {
+  notify.show(message, TOAST_TYPE.error, timeOut, ERROR_TOAST_COLOR);
 };
 
 export const warningNotification = message => {

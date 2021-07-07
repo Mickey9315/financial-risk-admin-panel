@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-import { store } from '../../redux/store';
 import { getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
 import { errorNotification } from '../../common/Toast';
+import { HEADER_URLS } from '../../constants/UrlConstants';
 import { LOGIN_REDUX_CONSTANTS } from '../../screens/auth/login/redux/LoginReduxConstants';
+import { store } from '../../redux/store';
 
 const instance = axios.create({
   timeout: 10000,
@@ -21,30 +22,6 @@ instance.interceptors.request.use(
     return config;
   },
   error => {
-    return Promise.reject(error);
-  }
-);
-
-instance.interceptors.response.use(
-  response => {
-    return response;
-  },
-  error => {
-    const statusCode = error?.response?.status ?? 0;
-    switch (statusCode) {
-      case 401:
-        store.dispatch({
-          type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
-        });
-        window.location.href = '/login';
-        errorNotification('For security purposes you have been logged out, you need to re login');
-        return false;
-      case 403:
-        window.location.href = '/forbidden-access';
-        return false;
-      default:
-        break;
-    }
     return Promise.reject(error);
   }
 );
@@ -69,5 +46,44 @@ const ApiService = {
     return instance.delete(url, config);
   },
 };
+
+instance.interceptors.response.use(
+  response => {
+    return response;
+  },
+  async error => {
+    const statusCode = error?.response?.status ?? 0;
+    switch (statusCode) {
+      case 401:
+        try {
+          const response = await ApiService.deleteData(HEADER_URLS.LOGOUT_URL);
+          if (response?.data?.status === 'SUCCESS') {
+            store.dispatch({
+              type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
+            });
+          }
+        } catch (e) {
+          store.dispatch({
+            type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
+          });
+          errorNotification(
+            'For security purposes you have been logged out, you need to re login',
+            5000
+          );
+        }
+        errorNotification(
+          'For security purposes you have been logged out, you need to re login',
+          5000
+        );
+        return false;
+      case 403:
+        window.location.href = '/forbidden-access';
+        return false;
+      default:
+        break;
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default ApiService;

@@ -89,7 +89,7 @@ export const getSettingDocumentTypeList = (params = { page: 1, limit: 15 }) => {
     try {
       startGeneralLoaderOnRequest('settingDocumentListLoader');
       const response = await SettingDocumentTypeApiServices.getDocumentListData(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch(fetchDocSuccess(response.data.data));
         stopGeneralLoaderOnSuccessOrFail('settingDocumentListLoader');
       }
@@ -133,7 +133,7 @@ export const getDocumentTypeDetailsById = id => {
   return async dispatch => {
     try {
       const response = await SettingDocumentTypeApiServices.getDocumentTypeDetailsById(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch(getDocTypeById(response.data.data));
       }
     } catch (e) {
@@ -147,7 +147,7 @@ export const updateSettingDocType = (id, data, cb) => {
     try {
       startGeneralLoaderOnRequest('settingUpdateDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.editDocumentTypeById(id, data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Document type updated successfully');
         stopGeneralLoaderOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
         cb();
@@ -164,7 +164,7 @@ export const deleteSettingDocumentType = (id, cb) => {
     try {
       startGeneralLoaderOnRequest('settingDeleteDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.deleteDocumentType(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Document type deleted successfully.');
         stopGeneralLoaderOnSuccessOrFail('settingDeleteDocumentTypeButtonLoaderAction');
         if (cb) {
@@ -183,7 +183,7 @@ export const getApiIntegration = data => {
     try {
       startGeneralLoaderOnRequest('settingApiIntegrationDetailsLoader');
       const response = await SettingApiIntegrationService.getApiIntegrationDetails(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch(fetchApiIntegrationSuccess(response.data.data.integration));
 
         stopGeneralLoaderOnSuccessOrFail('settingApiIntegrationDetailsLoader');
@@ -210,7 +210,7 @@ export const updateApiIntegrationDetails = data => {
     try {
       startGeneralLoaderOnRequest(`settingApiIntegrationButtonLoaderAction`);
       const response = await SettingApiIntegrationService.updateApiIntegrationDetails(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(
           response?.data?.message || 'API integration details tested successfully'
         );
@@ -229,7 +229,7 @@ export const testApiIntegrationDetails = params => {
     try {
       startGeneralLoaderOnRequest(`settingApiIntegrationTestButtonLoaderAction`);
       const response = await SettingApiIntegrationService.testApiIntegrationDetails(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(
           response?.data?.message || 'API integration details updated successfully'
         );
@@ -247,7 +247,7 @@ export const getOrganizationDetails = data => {
     try {
       startGeneralLoaderOnRequest('settingOrganizationTabLoader');
       const response = await SettingOrganizationDetailsApiService.getOrganizationDetails(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch(fetchOrgDetailSuccess(response.data.data));
         stopGeneralLoaderOnSuccessOrFail('settingOrganizationTabLoader');
       }
@@ -274,7 +274,7 @@ export const updateOrganizationDetails = data => {
     try {
       startGeneralLoaderOnRequest('settingUpdateOrganizationDetailsButtonLoaderAction');
       const response = await SettingOrganizationDetailsApiService.updateOrganizationDetails(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch(updateOrgDetails(response.data.data));
         successNotification(
           response?.data?.message || 'Organization details updated successfully.'
@@ -293,7 +293,7 @@ export const getAuditLogsList = (params = { page: 1, limit: 15 }) => {
     try {
       startGeneralLoaderOnRequest('settingAuditLogTabLoader');
       const response = await SettingAuditLogApiService.getAuditLogList(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch(fetchAuditLogList(response.data.data));
         stopGeneralLoaderOnSuccessOrFail('settingAuditLogTabLoader');
       }
@@ -308,7 +308,7 @@ export const getAuditLogColumnNameList = () => {
   return async dispatch => {
     try {
       const response = await SettingAuditLogApiService.getAuditLogColumnNameList();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_COLUMN_LIST_ACTION,
           data: response.data.data,
@@ -364,7 +364,7 @@ export const saveAuditLogColumnNameList = ({ auditLogColumnNameList = {}, isRese
         }
       }
       const response = await SettingAuditLogApiService.updateAuditLogColumnNameList(data);
-      if (response && response.data && response.data.status === 'SUCCESS') {
+      if (response && response.data && response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Columns updated successfully.');
         dispatch({
           type: SETTING_REDUX_CONSTANTS.AUDIT_LOG.AUDIT_LOG_DEFAULT_COLUMN_LIST_ACTION,
@@ -393,7 +393,7 @@ export const getAuditUserName = () => {
   return async dispatch => {
     try {
       const response = await SettingAuditLogApiService.getAuditUserNameList();
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch(getAuditUserList(response.data.data));
       }
     } catch (e) {

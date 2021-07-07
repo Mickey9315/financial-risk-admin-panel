@@ -300,6 +300,7 @@ const ApplicationCompanyStep = () => {
     (name, value) => {
       if (wipeOutDetails) {
         dispatch(updateEditApplicationField('company', 'wipeOutDetails', true));
+        setWipeOuts(false);
       }
       dispatch(updateEditApplicationField('company', name, value));
     },
@@ -328,7 +329,7 @@ const ApplicationCompanyStep = () => {
 
         dispatch(updateEditApplicationData('company', { errors: finalErrors }));
       }
-      if (data?.name === 'entityType' && partners?.length !== 0) {
+      if (data?.name === 'entityType' && partners?.length > 0) {
         setShowConfirmModal(true);
         setWipeOuts(data);
       } else if (data?.name === 'clientId') {
@@ -371,11 +372,11 @@ const ApplicationCompanyStep = () => {
     [
       updateSingleCompanyState,
       setShowConfirmModal,
-      wipeOutDetails,
       setWipeOuts,
       updateCompanyState,
       companyState,
       errors,
+      partners?.length,
     ]
   );
 
@@ -755,7 +756,14 @@ const ApplicationCompanyStep = () => {
 
   const changeEntityType = useMemo(
     () => [
-      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          toggleConfirmationModal();
+          setWipeOuts('');
+        },
+      },
       {
         title: 'Delete',
         buttonType: 'danger',

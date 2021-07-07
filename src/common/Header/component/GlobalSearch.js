@@ -26,45 +26,49 @@ const GlobalSearch = () => {
   };
   useOnClickOutside(headerSearchRef, searchOutsideClick);
 
-  // const scrollToSelected = () => {
-  //   const target = document.getElementsByClassName('header-search-results');
-  //   // target.scrollTop = target.scrollHeight;
-  // };
+  const target = document.getElementsByClassName('header-search-results')?.[0];
 
   const onSearchEnterKeyPress = useCallback(
     e => {
-      const temp = cursor + 1;
-      if (e.keyCode === 40) {
-        if (cursor === -1 || cursor >= globalSearchResult?.length - 1) {
-          setCursor(0);
-        } else {
-          const val = temp % globalSearchResult?.length;
-          setCursor(val);
-          if (val === 0) {
-            // scrollToSelected();
+      if (globalSearchResult?.length > 0) {
+        if (e.keyCode === 40) {
+          setHeaderSearchFocused(false);
+          if (cursor === -1 || cursor >= globalSearchResult?.length - 1) {
+            setCursor(0);
+            target.scrollTop = 0;
+          } else {
+            setCursor(prev => prev + 1);
+            target.scrollTop += 37;
           }
         }
-      }
-      if (e.keyCode === 38) {
-        setCursor(cursor - 1);
-        if (cursor <= 0) {
-          setCursor(globalSearchResult?.length - 1);
-          // scrollToSelected();
+        if (e.keyCode === 38) {
+          setHeaderSearchFocused(false);
+          setCursor(prev => prev - 1);
+          target.scrollTop -= 37;
+          if (cursor <= 0) {
+            setCursor(globalSearchResult?.length - 1);
+            target.scrollTop = target.scrollHeight;
+          }
         }
       }
       if (e.keyCode === 13) {
         const { value } = e?.target;
-        if (value?.trim()?.length > 0) {
+        if (value?.trim()?.length > 0 && headerSearchFocused) {
           setSearchStart(true);
           dispatch(searchGlobalData(value));
+        } else {
+          handleGlobalSearchSelect(globalSearchResult?.[cursor], history);
+          setSearchStart(false);
+          setSearchedString('');
         }
       }
     },
-    [setSearchStart, cursor, globalSearchResult?.length]
+    [setSearchStart, cursor, globalSearchResult?.length, headerSearchFocused, target]
   );
 
   const handleOnSearchChange = useCallback(e => {
     setSearchedString(e?.target?.value);
+    setHeaderSearchFocused(true);
     if (e?.target?.value?.trim()?.length === 0) {
       setSearchStart(false);
       dispatch({

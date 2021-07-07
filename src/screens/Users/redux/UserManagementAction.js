@@ -18,7 +18,7 @@ export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) =
     try {
       startGeneralLoaderOnRequest('userListLoader');
       const response = await UserManagementApiService.getAllUserListByFilter(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS,
           data: response.data.data,
@@ -54,7 +54,7 @@ export const getUserColumnListName = () => {
     try {
       const response = await UserManagementApiService.getUserColumnListName();
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response.data.data,
@@ -99,7 +99,7 @@ export const saveUserColumnListName = ({ userColumnNameList = {}, isReset = fals
         }
       }
       const response = await UserManagementApiService.updateUserColumnListName(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type:
             USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
@@ -149,7 +149,7 @@ export const getSelectedUserData = id => {
     try {
       startGeneralLoaderOnRequest('viewUserPageLoaderAction');
       const response = await UserManagementApiService.getSelectedUserData(id);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION,
           data: response.data.data,
@@ -168,7 +168,7 @@ export const getAllOrganisationModulesList = () => {
     try {
       const response = await UserManagementApiService.getAllOrganisationModuleList();
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: ORGANISATION_MODULE_REDUX_CONSTANTS.GET_ORGANISATION_MODULE_REDUX_ACTION,
           data: response.data.data,
@@ -185,7 +185,7 @@ export const getAllClientList = () => {
     try {
       const response = await UserManagementApiService.getClientList();
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_CLIENT_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_CLIENT_LIST_ACTION,
           data: response.data.data,
@@ -226,7 +226,7 @@ export const addNewUser = data => {
 
       const response = await UserManagementApiService.addNewUser(finalData);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification('Added user successfully.');
         stopGeneralLoaderOnSuccessOrFail('viewUserAddNewUserButtonLoaderAction');
         dispatch(getUserManagementListByFilter());
@@ -251,7 +251,7 @@ export const updateUserDetails = (id, data) => {
 
       const response = await UserManagementApiService.updateUser(id, finalData);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'User details updated successfully.');
         stopGeneralLoaderOnSuccessOrFail('viewUserUpdateUserButtonLoaderAction');
       }
@@ -268,7 +268,7 @@ export const deleteUserDetails = id => {
       startGeneralLoaderOnRequest('viewUserDeleteUserButtonLoaderAction');
       const response = await UserManagementApiService.deleteUser(id);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'User deleted successfully.');
         stopGeneralLoaderOnSuccessOrFail('viewUserDeleteUserButtonLoaderAction');
       }

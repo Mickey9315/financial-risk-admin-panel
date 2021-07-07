@@ -1342,7 +1342,7 @@ export const getClientClaimsListByFilter = (param = { page: 1, limit: 15 }, id) 
       };
       startGeneralLoaderOnRequest('clientClaimListLoader');
       const response = await ClientClaimsApiServices.getClientClaimsListByFilter(params);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.CLIENT_CLAIMS_LIST_SUCCESS,
           data: response.data.data,
@@ -1418,7 +1418,7 @@ export const saveClientClaimsColumnsList = ({ claimsColumnList = {}, isReset = f
         }
       }
       const response = await ClientClaimsApiServices.updateClientClaimsColumnList(data);
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.GET_CLIENT_CLAIMS_DEFAULT_COLUMN_LIST,
           data: claimsColumnList,

@@ -18,7 +18,7 @@ export const loginUser = ({ email, password }, rememberMe) => {
       const data = { userId: email.toLowerCase().trim(), password: password.trim() };
       const response = await AuthApiService.loginUser(data);
 
-      if (response.data.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         const { token } = response.data.data;
 
         if (rememberMe) {

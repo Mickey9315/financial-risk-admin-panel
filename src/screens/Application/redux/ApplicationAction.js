@@ -1003,7 +1003,9 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
         });
       }
     } catch (e) {
-      displayErrors(e);
+      if (e?.response?.data?.status === 'AUTOMATION_IN_PROCESS') {
+        errorNotification(e?.response?.data?.message);
+      } else displayErrors(e);
       throw Error();
     }
   };

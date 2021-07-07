@@ -12,7 +12,7 @@ export const resetPassword = async (token, password) => {
     const data = { token, password };
     const response = await AuthApiService.resetPassword(data);
 
-    if (response.data.status === 'SUCCESS') {
+    if (response?.data?.status === 'SUCCESS') {
       successNotification('Password changed successfully.');
       stopGeneralLoaderOnSuccessOrFail('resetPasswordButtonLoaderAction');
     }
