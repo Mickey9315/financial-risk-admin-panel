@@ -12,6 +12,7 @@ import {
   importApplicationSaveAndNext,
 } from '../redux/ApplicationAction';
 import { importApplicationImportStepValidations } from './Components/ImportAplicationImportStep/ImportApplicationImportStepValidations';
+import { errorNotification } from '../../../common/Toast';
 
 const STEPS = [
   {
@@ -52,9 +53,14 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
   const { importApplication } = useSelector(({ application }) => application ?? {});
   const activeStep = useMemo(() => importApplication?.activeStep ?? 0, [importApplication]);
   const importId = useMemo(() => importApplication?.importId ?? null, [importApplication]);
-  console.log(importId);
+  const { toBeProcessedApplicationCount } = useMemo(() => importApplication?.importData ?? null, [
+    importApplication,
+  ]);
 
-  console.log(STEPS?.[activeStep]?.name, importApplication?.[STEPS?.[activeStep ?? 0]?.name]);
+  const { saveAndNextIALoader, deleteDumpFromBackEndLoader } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+  );
+
   const validate = useCallback(async () => {
     const data = importApplication?.[STEPS?.[activeStep ?? 0]?.name];
     try {
@@ -79,11 +85,15 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
   }, [importApplication, activeStep, importId]);
 
   const onClickNextStep = useCallback(async () => {
-    const result = await validate();
-    if (result && activeStep < STEPS.length - 1) {
-      dispatch(importApplicaionGoToNextStep());
+    if (toBeProcessedApplicationCount !== 0) {
+      const result = await validate();
+      if (result && activeStep < STEPS.length - 1) {
+        dispatch(importApplicaionGoToNextStep());
+      }
+    } else {
+      errorNotification('No application to be process.');
     }
-  }, [activeStep, validate]);
+  }, [activeStep, validate, toBeProcessedApplicationCount]);
 
   return (
     <div className="mt-10">
@@ -100,13 +110,20 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
           </div>
         ))}
       </div>
-      <div className="ia-step-content">{STEP_COMPONENT[activeStep]}</div>
+      <div className="ia-step-content">
+        {!saveAndNextIALoader ? (
+          STEP_COMPONENT[activeStep]
+        ) : (
+          <span className="no-record-found">Processing applications please wait...</span>
+        )}
+      </div>
       <div className="ia-step-button-row">
         {activeStep < STEPS.length - 1 && (
           <Button
             buttonType="outlined-primary"
             title="Cancel"
             onClick={oncancelImportApplicationModal}
+            isLoading={deleteDumpFromBackEndLoader}
           />
         )}
         {activeStep === STEPS.length - 1 && (
@@ -114,6 +131,7 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
             buttonType="outlined-primary"
             title="close"
             onClick={oncancelImportApplicationModal}
+            isLoading={deleteDumpFromBackEndLoader}
           />
         )}
         {activeStep < STEPS.length - 1 && (
@@ -122,6 +140,7 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
             buttonType="primary"
             title={STEPS[activeStep + 1].button}
             onClick={onClickNextStep}
+            isLoading={saveAndNextIALoader}
           />
         )}
       </div>

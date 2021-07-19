@@ -10,15 +10,17 @@ import {
   syncInsurerData,
 } from '../redux/InsurerAction';
 import InsurerContactTab from '../Components/InsurerContactTab';
-import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
 import Button from '../../../common/Button/Button';
 import InsurerMatrixTab from '../Components/InsurerMatrixTab/InsurerMatrixTab';
 import Loader from '../../../common/Loader/Loader';
+import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
 
-const INSURER_TABS = ['Policies', 'Contacts', 'Matrix'];
+const INSURER_TABS_CONSTANTS = [
+  { label: 'Contacts', component: <InsurerContactTab /> },
+  { label: 'Matrix', component: <InsurerMatrixTab /> },
+];
 
 const ViewInsurer = () => {
-  const TAB_COMPONENTS = [<InsurerPoliciesTab />, <InsurerContactTab />, <InsurerMatrixTab />];
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -31,6 +33,8 @@ const ViewInsurer = () => {
     setActiveTabIndex(index);
   };
 
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+
   const viewInsurerActiveTabIndex = useSelector(
     ({ insurer }) => insurer?.viewInsurerActiveTabIndex ?? 0
   );
@@ -39,21 +43,24 @@ const ViewInsurer = () => {
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
-  const finalTabs = useMemo(() => {
-    const temp = [...INSURER_TABS];
-    if (insurerData?.isDefault) {
-      temp.splice(1, 1);
-    }
-    return temp;
-  }, [INSURER_TABS, insurerData?.isDefault]);
+  const checkAccess = useCallback(
+    accessFor => {
+      const availableAccess =
+        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData]
+  );
 
-  const finalComponents = useMemo(() => {
-    const temp = [...TAB_COMPONENTS];
-    if (insurerData?.isDefault) {
-      temp.splice(1, 1);
+  const finalTabs = useMemo(() => {
+    let temp = [...INSURER_TABS_CONSTANTS];
+    if (checkAccess('policy')) {
+      temp.splice(0, 0, { label: 'Policies', component: <InsurerPoliciesTab /> });
     }
+    if (insurerData?.isDefault) temp = temp.filter(e => e.label !== 'Contacts');
     return temp;
-  }, [TAB_COMPONENTS, insurerData?.isDefault]);
+  }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, checkAccess]);
 
   const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
     insurerData,
@@ -139,12 +146,12 @@ const ViewInsurer = () => {
                 </div>
               </div>
               <Tab
-                tabs={finalTabs}
+                tabs={finalTabs?.map(e => e.label)}
                 tabActive={tabActive}
                 activeTabIndex={activeTabIndex}
                 className="mt-15"
               />
-              <div className="common-white-container">{finalComponents[activeTabIndex]}</div>
+              <div className="common-white-container">{finalTabs?.[activeTabIndex]?.component}</div>
             </>
           ) : (
             <div className="no-record-found">No record found</div>

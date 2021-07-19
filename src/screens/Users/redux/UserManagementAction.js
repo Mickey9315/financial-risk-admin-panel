@@ -21,7 +21,7 @@ export const getUserManagementListByFilter = (params = { page: 1, limit: 15 }) =
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: USER_MANAGEMENT_REDUX_CONSTANTS.FETCH_USER_MANAGEMENT_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('userListLoader');
       }

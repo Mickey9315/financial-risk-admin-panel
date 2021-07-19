@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import { Suspense, useEffect } from 'react';
-import { saveTokenFromLocalStorageToSession } from '../helpers/LocalStorageHelper';
+import { Suspense } from 'react';
 import Loader from '../common/Loader/Loader';
 import { AuthenticatedRoute } from './AuthenticatedRoutes';
 import { ROUTES_CONSTANTS } from './constants/RoutesConstants';
@@ -8,9 +7,9 @@ import { NonAuthenticatedRoute } from './NonAuthenticatedRoutes';
 import Layout from '../common/Layout/Layout';
 
 function Routes() {
-  useEffect(() => {
-    saveTokenFromLocalStorageToSession();
-  }, []);
+  // useEffect(() => {
+  //   saveTokenFromLocalStorageToSession();
+  // }, []);
 
   return (
     <Router>

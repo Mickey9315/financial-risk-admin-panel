@@ -162,7 +162,7 @@ const DebtorsApplicationTab = () => {
       if (searchKeyword?.trim()?.toString()?.length !== 0) {
         getDebtorApplicationList({ search: searchKeyword?.trim()?.toString() });
       } else {
-        errorNotification('Please enter any value than press enter');
+        errorNotification('Please enter search text to search');
       }
     }
   };

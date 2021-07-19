@@ -15,7 +15,7 @@ export const getReportList = params => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('viewReportListLoader');
       }
@@ -36,11 +36,11 @@ export const getReportColumnList = reportFor => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: REPORTS_REDUX_CONSTANTS.GET_REPORT_COLUMN_LIST,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: REPORTS_REDUX_CONSTANTS.GET_REPORT_DEFAULT_COLUMN_LIST,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -118,7 +118,7 @@ export const getReportsClientDropdownData = () => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: REPORTS_REDUX_CONSTANTS.GET_DROPDOWN_CLIENT_LIST,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {

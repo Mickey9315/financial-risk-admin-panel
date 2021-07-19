@@ -9,6 +9,7 @@ import {
   getLoggedUserDetails,
   logoutUser,
   markNotificationAsReadAndDeleteAction,
+  turnOffNotifire,
   updateUserProfile,
   uploadProfilePicture,
 } from './redux/HeaderAction';
@@ -29,6 +30,7 @@ import {
   DATE_FORMAT_CONSTANT_FOR_CALENDER,
 } from '../../constants/DateFormatConstants';
 import GlobalSearch from './component/GlobalSearch';
+import audio from '../../assets/Sounds/notification_high-intensity.wav';
 
 const Header = () => {
   const history = useHistory();
@@ -62,15 +64,26 @@ const Header = () => {
   /*
    * Notification Data
    * */
-  const notificationData = useSelector(
+  const { notificationList, notificationReceived } = useSelector(
     ({ headerNotificationReducer }) => headerNotificationReducer ?? []
   );
 
-  const notificationList = useMemo(() => {
+  const player = new Audio(audio);
+
+  useEffect(() => {
+    if (notificationReceived) {
+      player?.play();
+      dispatch(turnOffNotifire());
+    } else {
+      player?.pause();
+    }
+  }, [notificationReceived]);
+
+  const sortedNotificationList = useMemo(() => {
     let list = [];
-    if (notificationData?.notificationList?.length > 0) {
+    if (notificationList?.length > 0) {
       list = Object.values(
-        notificationData?.notificationList?.reduce((acc, cur) => {
+        notificationList?.reduce((acc, cur) => {
           if (!acc[moment(cur.createdAt).format('DD/MM/YYYY')])
             acc[moment(cur.createdAt).format('DD/MM/YYYY')] = {
               createdAt: moment(cur.createdAt).format('DD/MM/YYYY'),
@@ -87,14 +100,12 @@ const Header = () => {
       });
     }
     return list ?? [];
-  }, [notificationData?.notificationList]);
+  }, [notificationList]);
 
   const notificationBadge = useMemo(() => {
-    const result = notificationData?.notificationList?.filter(
-      notification => notification?.isRead !== true
-    );
+    const result = notificationList?.filter(notification => notification?.isRead !== true);
     return result?.length ?? 0;
-  }, [notificationData?.notificationList]);
+  }, [notificationList]);
 
   /* end */
 
@@ -377,8 +388,8 @@ const Header = () => {
             drawerState={notificationDrawer}
             closeDrawer={() => setNotificationDrawer(false)}
           >
-            {notificationList?.length > 0 ? (
-              notificationList?.map(notification => (
+            {sortedNotificationList?.length > 0 ? (
+              sortedNotificationList?.map(notification => (
                 <div className="notification-set">
                   <div className="notification-set-title">
                     {moment(notification?.createdAt, DATE_FORMAT).calendar(

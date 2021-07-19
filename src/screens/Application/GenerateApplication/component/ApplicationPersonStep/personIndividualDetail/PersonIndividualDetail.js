@@ -962,9 +962,9 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
     e => {
       e.stopPropagation();
       if (partners?.length <= 2 && entityTypeFromCompany === 'PARTNERSHIP') {
-        errorNotification('You can not remove partner');
+        errorNotification('Partner can not be removed.');
       } else if (partners?.length <= 1) {
-        errorNotification('You can not remove every partner/trust');
+        errorNotification('Every partner/trust/sole trader can not be removed.');
       } else if (partners?.[index]?._id) {
         dispatch(wipeOutIndividualPerson(partners?.[index]?._id, index));
       } else {

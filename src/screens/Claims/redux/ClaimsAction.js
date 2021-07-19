@@ -15,7 +15,7 @@ export const getClaimsListByFilter = (params = { page: 1, limit: 15 }) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('claimListLoader');
       }
@@ -35,11 +35,11 @@ export const getClaimsColumnsList = () => {
       const response = await ClaimsApiServices.getClaimsColumnList(param);
       dispatch({
         type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_COLUMNS_LIST,
-        data: response.data.data,
+        data: response?.data?.data,
       });
       dispatch({
         type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_DEFAULT_COLUMN_LIST,
-        data: response.data.data,
+        data: response?.data?.data,
       });
     } catch (e) {
       displayErrors(e);
@@ -116,7 +116,7 @@ export const getClaimsEntityList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_ENTITY_LIST,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -164,7 +164,7 @@ export const getClaimDetails = id => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.GET_CLAIM_DETAILS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('viewClaimLoader');
       }

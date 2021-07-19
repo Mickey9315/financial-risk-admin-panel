@@ -14,6 +14,13 @@ const ClientApiService = {
   getListFromCrm: data =>
     ApiService.getData(`${CLIENT_URLS.GET_DATA_FROM_CRM_URL}?searchKeyword=${data}`),
   updateClientListFromCrm: data => ApiService.postData(CLIENT_URLS.CLIENT_LIST_URL, data),
+  downloadClientsList: params =>
+    ApiService.request({
+      url: `${CLIENT_URLS.DOWNLOAD_CLIENTS}`,
+      params,
+      method: 'GET',
+      responseType: 'blob',
+    }),
 };
 
 export default ClientApiService;

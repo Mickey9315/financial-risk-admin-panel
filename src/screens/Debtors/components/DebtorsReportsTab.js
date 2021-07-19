@@ -30,6 +30,7 @@ const DebtorsReportsTab = () => {
   const {
     reportsList,
     reportsListForFetch,
+    partners,
     debtorsReportsColumnNameList,
     debtorsReportsDefaultColumnNameList,
   } = useSelector(({ debtorsManagement }) => debtorsManagement?.reports ?? {});
@@ -156,13 +157,20 @@ const DebtorsReportsTab = () => {
 
   const [fetchReportsModal, setFetchReportsModal] = useState(false);
   const [selectedReports, setSelectedReports] = useState([]);
+  const [selectedStakeHolder, setSelectedStakeHolder] = useState([]);
 
   const toggleFetchReportsModal = useCallback(() => {
     setFetchReportsModal(e => !e);
   }, []);
 
+  const partnersWithCompany = useMemo(() => {
+    return partners?.filter(partner => partner?.type === 'company') ?? [];
+  }, [partners]);
+
   const OnClickFetchReportButton = useCallback(async () => {
-    if (selectedReports?.length <= 0) {
+    if (partners?.length > 0 && selectedStakeHolder?.length <= 0) {
+      errorNotification('Please select Stake Holder');
+    } else if (selectedReports?.length <= 0) {
       errorNotification('Please select reports to fetch');
     } else {
       try {
@@ -172,15 +180,26 @@ const DebtorsReportsTab = () => {
           debtorId: id,
           productCode: selectedProductCodes,
         };
+        if (partners?.length > 0) {
+          data.stakeholderId = selectedStakeHolder?.value;
+        }
         await dispatch(fetchSelectedReportsForDebtor(data));
         getDebtorReportsList();
         setSelectedReports([]);
+        setSelectedStakeHolder([]);
         toggleFetchReportsModal();
       } catch (e) {
         /**/
       }
     }
-  }, [id, selectedReports, getDebtorReportsList, toggleFetchReportsModal]);
+  }, [
+    id,
+    selectedReports,
+    getDebtorReportsList,
+    toggleFetchReportsModal,
+    selectedStakeHolder?.value,
+    partners?.length,
+  ]);
 
   const fetchReportsButtons = useMemo(
     () => [
@@ -197,6 +216,10 @@ const DebtorsReportsTab = () => {
 
   const handleOnReportSelect = useCallback(value => {
     setSelectedReports(value);
+  }, []);
+
+  const handleOnStakeHolderSelect = useCallback(value => {
+    setSelectedStakeHolder(value);
   }, []);
 
   useEffect(() => {
@@ -216,7 +239,7 @@ const DebtorsReportsTab = () => {
       if (searchKeyword?.trim()?.toString()?.length !== 0) {
         getDebtorReportsList({ search: searchKeyword?.trim()?.toString() });
       } else {
-        errorNotification('Please enter any value than press enter');
+        errorNotification('Please enter search text to search');
       }
     }
   };
@@ -226,16 +249,28 @@ const DebtorsReportsTab = () => {
       {fetchReportsModal && (
         <Modal header="Fetch Report" className="fetch-report-modal" buttons={fetchReportsButtons}>
           <div className="fetch-report-popup-container">
+            {partners?.length > 0 && (
+              <>
+                <span>Stake Holder</span>
+                <ReactSelect
+                  name="role"
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select Stake Holder"
+                  dropdownHandle={false}
+                  options={partnersWithCompany}
+                  value={selectedStakeHolder}
+                  onChange={handleOnStakeHolderSelect}
+                />
+              </>
+            )}
             <span>Report</span>
             <ReactSelect
-              // isMulti
               name="role"
               className="react-select-container"
               classNamePrefix="react-select"
-              // color="#003A78"
               placeholder="Select Reports"
               dropdownHandle={false}
-              // keepSelectedInList={false}
               options={reportsListForFetch}
               value={selectedReports}
               onChange={handleOnReportSelect}

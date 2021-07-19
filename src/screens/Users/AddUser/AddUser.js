@@ -203,7 +203,7 @@ const AddUser = () => {
       errorNotification('Please enter valid contact number');
       // eslint-disable-next-line no-restricted-globals
     } else if (maxCreditLimit && isNaN(maxCreditLimit)) {
-      errorNotification('Please enter number for max credit limit');
+      errorNotification('Please enter number for maximum credit limit');
     } else {
       try {
         if (action === 'add') {

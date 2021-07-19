@@ -3,14 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import Input from '../../../../../common/Input/Input';
 import {
+  changeEditApplicationFieldValue,
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
   resetEntityTableData,
+  saveApplicationStepDataToBackend,
   searchApplicationCompanyEntityName,
   updateEditApplicationData,
   updateEditApplicationField,
-  wipeOutPersonsAsEntityChange,
 } from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
 import Loader from '../../../../../common/Loader/Loader';
@@ -74,20 +75,10 @@ const ApplicationCompanyStep = () => {
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [wipeOutDetails, setWipeOutDetails] = useState(false);
-  const [selectedDebtorId, setSelectedDebtorId] = useState('');
-
-  const [wipeOuts, setWipeOuts] = useState('');
 
   const [searchedEntityNameValue, setSearchedEntityNameValue] = useState('');
 
   const [currentPage, setCurrentPage] = useState(0);
-
-  const toggleConfirmationModal = useCallback(
-    value => setShowConfirmModal(value !== undefined ? value : e => !e),
-    [setShowConfirmModal]
-  );
 
   const [errorMessage, setErrorMessage] = useState('');
   const [errorModal, setErrorModal] = useState(false);
@@ -123,10 +114,6 @@ const ApplicationCompanyStep = () => {
     australianStates,
     newZealandStates,
   ]);
-
-  useEffect(() => {
-    setSelectedDebtorId(companyState?.debtorId?.value);
-  }, [companyState?.debtorId]);
 
   const INPUTS = useMemo(
     () => [
@@ -296,16 +283,9 @@ const ApplicationCompanyStep = () => {
   }, []);
   /**/
 
-  const updateSingleCompanyState = useCallback(
-    (name, value) => {
-      if (wipeOutDetails) {
-        dispatch(updateEditApplicationField('company', 'wipeOutDetails', true));
-        setWipeOuts(false);
-      }
-      dispatch(updateEditApplicationField('company', name, value));
-    },
-    [wipeOutDetails]
-  );
+  const updateSingleCompanyState = useCallback((name, value) => {
+    dispatch(updateEditApplicationField('company', name, value));
+  }, []);
 
   const updateCompanyState = useCallback(data => {
     dispatch(updateEditApplicationData('company', data));
@@ -322,16 +302,13 @@ const ApplicationCompanyStep = () => {
   const handleSelectInputChange = useCallback(
     async data => {
       if (data?.name === 'country') {
+        updateSingleCompanyState(data?.name, data);
         dispatch(updateEditApplicationField('company', 'state', null));
 
         const finalErrors = { ...errors };
         delete finalErrors.state;
 
         dispatch(updateEditApplicationData('company', { errors: finalErrors }));
-      }
-      if (data?.name === 'entityType' && partners?.length > 0) {
-        setShowConfirmModal(true);
-        setWipeOuts(data);
       } else if (data?.name === 'clientId') {
         try {
           let response;
@@ -369,15 +346,7 @@ const ApplicationCompanyStep = () => {
         updateSingleCompanyState(data?.name, data);
       }
     },
-    [
-      updateSingleCompanyState,
-      setShowConfirmModal,
-      setWipeOuts,
-      updateCompanyState,
-      companyState,
-      errors,
-      partners?.length,
-    ]
+    [updateSingleCompanyState, updateCompanyState, companyState, errors, partners?.length]
   );
 
   const handleDebtorSelectChange = useCallback(
@@ -754,34 +723,6 @@ const ApplicationCompanyStep = () => {
     ]
   );
 
-  const changeEntityType = useMemo(
-    () => [
-      {
-        title: 'Close',
-        buttonType: 'primary-1',
-        onClick: () => {
-          toggleConfirmationModal();
-          setWipeOuts('');
-        },
-      },
-      {
-        title: 'Delete',
-        buttonType: 'danger',
-        onClick: async () => {
-          try {
-            await dispatch(wipeOutPersonsAsEntityChange(selectedDebtorId, []));
-            updateSingleCompanyState(wipeOuts?.name, wipeOuts);
-            setWipeOutDetails(true);
-            toggleConfirmationModal();
-          } catch (e) {
-            /**/
-          }
-        },
-      },
-    ],
-    [toggleConfirmationModal, wipeOutDetails, selectedDebtorId, updateSingleCompanyState, wipeOuts]
-  );
-
   const errorModalButtons = useMemo(
     () => [
       {
@@ -818,6 +759,42 @@ const ApplicationCompanyStep = () => {
     []
   );
 
+  const changeEntityType = useMemo(
+    () => [
+      {
+        title: 'No',
+        buttonType: 'primary-1',
+        onClick: () => {
+          dispatch({
+            type: APPLICATION_REDUX_CONSTANTS.COMPANY.ENTITY_TYPE_CHANGED,
+            data: { data: {}, openModal: false },
+          });
+        },
+      },
+      {
+        title: 'Yes',
+        buttonType: 'danger',
+        onClick: async () => {
+          try {
+            const data = {
+              ...companyState?.onEntityChange?.data,
+              removeStakeholders: true,
+            };
+            await dispatch(saveApplicationStepDataToBackend(data));
+            dispatch({
+              type: APPLICATION_REDUX_CONSTANTS.COMPANY.ENTITY_TYPE_CHANGED,
+              data: { data: {}, openModal: false },
+            });
+            dispatch(changeEditApplicationFieldValue('applicationStage', 1));
+          } catch (e) {
+            /**/
+          }
+        },
+      },
+    ],
+    [companyState?.onEntityChange?.data]
+  );
+
   useEffect(() => {
     dispatch(getApplicationCompanyDropDownData());
     return () => dispatch(updateEditApplicationData('companyStep', { errors: {} }));
@@ -835,14 +812,10 @@ const ApplicationCompanyStep = () => {
           <span className="confirmation-message">{errorMessage}</span>
         </Modal>
       )}
-      {showConfirmModal && (
-        <Modal
-          header="Change entity type"
-          buttons={changeEntityType}
-          hideModal={toggleConfirmationModal}
-        >
+      {companyState?.onEntityChange?.openModal && (
+        <Modal header="Change entity type" buttons={changeEntityType}>
           <span className="confirmation-message">
-            Are you sure you want to change entity type it will wipe-up person step data you filled?
+            Are you sure you want to change entity type? It will delete Stake Holders details.
           </span>
         </Modal>
       )}

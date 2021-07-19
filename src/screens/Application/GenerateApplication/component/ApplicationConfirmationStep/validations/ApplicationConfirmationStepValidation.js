@@ -6,7 +6,6 @@ export const applicationConfirmationStepValidations = async (
   editApplicationData,
   history
 ) => {
-  console.log(data);
   let validated = true;
   if (validated) {
     const finalData = {

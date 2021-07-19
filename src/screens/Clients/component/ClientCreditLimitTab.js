@@ -183,7 +183,7 @@ const ClientCreditLimitTab = () => {
       if (searchKeyword?.trim()?.toString()?.length !== 0) {
         getCreditLimitList({ search: searchKeyword?.trim()?.toString() });
       } else {
-        errorNotification('Please enter any value than press enter');
+        errorNotification('Please enter search text to search');
       }
     }
   };

@@ -965,16 +965,12 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
     }
 
     case DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_DATA_FOR_FETCH: {
-      let reportsListForFetch = state?.reports?.reportsListForFetch;
-      reportsListForFetch = action?.data?.map(report => ({
-        label: report?.name,
-        value: report?.code,
-      }));
       return {
         ...state,
         reports: {
           ...state?.reports,
-          reportsListForFetch,
+          reportsListForFetch: action?.data?.reports,
+          partners: action?.data?.partners,
         },
       };
     }

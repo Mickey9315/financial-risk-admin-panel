@@ -16,8 +16,6 @@ const ApplicationCompanyStepApiServices = {
     ApiService.getData(`${APPLICATION_URLS.COMPANY.SEARCH_APPLICATION_ENTITY_TYPE}`, {
       params,
     }),
-  deleteApplicationCompanyEntityTypeData: params =>
-    ApiService.deleteData(`${APPLICATION_URLS.COMPANY.DELETE_APPLICATION_ENTITY_TYPE}`, { params }),
   deleteApplicationPersonIndividualData: personId =>
     ApiService.deleteData(`${APPLICATION_URLS.COMPANY.DELETE_APPLICATION_PERSONS}${personId}`),
 };

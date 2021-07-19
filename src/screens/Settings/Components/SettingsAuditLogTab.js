@@ -23,6 +23,7 @@ import { errorNotification } from '../../../common/Toast';
 import { SETTING_REDUX_CONSTANTS } from '../redux/SettingReduxConstants';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 
 const SettingsAuditLogTab = () => {
   const { auditLogList, auditLogColumnNameList, auditLogDefaultColumnNameList } = useSelector(
@@ -52,11 +53,16 @@ const SettingsAuditLogTab = () => {
     finalFilter: {},
   });
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
+
+  const { settingAuditLogListFilters } = useSelector(
+    ({ listFilterReducer }) => listFilterReducer ?? {}
+  );
+
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'startDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
 
@@ -64,7 +70,7 @@ const SettingsAuditLogTab = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'endDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
 
@@ -275,15 +281,17 @@ const SettingsAuditLogTab = () => {
       actionType:
         paramActionType && paramActionType.toString().trim().length > 0
           ? paramActionType
-          : undefined,
+          : settingAuditLogListFilters?.actionType,
       userRefId:
-        paramUserRefId && paramUserRefId.toString().trim().length > 0 ? paramUserRefId : undefined,
+        paramUserRefId && paramUserRefId.toString().trim().length > 0
+          ? paramUserRefId
+          : settingAuditLogListFilters?.userRefId,
       entityType:
         paramEntityType && paramEntityType.toString().trim().length > 0
           ? paramEntityType
-          : undefined,
-      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
-      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+          : settingAuditLogListFilters?.entityType,
+      startDate: paramStartDate ? new Date(paramStartDate) : settingAuditLogListFilters?.startDate,
+      endDate: paramEndDate ? new Date(paramEndDate) : settingAuditLogListFilters?.endDate,
     };
 
     Object.entries(filters).forEach(([name, value]) => {
@@ -297,6 +305,10 @@ const SettingsAuditLogTab = () => {
     getAuditLogListByFilter({ ...params, ...filters });
     dispatch(getAuditLogColumnNameList());
   }, []);
+
+  useEffect(() => {
+    dispatch(saveAppliedFilters('settingAuditLogListFilters', finalFilter));
+  }, [finalFilter]);
 
   const filterModalButtons = useMemo(
     () => [
@@ -325,6 +337,8 @@ const SettingsAuditLogTab = () => {
       value: e._id,
     }));
   }, [userNameList]);
+
+  console.log(tempFilter);
 
   const entityTypeOptions = [
     {
@@ -388,11 +402,14 @@ const SettingsAuditLogTab = () => {
   }, [filter, tempFilter?.entityType]);
 
   const userNameSelectedValue = useMemo(() => {
-    const selectedUserName = userNameList?.find(e => {
-      return e._id === tempFilter?.userRefId;
-    });
-    return selectedUserName ? [{ label: selectedUserName.name, value: selectedUserName._id }] : [];
-  }, [filter, tempFilter?.userRefId]);
+    const selectedUserName = userNameList?.filter(e => e._id === tempFilter?.userRefId);
+    console.log(selectedUserName);
+    if (selectedUserName?.length > 0)
+      return { label: selectedUserName?.[0]?.name, value: selectedUserName?.[0]?._id };
+    return [];
+  }, [tempFilter?.userRefId]);
+
+  console.log(userNameSelectedValue);
 
   const actionTypeSelectedValue = useMemo(() => {
     const selectedActiontype = actionTypeOptions.find(e => {
@@ -453,7 +470,7 @@ const SettingsAuditLogTab = () => {
                   classNamePrefix="react-select"
                   placeholder="Select module"
                   name="entityType"
-                  value={entityTypeSelectedValue}
+                  value={entityTypeSelectedValue ?? []}
                   options={entityTypeOptions}
                   onChange={handleEntityTypeFilterChange}
                   isSearchable
@@ -467,7 +484,7 @@ const SettingsAuditLogTab = () => {
                   placeholder="Select user name"
                   name="userRefId"
                   options={userNameOptions}
-                  value={userNameSelectedValue}
+                  value={userNameSelectedValue ?? []}
                   onChange={handleUserNameFilterChange}
                   isSearchable
                 />
@@ -480,7 +497,7 @@ const SettingsAuditLogTab = () => {
                   placeholder="Select action type"
                   name="actionType"
                   value={actionTypeSelectedValue}
-                  options={actionTypeOptions}
+                  options={actionTypeOptions ?? []}
                   onChange={handleActionTypeFilterChange}
                   isSearchable
                 />

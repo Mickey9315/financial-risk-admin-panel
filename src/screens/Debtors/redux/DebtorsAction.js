@@ -28,7 +28,7 @@ export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.FETCH_DEBTOR_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('debtorListLoader');
       }
@@ -51,12 +51,12 @@ export const getDebtorsColumnNameList = () => {
         dispatch({
           type:
             DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type:
             DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -147,7 +147,7 @@ export const getDebtorById = id => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.SELECTED_DEBTORS_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('viewDebtorPageLoader');
       }
@@ -166,7 +166,7 @@ export const getDebtorDropdownData = () => {
         dispatch({
           type:
             DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -228,7 +228,7 @@ export const getDebtorsNotesListDataAction = (id, params = { page: 1, limit: 15 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.NOTES.FETCH_DEBTOR_NOTES_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -326,7 +326,7 @@ export const getDebtorDocumentsListData = (id, params = { page: 1, limit: 15 }) 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.FETCH_DEBTOR_DOCUMENTS_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -350,13 +350,13 @@ export const getDebtorDocumentsColumnNamesList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type:
             DEBTORS_REDUX_CONSTANTS.DOCUMENTS
               .DEBTOR_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -443,7 +443,7 @@ export const getDocumentTypeList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENT_TYPE_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -460,7 +460,7 @@ export const uploadDocument = (data, config) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DEBTOR_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         successNotification(response.data.message || 'Document uploaded successfully');
         stopGeneralLoaderOnSuccessOrFail(`viewDebtorUploadDocumentButtonLoaderAction`);
@@ -523,7 +523,7 @@ export const getDebtorTaskListData = (params, id) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.FETCH_DEBTOR_TASK_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -546,11 +546,11 @@ export const getDebtorTaskColumnList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.DEBTOR_TASK_COLUMN_NAME_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.DEBTOR_TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -631,7 +631,7 @@ export const getAssigneeDropDownData = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ASSIGNEE_DROP_DOWN_DATA_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -644,10 +644,10 @@ export const getEntityDropDownData = params => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
-      if (response?.data?.status === 'SUCCESS' && response.data.data) {
+      if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -660,12 +660,12 @@ export const getDebtorDefaultEntityDropDownData = params => {
   return async dispatch => {
     try {
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
-      if (response?.data?.status === 'SUCCESS' && response.data.data) {
+      if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
         dispatch({
           type:
             DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK
               .DEBTOR_DEFAULT_DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -730,7 +730,7 @@ export const getDebtorTaskDetail = id => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.EDIT_TASK.GET_DEBTOR_TASK_DETAILS_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -771,7 +771,7 @@ export const getDebtorApplicationListData = (id, param) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.APPLICATION.FETCH_DEBTOR_APPLICATION_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -796,7 +796,7 @@ export const getDebtorApplicationColumnNameList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.APPLICATION.DEBTOR_APPLICATION_DEFAULT_COLUMN_LIST_ACTION,
@@ -1571,4 +1571,19 @@ export const resetDebtorOverdueListData = () => {
       type: DEBTORS_REDUX_CONSTANTS.DEBTOR_OVERDUE.RESET_DEBTOR_OVERDUE_LIST_DATA,
     });
   };
+};
+
+export const debtorDownloadAction = async filters => {
+  startGeneralLoaderOnRequest('debtorDownloadButtonLoaderAction');
+  try {
+    const response = await DebtorsApiServices.downloadDebtorList({ ...filters });
+    if (response?.statusText === 'OK') {
+      stopGeneralLoaderOnSuccessOrFail(`debtorDownloadButtonLoaderAction`);
+      return response;
+    }
+  } catch (e) {
+    stopGeneralLoaderOnSuccessOrFail(`debtorDownloadButtonLoaderAction`);
+    displayErrors(e);
+  }
+  return false;
 };

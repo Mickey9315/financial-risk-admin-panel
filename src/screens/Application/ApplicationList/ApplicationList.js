@@ -31,6 +31,8 @@ import { downloadAll } from '../../../helpers/DownloadHelper';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import ImportApplicationModal from '../ImportApplication/ImportApplicationModal';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const ApplicationList = () => {
   const history = useHistory();
@@ -62,6 +64,9 @@ const ApplicationList = () => {
     ({ application }) => application?.applicationFilterList ?? {}
   );
 
+  const { applicationListFilters } = useSelector(
+    ({ listFilterReducer }) => listFilterReducer ?? {}
+  );
   const {
     applicationListColumnSaveButtonLoaderAction,
     applicationListColumnResetButtonLoaderAction,
@@ -105,7 +110,7 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'startDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
 
@@ -113,7 +118,7 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'endDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
 
@@ -342,16 +347,30 @@ const ApplicationList = () => {
       limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
-      entityType: (paramEntityType?.trim()?.length ?? -1) > 0 ? paramEntityType : undefined,
-      clientId: (paramClientId?.trim()?.length ?? -1) > 0 ? paramClientId : undefined,
-      debtorId: (paramDebtorId?.trim()?.length ?? -1) > 0 ? paramDebtorId : undefined,
-      status: (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : undefined,
+      entityType:
+        (paramEntityType?.trim()?.length ?? -1) > 0
+          ? paramEntityType
+          : applicationListFilters?.entityType ?? undefined,
+      clientId:
+        (paramClientId?.trim()?.length ?? -1) > 0
+          ? paramClientId
+          : applicationListFilters?.clientId,
+      debtorId:
+        (paramDebtorId?.trim()?.length ?? -1) > 0
+          ? paramDebtorId
+          : applicationListFilters?.debtorId,
+      status:
+        (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : applicationListFilters?.status,
       minCreditLimit:
-        (paramMinCreditLimit?.trim()?.length ?? -1) > 0 ? paramMinCreditLimit : undefined,
+        (paramMinCreditLimit?.trim()?.length ?? -1) > 0
+          ? paramMinCreditLimit
+          : applicationListFilters?.minCreditLimit,
       maxCreditLimit:
-        (paramMaxCreditLimit?.trim()?.length ?? -1) > 0 ? paramMaxCreditLimit : undefined,
-      startDate: paramStartDate || undefined,
-      endDate: paramEndDate || undefined,
+        (paramMaxCreditLimit?.trim()?.length ?? -1) > 0
+          ? paramMaxCreditLimit
+          : applicationListFilters?.maxCreditLimit,
+      startDate: paramStartDate || applicationListFilters?.startDate,
+      endDate: paramEndDate || applicationListFilters?.endDate,
     };
     Object.entries(filters)?.forEach(([name, value]) => {
       dispatchFilter({
@@ -457,6 +476,10 @@ const ApplicationList = () => {
     };
   }, []);
 
+  useEffect(() => {
+    dispatch(saveAppliedFilters('applicationListFilters', finalFilter));
+  }, [finalFilter]);
+
   return (
     <>
       {!applicationListPageLoader ? (
@@ -464,7 +487,9 @@ const ApplicationList = () => {
           <div className="page-header">
             <div className="page-header-name">Application List</div>
             <div className="page-header-button-container">
-              <ImportApplicationModal />
+              <UserPrivilegeWrapper moduleName="import-application-dump">
+                <ImportApplicationModal />
+              </UserPrivilegeWrapper>
               <IconButton
                 buttonType="primary-1"
                 title="cloud_download"

@@ -30,7 +30,7 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('clientListLoader');
       }
@@ -62,7 +62,7 @@ export const getClientById = id => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.SELECTED_CLIENT_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('viewClientPageLoaderAction');
       }
@@ -95,12 +95,12 @@ export const getClientColumnListName = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type:
             CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -117,7 +117,7 @@ export const getClientFilter = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_MANAGEMENT_FILTER_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_FILTER_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -133,7 +133,7 @@ export const getListFromCrm = data => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_ADD_FROM_CRM_REDUX_CONSTANT.CLIENT_GET_LIST_FROM_CRM_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -232,7 +232,7 @@ export const getClientContactListData = (id, params = { page: 1, limit: 15 }) =>
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -266,11 +266,11 @@ export const getClientContactColumnNamesList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_COLUMN_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CONTACT.CLIENT_CONTACT_COLUMN_DEFAULT_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -358,7 +358,7 @@ export const getClientPoliciesListData = (id, params = { page: 1, limit: 15 }) =
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -374,11 +374,11 @@ export const getClientPoliciesColumnNamesList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.POLICIES.CLIENT_POLICIES_COLUMN_DEFAULT_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -487,7 +487,7 @@ export const getClientNotesListDataAction = (id, params = { page: 1, limit: 15 }
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.NOTES.CLIENT_NOTES_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -581,7 +581,7 @@ export const getClientDocumentsListData = (id, params = { page: 1, limit: 15 }) 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -601,12 +601,12 @@ export const getClientDocumentsColumnNamesList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type:
             CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -692,7 +692,7 @@ export const getDocumentTypeList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENT_TYPE_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -709,7 +709,7 @@ export const uploadDocument = (data, config) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_CLIENT_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         successNotification(response?.data?.message || 'Document uploaded successfully.');
         stopGeneralLoaderOnSuccessOrFail(`viewClientUploadDocumentButtonLoaderAction`);
@@ -768,7 +768,7 @@ export const getClientCreditLimitData = (id, data) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -784,11 +784,11 @@ export const getCreditLimitColumnsNameList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.CREDIT_LIMIT.CLIENT_CREDIT_LIMIT_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -890,7 +890,7 @@ export const getClientApplicationListData = (id, param) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.APPLICATION.CLIENT_APPLICATION_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -1444,4 +1444,19 @@ export const resetClientClaimListData = () => {
       type: CLIENT_REDUX_CONSTANTS.CLIENT_CLAIMS.RESET_CLIENT_CLAIM_LIST_DATA,
     });
   };
+};
+
+export const clientsDownloadAction = async filters => {
+  startGeneralLoaderOnRequest('clientsDownloadButtonLoaderAction');
+  try {
+    const response = await ClientApiService.downloadClientsList({ ...filters });
+    if (response?.statusText === 'OK') {
+      stopGeneralLoaderOnSuccessOrFail(`clientsDownloadButtonLoaderAction`);
+      return response;
+    }
+  } catch (e) {
+    stopGeneralLoaderOnSuccessOrFail(`clientsDownloadButtonLoaderAction`);
+    displayErrors(e);
+  }
+  return false;
 };

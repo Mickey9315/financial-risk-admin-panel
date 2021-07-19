@@ -154,7 +154,7 @@ const DebtorsNotesTab = () => {
         getDebtorNotesList({ search: searchKeyword?.trim()?.toString() });
       } else {
         getDebtorNotesList();
-        errorNotification('Please enter any value than press enter');
+        errorNotification('Please enter search text to search');
       }
     }
   };

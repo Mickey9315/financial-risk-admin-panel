@@ -1,4 +1,3 @@
-import { object } from 'prop-types';
 import {
   importApplicationUploadDump,
   updateImportApplicationData,
@@ -9,7 +8,6 @@ export const importApplicationImportStepValidations = async (dispatch, data) => 
   let validated = true;
 
   // eslint-disable-next-line no-prototype-builtins
-  console.log(object.hasOwnProperty('file'));
   if (!data?.file) {
     validated = false;
     error = 'Please import file to continue';
@@ -17,7 +15,6 @@ export const importApplicationImportStepValidations = async (dispatch, data) => 
 
   if (validated) {
     const { file } = data;
-    console.log(file);
     const formData = new FormData();
     formData.append('dump-file', file);
     const config = {

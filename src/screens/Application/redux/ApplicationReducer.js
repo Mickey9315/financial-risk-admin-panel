@@ -34,6 +34,7 @@ const initialApplicationList = {
     _id: '',
     entityType: '',
     company: {
+      onEntityChange: { data: {}, openModal: false },
       clientId: [],
       postCode: '',
       state: [],
@@ -412,17 +413,6 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
 
-    case APPLICATION_REDUX_CONSTANTS.PERSON.WIPE_OUT_PERSON_STEP_DATA: {
-      // const perStep = state.editApplication.partners;
-      return {
-        ...state,
-        editApplication: {
-          ...state?.editApplication,
-          partners: action?.data,
-        },
-      };
-    }
-
     case APPLICATION_REDUX_CONSTANTS.PERSON.EDIT_APPLICATION_PERSON: {
       const partners = [...state?.editApplication?.partners];
       partners[action?.index] = {
@@ -749,18 +739,14 @@ export const application = (state = initialApplicationList, action) => {
 
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
       .FETCH_APPLICATION_REPORTS_LIST_DATA_FOR_FETCH: {
-      let reportsListForFetch = state?.viewApplication?.reports?.reportsListForFetch;
-      reportsListForFetch = action?.data?.map(report => ({
-        label: report?.name,
-        value: report?.code,
-      }));
       return {
         ...state,
         viewApplication: {
           ...state?.viewApplication,
           reports: {
             ...state?.viewApplication?.reports,
-            reportsListForFetch,
+            reportsListForFetch: action?.data?.reports,
+            partners: action?.data?.partners,
           },
         },
       };
@@ -785,7 +771,6 @@ export const application = (state = initialApplicationList, action) => {
     // import application
 
     case APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.GO_TO_NEXT_STEP:
-      console.log(state?.importApplication?.activeStep);
       return {
         ...state,
         importApplication: {
@@ -845,6 +830,21 @@ export const application = (state = initialApplicationList, action) => {
           ...state?.importApplication,
           importId: id,
           importData: action.data,
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.ENTITY_TYPE_CHANGED:
+      return {
+        ...state,
+        editApplication: {
+          ...state?.editApplication,
+          company: {
+            ...state?.editApplication?.company,
+            onEntityChange: {
+              data: action?.data?.data,
+              openModal: action?.data?.openModal,
+            },
+          },
         },
       };
 

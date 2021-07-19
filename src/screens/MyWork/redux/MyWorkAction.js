@@ -19,7 +19,7 @@ export const getTaskListByFilter = (params = {}) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.GET_TASK_LIST_SUCCESS_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('myWorkTasksListLoader');
       }

@@ -461,7 +461,7 @@ const ViewReport = () => {
               )}
               {['limit-list', 'pending-application'].includes(paramReport) && (
                 <IconButton
-                  buttonType="primary"
+                  buttonType="primary-1"
                   title="cloud_download"
                   className="mr-10"
                   buttonTitle={`Click to download ${reportName}`}

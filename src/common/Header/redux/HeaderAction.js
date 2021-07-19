@@ -185,3 +185,11 @@ export const searchGlobalData = value => {
     }
   };
 };
+
+export const turnOffNotifire = () => {
+  return dispatch => {
+    dispatch({
+      type: HEADER_NOTIFICATION_REDUX_CONSTANTS.OFF_NOTIFIRE,
+    });
+  };
+};

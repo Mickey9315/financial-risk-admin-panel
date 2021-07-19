@@ -9,6 +9,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
 import {
   changeDebtorsColumnListStatus,
+  debtorDownloadAction,
   getDebtorDropdownData,
   getDebtorsColumnNameList,
   getDebtorsList,
@@ -23,6 +24,8 @@ import { errorNotification } from '../../../common/Toast';
 import { DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
+import { downloadAll } from '../../../helpers/DownloadHelper';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 
 const DebtorsList = () => {
   const history = useHistory();
@@ -41,10 +44,13 @@ const DebtorsList = () => {
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
   );
 
+  const { debtorListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
+
   const {
     DebtorListColumnSaveButtonLoaderAction,
     DebtorListColumnResetButtonLoaderAction,
     debtorListLoader,
+    debtorDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, {
@@ -52,6 +58,13 @@ const DebtorsList = () => {
     finalFilter: {},
   });
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
+
+  const appliedFilters = useMemo(() => {
+    return {
+      entityType:
+        (tempFilter?.entityType?.trim()?.length ?? -1) > 0 ? tempFilter?.entityType : undefined,
+    };
+  }, [{ ...tempFilter }]);
 
   const handleEntityTypeFilterChange = useCallback(event => {
     dispatchFilter({
@@ -66,8 +79,7 @@ const DebtorsList = () => {
       const data = {
         page: page ?? 1,
         limit: limit ?? 15,
-        entityType:
-          (tempFilter?.entityType?.trim()?.length ?? -1) > 0 ? tempFilter?.entityType : undefined,
+        ...appliedFilters,
         ...params,
       };
       await dispatch(getDebtorsList(data));
@@ -78,7 +90,7 @@ const DebtorsList = () => {
         cb();
       }
     },
-    [page, limit, tempFilter?.entityType]
+    [page, limit, { ...appliedFilters }]
   );
 
   const pageActionClick = useCallback(
@@ -241,7 +253,8 @@ const DebtorsList = () => {
       limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
-      entityType: (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : undefined,
+      entityType:
+        (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : debtorListFilters?.entityType,
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
@@ -259,6 +272,23 @@ const DebtorsList = () => {
     history,
   ]);
 
+  const downloadDebtor = useCallback(async () => {
+    if (docs?.length > 0) {
+      try {
+        const response = await debtorDownloadAction(appliedFilters);
+        if (response) downloadAll(response);
+      } catch (e) {
+        /**/
+      }
+    } else {
+      errorNotification('No records to download');
+    }
+  }, [docs?.length, { ...appliedFilters }]);
+
+  useEffect(() => {
+    dispatch(saveAppliedFilters('debtorListFilters', finalFilter));
+  }, [finalFilter]);
+
   useEffect(() => {
     return () => {
       dispatch(resetDebtorListPaginationData(page, pages, total, limit));
@@ -273,6 +303,14 @@ const DebtorsList = () => {
           <div className="page-header">
             <div className="page-header-name">Debtor List</div>
             <div className="page-header-button-container">
+              <IconButton
+                buttonType="primary-1"
+                title="cloud_download"
+                className="mr-10"
+                buttonTitle="Click to download Debtor List"
+                onClick={downloadDebtor}
+                isLoading={debtorDownloadButtonLoaderAction}
+              />
               <IconButton
                 buttonType="secondary"
                 title="filter_list"

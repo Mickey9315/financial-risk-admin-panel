@@ -142,7 +142,7 @@ const ClientPoliciesTab = () => {
       if (searchKeyword?.trim()?.toString()?.length !== 0) {
         getClientPoliciesList({ search: searchKeyword?.trim()?.toString() });
       } else {
-        errorNotification('Please enter any value than press enter');
+        errorNotification('Please enter search text to search');
       }
     }
   };

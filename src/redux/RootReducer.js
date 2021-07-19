@@ -32,6 +32,7 @@ import { dashboard } from '../screens/Dashboard/redux/DashboardReducer';
 import { overdue } from '../screens/Overdues/redux/OverduesReducer';
 import { claims } from '../screens/Claims/redux/ClaimsReducer';
 import { reports } from '../screens/Reports/redux/ReportsReducer';
+import { listFilterReducer } from '../common/ListFilters/redux/ListFiltersReducer';
 
 const appReducer = combineReducers({
   dashboard,
@@ -57,6 +58,7 @@ const appReducer = combineReducers({
   overdue,
   claims,
   reports,
+  listFilterReducer,
 });
 
 const rootReducer = (state, action) => {

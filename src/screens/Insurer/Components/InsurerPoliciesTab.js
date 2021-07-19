@@ -198,7 +198,7 @@ const InsurerPoliciesTab = () => {
             errorNotification(e?.data?.message ?? 'Failed');
           });
       } else {
-        errorNotification('Select at least one policy to sync');
+        errorNotification('Please select at least one policy to sync');
       }
     } catch (e) {
       /**/
@@ -227,7 +227,7 @@ const InsurerPoliciesTab = () => {
         if (searchKeyword?.trim()?.toString()?.length !== 0) {
           getInsurerPoliciesList({ search: searchKeyword?.trim()?.toString() });
         } else {
-          errorNotification('Please enter any value than press enter');
+          errorNotification('Please enter search text to search');
         }
       }
     },
@@ -339,7 +339,7 @@ const InsurerPoliciesTab = () => {
             ref={searchInputRef}
             prefix="search"
             prefixClass="font-placeholder"
-            placeholder="Search policy"
+            placeholder="Search Client"
             type="text"
             onChange={_.debounce(checkIfEnterKeyPressedForPolicy, 1000)}
           />

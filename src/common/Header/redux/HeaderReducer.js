@@ -21,19 +21,27 @@ export const loggedUserProfile = (state = { changed: false }, action) => {
   }
 };
 
-export const headerNotificationReducer = (state = { notificationList: [] }, action) => {
+export const headerNotificationReducer = (
+  state = { notificationList: [], notificationReceived: false },
+  action
+) => {
   switch (action.type) {
-    case HEADER_NOTIFICATION_REDUX_CONSTANTS.GET_HEADER_NOTIFICATION:
+    case HEADER_NOTIFICATION_REDUX_CONSTANTS.GET_HEADER_NOTIFICATION: {
+      let notificationReceived = false;
+      if (action?.data?.length > 0) notificationReceived = true;
       return {
         ...state,
         notificationList: action?.data,
+        notificationReceived,
       };
+    }
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.ADD_NOTIFICATION: {
       const notifications = [...state?.notificationList];
       notifications.unshift(action?.data);
       return {
         ...state,
         notificationList: notifications,
+        notificationReceived: true,
       };
     }
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_DELETED_READ: {
@@ -43,6 +51,12 @@ export const headerNotificationReducer = (state = { notificationList: [] }, acti
       return {
         ...state,
         notificationList: finalList,
+      };
+    }
+    case HEADER_NOTIFICATION_REDUX_CONSTANTS.OFF_NOTIFIRE: {
+      return {
+        ...state,
+        notificationReceived: false,
       };
     }
     default:

@@ -29,6 +29,7 @@ import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import { USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 
 const UserList = () => {
   const history = useHistory();
@@ -44,6 +45,8 @@ const UserList = () => {
     viewUserDeleteUserButtonLoaderAction,
     userListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
+
+  const { userListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
 
   const [filter, dispatchFilter] = useReducer(filterReducer, {
     tempFilter: {},
@@ -78,8 +81,12 @@ const UserList = () => {
 
   const getUserManagementByFilter = useCallback(
     (params = {}, cb) => {
-      if (moment(tempFilter?.startDate)?.isAfter(tempFilter?.endDate)) {
-        errorNotification('From date should be earlier than to date');
+      if (
+        tempFilter?.startDate &&
+        tempFilter?.endDate &&
+        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+      ) {
+        errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
@@ -305,9 +312,9 @@ const UserList = () => {
     };
 
     const filters = {
-      role: paramRole?.trim()?.length > 0 ?? false ? paramRole : undefined,
-      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
-      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+      role: paramRole?.trim()?.length > 0 ?? false ? paramRole : userListFilters?.role,
+      startDate: paramStartDate ? new Date(paramStartDate) : userListFilters?.startDate,
+      endDate: paramEndDate ? new Date(paramEndDate) : userListFilters?.endDate,
     };
 
     Object.entries(filters).forEach(([name, value]) => {
@@ -325,6 +332,10 @@ const UserList = () => {
       dispatch(resetUserListData());
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(saveAppliedFilters('userListFilters', finalFilter));
+  }, [finalFilter]);
 
   useUrlParamsUpdate(
     {

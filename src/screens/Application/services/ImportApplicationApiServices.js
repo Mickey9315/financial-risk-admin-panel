@@ -11,10 +11,16 @@ const ImportApplicationApiServices = {
   deleteApplicationDump: id =>
     ApiService.deleteData(`${APPLICATION_URLS.IMPORT_APPLICATION_URLS.UPLOAD_DUMP}${id}`),
   uploadApplicationDump: (data, config) =>
-    ApiService.postData(APPLICATION_URLS.IMPORT_APPLICATION_URLS.UPLOAD_DUMP, data, config),
+    ApiService.postData(APPLICATION_URLS.IMPORT_APPLICATION_URLS.UPLOAD_DUMP, data, {
+      ...config,
+      timeout: 2 * 60 * 1000,
+    }),
   importApplicationSaveAndNext: (id, stepName) =>
     ApiService.putData(
-      `${APPLICATION_URLS.IMPORT_APPLICATION_URLS.UPLOAD_DUMP}${id}?stepName=${stepName}`
+      `${APPLICATION_URLS.IMPORT_APPLICATION_URLS.UPLOAD_DUMP}${id}?stepName=${stepName}`,
+      {
+        timeout: 2 * 60 * 1000,
+      }
     ),
 };
 export default ImportApplicationApiServices;

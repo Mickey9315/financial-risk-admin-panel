@@ -1,9 +1,6 @@
 import AuthApiService from '../../services/AuthApiService';
 import { successNotification } from '../../../../common/Toast';
-import {
-  saveAuthTokenLocalStorage,
-  saveTokenToSession,
-} from '../../../../helpers/LocalStorageHelper';
+import { saveAuthTokenLocalStorage } from '../../../../helpers/LocalStorageHelper';
 import { getLoggedUserDetails } from '../../../../common/Header/redux/HeaderAction';
 import {
   startGeneralLoaderOnRequest,
@@ -19,12 +16,12 @@ export const loginUser = ({ email, password }, rememberMe) => {
       const response = await AuthApiService.loginUser(data);
 
       if (response?.data?.status === 'SUCCESS') {
-        const { token } = response.data.data;
+        const { token } = response?.data?.data;
 
         if (rememberMe) {
           saveAuthTokenLocalStorage(token);
         } else {
-          saveTokenToSession(token);
+          saveAuthTokenLocalStorage(token);
         }
 
         successNotification('Login successfully.');

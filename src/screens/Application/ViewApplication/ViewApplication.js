@@ -44,6 +44,7 @@ export const DRAWER_ACTIONS = {
 const drawerInitialState = {
   visible: false,
   data: [],
+  drawerHeader: '',
 };
 
 const drawerReducer = (state, action) => {
@@ -52,6 +53,7 @@ const drawerReducer = (state, action) => {
       return {
         visible: true,
         data: action.data,
+        drawerHeader: action.drawerHeader,
       };
     case DRAWER_ACTIONS.HIDE_DRAWER:
       return { ...drawerInitialState };
@@ -137,7 +139,8 @@ const ViewApplication = () => {
 
       dispatchDrawerState({
         type: DRAWER_ACTIONS.SHOW_DRAWER,
-        data: response.data.data,
+        data: response.data.data.response,
+        drawerHeader: response.data.data.header,
       });
     } catch (e) {
       errorNotification('Something went wrong.');
@@ -688,7 +691,11 @@ function TableLinkDrawer(props) {
   };
 
   return (
-    <Drawer header="Contact Details" drawerState={drawerState.visible} closeDrawer={closeDrawer}>
+    <Drawer
+      header={drawerState.drawerHeader}
+      drawerState={drawerState.visible}
+      closeDrawer={closeDrawer}
+    >
       <div className="contacts-grid">
         {drawerState?.data?.map(row => (
           <>
@@ -707,6 +714,7 @@ TableLinkDrawer.propTypes = {
   drawerState: PropTypes.shape({
     visible: PropTypes.bool.isRequired,
     data: PropTypes.array.isRequired,
+    drawerHeader: PropTypes.string.isRequired,
   }).isRequired,
   closeDrawer: PropTypes.func.isRequired,
 };

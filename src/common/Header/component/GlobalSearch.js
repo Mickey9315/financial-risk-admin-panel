@@ -38,13 +38,13 @@ const GlobalSearch = () => {
             target.scrollTop = 0;
           } else {
             setCursor(prev => prev + 1);
-            target.scrollTop += 37;
+            target.scrollTop += 35;
           }
         }
         if (e.keyCode === 38) {
           setHeaderSearchFocused(false);
           setCursor(prev => prev - 1);
-          target.scrollTop -= 37;
+          target.scrollTop -= 35;
           if (cursor <= 0) {
             setCursor(globalSearchResult?.length - 1);
             target.scrollTop = target.scrollHeight;
@@ -60,6 +60,7 @@ const GlobalSearch = () => {
           handleGlobalSearchSelect(globalSearchResult?.[cursor], history);
           setSearchStart(false);
           setSearchedString('');
+          setCursor(0);
         }
       }
     },
@@ -93,7 +94,7 @@ const GlobalSearch = () => {
           onChange={handleOnSearchChange}
           value={searchedString}
         />
-        <span className="material-icons-round">search</span>
+        <span className="material-icons-round ga-search-icon">search</span>
       </div>
       {searchStart && (
         <ul className="header-search-results">
@@ -105,9 +106,14 @@ const GlobalSearch = () => {
                   handleGlobalSearchSelect(searchResult, history);
                   setSearchStart(false);
                   setSearchedString('');
+                  setCursor(0);
                 }}
               >
-                {searchResult?.title}
+                <span className="gs-value">{searchResult?.title}</span>
+                <span className="gs-tag">
+                  {searchResult?.module?.charAt(0)?.toUpperCase() +
+                    searchResult?.module?.substring(1)}
+                </span>
               </li>
             ))
           ) : (

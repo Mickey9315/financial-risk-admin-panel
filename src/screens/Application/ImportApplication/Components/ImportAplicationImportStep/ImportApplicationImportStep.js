@@ -23,7 +23,6 @@ const ImportApplicationImportStep = () => {
 
   const handleChange = useCallback(e => {
     e.preventDefault();
-    console.log(e);
     if (e.target.files && e.target.files.length > 0) {
       const fileExtension = ['xls', 'xlsx'];
       const mimeType = [
@@ -35,7 +34,7 @@ const ImportApplicationImportStep = () => {
       const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
 
       if (!(checkExtension || checkMimeTypes)) {
-        errorNotification('Only spread sheet type files are allowed');
+        errorNotification('Only excel file types are allowed');
       } else {
         dispatch(setImportedFile(e.target.files[0]));
         e.target.value = null;

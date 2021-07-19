@@ -16,7 +16,7 @@ import {
 const ApplicationReportAccordion = props => {
   const { index, debtorId } = props;
   const dispatch = useDispatch();
-  const { reportList, reportsListForFetch } = useSelector(
+  const { reportList, reportsListForFetch, partners } = useSelector(
     ({ application }) => application?.viewApplication?.reports ?? {}
   );
 
@@ -30,31 +30,40 @@ const ApplicationReportAccordion = props => {
 
   const [fetchReportsModal, setFetchReportsModal] = useState(false);
   const [selectedReports, setSelectedReports] = useState([]);
+  const [selectedStakeHolder, setSelectedStakeHolder] = useState([]);
 
   const toggleFetchReportsModal = useCallback(() => {
     setFetchReportsModal(e => !e);
   }, []);
 
+  const partnersWithCompany = useMemo(() => {
+    return partners?.filter(partner => partner?.type === 'company') ?? [];
+  }, [partners]);
+
   const OnClickFetchReportButton = useCallback(async () => {
-    if (selectedReports?.length <= 0) {
+    if (partners?.length > 0 && selectedStakeHolder?.length <= 0) {
+      errorNotification('Please select Stake Holder');
+    } else if (selectedReports?.length <= 0) {
       errorNotification('Please select reports to fetch');
     } else {
       try {
-        const selectedProductCodes =
-          selectedReports?.value; /* selectedReports?.map(report => report?.value); */
         const data = {
           debtorId,
-          productCode: selectedProductCodes,
+          productCode: selectedReports?.value,
         };
+        if (partners?.length > 0) {
+          data.stakeholderId = selectedStakeHolder?.value;
+        }
         await dispatch(fetchSelectedReportsForApplication(data));
         dispatch(getApplicationReportsListData(debtorId));
         setSelectedReports([]);
+        setSelectedStakeHolder([]);
         toggleFetchReportsModal();
       } catch (e) {
         /**/
       }
     }
-  }, [debtorId, selectedReports, toggleFetchReportsModal]);
+  }, [debtorId, selectedReports, toggleFetchReportsModal, selectedStakeHolder, partners?.length]);
 
   const fetchReportsButtons = useMemo(
     () => [
@@ -76,22 +85,37 @@ const ApplicationReportAccordion = props => {
   const handleOnReportSelect = useCallback(value => {
     setSelectedReports(value);
   }, []);
+  const handleOnStakeHolderSelect = useCallback(value => {
+    setSelectedStakeHolder(value);
+  }, []);
 
   return (
     <>
       {fetchReportsModal && (
         <Modal header="Fetch Report" className="fetch-report-modal" buttons={fetchReportsButtons}>
           <div className="fetch-report-popup-container">
+            {partners?.length > 0 && (
+              <>
+                <span>Stake Holder</span>
+                <ReactSelect
+                  name="role"
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select Stake Holder"
+                  dropdownHandle={false}
+                  options={partnersWithCompany}
+                  value={selectedStakeHolder}
+                  onChange={handleOnStakeHolderSelect}
+                />
+              </>
+            )}
             <span>Report</span>
             <ReactSelect
-              // isMulti
               name="role"
               className="react-select-container"
               classNamePrefix="react-select"
-              // color="#003A78"
               placeholder="Select Reports"
               dropdownHandle={false}
-              // keepSelectedInList={false}
               options={reportsListForFetch}
               value={selectedReports}
               onChange={handleOnReportSelect}

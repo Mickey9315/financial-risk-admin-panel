@@ -24,7 +24,7 @@ export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.APPLICATION_LIST_SUCCESS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('applicationListPageLoader');
       }
@@ -55,11 +55,11 @@ export const getApplicationColumnNameList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: APPLICATION_COLUMN_LIST_REDUX_CONSTANTS.APPLICATION_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -140,7 +140,7 @@ export const getApplicationFilter = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -156,7 +156,7 @@ export const getApplicationDetail = applicationId => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('generateApplicationPageLoaderAction');
       }
@@ -178,7 +178,7 @@ export const getApplicationCompanyDropDownData = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_DROP_DOWN_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -228,6 +228,7 @@ export const getApplicationCompanyDataFromABNOrACN = params => {
         return response.data;
       }
     } catch (e) {
+      displayErrors(e);
       throw e;
     }
     return null;
@@ -256,7 +257,7 @@ export const searchApplicationCompanyEntityName = params => {
             isLoading: false,
             error: false,
             errorMessage: '',
-            data: response.data.data,
+            data: response?.data?.data,
           },
         });
       }
@@ -282,7 +283,7 @@ export const searchApplicationCompanyEntityName = params => {
           data: {
             isLoading: false,
             error: true,
-            errorMessage: 'ABR lookup facing trouble to found searched data. Please try again...',
+            errorMessage: 'ABR Lookup is not responding, please try again.',
             data: [],
           },
         });
@@ -398,27 +399,6 @@ export const removePersonDetail = index => {
     });
   };
 };
-export const wipeOutPersonsAsEntityChange = (debtor, data) => {
-  return async dispatch => {
-    try {
-      const response = await ApplicationCompanyStepApiServices.deleteApplicationCompanyEntityTypeData(
-        {
-          debtorId: debtor,
-        }
-      );
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.PERSON.WIPE_OUT_PERSON_STEP_DATA,
-          data,
-        });
-        successNotification(response?.data?.message || 'Data deleted successfully');
-      }
-    } catch (e) {
-      displayErrors(e);
-      throw Error();
-    }
-  };
-};
 
 export const wipeOutIndividualPerson = (personID, index) => {
   return async dispatch => {
@@ -449,7 +429,7 @@ export const getApplicationPersonDataFromABNOrACN = params => {
       );
 
       if (response?.data?.status === 'SUCCESS') {
-        return response.data.data;
+        return response?.data?.data;
       }
     } catch (e) {
       displayErrors(e);
@@ -505,7 +485,12 @@ export const saveApplicationStepDataToBackend = data => {
       }
     } catch (e) {
       stopGeneralLoaderOnSuccessOrFail('generateApplicationSaveAndNextButtonLoaderAction');
-      displayErrors(e);
+      if (e?.response?.data?.messageCode === 'ENTITY_TYPE_CHANGED') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.ENTITY_TYPE_CHANGED,
+          data: { data, openModal: true },
+        });
+      } else displayErrors(e);
       throw Error();
     }
   };
@@ -521,7 +506,7 @@ export const getDocumentTypeList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_TYPE_LIST_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -543,7 +528,7 @@ export const getApplicationDocumentDataList = id => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.APPLICATION_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA,
-          data: response.data.data && response.data.data.docs ? response.data.data.docs : [],
+          data: response?.data?.data && response?.data?.data.docs ? response?.data?.data.docs : [],
         });
       }
     } catch (e) {
@@ -560,7 +545,7 @@ export const uploadDocument = (data, config) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         successNotification(response?.data?.message || 'Application document added successfully.');
         stopGeneralLoaderOnSuccessOrFail('GenerateApplicationDocumentUploadButtonLoaderAction');
@@ -599,7 +584,7 @@ export const getApplicationDetailById = applicationId => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_SUCCESS_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('viewApplicationPageLoader');
       }
@@ -636,7 +621,7 @@ export const getApplicationTaskList = id => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
               .APPLICATION_TASK_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -654,7 +639,7 @@ export const getAssigneeDropDownData = () => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
               .APPLICATION_TASK_ASSIGNEE_DROP_DOWN_DATA_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -669,12 +654,12 @@ export const getApplicationTaskEntityDropDownData = params => {
       const response = await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(
         params
       );
-      if (response?.data?.status === 'SUCCESS' && response.data.data) {
+      if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
         dispatch({
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
               .APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -689,12 +674,12 @@ export const getApplicationTaskDefaultEntityDropDownData = params => {
       const response = await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(
         params
       );
-      if (response?.data?.status === 'SUCCESS' && response.data.data) {
+      if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
         dispatch({
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
               .DEFAULT_APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -745,7 +730,7 @@ export const getApplicationTaskDetail = id => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
               .GET_APPLICATION_TASK_DETAILS_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -807,7 +792,7 @@ export const getApplicationModuleList = id => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
               .APPLICATION_MODULE_LIST_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -830,7 +815,7 @@ export const getViewApplicationDocumentTypeList = () => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
               .VIEW_APPLICATION_DOCUMENT_TYPE_LIST_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -852,7 +837,7 @@ export const viewApplicationUploadDocument = (data, config) => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
               .VIEW_APPLICATION_UPLOAD_DOCUMENT_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         successNotification(response?.data?.message || 'Document uploaded successfully.');
         stopGeneralLoaderOnSuccessOrFail('viewDocumentUploadDocumentButtonLoaderAction');
@@ -900,7 +885,7 @@ export const getApplicationNotesList = id => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_NOTES
               .APPLICATION_NOTES_LIST_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -1023,7 +1008,7 @@ export const getApplicationReportsListData = id => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
               .APPLICATION_REPORTS_LIST_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -1043,7 +1028,7 @@ export const getApplicationReportsListForFetch = id => {
           type:
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
               .FETCH_APPLICATION_REPORTS_LIST_DATA_FOR_FETCH,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -1078,7 +1063,7 @@ export const getApplicationDetailsOnBackToCompanyStep = (applicationId, activeSt
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.UPDATE_APPLICATION_DETAILS_ON_BACK_TO_COMPANY_STEP,
-          data: response.data.data,
+          data: response?.data?.data,
           activeStep,
         });
         stopGeneralLoaderOnSuccessOrFail('generateApplicationPageLoaderAction');
@@ -1144,14 +1129,17 @@ export const updateImportApplicationData = (step, error) => {
 export const importApplicationUploadDump = (data, config) => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('saveAndNextIALoader');
       const response = await ImportApplicationApiServices.uploadApplicationDump(data, config);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ON_SUCCESS,
           data: response?.data?.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('saveAndNextIALoader');
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('saveAndNextIALoader');
       if (e?.response?.data?.status === 'MISSING_HEADERS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ERROR,
@@ -1169,6 +1157,7 @@ export const importApplicationUploadDump = (data, config) => {
 export const importApplicationSaveAndNext = (importId, stepName) => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('saveAndNextIALoader');
       const response = await ImportApplicationApiServices.importApplicationSaveAndNext(
         importId,
         stepName
@@ -1178,10 +1167,12 @@ export const importApplicationSaveAndNext = (importId, stepName) => {
           type: APPLICATION_REDUX_CONSTANTS.IMPORT_APPLICATION.UPDATE_DATA_ON_SUCCESS,
           data: response?.data?.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('saveAndNextIALoader');
         return true;
       }
       return true;
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('saveAndNextIALoader');
       displayErrors(e);
       throw Error();
     }
@@ -1206,11 +1197,14 @@ export const deleteImportedFile = () => {
 
 export const downloadIASample = async () => {
   try {
+    startGeneralLoaderOnRequest('downloadIASampleFileLoaderButton');
     const response = await ImportApplicationApiServices.downloadSample();
     if (response?.statusText === 'OK') {
+      stopGeneralLoaderOnSuccessOrFail('downloadIASampleFileLoaderButton');
       return response;
     }
   } catch (e) {
+    stopGeneralLoaderOnSuccessOrFail('downloadIASampleFileLoaderButton');
     displayErrors(e);
   }
   return false;
@@ -1219,8 +1213,11 @@ export const downloadIASample = async () => {
 export const deleteDumpFromBackend = dumpId => {
   return async () => {
     try {
+      startGeneralLoaderOnRequest('deleteDumpFromBackEndLoader');
       await ImportApplicationApiServices.deleteApplicationDump(dumpId);
+      stopGeneralLoaderOnSuccessOrFail('deleteDumpFromBackEndLoader');
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('deleteDumpFromBackEndLoader');
       displayErrors(e);
     }
   };

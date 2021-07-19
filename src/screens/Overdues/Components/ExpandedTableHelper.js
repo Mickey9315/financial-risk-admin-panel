@@ -17,6 +17,7 @@ const drawerInitialState = {
   visible: false,
   data: [],
   id: '',
+  drawerHeader: '',
 };
 
 const drawerReducer = (state, action) => {
@@ -26,6 +27,7 @@ const drawerReducer = (state, action) => {
         visible: true,
         data: action.data,
         id: action.id,
+        drawerHeader: action.drawerHeader,
       };
     case DRAWER_ACTIONS.HIDE_DRAWER:
       return drawerInitialState;
@@ -54,7 +56,8 @@ const ExpandedTableHelper = props => {
 
       dispatchDrawerState({
         type: DRAWER_ACTIONS.SHOW_DRAWER,
-        data: response?.data?.data,
+        data: response.data.data.response,
+        drawerHeader: response.data.data.header,
         id: data?._id,
       });
     } catch (e) {
@@ -177,7 +180,11 @@ const TableLinkDrawer = props => {
   }, [currentStatus?.value]);
 
   return (
-    <Drawer header="Overdue Details" drawerState={drawerState?.visible} closeDrawer={closeDrawer}>
+    <Drawer
+      header={drawerState.drawerHeader}
+      drawerState={drawerState?.visible}
+      closeDrawer={closeDrawer}
+    >
       <div className="contacts-grid">
         {drawerState?.data?.map(row => (
           <>
@@ -195,6 +202,7 @@ TableLinkDrawer.propTypes = {
     visible: PropTypes.bool.isRequired,
     data: PropTypes.array.isRequired,
     id: PropTypes.string.isRequired,
+    drawerHeader: PropTypes.string.isRequired,
   }).isRequired,
   closeDrawer: PropTypes.func.isRequired,
   setIsStatusChanged: PropTypes.func.isRequired,

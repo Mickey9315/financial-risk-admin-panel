@@ -49,7 +49,6 @@ export const APPLICATION_URLS = {
     SEARCH_APPLICATION_BY_DEBTOR_DETAILS: `${BASE_URL}debtor/details/`,
     SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
     SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}application/search-entity-list/`,
-    DELETE_APPLICATION_ENTITY_TYPE: `${BASE_URL}debtor/stakeholder/`,
     DELETE_APPLICATION_PERSONS: `${BASE_URL}debtor/stakeholder/`,
   },
   DOCUMENTS: {
@@ -102,6 +101,7 @@ export const CLIENT_URLS = {
   CLIENT_FILTER_LIST_URL: `${BASE_URL}client/user-list`,
   SYNC_CLIENT_DATA_URL: `${BASE_URL}client/sync-from-crm/`,
   GET_DATA_FROM_CRM_URL: `${BASE_URL}client/search-from-crm`,
+  DOWNLOAD_CLIENTS: `${BASE_URL}client/download/`,
 
   CREDIT_LIMIT: {
     CREDIT_LIMIT_LIST: `${BASE_URL}client/credit-limit/`,
@@ -195,6 +195,7 @@ export const DEBTORS_URLS = {
   DEBTORS_COLUMNS_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
   SELECTED_DEBTOR_DETAILS_URL: `${BASE_URL}debtor/`,
   DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list/`,
+  DOWNLOAD_DEBTOR: `${BASE_URL}debtor/download/`,
 
   NOTES: {
     NOTES_LIST: `${BASE_URL}note/`,

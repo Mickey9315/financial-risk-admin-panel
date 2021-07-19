@@ -1078,7 +1078,7 @@ const DebtorsStakeHolderTab = () => {
       if (searchKeyword?.trim()?.toString()?.length !== 0) {
         getDebtorStakeHolderList({ search: searchKeyword?.trim()?.toString() });
       } else {
-        errorNotification('Please enter any value than press enter');
+        errorNotification('Please enter search text to search');
       }
     }
   };
@@ -1116,9 +1116,9 @@ const DebtorsStakeHolderTab = () => {
   const onStakeHolderDelete = useCallback(
     stakeHolderId => {
       if (docs?.length <= 2 && entityType.label === 'Partnership') {
-        errorNotification('You can not remove stake holder');
+        errorNotification('StakeHolder can not be removed.');
       } else if (docs?.length <= 1) {
-        errorNotification('You can not remove every stake holder');
+        errorNotification('Every StakeHolder cannot be removed.');
       } else {
         setDeleteId(stakeHolderId);
         toggleConfirmationModal();

@@ -23,6 +23,7 @@ import { CLAIMS_REDUX_CONSTANTS } from '../redux/ClaimsReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 
 const ClaimsList = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,8 @@ const ClaimsList = () => {
     value => setFilterModal(value !== undefined ? value : e => !e),
     [setFilterModal]
   );
+
+  const { claimsListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
 
   const [filter, dispatchFilter] = useReducer(filterReducer, {
     tempFilter: {},
@@ -71,7 +74,7 @@ const ClaimsList = () => {
   const { page: paramPage, limit: paramLimit, clientId: paramClientId } = useQueryParams();
 
   const getClaimsByFilter = useCallback(
-    (initialParams = { page: 1, limit: 15 }) => {
+    async (initialParams = { page: 1, limit: 15 }) => {
       const params = {
         page: page ?? 1,
         limit: limit ?? 15,
@@ -81,24 +84,24 @@ const ClaimsList = () => {
             : undefined,
         ...initialParams,
       };
-      dispatch(getClaimsListByFilter(params));
+      await dispatch(getClaimsListByFilter(params));
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
       });
     },
-    [page, limit, tempFilter?.clientId]
+    [page, limit, { ...tempFilter }]
   );
 
-  const onClickApplyFilter = useCallback(() => {
+  const onClickApplyFilter = useCallback(async () => {
     toggleFilterModal();
-    getClaimsByFilter({ page: 1, limit });
-  }, [getClaimsByFilter, toggleFilterModal]);
+    await getClaimsByFilter({ page: 1, limit });
+  }, [getClaimsByFilter, toggleFilterModal, limit]);
 
-  const onClickResetFilter = useCallback(() => {
+  const onClickResetFilter = useCallback(async () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
-    onClickApplyFilter();
+    await onClickApplyFilter();
   }, []);
 
   const filterModalButtons = useMemo(
@@ -138,7 +141,7 @@ const ClaimsList = () => {
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     await dispatch(saveClaimsColumnsList({ isReset: true }));
     dispatch(getClaimsColumnsList());
-    getClaimsByFilter();
+    await getClaimsByFilter();
     toggleCustomField();
   }, [toggleCustomField, getClaimsByFilter]);
 
@@ -155,7 +158,7 @@ const ClaimsList = () => {
       const isBothEqual = _.isEqual(claimsColumnList, claimsDefaultColumnList);
       if (!isBothEqual) {
         await dispatch(saveClaimsColumnsList({ claimsColumnList }));
-        getClaimsByFilter();
+        await getClaimsByFilter();
       } else {
         errorNotification('Please select different columns to apply changes.');
         throw Error();
@@ -225,34 +228,41 @@ const ClaimsList = () => {
     {
       page: page ?? 1,
       limit: limit ?? 15,
-      entityType:
+      clientId:
         (finalFilter?.clientId?.toString()?.trim()?.length ?? -1) > 0
           ? finalFilter?.clientId
           : undefined,
     },
-    [page, limit, { ...finalFilter }]
+    [page, limit, finalFilter?.clientId]
   );
 
-  useEffect(() => {
+  useEffect(async () => {
     const data = {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
-      clientId: (paramClientId?.trim().length ?? -1) > 0 ? paramClientId : undefined,
     };
-    Object.entries(filter).forEach(([name, value]) => {
+    const filters = {
+      clientId:
+        (paramClientId?.trim().length ?? -1) > 0 ? paramClientId : claimsListFilters?.clientId,
+    };
+    Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name,
         value,
       });
     });
-    getClaimsByFilter(data);
+    await getClaimsByFilter({ ...data, ...filters });
     dispatch(getClaimsColumnsList());
     dispatch(getClaimsEntityList());
     return () => {
       dispatch(resetClaimListData());
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(saveAppliedFilters('claimsListFilters', finalFilter));
+  }, [finalFilter]);
 
   return (
     <>

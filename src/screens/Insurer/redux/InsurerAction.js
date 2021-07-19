@@ -24,7 +24,7 @@ export const getInsurerListByFilter = (params = { page: 1, limit: 15 }) => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_REDUX_CONSTANTS.INSURER_LIST_USER_SUCCESS_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('insurerListLoader');
       }
@@ -42,11 +42,11 @@ export const getInsurerColumnNameList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: INSURER_COLUMN_LIST_REDUX_CONSTANTS.INSURER_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -121,7 +121,7 @@ export const getInsurerById = id => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.VIEW_INSURER_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('viewInsurerPageLoaderAction');
       }
@@ -139,7 +139,7 @@ export const getInsurerContactListData = (id, params = { page: 1, limit: 15 }) =
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -155,11 +155,11 @@ export const getInsurerContactColumnNameList = () => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.CONTACT.INSURER_CONTACT_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -261,7 +261,7 @@ export const getInsurerPoliciesListData = (id, params = { page: 1, limit: 15 }) 
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_LIST_USER_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -276,11 +276,11 @@ export const getInsurerPoliciesColumnNameList = () => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICIES_DEFAULT_COLUMN_LIST_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -366,7 +366,7 @@ export const getListFromCrm = data => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_CRM_REDUX_CONSTANTS.INSURER_GET_LIST_FROM_CRM_ACTION,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -400,7 +400,7 @@ export const getInsurerMatrixData = id => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.MATRIX.INSURER_MATRIX_GET_DATA,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {
@@ -416,7 +416,7 @@ export const getPolicySyncListForCRM = (id, data) => {
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: INSURER_VIEW_REDUX_CONSTANT.POLICIES.INSURER_POLICY_SYNC_LIST_BY_SEARCH,
-          data: response.data.data,
+          data: response?.data?.data,
         });
       }
     } catch (e) {

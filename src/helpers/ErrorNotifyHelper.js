@@ -1,6 +1,7 @@
 import { errorNotification } from '../common/Toast';
 
 export const displayErrors = e => {
+  console.log(e?.response?.data?.status);
   if (e?.code === 'ECONNABORTED') {
     errorNotification('Request Timeout, Make sure you are connected to network.');
   } else {
@@ -17,6 +18,7 @@ export const displayErrors = e => {
         errorNotification(e?.response?.data?.message || 'Bad request');
         break;
       default:
+        errorNotification('Something went wrong, Please try again later.');
         throw e;
     }
   }

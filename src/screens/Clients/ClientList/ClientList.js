@@ -13,6 +13,7 @@ import Modal from '../../../common/Modal/Modal';
 
 import {
   changeClientColumnListStatus,
+  clientsDownloadAction,
   getClientColumnListName,
   getClientFilter,
   getClientList,
@@ -39,6 +40,8 @@ import {
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
+import { downloadAll } from '../../../helpers/DownloadHelper';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 
 const ClientList = () => {
   const history = useHistory();
@@ -54,11 +57,14 @@ const ClientList = () => {
   );
   const syncListFromCrm = useSelector(({ syncClientWithCrm }) => syncClientWithCrm ?? []);
 
+  const { clientListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
+
   const {
     clientListColumnSaveButtonLoaderAction,
     clientListColumnResetButtonLoaderAction,
     clientListAddFromCRMButtonLoaderAction,
     clientListLoader,
+    clientsDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, {
@@ -81,6 +87,21 @@ const ClientList = () => {
     startDate: paramStartDate,
     endDate: paramEndDate,
   } = useQueryParams();
+
+  const appliedFilters = useMemo(() => {
+    return {
+      riskAnalystId:
+        (tempFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
+          ? tempFilter?.riskAnalystId
+          : undefined,
+      serviceManagerId:
+        (tempFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
+          ? tempFilter?.serviceManagerId
+          : undefined,
+      startDate: tempFilter?.startDate ?? undefined,
+      endDate: tempFilter?.endDate ?? undefined,
+    };
+  }, [{ ...tempFilter }]);
 
   const riskAnalystFilterListData = useMemo(() => {
     const finalData = filterList?.riskAnalystList;
@@ -108,7 +129,7 @@ const ClientList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'startDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
 
@@ -116,7 +137,7 @@ const ClientList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'endDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
   const resetFilterDates = useCallback(() => {
@@ -137,16 +158,7 @@ const ClientList = () => {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          riskAnalystId:
-            (tempFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
-              ? tempFilter?.riskAnalystId
-              : undefined,
-          serviceManagerId:
-            (tempFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
-              ? tempFilter?.serviceManagerId
-              : undefined,
-          startDate: tempFilter?.startDate ?? undefined,
-          endDate: tempFilter?.endDate ?? undefined,
+          ...appliedFilters,
           ...params,
         };
         await dispatch(getClientList(data));
@@ -158,7 +170,7 @@ const ClientList = () => {
         }
       }
     },
-    [page, limit, { ...tempFilter }]
+    [page, limit, { ...appliedFilters }]
   );
 
   useEffect(async () => {
@@ -168,11 +180,16 @@ const ClientList = () => {
     };
 
     const filters = {
-      riskAnalystId: (paramRiskAnalyst?.trim()?.length ?? -1) > 0 ? paramRiskAnalyst : undefined,
+      riskAnalystId:
+        (paramRiskAnalyst?.trim()?.length ?? -1) > 0
+          ? paramRiskAnalyst
+          : clientListFilters?.riskAnalystId,
       serviceManagerId:
-        (paramServiceManager?.trim()?.length ?? -1) > 0 ? paramServiceManager : undefined,
-      startDate: paramStartDate ? new Date(paramStartDate) : undefined,
-      endDate: paramEndDate ? new Date(paramEndDate) : undefined,
+        (paramServiceManager?.trim()?.length ?? -1) > 0
+          ? paramServiceManager
+          : clientListFilters?.serviceManagerId,
+      startDate: paramStartDate ? new Date(paramStartDate) : clientListFilters?.startDate,
+      endDate: paramEndDate ? new Date(paramEndDate) : clientListFilters?.endDate,
     };
 
     Object.entries(filters).forEach(([name, value]) => {
@@ -489,6 +506,23 @@ const ClientList = () => {
     [syncListFromCrm, setCrmIds]
   );
 
+  const downloadClients = useCallback(async () => {
+    if (docs?.length > 0) {
+      try {
+        const response = await clientsDownloadAction(appliedFilters);
+        if (response) downloadAll(response);
+      } catch (e) {
+        /**/
+      }
+    } else {
+      errorNotification('No records to download');
+    }
+  }, [docs?.length, { ...appliedFilters }]);
+
+  useEffect(() => {
+    dispatch(saveAppliedFilters('clientListFilters', finalFilter));
+  }, [finalFilter]);
+
   useEffect(() => {
     return () => {
       dispatch(resetClientListPaginationData(page, pages, total, limit));
@@ -502,6 +536,14 @@ const ClientList = () => {
           <div className="page-header">
             <div className="page-header-name">Client List</div>
             <div className="page-header-button-container">
+              <IconButton
+                buttonType="primary-1"
+                title="cloud_download"
+                className="mr-10"
+                buttonTitle="Click to download Client List"
+                onClick={downloadClients}
+                isLoading={clientsDownloadButtonLoaderAction}
+              />
               <IconButton
                 buttonType="secondary"
                 title="filter_list"

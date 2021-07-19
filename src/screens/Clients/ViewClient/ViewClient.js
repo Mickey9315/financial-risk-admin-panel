@@ -50,6 +50,20 @@ function assigneeReducer(state, action) {
   }
 }
 
+const CLIENT_TABS_CONSTANTS = [
+  { label: 'Contacts', component: <ClientContactTab /> },
+  { label: 'Credit Limit', component: <ClientCreditLimitTab /> },
+];
+const CLIENT_TABS_WITH_ACCESS = [
+  { label: 'Application', component: <ClientApplicationTab />, name: 'application' },
+  { label: 'Overdues', component: <ClientOverdueTab />, name: 'overdue' },
+  { label: 'Claims', component: <ClientClaimsTab />, name: 'claim' },
+  { label: 'Tasks', component: <ClientTaskTab />, name: 'task' },
+  { label: 'Policies', component: <ClientPoliciesTab />, name: 'policy' },
+  { label: 'Documents', component: <ClientDocumentsTab />, name: 'document' },
+  { label: 'Notes', component: <ClientNotesTab />, name: 'note' },
+];
+
 const ViewClient = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [{ riskAnalystId, serviceManagerId, isAutoApproveAllowed }, dispatchAssignee] = useReducer(
@@ -71,17 +85,6 @@ const ViewClient = () => {
   const backToClient = () => {
     history.replace('/clients');
   };
-  const tabs = [
-    'Contacts',
-    'Credit Limit',
-    'Application',
-    'Overdues',
-    'Claims',
-    'Tasks',
-    'Policies',
-    'Documents',
-    'Notes',
-  ];
 
   const viewClientActiveTabIndex = useSelector(
     ({ clientManagement }) => clientManagement?.viewClientActiveTabIndex ?? 0
@@ -90,6 +93,28 @@ const ViewClient = () => {
   const viewClientData = useSelector(
     ({ clientManagement }) => clientManagement?.selectedClient || {}
   );
+
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+
+  const checkAccess = useCallback(
+    accessFor => {
+      const availableAccess =
+        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData]
+  );
+
+  const finalTabs = useMemo(() => {
+    const tabs = [...CLIENT_TABS_CONSTANTS];
+    CLIENT_TABS_WITH_ACCESS.forEach(tab => {
+      if (checkAccess(tab.name)) {
+        tabs.push(tab);
+      }
+    });
+    return tabs ?? [];
+  }, [CLIENT_TABS_CONSTANTS, CLIENT_TABS_WITH_ACCESS, checkAccess]);
 
   const riskAnalysts = useMemo(
     () =>
@@ -195,18 +220,6 @@ const ViewClient = () => {
     dispatch(syncClientData(id));
   }, [id]);
 
-  const tabComponent = [
-    <ClientContactTab />,
-    <ClientCreditLimitTab />,
-    <ClientApplicationTab />,
-    <ClientOverdueTab />,
-    <ClientClaimsTab />,
-    <ClientTaskTab />,
-    <ClientPoliciesTab />,
-    <ClientDocumentsTab />,
-    <ClientNotesTab />,
-  ];
-
   return (
     <>
       {!viewClientPageLoaderAction ? (
@@ -302,12 +315,12 @@ const ViewClient = () => {
                 />
               </div>
               <Tab
-                tabs={tabs}
+                tabs={finalTabs?.map(tab => tab?.label)}
                 tabActive={tabActive}
                 activeTabIndex={activeTabIndex}
                 className="mt-15"
               />
-              <div className="common-white-container">{tabComponent[activeTabIndex]}</div>
+              <div className="common-white-container">{finalTabs?.[activeTabIndex]?.component}</div>
             </>
           ) : (
             <div className="no-record-found">No record found</div>

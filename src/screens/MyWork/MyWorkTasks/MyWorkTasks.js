@@ -30,6 +30,7 @@ import { MY_WORK_REDUX_CONSTANTS } from '../redux/MyWorkReduxConstants';
 import { errorNotification } from '../../../common/Toast';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 
 const priorityListData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -50,6 +51,8 @@ const MyWorkTasks = () => {
     taskData,
   ]);
   const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
+
+  const { taskListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
 
   const [filter, dispatchFilter] = useReducer(filterReducer, {
     tempFilter: {},
@@ -93,14 +96,14 @@ const MyWorkTasks = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'startDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
   const handleEndDateChange = useCallback(date => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'endDate',
-      value: new Date(date).toISOString(),
+      value: date ? new Date(date).toISOString() : null,
     });
   }, []);
 
@@ -176,11 +179,13 @@ const MyWorkTasks = () => {
       limit: limit ?? paramLimit ?? 15,
     };
     const filters = {
-      priority: (paramPriority?.trim()?.length ?? -1) > 0 ? paramPriority : undefined,
-      isCompleted: paramIsCompleted || undefined,
-      assigneeId: (paramAssigneeId?.trim()?.length ?? -1) > 0 ? paramAssigneeId : undefined,
-      startDate: paramStartDate ?? undefined,
-      endDate: paramEndDate ?? undefined,
+      priority:
+        (paramPriority?.trim()?.length ?? -1) > 0 ? paramPriority : taskListFilters?.priority,
+      isCompleted: paramIsCompleted || taskListFilters?.isCompleted || undefined,
+      assigneeId:
+        (paramAssigneeId?.trim()?.length ?? -1) > 0 ? paramAssigneeId : taskListFilters?.assigneeId,
+      startDate: paramStartDate ?? taskListFilters?.start,
+      endDate: paramEndDate ?? taskListFilters?.endDate,
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
@@ -413,6 +418,10 @@ const MyWorkTasks = () => {
       dispatch(resetMyWorkTaskData());
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(saveAppliedFilters('taskListFilters', finalFilter));
+  }, [finalFilter]);
 
   const addTask = useCallback(() => {
     history.push('/my-work/add');

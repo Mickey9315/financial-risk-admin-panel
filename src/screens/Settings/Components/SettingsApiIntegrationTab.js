@@ -23,31 +23,31 @@ const SettingsApiIntegrationTab = () => {
   ]);
 
   const [errorElementList, setErrorElementList] = useState([]);
-  const { equifax, illion, rss, abn } = useMemo(() => apiIntegrationDetails ?? {}, [
+  const { illion, rss, abn, nzbn } = useMemo(() => apiIntegrationDetails ?? {}, [
     apiIntegrationDetails,
   ]);
 
   const settingsApiIntegrationRow = useMemo(
     () => [
-      {
-        title: 'Equifax',
-        name: 'equifax',
-        className: 'equifax-row-container',
-        inputs: [
-          {
-            title: 'User name',
-            name: 'username',
-            placeholder: 'Enter user name',
-            value: equifax?.username ?? '-',
-          },
-          {
-            title: 'Password',
-            name: 'password',
-            placeholder: 'Enter password',
-            value: equifax?.password ?? '-',
-          },
-        ],
-      },
+      // {
+      //   title: 'Equifax',
+      //   name: 'equifax',
+      //   className: 'equifax-row-container',
+      //   inputs: [
+      //     {
+      //       title: 'User name',
+      //       name: 'username',
+      //       placeholder: 'Enter user name',
+      //       value: equifax?.username ?? '-',
+      //     },
+      //     {
+      //       title: 'Password',
+      //       name: 'password',
+      //       placeholder: 'Enter password',
+      //       value: equifax?.password ?? '-',
+      //     },
+      //   ],
+      // },
       {
         title: 'Illion',
         name: 'illion',
@@ -82,6 +82,19 @@ const SettingsApiIntegrationTab = () => {
             placeholder: 'Enter access token',
             type: 'textarea',
             value: rss?.accessToken ?? '-',
+          },
+        ],
+      },
+      {
+        title: 'NZBN',
+        name: 'nzbn',
+        inputs: [
+          {
+            title: 'Access Token',
+            name: 'accessToken',
+            placeholder: 'Enter access token',
+            type: 'textarea',
+            value: nzbn?.accessToken ?? '-',
           },
         ],
       },

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import 'react-datepicker/dist/react-datepicker.css';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import Table /* TABLE_ROW_ACTIONS */ from '../../../common/Table/Table';
@@ -233,7 +232,7 @@ const InsurerList = () => {
             stopGeneralLoaderOnSuccessOrFail('insurerListAddFromCRMButtonLoaderAction');
           });
       } else {
-        errorNotification('Please select insurer to Add');
+        errorNotification('Please select at least one insurer to Add');
       }
     } catch (e) {
       /**/
@@ -342,7 +341,7 @@ const InsurerList = () => {
                 ref={searchInputRef}
                 prefix="search"
                 prefixClass="font-placeholder"
-                placeholder="Search clients"
+                placeholder="Search Insurer"
                 type="text"
                 onKeyDown={_.debounce(checkIfEnterKeyPressed, 1000)}
               />

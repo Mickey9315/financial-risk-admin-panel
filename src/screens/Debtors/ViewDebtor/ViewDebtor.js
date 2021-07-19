@@ -21,22 +21,20 @@ import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
 import DebtorsCreditLimitTab from '../components/DebtorsCreditLimitTab';
 import DebtorsApplicationTab from '../components/DebtorsApplicationTab';
+import DebtorOverdueTab from '../components/DebtorOverdueTab';
+import DebtorsTasksTab from '../components/DebtorsTasksTab';
 import DebtorsDocumentsTab from '../components/DebtorsDocumentsTab';
 import DebtorsNotesTab from '../components/DebtorsNotesTab';
-import DebtorsReportsTab from '../components/DebtorsReportsTab';
-import DebtorsTasksTab from '../components/DebtorsTasksTab';
 import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderTab';
-import DebtorOverdueTab from '../components/DebtorOverdueTab';
+import DebtorsReportsTab from '../components/DebtorsReportsTab';
 
-const VIEW_DEBTOR_TABS = [
-  <DebtorsCreditLimitTab />,
-  <DebtorsStakeHolderTab />,
-  <DebtorsApplicationTab />,
-  <DebtorOverdueTab />,
-  <DebtorsTasksTab />,
-  <DebtorsDocumentsTab />,
-  <DebtorsNotesTab />,
-  <DebtorsReportsTab />,
+const DEBTOR_TABS_CONSTANTS = [{ label: 'Credit Limits', component: <DebtorsCreditLimitTab /> }];
+const DEBTOR_TABS_WITH_ACCESS = [
+  { label: 'Application', component: <DebtorsApplicationTab />, name: 'application' },
+  { label: 'Overdues', component: <DebtorOverdueTab />, name: 'overdue' },
+  { label: 'Tasks', component: <DebtorsTasksTab />, name: 'task' },
+  { label: 'Documents', component: <DebtorsDocumentsTab />, name: 'document' },
+  { label: 'Notes', component: <DebtorsNotesTab />, name: 'note' },
 ];
 
 const ViewInsurer = () => {
@@ -47,6 +45,7 @@ const ViewInsurer = () => {
   };
   const history = useHistory();
   const dispatch = useDispatch();
+
   const { action, id } = useParams();
 
   const backToDebtor = useCallback(() => {
@@ -56,17 +55,6 @@ const ViewInsurer = () => {
   const backToDebtorList = useCallback(() => {
     history.push(`/debtors`);
   }, []);
-
-  const tabs = [
-    'Credit Limits',
-    'Stakeholder',
-    'Application',
-    'Overdues',
-    'Tasks',
-    'Documents',
-    'Notes',
-    'Reports',
-  ];
 
   const viewDebtorActiveTabIndex = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.viewDebtorActiveTabIndex ?? 0
@@ -83,34 +71,55 @@ const ViewInsurer = () => {
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+
+  const checkAccess = useCallback(
+    accessFor => {
+      const availableAccess =
+        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData]
+  );
+
   const [isAUSOrNZL, setIsAUSOrNAL] = useState(false);
 
   useEffect(() => {
     if (['AUS', 'NZL'].includes(debtorData?.country?.value)) setIsAUSOrNAL(true);
   }, [debtorData?.country]);
 
-  const FINAL_COMPONENTS = useMemo(() => {
-    const filteredComponents = [...VIEW_DEBTOR_TABS];
-    if (!['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(debtorData?.entityType?.value)) {
-      filteredComponents.splice(1, 1);
+  const finalTabs = useMemo(() => {
+    const tabs = [...DEBTOR_TABS_CONSTANTS];
+    DEBTOR_TABS_WITH_ACCESS.forEach(tab => {
+      if (checkAccess(tab.name)) {
+        tabs.push(tab);
+      }
+    });
+    if (['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(debtorData?.entityType?.value)) {
+      tabs.splice(1, 0, {
+        label: 'Stakeholder',
+        component: <DebtorsStakeHolderTab />,
+        name: 'stakeHolder',
+      });
     }
-    if (!isAUSOrNZL) {
-      filteredComponents.splice(filteredComponents?.length - 1, 1);
+    if (isAUSOrNZL) {
+      tabs.push({
+        label: 'Reports',
+        component: <DebtorsReportsTab />,
+        name: 'reports',
+      });
     }
+    return tabs ?? [];
+  }, [
+    debtorData?.entityType,
+    isAUSOrNZL,
+    DEBTOR_TABS_CONSTANTS,
+    checkAccess,
+    DEBTOR_TABS_WITH_ACCESS,
+  ]);
 
-    return filteredComponents;
-  }, [debtorData, isAUSOrNZL]);
-
-  const FINAL_TABS = useMemo(() => {
-    const filteredTabs = [...tabs];
-    if (!['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(debtorData?.entityType?.value)) {
-      filteredTabs.splice(1, 1);
-    }
-    if (!isAUSOrNZL) {
-      filteredTabs.splice(filteredTabs?.length - 1, 1);
-    }
-    return filteredTabs;
-  }, [debtorData, isAUSOrNZL]);
+  console.log(finalTabs);
 
   const INPUTS = useMemo(
     () => [
@@ -467,12 +476,12 @@ const ViewInsurer = () => {
               </div>
 
               <Tab
-                tabs={FINAL_TABS}
+                tabs={finalTabs.map(tab => tab?.label)}
                 tabActive={tabActive}
                 activeTabIndex={activeTabIndex}
                 className="mt-15"
               />
-              <div className="common-white-container">{FINAL_COMPONENTS[activeTabIndex]}</div>
+              <div className="common-white-container">{finalTabs?.[activeTabIndex]?.component}</div>
             </>
           ) : (
             <div className="no-record-found">No record found</div>
