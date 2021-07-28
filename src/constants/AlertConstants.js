@@ -7,5 +7,5 @@ export const ALERT_TYPE_ROW_ICON = {
 export const ALERT_TYPE_ROW = {
   Moderate: '#FEEBEB',
   High: '#FDF0E4',
-  Low: '#CBD7E4',
+  Low: '#E8F0FF',
 };

@@ -119,7 +119,6 @@ const ViewApplication = () => {
     dispatch(getApplicationModuleList(id));
     dispatch(getViewApplicationDocumentTypeList());
     dispatch(getApplicationTaskList(id));
-    dispatch(getApplicationAlertsListData(id));
     return () => dispatch(resetApplicationDetail());
   }, [id]);
 
@@ -129,6 +128,12 @@ const ViewApplication = () => {
       dispatch(getApplicationReportsListForFetch(debtorId?.[0]?._id));
     }
   }, [debtorId, isAUSOrNZL]);
+
+  useEffect(() => {
+    if (debtorId?.length > 0) {
+      dispatch(getApplicationAlertsListData(debtorId?.[0]?._id));
+    }
+  }, [debtorId]);
 
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const handleDrawerState = useCallback(async (idDrawer, headers) => {

@@ -860,7 +860,7 @@ export const application = (state = initialApplicationList, action) => {
           ...state?.viewApplication,
           alerts: {
             ...state?.viewApplication.alerts,
-            alertsList: action?.data,
+            alertsList: action?.data?.docs,
           },
         },
       };
