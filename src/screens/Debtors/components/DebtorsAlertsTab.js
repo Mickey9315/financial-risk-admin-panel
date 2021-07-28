@@ -171,28 +171,32 @@ const DebtorsAlertsTab = () => {
                       <div className="font-primary f-14">{alertDetail?.name}</div>
                     </div>
                   </div>
-                  <div className="alert-details-wrapper">
-                    <span className="font-primary f-16 f-bold">General Details</span>
-                    <div className="alert-general-details">
-                      {alertDetail?.generalDetails?.map(detail => (
-                        <>
-                          <span>{detail?.label}</span>
-                          <div className="alert-detail-value-field">{detail?.value}</div>
-                        </>
-                      ))}
+                  {alertDetail?.generalDetails?.length > 0 && (
+                    <div className="alert-details-wrapper">
+                      <span className="font-primary f-16 f-bold">General Details</span>
+                      <div className="alert-general-details">
+                        {alertDetail?.generalDetails?.map(detail => (
+                          <>
+                            <span>{detail?.label}</span>
+                            <div className="alert-detail-value-field">{detail?.value}</div>
+                          </>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="alert-details-wrapper">
-                    <span className="font-primary f-16 f-bold">Alert Details</span>
-                    <div className="alert-detail">
-                      {alertDetail?.alertDetails?.map(detail => (
-                        <>
-                          <span>{detail?.label}</span>
-                          <div className="alert-detail-value-field">{detail?.value}</div>
-                        </>
-                      ))}
+                  )}
+                  {alertDetail?.alertDetails?.length > 0 && (
+                    <div className="alert-details-wrapper">
+                      <span className="font-primary f-16 f-bold">Alert Details</span>
+                      <div className="alert-detail">
+                        {alertDetail?.alertDetails?.map(detail => (
+                          <>
+                            <span>{detail?.label}</span>
+                            <div className="alert-detail-value-field">{detail?.value}</div>
+                          </>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </>
               ) : (
                 <div className="no-record-found">No record found</div>
