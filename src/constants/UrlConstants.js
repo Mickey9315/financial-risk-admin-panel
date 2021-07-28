@@ -83,6 +83,7 @@ export const APPLICATION_URLS = {
     },
     APPLICATION_ALERTS: {
       APPLICATION_ALERTS_LIST: `${BASE_URL}application/alert-list/`,
+      ALERTS_DETAILS: `${BASE_URL}application/alert/`,
     },
   },
   // import application

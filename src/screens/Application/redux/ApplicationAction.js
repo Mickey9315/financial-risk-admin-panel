@@ -1243,3 +1243,36 @@ export const getApplicationAlertsListData = id => {
     }
   };
 };
+
+export const getApplicationAlertsDetail = id => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('applicationAlertDetailsLoader');
+      const response = await ApplicationViewApiServices.applicationAlertsApiServices.getApplicationAlertsDetails(
+        id
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('applicationAlertDetailsLoader');
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+              .GET_APPLICATION_ALERTS_DETAILS,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('applicationAlertDetailsLoader');
+      displayErrors(e);
+    }
+  };
+};
+
+export const clearApplicationAlertDetails = () => {
+  return dispatch => {
+    dispatch({
+      type:
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+          .CLEAR_APPLICATION_ALERTS_DETAILS,
+    });
+  };
+};

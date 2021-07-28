@@ -155,50 +155,42 @@ const DebtorsAlertsTab = () => {
                 <>
                   <div
                     className="alert-type"
-                    style={{ backgroundColor: `${ALERT_TYPE_ROW[alertDetail?.alertPriority]}` }}
+                    style={{ backgroundColor: `${ALERT_TYPE_ROW[alertDetail?.priority]}` }}
                   >
                     <span
                       className={`material-icons-round ${
-                        ALERT_TYPE_ROW_ICON[alertDetail?.alertPriority]
+                        ALERT_TYPE_ROW_ICON[alertDetail?.priority]
                       } f-h2`}
                     >
                       warning
                     </span>
                     <div className="alert-type-right-texts">
-                      <div
-                        className={`f-16 f-bold ${ALERT_TYPE_ROW_ICON[alertDetail?.alertPriority]}`}
-                      >
-                        Critical
+                      <div className={`f-16 f-bold ${ALERT_TYPE_ROW_ICON[alertDetail?.priority]}`}>
+                        {alertDetail?.priority}
                       </div>
-                      <div className="font-primary f-14">Debtor 1</div>
+                      <div className="font-primary f-14">{alertDetail?.name}</div>
                     </div>
                   </div>
                   <div className="alert-details-wrapper">
                     <span className="font-primary f-16 f-bold">General Details</span>
                     <div className="alert-general-details">
-                      {Object.entries(alertDetail).map(
-                        ([key, value]) =>
-                          typeof value === 'string' && (
-                            <>
-                              <span>{key}</span>
-                              <div className="alert-detail-value-field">{value}</div>
-                            </>
-                          )
-                      )}
+                      {alertDetail?.generalDetails?.map(detail => (
+                        <>
+                          <span>{detail?.label}</span>
+                          <div className="alert-detail-value-field">{detail?.value}</div>
+                        </>
+                      ))}
                     </div>
                   </div>
                   <div className="alert-details-wrapper">
                     <span className="font-primary f-16 f-bold">Alert Details</span>
                     <div className="alert-detail">
-                      {Object.entries(alertDetail).map(
-                        ([key, value]) =>
-                          typeof value === 'string' && (
-                            <>
-                              <span>{key}</span>
-                              <div className="alert-detail-value-field">{value}</div>
-                            </>
-                          )
-                      )}
+                      {alertDetail?.alertDetails?.map(detail => (
+                        <>
+                          <span>{detail?.label}</span>
+                          <div className="alert-detail-value-field">{detail?.value}</div>
+                        </>
+                      ))}
                     </div>
                   </div>
                 </>

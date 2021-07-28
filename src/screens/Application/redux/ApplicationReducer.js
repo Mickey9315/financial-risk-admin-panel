@@ -145,6 +145,7 @@ const initialApplicationList = {
     },
     alerts: {
       alertsList: [],
+      alertDetail: {},
     },
     dropDownData: {
       assigneeList: [],
@@ -861,6 +862,31 @@ export const application = (state = initialApplicationList, action) => {
           alerts: {
             ...state?.viewApplication.alerts,
             alertsList: action?.data?.docs,
+          },
+        },
+      };
+
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+      .GET_APPLICATION_ALERTS_DETAILS:
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          alerts: {
+            ...state?.viewApplication?.alerts,
+            alertDetail: action?.data,
+          },
+        },
+      };
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+      .CLEAR_APPLICATION_ALERTS_DETAILS:
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          alerts: {
+            ...state?.viewApplication?.alerts,
+            alertDetail: {},
           },
         },
       };
