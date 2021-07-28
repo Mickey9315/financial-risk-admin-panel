@@ -224,6 +224,10 @@ export const DEBTORS_URLS = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
   },
+
+  ALERTS: {
+    ALERTS_LIST: `${BASE_URL}debtor/alert-list/`,
+  },
   CREDIT_LIMIT: {
     CREDIT_LIMIT_LIST: `${BASE_URL}debtor/credit-limit/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,

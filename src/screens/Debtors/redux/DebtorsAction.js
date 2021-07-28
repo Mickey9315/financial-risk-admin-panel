@@ -19,6 +19,7 @@ import {
 import { store } from '../../../redux/store';
 import DebtorsReportsApiServices from '../services/DebtorsReportsApiServices';
 import { DebtorOverdueApiServices } from '../services/DebtorOverdueApiServices';
+import DebtorAlertsApiServices from '../services/DebtorAlertsApiServices';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1586,4 +1587,24 @@ export const debtorDownloadAction = async filters => {
     displayErrors(e);
   }
   return false;
+};
+
+// alerts
+export const getDebtorsAlertsListData = (id, params) => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('debtorAlertListLoader');
+      const response = await DebtorAlertsApiServices.getAlertsListData(id, params);
+      if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('debtorAlertListLoader');
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.ALERTS.FETCH_DEBTOR_ALERTS_LIST,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('debtorAlertListLoader');
+      displayErrors(e);
+    }
+  };
 };

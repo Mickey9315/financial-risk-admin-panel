@@ -157,6 +157,9 @@ const initialDebtorState = {
     overdueList: {},
     entityList: {},
   },
+  alerts: {
+    alertsList: {},
+  },
 };
 
 export const debtorsManagement = (state = initialDebtorState, action) => {
@@ -1024,6 +1027,17 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         selectedDebtorData: {},
+      };
+
+    // Alerts
+
+    case DEBTORS_REDUX_CONSTANTS.ALERTS.FETCH_DEBTOR_ALERTS_LIST:
+      return {
+        ...state,
+        alerts: {
+          ...state?.alerts,
+          alertsList: action?.data,
+        },
       };
 
     default:

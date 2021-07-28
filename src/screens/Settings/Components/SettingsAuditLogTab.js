@@ -338,8 +338,6 @@ const SettingsAuditLogTab = () => {
     }));
   }, [userNameList]);
 
-  console.log(tempFilter);
-
   const entityTypeOptions = [
     {
       label: 'Client',
@@ -403,13 +401,10 @@ const SettingsAuditLogTab = () => {
 
   const userNameSelectedValue = useMemo(() => {
     const selectedUserName = userNameList?.filter(e => e._id === tempFilter?.userRefId);
-    console.log(selectedUserName);
     if (selectedUserName?.length > 0)
       return { label: selectedUserName?.[0]?.name, value: selectedUserName?.[0]?._id };
     return [];
   }, [tempFilter?.userRefId]);
-
-  console.log(userNameSelectedValue);
 
   const actionTypeSelectedValue = useMemo(() => {
     const selectedActiontype = actionTypeOptions.find(e => {

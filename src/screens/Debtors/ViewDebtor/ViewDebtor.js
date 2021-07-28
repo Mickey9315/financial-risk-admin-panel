@@ -27,6 +27,7 @@ import DebtorsDocumentsTab from '../components/DebtorsDocumentsTab';
 import DebtorsNotesTab from '../components/DebtorsNotesTab';
 import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderTab';
 import DebtorsReportsTab from '../components/DebtorsReportsTab';
+import DebtorsAlertsTab from '../components/DebtorsAlertsTab';
 
 const DEBTOR_TABS_CONSTANTS = [{ label: 'Credit Limits', component: <DebtorsCreditLimitTab /> }];
 const DEBTOR_TABS_WITH_ACCESS = [
@@ -110,6 +111,7 @@ const ViewInsurer = () => {
         name: 'reports',
       });
     }
+    tabs.push({ label: 'Alerts', component: <DebtorsAlertsTab />, name: 'alerts' });
     return tabs ?? [];
   }, [
     debtorData?.entityType,
@@ -118,8 +120,6 @@ const ViewInsurer = () => {
     checkAccess,
     DEBTOR_TABS_WITH_ACCESS,
   ]);
-
-  console.log(finalTabs);
 
   const INPUTS = useMemo(
     () => [
