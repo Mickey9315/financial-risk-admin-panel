@@ -1,13 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
-import { getDebtorAlertsDetail, getDebtorsAlertsListData } from '../redux/DebtorsAction';
+import {
+  clearAlertDetails,
+  getDebtorAlertsDetail,
+  getDebtorsAlertsListData,
+} from '../redux/DebtorsAction';
 import Modal from '../../../common/Modal/Modal';
+import { ALERT_TYPE_ROW, ALERT_TYPE_ROW_ICON } from '../../../constants/AlertConstants';
 
 const DebtorsAlertsTab = () => {
   const { id } = useParams();
@@ -19,10 +25,7 @@ const DebtorsAlertsTab = () => {
   const { alertsList, alertDetail } = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.alerts ?? {}
   );
-
-  // console.log(Object.entries(alertDetail).map((key, value) => console.log(key, value)));
-  console.log(alertDetail);
-  const { debtorAlertListLoader } = useSelector(
+  const { debtorAlertListLoader, debtorAlertDetailsLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
@@ -67,8 +70,13 @@ const DebtorsAlertsTab = () => {
     [id]
   );
 
+  const onCloseAlertModal = useCallback(() => {
+    setIsAlertModal(false);
+    dispatch(clearAlertDetails());
+  }, []);
+
   const alertModalButtons = useMemo(
-    () => [{ title: 'Close', buttonType: 'primary-1', onClick: () => setIsAlertModal(false) }],
+    () => [{ title: 'Close', buttonType: 'primary-1', onClick: onCloseAlertModal }],
     []
   );
 
@@ -88,6 +96,8 @@ const DebtorsAlertsTab = () => {
       }
     }
   };
+
+  console.log(alertDetail?.alertPriority);
 
   return (
     <>
@@ -139,41 +149,65 @@ const DebtorsAlertsTab = () => {
       )}
       {isAlertModal && (
         <Modal header="Alerts" buttons={alertModalButtons} className="alert-details-modal">
-          <div className="alert-type">
-            <span className="material-icons-round font-danger f-h2">warning</span>
-            <div className="alert-type-right-texts">
-              <div className="font-danger f-16 f-bold">Critical</div>
-              <div className="font-primary f-14">Debtor 1</div>
-            </div>
-          </div>
-          <div className="alert-details-wrapper">
-            <span className="font-primary f-16 f-bold">General Details</span>
-            <div className="alert-general-details">
-              {Object.entries(alertDetail).map(
-                ([key, value]) =>
-                  typeof value === 'string' && (
-                    <>
-                      <span>{key}</span>
-                      <div className="alert-detail-value-field">{value}</div>
-                    </>
-                  )
-              )}
-            </div>
-          </div>
-          <div className="alert-details-wrapper">
-            <span className="font-primary f-16 f-bold">Alert Details</span>
-            <div className="alert-detail">
-              {Object.entries(alertDetail).map(
-                ([key, value]) =>
-                  typeof value === 'string' && (
-                    <>
-                      <span>{key}</span>
-                      <div className="alert-detail-value-field">{value}</div>
-                    </>
-                  )
-              )}
-            </div>
-          </div>
+          {!debtorAlertDetailsLoader ? (
+            (() =>
+              !_.isEmpty(alertDetail) ? (
+                <>
+                  <div
+                    className="alert-type"
+                    style={{ backgroundColor: `${ALERT_TYPE_ROW[alertDetail?.alertPriority]}` }}
+                  >
+                    <span
+                      className={`material-icons-round ${
+                        ALERT_TYPE_ROW_ICON[alertDetail?.alertPriority]
+                      } f-h2`}
+                    >
+                      warning
+                    </span>
+                    <div className="alert-type-right-texts">
+                      <div
+                        className={`f-16 f-bold ${ALERT_TYPE_ROW_ICON[alertDetail?.alertPriority]}`}
+                      >
+                        Critical
+                      </div>
+                      <div className="font-primary f-14">Debtor 1</div>
+                    </div>
+                  </div>
+                  <div className="alert-details-wrapper">
+                    <span className="font-primary f-16 f-bold">General Details</span>
+                    <div className="alert-general-details">
+                      {Object.entries(alertDetail).map(
+                        ([key, value]) =>
+                          typeof value === 'string' && (
+                            <>
+                              <span>{key}</span>
+                              <div className="alert-detail-value-field">{value}</div>
+                            </>
+                          )
+                      )}
+                    </div>
+                  </div>
+                  <div className="alert-details-wrapper">
+                    <span className="font-primary f-16 f-bold">Alert Details</span>
+                    <div className="alert-detail">
+                      {Object.entries(alertDetail).map(
+                        ([key, value]) =>
+                          typeof value === 'string' && (
+                            <>
+                              <span>{key}</span>
+                              <div className="alert-detail-value-field">{value}</div>
+                            </>
+                          )
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="no-record-found">No record found</div>
+              ))()
+          ) : (
+            <Loader />
+          )}
         </Modal>
       )}
     </>

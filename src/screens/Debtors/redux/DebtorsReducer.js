@@ -1049,6 +1049,14 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           alertDetail: action?.data,
         },
       };
+    case DEBTORS_REDUX_CONSTANTS.ALERTS.CLEAR_DEBTOR_ALERTS_DETAILS:
+      return {
+        ...state,
+        alerts: {
+          ...state?.alerts,
+          alertDetail: {},
+        },
+      };
 
     default:
       return state;

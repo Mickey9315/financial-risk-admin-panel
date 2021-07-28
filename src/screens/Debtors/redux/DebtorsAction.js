@@ -1627,3 +1627,11 @@ export const getDebtorAlertsDetail = id => {
     }
   };
 };
+
+export const clearAlertDetails = () => {
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.ALERTS.CLEAR_DEBTOR_ALERTS_DETAILS,
+    });
+  };
+};
