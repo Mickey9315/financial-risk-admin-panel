@@ -90,5 +90,11 @@ const ApplicationViewApiServices = {
         data
       ),
   },
+  applicationAlertsApiServices: {
+    getApplicationAlertsListData: id =>
+      ApiService.getData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_ALERTS.APPLICATION_ALERTS_LIST}${id}`
+      ),
+  },
 };
 export default ApplicationViewApiServices;

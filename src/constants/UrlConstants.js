@@ -81,6 +81,9 @@ export const APPLICATION_URLS = {
       APPLICATION_REPORTS_LIST_FOR_FETCH: `${BASE_URL}credit-report/list/`,
       FETCH_SELECTED_REPORTS_FOR_APPLICATION: `${BASE_URL}credit-report/generate/`,
     },
+    APPLICATION_ALERTS: {
+      APPLICATION_ALERTS_LIST: `${BASE_URL}application/alert-list/`,
+    },
   },
   // import application
   IMPORT_APPLICATION_URLS: {

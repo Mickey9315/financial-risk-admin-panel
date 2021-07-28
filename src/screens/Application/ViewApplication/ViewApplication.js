@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Accordion from '../../../common/Accordion/Accordion';
 import {
   changeApplicationStatus,
+  getApplicationAlertsListData,
   getApplicationDetailById,
   getApplicationModuleList,
   getApplicationNotesList,
@@ -118,6 +119,7 @@ const ViewApplication = () => {
     dispatch(getApplicationModuleList(id));
     dispatch(getViewApplicationDocumentTypeList());
     dispatch(getApplicationTaskList(id));
+    dispatch(getApplicationAlertsListData(id));
     return () => dispatch(resetApplicationDetail());
   }, [id]);
 

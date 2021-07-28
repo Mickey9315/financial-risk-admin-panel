@@ -143,6 +143,9 @@ const initialApplicationList = {
       reportList: [],
       reportsListForFetch: [],
     },
+    alerts: {
+      alertsList: [],
+    },
     dropDownData: {
       assigneeList: [],
       entityList: [],
@@ -844,6 +847,20 @@ export const application = (state = initialApplicationList, action) => {
               data: action?.data?.data,
               openModal: action?.data?.openModal,
             },
+          },
+        },
+      };
+
+    // Alerts
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+      .FETCH_APPLICATION_ALERTS_LIST:
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          alerts: {
+            ...state?.viewApplication.alerts,
+            alertsList: action?.data,
           },
         },
       };

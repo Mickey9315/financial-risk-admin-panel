@@ -1222,3 +1222,24 @@ export const deleteDumpFromBackend = dumpId => {
     }
   };
 };
+
+// alerts
+export const getApplicationAlertsListData = id => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationViewApiServices.applicationAlertsApiServices.getApplicationAlertsListData(
+        id
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+              .FETCH_APPLICATION_ALERTS_LIST,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
