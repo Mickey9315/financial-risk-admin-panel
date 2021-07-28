@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -6,15 +6,22 @@ import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
-import { getDebtorsAlertsListData } from '../redux/DebtorsAction';
+import { getDebtorAlertsDetail, getDebtorsAlertsListData } from '../redux/DebtorsAction';
+import Modal from '../../../common/Modal/Modal';
 
 const DebtorsAlertsTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
 
-  const { alertsList } = useSelector(({ debtorsManagement }) => debtorsManagement?.alerts ?? {});
+  const [isAlertModal, setIsAlertModal] = useState(false);
 
+  const { alertsList, alertDetail } = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.alerts ?? {}
+  );
+
+  // console.log(Object.entries(alertDetail).map((key, value) => console.log(key, value)));
+  console.log(alertDetail);
   const { debtorAlertListLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
@@ -50,6 +57,19 @@ const DebtorsAlertsTab = () => {
       getDebtorAlertsList({ page: newPage, limit });
     },
     [limit, getDebtorAlertsList]
+  );
+
+  const onSelectRecord = useCallback(
+    alertId => {
+      dispatch(getDebtorAlertsDetail(alertId));
+      setIsAlertModal(true);
+    },
+    [id]
+  );
+
+  const alertModalButtons = useMemo(
+    () => [{ title: 'Close', buttonType: 'primary-1', onClick: () => setIsAlertModal(false) }],
+    []
   );
 
   useEffect(() => {
@@ -97,6 +117,8 @@ const DebtorsAlertsTab = () => {
                 tableClass="white-header-table"
                 data={docs}
                 headers={headers}
+                rowClass="cursor-pointer"
+                recordSelected={onSelectRecord}
               />
             </div>
             <Pagination
@@ -114,6 +136,45 @@ const DebtorsAlertsTab = () => {
         )
       ) : (
         <Loader />
+      )}
+      {isAlertModal && (
+        <Modal header="Alerts" buttons={alertModalButtons} className="alert-details-modal">
+          <div className="alert-type">
+            <span className="material-icons-round font-danger f-h2">warning</span>
+            <div className="alert-type-right-texts">
+              <div className="font-danger f-16 f-bold">Critical</div>
+              <div className="font-primary f-14">Debtor 1</div>
+            </div>
+          </div>
+          <div className="alert-details-wrapper">
+            <span className="font-primary f-16 f-bold">General Details</span>
+            <div className="alert-general-details">
+              {Object.entries(alertDetail).map(
+                ([key, value]) =>
+                  typeof value === 'string' && (
+                    <>
+                      <span>{key}</span>
+                      <div className="alert-detail-value-field">{value}</div>
+                    </>
+                  )
+              )}
+            </div>
+          </div>
+          <div className="alert-details-wrapper">
+            <span className="font-primary f-16 f-bold">Alert Details</span>
+            <div className="alert-detail">
+              {Object.entries(alertDetail).map(
+                ([key, value]) =>
+                  typeof value === 'string' && (
+                    <>
+                      <span>{key}</span>
+                      <div className="alert-detail-value-field">{value}</div>
+                    </>
+                  )
+              )}
+            </div>
+          </div>
+        </Modal>
       )}
     </>
   );

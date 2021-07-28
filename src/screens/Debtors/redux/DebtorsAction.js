@@ -1608,3 +1608,22 @@ export const getDebtorsAlertsListData = (id, params) => {
     }
   };
 };
+
+export const getDebtorAlertsDetail = id => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('debtorAlertDetailsLoader');
+      const response = await DebtorAlertsApiServices.getDebtorAlertsDetails(id);
+      if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('debtorAlertDetailsLoader');
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.ALERTS.GET_DEBTOR_ALERTS_DETAILS,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('debtorAlertDetailsLoader');
+      displayErrors(e);
+    }
+  };
+};

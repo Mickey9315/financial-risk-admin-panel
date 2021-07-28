@@ -159,6 +159,7 @@ const initialDebtorState = {
   },
   alerts: {
     alertsList: {},
+    alertDetail: {},
   },
 };
 
@@ -1037,6 +1038,15 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         alerts: {
           ...state?.alerts,
           alertsList: action?.data,
+        },
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.ALERTS.GET_DEBTOR_ALERTS_DETAILS:
+      return {
+        ...state,
+        alerts: {
+          ...state?.alerts,
+          alertDetail: action?.data,
         },
       };
 

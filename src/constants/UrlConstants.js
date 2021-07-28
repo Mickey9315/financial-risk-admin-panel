@@ -230,6 +230,7 @@ export const DEBTORS_URLS = {
 
   ALERTS: {
     ALERTS_LIST: `${BASE_URL}debtor/alert-list/`,
+    ALERTS_DETAILS: `${BASE_URL}debtor/alert/`,
   },
   CREDIT_LIMIT: {
     CREDIT_LIMIT_LIST: `${BASE_URL}debtor/credit-limit/`,
