@@ -66,7 +66,7 @@ const HeaderNotification = () => {
   const onClickNotification = useCallback(notification => {
     if (notification?.entityType === 'alert') {
       setNotificationDrawer(false);
-      dispatch(getNotificationAlertsDetail(notification?.entityId));
+      dispatch(getNotificationAlertsDetail(notification?.entityId?._id));
       setIsAlertModal(true);
     }
   }, []);
@@ -114,23 +114,26 @@ const HeaderNotification = () => {
               </div>
               {notification?.notifications?.map(singleNotification => (
                 <div
-                  className={`common-accordion-item-content-box ${
+                  className={`notification-item-wrapper ${
                     singleNotification?.entityType === 'alert'
-                      ? ALERT_TYPE_ROW[singleNotification?.priority]
+                      ? `${ALERT_TYPE_ROW[singleNotification?.entityId?.priority]} cursor-pointer`
                       : 'secondary-tag'
                   }`}
                   key={singleNotification?._id}
                   onClick={() => onClickNotification(singleNotification)}
                 >
-                  <div className="date-owner-row just-bet">
-                    <span className="title mr-5">Date:</span>
-                    <span className="details">
-                      {moment(singleNotification?.createdAt).format('DD-MMM-YYYY')}
-                    </span>
-                    <span />
+                  <div className="notification-date-row">
+                    <div className="notification-date-row-left">
+                      <span className="font-field mr-5">Date:</span>
+                      <span className="font-primary">
+                        {moment(singleNotification?.createdAt).format('DD-MMM-YYYY')}
+                      </span>
+                      {singleNotification?.entityType === 'alert' && (
+                        <span className="material-icons-round ml-5">warning</span>
+                      )}
+                    </div>
                     <span
-                      className="material-icons-round font-placeholder"
-                      style={{ textAlign: 'end', fontSize: '18px', cursor: 'pointer' }}
+                      className="material-icons-round font-placeholder cursor-pointer"
                       onClick={() =>
                         dispatch(markNotificationAsReadAndDeleteAction(singleNotification?._id))
                       }

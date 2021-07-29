@@ -277,3 +277,19 @@
 .page-header-button-container {
   display: flex;
 }
+
+.notification-item-wrapper{
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: $text;
+  border-radius: 5px;
+  .notification-date-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .notification-date-row-left{
+      display: flex;
+      align-items: center;
+    }
+  }
+}
