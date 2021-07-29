@@ -293,3 +293,53 @@
     }
   }
 }
+
+//alert modal
+.alert-details-modal{
+  width: 80%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+
+  .modal-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px 0;
+  }
+
+  .alert-type{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px 60px;
+
+    .alert-type-right-texts{
+      display: flex;
+      flex-direction: column;
+      padding-left: 10px;
+    }
+  }
+
+  .alert-details-wrapper{
+    padding: 20px 60px;
+
+    .alert-general-details, .alert-detail{
+      display: grid;
+      grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
+      align-items: center;
+      padding: 5px 0;
+      gap: 10px;
+
+      > span {
+        margin-top: 7px;
+        color: $primary-color;
+      }
+
+      .alert-detail-value-field {
+        padding: .344rem;
+        min-width: 170px;
+        color: $field-color;
+      }
+    }
+  }
+}

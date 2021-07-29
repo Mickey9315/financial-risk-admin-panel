@@ -129,7 +129,10 @@ const HeaderNotification = () => {
                         {moment(singleNotification?.createdAt).format('DD-MMM-YYYY')}
                       </span>
                       {singleNotification?.entityType === 'alert' && (
-                        <span className="material-icons-round ml-5">warning</span>
+                        <span className="ml-10 d-flex align-center">
+                          <span className="material-icons-round">warning</span>
+                          {singleNotification?.entityId?.priority}
+                        </span>
                       )}
                     </div>
                     <span
@@ -165,7 +168,7 @@ const HeaderNotification = () => {
                     </div>
                   </div>
                   {alertDetail?.generalDetails?.length > 0 && (
-                    <div className="alert-details-wrapper">
+                    <div className="alert-details-wrapper f-14">
                       <span className="font-primary f-16 f-bold">General Details</span>
                       <div className="alert-general-details">
                         {alertDetail?.generalDetails?.map(detail => (
