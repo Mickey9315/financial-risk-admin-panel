@@ -13,7 +13,7 @@ import {
 } from '../redux/HeaderAction';
 import Drawer from '../../Drawer/Drawer';
 import IconButton from '../../IconButton/IconButton';
-import { ALERT_TYPE_ROW } from '../../../constants/AlertConstants';
+import { ALERT_TYPE_ROW, checkAlertValue } from '../../../helpers/AlertHelper';
 import Modal from '../../Modal/Modal';
 import Loader from '../../Loader/Loader';
 
@@ -174,7 +174,9 @@ const HeaderNotification = () => {
                         {alertDetail?.generalDetails?.map(detail => (
                           <>
                             <span>{detail?.label}</span>
-                            <div className="alert-detail-value-field">{detail?.value}</div>
+                            <div className="alert-detail-value-field">
+                              {checkAlertValue(detail)}
+                            </div>
                           </>
                         ))}
                       </div>
@@ -187,7 +189,9 @@ const HeaderNotification = () => {
                         {alertDetail?.alertDetails?.map(detail => (
                           <>
                             <span>{detail?.label}</span>
-                            <div className="alert-detail-value-field">{detail?.value}</div>
+                            <div className="alert-detail-value-field">
+                              {checkAlertValue(detail)}
+                            </div>
                           </>
                         ))}
                       </div>

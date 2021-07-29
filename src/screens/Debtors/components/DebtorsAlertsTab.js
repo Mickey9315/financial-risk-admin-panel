@@ -13,7 +13,7 @@ import {
   getDebtorsAlertsListData,
 } from '../redux/DebtorsAction';
 import Modal from '../../../common/Modal/Modal';
-import { ALERT_TYPE_ROW } from '../../../constants/AlertConstants';
+import { ALERT_TYPE_ROW, checkAlertValue } from '../../../helpers/AlertHelper';
 
 const DebtorsAlertsTab = () => {
   const { id } = useParams();
@@ -167,7 +167,9 @@ const DebtorsAlertsTab = () => {
                         {alertDetail?.generalDetails?.map(detail => (
                           <>
                             <span>{detail?.label}</span>
-                            <div className="alert-detail-value-field">{detail?.value}</div>
+                            <div className="alert-detail-value-field">
+                              {checkAlertValue(detail)}
+                            </div>
                           </>
                         ))}
                       </div>
@@ -180,7 +182,9 @@ const DebtorsAlertsTab = () => {
                         {alertDetail?.alertDetails?.map(detail => (
                           <>
                             <span>{detail?.label}</span>
-                            <div className="alert-detail-value-field">{detail?.value}</div>
+                            <div className="alert-detail-value-field">
+                              {checkAlertValue(detail)}
+                            </div>
                           </>
                         ))}
                       </div>

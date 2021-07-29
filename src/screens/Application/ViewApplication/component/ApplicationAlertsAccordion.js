@@ -5,7 +5,7 @@ import moment from 'moment';
 import { useCallback, useMemo, useState } from 'react';
 import _ from 'lodash';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
-import { ALERT_TYPE_ROW } from '../../../../constants/AlertConstants';
+import { ALERT_TYPE_ROW, checkAlertValue } from '../../../../helpers/AlertHelper';
 import Modal from '../../../../common/Modal/Modal';
 import Loader from '../../../../common/Loader/Loader';
 import {
@@ -101,7 +101,9 @@ const ApplicationAlertsAccordion = props => {
                           {alertDetail?.generalDetails?.map(detail => (
                             <>
                               <span>{detail?.label}</span>
-                              <div className="alert-detail-value-field">{detail?.value}</div>
+                              <div className="alert-detail-value-field">
+                                {checkAlertValue(detail)}
+                              </div>
                             </>
                           ))}
                         </div>
@@ -114,7 +116,9 @@ const ApplicationAlertsAccordion = props => {
                           {alertDetail?.alertDetails?.map(detail => (
                             <>
                               <span>{detail?.label}</span>
-                              <div className="alert-detail-value-field">{detail?.value}</div>
+                              <div className="alert-detail-value-field">
+                                {checkAlertValue(detail)}
+                              </div>
                             </>
                           ))}
                         </div>
