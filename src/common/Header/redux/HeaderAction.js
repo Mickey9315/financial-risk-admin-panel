@@ -193,3 +193,32 @@ export const turnOffNotifire = () => {
     });
   };
 };
+
+export const getNotificationAlertsDetail = id => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('notificationAlertDetailsLoader');
+      const response = await HeaderApiService.notificationApiServices.getNotificationAlertsDetails(
+        id
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('notificationAlertDetailsLoader');
+        dispatch({
+          type: HEADER_NOTIFICATION_REDUX_CONSTANTS.GET_NOTIFICATION_ALERTS_DETAILS,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('notificationAlertDetailsLoader');
+      displayErrors(e);
+    }
+  };
+};
+
+export const clearNotificationAlertDetails = () => {
+  return dispatch => {
+    dispatch({
+      type: HEADER_NOTIFICATION_REDUX_CONSTANTS.CLEAR_NOTIFICATION_ALERTS_DETAILS,
+    });
+  };
+};

@@ -22,7 +22,7 @@ export const loggedUserProfile = (state = { changed: false }, action) => {
 };
 
 export const headerNotificationReducer = (
-  state = { notificationList: [], notificationReceived: false },
+  state = { notificationList: [], notificationReceived: false, alertDetail: {} },
   action
 ) => {
   switch (action.type) {
@@ -57,6 +57,18 @@ export const headerNotificationReducer = (
       return {
         ...state,
         notificationReceived: false,
+      };
+    }
+    case HEADER_NOTIFICATION_REDUX_CONSTANTS.GET_NOTIFICATION_ALERTS_DETAILS: {
+      return {
+        ...state,
+        alertDetail: action?.data,
+      };
+    }
+    case HEADER_NOTIFICATION_REDUX_CONSTANTS.CLEAR_NOTIFICATION_ALERTS_DETAILS: {
+      return {
+        ...state,
+        alertDetail: {},
       };
     }
     default:
