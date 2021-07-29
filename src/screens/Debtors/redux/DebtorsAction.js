@@ -1635,3 +1635,21 @@ export const clearAlertDetails = () => {
     });
   };
 };
+
+export const downloadCreditLimitDecisionLetter = id => {
+  return async () => {
+    try {
+      startGeneralLoaderOnRequest('decisionLetterDownloadButtonLoaderAction');
+      const response = await DebtorCreditLimitApiServices.downloadCreditLimitDecisionLetter(id);
+      if (response?.statusText === 'OK') {
+        stopGeneralLoaderOnSuccessOrFail(`decisionLetterDownloadButtonLoaderAction`);
+        return response;
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('decisionLetterDownloadButtonLoaderAction');
+      displayErrors(e);
+      throw Error();
+    }
+    return false;
+  };
+};

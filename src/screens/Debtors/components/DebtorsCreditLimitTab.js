@@ -12,6 +12,7 @@ import { errorNotification } from '../../../common/Toast';
 import {
   changeDebtorCreditLimitColumnListStatus,
   downloadCreditLimitCSV,
+  downloadCreditLimitDecisionLetter,
   getCreditLimitColumnsNameList,
   getDebtorCreditLimitData,
   modifyDebtorCreditLimit,
@@ -42,6 +43,7 @@ const DebtorsCreditLimitTab = () => {
     ViewDebtorSurrenderCreditLimitButtonLoaderAction,
     ViewDebtorModifyCreditLimitButtonLoaderAction,
     viewDebtorDownloadCreditLimitCSVButtonLoaderAction,
+    decisionLetterDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
@@ -183,6 +185,22 @@ const DebtorsCreditLimitTab = () => {
     }
   }, [docs, id]);
 
+  const downloadDecisionLetter = useCallback(
+    async creditLimitId => {
+      if (creditLimitId) {
+        try {
+          const res = await dispatch(downloadCreditLimitDecisionLetter(creditLimitId));
+          if (res) downloadAll(res);
+        } catch (e) {
+          errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+        }
+      } else {
+        errorNotification('You have no records to download');
+      }
+    },
+    [id]
+  );
+
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef.current.value;
     if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
@@ -212,10 +230,20 @@ const DebtorsCreditLimitTab = () => {
     setSurrenderModal(!surrenderModal);
   }, [surrenderModal]);
 
+  console.log(decisionLetterDownloadButtonLoaderAction);
+
   const creditLimitAction = useMemo(
     () => [
       data => (
         <span className="table-action-buttons">
+          <IconButton
+            buttonType="primary-1"
+            title="cloud_download"
+            buttonTitle="Click to download applications"
+            className="download-decision-letter-icon"
+            onClick={() => downloadDecisionLetter(data?.id)}
+            isLoading={decisionLetterDownloadButtonLoaderAction}
+          />
           <Button
             buttonType="outlined-primary-small"
             title="Modify"
@@ -235,7 +263,12 @@ const DebtorsCreditLimitTab = () => {
         </span>
       ),
     ],
-    [toggleModifyLimitModal, toggleSurrenderModal, setCurrentCreditLimitData]
+    [
+      toggleModifyLimitModal,
+      toggleSurrenderModal,
+      setCurrentCreditLimitData,
+      decisionLetterDownloadButtonLoaderAction,
+    ]
   );
 
   const modifyLimit = useCallback(async () => {

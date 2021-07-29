@@ -240,6 +240,7 @@ export const DEBTORS_URLS = {
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
     CREDIT_LIMIT_ACTIONS: `${BASE_URL}debtor/credit-limit/`,
     DOWNLOAD_DEBTOR_CREDIT_LIMIT_CSV: `${BASE_URL}debtor/download/`,
+    DOWNLOAD_DEBTOR_CREDIT_LIMIT_DECISION_LETTER: `${BASE_URL}debtor/download/decision-letter/`,
   },
   STAKE_HOLDER: {
     STAKE_HOLDER_LIST: `${BASE_URL}debtor/stakeholder/`,

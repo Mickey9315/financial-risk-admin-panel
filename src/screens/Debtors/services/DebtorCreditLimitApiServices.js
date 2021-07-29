@@ -18,5 +18,11 @@ const DebtorCreditLimitApiServices = {
       method: 'GET',
       responseType: 'blob',
     }),
+  downloadCreditLimitDecisionLetter: id =>
+    ApiService.request({
+      url: `${DEBTORS_URLS.CREDIT_LIMIT.DOWNLOAD_DEBTOR_CREDIT_LIMIT_DECISION_LETTER}${id}`,
+      method: 'GET',
+      responseType: 'blob',
+    }),
 };
 export default DebtorCreditLimitApiServices;
