@@ -1460,3 +1460,21 @@ export const clientsDownloadAction = async filters => {
   }
   return false;
 };
+
+export const downloadClientCreditLimitDecisionLetter = id => {
+  return async () => {
+    try {
+      startGeneralLoaderOnRequest('clientDecisionLetterDownloadButtonLoaderAction');
+      const response = await ClientCreditLimitApiService.downloadCreditLimitDecisionLetter(id);
+      if (response?.statusText === 'OK') {
+        stopGeneralLoaderOnSuccessOrFail(`clientDecisionLetterDownloadButtonLoaderAction`);
+        return response;
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('clientDecisionLetterDownloadButtonLoaderAction');
+      displayErrors(e);
+      throw Error();
+    }
+    return false;
+  };
+};

@@ -18,5 +18,11 @@ const ClientCreditLimitApiService = {
       method: 'GET',
       responseType: 'blob',
     }),
+  downloadCreditLimitDecisionLetter: id =>
+    ApiService.request({
+      url: `${CLIENT_URLS.CREDIT_LIMIT.DOWNLOAD_CLIENT_CREDIT_LIMIT_DECISION_LETTER}${id}`,
+      method: 'GET',
+      responseType: 'blob',
+    }),
 };
 export default ClientCreditLimitApiService;

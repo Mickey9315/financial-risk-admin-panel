@@ -114,6 +114,7 @@ export const CLIENT_URLS = {
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}client/credit-limit/column-name/`,
     CREDIT_LIMIT_ACTIONS: `${BASE_URL}client/credit-limit/`,
     DOWNLOAD_CLIENT_CREDIT_LIMIT_CSV: `${BASE_URL}client/download/`,
+    DOWNLOAD_CLIENT_CREDIT_LIMIT_DECISION_LETTER: `${BASE_URL}client/download/decision-letter/`,
   },
 
   APPLICATION: {

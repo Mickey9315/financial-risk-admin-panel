@@ -9,6 +9,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import {
   changeClientCreditLimitColumnListStatus,
+  downloadClientCreditLimitDecisionLetter,
   downloadCreditLimitCSV,
   getClientCreditLimitData,
   getCreditLimitColumnsNameList,
@@ -42,6 +43,7 @@ const ClientCreditLimitTab = () => {
     ViewClientSurrenderCreditLimitButtonLoaderAction,
     ViewClientModifyCreditLimitButtonLoaderAction,
     viewClientDownloadCreditLimitCSVButtonLoaderAction,
+    clientDecisionLetterDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit } = useMemo(() => creditLimitList ?? {}, [
@@ -175,6 +177,22 @@ const ClientCreditLimitTab = () => {
     }
   }, [docs, id]);
 
+  const downloadDecisionLetter = useCallback(
+    async creditLimitId => {
+      if (creditLimitId) {
+        try {
+          const res = await dispatch(downloadClientCreditLimitDecisionLetter(creditLimitId));
+          if (res) downloadAll(res);
+        } catch (e) {
+          errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+        }
+      } else {
+        errorNotification('You have no records to download');
+      }
+    },
+    [id]
+  );
+
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;
     if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
@@ -208,6 +226,14 @@ const ClientCreditLimitTab = () => {
     () => [
       data => (
         <span className="table-action-buttons">
+          <IconButton
+            buttonType="primary-1"
+            title="cloud_download"
+            buttonTitle="Click to download applications"
+            className="download-decision-letter-icon"
+            onClick={() => downloadDecisionLetter(data?.id)}
+            isLoading={clientDecisionLetterDownloadButtonLoaderAction}
+          />
           <Button
             buttonType="outlined-primary-small"
             title="Modify"
@@ -227,7 +253,12 @@ const ClientCreditLimitTab = () => {
         </span>
       ),
     ],
-    [toggleModifyLimitModal, toggleSurrenderModal, setCurrentCreditLimitData]
+    [
+      toggleModifyLimitModal,
+      toggleSurrenderModal,
+      setCurrentCreditLimitData,
+      clientDecisionLetterDownloadButtonLoaderAction,
+    ]
   );
 
   const modifyLimit = useCallback(async () => {
