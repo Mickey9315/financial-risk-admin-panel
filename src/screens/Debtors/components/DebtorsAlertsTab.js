@@ -13,7 +13,7 @@ import {
   getDebtorsAlertsListData,
 } from '../redux/DebtorsAction';
 import Modal from '../../../common/Modal/Modal';
-import { ALERT_TYPE_ROW, ALERT_TYPE_ROW_ICON } from '../../../constants/AlertConstants';
+import { ALERT_TYPE_ROW } from '../../../constants/AlertConstants';
 
 const DebtorsAlertsTab = () => {
   const { id } = useParams();
@@ -153,21 +153,10 @@ const DebtorsAlertsTab = () => {
             (() =>
               !_.isEmpty(alertDetail) ? (
                 <>
-                  <div
-                    className="alert-type"
-                    style={{ backgroundColor: `${ALERT_TYPE_ROW[alertDetail?.priority]}` }}
-                  >
-                    <span
-                      className={`material-icons-round ${
-                        ALERT_TYPE_ROW_ICON[alertDetail?.priority]
-                      } f-h2`}
-                    >
-                      warning
-                    </span>
+                  <div className={`alert-type ${ALERT_TYPE_ROW[alertDetail?.priority]}`}>
+                    <span className="material-icons-round f-h2">warning</span>
                     <div className="alert-type-right-texts">
-                      <div className={`f-16 f-bold ${ALERT_TYPE_ROW_ICON[alertDetail?.priority]}`}>
-                        {alertDetail?.priority}
-                      </div>
+                      <div className="f-16 f-bold">{alertDetail?.priority}</div>
                       <div className="font-primary f-14">{alertDetail?.name}</div>
                     </div>
                   </div>

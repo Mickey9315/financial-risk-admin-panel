@@ -5,7 +5,7 @@ import moment from 'moment';
 import { useCallback, useMemo, useState } from 'react';
 import _ from 'lodash';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
-import { ALERT_TYPE_ROW, ALERT_TYPE_ROW_ICON } from '../../../../constants/AlertConstants';
+import { ALERT_TYPE_ROW } from '../../../../constants/AlertConstants';
 import Modal from '../../../../common/Modal/Modal';
 import Loader from '../../../../common/Loader/Loader';
 import {
@@ -54,8 +54,9 @@ const ApplicationAlertsAccordion = props => {
         {alertsList?.length > 0 ? (
           alertsList?.map(alert => (
             <div
-              className="common-accordion-item-content-box cursor-pointer"
-              style={{ backgroundColor: `${ALERT_TYPE_ROW[alert?.alertPriority]}` }}
+              className={`common-accordion-item-content-box cursor-pointer ${
+                ALERT_TYPE_ROW[alert?.alertPriority]
+              }`}
               onClick={() => onSelectAlert(alert?._id)}
             >
               <div className="alert-title-row">
@@ -64,9 +65,7 @@ const ApplicationAlertsAccordion = props => {
                   overlay={<span>Alert Priority</span>}
                   placement="left"
                 >
-                  <div className={`f-12 f-bold ${ALERT_TYPE_ROW_ICON[alert?.alertPriority]}`}>
-                    {alert?.alertPriority}
-                  </div>
+                  <div className="f-12 f-bold">{alert?.alertPriority}</div>
                 </Tooltip>
               </div>
               <div className="date-owner-row">
@@ -88,23 +87,10 @@ const ApplicationAlertsAccordion = props => {
               (() =>
                 !_.isEmpty(alertDetail) ? (
                   <>
-                    <div
-                      className="alert-type"
-                      style={{ backgroundColor: `${ALERT_TYPE_ROW[alertDetail?.priority]}` }}
-                    >
-                      <span
-                        className={`material-icons-round ${
-                          ALERT_TYPE_ROW_ICON[alertDetail?.priority]
-                        } f-h2`}
-                      >
-                        warning
-                      </span>
+                    <div className={`alert-type ${ALERT_TYPE_ROW[alertDetail?.priority]}`}>
+                      <span className="material-icons-round f-h2">warning</span>
                       <div className="alert-type-right-texts">
-                        <div
-                          className={`f-16 f-bold ${ALERT_TYPE_ROW_ICON[alertDetail?.priority]}`}
-                        >
-                          {alertDetail?.priority}
-                        </div>
+                        <div className="f-16 f-bold">{alertDetail?.priority}</div>
                         <div className="font-primary f-14">{alertDetail?.name}</div>
                       </div>
                     </div>
