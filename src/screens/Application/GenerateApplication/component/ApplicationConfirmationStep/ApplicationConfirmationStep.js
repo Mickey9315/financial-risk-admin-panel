@@ -184,13 +184,13 @@ const ApplicationConfirmationStep = () => {
             type: 'select',
           },
           {
-            title: 'ACN',
+            title: 'ACN/NCN',
             value: person?.acn || '-',
             label: 'acn',
             type: 'text',
           },
           {
-            title: 'ABN*',
+            title: 'ABN/NZBN*',
             value: person?.abn || '-',
             label: 'abn',
             type: 'text',
@@ -231,13 +231,13 @@ const ApplicationConfirmationStep = () => {
       type: 'text',
     },
     {
-      title: 'ABN*',
+      title: 'ABN/NZBN*',
       value: company?.abn || '-',
       label: 'abn',
       type: 'text',
     },
     {
-      title: 'ACN',
+      title: 'ACN/NCN',
       value: company?.acn || '-',
       label: 'acn',
       type: 'text',
