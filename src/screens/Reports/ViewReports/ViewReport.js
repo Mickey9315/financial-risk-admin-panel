@@ -113,6 +113,7 @@ const ViewReport = () => {
       if (currentFilter.filter === 'reviewReport') {
         params.date = reviewReportFilterDate || undefined;
       }
+      console.log(reviewReportFilterDate);
       try {
         await dispatch(getReportList(params));
         dispatch(applyFinalFilter(currentFilter.filter));
@@ -123,7 +124,7 @@ const ViewReport = () => {
         /**/
       }
     },
-    [reportList, page, limit, tempFilters, currentFilter, reviewReportFilterDate]
+    [reportList, page, limit, tempFilters, currentFilter, reviewReportFilterDate, paramReport]
   );
 
   const onClickCloseColumnSelection = useCallback(() => {
@@ -413,13 +414,13 @@ const ViewReport = () => {
   }, [history, total, pages, page, limit, finalFilters]);
 
   // extra filter for reviewReport
-  const handleSelectDateChange = useCallback(
-    async date => {
-      setReviewReportFilterDate(new Date(date).toISOString());
-      await getReportListByFilter();
-    },
-    [setReviewReportFilterDate]
-  );
+  const handleSelectDateChange = useCallback(date => {
+    setReviewReportFilterDate(new Date(date).toISOString());
+  }, []);
+
+  useEffect(async () => {
+    await getReportListByFilter();
+  }, [reviewReportFilterDate]);
 
   // download
   const downloadReport = useCallback(async () => {
