@@ -57,6 +57,12 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
             errors.registrationNumber = 'Please enter valid registration number';
           }
         }
+        if (item?.stakeholderCountry?.value === 'NZL') {
+          if (!item?.acn || item?.acn?.trim()?.length <= 0) {
+            validated = false;
+            errors.acn = 'Please enter NCN number before continue';
+          }
+        }
         if (
           !item?.entityName ||
           item?.entityName?.length <= 0 ||
