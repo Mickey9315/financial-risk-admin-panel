@@ -1043,7 +1043,7 @@ const DebtorsStakeHolderTab = () => {
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCancelStakeHolderModal },
       {
-        title: isEdit ? 'Edit' : 'Add',
+        title: isEdit ? 'Save' : 'Add',
         buttonType: 'primary',
         onClick: () => stakeHolderValidation(dispatch, stakeHolder, debtorData, callBack, isEdit),
         isLoading: isEdit
