@@ -51,6 +51,12 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
         errors.registrationNumber = 'Please enter valid registration number';
       }
     }
+    if (data?.stakeholderCountry?.value === 'NZL') {
+      if (!data?.acn || data?.acn?.trim()?.length <= 0) {
+        validated = false;
+        errors.acn = 'Please enter NCN number before continue';
+      }
+    }
     if (
       !data?.entityName ||
       data?.entityName?.length <= 0 ||
