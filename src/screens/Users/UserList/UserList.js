@@ -30,6 +30,7 @@ import { USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS } from '../redux/UserManage
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const UserList = () => {
   const history = useHistory();
@@ -350,6 +351,8 @@ const UserList = () => {
     [page, limit, { ...finalFilter }]
   );
 
+  const { hasWriteAccess, hasFullAccess } = useModulePrivileges(SIDEBAR_NAMES.USER);
+
   const userRoleSelectedValue = useMemo(() => {
     const foundValue = USER_ROLES.find(e => {
       return (e?.value ?? '') === tempFilter?.role;
@@ -395,7 +398,7 @@ const UserList = () => {
                   recordSelected={onSelectUserRecord}
                   recordActionClick={onSelectUserRecordActionClick}
                   rowClass="cursor-pointer"
-                  haveActions
+                  haveActions={hasFullAccess || hasWriteAccess}
                 />
               </div>
               <Pagination

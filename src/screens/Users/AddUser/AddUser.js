@@ -430,29 +430,33 @@ const AddUser = () => {
                 {filteredOrganisationList.map(module => (
                   <div key={module.label} className="module">
                     <div className="module-title">{module.label}</div>
-                    {USER_MODULE_ACCESS.map(access => ((module.label === 'Insurer' && access.value === 'full-access') ?
-                           <div/> :
-                            <Checkbox
-                                key={access.label}
-                                disabled={
-                                  action === 'view' ||
-                                  (module?.accessTypes?.includes('full-access') &&
-                                      (access.value === 'read' || access.value === 'write')) ||
-                                  (module?.accessTypes?.includes('write') && access.value === 'read')
-                                }
-                                title={access.label}
-                                name={access.value}
-                                className={`${
-                                    (action === 'view' ||
-                                        (module?.accessTypes?.includes('full-access') &&
-                                            (access.value === 'read' || access.value === 'write')) ||
-                                        (module?.accessTypes?.includes('write') && access.value === 'read')) &&
-                                    'checkbox-disabled'
-                                }`}
-                                checked={module.accessTypes.includes(access.value)}
-                                onChange={() => onChangeUserAccess(module, access)}
-                            />
-                    ))}
+                    {USER_MODULE_ACCESS.map(access =>
+                      module.label === 'Insurer' && access.value === 'full-access' ? (
+                        <div />
+                      ) : (
+                        <Checkbox
+                          key={access.label}
+                          disabled={
+                            action === 'view' ||
+                            (module?.accessTypes?.includes('full-access') &&
+                              (access.value === 'read' || access.value === 'write')) ||
+                            (module?.accessTypes?.includes('write') && access.value === 'read')
+                          }
+                          title={access.label}
+                          name={access.value}
+                          className={`${
+                            (action === 'view' ||
+                              (module?.accessTypes?.includes('full-access') &&
+                                (access.value === 'read' || access.value === 'write')) ||
+                              (module?.accessTypes?.includes('write') &&
+                                access.value === 'read')) &&
+                            'checkbox-disabled'
+                          }`}
+                          checked={module.accessTypes.includes(access.value)}
+                          onChange={() => onChangeUserAccess(module, access)}
+                        />
+                      )
+                    )}
                   </div>
                 ))}
               </div>
