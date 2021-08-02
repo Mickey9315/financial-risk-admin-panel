@@ -43,7 +43,7 @@ const ClientCreditLimitTab = () => {
     ViewClientSurrenderCreditLimitButtonLoaderAction,
     ViewClientModifyCreditLimitButtonLoaderAction,
     viewClientDownloadCreditLimitCSVButtonLoaderAction,
-    clientDecisionLetterDownloadButtonLoaderAction,
+    // clientDecisionLetterDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit } = useMemo(() => creditLimitList ?? {}, [
@@ -184,7 +184,8 @@ const ClientCreditLimitTab = () => {
           const res = await dispatch(downloadClientCreditLimitDecisionLetter(creditLimitId));
           if (res) downloadAll(res);
         } catch (e) {
-          errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+          console.log(e?.response);
+          // errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
         }
       } else {
         errorNotification('You have no records to download');
@@ -232,7 +233,7 @@ const ClientCreditLimitTab = () => {
             buttonTitle="Click to download applications"
             className="download-decision-letter-icon"
             onClick={() => downloadDecisionLetter(data?.id)}
-            isLoading={clientDecisionLetterDownloadButtonLoaderAction}
+            // isLoading={clientDecisionLetterDownloadButtonLoaderAction}
           />
           <Button
             buttonType="outlined-primary-small"
@@ -257,7 +258,7 @@ const ClientCreditLimitTab = () => {
       toggleModifyLimitModal,
       toggleSurrenderModal,
       setCurrentCreditLimitData,
-      clientDecisionLetterDownloadButtonLoaderAction,
+      // clientDecisionLetterDownloadButtonLoaderAction,
     ]
   );
 

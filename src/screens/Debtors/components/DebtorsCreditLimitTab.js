@@ -43,7 +43,7 @@ const DebtorsCreditLimitTab = () => {
     ViewDebtorSurrenderCreditLimitButtonLoaderAction,
     ViewDebtorModifyCreditLimitButtonLoaderAction,
     viewDebtorDownloadCreditLimitCSVButtonLoaderAction,
-    decisionLetterDownloadButtonLoaderAction,
+    // decisionLetterDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
@@ -230,8 +230,6 @@ const DebtorsCreditLimitTab = () => {
     setSurrenderModal(!surrenderModal);
   }, [surrenderModal]);
 
-  console.log(decisionLetterDownloadButtonLoaderAction);
-
   const creditLimitAction = useMemo(
     () => [
       data => (
@@ -242,7 +240,7 @@ const DebtorsCreditLimitTab = () => {
             buttonTitle="Click to download applications"
             className="download-decision-letter-icon"
             onClick={() => downloadDecisionLetter(data?.id)}
-            isLoading={decisionLetterDownloadButtonLoaderAction}
+            // isLoading={decisionLetterDownloadButtonLoaderAction}
           />
           <Button
             buttonType="outlined-primary-small"
@@ -267,7 +265,7 @@ const DebtorsCreditLimitTab = () => {
       toggleModifyLimitModal,
       toggleSurrenderModal,
       setCurrentCreditLimitData,
-      decisionLetterDownloadButtonLoaderAction,
+      // decisionLetterDownloadButtonLoaderAction,
     ]
   );
 
