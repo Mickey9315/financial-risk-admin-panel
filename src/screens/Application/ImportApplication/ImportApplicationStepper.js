@@ -53,7 +53,7 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
   const { importApplication } = useSelector(({ application }) => application ?? {});
   const activeStep = useMemo(() => importApplication?.activeStep ?? 0, [importApplication]);
   const importId = useMemo(() => importApplication?.importId ?? null, [importApplication]);
-  const { toBeProcessedApplicationCount } = useMemo(() => importApplication?.importData ?? null, [
+  const { toBeProcessedApplicationCount } = useMemo(() => importApplication?.importData ?? 0, [
     importApplication,
   ]);
 
