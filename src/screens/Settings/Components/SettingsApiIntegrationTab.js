@@ -265,21 +265,18 @@ const SettingsApiIntegrationTab = () => {
                           name={row.name}
                           onClick={() => onEditItemIndex(index)}
                         />
-                        {index !== 0 && (
-                          <Button
-                            buttonType="primary"
-                            title="Test"
-                            name={row.name}
-                            onClick={async () => {
-                              setIsTestItemIndex(index);
-                              await onTestItem(row, index);
-                            }}
-                            isLoading={
-                              isTestItemIndex === index &&
-                              settingApiIntegrationTestButtonLoaderAction
-                            }
-                          />
-                        )}
+                        <Button
+                          buttonType="primary"
+                          title="Test"
+                          name={row.name}
+                          onClick={async () => {
+                            setIsTestItemIndex(index);
+                            await onTestItem(row, index);
+                          }}
+                          isLoading={
+                            isTestItemIndex === index && settingApiIntegrationTestButtonLoaderAction
+                          }
+                        />
                       </div>
                     ) : (
                       <div className="buttons-row">
