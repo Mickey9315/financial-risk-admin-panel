@@ -367,7 +367,17 @@ const AddUser = () => {
                   </div>
                   <div className="common-detail-field">
                     <div className="common-detail-title">Email</div>
-                    <span className="mail-id-value">{email}</span>
+                    {action === 'view' || action === 'edit' ? (
+                      <span className="mail-id-value">{email}</span>
+                    ) : (
+                      <Input
+                        type="email"
+                        placeholder="jason@trad.au"
+                        name="email"
+                        value={email}
+                        onChange={onChangeUserData}
+                      />
+                    )}
                   </div>
                   <div className="common-detail-field">
                     <div className="common-detail-title">Role</div>
