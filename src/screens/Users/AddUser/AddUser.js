@@ -15,6 +15,7 @@ import {
   getAllClientList,
   getAllOrganisationModulesList,
   getSelectedUserData,
+  resendVerificationMail,
   setNewUserInitialStates,
   updateUserDetails,
 } from '../redux/UserManagementAction';
@@ -43,6 +44,7 @@ const AddUser = () => {
     viewUserAddNewUserButtonLoaderAction,
     viewUserDeleteUserButtonLoaderAction,
     viewUserPageLoaderAction,
+    viewUserResendMailButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const filteredOrganisationList = useMemo(
@@ -283,6 +285,10 @@ const AddUser = () => {
     }
   }, [action]);
 
+  const onResendEmailButtonClick = useCallback(() => {
+    dispatch(resendVerificationMail(selectedUser?._id));
+  }, [selectedUser]);
+
   return (
     <>
       {!viewUserPageLoaderAction ? (
@@ -306,10 +312,24 @@ const AddUser = () => {
                 </div>
                 <div className="buttons-row">
                   {action === 'view' ? (
-                    <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
-                      <Button buttonType="primary" title="Edit" onClick={editUserClick} />
-                      <Button buttonType="danger" title="Delete" onClick={deleteModalButtonClick} />
-                    </UserPrivilegeWrapper>
+                    <>
+                      {selectedUser?.status !== 'Active' && (
+                        <Button
+                          buttonType="secondary"
+                          title="Resend Email"
+                          onClick={onResendEmailButtonClick}
+                          isLoading={viewUserResendMailButtonLoaderAction}
+                        />
+                      )}
+                      <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
+                        <Button buttonType="primary" title="Edit" onClick={editUserClick} />
+                        <Button
+                          buttonType="danger"
+                          title="Delete"
+                          onClick={deleteModalButtonClick}
+                        />
+                      </UserPrivilegeWrapper>
+                    </>
                   ) : (
                     <>
                       <Button buttonType="primary-1" title="Close" onClick={backToUser} />

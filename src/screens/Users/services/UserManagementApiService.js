@@ -18,6 +18,7 @@ const UserManagementApiService = {
     ApiService.putData(USER_MANAGEMENT_URLS.UPDATE_USER_COLUMN_NAME_LIST_URL, data),
   getAllUserListByFilter: params =>
     ApiService.getData(USER_MANAGEMENT_URLS.USER_LIST_URL, { params }),
+  resendMail: userId => ApiService.getData(`${USER_MANAGEMENT_URLS.RESEND_MAIL}${userId}`),
 };
 
 export default UserManagementApiService;

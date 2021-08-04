@@ -306,3 +306,20 @@ export const resetViewUserData = () => {
     });
   };
 };
+
+export const resendVerificationMail = userId => {
+  return async () => {
+    try {
+      startGeneralLoaderOnRequest('viewUserResendMailButtonLoaderAction');
+      const response = await UserManagementApiService.resendMail(userId);
+
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Email sent successfully.');
+        stopGeneralLoaderOnSuccessOrFail('viewUserResendMailButtonLoaderAction');
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('viewUserResendMailButtonLoaderAction');
+      displayErrors(e);
+    }
+  };
+};

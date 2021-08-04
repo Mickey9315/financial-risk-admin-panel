@@ -34,6 +34,7 @@ export const USER_MANAGEMENT_URLS = {
   USER_COLUMN_NAME_LIST_URL: `${BASE_URL}user/column-name/`,
   USER_CLIENT_LIST_URL: `${BASE_URL}user/client-name/`,
   UPDATE_USER_COLUMN_NAME_LIST_URL: `${BASE_URL}user/column-name/`,
+  RESEND_MAIL: `${BASE_URL}user/send-mail/`,
 };
 
 export const APPLICATION_URLS = {
