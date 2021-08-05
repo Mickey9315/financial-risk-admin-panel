@@ -310,7 +310,7 @@ const Header = () => {
         <GlobalSearch />
         <HeaderNotification />
 
-        <img className="user-dp" src={profilePictureUrl ?? dummy} onClick={toggleUserSettings} />
+        <img className="user-dp" src={profilePictureUrl || dummy} onClick={toggleUserSettings} />
         {showUserSettings && (
           <div ref={userSettingsRef} className="user-settings">
             <div onClick={toggleEditProfileModal}>
@@ -340,13 +340,14 @@ const Header = () => {
             <div className="edit-profile-grid">
               <div className="form-title">Profile Avatar</div>
               {!isEditProfileButton ? (
-                <img className="user-dp" src={profilePictureUrl ?? dummy} />
+                <img className="user-dp" src={profilePictureUrl || dummy} />
               ) : (
                 <FileUpload
                   profilePictureUrl={profilePictureUrl}
                   isProfile
                   handleChange={handleChange}
                   fileName={fileName}
+                  file={file}
                 />
               )}
               <div className="form-title">Name</div>
