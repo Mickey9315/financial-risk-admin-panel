@@ -275,6 +275,14 @@ const DebtorsReportsTab = () => {
               value={selectedReports}
               onChange={handleOnReportSelect}
             />
+            {partners?.length > 0 && partnersWithCompany?.length <= 0 && (
+              <>
+                <span />
+                <div className="font-danger">
+                  All stake holders are individual so reports cannot be fetched.
+                </div>
+              </>
+            )}
           </div>
         </Modal>
       )}
