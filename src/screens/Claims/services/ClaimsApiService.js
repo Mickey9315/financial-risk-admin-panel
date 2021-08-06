@@ -15,5 +15,11 @@ export const ClaimsApiServices = {
       ApiService.getData(`${CLAIMS_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`, { params }),
     uploadClaimDocument: (data, config) =>
       ApiService.postData(CLAIMS_URLS.DOCUMENTS.DOCUMENTS_LIST, data, config),
+    downloadClaimDocument: id =>
+      ApiService.request({
+        url: `${CLAIMS_URLS.DOCUMENTS.DOWNLOAD_DOCUMENTS}${id}`,
+        method: 'GET',
+        responseType: 'blob',
+      }),
   },
 };

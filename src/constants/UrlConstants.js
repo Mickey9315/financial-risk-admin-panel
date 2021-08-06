@@ -281,6 +281,7 @@ export const CLAIMS_URLS = {
   GET_CLAIM_DETAILS: `${BASE_URL}claim/`,
   DOCUMENTS: {
     DOCUMENTS_LIST: `${BASE_URL}claim/document/`,
+    DOWNLOAD_DOCUMENTS: `${BASE_URL}claim/document/download/`,
   },
 };
 

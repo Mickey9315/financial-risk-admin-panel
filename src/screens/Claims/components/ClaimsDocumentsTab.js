@@ -10,7 +10,8 @@ import { errorNotification } from '../../../common/Toast';
 import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import FileUpload from '../../../common/Header/component/FileUpload';
-import { getClaimsDocumentsListData } from '../redux/ClaimsAction';
+import { downloadDocumentFromServer, getClaimsDocumentsListData } from '../redux/ClaimsAction';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const initialClaimDocumentState = {
   description: '',
@@ -221,6 +222,34 @@ const ClaimsDocumentsTab = () => {
     [getClaimsDocumentsList]
   );
 
+  const downloadClaimDocument = useCallback(async docId => {
+    try {
+      console.log(docId);
+      const response = await downloadDocumentFromServer(docId);
+      console.log(response);
+      if (response) downloadAll(response);
+    } catch (e) {
+      /**/
+    }
+  }, []);
+
+  const downloadDocument = useMemo(
+    () => [
+      data => (
+        <span
+          className="material-icons-round font-primary cursor-pointer"
+          onClick={async e => {
+            e.stopPropagation();
+            await downloadClaimDocument(data?.id);
+          }}
+        >
+          cloud_download
+        </span>
+      ),
+    ],
+    []
+  );
+
   useEffect(() => {
     getClaimsDocumentsList();
   }, [id]);
@@ -259,6 +288,7 @@ const ClaimsDocumentsTab = () => {
                 headers={headers}
                 tableClass="white-header-table"
                 refreshData={getClaimsDocumentsList}
+                extraColumns={downloadDocument}
               />
             </div>
             <Pagination

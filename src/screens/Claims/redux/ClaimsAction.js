@@ -228,3 +228,15 @@ export const uploadClaimDocument = (data, config) => {
     }
   };
 };
+
+export const downloadDocumentFromServer = async id => {
+  try {
+    const response = await ClaimsApiServices.ClaimsDocumentServices.downloadClaimDocument(id);
+    if (response?.statusText === 'OK') {
+      return response;
+    }
+  } catch (e) {
+    displayErrors(e);
+  }
+  return false;
+};
