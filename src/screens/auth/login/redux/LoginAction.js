@@ -8,7 +8,7 @@ import {
 } from '../../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { displayErrors } from '../../../../helpers/ErrorNotifyHelper';
 
-export const loginUser = ({ email, password }, rememberMe) => {
+export const loginUser = ({ email, password }) => {
   return async dispatch => {
     try {
       startGeneralLoaderOnRequest('logInButtonLoaderAction');
@@ -17,12 +17,7 @@ export const loginUser = ({ email, password }, rememberMe) => {
 
       if (response?.data?.status === 'SUCCESS') {
         const { token } = response?.data?.data;
-
-        if (rememberMe) {
-          saveAuthTokenLocalStorage(token);
-        } else {
-          saveAuthTokenLocalStorage(token);
-        }
+        saveAuthTokenLocalStorage(token);
 
         successNotification('Login successfully.');
         await dispatch(getLoggedUserDetails());

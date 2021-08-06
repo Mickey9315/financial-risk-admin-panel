@@ -5,7 +5,6 @@ import grayLogo from '../../../assets/images/logo-light.svg';
 import Button from '../../../common/Button/Button';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import BigInput from '../../../common/BigInput/BigInput';
-import Checkbox from '../../../common/Checkbox/Checkbox';
 import { loginUser } from './redux/LoginAction';
 import { errorNotification } from '../../../common/Toast';
 import { checkForEmail, replaceHiddenCharacters } from '../../../helpers/ValidationHelper';
@@ -18,7 +17,7 @@ function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberUser, setRememberUser] = useState(false);
+  // const [rememberUser, setRememberUser] = useState(false);
   const { logInButtonLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
@@ -31,7 +30,7 @@ function LoginScreen() {
       errorNotification('Please enter password');
     else {
       try {
-        await dispatch(loginUser({ email, password }, rememberUser));
+        await dispatch(loginUser({ email, password }));
         history.replace('/dashboard');
       } catch (e) {
         /**/
@@ -57,9 +56,9 @@ function LoginScreen() {
     setPassword(passwordText);
   };
 
-  const onChangeRememberUser = e => {
-    setRememberUser(e.target.checked);
-  };
+  // const onChangeRememberUser = e => {
+  //   setRememberUser(e.target.checked);
+  // };
 
   useEffect(() => {
     const token = getAuthTokenLocalStorage();
@@ -97,7 +96,7 @@ function LoginScreen() {
         onKeyDown={onEnterKeyPress}
       />
       <div className="login-action-row">
-        <Checkbox title="Remember me" checked={rememberUser} onChange={onChangeRememberUser} />
+        {/* <Checkbox title="Remember me" checked={rememberUser} onChange={onChangeRememberUser} /> */}
         <Link to="/forgot-password" className="login-module-link">
           Forgot Password?
         </Link>
