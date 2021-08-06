@@ -222,3 +222,22 @@ export const clearNotificationAlertDetails = () => {
     });
   };
 };
+
+export const markAllNotificationAsRead = () => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('markAllAsReadLoader');
+      const response = await HeaderApiService.notificationApiServices.markAllAsRead();
+      if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('markAllAsReadLoader');
+        successNotification(response?.data?.message ?? 'Marked all notification as read.');
+        dispatch({
+          type: HEADER_NOTIFICATION_REDUX_CONSTANTS.MARKED_ALL_AS_READ,
+        });
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('markAllAsReadLoader');
+      displayErrors(e);
+    }
+  };
+};

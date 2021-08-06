@@ -18,6 +18,7 @@ export const HEADER_URLS = {
     GET_HEADER_NOTIFICATION_LIST_URL: `${BASE_URL}notification/list/`,
     MARK_AS_READ_NOTIFICATION_URL: `${BASE_URL}notification/markAsRead/`,
     NOTIFICATION_ALERTS_DETAILS: `${BASE_URL}notification/alert/`,
+    MARK_ALL_NOTIFICATIONS_AS_READ: `${BASE_URL}notification/markAllAsRead/`,
   },
   HEADER_GLOBAL_SEARCH: `${BASE_URL}search/`,
 };

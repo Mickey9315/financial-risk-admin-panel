@@ -53,6 +53,12 @@ export const headerNotificationReducer = (
         notificationList: finalList,
       };
     }
+    case HEADER_NOTIFICATION_REDUX_CONSTANTS.MARKED_ALL_AS_READ:
+      return {
+        ...state,
+        notificationList: [],
+      };
+
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.OFF_NOTIFIRE: {
       return {
         ...state,

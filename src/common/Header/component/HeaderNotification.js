@@ -9,6 +9,7 @@ import {
 import {
   clearNotificationAlertDetails,
   getNotificationAlertsDetail,
+  markAllNotificationAsRead,
   markNotificationAsReadAndDeleteAction,
 } from '../redux/HeaderAction';
 import Drawer from '../../Drawer/Drawer';
@@ -16,6 +17,7 @@ import IconButton from '../../IconButton/IconButton';
 import { ALERT_TYPE_ROW, checkAlertValue } from '../../../helpers/AlertHelper';
 import Modal from '../../Modal/Modal';
 import Loader from '../../Loader/Loader';
+import { errorNotification } from '../../Toast';
 
 const HeaderNotification = () => {
   const dispatch = useDispatch();
@@ -26,7 +28,7 @@ const HeaderNotification = () => {
     ({ headerNotificationReducer }) => headerNotificationReducer ?? []
   );
 
-  const { notificationAlertDetailsLoader } = useSelector(
+  const { notificationAlertDetailsLoader, markAllAsReadLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
@@ -88,6 +90,15 @@ const HeaderNotification = () => {
       </div>
     );
   };
+
+  const markAllAsRead = useCallback(() => {
+    if (sortedNotificationList?.length > 0 && !markAllAsReadLoader) {
+      dispatch(markAllNotificationAsRead());
+    } else {
+      errorNotification('Nothing To Mark.');
+    }
+  }, [sortedNotificationList, markAllAsReadLoader]);
+
   return (
     <>
       <IconButton
@@ -104,9 +115,13 @@ const HeaderNotification = () => {
         closeDrawer={() => setNotificationDrawer(false)}
       >
         <>
-          <div className="notification-clear-all-wrapper">
-            <span className="notification-clear-all-btn f-14">Mark All As Read</span>
-          </div>
+          {sortedNotificationList?.length > 0 && (
+            <div className="notification-clear-all-wrapper">
+              <span className="notification-clear-all-btn f-14" onClick={markAllAsRead}>
+                Mark All As Read
+              </span>
+            </div>
+          )}
           {sortedNotificationList?.length > 0 ? (
             sortedNotificationList?.map(notification => (
               <div className="notification-set">
