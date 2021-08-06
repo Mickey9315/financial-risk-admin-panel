@@ -73,12 +73,15 @@ const ApplicationReportAccordion = props => {
         buttonType: 'primary',
         onClick: OnClickFetchReportButton,
         isLoading: viewApplicationFetchReportButtonLoaderAction,
+        isDisabled: partners?.length > 0 && partnersWithCompany?.length <= 0,
       },
     ],
     [
       toggleFetchReportsModal,
       OnClickFetchReportButton,
       viewApplicationFetchReportButtonLoaderAction,
+      partners,
+      partnersWithCompany,
     ]
   );
 
@@ -106,6 +109,7 @@ const ApplicationReportAccordion = props => {
                   options={partnersWithCompany}
                   value={selectedStakeHolder}
                   onChange={handleOnStakeHolderSelect}
+                  isDisabled={partnersWithCompany?.length <= 0}
                 />
               </>
             )}
@@ -119,6 +123,7 @@ const ApplicationReportAccordion = props => {
               options={reportsListForFetch}
               value={selectedReports}
               onChange={handleOnReportSelect}
+              isDisabled={partners?.length > 0 && partnersWithCompany?.length <= 0}
             />
             {partners?.length > 0 && partnersWithCompany?.length <= 0 && (
               <>
