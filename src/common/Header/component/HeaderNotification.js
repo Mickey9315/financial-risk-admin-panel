@@ -103,56 +103,61 @@ const HeaderNotification = () => {
         drawerState={notificationDrawer}
         closeDrawer={() => setNotificationDrawer(false)}
       >
-        {sortedNotificationList?.length > 0 ? (
-          sortedNotificationList?.map(notification => (
-            <div className="notification-set">
-              <div className="notification-set-title">
-                {moment(notification?.createdAt, DATE_FORMAT).calendar(
-                  null,
-                  DATE_FORMAT_CONSTANT_FOR_CALENDER
-                )}
-              </div>
-              {notification?.notifications?.map(singleNotification => (
-                <div
-                  className={`notification-item-wrapper ${
-                    singleNotification?.entityType === 'alert'
-                      ? `${ALERT_TYPE_ROW[singleNotification?.entityId?.priority]} cursor-pointer`
-                      : 'secondary-tag'
-                  }`}
-                  key={singleNotification?._id}
-                  onClick={() => onClickNotification(singleNotification)}
-                >
-                  <div className="notification-date-row">
-                    <div className="notification-date-row-left">
-                      <span className="font-field mr-5">Date:</span>
-                      <span className="font-primary">
-                        {moment(singleNotification?.createdAt).format('DD-MMM-YYYY')}
-                      </span>
-                      {singleNotification?.entityType === 'alert' && (
-                        <span className="ml-10 d-flex align-center">
-                          <span className="material-icons-round">warning</span>
-                          {singleNotification?.entityId?.priority}
-                        </span>
-                      )}
-                    </div>
-                    <span
-                      className="material-icons-round font-placeholder cursor-pointer"
-                      onClick={() =>
-                        dispatch(markNotificationAsReadAndDeleteAction(singleNotification?._id))
-                      }
-                    >
-                      cancel
-                    </span>
-                  </div>
-                  <div className="font-field">Description:</div>
-                  <div className="font-primary">{singleNotification?.description}</div>
+        <>
+          <div className="notification-clear-all-wrapper">
+            <span className="notification-clear-all-btn f-14">Mark All As Read</span>
+          </div>
+          {sortedNotificationList?.length > 0 ? (
+            sortedNotificationList?.map(notification => (
+              <div className="notification-set">
+                <div className="notification-set-title">
+                  {moment(notification?.createdAt, DATE_FORMAT).calendar(
+                    null,
+                    DATE_FORMAT_CONSTANT_FOR_CALENDER
+                  )}
                 </div>
-              ))}
-            </div>
-          ))
-        ) : (
-          <div className="no-record-found">No record found</div>
-        )}
+                {notification?.notifications?.map(singleNotification => (
+                  <div
+                    className={`notification-item-wrapper ${
+                      singleNotification?.entityType === 'alert'
+                        ? `${ALERT_TYPE_ROW[singleNotification?.entityId?.priority]} cursor-pointer`
+                        : 'secondary-tag'
+                    }`}
+                    key={singleNotification?._id}
+                    onClick={() => onClickNotification(singleNotification)}
+                  >
+                    <div className="notification-date-row">
+                      <div className="notification-date-row-left">
+                        <span className="font-field mr-5">Date:</span>
+                        <span className="font-primary">
+                          {moment(singleNotification?.createdAt).format('DD-MMM-YYYY')}
+                        </span>
+                        {singleNotification?.entityType === 'alert' && (
+                          <span className="ml-10 d-flex align-center">
+                            <span className="material-icons-round">warning</span>
+                            {singleNotification?.entityId?.priority}
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        className="material-icons-round font-placeholder cursor-pointer"
+                        onClick={() =>
+                          dispatch(markNotificationAsReadAndDeleteAction(singleNotification?._id))
+                        }
+                      >
+                        cancel
+                      </span>
+                    </div>
+                    <div className="font-field">Description:</div>
+                    <div className="font-primary">{singleNotification?.description}</div>
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            <div className="no-record-found">No record found</div>
+          )}
+        </>
       </Drawer>
       {isAlertModal && (
         <Modal header="Alerts" buttons={alertModalButtons} className="alert-details-modal">
