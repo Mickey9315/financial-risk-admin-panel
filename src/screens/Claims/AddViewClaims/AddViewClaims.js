@@ -24,6 +24,7 @@ import {
 import { addClaimsValidations } from './AddClaimsValidations';
 import Loader from '../../../common/Loader/Loader';
 import { setViewClientActiveTabIndex } from '../../Clients/redux/ClientAction';
+import ClaimsTabContainer from '../components/ClaimsTabContainer';
 
 const AddViewClaims = () => {
   const history = useHistory();
@@ -436,6 +437,7 @@ const AddViewClaims = () => {
           >
             {inputClaims.map(getComponentByType)}
           </div>
+          {type === 'view' && <ClaimsTabContainer />}
           {type === 'add' && (
             <div className="add-overdues-save-button">
               <Button

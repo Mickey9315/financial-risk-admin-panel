@@ -244,6 +244,7 @@ const DebtorsDocumentsTab = () => {
           'content-type': 'multipart/form-data',
         },
       };
+      console.log(formData, config);
       await dispatch(uploadDocument(formData, config));
       dispatchSelectedDebtorDocument({
         type: DEBTOR_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,

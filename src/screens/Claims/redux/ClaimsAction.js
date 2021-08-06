@@ -190,3 +190,41 @@ export const resetClaimDetails = () => {
     });
   };
 };
+
+// Document Actions
+
+export const getClaimsDocumentsListData = (id, params = { page: 1, limit: 15 }) => {
+  return async dispatch => {
+    try {
+      const response = await ClaimsApiServices.ClaimsDocumentServices.getClaimsDocumentsList(
+        id,
+        params
+      );
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: CLAIMS_REDUX_CONSTANTS.DOCUMENTS.FETCH_CLAIMS_DOCUMENTS_LIST,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const uploadClaimDocument = (data, config) => {
+  return async () => {
+    try {
+      const response = await ClaimsApiServices.ClaimsDocumentServices.uploadClaimDocument(
+        data,
+        config
+      );
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response.data.message || 'Document uploaded successfully');
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
