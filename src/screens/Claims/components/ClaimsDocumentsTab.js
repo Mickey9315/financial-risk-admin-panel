@@ -72,9 +72,10 @@ const ClaimsDocumentsTab = () => {
 
   const { documentList } = useSelector(({ claims }) => claims?.documents ?? {});
 
-  const { viewDebtorUploadDocumentButtonLoaderAction } = useSelector(
-    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
-  );
+  const {
+    viewClaimUploadDocumentButtonLoaderAction,
+    viewClaimDownloadDocumentButtonLoaderAction,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => documentList ?? {},
@@ -190,10 +191,10 @@ const ClaimsDocumentsTab = () => {
         title: 'Upload',
         buttonType: 'primary',
         onClick: onClickUploadDocument,
-        isLoading: viewDebtorUploadDocumentButtonLoaderAction,
+        isLoading: viewClaimUploadDocumentButtonLoaderAction,
       },
     ],
-    [onCloseUploadDocumentButton, onClickUploadDocument, viewDebtorUploadDocumentButtonLoaderAction]
+    [onCloseUploadDocumentButton, onClickUploadDocument, viewClaimUploadDocumentButtonLoaderAction]
   );
 
   const checkIfEnterKeyPressed = e => {
@@ -223,10 +224,8 @@ const ClaimsDocumentsTab = () => {
   );
 
   const downloadClaimDocument = useCallback(async docId => {
+    const response = await downloadDocumentFromServer(docId);
     try {
-      console.log(docId);
-      const response = await downloadDocumentFromServer(docId);
-      console.log(response);
       if (response) downloadAll(response);
     } catch (e) {
       /**/
@@ -240,14 +239,14 @@ const ClaimsDocumentsTab = () => {
           className="material-icons-round font-primary cursor-pointer"
           onClick={async e => {
             e.stopPropagation();
-            await downloadClaimDocument(data?.id);
+            if (!viewClaimDownloadDocumentButtonLoaderAction) await downloadClaimDocument(data?.id);
           }}
         >
           cloud_download
         </span>
       ),
     ],
-    []
+    [viewClaimDownloadDocumentButtonLoaderAction]
   );
 
   useEffect(() => {

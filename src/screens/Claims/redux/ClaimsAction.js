@@ -216,14 +216,17 @@ export const getClaimsDocumentsListData = (id, params = { page: 1, limit: 15 }) 
 export const uploadClaimDocument = (data, config) => {
   return async () => {
     try {
+      startGeneralLoaderOnRequest('viewClaimUploadDocumentButtonLoaderAction');
       const response = await ClaimsApiServices.ClaimsDocumentServices.uploadClaimDocument(
         data,
         config
       );
       if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('viewClaimUploadDocumentButtonLoaderAction');
         successNotification(response.data.message || 'Document uploaded successfully');
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('viewClaimUploadDocumentButtonLoaderAction');
       displayErrors(e);
     }
   };
@@ -231,11 +234,14 @@ export const uploadClaimDocument = (data, config) => {
 
 export const downloadDocumentFromServer = async id => {
   try {
+    startGeneralLoaderOnRequest('viewClaimDownloadDocumentButtonLoaderAction');
     const response = await ClaimsApiServices.ClaimsDocumentServices.downloadClaimDocument(id);
     if (response?.statusText === 'OK') {
+      stopGeneralLoaderOnSuccessOrFail('viewClaimDownloadDocumentButtonLoaderAction');
       return response;
     }
   } catch (e) {
+    stopGeneralLoaderOnSuccessOrFail('viewClaimDownloadDocumentButtonLoaderAction');
     displayErrors(e);
   }
   return false;
