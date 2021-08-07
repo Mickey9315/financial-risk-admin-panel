@@ -43,7 +43,7 @@ const ClientCreditLimitTab = () => {
     ViewClientSurrenderCreditLimitButtonLoaderAction,
     ViewClientModifyCreditLimitButtonLoaderAction,
     viewClientDownloadCreditLimitCSVButtonLoaderAction,
-    // clientDecisionLetterDownloadButtonLoaderAction,
+    clientDecisionLetterDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit } = useMemo(() => creditLimitList ?? {}, [
@@ -230,10 +230,11 @@ const ClientCreditLimitTab = () => {
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
-            buttonTitle="Click to download applications"
+            buttonTitle="Click to download decision letter"
             className="download-decision-letter-icon"
-            onClick={() => downloadDecisionLetter(data?.id)}
-            // isLoading={clientDecisionLetterDownloadButtonLoaderAction}
+            onClick={() => {
+              if (!clientDecisionLetterDownloadButtonLoaderAction) downloadDecisionLetter(data?.id);
+            }}
           />
           <Button
             buttonType="outlined-primary-small"
@@ -258,7 +259,7 @@ const ClientCreditLimitTab = () => {
       toggleModifyLimitModal,
       toggleSurrenderModal,
       setCurrentCreditLimitData,
-      // clientDecisionLetterDownloadButtonLoaderAction,
+      clientDecisionLetterDownloadButtonLoaderAction,
     ]
   );
 
