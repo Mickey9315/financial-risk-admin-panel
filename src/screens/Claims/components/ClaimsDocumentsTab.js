@@ -10,7 +10,11 @@ import { errorNotification } from '../../../common/Toast';
 import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import FileUpload from '../../../common/Header/component/FileUpload';
-import { downloadDocumentFromServer, getClaimsDocumentsListData } from '../redux/ClaimsAction';
+import {
+  downloadDocumentFromServer,
+  getClaimsDocumentsListData,
+  uploadClaimDocument,
+} from '../redux/ClaimsAction';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const initialClaimDocumentState = {
@@ -112,7 +116,7 @@ const ClaimsDocumentsTab = () => {
       };
       try {
         console.log(formData, config);
-        // await dispatch(uploadClaimDocument(formData, config));
+        await dispatch(uploadClaimDocument(formData, config));
         dispatchSelectedClaimsDocument({
           type: CLAIMS_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
         });
