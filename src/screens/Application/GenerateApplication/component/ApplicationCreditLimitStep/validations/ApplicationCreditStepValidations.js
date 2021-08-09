@@ -52,6 +52,7 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
       creditLimit,
       outstandingAmount,
       orderOnHand,
+      clientReference,
       note,
     } = data;
 
@@ -66,6 +67,7 @@ export const applicationCreditStepValidations = async (dispatch, data, editAppli
       creditLimit,
       outstandingAmount,
       orderOnHand,
+      clientReference,
       note,
     };
     try {
