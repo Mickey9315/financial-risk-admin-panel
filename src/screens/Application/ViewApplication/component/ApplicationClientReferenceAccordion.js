@@ -19,7 +19,7 @@ const ApplicationClientReferenceAccordion = props => {
   const { clientReference, _id } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const saveClientReference = useCallback(async () => {
-    if (clientReferenceText?.toString()?.trim()?.length <= 0) {
+    if (!clientReferenceText || clientReferenceText?.toString()?.trim()?.length <= 0) {
       errorNotification('Please Enter Client Reference');
     } else {
       const data = {

@@ -19,7 +19,7 @@ const ApplicationCommentAccordion = props => {
   const { comment, _id } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const saveClientComment = useCallback(async () => {
-    if (commentText?.toString()?.trim()?.length <= 0) {
+    if (!commentText || commentText?.toString()?.trim()?.length <= 0) {
       errorNotification('Please Enter Comment');
     } else {
       const data = {

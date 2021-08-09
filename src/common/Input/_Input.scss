@@ -39,7 +39,8 @@
 }
 
 .disabled-control input {
-    font: $subtitle $font-medium !important;
+  font: $subtitle $font-medium !important;
+  cursor: default;
 }
 
 .chips-container {

@@ -208,9 +208,9 @@ background-color: $success-color;
   color: $primary-color;
 }
 
-.current-business-address {
+.current-business-address, .client-reference, .application-comment {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 150px auto;
   align-items: center;
   margin: 10px 0;
 }

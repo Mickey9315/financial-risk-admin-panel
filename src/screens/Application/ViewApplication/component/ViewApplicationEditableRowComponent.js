@@ -96,7 +96,7 @@ const ViewApplicationEditableRowComponent = props => {
           <ReactSelect
             className="react-select-container"
             classNamePrefix="react-select"
-            placeholder="Select Limit Type"
+            placeholder={!isApprovedOrDeclined ? 'Select Limit Type' : '-'}
             name="applicationStatus"
             value={selectedLimitType ?? []}
             options={LimitTypeOptions}
@@ -107,19 +107,25 @@ const ViewApplicationEditableRowComponent = props => {
       </div>
       <div>
         <div className="font-field mt-10">Expiry Date</div>
-        <div className="date-picker-container filter-date-picker-container view-application-status">
+        <div
+          className={`date-picker-container ${
+            isApprovedOrDeclined && 'disabled-control'
+          } view-application-status `}
+        >
           <DatePicker
-            className="filter-date-picker"
             selected={selectedExpiryDate ?? null}
             onChange={handleExpiryDateChange}
-            placeholderText="Expiry Date"
+            placeholderText={!isApprovedOrDeclined ? 'Select Expiry Date' : '-'}
             minDate={new Date()}
             showMonthDropdown
             showYearDropdown
             scrollableYearDropdown
+            disabled={!isAllowToUpdate || isApprovedOrDeclined}
             dateFormat="dd/MM/yyyy"
           />
-          <span className="material-icons-round">event_available</span>
+          {isAllowToUpdate && !isApprovedOrDeclined && (
+            <span className="material-icons-round">event_available</span>
+          )}
         </div>
       </div>
     </div>
