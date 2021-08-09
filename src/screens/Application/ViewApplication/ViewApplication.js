@@ -30,6 +30,7 @@ import { errorNotification } from '../../../common/Toast';
 import Loader from '../../../common/Loader/Loader';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import ViewApplicationStatusComponent from './component/ViewApplicationStatusComponent';
+import ViewApplicationEditableRowComponent from './component/ViewApplicationEditableRowComponent';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -261,6 +262,9 @@ const ViewApplication = () => {
                   <div className="common-white-container">
                     <div className="font-field">Status</div>
                     <ViewApplicationStatusComponent isApprovedOrDeclined={isApprovedOrDeclined} />
+                    <ViewApplicationEditableRowComponent
+                      isApprovedOrDeclined={isApprovedOrDeclined}
+                    />
                     <div className="application-details-grid">
                       {applicationDetails?.map(detail => (
                         <div>

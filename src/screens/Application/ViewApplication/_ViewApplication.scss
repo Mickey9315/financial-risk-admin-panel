@@ -156,6 +156,18 @@ background-color: $success-color;
   }
 }
 
+.application-editable-row-grid{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  .view-application-status {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    margin-right: 10px;
+  }
+}
+
 .application-details-grid {
   display: grid;
   display: -ms-grid;
