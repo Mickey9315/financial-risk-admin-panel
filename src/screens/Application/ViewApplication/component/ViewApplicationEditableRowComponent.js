@@ -1,8 +1,10 @@
 import ReactSelect from 'react-select';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
+import { useParams } from 'react-router-dom';
+import { changeApplicationStatus } from '../../redux/ApplicationAction';
 
 const LimitTypeOptions = [
   {
@@ -34,8 +36,9 @@ const LimitTypeOptions = [
 
 const ViewApplicationEditableRowComponent = props => {
   const { isApprovedOrDeclined } = props;
-  // const { id } = useParams();
-  // const dispatch = useDispatch();
+
+  const dispatch = useDispatch();
+  const { id } = useParams();
 
   const [selectedLimitType, setSelectedLimitType] = useState([]);
   const [selectedExpiryDate, setSelectedExpiryDate] = useState(null);
@@ -48,13 +51,37 @@ const ViewApplicationEditableRowComponent = props => {
     applicationDetail,
   ]);
 
-  const handleApplicationLimitTypeChange = useCallback(e => {
-    setSelectedLimitType(e);
-  }, []);
+  const handleApplicationLimitTypeChange = useCallback(
+    e => {
+      setSelectedLimitType(e);
+      try {
+        const data = {
+          update: 'field',
+          limitType: e?.value,
+        };
+        dispatch(changeApplicationStatus(id, data));
+      } catch (err) {
+        /**/
+      }
+    },
+    [id]
+  );
 
-  const handleExpiryDateChange = useCallback(e => {
-    setSelectedExpiryDate(e);
-  }, []);
+  const handleExpiryDateChange = useCallback(
+    e => {
+      setSelectedExpiryDate(e);
+      try {
+        const data = {
+          update: 'field',
+          expiryDate: e,
+        };
+        dispatch(changeApplicationStatus(id, data));
+      } catch (err) {
+        /**/
+      }
+    },
+    [id]
+  );
 
   useEffect(() => {
     setSelectedLimitType(limitType);

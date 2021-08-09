@@ -982,10 +982,12 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
       );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Application status updated successfully.');
-        dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_STATUS_CHANGE_ACTION,
-          data: statusToChange,
-        });
+        if (statusToChange) {
+          dispatch({
+            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_STATUS_CHANGE_ACTION,
+            data: statusToChange,
+          });
+        }
       }
     } catch (e) {
       if (e?.response?.data?.status === 'AUTOMATION_IN_PROCESS') {
