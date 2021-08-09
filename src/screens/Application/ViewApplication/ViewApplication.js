@@ -75,7 +75,6 @@ const ViewApplication = () => {
 
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
-  console.log(isApprovedOrDeclined);
 
   const {
     tradingName,

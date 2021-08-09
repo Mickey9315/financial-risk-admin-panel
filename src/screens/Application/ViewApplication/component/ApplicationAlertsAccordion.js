@@ -26,8 +26,6 @@ const ApplicationAlertsAccordion = props => {
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
-  console.log(alertDetail);
-
   const onSelectAlert = useCallback(alertId => {
     dispatch(getApplicationAlertsDetail(alertId));
     setIsAlertModal(true);

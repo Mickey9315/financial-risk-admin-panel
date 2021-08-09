@@ -115,7 +115,6 @@ const ClaimsDocumentsTab = () => {
         },
       };
       try {
-        console.log(formData, config);
         await dispatch(uploadClaimDocument(formData, config));
         dispatchSelectedClaimsDocument({
           type: CLAIMS_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
@@ -127,8 +126,6 @@ const ClaimsDocumentsTab = () => {
       }
     }
   }, [selectedClaimsDocument, fileData, toggleUploadModel, id]);
-
-  console.log(fileData);
 
   const onUploadClick = useCallback(e => {
     // e.persist();

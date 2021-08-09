@@ -66,7 +66,6 @@ const ViewApplicationStatusComponent = props => {
     } else if (statusToChange?.value === 'APPROVED' && newCreditLimit > creditLimit) {
       errorNotification("Can't approve more credit limit than requested");
     } else if (!commentText || commentText?.toString()?.trim()?.length <= 0) {
-      console.log(commentText);
       errorNotification('Please enter comment to continue!');
     } else {
       try {
@@ -84,8 +83,6 @@ const ViewApplicationStatusComponent = props => {
       }
     }
   }, [newCreditLimit, toggleModifyLimitModal, statusToChange, id, creditLimit, commentText]);
-
-  console.log(commentText);
 
   const modifyLimitButtons = useMemo(
     () => [

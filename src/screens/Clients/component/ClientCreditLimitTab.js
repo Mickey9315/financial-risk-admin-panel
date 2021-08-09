@@ -184,7 +184,6 @@ const ClientCreditLimitTab = () => {
           const res = await dispatch(downloadClientCreditLimitDecisionLetter(creditLimitId));
           if (res) downloadAll(res);
         } catch (e) {
-          console.log(e?.response);
           // errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
         }
       } else {

@@ -82,7 +82,7 @@ const Header = () => {
         name: name ?? '',
         email: email ?? '',
         contactNumber: contactNumber ?? '',
-        profilePictureUrl: profilePictureUrl ?? '',
+        profilePictureUrl: profilePictureUrl || '',
         changed: changed ?? false,
       };
     }
@@ -296,6 +296,8 @@ const Header = () => {
     }
     return () => disconnectWebSocket();
   }, []);
+
+  console.log(profilePictureUrl);
 
   return (
     <div className="header-container">
