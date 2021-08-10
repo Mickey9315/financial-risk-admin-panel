@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap.css';
+import moment from 'moment';
 import Drawer from '../Drawer/Drawer';
 import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
@@ -11,6 +11,7 @@ import DropdownMenu from '../DropdownMenu/DropdownMenu';
 import { successNotification } from '../Toast';
 import ExpandedTableHelper from '../../screens/Overdues/Components/ExpandedTableHelper';
 import { NumberCommaSeparator } from '../../helpers/NumberCommaSeparator';
+import EditableDrawer from './EditableDrawer';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -26,6 +27,8 @@ const drawerInitialState = {
   visible: false,
   data: [],
   drawerHeader: '',
+  isEditableDrawer: false,
+  id: '',
 };
 
 const drawerReducer = (state, action) => {
@@ -35,6 +38,8 @@ const drawerReducer = (state, action) => {
         visible: true,
         data: action.data,
         drawerHeader: action.drawerHeader,
+        isEditableDrawer: action?.isEditableDrawer,
+        id: action?.id,
       };
     case DRAWER_ACTIONS.HIDE_DRAWER:
       return { ...drawerInitialState };
@@ -63,6 +68,7 @@ const Table = props => {
     haveActions,
     showCheckbox,
     onChangeRowSelection,
+    isEditableDrawer,
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -82,23 +88,33 @@ const Table = props => {
     [expandedRowId]
   );
 
-  const handleDrawerState = useCallback(async (header, currentData, row) => {
-    try {
-      const response = await TableApiService.tableActions({
-        url: header.request.url ?? header.request[currentData.type],
-        method: header.request.method,
-        id: currentData.id ?? currentData._id ?? row._id,
-      });
+  const handleDrawerState = useCallback(
+    async (header, currentData, row) => {
+      const params = {};
+      if (isEditableDrawer) {
+        params.isEditableDrawer = isEditableDrawer;
+      }
+      try {
+        const response = await TableApiService.tableActions({
+          url: header.request.url ?? header.request[currentData.type],
+          method: header.request.method,
+          id: currentData.id ?? currentData._id ?? row._id,
+          params,
+        });
 
-      dispatchDrawerState({
-        type: DRAWER_ACTIONS.SHOW_DRAWER,
-        data: response.data.data.response,
-        drawerHeader: response.data.data.header,
-      });
-    } catch (e) {
-      /**/
-    }
-  }, []);
+        dispatchDrawerState({
+          type: DRAWER_ACTIONS.SHOW_DRAWER,
+          data: response.data.data.response,
+          drawerHeader: response.data.data.header,
+          isEditableDrawer,
+          id: currentData.id ?? currentData._id ?? row._id,
+        });
+      } catch (e) {
+        /**/
+      }
+    },
+    [isEditableDrawer]
+  );
 
   const handleCheckBoxState = useCallback(
     async (value, header, currentData, row) => {
@@ -281,6 +297,7 @@ Table.propTypes = {
   haveActions: PropTypes.bool,
   showCheckbox: PropTypes.bool,
   onChangeRowSelection: PropTypes.func,
+  isEditableDrawer: PropTypes.bool,
 };
 
 Table.defaultProps = {
@@ -301,6 +318,7 @@ Table.defaultProps = {
   recordActionClick: () => {},
   refreshData: () => {},
   onChangeRowSelection: () => {},
+  isEditableDrawer: false,
 };
 
 export default Table;
@@ -553,10 +571,39 @@ function TableLinkDrawer(props) {
         return row?.value ? `${row?.value} %` : '-';
       case 'date':
         return row?.value ? moment(row?.value)?.format('DD-MMM-YYYY') : '-';
+
+      case 'editableString':
+        if (drawerState?.isEditableDrawer) {
+          return (
+            <EditableDrawer
+              row={row}
+              editableField="LIMIT_TYPE"
+              id={drawerState?.id}
+              drawerData={drawerState?.data}
+            />
+          );
+        }
+        return row?.value || '-';
+
+      case 'editableDate':
+        if (drawerState?.isEditableDrawer) {
+          return (
+            <EditableDrawer
+              row={row}
+              editableField="EXPIRY_DATE"
+              id={drawerState?.id}
+              drawerData={drawerState?.data}
+            />
+          );
+        }
+        return row?.value ? moment(row?.value)?.format('DD-MMM-YYYY') : '-';
+
       default:
         return row?.value || '-';
     }
   };
+
+  console.log(drawerState);
 
   return (
     <Drawer
@@ -581,8 +628,8 @@ TableLinkDrawer.propTypes = {
     visible: PropTypes.bool.isRequired,
     data: PropTypes.array.isRequired,
     drawerHeader: PropTypes.string.isRequired,
+    isEditableDrawer: PropTypes.bool.isRequired,
+    id: PropTypes.string.isRequired,
   }).isRequired,
   closeDrawer: PropTypes.func.isRequired,
 };
-
-TableLinkDrawer.defaultProps = {};

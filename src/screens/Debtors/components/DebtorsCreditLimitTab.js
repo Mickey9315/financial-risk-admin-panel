@@ -369,6 +369,7 @@ const DebtorsCreditLimitTab = () => {
                 data={docs}
                 headers={headers}
                 tableButtonActions={creditLimitAction}
+                isEditableDrawer
               />
             </div>
             <Pagination
