@@ -60,7 +60,7 @@ export const claims = (state = initialClaims, action) => {
     case CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_ENTITY_LIST: {
       const list = action.data.map(record => ({
         label: record.name,
-        value: record._id,
+        value: record?.crmClientId,
       }));
       return {
         ...state,

@@ -11,6 +11,13 @@ import { errorNotification } from '../../../../common/Toast';
 import { NUMBER_REGEX } from '../../../../constants/RegexConstants';
 import { changeApplicationStatus } from '../../redux/ApplicationAction';
 
+const APPLICATION_STATUS = {
+  WITHDRAWN: 'Withdraw',
+  CANCELLED: 'Cancel',
+  APPROVED: 'Approve',
+  DECLINED: 'Decline',
+};
+
 const ViewApplicationStatusComponent = props => {
   const { isApprovedOrDeclined } = props;
   const { id } = useParams();
@@ -24,6 +31,7 @@ const ViewApplicationStatusComponent = props => {
     () => applicationDetail ?? {},
     [applicationDetail]
   );
+
   const [showConfirmModal, setShowConfirmationModal] = useState(false);
   const [statusToChange, setStatusToChange] = useState({});
   const [newCreditLimit, setNewCreditLimit] = useState('');
@@ -103,14 +111,32 @@ const ViewApplicationStatusComponent = props => {
     [toggleModifyLimitModal, modifyLimit, creditLimit]
   );
 
+  const handleStatusChange = useCallback(async () => {
+    try {
+      await dispatch(
+        changeApplicationStatus(
+          _id,
+          { update: 'credit-limit', status: statusToChange?.value },
+          statusToChange
+        )
+      );
+      toggleConfirmationModal();
+      setStatusToChange([]);
+    } catch (err) {
+      /**/
+    }
+  }, [statusToChange]);
+
   const handleApplicationStatusChange = useCallback(
     async e => {
-      if (['CANCELLED', 'SURRENDERED', 'WITHDRAWN'].includes(e?.value)) {
+      if (['CANCELLED', 'WITHDRAWN'].includes(e?.value)) {
         setStatusToChange(e);
         toggleConfirmationModal();
       } else {
         try {
-          await dispatch(changeApplicationStatus(_id, { status: e?.value }, e));
+          await dispatch(
+            changeApplicationStatus(_id, { update: 'credit-limit', status: e?.value }, e)
+          );
         } catch (err) {
           /**/
         }
@@ -123,9 +149,9 @@ const ViewApplicationStatusComponent = props => {
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
       {
-        title: 'Decline',
+        title: APPLICATION_STATUS[statusToChange?.value],
         buttonType: 'danger',
-        onClick: modifyLimit,
+        onClick: statusToChange?.value === 'DECLINE' ? modifyLimit : handleStatusChange,
       },
     ],
     [toggleConfirmationModal, statusToChange, _id, modifyLimit]
@@ -206,25 +232,29 @@ const ViewApplicationStatusComponent = props => {
       {showConfirmModal && (
         <Modal
           className="add-to-crm-modal"
-          header="Decline Application"
+          header={`${APPLICATION_STATUS[statusToChange?.value]} Application`}
           buttons={changeStatusButton}
           hideModal={toggleConfirmationModal}
         >
           <>
-            <div className="font-field mb-30">
-              Are you sure you want to decline this application?
+            <div className="f-16 font-field mb-30">
+              {`Are you sure you want to ${APPLICATION_STATUS[statusToChange?.value]
+                .toString()
+                .toLowerCase()} this application?`}
             </div>
-            <div className="add-notes-popup-container">
-              <span>Comment</span>
-              <Input
-                prefixClass="font-placeholder"
-                placeholder="Enter Comment"
-                name="comment"
-                type="text"
-                value={commentText}
-                onChange={e => setCommentText(e?.target?.value)}
-              />
-            </div>
+            {statusToChange?.value === 'DECLINED' && (
+              <div className="add-notes-popup-container">
+                <span>Comment</span>
+                <Input
+                  prefixClass="font-placeholder"
+                  placeholder="Enter Comment"
+                  name="comment"
+                  type="text"
+                  value={commentText}
+                  onChange={e => setCommentText(e?.target?.value)}
+                />
+              </div>
+            )}
           </>
         </Modal>
       )}
