@@ -369,7 +369,7 @@ function Row(props) {
               ? `completedTask ${rowClass}`
               : rowClass
           }
-              ${dataIndex % 2 === 0 ? 'bg-background-color' : 'bg-white'}
+              ${dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}
         `}
       >
         {showCheckbox && (
