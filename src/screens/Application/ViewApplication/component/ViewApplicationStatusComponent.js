@@ -63,6 +63,7 @@ const ViewApplicationStatusComponent = props => {
   }, [statusToChange]);
 
   const modifyLimit = useCallback(async () => {
+    console.log(statusToChange);
     if (statusToChange?.value === 'APPROVED' && newCreditLimit?.toString()?.trim().length <= 0) {
       errorNotification('Please provide credit limit');
     } else if (
@@ -73,12 +74,21 @@ const ViewApplicationStatusComponent = props => {
       errorNotification('Please provide valid credit limit');
     } else if (statusToChange?.value === 'APPROVED' && newCreditLimit > creditLimit) {
       errorNotification("Can't approve more credit limit than requested");
-    } else if (!commentText || commentText?.toString()?.trim()?.length <= 0) {
+    } else if (
+      statusToChange?.value === 'APPROVED' &&
+      (!commentText || commentText?.toString()?.trim()?.length <= 0) &&
+      newCreditLimit < creditLimit
+    ) {
+      errorNotification('Please enter comment to continue!');
+    } else if (
+      statusToChange?.value === 'DECLINED' &&
+      (!commentText || commentText?.toString()?.trim()?.length <= 0)
+    ) {
       errorNotification('Please enter comment to continue!');
     } else {
       try {
         const data = {
-          update: 'creditLimit',
+          update: 'credit-limit',
           status: statusToChange?.value,
           comment: commentText,
         };
@@ -144,14 +154,15 @@ const ViewApplicationStatusComponent = props => {
     },
     [toggleConfirmationModal, _id, setStatusToChange, statusToChange]
   );
-
   const changeStatusButton = useMemo(
     () => [
       { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
       {
         title: APPLICATION_STATUS[statusToChange?.value],
         buttonType: 'danger',
-        onClick: statusToChange?.value === 'DECLINE' ? modifyLimit : handleStatusChange,
+        onClick: ['DECLINED', 'APPROVED'].includes(statusToChange?.value)
+          ? modifyLimit
+          : handleStatusChange,
       },
     ],
     [toggleConfirmationModal, statusToChange, _id, modifyLimit]
@@ -161,6 +172,8 @@ const ViewApplicationStatusComponent = props => {
     setNewCreditLimit(creditLimit);
     setCommentText(comment);
   }, [creditLimit, comment]);
+
+  console.log(statusToChange);
 
   const rightSideStatusButtons = useMemo(() => {
     if (!['DECLINED', 'APPROVED'].includes(status?.value)) {

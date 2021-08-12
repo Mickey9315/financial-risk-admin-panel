@@ -17,7 +17,7 @@ const ApplicationCreditLimitStep = () => {
     outstandingAmount,
     orderOnHand,
     note,
-    clientReference,
+    // clientReference,
     errors,
   } = useSelector(({ application }) => application?.editApplication?.creditLimit ?? {});
 
@@ -203,22 +203,22 @@ const ApplicationCreditLimitStep = () => {
         {errors?.note && <div className="ui-state-error">{errors?.note}</div>}
       </div>
 
-      <div>
-        <span className="f-14 font-primary">Client Reference</span>
-        <div>
-          <Input
-            type="text"
-            name="clientReference"
-            placeholder="Enter Client Reference"
-            value={clientReference}
-            borderClass="mt-5"
-            onChange={handleInputChange}
-          />
-          {errors?.clientReference && (
-            <div className="ui-state-error">{errors?.clientReference}</div>
-          )}
-        </div>
-      </div>
+      {/* <div> */}
+      {/*  <span className="f-14 font-primary">Client Reference</span> */}
+      {/*  <div> */}
+      {/*    <Input */}
+      {/*      type="text" */}
+      {/*      name="clientReference" */}
+      {/*      placeholder="Enter Client Reference" */}
+      {/*      value={clientReference} */}
+      {/*      borderClass="mt-5" */}
+      {/*      onChange={handleInputChange} */}
+      {/*    /> */}
+      {/*    {errors?.clientReference && ( */}
+      {/*      <div className="ui-state-error">{errors?.clientReference}</div> */}
+      {/*    )} */}
+      {/*  </div> */}
+      {/* </div> */}
     </>
   );
 };
