@@ -360,6 +360,7 @@ const ClientCreditLimitTab = () => {
                 data={docs}
                 headers={headers}
                 tableButtonActions={creditLimitAction}
+                isEditableDrawer
               />
             </div>
             <Pagination
