@@ -30,6 +30,9 @@ import { errorNotification } from '../../../common/Toast';
 import Loader from '../../../common/Loader/Loader';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import ViewApplicationStatusComponent from './component/ViewApplicationStatusComponent';
+import ViewApplicationEditableRowComponent from './component/ViewApplicationEditableRowComponent';
+import ApplicationClientReferenceAccordion from './component/ApplicationClientReferenceAccordion';
+import ApplicationCommentAccordion from './component/ApplicationCommentAccordion';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -262,9 +265,9 @@ const ViewApplication = () => {
                   <div className="common-white-container">
                     <div className="font-field">Status</div>
                     <ViewApplicationStatusComponent isApprovedOrDeclined={isApprovedOrDeclined} />
-                    {/* <ViewApplicationEditableRowComponent */}
-                    {/*  isApprovedOrDeclined={isApprovedOrDeclined} */}
-                    {/* /> */}
+                    <ViewApplicationEditableRowComponent
+                      isApprovedOrDeclined={isApprovedOrDeclined}
+                    />
                     <div className="application-details-grid">
                       {applicationDetails?.map(detail => (
                         <div>
@@ -347,8 +350,8 @@ const ViewApplication = () => {
                       <ApplicationAlertsAccordion index={3} />
                       <ApplicationDocumentsAccordion applicationId={id} index={4} />
                       <ApplicationLogsAccordion index={5} />
-                      {/* <ApplicationClientReferenceAccordion index={6} /> */}
-                      {/* <ApplicationCommentAccordion index={7} /> */}
+                      <ApplicationClientReferenceAccordion index={6} />
+                      <ApplicationCommentAccordion index={7} />
                     </Accordion>
                   </div>
                 </div>
