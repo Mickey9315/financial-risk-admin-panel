@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useReducer, useState} from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap.css';
 import moment from 'moment';
 import Drawer from '../Drawer/Drawer';
-import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
+import {processTableDataByType} from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
 import Checkbox from '../Checkbox/Checkbox';
 import DropdownMenu from '../DropdownMenu/DropdownMenu';
-import { successNotification } from '../Toast';
+import {successNotification} from '../Toast';
 import ExpandedTableHelper from '../../screens/Overdues/Components/ExpandedTableHelper';
-import { NumberCommaSeparator } from '../../helpers/NumberCommaSeparator';
+import {NumberCommaSeparator} from '../../helpers/NumberCommaSeparator';
 import EditableDrawer from './EditableDrawer';
 
 export const TABLE_ROW_ACTIONS = {
@@ -69,6 +69,7 @@ const Table = props => {
     showCheckbox,
     onChangeRowSelection,
     isEditableDrawer,
+      handleRedirectClick
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -165,6 +166,7 @@ const Table = props => {
       handleDrawerState,
       handleCheckBoxState,
       handleViewDocument,
+      handleRedirectClick
     };
 
     return data.map((e, index) => {
@@ -178,7 +180,7 @@ const Table = props => {
       finalObj.dataToExpand = isExpandable ? e?.debtors : undefined;
       return finalObj;
     });
-  }, [data, handleDrawerState, isExpandable, handleCheckBoxState, handleViewDocument]);
+  }, [data, handleDrawerState, isExpandable, handleCheckBoxState, handleViewDocument,handleRedirectClick]);
 
   const onRowSelectedDataChange = useCallback(
     current => {
@@ -298,6 +300,7 @@ Table.propTypes = {
   showCheckbox: PropTypes.bool,
   onChangeRowSelection: PropTypes.func,
   isEditableDrawer: PropTypes.bool,
+  handleRedirectClick: PropTypes.func,
 };
 
 Table.defaultProps = {
@@ -319,6 +322,7 @@ Table.defaultProps = {
   refreshData: () => {},
   onChangeRowSelection: () => {},
   isEditableDrawer: false,
+  handleRedirectClick: () => {}
 };
 
 export default Table;
@@ -344,7 +348,6 @@ function Row(props) {
     onRowSelectedDataChange,
     refreshData,
   } = props;
-
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
@@ -602,8 +605,6 @@ function TableLinkDrawer(props) {
         return row?.value || '-';
     }
   };
-
-  console.log(drawerState);
 
   return (
     <Drawer

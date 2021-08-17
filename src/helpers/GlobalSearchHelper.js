@@ -70,7 +70,7 @@ export const handleGlobalSearchSelect = (data, history) => {
         break;
       case 'application':
         if (status === 'DRAFT')
-          history.push(`/applications/application/generate/?applicationId=${_id}`);
+          history.push(`/applications/generate/?applicationId=${_id}`);
         else history.push(`/applications/detail/view/${_id}`);
         break;
       case 'client':

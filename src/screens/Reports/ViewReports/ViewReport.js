@@ -113,7 +113,6 @@ const ViewReport = () => {
       if (currentFilter.filter === 'reviewReport') {
         params.date = reviewReportFilterDate || undefined;
       }
-      console.log(reviewReportFilterDate);
       try {
         await dispatch(getReportList(params));
         dispatch(applyFinalFilter(currentFilter.filter));

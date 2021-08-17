@@ -107,7 +107,7 @@ export const ROUTES_CONSTANTS = [
     authenticated: true,
   },
   {
-    path: '/applications/application/:action/',
+    path: '/applications/:action/',
     component: GenerateApplication,
     authenticated: true,
   },

@@ -97,8 +97,6 @@ const DebtorsAlertsTab = () => {
     }
   };
 
-  console.log(alertDetail?.alertPriority);
-
   return (
     <>
       <div className="tab-content-header-row">

@@ -34,6 +34,7 @@ import ImportApplicationModal from '../ImportApplication/ImportApplicationModal'
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
+import CustomSelect from '../../../common/CustomSelect/CustomSelect';
 
 const ApplicationList = () => {
   const history = useHistory();
@@ -80,6 +81,8 @@ const ApplicationList = () => {
     finalFilter: {},
   });
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
+  const defaultApplicationStatus =
+    'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION';
 
   const appliedFilters = useMemo(() => {
     return {
@@ -102,10 +105,6 @@ const ApplicationList = () => {
       endDate: tempFilter?.endDate || undefined,
     };
   }, [{ ...tempFilter }]);
-
-  useEffect(() => {
-    dispatch(getApplicationFilter());
-  }, []);
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({
@@ -153,7 +152,7 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'status',
-      value: event?.value,
+      value: event?.map(value => value.value).join(','),
     });
   }, []);
   const handleMinLimitChange = useCallback(
@@ -342,6 +341,12 @@ const ApplicationList = () => {
     dispatch(changeApplicationColumnNameList(data));
   }, []);
 
+  useEffect(() => {
+    dispatch(getApplicationFilter());
+  }, []);
+
+  console.log(paramStatus);
+
   useEffect(async () => {
     const params = {
       page: paramPage ?? page ?? 1,
@@ -361,7 +366,9 @@ const ApplicationList = () => {
           ? paramDebtorId
           : applicationListFilters?.debtorId,
       status:
-        (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : applicationListFilters?.status,
+        (paramStatus?.trim()?.length ?? -1) > 0
+          ? paramStatus
+          : applicationListFilters?.status || defaultApplicationStatus,
       minCreditLimit:
         (paramMinCreditLimit?.trim()?.length ?? -1) > 0
           ? paramMinCreditLimit
@@ -392,7 +399,7 @@ const ApplicationList = () => {
         value: 'AUS',
       })
     );
-    history.push(`/applications/application/generate/`);
+    history.push(`/applications/generate/`);
   }, []);
 
   // for params in url
@@ -408,7 +415,10 @@ const ApplicationList = () => {
         finalFilter?.clientId?.toString()?.trim()?.length > 0 ? finalFilter?.clientId : undefined,
       debtorId:
         finalFilter?.debtorId?.toString()?.trim()?.length > 0 ? finalFilter?.debtorId : undefined,
-      status: finalFilter?.status?.toString()?.trim()?.length > 0 ? finalFilter?.status : undefined,
+      status:
+        finalFilter?.status?.toString()?.trim()?.length > 0
+          ? finalFilter?.status
+          : undefined,
       minCreditLimit:
         finalFilter?.minCreditLimit?.toString()?.trim()?.length > 0
           ? finalFilter?.minCreditLimit
@@ -441,9 +451,12 @@ const ApplicationList = () => {
     });
     return foundValue ?? [];
   }, [tempFilter?.debtorId, dropdownData]);
+
   const applicationStatusSelectedValue = useMemo(() => {
-    const foundValue = dropdownData?.applicationStatus?.find(e => {
-      return (e?.value ?? '') === tempFilter?.status;
+    const foundValue = dropdownData?.applicationStatus?.filter(e => {
+      return (
+        tempFilter?.status?.split(',').includes(e.value)
+      );
     });
     return foundValue ?? [];
   }, [tempFilter?.status, dropdownData]);
@@ -451,7 +464,7 @@ const ApplicationList = () => {
   // eslint-disable-next-line no-shadow
   const viewApplicationOnSelectRecord = useCallback((id, data) => {
     if (data?.status === 'Draft') {
-      history.push(`/applications/application/generate/?applicationId=${id}`);
+      history.push(`/applications/generate/?applicationId=${id}`);
     } else {
       history.push(`/applications/detail/view/${id}`);
     }
@@ -592,15 +605,12 @@ const ApplicationList = () => {
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Application Status</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
-                  placeholder="Select Status"
-                  name="role"
+                <CustomSelect
+                  className="application-status-select"
                   options={dropdownData?.applicationStatus}
+                  placeholder="Select Status"
+                  onChangeCustomSelect={handleApplicationStatusFilterChange}
                   value={applicationStatusSelectedValue}
-                  onChange={handleApplicationStatusFilterChange}
-                  isSearchble
                 />
               </div>
               <div className="filter-modal-row">

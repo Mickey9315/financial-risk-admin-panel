@@ -9,10 +9,11 @@
   }
 }
 
-textarea {
-  width: 100%;
+.step-content textarea {
   grid-column: 2/ 7;
-  $font:$subtitle $font-regular;
+  width: 100%;
+  margin-top: 5px;
+  font: $subtitle $font-regular;
   color: $field-color;
   word-break: break-all;
 }

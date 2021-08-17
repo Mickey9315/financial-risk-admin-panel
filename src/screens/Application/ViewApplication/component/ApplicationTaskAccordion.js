@@ -183,36 +183,36 @@ const ApplicationTaskAccordion = props => {
   const INPUTS = useMemo(
     () => [
       {
-        label: 'Title',
-        placeholder: 'Enter title',
+        label: 'Description',
+        placeholder: 'Enter description',
         type: 'text',
-        name: 'title',
+        name: 'description',
         data: [],
       },
       {
         label: 'Assignee',
-        placeholder: 'Select Assignee',
+        placeholder: 'Select assignee',
         type: 'select',
         name: 'assigneeId',
         data: assigneeList,
       },
       {
         label: 'Priority',
-        placeholder: 'Select Priority',
+        placeholder: 'Select priority',
         type: 'select',
         name: 'priority',
         data: priorityData,
       },
       {
         label: 'Due Date',
-        placeholder: 'Select Date',
+        placeholder: 'Select date',
         type: 'date',
         name: 'dueDate',
         data: [],
       },
       {
         label: 'Task For',
-        placeholder: 'Select Task For',
+        placeholder: 'Select task for',
         type: 'select',
         name: 'entityType',
         data: entityTypeData,
@@ -222,7 +222,7 @@ const ApplicationTaskAccordion = props => {
       },
       {
         label: 'Entity Labels',
-        placeholder: 'Select Entity',
+        placeholder: 'Select entity',
         type: 'select',
         name: 'entityId',
         data: entityList,
@@ -231,10 +231,10 @@ const ApplicationTaskAccordion = props => {
         type: 'blank',
       },
       {
-        label: 'Description',
-        placeholder: 'Enter Description',
-        type: 'text',
-        name: 'description',
+        label: 'Comments',
+        placeholder: 'Enter comments',
+        type: 'textarea',
+        name: 'comments',
       },
     ],
     [assigneeList, entityList, priorityData, entityTypeData, addTaskState]
@@ -300,7 +300,7 @@ const ApplicationTaskAccordion = props => {
 
   const onSaveTaskClick = useCallback(async () => {
     const data = {
-      title: addTaskState?.title?.trim() || '',
+      description: addTaskState?.description?.trim() || '',
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId?.value,
       assigneeType: addTaskState?.assigneeId?.type ?? addTaskState?.assigneeType,
@@ -308,11 +308,11 @@ const ApplicationTaskAccordion = props => {
       priority: addTaskState?.priority?.value ?? undefined,
       entityType: entityType?.value ?? undefined,
       entityId: addTaskState?.entityId?.value ?? undefined,
-      description: addTaskState?.description?.trim() ?? undefined,
+      comments: addTaskState?.comments?.trim() ?? undefined,
     };
 
-    if (!data.title && data.title.length === 0) {
-      errorNotification('Please add title');
+    if (!data.description && data.description.length === 0) {
+      errorNotification('Please add description');
     } else {
       try {
         if (editTaskModal) {
@@ -394,6 +394,22 @@ const ApplicationTaskAccordion = props => {
               <div />
               <div />
             </>
+          );
+          break;
+        }
+        case 'textarea': {
+          component = (
+              <>
+                <span>{input.label}</span>
+                <textarea
+                    name={input.name}
+                    value={input?.value}
+                    rows={4}
+                    className={input?.class}
+                    placeholder={input.placeholder}
+                    onChange={handleTextInputChange}
+                />
+              </>
           );
           break;
         }
@@ -483,10 +499,10 @@ const ApplicationTaskAccordion = props => {
                 <div className="document-title-row">
                   <Tooltip
                     overlayClassName="tooltip-left-class"
-                    overlay={task.title || 'No task title set'}
+                    overlay={task.description || 'No task title set'}
                     placement="left"
                   >
-                    <div className="document-title">{task.title || '-'}</div>
+                    <div className="document-title">{task.description || '-'}</div>
                   </Tooltip>
 
                   <div className="d-flex">
@@ -518,7 +534,7 @@ const ApplicationTaskAccordion = props => {
                 </div>
                 <div className="font-field">Description:</div>
                 <div className="view-application-accordion-description">
-                  {task.description || '-'}
+                  {task.comments || '-'}
                 </div>
               </div>
             ))

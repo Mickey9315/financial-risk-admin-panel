@@ -297,8 +297,6 @@ const Header = () => {
     return () => disconnectWebSocket();
   }, []);
 
-  console.log(profilePictureUrl);
-
   return (
     <div className="header-container">
       <div className="screen-title">

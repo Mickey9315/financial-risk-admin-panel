@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -22,6 +22,8 @@ const DebtorsApplicationTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
+  const history = useHistory();
+
   const {
     applicationList,
     debtorsApplicationColumnNameList,
@@ -167,6 +169,11 @@ const DebtorsApplicationTab = () => {
     }
   };
 
+  const handleApplicationRedirectLink = useCallback(row => {
+      history.replace(row?.status === 'Draft' ? `/applications/generate/?applicationId=${row._id}` :
+          `/applications/detail/view/${row._id}`)
+  }, [])
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -200,6 +207,7 @@ const DebtorsApplicationTab = () => {
                 tableClass="white-header-table"
                 data={docs}
                 headers={headers}
+                handleRedirectClick={row => handleApplicationRedirectLink(row)}
               />
             </div>
             <Pagination

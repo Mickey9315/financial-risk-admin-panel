@@ -63,7 +63,6 @@ const ViewApplicationStatusComponent = props => {
   }, [statusToChange]);
 
   const modifyLimit = useCallback(async () => {
-    console.log(statusToChange);
     if (statusToChange?.value === 'APPROVED' && newCreditLimit?.toString()?.trim().length <= 0) {
       errorNotification('Please provide credit limit');
     } else if (
@@ -172,8 +171,6 @@ const ViewApplicationStatusComponent = props => {
     setNewCreditLimit(creditLimit);
     setCommentText(comment);
   }, [creditLimit, comment]);
-
-  console.log(statusToChange);
 
   const rightSideStatusButtons = useMemo(() => {
     if (!['DECLINED', 'APPROVED'].includes(status?.value)) {

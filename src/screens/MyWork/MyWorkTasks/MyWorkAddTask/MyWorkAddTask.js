@@ -54,10 +54,10 @@ const MyWorkAddTask = () => {
   const INPUTS = useMemo(
     () => [
       {
-        label: 'Title',
-        placeholder: 'Enter title',
+        label: 'Description',
+        placeholder: 'Enter description',
         type: 'text',
-        name: 'title',
+        name: 'description',
         data: [],
       },
       {
@@ -102,10 +102,10 @@ const MyWorkAddTask = () => {
         type: 'blank',
       },
       {
-        label: 'Description',
-        placeholder: 'Enter Description',
-        type: 'text',
-        name: 'description',
+        label: 'Comments',
+        placeholder: 'Enter comments',
+        type: 'textarea',
+        name: 'comments',
       },
     ],
     [assigneeList, entityList, addTaskState, priorityData, entityTypeData]
@@ -163,7 +163,7 @@ const MyWorkAddTask = () => {
 
   const onSaveTask = useCallback(async () => {
     const data = {
-      title: addTaskState?.title?.trim(),
+      description: addTaskState?.description?.trim(),
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeId: addTaskState?.assigneeId?.value,
       assigneeType: addTaskState?.assigneeId?.type,
@@ -171,11 +171,11 @@ const MyWorkAddTask = () => {
       priority: addTaskState?.priority?.value ?? undefined,
       entityType: entityType?.value ?? undefined,
       entityId: addTaskState?.entityId?.value ?? undefined,
-      description: addTaskState?.description?.trim() ?? undefined,
+      comments: addTaskState?.comments?.trim() ?? undefined,
     };
 
-    if (!data?.title && (data?.title?.length ?? -1) === 0) {
-      errorNotification('Please add title');
+    if (!data?.description && (data?.description?.length ?? -1) === 0) {
+      errorNotification('Please add description');
     } else {
       try {
         await dispatch(saveTaskData(data, backToTaskList));
@@ -258,6 +258,22 @@ const MyWorkAddTask = () => {
           );
           break;
         }
+          case 'textarea': {
+              component = (
+                  <>
+                      <span>{input.label}</span>
+                      <textarea
+                          name={input.name}
+                          value={input?.value}
+                          rows={4}
+                          className={input?.class}
+                          placeholder={input.placeholder}
+                          onChange={handleTextInputChange}
+                      />
+                  </>
+              );
+              break;
+          }
         default:
           return null;
       }

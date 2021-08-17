@@ -42,6 +42,7 @@ const MyWorkTasks = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
+  const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
   const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? {}, [
     taskListData,
@@ -128,7 +129,7 @@ const MyWorkTasks = () => {
           priority: (tempFilter?.priority?.length ?? -1) > 0 ? tempFilter?.priority : undefined,
           isCompleted: tempFilter?.isCompleted || undefined,
           assigneeId:
-            (tempFilter?.assigneeId?.length ?? -1) > 0 ? tempFilter?.assigneeId : undefined,
+            (tempFilter?.assigneeId?.length ?? -1) > 0 ? tempFilter?.assigneeId : userId,
           startDate: tempFilter?.startDate ?? undefined,
           endDate: tempFilter?.endDate ?? undefined,
           columnFor: 'task',
@@ -147,12 +148,12 @@ const MyWorkTasks = () => {
         }
       }
     },
-    [total, pages, page, limit, { ...tempFilter }]
+    [total, pages, page, limit, { ...tempFilter }, userId]
   );
 
   const getSelectedValue = useMemo(() => {
     const selectedPriority = priorityListData?.filter(e => e?.value === tempFilter?.priority) ?? {};
-    const selectedAssignee = assigneeList?.filter(e => e?.value === tempFilter?.assigneeId) ?? {};
+    const selectedAssignee = assigneeList?.filter(e => e?.value === tempFilter?.assigneeId) ;
     return { selectedPriority, selectedAssignee };
   }, [priorityListData, assigneeList, tempFilter?.priority, tempFilter?.assigneeId]);
 
@@ -183,7 +184,7 @@ const MyWorkTasks = () => {
         (paramPriority?.trim()?.length ?? -1) > 0 ? paramPriority : taskListFilters?.priority,
       isCompleted: paramIsCompleted || taskListFilters?.isCompleted || undefined,
       assigneeId:
-        (paramAssigneeId?.trim()?.length ?? -1) > 0 ? paramAssigneeId : taskListFilters?.assigneeId,
+        (paramAssigneeId?.trim()?.length ?? -1) > 0 ? paramAssigneeId : taskListFilters?.assigneeId || userId,
       startDate: paramStartDate ?? taskListFilters?.start,
       endDate: paramEndDate ?? taskListFilters?.endDate,
     };
@@ -204,6 +205,7 @@ const MyWorkTasks = () => {
     paramIsCompleted,
     paramPriority,
     getTaskList,
+    userId
   ]);
 
   useUrlParamsUpdate(
@@ -386,6 +388,10 @@ const MyWorkTasks = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
+     dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+    });
+
     applyFilterOnClick();
   }, []);
 
@@ -426,7 +432,6 @@ const MyWorkTasks = () => {
   const addTask = useCallback(() => {
     history.push('/my-work/add');
   }, [history]);
-
   return (
     <>
       {!myWorkTasksListLoader ? (
@@ -564,7 +569,7 @@ const MyWorkTasks = () => {
                     placeholder="Select"
                     name="role"
                     options={assigneeList}
-                    value={getSelectedValue?.selectedAssignee ?? {}}
+                    value={getSelectedValue?.selectedAssignee}
                     onChange={handleAssigneeFilterChange}
                     isSearchable
                   />
