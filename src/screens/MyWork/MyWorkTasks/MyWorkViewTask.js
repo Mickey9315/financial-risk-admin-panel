@@ -3,7 +3,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import Button from '../../../common/Button/Button';
-import Input from '../../../common/Input/Input';
 import { getTaskById, markTaskAsComplete } from '../redux/MyWorkAction';
 import Loader from '../../../common/Loader/Loader';
 
@@ -24,32 +23,27 @@ const MyWorkAddTask = () => {
   const INPUTS = useMemo(
     () => [
       {
-        label: 'Title',
-        placeholder: '-',
+        label: 'Description',
         type: 'text',
-        name: 'title',
+        name: 'description',
       },
       {
         label: 'Assignee',
-        placeholder: '-',
         type: 'text',
         name: 'assigneeId',
       },
       {
         label: 'Priority',
-        placeholder: '-',
         type: 'text',
         name: 'priority',
       },
       {
         label: 'Due Date',
-        placeholder: '-',
         type: 'text',
         name: 'dueDate',
       },
       {
         label: 'Task For',
-        placeholder: '-',
         type: 'text',
         name: 'entityType',
       },
@@ -58,7 +52,6 @@ const MyWorkAddTask = () => {
       },
       {
         label: 'Entity Labels',
-        placeholder: '-',
         type: 'text',
         name: 'entityId',
       },
@@ -66,10 +59,9 @@ const MyWorkAddTask = () => {
         type: 'blank',
       },
       {
-        label: 'Description',
-        placeholder: '-',
+        label: 'Comments',
         type: 'text',
-        name: 'description',
+        name: 'comments',
       },
     ],
     []
@@ -78,17 +70,17 @@ const MyWorkAddTask = () => {
   const taskFieldValues = useCallback(
     fieldFor => {
       switch (fieldFor) {
-        case 'title': {
-          return taskDetails?.title ?? '';
+        case 'description': {
+          return taskDetails?.description ?? '-';
         }
         case 'assigneeId': {
-          return taskDetails?.assigneeId?.label ?? '';
+          return taskDetails?.assigneeId?.label ?? '-';
         }
         case 'priority': {
-          return taskDetails?.priority?.label ?? '';
+          return taskDetails?.priority?.label ?? '-';
         }
         case 'entityType': {
-          return taskDetails?.entityType?.label ?? '';
+          return taskDetails?.entityType?.label ?? '-';
         }
         case 'entityId': {
           return taskDetails?.entityId?.label ?? [];
@@ -96,8 +88,8 @@ const MyWorkAddTask = () => {
         case 'dueDate': {
           return moment(taskDetails?.dueDate).format('MM/DD/YYYY');
         }
-        case 'description': {
-          return taskDetails?.description ?? '';
+        case 'comments': {
+          return taskDetails?.comments ?? '-';
         }
         default:
           return '';
@@ -114,14 +106,7 @@ const MyWorkAddTask = () => {
           component = (
             <>
               <span>{input.label}</span>
-              <Input
-                type="text"
-                name={input.name}
-                placeholder={input.placeholder}
-                value={taskFieldValues(input.name)}
-                disabled
-                borderClass="disabled-control"
-              />
+              <div className="font-field">{taskFieldValues(input.name) ?? '-'}</div>
             </>
           );
           break;
@@ -177,7 +162,7 @@ const MyWorkAddTask = () => {
                 />
               </div>
             </div>
-            <div className="common-white-container my-work-add-task-container">
+            <div className="common-white-container my-work-view-task-container">
               {INPUTS.map(getComponentFromType)}
             </div>
           </>
