@@ -47,8 +47,6 @@ const EditableDrawer = props => {
     return false;
   }, [drawerData]);
 
-  console.log(isApprovedOrDeclined);
-
   const handleExpiryDateChange = useCallback(
     e => {
       setSelectedExpiryDate(e);
