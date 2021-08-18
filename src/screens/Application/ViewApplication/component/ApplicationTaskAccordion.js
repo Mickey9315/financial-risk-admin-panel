@@ -401,7 +401,7 @@ const ApplicationTaskAccordion = props => {
               <span>{input.label}</span>
               <textarea
                 name={input.name}
-                value={input?.value}
+                value={selectedValues}
                 rows={4}
                 className={input?.class}
                 placeholder={input.placeholder}
@@ -552,12 +552,7 @@ const ApplicationTaskAccordion = props => {
         </Modal>
       )}
       {editTaskModal && (
-        <Modal
-          header="Edit Task"
-          className="add-task-modal"
-          buttons={editTaskModalButton}
-          // hideModal={toggleEditTaskModal}
-        >
+        <Modal header="Edit Task" className="add-task-modal" buttons={editTaskModalButton}>
           <div className="common-white-container my-work-add-task-container">
             {INPUTS.map(getComponentFromType)}
           </div>
