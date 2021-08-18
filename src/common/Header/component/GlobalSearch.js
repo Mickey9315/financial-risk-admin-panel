@@ -79,6 +79,11 @@ const GlobalSearch = () => {
     }
   }, []);
 
+  const onSearchResultSelection = useCallback(searchResult => {
+    const { module, _id, hasSubModule, subModule, status } = searchResult;
+    handleGlobalSearchSelect(history, module, _id, hasSubModule, subModule, status);
+  }, []);
+
   return (
     <div
       ref={headerSearchRef}
@@ -104,7 +109,7 @@ const GlobalSearch = () => {
               <li
                 className={index === cursor && 'header-active-search'}
                 onClick={() => {
-                  handleGlobalSearchSelect(searchResult, history);
+                  onSearchResultSelection(searchResult);
                   setSearchStart(false);
                   setSearchedString('');
                   setCursor(0);
