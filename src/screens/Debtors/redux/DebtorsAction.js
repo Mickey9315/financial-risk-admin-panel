@@ -50,13 +50,11 @@ export const getDebtorsColumnNameList = () => {
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
+          type: DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
           data: response?.data?.data,
         });
         dispatch({
-          type:
-            DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: response?.data?.data,
         });
       }
@@ -69,8 +67,7 @@ export const getDebtorsColumnNameList = () => {
 export const changeDebtorsColumnListStatus = data => {
   return async dispatch => {
     dispatch({
-      type:
-        DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
+      type: DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION,
       data,
     });
   };
@@ -110,8 +107,7 @@ export const saveDebtorsColumnListName = ({ debtorsColumnNameList = {}, isReset 
       const response = await DebtorsApiServices.updateDebtorsColumnNameList(data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: debtorsColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
@@ -165,8 +161,7 @@ export const getDebtorDropdownData = () => {
       const response = await DebtorsApiServices.getDebtorDropdownDataList();
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS,
+          type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS,
           data: response?.data?.data,
         });
       }
@@ -189,8 +184,7 @@ export const changeDebtorData = (name, value) => {
 export const OnChangeCountry = value => {
   return async dispatch => {
     dispatch({
-      type:
-        DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTOR_MANAGEMENT_UPDATE_DEBTOR_STATE_LIST_ACTION,
+      type: DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTOR_MANAGEMENT_UPDATE_DEBTOR_STATE_LIST_ACTION,
       value,
     });
   };
@@ -354,9 +348,8 @@ export const getDebtorDocumentsColumnNamesList = () => {
           data: response?.data?.data,
         });
         dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.DOCUMENTS
-              .DEBTOR_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS
+            .DEBTOR_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: response?.data?.data,
         });
       }
@@ -414,9 +407,8 @@ export const saveDebtorDocumentsColumnListName = ({
       const response = await DebtorsDocumentApiServices.updateDebtorDocumentColumnListName(data);
       if (response && response.data && response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.DOCUMENTS
-              .DEBTOR_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS
+            .DEBTOR_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: debtorsDocumentColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
@@ -663,9 +655,8 @@ export const getDebtorDefaultEntityDropDownData = params => {
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
       if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
         dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK
-              .DEBTOR_DEFAULT_DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK
+            .DEBTOR_DEFAULT_DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response?.data?.data,
         });
       }
@@ -1154,9 +1145,8 @@ export const saveDebtorStakeHolderColumnNameList = ({
 export const changeStakeHolderPersonType = personType => {
   return dispatch => {
     dispatch({
-      type:
-        DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
-          .CHANGE_DEBTOR_STAKE_HOLDER_PERSON_TYPE,
+      type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+        .CHANGE_DEBTOR_STAKE_HOLDER_PERSON_TYPE,
       personType,
     });
   };
@@ -1175,11 +1165,12 @@ export const updateStakeHolderDetail = (name, value) => {
 export const getStakeHolderDropDownData = () => {
   return async dispatch => {
     try {
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDropdownData();
+      const response =
+        await DebtorStakeHolderApiServices.StakeHolderCRUD.getStakeHolderDropdownData();
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA,
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+            .GET_STAKEHOLDER_DROPDOWN_DATA,
           data: response.data.data,
         });
       }
@@ -1192,9 +1183,10 @@ export const getStakeHolderDropDownData = () => {
 export const getstakeholderCountryDataFromABNorACN = params => {
   return async () => {
     try {
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.getstakeholderCountryDataFromABNorACN(
-        params
-      );
+      const response =
+        await DebtorStakeHolderApiServices.StakeHolderCRUD.getstakeholderCountryDataFromABNorACN(
+          params
+        );
 
       if (response?.data?.status === 'SUCCESS') {
         return response.data.data;
@@ -1210,8 +1202,8 @@ export const getstakeholderCountryDataFromABNorACN = params => {
 export const updateStakeHolderDataOnValueSelected = data => {
   return dispatch => {
     dispatch({
-      type:
-        DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.UPDATE_STAKE_HOLDER_COMPANY_ALL_DATA,
+      type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+        .UPDATE_STAKE_HOLDER_COMPANY_ALL_DATA,
       data,
     });
   };
@@ -1228,14 +1220,15 @@ export const searchstakeholderCountryEntityName = params => {
           errorMessage: '',
         },
       });
-      const response = await DebtorStakeHolderApiServices.StakeHolderCRUD.searchstakeholderCountryEntityName(
-        params
-      );
+      const response =
+        await DebtorStakeHolderApiServices.StakeHolderCRUD.searchstakeholderCountryEntityName(
+          params
+        );
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+            .STAKE_HOLDER_ENTITY_TYPE_DATA,
           data: {
             isLoading: false,
             error: false,
@@ -1252,8 +1245,8 @@ export const searchstakeholderCountryEntityName = params => {
           errorNotification('Internal server error');
         } else {
           dispatch({
-            type:
-              DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+            type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+              .STAKE_HOLDER_ENTITY_TYPE_DATA,
             data: {
               isLoading: false,
               error: true,
@@ -1264,8 +1257,8 @@ export const searchstakeholderCountryEntityName = params => {
         }
       } else {
         dispatch({
-          type:
-            DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.STAKE_HOLDER_ENTITY_TYPE_DATA,
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD
+            .STAKE_HOLDER_ENTITY_TYPE_DATA,
           data: {
             isLoading: false,
             error: true,
