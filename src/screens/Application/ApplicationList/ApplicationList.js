@@ -345,8 +345,6 @@ const ApplicationList = () => {
     dispatch(getApplicationFilter());
   }, []);
 
-  console.log(paramStatus);
-
   useEffect(async () => {
     const params = {
       page: paramPage ?? page ?? 1,
