@@ -56,11 +56,6 @@
     overflow: hidden;
     z-index: 9999;
 
-    > div {
-      max-height: 280px;
-      overflow-y: auto;
-    }
-
     ul {
       margin: 5px 0;
       padding: 0;
@@ -103,6 +98,7 @@
 }
 
 .custom-select-dropdown.active-custom-select-dropdown {
-  max-height: 57vh;
+  max-height: 40vh;
   border-width: 1px;
+  overflow-y: auto;
 }

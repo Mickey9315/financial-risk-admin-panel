@@ -104,21 +104,19 @@ const CustomSelect = props => {
             isOpenCustomSelect && 'active-custom-select-dropdown'
           }`}
         >
-          <div>
-            <ul className="selected-list">
-              {selectedList?.map(selectedItem => (
-                <li onClick={() => onItemUnselect(selectedItem)}>
-                  <>{selectedItem?.label || ''}</>
-                  <span className="material-icons-round">task_alt</span>
-                </li>
-              ))}
-            </ul>
-            <ul>
-              {notSelectedList?.map(unselectedItem => (
-                <li onClick={() => onItemSelection(unselectedItem)}>{unselectedItem?.label}</li>
-              ))}
-            </ul>
-          </div>
+          <ul className="selected-list">
+            {selectedList?.map(selectedItem => (
+              <li onClick={() => onItemUnselect(selectedItem)}>
+                <>{selectedItem?.label || ''}</>
+                <span className="material-icons-round">task_alt</span>
+              </li>
+            ))}
+          </ul>
+          <ul>
+            {notSelectedList?.map(unselectedItem => (
+              <li onClick={() => onItemSelection(unselectedItem)}>{unselectedItem?.label}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </>
