@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import Tooltip from 'rc-tooltip';
 import PropTypes from 'prop-types';
 import Input from '../Input/Input';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
@@ -78,7 +79,20 @@ const CustomSelect = props => {
             }}
           />
           {selectedList.length > 1 && (
-            <div className="more-text">+{selectedList.length - 1} more</div>
+            <Tooltip
+              overlayClassName="tooltip-top-class"
+              overlay={
+                <span>
+                  {selectedList
+                    ?.filter((record, index) => index !== 0)
+                    .map(record => record.label)
+                    .join(', ')}
+                </span>
+              }
+              placement="topLeft"
+            >
+              <div className="more-text">+{selectedList.length - 1} more</div>
+            </Tooltip>
           )}
           <span className={`material-icons-round ${isOpenCustomSelect && 'font-field'}`}>
             expand_more
