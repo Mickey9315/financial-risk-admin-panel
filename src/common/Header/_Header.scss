@@ -308,6 +308,14 @@
       align-items: center;
     }
   }
+
+  &.secondary-tag:hover {
+    background-color: #F9D0AC ;
+  }
+
+  &.red-tag:hover {
+    background-color: #FEC4C4;
+  }
 }
 
 //alert modal
