@@ -256,7 +256,7 @@
 }
 
 .notification-set-title {
-  margin-bottom: 10px;
+  margin-bottom: 2px;
   font: $h6 $font-medium;
   color: $primary-color;
 }
@@ -296,6 +296,7 @@
   padding: 10px;
   font-size: $text;
   border-radius: 5px;
+  cursor: pointer;
 
   .notification-date-row {
     display: flex;
@@ -369,7 +370,7 @@
 
   .notification-clear-all-btn {
     width: auto;
-    padding: 5px;
+    padding: 5px 10px;
     cursor: pointer;
     border-radius: 5px;
 
