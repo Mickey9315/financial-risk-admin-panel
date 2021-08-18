@@ -4,6 +4,28 @@
   @extend .client-details-container
 }
 
+.my-work-view-task-container {
+  display: grid!important;
+  grid-template-columns: 15% calc(35% - 22px) 15% calc(35% - 22px);
+  padding: 25px 30px;
+  gap: 15px;
+
+  > span {
+    color: $primary-color;
+  }
+
+  .client-detail {
+    padding: .344rem;
+    min-width: 170px;
+    color: $field-color;
+    cursor: not-allowed;
+  }
+
+  input {
+    cursor: default!important;
+  }
+}
+
 .my-work-tab-button-row {
   display: flex;
   justify-content: space-between;
