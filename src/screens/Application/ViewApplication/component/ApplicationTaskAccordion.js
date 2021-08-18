@@ -124,9 +124,8 @@ const ApplicationTaskAccordion = props => {
 
   const backToTaskList = useCallback(() => {
     dispatch({
-      type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -144,9 +143,8 @@ const ApplicationTaskAccordion = props => {
 
   const onCloseTaskModal = useCallback(() => {
     dispatch({
-      type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -273,8 +271,8 @@ const ApplicationTaskAccordion = props => {
   const getSelectedValues = useCallback(
     fieldFor => {
       switch (fieldFor) {
-        case 'title': {
-          return addTaskState?.title || '';
+        case 'description': {
+          return addTaskState?.description || '';
         }
         case 'assigneeId': {
           return addTaskState?.assigneeId || [];
@@ -288,8 +286,8 @@ const ApplicationTaskAccordion = props => {
         case 'entityId': {
           return addTaskState?.entityId || [];
         }
-        case 'description': {
-          return addTaskState?.description || '';
+        case 'comments': {
+          return addTaskState?.comments || '';
         }
         default:
           return [];
@@ -399,17 +397,17 @@ const ApplicationTaskAccordion = props => {
         }
         case 'textarea': {
           component = (
-              <>
-                <span>{input.label}</span>
-                <textarea
-                    name={input.name}
-                    value={input?.value}
-                    rows={4}
-                    className={input?.class}
-                    placeholder={input.placeholder}
-                    onChange={handleTextInputChange}
-                />
-              </>
+            <>
+              <span>{input.label}</span>
+              <textarea
+                name={input.name}
+                value={input?.value}
+                rows={4}
+                className={input?.class}
+                placeholder={input.placeholder}
+                onChange={handleTextInputChange}
+              />
+            </>
           );
           break;
         }
@@ -533,9 +531,7 @@ const ApplicationTaskAccordion = props => {
                   </Tooltip>
                 </div>
                 <div className="font-field">Description:</div>
-                <div className="view-application-accordion-description">
-                  {task.comments || '-'}
-                </div>
+                <div className="view-application-accordion-description">{task.comments || '-'}</div>
               </div>
             ))
           ) : (
