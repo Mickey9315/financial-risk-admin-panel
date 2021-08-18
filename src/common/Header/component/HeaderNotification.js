@@ -2,6 +2,8 @@ import moment from 'moment';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
+import { useHistory } from 'react-router-dom';
+import { handleGlobalSearchSelect } from '../../../helpers/GlobalSearchHelper';
 import {
   DATE_FORMAT,
   DATE_FORMAT_CONSTANT_FOR_CALENDER,
@@ -21,6 +23,7 @@ import { errorNotification } from '../../Toast';
 
 const HeaderNotification = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [notificationDrawer, setNotificationDrawer] = useState(false);
   const [isAlertModal, setIsAlertModal] = useState(false);
 
@@ -70,6 +73,10 @@ const HeaderNotification = () => {
       setNotificationDrawer(false);
       dispatch(getNotificationAlertsDetail(notification?.entityId?._id));
       setIsAlertModal(true);
+    } else {
+      const { entityType, entityId, hasSubModule, subModule, description } = notification;
+      handleGlobalSearchSelect(history, entityType, entityId, hasSubModule, subModule, description);
+      setNotificationDrawer(false);
     }
   }, []);
 
@@ -157,7 +164,9 @@ const HeaderNotification = () => {
                       <span
                         className="material-icons-round font-placeholder cursor-pointer"
                         onClick={() =>
-                          dispatch(markNotificationAsReadAndDeleteAction(singleNotification?._id))
+                          dispatch(e =>
+                            markNotificationAsReadAndDeleteAction(e, singleNotification?._id)
+                          )
                         }
                       >
                         cancel

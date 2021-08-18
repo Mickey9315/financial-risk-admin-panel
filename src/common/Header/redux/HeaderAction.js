@@ -141,19 +141,21 @@ export const updateHeaderNotificationOnNewNotificationAction = data => {
       data,
     });
     dispatch({
-      type:
-        MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS.GET_NOTIFICATION_FROM_SOCKET,
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+        .GET_NOTIFICATION_FROM_SOCKET,
       data,
     });
   };
 };
 
-export const markNotificationAsReadAndDeleteAction = notificationId => {
+export const markNotificationAsReadAndDeleteAction = (event, notificationId) => {
+  event.stopPropagation();
   return async dispatch => {
     try {
-      const response = await HeaderApiService.notificationApiServices.markNotificationAsReadAndDelete(
-        notificationId
-      );
+      const response =
+        await HeaderApiService.notificationApiServices.markNotificationAsReadAndDelete(
+          notificationId
+        );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Notification deleted successfully');
         dispatch({

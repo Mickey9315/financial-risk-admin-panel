@@ -55,27 +55,19 @@ const handleSearchWithSubModules = (path, module, hasSubModule, subModule, histo
   history.push(path);
 };
 
-export const handleGlobalSearchSelect = (data, history) => {
+export const handleGlobalSearchSelect = (history, module, id, hasSubModule, subModule, status) => {
   try {
-    const { module, _id, hasSubModule, subModule, status } = data;
     switch (module) {
       case 'task':
-        handleSearchWithSubModules(
-          `/my-work/view/${_id}`,
-          module,
-          hasSubModule,
-          subModule,
-          history
-        );
+        handleSearchWithSubModules(`/my-work/view/${id}`, module, hasSubModule, subModule, history);
         break;
       case 'application':
-        if (status === 'DRAFT')
-          history.push(`/applications/generate/?applicationId=${_id}`);
-        else history.push(`/applications/detail/view/${_id}`);
+        if (status === 'DRAFT') history.push(`/applications/generate/?applicationId=${id}`);
+        else history.push(`/applications/detail/view/${id}`);
         break;
       case 'client':
         handleSearchWithSubModules(
-          `/clients/client/view/${_id}`,
+          `/clients/client/view/${id}`,
           module,
           hasSubModule,
           subModule,
@@ -84,7 +76,7 @@ export const handleGlobalSearchSelect = (data, history) => {
         break;
       case 'debtor':
         handleSearchWithSubModules(
-          `/debtors/debtor/view/${_id}`,
+          `/debtors/debtor/view/${id}`,
           module,
           hasSubModule,
           subModule,
@@ -92,17 +84,11 @@ export const handleGlobalSearchSelect = (data, history) => {
         );
         break;
       case 'insurer':
-        handleSearchWithSubModules(
-          `/insurer/view/${_id}`,
-          module,
-          hasSubModule,
-          subModule,
-          history
-        );
+        handleSearchWithSubModules(`/insurer/view/${id}`, module, hasSubModule, subModule, history);
         break;
       case 'user':
         handleSearchWithSubModules(
-          `/users/user/view/${_id}`,
+          `/users/user/view/${id}`,
           module,
           hasSubModule,
           subModule,

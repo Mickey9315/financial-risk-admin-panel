@@ -57,7 +57,8 @@ const GlobalSearch = () => {
           setSearchStart(true);
           dispatch(searchGlobalData(value));
         } else {
-          handleGlobalSearchSelect(globalSearchResult?.[cursor], history);
+          const { module, _id, hasSubModule, subModule, status } = globalSearchResult?.[cursor];
+          handleGlobalSearchSelect(history, module, _id, hasSubModule, subModule, status);
           setSearchStart(false);
           setSearchedString('');
           setCursor(0);
