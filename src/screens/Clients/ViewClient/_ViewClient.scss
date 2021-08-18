@@ -1,4 +1,4 @@
-.client-details-container, .my-work-add-task-container {
+.client-details-container {
   display: grid!important;
   grid-template-columns: 15% calc(35% - 22px) 15% calc(35% - 22px);
   padding: 25px 30px;
