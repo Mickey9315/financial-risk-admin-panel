@@ -252,7 +252,7 @@
 }
 
 .notification-set {
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .notification-set-title {
@@ -362,7 +362,7 @@
 .notification-clear-all-wrapper {
   position: sticky;
   top: 0;
-  padding: 20px;
+  padding: 20px 20px 0;
   background: #fff;
   color: $primary-color;
   text-align: right;
