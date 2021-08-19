@@ -18,7 +18,6 @@ import {
   getClientFilter,
   getClientList,
   getListFromCrm,
-  resetClientListData,
   resetClientListPaginationData,
   saveClientColumnListName,
 } from '../redux/ClientAction';
@@ -121,9 +120,10 @@ const ClientList = () => {
     }));
   }, [filterList]);
 
-  const { total, pages, page, limit } = useMemo(() => clientListWithPageData ?? {}, [
-    clientListWithPageData,
-  ]);
+  const { total, pages, page, limit } = useMemo(
+    () => clientListWithPageData ?? {},
+    [clientListWithPageData]
+  );
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({
@@ -524,10 +524,7 @@ const ClientList = () => {
   }, [finalFilter]);
 
   useEffect(() => {
-    return () => {
-      dispatch(resetClientListPaginationData(page, pages, total, limit));
-      dispatch(resetClientListData());
-    };
+    dispatch(resetClientListPaginationData(page, pages, total, limit));
   }, []);
   return (
     <>

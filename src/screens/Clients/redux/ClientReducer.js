@@ -105,6 +105,7 @@ export const clientManagement = (state = initialClientListState, action) => {
         pages: action?.pages,
         total: action?.total,
         limit: action?.limit,
+        docs: [],
       };
 
     case CLIENT_REDUX_CONSTANTS.SELECTED_CLIENT_DATA:
@@ -350,9 +351,9 @@ export const clientManagement = (state = initialClientListState, action) => {
         ...state?.creditLimit?.clientCreditLimitColumnNameList,
       };
       const { type, name, value } = action?.data ?? {};
-      clientCreditLimitColumnNameList[`${type}`] = clientCreditLimitColumnNameList[
-        `${type}`
-      ]?.map(e => (e?.name === name ? { ...e, isChecked: value } : e));
+      clientCreditLimitColumnNameList[`${type}`] = clientCreditLimitColumnNameList[`${type}`]?.map(
+        e => (e?.name === name ? { ...e, isChecked: value } : e)
+      );
       return {
         ...state,
         creditLimit: {
@@ -397,9 +398,9 @@ export const clientManagement = (state = initialClientListState, action) => {
         ...state?.application?.clientApplicationColumnNameList,
       };
       const { name, type, value } = action?.data ?? {};
-      clientApplicationColumnNameList[`${type}`] = clientApplicationColumnNameList[
-        `${type}`
-      ]?.map(e => (e?.name === name ? { ...e, isChecked: value } : e));
+      clientApplicationColumnNameList[`${type}`] = clientApplicationColumnNameList[`${type}`]?.map(
+        e => (e?.name === name ? { ...e, isChecked: value } : e)
+      );
       return {
         ...state,
         application: {
