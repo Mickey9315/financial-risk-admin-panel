@@ -174,10 +174,14 @@ export const saveOverdueList = data => {
   };
 };
 
-export const resetOverdueListData = () => {
+export const resetOverdueListData = (page, pages, total, limit) => {
   return dispatch => {
     dispatch({
-      type: OVERDUE_REDUX_CONSTANTS.RESET_OVERDUE_LIST_DATA,
+      type: OVERDUE_REDUX_CONSTANTS.RESET_OVERDUE_LIST_PAGINATION_DATA,
+      page,
+      pages,
+      total,
+      limit,
     });
   };
 };

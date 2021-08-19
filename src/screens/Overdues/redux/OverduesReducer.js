@@ -162,10 +162,17 @@ export const overdue = (state = initialOverdueState, action) => {
       };
     }
 
-    case OVERDUE_REDUX_CONSTANTS.RESET_OVERDUE_LIST_DATA: {
+    case OVERDUE_REDUX_CONSTANTS.RESET_OVERDUE_LIST_PAGINATION_DATA: {
       return {
         ...state,
-        overdueList: initialOverdueState.overdueList,
+        overdueList: {
+          ...state?.overdueList,
+          page: action?.page,
+          pages: action?.pages,
+          total: action?.total,
+          limit: action?.limit,
+          docs: [],
+        },
       };
     }
 
