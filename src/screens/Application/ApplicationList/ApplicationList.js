@@ -476,7 +476,7 @@ const ApplicationList = () => {
   }, [docs?.length, appliedFilters]);
 
   useEffect(() => {
-    return dispatch(resetApplicationListPaginationData(page, pages, total, limit));
+    dispatch(resetApplicationListPaginationData(page, pages, total, limit));
   }, []);
 
   useEffect(() => {
