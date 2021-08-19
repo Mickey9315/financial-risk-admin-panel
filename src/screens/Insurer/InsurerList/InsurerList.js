@@ -3,14 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
-import Table /* TABLE_ROW_ACTIONS */ from '../../../common/Table/Table';
+import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import {
   changeInsurerColumnListStatus,
   getInsurerColumnNameList,
   getInsurerListByFilter,
   getListFromCrm,
-  resetInsurerListData,
   resetInsurerListPaginationData,
   saveInsurerColumnListName,
 } from '../redux/InsurerAction';
@@ -183,10 +182,7 @@ const InsurerList = () => {
 
     getInsurerList({ ...params });
     dispatch(getInsurerColumnNameList());
-    return () => {
-      dispatch(resetInsurerListPaginationData(page, pages, limit, total));
-      dispatch(resetInsurerListData());
-    };
+    dispatch(resetInsurerListPaginationData(page, pages, limit, total));
   }, []);
 
   /** *

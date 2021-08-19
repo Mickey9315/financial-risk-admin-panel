@@ -57,6 +57,7 @@ export const insurer = (state = initialInsurer, action) => {
           limit: action?.limit,
           total: action?.total,
           pages: action?.pages,
+          docs: [],
         },
       };
 
