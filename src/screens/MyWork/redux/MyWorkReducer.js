@@ -158,6 +158,7 @@ export const myWorkReducer = (state = initialMyWork, action) => {
             limit: action?.limit,
             pages: action?.pages,
             total: action?.total,
+            docs: [],
           },
         },
       };
