@@ -608,7 +608,7 @@ const ApplicationList = () => {
                   type="text"
                   name="min-limit"
                   value={NumberCommaSeparator(tempFilter?.minCreditLimit)}
-                  placeholder="00,000"
+                  placeholder="0"
                   onChange={handleMinLimitChange}
                 />
               </div>
@@ -618,7 +618,7 @@ const ApplicationList = () => {
                   type="text"
                   name="max-limit"
                   value={NumberCommaSeparator(tempFilter?.maxCreditLimit)}
-                  placeholder="00,000"
+                  placeholder="0"
                   onChange={handleMaxLimitChange}
                 />
               </div>
