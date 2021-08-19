@@ -37,6 +37,7 @@ export const userManagementList = (state = initialUserManagementListState, actio
         total: action?.total,
         limit: action?.limit,
         pages: action?.pages,
+        docs: [],
       };
     }
     case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_USER_LIST_DATA: {

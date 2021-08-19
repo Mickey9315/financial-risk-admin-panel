@@ -14,7 +14,6 @@ import {
   deleteUserDetails,
   getUserColumnListName,
   getUserManagementListByFilter,
-  resetUserListData,
   resetUserListPaginationData,
   saveUserColumnListName,
 } from '../redux/UserManagementAction';
@@ -55,9 +54,10 @@ const UserList = () => {
   });
   const [deleteId, setDeleteId] = useState(null);
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
-  const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData ?? {}, [
-    userListWithPageData,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => userListWithPageData ?? {},
+    [userListWithPageData]
+  );
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({
@@ -328,10 +328,7 @@ const UserList = () => {
 
     getUserManagementByFilter({ ...params, ...filters });
     dispatch(getUserColumnListName());
-    return () => {
-      dispatch(resetUserListPaginationData(page, limit, pages, total));
-      dispatch(resetUserListData());
-    };
+    dispatch(resetUserListPaginationData(page, limit, pages, total));
   }, []);
 
   useEffect(() => {
