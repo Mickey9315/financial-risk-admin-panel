@@ -425,13 +425,13 @@ export const getPolicySyncListForCRM = (id, data) => {
   };
 };
 
-export const resetInsurerListPaginationData = (page, limit, pages, total) => {
+export const resetInsurerListPaginationData = (page, pages, total, limit) => {
   return async dispatch => {
     dispatch({
       type: INSURER_REDUX_CONSTANTS.RESET_INSURER_LIST_PAGINATION_DATA,
       page,
-      total,
       pages,
+      total,
       limit,
     });
   };

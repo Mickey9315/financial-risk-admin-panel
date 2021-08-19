@@ -182,7 +182,7 @@ const InsurerList = () => {
 
     getInsurerList({ ...params });
     dispatch(getInsurerColumnNameList());
-    dispatch(resetInsurerListPaginationData(page, pages, limit, total));
+    dispatch(resetInsurerListPaginationData(page, pages, total, limit));
   }, []);
 
   /** *
