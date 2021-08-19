@@ -179,7 +179,7 @@ const HeaderNotification = () => {
               </div>
             ))
           ) : (
-            <div className="no-record-found">No record found</div>
+            <div className="no-record-found">No new notification</div>
           )}
         </>
       </Drawer>
