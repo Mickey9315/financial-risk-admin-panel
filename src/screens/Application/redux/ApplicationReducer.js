@@ -184,6 +184,7 @@ export const application = (state = initialApplicationList, action) => {
           pages: action?.pages,
           total: action?.total,
           limit: action?.limit,
+          docs: [],
         },
       };
     case APPLICATION_REDUX_CONSTANTS.APPLICATION_DETAILS:

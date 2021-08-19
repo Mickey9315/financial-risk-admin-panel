@@ -16,7 +16,6 @@ import {
   getApplicationColumnNameList,
   getApplicationFilter,
   getApplicationsListByFilter,
-  resetApplicationListData,
   resetApplicationListPaginationData,
   saveApplicationColumnNameList,
   updateEditApplicationField,
@@ -413,10 +412,7 @@ const ApplicationList = () => {
         finalFilter?.clientId?.toString()?.trim()?.length > 0 ? finalFilter?.clientId : undefined,
       debtorId:
         finalFilter?.debtorId?.toString()?.trim()?.length > 0 ? finalFilter?.debtorId : undefined,
-      status:
-        finalFilter?.status?.toString()?.trim()?.length > 0
-          ? finalFilter?.status
-          : undefined,
+      status: finalFilter?.status?.toString()?.trim()?.length > 0 ? finalFilter?.status : undefined,
       minCreditLimit:
         finalFilter?.minCreditLimit?.toString()?.trim()?.length > 0
           ? finalFilter?.minCreditLimit
@@ -452,9 +448,7 @@ const ApplicationList = () => {
 
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.filter(e => {
-      return (
-        tempFilter?.status?.split(',').includes(e.value)
-      );
+      return tempFilter?.status?.split(',').includes(e.value);
     });
     return foundValue ?? [];
   }, [tempFilter?.status, dropdownData]);
@@ -482,10 +476,7 @@ const ApplicationList = () => {
   }, [docs?.length, appliedFilters]);
 
   useEffect(() => {
-    return () => {
-      dispatch(resetApplicationListPaginationData(page, pages, total, limit));
-      dispatch(resetApplicationListData());
-    };
+    return dispatch(resetApplicationListPaginationData(page, pages, total, limit));
   }, []);
 
   useEffect(() => {
