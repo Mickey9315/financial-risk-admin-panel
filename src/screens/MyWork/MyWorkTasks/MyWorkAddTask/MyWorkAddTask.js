@@ -43,9 +43,10 @@ const MyWorkAddTask = () => {
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
   const { entityType, ...addTaskState } = useMemo(() => taskData?.addTask ?? {}, [taskData]);
-  const { assigneeList, entityList } = useMemo(() => taskData?.myWorkDropDownData ?? {}, [
-    taskData,
-  ]);
+  const { assigneeList, entityList } = useMemo(
+    () => taskData?.myWorkDropDownData ?? {},
+    [taskData]
+  );
 
   const { myWorkSaveNewTaskLoaderButtonAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
@@ -258,22 +259,22 @@ const MyWorkAddTask = () => {
           );
           break;
         }
-          case 'textarea': {
-              component = (
-                  <>
-                      <span>{input.label}</span>
-                      <textarea
-                          name={input.name}
-                          value={input?.value}
-                          rows={4}
-                          className={input?.class}
-                          placeholder={input.placeholder}
-                          onChange={handleTextInputChange}
-                      />
-                  </>
-              );
-              break;
-          }
+        case 'textarea': {
+          component = (
+            <>
+              <span>{input.label}</span>
+              <textarea
+                name={input.name}
+                value={addTaskState?.[input.name]}
+                rows={4}
+                className={input?.class}
+                placeholder={input.placeholder}
+                onChange={handleTextInputChange}
+              />
+            </>
+          );
+          break;
+        }
         default:
           return null;
       }

@@ -183,7 +183,7 @@ const MyWorkAddTask = () => {
 
   const onSaveTask = useCallback(() => {
     const data = {
-        description: taskDetails?.description?.trim() ?? '',
+      description: taskDetails?.description?.trim() ?? '',
       dueDate: taskDetails?.dueDate || new Date().toISOString(),
       assigneeId: taskDetails?.assigneeId?.value ?? '',
       assigneeType: taskDetails?.assigneeId?.type ?? taskDetails?.assigneeType,
@@ -282,17 +282,17 @@ const MyWorkAddTask = () => {
         }
         case 'textarea': {
           component = (
-              <>
-                <span>{input.label}</span>
-                <textarea
-                    name={input.name}
-                    value={input?.value}
-                    rows={4}
-                    className={input?.class}
-                    placeholder={input.placeholder}
-                    onChange={handleTextInputChange}
-                />
-              </>
+            <>
+              <span>{input.label}</span>
+              <textarea
+                name={input.name}
+                value={taskDetails?.[input.name]}
+                rows={4}
+                className={input?.class}
+                placeholder={input.placeholder}
+                onChange={handleTextInputChange}
+              />
+            </>
           );
           break;
         }

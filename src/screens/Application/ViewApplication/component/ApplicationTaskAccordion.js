@@ -497,7 +497,7 @@ const ApplicationTaskAccordion = props => {
                 <div className="document-title-row">
                   <Tooltip
                     overlayClassName="tooltip-left-class"
-                    overlay={task.description || 'No task title set'}
+                    overlay={task.description || 'No task description set'}
                     placement="left"
                   >
                     <div className="document-title">{task.description || '-'}</div>
@@ -530,7 +530,7 @@ const ApplicationTaskAccordion = props => {
                     <span className="details">{task.createdById}</span>
                   </Tooltip>
                 </div>
-                <div className="font-field">Description:</div>
+                <div className="font-field">Comments:</div>
                 <div className="view-application-accordion-description">{task.comments || '-'}</div>
               </div>
             ))
