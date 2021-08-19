@@ -213,6 +213,7 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           pages: action?.pages,
           total: action?.total,
           limit: action?.limit,
+          docs: [],
         },
       };
     case DEBTORS_REDUX_CONSTANTS.SELECTED_DEBTORS_DATA:
