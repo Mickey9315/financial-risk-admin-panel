@@ -119,9 +119,10 @@ const OverduesList = () => {
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
-    overdueListWithPageData,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => overdueListWithPageData,
+    [overdueListWithPageData]
+  );
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -237,14 +238,15 @@ const OverduesList = () => {
     });
     await getOverdueListByFilter({ ...params, ...filters });
     dispatch(getEntityDetails());
-    return () => {
-      dispatch(resetOverdueListData());
-    };
   }, []);
 
   useEffect(() => {
     dispatch(saveAppliedFilters('overdueListFilters', finalFilter));
   }, [finalFilter]);
+
+  useEffect(() => {
+    dispatch(resetOverdueListData(page, pages, total, limit));
+  }, []);
 
   useUrlParamsUpdate(
     {
