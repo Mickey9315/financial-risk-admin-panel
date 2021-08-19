@@ -25,12 +25,14 @@ import { addClaimsValidations } from './AddClaimsValidations';
 import Loader from '../../../common/Loader/Loader';
 import { setViewClientActiveTabIndex } from '../../Clients/redux/ClientAction';
 import ClaimsTabContainer from '../components/ClaimsTabContainer';
+import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 
 const AddViewClaims = () => {
   const history = useHistory();
-  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
-    history,
-  ]);
+  const { isRedirected, redirectedFrom, fromId } = useMemo(
+    () => history?.location?.state ?? {},
+    [history]
+  );
   const dispatch = useDispatch();
   const { type, id } = useParams();
   const clientList = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
@@ -60,6 +62,11 @@ const AddViewClaims = () => {
   const onHandleInputTextChange = useCallback(e => {
     const { name, value } = e.target;
     changeClaimDetails(name, value);
+  }, []);
+
+  const onHandleAmountInputTextChange = useCallback(e => {
+    const { name, value } = e.target;
+    dispatch(handleClaimChange(name, parseInt(value?.toString()?.replaceAll(',', ''), 10)));
   }, []);
 
   const onHandleSelectChange = useCallback(e => {
@@ -112,7 +119,7 @@ const AddViewClaims = () => {
       {
         name: 'codrequested',
         title: 'COD Requested',
-        placeholder: '',
+        placeholder: 'Select',
         type: 'date',
         value: claimDetails?.codrequested,
       },
@@ -126,7 +133,7 @@ const AddViewClaims = () => {
       {
         name: 'codreceived',
         title: 'COD Received',
-        placeholder: '',
+        placeholder: 'Select',
         type: 'date',
         value: claimDetails?.codreceived,
       },
@@ -140,8 +147,8 @@ const AddViewClaims = () => {
       {
         name: 'grossdebtamount',
         title: 'Gross Debt Amount',
-        placeholder: '',
-        type: 'input',
+        placeholder: '$00.00',
+        type: 'amount',
         value: claimDetails?.grossdebtamount,
       },
       {
@@ -153,8 +160,8 @@ const AddViewClaims = () => {
       {
         name: 'amountpaid',
         title: 'Amount Paid',
-        placeholder: '',
-        type: 'input',
+        placeholder: '$00.00',
+        type: 'amount',
         value: claimDetails?.amountpaid,
       },
       {
@@ -208,11 +215,11 @@ const AddViewClaims = () => {
         value: claimDetails?.reimbursementreceived,
       },
       {
-        name: 'note',
+        name: 'description',
         title: 'Notes',
-        placeholder: '',
+        placeholder: 'Please enter',
         type: 'input',
-        value: claimDetails?.note,
+        value: claimDetails?.description,
       },
       {
         name: 'reimbursementrequested',
@@ -234,15 +241,15 @@ const AddViewClaims = () => {
       {
         name: 'reimbursementspaid',
         title: 'Reimbursement Paid',
-        placeholder: '',
-        type: 'input',
+        placeholder: '$00.00',
+        type: 'amount',
         value: claimDetails?.reimbursementspaid,
       },
       {
         name: 'repaymentplanamount',
         title: 'Repayment Plan Amount',
-        placeholder: '',
-        type: 'input',
+        placeholder: '$00.00',
+        type: 'amount',
         value: claimDetails?.repaymentplanamount,
       },
       {
@@ -256,7 +263,7 @@ const AddViewClaims = () => {
         name: 'instalmentamounts',
         title: 'Instalment Amount',
         placeholder: '$00.00',
-        type: 'input',
+        type: 'amount',
         value: claimDetails?.instalmentamounts,
       },
       {
@@ -271,7 +278,7 @@ const AddViewClaims = () => {
       {
         name: 'frequency',
         title: 'Frequency',
-        placeholder: '',
+        placeholder: 'Please enter',
         type: 'input',
         value: claimDetails?.frequency,
       },
@@ -285,14 +292,14 @@ const AddViewClaims = () => {
       {
         name: 'repaymentplanlength',
         title: 'Repayment Plan Length',
-        placeholder: '',
+        placeholder: 'Please enter',
         type: 'input',
         value: claimDetails?.repaymentplanlength,
       },
       {
         name: 'finalpaymentdate',
         title: 'Final Payment Date',
-        placeholder: '',
+        placeholder: 'Select',
         type: 'date',
         value: claimDetails?.finalpaymentdate,
       },
@@ -363,6 +370,24 @@ const AddViewClaims = () => {
               onChange={onHandleSwitchChange}
               checked={input?.value ?? false}
             />
+          );
+          break;
+
+        case 'amount':
+          component = (
+            <>
+              {type === 'view' ? (
+                <div className="view-claim-detail">{NumberCommaSeparator(input?.value) ?? '-'}</div>
+              ) : (
+                <Input
+                  type="text"
+                  name={input?.name}
+                  placeholder={input.placeholder}
+                  onChange={onHandleAmountInputTextChange}
+                  value={NumberCommaSeparator(input.value) ?? ''}
+                />
+              )}
+            </>
           );
           break;
 
