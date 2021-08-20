@@ -233,7 +233,7 @@ const ViewApplicationStatusComponent = props => {
 
           {!isAllowToUpdate && !isApprovedOrDeclined && (
             <div className="ui-state-error">
-              You don&apos;t have access to approve application, please contact admin that.
+              You don&apos;t have access to approve application, please contact admin for that.
             </div>
           )}
         </div>
