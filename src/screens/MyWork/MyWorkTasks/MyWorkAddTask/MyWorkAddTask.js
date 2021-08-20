@@ -177,6 +177,17 @@ const MyWorkAddTask = () => {
 
     if (!data?.description && (data?.description?.length ?? -1) === 0) {
       errorNotification('Please add description');
+    } else if (
+      addTaskState?.assigneeId?.type === 'client-user' &&
+      entityType?.value === 'insurer'
+    ) {
+      errorNotification('Cannot assign task on insurer to client');
+    } else if (
+      addTaskState?.assigneeId?.type === 'client-user' &&
+      addTaskState?.assigneeId?.value !== addTaskState?.entityId?.value &&
+      entityType?.value === 'client'
+    ) {
+      errorNotification("Entity label and Assignee don't relate");
     } else {
       try {
         await dispatch(saveTaskData(data, backToTaskList));
