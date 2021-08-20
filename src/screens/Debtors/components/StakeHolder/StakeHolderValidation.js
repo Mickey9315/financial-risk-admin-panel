@@ -197,9 +197,9 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
     preparedData = {
       type,
       title: title?.value ?? title,
-      firstName,
-      middleName,
-      lastName,
+      firstName: firstName.toString().trim(),
+      middleName: middleName.toString().trim(),
+      lastName: lastName.toString().trim(),
       dateOfBirth,
       driverLicenceNumber,
       phoneNumber,
