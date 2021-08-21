@@ -87,7 +87,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         }
         if (!item?.firstName || item?.firstName?.trim()?.length <= 0) {
           validated = false;
-          errors.firstName = 'Please enter firstname before continue';
+          errors.firstName = 'Please enter first name before continue';
         }
         if (item?.firstName && SPECIAL_CHARACTER_REGEX.test(item?.firstName)) {
           validated = false;
@@ -95,7 +95,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         }
         if (!item?.lastName || item?.lastName?.trim()?.length <= 0) {
           validated = false;
-          errors.lastName = 'Please enter lastname before continue';
+          errors.lastName = 'Please enter last name before continue';
         }
         if (item?.lastName && SPECIAL_CHARACTER_REGEX.test(item?.lastName)) {
           validated = false;
