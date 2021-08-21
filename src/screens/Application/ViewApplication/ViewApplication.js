@@ -159,7 +159,7 @@ const ViewApplication = () => {
         type: 'text',
       },
       {
-        title: 'Credit Limit',
+        title: 'Credit Limit Amount',
         value: creditLimit ? NumberCommaSeparator(creditLimit) : '',
         name: 'creditLimit',
         type: 'text',
