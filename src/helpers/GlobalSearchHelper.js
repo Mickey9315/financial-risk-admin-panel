@@ -95,6 +95,9 @@ export const handleGlobalSearchSelect = (history, module, id, hasSubModule, subM
           history
         );
         break;
+      case 'claim':
+        handleSearchWithSubModules(`/claims/view/${id}`, module, hasSubModule, subModule, history);
+        break;
 
       default:
         history.push('/dashboard');
