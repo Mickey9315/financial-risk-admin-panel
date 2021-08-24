@@ -28,6 +28,7 @@ import { REPORTS_REDUX_CONSTANTS } from '../redux/ReportsReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 import CustomSelect from '../../../common/CustomSelect/CustomSelect';
 import { downloadAll } from '../../../helpers/DownloadHelper';
+import { startGeneralLoaderOnRequest } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 
 const ViewReport = () => {
   const dispatch = useDispatch();
@@ -395,6 +396,7 @@ const ViewReport = () => {
   useEffect(() => {
     return () => {
       dispatch(resetReportListData());
+      startGeneralLoaderOnRequest('viewReportListLoader');
     };
   }, []);
 
