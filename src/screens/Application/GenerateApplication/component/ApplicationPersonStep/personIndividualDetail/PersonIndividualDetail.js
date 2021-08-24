@@ -48,7 +48,7 @@ const drawerReducer = (state, action) => {
       return state;
   }
 };
-const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) => {
+const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, activePersonStep }) => {
   const dispatch = useDispatch();
   const updateSinglePersonState = useCallback(
     (name, value) => {
@@ -65,13 +65,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
   );
   const partners = useSelector(({ application }) => application?.editApplication?.partners ?? []);
 
-  const {
-    streetType,
-    australianStates,
-    countryList,
-    newZealandStates,
-    companyEntityType,
-  } = useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
+  const { streetType, australianStates, countryList, newZealandStates, companyEntityType } =
+    useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
 
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
@@ -1025,6 +1020,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany }) =>
       <AccordionItem
         index={index}
         isExpanded
+        setOpenIndex={activePersonStep}
         className="application-person-step-accordion"
         header={itemHeader ?? 'Director Details'}
         prefix="expand_more"
@@ -1046,9 +1042,11 @@ PersonIndividualDetail.propTypes = {
   itemHeader: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   entityTypeFromCompany: PropTypes.string,
+  activePersonStep: PropTypes.number,
 };
 PersonIndividualDetail.defaultProps = {
   entityTypeFromCompany: '',
+  activePersonStep: undefined,
 };
 
 export default PersonIndividualDetail;

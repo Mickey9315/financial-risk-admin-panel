@@ -13,6 +13,7 @@ const ApplicationPersonStep = () => {
   const personState = useSelector(
     ({ application }) => application?.editApplication?.partners ?? []
   );
+
   const entityType = useSelector(
     ({ application }) => application?.editApplication?.company?.entityType ?? []
   );
@@ -55,10 +56,11 @@ const ApplicationPersonStep = () => {
           itemHeader={itemHeader}
           index={index}
           entityTypeFromCompany={entityTypeFromCompany}
+          activePersonStep={personState?.length}
         />
       );
     },
-    [entityTypeFromCompany]
+    [entityTypeFromCompany, personState?.length]
   );
 
   return (

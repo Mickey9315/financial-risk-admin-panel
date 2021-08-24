@@ -8,6 +8,7 @@ const AccordionItem = props => {
     className,
     headerClass,
     prefix,
+    setOpenIndex,
     prefixClass,
     suffix,
     isExpanded,
@@ -32,8 +33,9 @@ const AccordionItem = props => {
     [activeAccordion, setIndex]
   );
   useEffect(() => {
-    setIndex(isExpanded ? 0 : -1);
-  }, []);
+    // eslint-disable-next-line no-nested-ternary
+    setIndex(setOpenIndex ? setOpenIndex - 1 : isExpanded ? 0 : -1);
+  }, [setOpenIndex]);
   return (
     <div className={accordionClass}>
       <div className={headerClassName} onClick={onClickAccordionItem}>
@@ -73,6 +75,7 @@ const AccordionItem = props => {
 
 AccordionItem.propTypes = {
   index: PropTypes.number.isRequired,
+  setOpenIndex: PropTypes.number,
   className: PropTypes.string,
   headerClass: PropTypes.string,
   header: PropTypes.array.isRequired,
@@ -95,6 +98,7 @@ AccordionItem.defaultProps = {
   count: '',
   prefixClass: '',
   suffixClass: '',
+  setOpenIndex: undefined,
   isExpanded: false,
   accordionBodyClass: '',
   children: null,
