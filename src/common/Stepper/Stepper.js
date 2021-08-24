@@ -122,7 +122,6 @@ Stepper.propTypes = {
   addStepClick: PropTypes.func,
   onChangeIndex: PropTypes.func,
   children: PropTypes.element.isRequired,
-  isPersonAdded: PropTypes.bool,
 };
 
 Stepper.defaultProps = {
@@ -130,7 +129,6 @@ Stepper.defaultProps = {
   onChangeIndex: () => {},
   nextClick: () => {},
   addStepClick: () => {},
-  isPersonAdded: false,
 };
 
 export default Stepper;
