@@ -9,6 +9,8 @@ const noPerPage = [
   { label: '20', value: 20 },
   { label: '25', value: 25 },
   { label: '30', value: 30 },
+  { label: '50', value: 50 },
+  { label: '100', value: 100 },
 ];
 const Pagination = props => {
   const { total, limit, pages, page, className, pageActionClick, onSelectLimit } = props;
