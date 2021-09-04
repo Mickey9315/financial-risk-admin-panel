@@ -22,7 +22,7 @@
     }
 
     span {
-      color: $placeholder-color
+      color: $placeholder-color;
     }
 
     .input-container {
@@ -30,7 +30,8 @@
       width: fit-content;
     }
 
-    .input-container, input {
+    .input-container,
+    input {
       font: $subtitle $font-regular;
       color: $field-color;
       border: none;
@@ -60,7 +61,7 @@
       margin: 5px 0;
       padding: 0;
       background-color: #ffffff;
-      list-style-type:none;
+      list-style-type: none;
     }
 
     li {

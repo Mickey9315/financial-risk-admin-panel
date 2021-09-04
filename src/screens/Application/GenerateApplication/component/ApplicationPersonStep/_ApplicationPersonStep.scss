@@ -2,18 +2,21 @@
   background-color: $background-color;
 }
 
-.application-person-step-accordion-item, .application-confirmation-step {
+.application-person-step-accordion-item,
+.application-confirmation-step {
   display: grid;
   grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
   align-items: center;
   padding: 5px 30px 30px;
   gap: 10px;
-  font: $subtitle $font-regular!important;
+  font: $subtitle $font-regular !important;
 
   > span {
     color: $primary-color;
   }
-  .react-select-container, .input-container, .date-picker-container {
+  .react-select-container,
+  .input-container,
+  .date-picker-container {
     width: 70%;
     min-width: 170px;
   }
@@ -21,10 +24,15 @@
   .radio-container {
     display: flex;
     align-items: center;
-    grid-column: 1/span 4;
+    grid-column: 1 / span 4;
   }
 
-  .grid-checkbox, .title, .main-title, .horizontal-line, .radio-title ,.main-title-director-detail{
+  .grid-checkbox,
+  .title,
+  .main-title,
+  .horizontal-line,
+  .radio-title,
+  .main-title-director-detail {
     grid-column: 1 / span 4;
   }
 
@@ -64,11 +72,11 @@
   }
 
   .radio-buttons {
-    grid-column: 1/ span 4;
+    grid-column: 1 / span 4;
   }
 
   .long-text {
-    grid-column: 2/ span 3;
+    grid-column: 2 / span 3;
     width: 100%;
     padding: 5px 10px;
     color: $field-color;
@@ -76,10 +84,10 @@
     border-radius: 5px;
   }
 }
-.is-or-container{
+.is-or-container {
   position: relative;
 }
-.is-or-container::after{
+.is-or-container::after {
   content: 'or';
   position: absolute;
   bottom: -16px;

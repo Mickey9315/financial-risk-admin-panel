@@ -25,7 +25,9 @@
       color: $primary-color;
     }
 
-    .react-select-container, .input-container, .date-picker-container {
+    .react-select-container,
+    .input-container,
+    .date-picker-container {
       width: 70%;
       min-width: 170px;
     }
@@ -33,10 +35,14 @@
     .radio-container {
       display: flex;
       align-items: center;
-      grid-column: 1/span 4;
+      grid-column: 1 / span 4;
     }
 
-    .grid-checkbox, .title, .main-title, .horizontal-line, .radio-title {
+    .grid-checkbox,
+    .title,
+    .main-title,
+    .horizontal-line,
+    .radio-title {
       grid-column: 1 / span 4;
     }
 
@@ -71,11 +77,11 @@
     }
 
     .radio-buttons {
-      grid-column: 1/ span 4;
+      grid-column: 1 / span 4;
     }
 
     .long-text {
-      grid-column: 2/ span 3;
+      grid-column: 2 / span 3;
       width: 100%;
       padding: 5px 10px;
       color: $field-color;
@@ -83,10 +89,10 @@
       border-radius: 5px;
     }
   }
-
 }
 
-.document-upload-popup-container, .add-notes-popup-container {
+.document-upload-popup-container,
+.add-notes-popup-container {
   display: grid;
   grid-template-columns: 180px 2fr;
   align-items: center;
@@ -109,7 +115,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    border: 0.063rem solid #E7ECF2;
+    border: 0.063rem solid #e7ecf2;
     height: 32px;
     width: 100%;
     overflow: hidden;
@@ -117,7 +123,7 @@
 
     button {
       border: none;
-      color: #B2B9BF;
+      color: #b2b9bf;
       background: none;
     }
 
@@ -125,9 +131,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: #B2B9BF;
+      color: #b2b9bf;
     }
-
   }
 }
 
@@ -147,7 +152,7 @@
   }
 }
 
-.button.icon-button.download-decision-letter-icon{
+.button.icon-button.download-decision-letter-icon {
   display: inline-flex;
   background-color: #ffffff;
   //color: $primary-color;
@@ -155,7 +160,6 @@
   border-radius: 8px;
   border: 1px solid $primary-color;
 }
-.button.icon-button.download-decision-letter-icon:hover{
+.button.icon-button.download-decision-letter-icon:hover {
   background-color: $border-color;
 }
-

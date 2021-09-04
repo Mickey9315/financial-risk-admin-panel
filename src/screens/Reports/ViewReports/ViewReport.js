@@ -55,10 +55,10 @@ const ViewReport = () => {
   }, [paramReport]);
 
   // filter
-  const currentFilter = useMemo(
-    () => reportType.find(report => report.url === paramReport),
-    [reportType, paramReport]
-  );
+  const currentFilter = useMemo(() => reportType.find(report => report.url === paramReport), [
+    reportType,
+    paramReport,
+  ]);
   const reportFilters = useSelector(({ reports }) => reports?.reportFilters ?? {});
   const reportEntityListData = useSelector(({ reports }) => reports?.reportEntityListData ?? []);
   const [reviewReportFilterDate, setReviewReportFilterDate] = useState(new Date().toISOString());

@@ -28,10 +28,10 @@ const AccordionItem = props => {
   const content = useRef(null);
   const { openIndex, setIndex } = React.useContext(AccordionContext);
   const activeAccordion = React.useMemo(() => openIndex === index, [openIndex, index]);
-  const onClickAccordionItem = React.useCallback(
-    () => setIndex(!activeAccordion ? index : -1),
-    [activeAccordion, setIndex]
-  );
+  const onClickAccordionItem = React.useCallback(() => setIndex(!activeAccordion ? index : -1), [
+    activeAccordion,
+    setIndex,
+  ]);
   useEffect(() => {
     // eslint-disable-next-line no-nested-ternary
     setIndex(setOpenIndex ? setOpenIndex - 1 : isExpanded ? 0 : -1);

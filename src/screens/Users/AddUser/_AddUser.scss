@@ -10,12 +10,12 @@
 .common-detail-grid {
   display: grid;
   grid-template-columns: calc(50% - 5%) calc(50% - 5%);
-  grid-template-areas: "r1c1 r1c2" "r2c1 r2c2" "r3c1 r3c1";
+  grid-template-areas: 'r1c1 r1c2' 'r2c1 r2c2' 'r3c1 r3c1';
   gap: 15px 10%;
 }
 
 .common-detail-field.user-select-client {
-  grid-column: 1/span 2;
+  grid-column: 1 / span 2;
 }
 
 .common-detail-field {
@@ -60,7 +60,7 @@
   }
 }
 
-.add-user-detail-container span{
+.add-user-detail-container span {
   padding: 0 10px;
   font: $subtitle $font-medium;
   color: $field-color;

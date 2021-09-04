@@ -120,10 +120,9 @@ const ClientList = () => {
     }));
   }, [filterList]);
 
-  const { total, pages, page, limit } = useMemo(
-    () => clientListWithPageData ?? {},
-    [clientListWithPageData]
-  );
+  const { total, pages, page, limit } = useMemo(() => clientListWithPageData ?? {}, [
+    clientListWithPageData,
+  ]);
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({

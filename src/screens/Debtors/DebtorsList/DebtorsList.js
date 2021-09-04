@@ -35,10 +35,9 @@ const DebtorsList = () => {
   const { debtorsColumnNameList, debtorsDefaultColumnNameList } = useSelector(
     ({ debtorsManagement }) => debtorsManagement ?? {}
   );
-  const { docs, headers, page, pages, limit, total } = useMemo(
-    () => debtorListWithPageData ?? {},
-    [debtorListWithPageData]
-  );
+  const { docs, headers, page, pages, limit, total } = useMemo(() => debtorListWithPageData ?? {}, [
+    debtorListWithPageData,
+  ]);
 
   const debtorDropDownData = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
@@ -268,10 +267,9 @@ const DebtorsList = () => {
     dispatch(getDebtorDropdownData());
   }, []);
 
-  const onClickViewDebtor = useCallback(
-    id => history.replace(`debtors/debtor/view/${id}`),
-    [history]
-  );
+  const onClickViewDebtor = useCallback(id => history.replace(`debtors/debtor/view/${id}`), [
+    history,
+  ]);
 
   const downloadDebtor = useCallback(async () => {
     if (docs?.length > 0) {

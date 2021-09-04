@@ -1,11 +1,11 @@
 /* completely hiding radio button */
-input[type="radio"] {
+input[type='radio'] {
   display: none;
 }
 
 /* simulate radiobutton appearance using pseudo selector */
-input[type="radio"] + label:before {
-  content: "";
+input[type='radio'] + label:before {
+  content: '';
   /* create custom radiobutton appearance */
   display: inline-block;
   height: 18px;
@@ -22,7 +22,7 @@ input[type="radio"] + label:before {
 }
 
 /* appearance of checked radiobutton */
-input[type="radio"]:checked + label:before {
+input[type='radio']:checked + label:before {
   background-color: $primary-color;
   border-color: $primary-color;
 }

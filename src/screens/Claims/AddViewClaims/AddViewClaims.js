@@ -29,10 +29,9 @@ import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 
 const AddViewClaims = () => {
   const history = useHistory();
-  const { isRedirected, redirectedFrom, fromId } = useMemo(
-    () => history?.location?.state ?? {},
-    [history]
-  );
+  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
+    history,
+  ]);
   const dispatch = useDispatch();
   const { type, id } = useParams();
   const clientList = useSelector(({ claims }) => claims?.claimsEntityList ?? []);

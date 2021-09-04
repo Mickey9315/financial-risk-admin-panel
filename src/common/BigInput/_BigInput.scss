@@ -9,7 +9,7 @@
   border-radius: 0.625rem;
 
   span {
-   width: 2.5rem;
+    width: 2.5rem;
   }
 
   input {
@@ -28,9 +28,9 @@
 .big-input:-webkit-autofill:hover,
 .big-input:-webkit-autofill:focus,
 .big-input:-webkit-autofill:active {
-    font: $title $font-regular!important;
-    transition: background-color 5000s;
-    -webkit-text-fill-color: $field-color !important;
+  font: $title $font-regular !important;
+  transition: background-color 5000s;
+  -webkit-text-fill-color: $field-color !important;
 }
 
 .suffix {

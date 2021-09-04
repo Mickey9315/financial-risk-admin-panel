@@ -43,15 +43,13 @@ const MyWorkTasks = () => {
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
-  const { total, pages, page, limit, headers, docs } = useMemo(
-    () => taskListData ?? {},
-    [taskListData]
-  );
+  const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? {}, [
+    taskListData,
+  ]);
 
-  const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(
-    () => taskData ?? {},
-    [taskData]
-  );
+  const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(() => taskData ?? {}, [
+    taskData,
+  ]);
   const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
 
   const { taskListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});

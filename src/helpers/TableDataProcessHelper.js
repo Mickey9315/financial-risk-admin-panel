@@ -6,7 +6,12 @@ import { NumberCommaSeparator } from './NumberCommaSeparator';
 export const processTableDataByType = ({ header, row, actions }) => {
   const { type } = header;
   const currentData = row[`${header.name}`];
-  const { handleDrawerState, handleCheckBoxState, handleViewDocument, handleRedirectClick } = actions;
+  const {
+    handleDrawerState,
+    handleCheckBoxState,
+    handleViewDocument,
+    handleRedirectClick,
+  } = actions;
 
   switch (type) {
     case 'date':
@@ -54,7 +59,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
       return currentData ? NumberCommaSeparator(parseFloat(currentData)) : '-';
 
     case 'redirectLink':
-      return <div onClick={() => handleRedirectClick(row)}>{currentData}</div>
+      return <div onClick={() => handleRedirectClick(row)}>{currentData}</div>;
 
     default:
       return currentData;

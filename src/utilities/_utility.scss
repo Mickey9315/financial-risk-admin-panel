@@ -1,20 +1,20 @@
-@import "color-palette";
-@import "typography";
-@import "common-class";
-@import "basic-styles";
-@import "node_modules/react-datepicker/dist/react-datepicker";
+@import 'color-palette';
+@import 'typography';
+@import 'common-class';
+@import 'basic-styles';
+@import 'node_modules/react-datepicker/dist/react-datepicker';
 @import '~rc-tooltip/assets/bootstrap.css';
-@import "modified-library";
+@import 'modified-library';
 
 .cursor-pointer {
   cursor: pointer;
 }
 
-.cursor-not-allowed{
+.cursor-not-allowed {
   cursor: not-allowed;
 }
 
-.cursor-default{
+.cursor-default {
   cursor: default;
 }
 
@@ -22,17 +22,17 @@
   font-size: $subtitle;
 }
 
-.f-bold{
+.f-bold {
   font-weight: bold;
 }
 
 .f-16 {
   font-size: $title;
 }
-.f-h1{
+.f-h1 {
   font-size: $h1;
 }
-.f-h2{
+.f-h2 {
   font-size: $h2;
 }
 
@@ -125,7 +125,7 @@
 }
 
 .mb-5 {
-  margin-bottom: .313rem;
+  margin-bottom: 0.313rem;
 }
 
 .mb-10 {
@@ -133,7 +133,7 @@
 }
 
 .mb-15 {
-  margin-bottom: .938rem;
+  margin-bottom: 0.938rem;
 }
 
 .mb-30 {
@@ -164,4 +164,3 @@
   font: $subtitle $font-regular;
   color: $primary-color;
 }
-

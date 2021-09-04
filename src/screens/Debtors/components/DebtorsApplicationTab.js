@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {useHistory, useParams} from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -170,9 +170,12 @@ const DebtorsApplicationTab = () => {
   };
 
   const handleApplicationRedirectLink = useCallback(row => {
-      history.replace(row?.status === 'Draft' ? `/applications/generate/?applicationId=${row._id}` :
-          `/applications/detail/view/${row._id}`)
-  }, [])
+    history.replace(
+      row?.status === 'Draft'
+        ? `/applications/generate/?applicationId=${row._id}`
+        : `/applications/detail/view/${row._id}`
+    );
+  }, []);
 
   return (
     <>

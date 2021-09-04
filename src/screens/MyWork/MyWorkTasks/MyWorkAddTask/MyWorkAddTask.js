@@ -43,10 +43,9 @@ const MyWorkAddTask = () => {
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
   const { entityType, ...addTaskState } = useMemo(() => taskData?.addTask ?? {}, [taskData]);
-  const { assigneeList, entityList } = useMemo(
-    () => taskData?.myWorkDropDownData ?? {},
-    [taskData]
-  );
+  const { assigneeList, entityList } = useMemo(() => taskData?.myWorkDropDownData ?? {}, [
+    taskData,
+  ]);
 
   const { myWorkSaveNewTaskLoaderButtonAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false

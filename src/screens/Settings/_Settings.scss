@@ -52,14 +52,15 @@
 
 .settings-input-container {
   display: grid;
-  grid-template-columns: repeat(3, 100px minmax(100px,350px));
+  grid-template-columns: repeat(3, 100px minmax(100px, 350px));
   gap: 10px;
   align-items: center;
   margin: 15px 30px 0 0;
 
-  .rss-access-token, textarea {
+  .rss-access-token,
+  textarea {
     grid-column: 2/ 7;
-    $font:$subtitle $font-regular;
+    $font: $subtitle $font-regular;
     color: $field-color;
     word-break: break-all;
   }
@@ -84,7 +85,8 @@
   width: 500px;
 }
 
-.settings-organization-details-row, .add-document-modal-body {
+.settings-organization-details-row,
+.add-document-modal-body {
   display: grid;
   grid-template-columns: 150px minmax(200px, 400px);
   gap: 10px;
@@ -95,7 +97,6 @@
     color: $primary-color;
   }
 }
-
 
 .add-document-modal-body {
   grid-template-columns: 150px minmax(200px, 300px);
@@ -133,7 +134,7 @@
 }
 
 .settings-organization-details-value {
-  padding: .344rem;
+  padding: 0.344rem;
   font: $subtitle $font-medium;
   color: $field-color;
 }

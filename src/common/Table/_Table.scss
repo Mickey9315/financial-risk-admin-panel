@@ -21,8 +21,8 @@
   tbody {
     height: calc(100% - 9rem);
     box-shadow: 0 0 0 1px white;
-    border-top-left-radius: .625rem;
-    border-top-right-radius: .625rem;
+    border-top-left-radius: 0.625rem;
+    border-top-right-radius: 0.625rem;
     overflow-y: auto;
   }
 
@@ -73,7 +73,6 @@
   }
 }
 
-
 .main-list-table {
   th {
     background-color: $background-color;
@@ -101,7 +100,7 @@
   width: max-content;
   padding: 5px 12px;
   border-radius: 5px;
-  background: #FEEBEB 0% 0% no-repeat padding-box;
+  background: #feebeb 0% 0% no-repeat padding-box;
   opacity: 1;
   color: $error-color !important;
   font: $text $font-medium;
@@ -111,7 +110,7 @@
   width: max-content;
   padding: 5px 12px;
   border-radius: 5px;
-  background: #E2E9F0 0% 0% no-repeat padding-box;
+  background: #e2e9f0 0% 0% no-repeat padding-box;
   opacity: 1;
   color: $primary-color !important;
   font: $text $font-medium;
@@ -121,7 +120,7 @@
   width: max-content;
   padding: 5px 12px;
   border-radius: 5px;
-  background: #FDF0E4 0% 0% no-repeat padding-box;
+  background: #fdf0e4 0% 0% no-repeat padding-box;
   opacity: 1;
   color: $secondary-color !important;
   font: $text $font-medium;
@@ -160,7 +159,7 @@
   padding: 0;
 
   span {
-    transition: all .3s ease-in-out;
+    transition: all 0.3s ease-in-out;
   }
 }
 
@@ -178,11 +177,14 @@
     overflow: hidden;
   }
 
-  td, tr, th, div {
+  td,
+  tr,
+  th,
+  div {
     height: unset !important;
     max-height: 0 !important;
     overflow: hidden;
-    transition: all .5s ease-in-out;
+    transition: all 0.5s ease-in-out;
   }
 
   th {
@@ -199,13 +201,19 @@
 }
 
 .show-table {
-  table, tr, th, div {
+  table,
+  tr,
+  th,
+  div {
     max-height: 1000px !important;
     overflow: auto !important;
   }
 }
 
-.expandable-table th:first-child, .expandable-table table td:first-child, .expandable-table th:last-child, .expandable-table table td:last-child {
+.expandable-table th:first-child,
+.expandable-table table td:first-child,
+.expandable-table th:last-child,
+.expandable-table table td:last-child {
   padding-left: 60px;
 }
 
@@ -213,11 +221,11 @@
   display: flex;
   align-items: center;
 
-  .date-picker-container{
+  .date-picker-container {
     max-width: 180px;
   }
 
   .react-select-container {
-    min-width: 180px
+    min-width: 180px;
   }
 }

@@ -31,7 +31,7 @@
   width: 24px;
   background-color: #fff;
   border: 1px solid $border-color;
-  border-radius: 6px
+  border-radius: 6px;
 }
 
 /* On mouse-over, add a grey background color */
@@ -39,8 +39,8 @@
   background-color: $background-color;
 }
 //TODO Monika
-input[type="checkbox" i]:disabled.checkbox-container:hover input ~ .checkmark {
-  background-color: white!important;
+input[type='checkbox' i]:disabled.checkbox-container:hover input ~ .checkmark {
+  background-color: white !important;
 }
 
 /* When the checkbox is checked, add a blue background */
@@ -50,7 +50,7 @@ input[type="checkbox" i]:disabled.checkbox-container:hover input ~ .checkmark {
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }

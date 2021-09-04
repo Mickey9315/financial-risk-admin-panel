@@ -1,5 +1,5 @@
 .client-details-container {
-  display: grid!important;
+  display: grid !important;
   grid-template-columns: 15% calc(35% - 22px) 15% calc(35% - 22px);
   padding: 25px 30px;
   gap: 15px;
@@ -10,13 +10,13 @@
   }
 
   .client-detail {
-    padding: .344rem;
+    padding: 0.344rem;
     min-width: 170px;
     color: $field-color;
     cursor: not-allowed;
   }
 
-   input {
-    cursor: default!important;
+  input {
+    cursor: default !important;
   }
 }

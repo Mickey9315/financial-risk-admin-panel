@@ -26,10 +26,9 @@ import { setViewDebtorActiveTabIndex } from '../../../Debtors/redux/DebtorsActio
 const AddOverdues = () => {
   const history = useHistory();
   const amountRef = useRef([]);
-  const { isRedirected, redirectedFrom, fromId } = useMemo(
-    () => history?.location?.state ?? {},
-    [history]
-  );
+  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
+    history,
+  ]);
   const { id, period } = useParams();
 
   const dispatch = useDispatch();

@@ -53,7 +53,7 @@ export const SIDEBAR_URLS = [
     title: 'Reports',
     icon: 'pie_chart',
     url: '/reports',
-    name: SIDEBAR_NAMES.REPORT
+    name: SIDEBAR_NAMES.REPORT,
   },
   {
     label: 'Claims',

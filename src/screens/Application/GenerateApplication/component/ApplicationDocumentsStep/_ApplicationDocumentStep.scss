@@ -3,17 +3,18 @@
   font-size: $subtitle;
   color: $field-color;
   border-collapse: collapse;
-  td, th {
+  td,
+  th {
     padding: 0.313rem 1.25rem;
   }
 }
 
 .documents-table tr:nth-child(even) {
-background-color: $background-color;
+  background-color: $background-color;
 }
 
 .documents-table tr:nth-child(odd) {
-background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .upload-document-row {

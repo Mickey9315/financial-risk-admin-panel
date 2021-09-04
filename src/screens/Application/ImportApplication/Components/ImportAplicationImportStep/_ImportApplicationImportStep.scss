@@ -1,9 +1,9 @@
-.ia-import-file-step{
+.ia-import-file-step {
   display: flex;
   padding-top: 10px;
   flex-direction: column;
   align-items: center;
-  .ia-import-file-name{
+  .ia-import-file-name {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -12,12 +12,12 @@
     padding: 10px 15px;
     background-color: $background-color;
     border-radius: 10px;
-    .ia-file-name{
+    .ia-file-name {
       font-size: $field-name;
       color: $primary-color;
     }
   }
-  .import-error{
+  .import-error {
     width: 100%;
     text-align: left;
   }

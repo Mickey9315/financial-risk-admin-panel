@@ -47,10 +47,9 @@ const ViewApplicationEditableRowComponent = props => {
     ({ application }) => application?.viewApplication ?? {}
   );
 
-  const { limitType, isAllowToUpdate, expiryDate } = useMemo(
-    () => applicationDetail ?? {},
-    [applicationDetail]
-  );
+  const { limitType, isAllowToUpdate, expiryDate } = useMemo(() => applicationDetail ?? {}, [
+    applicationDetail,
+  ]);
   const handleApplicationLimitTypeChange = useCallback(
     e => {
       setSelectedLimitType(e);

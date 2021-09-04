@@ -1,17 +1,17 @@
 .application-company-container {
   @extend .client-details-container;
-  padding: 0 10px!important;
+  padding: 0 10px !important;
   font: $subtitle $font-regular;
 
   > div {
-    width:100%
+    width: 100%;
   }
 }
 
 .application-entity-name-modal {
   min-height: 30vh;
   max-height: 70vh;
-  width:75vw;
+  width: 75vw;
   background-color: white;
 
   .modal-body {
@@ -19,7 +19,9 @@
     padding: 0;
     overflow: auto;
 
-      tr:hover {background-color: $background-color}
+    tr:hover {
+      background-color: $background-color;
+    }
 
     .application-entity-name-modal-search-records {
       max-height: calc(70vh - 80px);
@@ -32,19 +34,22 @@
   }
 
   table {
-    background-color: white!important;
+    background-color: white !important;
     th {
-      padding: 1rem 1.25rem .6rem 1.25rem;
+      padding: 1rem 1.25rem 0.6rem 1.25rem;
       text-align: left;
     }
-    th:first-child, th:last-child, td:first-child, td:last-child {
+    th:first-child,
+    th:last-child,
+    td:first-child,
+    td:last-child {
       padding-left: 30px;
       padding-right: 30px;
     }
   }
 }
 
-.application-entity-name-modal-retry-button{
+.application-entity-name-modal-retry-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,10 +58,10 @@
   font: $subtitle $font-regular;
   color: $primary-color;
 }
-.is-or-container{
+.is-or-container {
   position: relative;
 }
-.is-or-container::after{
+.is-or-container::after {
   content: 'or';
   position: absolute;
   bottom: -16px;
@@ -81,7 +86,7 @@
 
 .application-stepper-divider {
   width: 100% !important;
-  grid-column: 1/span 4;
+  grid-column: 1 / span 4;
   margin: 10px 0;
   border-top: 1px solid $primary-color-1;
 }

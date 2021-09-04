@@ -7,21 +7,24 @@
   width: 100%;
   padding: 30px;
 
-  .react-select-container, .react-select-container .react-select__control, .date-picker-container, >div > div {
+  .react-select-container,
+  .react-select-container .react-select__control,
+  .date-picker-container,
+  > div > div {
     width: 100%;
     max-width: 300px;
   }
 }
 
 .add-claims-content.view-claim-content {
-  gap: 20px
+  gap: 20px;
 }
 
 .claims-title {
   width: 190px;
   margin-right: 10px;
   font: $subtitle $font-regular;
-  color: $primary-color
+  color: $primary-color;
 }
 
 .view-claim-detail {

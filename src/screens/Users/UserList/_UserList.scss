@@ -7,8 +7,8 @@
 }
 
 .common-list-pagination {
-  border-bottom-left-radius: .625rem;
-  border-bottom-right-radius: .625rem;
+  border-bottom-left-radius: 0.625rem;
+  border-bottom-right-radius: 0.625rem;
 }
 
 .filter-modal {
@@ -51,7 +51,7 @@
   display: flex;
   > div {
     margin-right: 60px;
-   label {
+    label {
       margin: 10px 0;
     }
   }

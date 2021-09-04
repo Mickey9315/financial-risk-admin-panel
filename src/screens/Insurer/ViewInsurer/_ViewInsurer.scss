@@ -1,5 +1,5 @@
 .common-detail-field.view-insurer-website {
-  grid-column: 1/span 2;
+  grid-column: 1 / span 2;
 
   a {
     padding: 2px 5px;
@@ -11,9 +11,10 @@
 
 .view-insurer-grid .common-detail-field {
   grid-template-columns: 130px 1fr;
-  align-items: baseline; .common-detail-title {
-  margin-top: 5px;
-}
+  align-items: baseline;
+  .common-detail-title {
+    margin-top: 5px;
+  }
 }
 
 .view-insurer-value {

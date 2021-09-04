@@ -65,8 +65,13 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
   );
   const partners = useSelector(({ application }) => application?.editApplication?.partners ?? []);
 
-  const { streetType, australianStates, countryList, newZealandStates, companyEntityType } =
-    useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
+  const {
+    streetType,
+    australianStates,
+    countryList,
+    newZealandStates,
+    companyEntityType,
+  } = useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
 
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);

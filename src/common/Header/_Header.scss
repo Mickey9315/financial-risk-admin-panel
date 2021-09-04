@@ -1,4 +1,4 @@
-@import "../../screens/Application/ViewApplication/ViewApplication";
+@import '../../screens/Application/ViewApplication/ViewApplication';
 // TODO handle this css
 
 .header-container {
@@ -31,7 +31,7 @@
 }
 
 .user-dp:hover {
-  opacity: .8;
+  opacity: 0.8;
 }
 
 .user-settings {
@@ -107,7 +107,7 @@
 
 .header-search-container-focused {
   border-color: transparent;
-  box-shadow: 0px 0px 10px #3D3D3D29;
+  box-shadow: 0px 0px 10px #3d3d3d29;
 }
 
 .got-search-results {
@@ -125,12 +125,12 @@
   max-height: 200px;
   overflow: auto;
   background-color: white;
-  color: #B8C1CC;
+  color: #b8c1cc;
   list-style-type: none;
   border-radius: 0 0 10px 10px;
-  box-shadow: 0px 10px 10px -1px #3D3D3D29;
-  -webkit-box-shadow: 0px 10px 10px -1px #3D3D3D29;
-  -moz-box-shadow: 0px 10px 13px -1px #3D3D3D29;
+  box-shadow: 0px 10px 10px -1px #3d3d3d29;
+  -webkit-box-shadow: 0px 10px 10px -1px #3d3d3d29;
+  -moz-box-shadow: 0px 10px 13px -1px #3d3d3d29;
   z-index: 1000;
 
   li {
@@ -153,17 +153,17 @@
       color: $primary-color;
       padding: 5px 12px;
       border-radius: 5px;
-      background: #E2E9F0 0% 0% no-repeat padding-box;
+      background: #e2e9f0 0% 0% no-repeat padding-box;
       opacity: 1;
     }
   }
 
   li:hover {
-    background-color: #DEEBFF;
+    background-color: #deebff;
   }
 
   .header-active-search {
-    background-color: #DEEBFF;
+    background-color: #deebff;
   }
 }
 
@@ -282,7 +282,8 @@
   align-items: center;
 }
 
-.page-header-name, .tab-content-header {
+.page-header-name,
+.tab-content-header {
   font: $h5 $font-medium;
   color: $primary-color;
 }
@@ -310,11 +311,11 @@
   }
 
   &.secondary-tag:hover {
-    background-color: #F9D0AC ;
+    background-color: #f9d0ac;
   }
 
   &.red-tag:hover {
-    background-color: #FEC4C4;
+    background-color: #fec4c4;
   }
 }
 
@@ -347,7 +348,8 @@
   .alert-details-wrapper {
     padding: 20px 60px;
 
-    .alert-general-details, .alert-detail {
+    .alert-general-details,
+    .alert-detail {
       display: grid;
       grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
       align-items: center;
@@ -360,7 +362,7 @@
       }
 
       .alert-detail-value-field {
-        padding: .344rem;
+        padding: 0.344rem;
         min-width: 170px;
         color: $field-color;
       }

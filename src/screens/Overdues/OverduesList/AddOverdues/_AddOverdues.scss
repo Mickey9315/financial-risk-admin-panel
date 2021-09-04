@@ -10,21 +10,20 @@
   padding: 0 40px;
   span {
     font: $title $font-bold;
-    color: $field-color
+    color: $field-color;
   }
 }
 
 .add-overdue-modal {
-  width:80%;
+  width: 80%;
   height: 80%;
   display: flex;
   flex-direction: column;
-  .modal-body{
+  .modal-body {
     flex-grow: 1;
-    overflow:auto ;
+    overflow: auto;
   }
 }
-
 
 .add-modal-full-width-row {
   font: $subtitle $font-bold;
@@ -39,34 +38,41 @@
   .add-overdue-field-container {
     display: flex;
 
-    > div, input, textarea, .react-select-container, .react-select-container .react-select__control, .date-picker-container {
+    > div,
+    input,
+    textarea,
+    .react-select-container,
+    .react-select-container .react-select__control,
+    .date-picker-container {
       width: 100%;
     }
   }
 
-  .add-overdue-textarea{
+  .add-overdue-textarea {
     grid-column: 2;
-    grid-row: 7/span 7;
+    grid-row: 7 / span 7;
   }
-  .add-overdue-textarea.overdue-analyst-comment{
+  .add-overdue-textarea.overdue-analyst-comment {
     grid-column: 2;
-    grid-row: 10/span 10;
+    grid-row: 10 / span 10;
   }
 
-  .add-overdue-amount-input, .add-overdue-total-amount {
+  .add-overdue-amount-input,
+  .add-overdue-total-amount {
     width: 100%;
     text-align: right;
   }
 
-  .add-overdue-total-amount-title, .add-overdue-total-amount {
+  .add-overdue-total-amount-title,
+  .add-overdue-total-amount {
     font: $subtitle $font-medium;
-    color: $secondary-color!important;
+    color: $secondary-color !important;
   }
 
   .add-overdue-total-amount {
     padding-right: 5px;
     .ui-state-error {
-      text-align: right ;
+      text-align: right;
     }
   }
 }
@@ -90,20 +96,23 @@
 
   thead {
     border: 1px solid #ffffff;
-  th {
-    text-align: left;
-  }
+    th {
+      text-align: left;
+    }
   }
 
-  td:first-child, th:first-child {
+  td:first-child,
+  th:first-child {
     padding: 8px 0 8px 40px;
   }
 
-  td:last-child, th:last-child {
+  td:last-child,
+  th:last-child {
     padding: 8px 40px 8px 0;
   }
 
-  tr:nth-child(1) td:first-child, tr:nth-child(1) td:last-child {
+  tr:nth-child(1) td:first-child,
+  tr:nth-child(1) td:last-child {
     border-radius: unset;
   }
 }

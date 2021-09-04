@@ -54,10 +54,9 @@ const UserList = () => {
   });
   const [deleteId, setDeleteId] = useState(null);
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => userListWithPageData ?? {},
-    [userListWithPageData]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => userListWithPageData ?? {}, [
+    userListWithPageData,
+  ]);
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({

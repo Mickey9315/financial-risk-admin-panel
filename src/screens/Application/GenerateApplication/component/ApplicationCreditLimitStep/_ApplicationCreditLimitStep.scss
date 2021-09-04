@@ -1,4 +1,6 @@
-.if-yes-row, .credit-limits-note, .upload-document-row {
+.if-yes-row,
+.credit-limits-note,
+.upload-document-row {
   span {
     font-size: $subtitle;
   }
@@ -39,7 +41,7 @@
 .application-credit-limits-grid {
   display: grid;
   grid-template-columns: calc(50% - 15px) calc(50% - 15px);
-  gap: 20px 30px
+  gap: 20px 30px;
 }
 
 .outstanding-amount-container {

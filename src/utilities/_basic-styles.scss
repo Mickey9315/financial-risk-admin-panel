@@ -1,4 +1,5 @@
-html, body{
+html,
+body {
   height: 100%;
 }
 
@@ -17,15 +18,17 @@ code {
   font-family: $font-regular;
 }
 
-input::placeholder, textarea::placeholder, .react-select__placeholder {
+input::placeholder,
+textarea::placeholder,
+.react-select__placeholder {
   font: $subtitle $font-regular;
-  color: $placeholder-color!important;
+  color: $placeholder-color !important;
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active  {
+input:-webkit-autofill:active {
   font: $subtitle $font-regular;
   transition: background-color 5000s;
   -webkit-text-fill-color: $field-color !important;

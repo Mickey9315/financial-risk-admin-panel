@@ -12,7 +12,7 @@ export const applicationDocumentsStepValidations = async (dispatch, data, editAp
     try {
       await dispatch(saveApplicationStepDataToBackend(finalData));
     } catch (e) {
-      throw Error()
+      throw Error();
     }
     validated = true;
   }

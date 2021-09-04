@@ -20,7 +20,9 @@ const DebtorStakeHolderApiServices = {
     getstakeholderCountryDataFromABNorACN: params =>
       ApiService.getData(
         `${DEBTORS_URLS.STAKE_HOLDER.STAKE_HOLDER_CRUD.SEARCH_APPLICATION_BY_ABN_ACN_DETAILS}`,
-        { params }
+        {
+          params,
+        }
       ),
     searchstakeholderCountryEntityName: params =>
       ApiService.getData(

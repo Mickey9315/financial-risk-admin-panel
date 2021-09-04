@@ -49,11 +49,10 @@ const HeaderNotification = () => {
           return acc;
         }, {})
       );
-      list?.sort(function (a, b) {
-        return (
+      list?.sort(
+        (a, b) =>
           moment(b.createdAt, 'DD/MM/YYYY').toDate() - moment(a.createdAt, 'DD/MM/YYYY').toDate()
-        );
-      });
+      );
     }
     return list ?? [];
   }, [notificationList]);

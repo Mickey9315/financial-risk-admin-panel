@@ -1,11 +1,14 @@
-.upload-document-modal, .add-task-modal {
+.upload-document-modal,
+.add-task-modal {
   width: 60vw;
   .document-upload-popup-container > span {
     font-size: $subtitle;
   }
 }
 
-.document-upload-popup-container, .add-notes-popup-container, .modify-credit-limit-container {
+.document-upload-popup-container,
+.add-notes-popup-container,
+.modify-credit-limit-container {
   display: grid;
   grid-template-columns: 180px 2fr;
   gap: 15px 5px;
@@ -17,28 +20,26 @@
   .upload-document-input {
     width: 180px;
   }
-   .switch-container {
-     width: 180px;
+  .switch-container {
+    width: 180px;
   }
-  .document-upload-input{
+  .document-upload-input {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    border: 0.063rem solid #E7ECF2;
+    border: 0.063rem solid #e7ecf2;
     height: 32px;
     width: 180px;
-    button{
+    button {
       border: none;
-      color: #B2B9BF;
+      color: #b2b9bf;
       background: none;
     }
-      p{
-        color: #B2B9BF;
-      }
-
+    p {
+      color: #b2b9bf;
     }
-
+  }
 }
 
 .tab-table-container {

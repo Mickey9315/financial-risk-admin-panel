@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   height: 200px;
-  width:100%;
+  width: 100%;
   padding: 20px;
 }
 
@@ -21,7 +21,7 @@
 }
 .loader:after {
   background-color: $secondary-color;
-  color:$secondary-color;
+  color: $secondary-color;
 }
 .loader {
   position: relative;

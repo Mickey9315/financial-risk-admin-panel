@@ -24,7 +24,7 @@
 .view-application-accordion {
   width: 100%;
 
- .accordion-body-container {
+  .accordion-body-container {
     background-color: white;
   }
 
@@ -40,7 +40,9 @@
   border: 1px solid $border-color;
   border-radius: 5px;
 
-  .note-title, .alert-title, .document-title {
+  .note-title,
+  .alert-title,
+  .document-title {
     max-width: 70%;
     font: $subtitle $font-medium;
     color: $secondary-color;
@@ -50,7 +52,7 @@
   }
 
   .menu-name {
-    font: $subtitle!important;
+    font: $subtitle !important;
   }
 }
 
@@ -58,7 +60,8 @@
   margin-bottom: 0;
 }
 
-.date-owner-row, .date-time-row {
+.date-owner-row,
+.date-time-row {
   display: grid;
   grid-template-columns: 30px 1fr 40px 1fr;
   gap: 0 5px;
@@ -99,7 +102,9 @@
   }
 }
 
-.note-title-row, .alert-title-row, .document-title-row {
+.note-title-row,
+.alert-title-row,
+.document-title-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -117,15 +122,15 @@
   color: $primary-color;
 }
 
-.application-status-grid{
+.application-status-grid {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.right-side-status{
+.right-side-status {
   display: flex;
-  color:$primary-color;
+  color: $primary-color;
 }
 
 .application-status {
@@ -135,7 +140,7 @@
 }
 
 .approved-application-status {
-background-color: $success-color;
+  background-color: $success-color;
 }
 
 .declined-application-status {
@@ -148,7 +153,7 @@ background-color: $success-color;
   margin-top: 5px;
 
   .react-select-container {
-    min-width: 180px
+    min-width: 180px;
   }
 
   .ui-state-error {
@@ -156,7 +161,7 @@ background-color: $success-color;
   }
 }
 
-.application-editable-row-grid{
+.application-editable-row-grid {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -183,13 +188,14 @@ background-color: $success-color;
   }
 }
 
-.add-task-button, .add-note-button {
+.add-task-button,
+.add-note-button {
   margin-bottom: 10px;
   padding: 5px 15px;
   font: $text $font-medium;
   border-radius: 5px;
 }
-.add-document-button{
+.add-document-button {
   margin-bottom: 10px;
   padding: 5px;
   font: $text $font-medium;
@@ -199,7 +205,7 @@ background-color: $success-color;
 .blockers-title {
   margin-bottom: 7px;
   font: $subtitle $font-medium;
-  color:$secondary-color;
+  color: $secondary-color;
 }
 
 .current-business-address-title {
@@ -208,7 +214,9 @@ background-color: $success-color;
   color: $primary-color;
 }
 
-.current-business-address, .client-reference, .application-comment {
+.current-business-address,
+.client-reference,
+.application-comment {
   display: grid;
   grid-template-columns: 150px auto;
   align-items: center;
@@ -229,7 +237,8 @@ background-color: $success-color;
   margin-bottom: 0;
 }
 
-.view-application-question, .view-application-answer {
+.view-application-question,
+.view-application-answer {
   margin: 10px 0;
   color: $field-color;
 }
@@ -242,9 +251,9 @@ background-color: $success-color;
   width: 175px;
 }
 
-.accordion-body-container.application-active-accordion-scroll.active-accordion{
+.accordion-body-container.application-active-accordion-scroll.active-accordion {
   max-height: 60vh;
-  overflow: auto!important;
+  overflow: auto !important;
 }
 
 .view-application-accordion-description {
@@ -254,7 +263,7 @@ background-color: $success-color;
 }
 
 .view-application-accordion-dropdown .menu-name {
-  font-size: $subtitle!important;
+  font-size: $subtitle !important;
 }
 
 .fetch-report-modal {

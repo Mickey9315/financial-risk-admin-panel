@@ -20,8 +20,8 @@
   color: $field-color;
   cursor: pointer;
 
-  >span:first-child {
-    opacity: .5;
+  > span:first-child {
+    opacity: 0.5;
   }
 
   > span:last-child {
@@ -66,25 +66,25 @@
 }
 
 .disabled-icon {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .disabled {
-  color: $field-color!important;
-  opacity: .5;
+  color: $field-color !important;
+  opacity: 0.5;
 }
 
 .disabled-control {
-  border: none!important;
+  border: none !important;
   -moz-appearance: window;
   -webkit-appearance: none;
 }
 
 .react-dropdown-select.disabled-control .react-dropdown-select-content {
-  font-family: $font-medium!important;
+  font-family: $font-medium !important;
 }
 
-.react-dropdown-select-type-single{
+.react-dropdown-select-type-single {
   display: flex;
   align-items: center;
   height: 18px;
@@ -103,11 +103,11 @@
 }
 
 .ui-state-error {
-  font:$text $font-regular;
+  font: $text $font-regular;
   color: $error-color;
 }
 
-.select > div:nth-child(1){
+.select > div:nth-child(1) {
   height: 2rem;
   min-height: unset;
   padding: 2px 5px 2px 0px;
@@ -118,7 +118,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   background-color: #ffffff;
-  border: 0.063rem solid #E7ECF2;
+  border: 0.063rem solid #e7ecf2;
   border-radius: 0.313rem;
   box-shadow: none;
 
@@ -127,21 +127,22 @@
     color: $field-color;
   }
 
-   div:nth-child(2) span {
+  div:nth-child(2) span {
     display: none;
   }
 
   div:nth-child(2) div {
-    padding: 0 ;
+    padding: 0;
 
     svg {
-      fill: #ABB3BA;
+      fill: #abb3ba;
     }
   }
 }
 
-.select > div:focus, .select > div:hover {
-  border: 0.063rem solid #E7ECF2;
+.select > div:focus,
+.select > div:hover {
+  border: 0.063rem solid #e7ecf2;
   outline: none;
   box-shadow: none;
 }

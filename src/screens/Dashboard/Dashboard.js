@@ -38,7 +38,6 @@ const Dashboard = () => {
     return () => dispatch(resetDashboardDetails());
   }, []);
 
-
   return (
     <>
       <ReactSelect

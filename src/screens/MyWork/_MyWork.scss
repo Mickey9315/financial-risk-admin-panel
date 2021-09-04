@@ -1,11 +1,11 @@
-@import "../Clients/ViewClient/ViewClient";
+@import '../Clients/ViewClient/ViewClient';
 
 .my-work-add-task-container {
-  @extend .client-details-container
+  @extend .client-details-container;
 }
 
 .my-work-view-task-container {
-  display: grid!important;
+  display: grid !important;
   grid-template-columns: 15% calc(35% - 22px) 15% calc(35% - 22px);
   padding: 25px 30px;
   gap: 15px;
@@ -15,14 +15,14 @@
   }
 
   .client-detail {
-    padding: .344rem;
+    padding: 0.344rem;
     min-width: 170px;
     color: $field-color;
     cursor: not-allowed;
   }
 
   input {
-    cursor: default!important;
+    cursor: default !important;
   }
 }
 
@@ -33,8 +33,8 @@
 }
 
 .my-work-tab {
-  width: fit-content!important;
-  background-color: white!important;
+  width: fit-content !important;
+  background-color: white !important;
 }
 
 .my-work-tab-content-container {
@@ -43,17 +43,16 @@
 }
 
 .my-work-tab-button-row .react-datepicker-popper {
-  left: unset!important;
+  left: unset !important;
   right: 0;
 }
-.common-white-container.notification-white-container{
+.common-white-container.notification-white-container {
   max-height: calc(100vh - 11rem);
   display: block;
   margin-top: 20px;
   overflow: auto;
-
 }
-.my-work-task-action-row{
+.my-work-task-action-row {
   display: flex;
   justify-content: flex-end;
   width: 100%;

@@ -124,8 +124,9 @@ const ApplicationTaskAccordion = props => {
 
   const backToTaskList = useCallback(() => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type:
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -143,8 +144,9 @@ const ApplicationTaskAccordion = props => {
 
   const onCloseTaskModal = useCallback(() => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type:
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
