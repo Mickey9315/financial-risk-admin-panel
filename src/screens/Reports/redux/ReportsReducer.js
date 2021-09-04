@@ -310,6 +310,12 @@ const initialReports = {
 
 export const reports = (state = initialReports, action) => {
   switch (action.type) {
+    case REPORTS_REDUX_CONSTANTS.INITIALIZE_FILTERS:
+      return {
+        ...state,
+        reportFilters: initialFilterState,
+      };
+
     case REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS:
       return {
         ...state,
@@ -359,7 +365,6 @@ export const reports = (state = initialReports, action) => {
       return {
         ...state,
         reportEntityListData,
-        reportFilters: initialFilterState,
       };
     }
 
