@@ -140,7 +140,7 @@ const ViewReport = () => {
       const isBothEqual = _.isEqual(reportColumnList, reportDefaultColumnList);
       if (!isBothEqual) {
         await dispatch(saveReportColumnList({ reportColumnList, reportFor: paramReport }));
-        getReportListByFilter();
+        await getReportListByFilter();
       } else {
         errorNotification('Please select different columns to apply changes.');
         throw Error();
@@ -161,7 +161,7 @@ const ViewReport = () => {
     try {
       await dispatch(saveReportColumnList({ isReset: true, reportFor: paramReport }));
       dispatch(getReportColumnList(paramReport));
-      getReportListByFilter();
+      await getReportListByFilter();
       toggleCustomField();
     } catch (e) {
       /**/
@@ -277,7 +277,7 @@ const ViewReport = () => {
               name="role"
               isSearchble
               options={reportEntityListData?.[input.name]}
-              value={reportEntityListData?.[input.name].find(
+              value={reportEntityListData?.[input.name]?.find(
                 data =>
                   data?.value === reportFilters?.[currentFilter.filter]?.tempFilter[input.name]
               )}
@@ -385,19 +385,17 @@ const ViewReport = () => {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
     };
-    dispatch(getReportsClientDropdownData());
+    startGeneralLoaderOnRequest('viewReportListLoader');
+    await dispatch(getReportsClientDropdownData());
     Object.entries(restParams).forEach(([key, value]) => {
       changeFilterFields(key, value);
     });
     await getReportListByFilter({ ...params, ...restParams });
-    dispatch(getReportColumnList(paramReport));
+    await dispatch(getReportColumnList(paramReport));
   }, []);
 
   useEffect(() => {
-    return () => {
-      dispatch(resetReportListData());
-      startGeneralLoaderOnRequest('viewReportListLoader');
-    };
+    return () => dispatch(resetReportListData());
   }, []);
 
   // for params in url
@@ -423,6 +421,9 @@ const ViewReport = () => {
     if (['review'].includes(paramReport)) await getReportListByFilter();
   }, [reviewReportFilterDate, paramReport]);
 
+  useEffect(() => {
+    dispatch({ type: REPORTS_REDUX_CONSTANTS.INITIALIZE_FILTERS });
+  }, []);
   // download
   const downloadReport = useCallback(async () => {
     if (docs?.length > 0) {
@@ -527,7 +528,7 @@ const ViewReport = () => {
               buttons={filterModalButtons}
               className="filter-modal overdue-filter-modal"
             >
-              <>{reportFilters?.[currentFilter.filter]?.filterInputs?.map(getComponentFromType)}</>
+              <>{reportFilters?.[currentFilter?.filter]?.filterInputs?.map(getComponentFromType)}</>
             </Modal>
           )}
         </>

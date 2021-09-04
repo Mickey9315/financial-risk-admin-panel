@@ -10,7 +10,6 @@ import { errorNotification, successNotification } from '../../../common/Toast';
 export const getReportList = params => {
   return async dispatch => {
     try {
-      startGeneralLoaderOnRequest('viewReportListLoader');
       const response = await ReportsApiService.getReportsList(params);
       if (response.data.status === 'SUCCESS') {
         dispatch({
