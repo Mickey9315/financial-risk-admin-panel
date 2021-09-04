@@ -5,6 +5,7 @@ import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import Button from '../../../../common/Button/Button';
 import { errorNotification } from '../../../../common/Toast';
 import { changeApplicationStatus } from '../../redux/ApplicationAction';
+import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
 
 const ApplicationCommentAccordion = props => {
   const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
@@ -25,6 +26,10 @@ const ApplicationCommentAccordion = props => {
         comments: commentText,
       };
       await dispatch(changeApplicationStatus(_id, data));
+      await dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_COMMENT_CHANGE,
+        data: commentText,
+      });
     }
   }, [_id, commentText]);
 
