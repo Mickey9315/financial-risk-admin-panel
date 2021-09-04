@@ -385,7 +385,7 @@ const ViewReport = () => {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
     };
-    await dispatch(getReportsClientDropdownData());
+    dispatch(getReportsClientDropdownData());
     Object.entries(restParams).forEach(([key, value]) => {
       changeFilterFields(key, value);
     });

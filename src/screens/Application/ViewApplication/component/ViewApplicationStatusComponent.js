@@ -27,7 +27,7 @@ const ViewApplicationStatusComponent = props => {
     ({ application }) => application?.viewApplication ?? {}
   );
 
-  const { creditLimit, isAllowToUpdate, status, _id, comment } = useMemo(
+  const { creditLimit, isAllowToUpdate, status, _id, comments } = useMemo(
     () => applicationDetail ?? {},
     [applicationDetail]
   );
@@ -89,7 +89,7 @@ const ViewApplicationStatusComponent = props => {
         const data = {
           update: 'credit-limit',
           status: statusToChange?.value,
-          comment: commentText,
+          comments: commentText,
         };
         if (statusToChange?.value === 'APPROVED')
           data.creditLimit = newCreditLimit?.toString()?.trim();
@@ -169,8 +169,8 @@ const ViewApplicationStatusComponent = props => {
 
   useEffect(() => {
     setNewCreditLimit(creditLimit);
-    setCommentText(comment);
-  }, [creditLimit, comment]);
+    setCommentText(comments);
+  }, [creditLimit, comments]);
 
   const rightSideStatusButtons = useMemo(() => {
     if (!['DECLINED', 'APPROVED'].includes(status?.value)) {

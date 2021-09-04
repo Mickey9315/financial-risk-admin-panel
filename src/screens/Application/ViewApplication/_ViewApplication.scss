@@ -87,11 +87,12 @@
 
 .report-row {
   display: grid;
-  grid-template-columns: 40px 2fr;
+  grid-template-columns: 1fr 2fr;
   gap: 3px 5px;
 
   .title {
     color: $field-color;
+    white-space: nowrap;
   }
 
   .details {

@@ -24,7 +24,7 @@ const ApplicationCommentAccordion = props => {
     } else {
       const data = {
         update: 'field',
-        comment: commentText,
+        comments: commentText,
       };
       await dispatch(changeApplicationStatus(_id, data));
     }
