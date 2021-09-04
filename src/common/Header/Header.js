@@ -118,6 +118,7 @@ const Header = () => {
 
     try {
       await changePassword(currentPassword, newPassword);
+      await dispatch(logoutUser());
       toggleChangePasswordModal(false);
       resetInputs();
     } catch (e) {
