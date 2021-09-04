@@ -187,6 +187,29 @@ export const getApplicationCompanyDropDownData = () => {
   };
 };
 
+export const getApplicationDebtorDropDownData = searchString => {
+  return async dispatch => {
+    try {
+      const options = {
+        searchString,
+        page: 1,
+        limit: 250,
+      };
+      const response = await ApplicationApiServices.searchDebtorDropdownData(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_DEBTOR_DROP_DOWN_DATA,
+          data: response?.data?.data,
+          name: 'debtors',
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
 export const getApplicationCompanyDataFromDebtor = (id, params) => {
   return async dispatch => {
     // eslint-disable-next-line no-useless-catch

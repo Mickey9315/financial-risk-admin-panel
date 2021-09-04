@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AsyncSelect from 'react-select/async';
+import ReactSelect from 'react-select';
+import _ from 'lodash';
 import Input from '../../../../../common/Input/Input';
 import {
   changeEditApplicationFieldValue,
@@ -12,6 +13,7 @@ import {
   searchApplicationCompanyEntityName,
   updateEditApplicationData,
   updateEditApplicationField,
+  getApplicationDebtorDropDownData,
 } from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
 import Loader from '../../../../../common/Loader/Loader';
@@ -85,13 +87,6 @@ const ApplicationCompanyStep = () => {
   const [warningModal, setWarningModal] = useState(false);
 
   const prevRef = useRef({});
-
-  const loadOptions = (searchText, { data }) => {
-    const text = new RegExp(searchText ?? '', 'ig');
-    const filteredData = data?.filter(i => i?.label?.match(text))?.slice(0, 150);
-
-    return filteredData;
-  };
 
   useEffect(() => {
     const country = companyState?.country?.value ?? '';
@@ -389,6 +384,10 @@ const ApplicationCompanyStep = () => {
     ]
   );
 
+  const handleDebtorInputChange = useCallback(text => {
+    dispatch(getApplicationDebtorDropDownData(text));
+  }, []);
+
   const onHandleSearchClick = useCallback(
     async ref => {
       try {
@@ -684,24 +683,25 @@ const ApplicationCompanyStep = () => {
           );
           break;
         case 'select': {
-          const defaultOptions = input?.data?.slice(0, 150);
           let handleOnChange = handleSelectInputChange;
+          let handleInputChange;
 
           if (input.name === 'debtorId') {
+            handleInputChange = _.debounce(handleDebtorInputChange, 800);
             handleOnChange = handleDebtorSelectChange;
           }
 
           component = (
-            <AsyncSelect
+            <ReactSelect
               className="react-select-container"
               classNamePrefix="react-select"
               placeholder={input.placeholder}
-              name={input.name}
-              loadOptions={async text => loadOptions(text, input)}
-              defaultOptions={defaultOptions}
+              name={input?.name}
+              options={input?.data ?? []}
               isSearchable
               value={companyState?.[input?.name] ?? []}
               onChange={handleOnChange}
+              onInputChange={handleInputChange}
             />
           );
           break;

@@ -46,6 +46,7 @@ export const APPLICATION_URLS = {
   APPLICATION_FILTER_LIST_URL: `${BASE_URL}application/entity-list`,
   GET_APPLICATION_DETAILS_URL: `${BASE_URL}application/details/`,
   DOWNLOAD_APPLICATION: `${BASE_URL}application/download`,
+  APPLICATION_SEARCH_DEBTOR_DROPDOWN_DATA: `${BASE_URL}application/debtor-list`,
 
   COMPANY: {
     DROP_DOWN_DATA_URL: `${BASE_URL}application/entity-list/`,

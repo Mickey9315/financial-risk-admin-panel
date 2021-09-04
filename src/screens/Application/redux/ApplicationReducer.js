@@ -255,6 +255,25 @@ export const application = (state = initialApplicationList, action) => {
         companyData,
       };
     }
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_DEBTOR_DROP_DOWN_DATA: {
+      const dropdownData = {
+        ...state?.companyData?.dropdownData,
+        [action?.name]: action?.data?.map(entity => ({
+          label: entity.name,
+          name: action?.name,
+          value: entity._id,
+        })),
+      };
+      const companyData = {
+        ...state?.companyData,
+        dropdownData,
+      };
+
+      return {
+        ...state,
+        companyData,
+      };
+    }
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ENTITY_TYPE_DATA: {
       let entityNameSearchData = state?.companyData?.entityNameSearch?.data ?? [];
       let hasNoMoreRecords = false;
