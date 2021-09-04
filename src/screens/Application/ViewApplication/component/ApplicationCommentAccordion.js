@@ -16,7 +16,7 @@ const ApplicationCommentAccordion = props => {
 
   const [commentText, setCommentText] = useState('');
 
-  const { comment, _id } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
+  const { comments, _id } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const saveClientComment = useCallback(async () => {
     if (!commentText || commentText?.toString()?.trim()?.length <= 0) {
@@ -31,8 +31,8 @@ const ApplicationCommentAccordion = props => {
   }, [_id, commentText]);
 
   useEffect(() => {
-    setCommentText(comment);
-  }, [comment]);
+    setCommentText(comments);
+  }, [comments]);
 
   return (
     <>

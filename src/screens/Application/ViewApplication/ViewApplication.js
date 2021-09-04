@@ -93,7 +93,7 @@ const ViewApplication = () => {
     registrationNumber,
     acn,
     clientReference,
-    comment,
+    comments,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const [isAUSOrNZL, setIsAUZOrNZL] = useState(false);
@@ -311,7 +311,7 @@ const ViewApplication = () => {
                     {/* <div className="current-business-address-title">Current Business Address</div> */}
                     <div className="application-comment">
                       <div className="font-field mr-15">Comment</div>
-                      <div className="font-primary">{comment || '-'}</div>
+                      <div className="font-primary">{comments || '-'}</div>
                     </div>
                     <div className="client-reference">
                       <div className="font-field mr-15">Client reference</div>
