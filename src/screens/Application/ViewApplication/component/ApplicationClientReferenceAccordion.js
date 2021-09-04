@@ -38,16 +38,15 @@ const ApplicationClientReferenceAccordion = props => {
     <>
       <AccordionItem index={index} header="Client Reference" suffix="expand_more">
         <div className="common-accordion-item-content-box">
-          <div>
-            <textarea
-              rows={3}
-              name="clientReference"
-              className="mt-5"
-              placeholder="Enter Client Reference"
-              value={clientReferenceText}
-              onChange={e => setClientReferenceText(e?.target?.value)}
-            />
-          </div>
+          <textarea
+            rows={3}
+            name="clientReference"
+            className="mt-5 w-100"
+            placeholder="Enter Client Reference"
+            value={clientReferenceText}
+            onChange={e => setClientReferenceText(e?.target?.value)}
+          />
+
           <div className="d-flex just-end align-center mt-5">
             <Button
               buttonType="primary"

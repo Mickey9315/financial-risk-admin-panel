@@ -27,6 +27,7 @@ import Modal from '../../../common/Modal/Modal';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import Loader from '../../../common/Loader/Loader';
+import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 
 const AddUser = () => {
   const history = useHistory();
@@ -109,6 +110,12 @@ const AddUser = () => {
     const { name, value } = e.target;
 
     dispatch(changeUserData({ name, value }));
+  }, []);
+
+  const onChangeMaxLimit = useCallback(e => {
+    const { name, value } = e.target;
+    const updatedVal = value?.toString()?.replaceAll(',', '');
+    dispatch(changeUserData({ name, value: parseInt(updatedVal, 10) }));
   }, []);
 
   const clientSelected = useCallback(value => {
@@ -415,14 +422,14 @@ const AddUser = () => {
                   <div className="common-detail-field">
                     <div className="common-detail-title">Max credit limit approval</div>
                     {action === 'view' ? (
-                      <span>{maxCreditLimit}</span>
+                      <span>{NumberCommaSeparator(maxCreditLimit)}</span>
                     ) : (
                       <Input
                         name="maxCreditLimit"
-                        value={maxCreditLimit}
+                        value={NumberCommaSeparator(maxCreditLimit)}
                         type="text"
                         placeholder="Enter credit limit"
-                        onChange={onChangeUserData}
+                        onChange={onChangeMaxLimit}
                       />
                     )}
                   </div>

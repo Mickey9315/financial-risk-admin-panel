@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useParams, Prompt } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
@@ -25,10 +25,13 @@ import { setViewDebtorActiveTabIndex } from '../../../Debtors/redux/DebtorsActio
 
 const AddOverdues = () => {
   const history = useHistory();
-  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
-    history,
-  ]);
+  const amountRef = useRef([]);
+  const { isRedirected, redirectedFrom, fromId } = useMemo(
+    () => history?.location?.state ?? {},
+    [history]
+  );
   const { id, period } = useParams();
+
   const dispatch = useDispatch();
   const [overdueFormModal, setOverdueFormModal] = useState(false);
   const [isAmendOverdueModal, setIsAmendOverdueModal] = useState(false);
@@ -100,11 +103,13 @@ const AddOverdues = () => {
   const { saveOverdueToBackEndPageLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
-
+  const selectedDate = useMemo(() => moment(period, 'MMM/YYYY'), [period]);
+  const month = useMemo(() => selectedDate.format('M'), [selectedDate]);
+  const year = useMemo(() => selectedDate.format('YYYY'), [selectedDate]);
   const getOverdueList = useCallback(async () => {
-    const data = { date: moment(period, 'MMMM-YYYY').toISOString(), clientId: id };
+    const data = { month, year, clientId: id };
     await dispatch(getOverdueListByDate(data));
-  }, [period, id]);
+  }, [month, year, id]);
 
   const changeOverdueFields = useCallback((name, value) => {
     dispatch(handleOverdueFieldChange(name, value));
@@ -224,12 +229,14 @@ const AddOverdues = () => {
         title: 'Client Comment',
         name: 'clientComment',
         type: 'textarea',
+        placeholder: 'Please enter',
         value: overdueDetails?.clientComment ?? '',
       },
       {
         title: 'Analyst Comment',
         name: 'analystComment',
         type: 'textarea',
+        placeholder: 'Please enter',
         class: 'overdue-analyst-comment',
         value: overdueDetails?.analystComment ?? '',
       },
@@ -278,12 +285,15 @@ const AddOverdues = () => {
     },
     [setShowSaveAlertModal, isPrompt, alertOnLeftModal, toggleAlertOnLeftModal]
   );
-
-  const handleAmountInputChange = useCallback(e => {
-    const { name, value } = e?.target;
-    const updatedVal = value?.toString()?.replaceAll(',', '');
-    changeOverdueFields(name, updatedVal);
-  }, []);
+  const decimalRegex = new RegExp(/(^[0-9]*(\.\d{0,2})?$)/);
+  const handleAmountInputChange = useCallback(
+    e => {
+      const { name, value } = e?.target;
+      const updatedVal = value?.toString()?.replaceAll(',', '');
+      if (decimalRegex.test(updatedVal)) changeOverdueFields(name, updatedVal);
+    },
+    [decimalRegex]
+  );
 
   const handleSelectInputChange = useCallback(e => {
     changeOverdueFields(e?.name, e);
@@ -293,8 +303,13 @@ const AddOverdues = () => {
     changeOverdueFields(name, e);
   }, []);
 
+  useEffect(() => {
+    if (amountRef.current[12])
+      amountRef.current[12].value = NumberCommaSeparator(amountRef.current[12].value);
+  });
+
   const getComponentFromType = useCallback(
-    input => {
+    (input, index) => {
       let component = null;
       switch (input.type) {
         case 'text':
@@ -354,8 +369,11 @@ const AddOverdues = () => {
         case 'amount':
           component = (
             <Input
+              ref={ref => {
+                amountRef.current[index] = ref;
+              }}
               name={input.name}
-              value={input?.value ? NumberCommaSeparator(input?.value) : ''}
+              value={input?.value || ''}
               className="add-overdue-amount-input"
               type="text"
               placeholder="0"
@@ -403,6 +421,7 @@ const AddOverdues = () => {
       );
       return (
         <div
+          key={input?.name}
           className={`add-overdue-field-container ${
             input.type === 'textarea' && 'add-overdue-textarea'
           } ${input?.class}`}
@@ -452,19 +471,19 @@ const AddOverdues = () => {
   useEffect(() => {
     const currentAmount =
       overdueDetails?.currentAmount?.toString()?.trim()?.length > 0 &&
-      (parseInt(overdueDetails?.currentAmount, 10) ?? 0);
+      (parseFloat(overdueDetails?.currentAmount) ?? 0);
     const thirtyDaysAmount =
       overdueDetails?.thirtyDaysAmount?.toString()?.trim()?.length > 0 &&
-      (parseInt(overdueDetails?.thirtyDaysAmount, 10) ?? 0);
+      (parseFloat(overdueDetails?.thirtyDaysAmount) ?? 0);
     const ninetyPlusDaysAmount =
       overdueDetails?.ninetyPlusDaysAmount?.toString()?.trim()?.length > 0 &&
-      (parseInt(overdueDetails?.ninetyPlusDaysAmount, 10) ?? 0);
+      (parseFloat(overdueDetails?.ninetyPlusDaysAmount) ?? 0);
     const ninetyDaysAmount =
       overdueDetails?.ninetyDaysAmount?.toString()?.trim()?.length > 0 &&
-      (parseInt(overdueDetails?.ninetyDaysAmount, 10) ?? 0);
+      (parseFloat(overdueDetails?.ninetyDaysAmount) ?? 0);
     const sixtyDaysAmount =
       overdueDetails?.sixtyDaysAmount?.toString()?.trim()?.length > 0 &&
-      (parseInt(overdueDetails?.sixtyDaysAmount, 10) ?? 0);
+      (parseFloat(overdueDetails?.sixtyDaysAmount) ?? 0);
 
     const total =
       sixtyDaysAmount + ninetyDaysAmount + ninetyPlusDaysAmount + thirtyDaysAmount + currentAmount;

@@ -13,7 +13,6 @@ const initialClaims = {
   claimsColumnList: {},
   claimsDefaultColumnList: {},
   claimsEntityList: [],
-  claimDetails: {},
 
   documents: {
     documentList: [],
@@ -60,7 +59,7 @@ export const claims = (state = initialClaims, action) => {
     case CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_ENTITY_LIST: {
       const list = action.data.map(record => ({
         label: record.name,
-        value: record?.crmClientId,
+        value: record._id,
       }));
       return {
         ...state,

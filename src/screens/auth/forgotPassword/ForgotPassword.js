@@ -45,12 +45,12 @@ function ForgotPassword() {
 
   return (
     <AuthScreenContainer>
-      <div className="login-field-name">Email or Number</div>
+      <div className="login-field-name">Email</div>
       <BigInput
         prefix="drafts"
         prefixClass="login-input-icon"
         type="email"
-        placeholder="Enter email or number"
+        placeholder="Enter email"
         value={email}
         onChange={onChangeEmail}
         onKeyDown={onEnterKeyPress}

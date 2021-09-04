@@ -52,13 +52,13 @@ function VerifyOtp() {
 
   return (
     <AuthScreenContainer>
-      <div className="login-field-name disabled">Email or Number</div>
+      <div className="login-field-name disabled">Email</div>
       <BigInput
         prefix="drafts"
         className="disabled"
         prefixClass="login-input-icon disabled-icon"
         type="email"
-        placeholder="Enter email or number"
+        placeholder="Enter email"
         value={email}
         disabled
       />

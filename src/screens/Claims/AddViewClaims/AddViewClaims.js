@@ -37,6 +37,7 @@ const AddViewClaims = () => {
   const { type, id } = useParams();
   const clientList = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
   const claimDetails = useSelector(({ claims }) => claims?.claimDetails ?? {});
+
   const backToClaimsList = useCallback(() => {
     if (isRedirected) {
       if (redirectedFrom === 'client') {
@@ -338,20 +339,19 @@ const AddViewClaims = () => {
             <>
               {type === 'view' ? (
                 <span className="view-claim-detail">
-                  {input?.value
-                    ? moment(input?.value, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY')
-                    : '-'}
+                  {input?.value ? moment(input?.value).format('DD/MM/YYYY') : '-'}
                 </span>
               ) : (
-                <div className={`date-picker-container ${type === 'view' && 'disabled-control'}`}>
+                <div className="date-picker-container">
                   <DatePicker
                     placeholderText={input.placeholder}
-                    selected={(input.value && new Date(input.value)) || null}
+                    selected={input.value || null}
                     onChange={date => handleDateInputChange(input.name, date)}
                     showMonthDropdown
                     showYearDropdown
                     scrollableYearDropdown
                     popperProps={{ positionFixed: true }}
+                    dateFormat="dd/MM/yyyy"
                   />
                   <span className="material-icons-round">event</span>
                 </div>
@@ -429,8 +429,8 @@ const AddViewClaims = () => {
   );
 
   const onAddClaim = useCallback(async () => {
-    await addClaimsValidations(dispatch, claimDetails, backToClaimsList);
-  }, [claimDetails, backToClaimsList]);
+    await addClaimsValidations(dispatch, history, claimDetails);
+  }, [claimDetails]);
 
   useEffect(() => {
     return () => {

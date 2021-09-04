@@ -47,10 +47,10 @@ const ViewApplicationEditableRowComponent = props => {
     ({ application }) => application?.viewApplication ?? {}
   );
 
-  const { limitType, isAllowToUpdate, expiryDate } = useMemo(() => applicationDetail ?? {}, [
-    applicationDetail,
-  ]);
-
+  const { limitType, isAllowToUpdate, expiryDate } = useMemo(
+    () => applicationDetail ?? {},
+    [applicationDetail]
+  );
   const handleApplicationLimitTypeChange = useCallback(
     e => {
       setSelectedLimitType(e);
@@ -84,9 +84,9 @@ const ViewApplicationEditableRowComponent = props => {
   );
 
   useEffect(() => {
-    setSelectedLimitType(limitType);
+    setSelectedLimitType(LimitTypeOptions.filter(e => e.value === limitType) ?? []);
     setSelectedExpiryDate(expiryDate);
-  }, [limitType]);
+  }, [limitType, expiryDate]);
 
   return (
     <div className="application-editable-row-grid">
@@ -113,7 +113,7 @@ const ViewApplicationEditableRowComponent = props => {
           } view-application-status `}
         >
           <DatePicker
-            selected={selectedExpiryDate ?? null}
+            selected={selectedExpiryDate ? new Date(selectedExpiryDate) : null}
             onChange={handleExpiryDateChange}
             placeholderText={!isApprovedOrDeclined ? 'Select Expiry Date' : '-'}
             minDate={new Date()}

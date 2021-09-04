@@ -281,12 +281,28 @@ const OverduesList = () => {
     [getOverdueListByFilter]
   );
 
+  const onDateSelection = useCallback(
+    date => {
+      const formattedDate = moment(date, 'MM/YYYY');
+
+      setNewSubmissionDetails({
+        ...newSubmissionDetails,
+        month: formattedDate.format('M'),
+        year: formattedDate.format('YYYY'),
+        submissionDate: date,
+      });
+    },
+    [newSubmissionDetails]
+  );
+
   const onAddNewSubmission = useCallback(() => {
     if (
       // eslint-disable-next-line no-prototype-builtins
       !newSubmissionDetails.hasOwnProperty('clientId') ||
       // eslint-disable-next-line no-prototype-builtins
-      !newSubmissionDetails.hasOwnProperty('submissionDate')
+      !newSubmissionDetails.hasOwnProperty('month') ||
+      // eslint-disable-next-line no-prototype-builtins
+      !newSubmissionDetails.hasOwnProperty('year')
     ) {
       errorNotification('Please select client and month/year to add new submission');
     } else {
@@ -386,9 +402,7 @@ const OverduesList = () => {
               <div className="date-picker-container month-year-picker">
                 <DatePicker
                   placeholderText="Select month and year"
-                  onChange={date =>
-                    setNewSubmissionDetails({ ...newSubmissionDetails, submissionDate: date })
-                  }
+                  onChange={date => onDateSelection(date)}
                   dateFormat="MM/yyyy"
                   selected={newSubmissionDetails?.submissionDate}
                   showMonthYearPicker

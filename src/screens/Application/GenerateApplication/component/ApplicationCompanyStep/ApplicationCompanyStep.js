@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-select';
+import ReactSelect, { createFilter } from 'react-select';
 import Input from '../../../../../common/Input/Input';
 import {
   changeEditApplicationFieldValue,
@@ -687,6 +687,7 @@ const ApplicationCompanyStep = () => {
               classNamePrefix="react-select"
               placeholder={input.placeholder}
               name={input.name}
+              filterOption={createFilter({ ignoreAccents: false })}
               options={input.data}
               isSearchable
               value={companyState?.[input?.name] ?? []}

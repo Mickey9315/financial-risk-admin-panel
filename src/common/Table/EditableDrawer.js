@@ -87,7 +87,7 @@ const EditableDrawer = props => {
   return (
     <>
       {editableField === 'LIMIT_TYPE' &&
-        (!isApprovedOrDeclined ? (
+        (isApprovedOrDeclined ? (
           <div className="editable-drawer-field">
             <ReactSelect
               className="react-select-container"

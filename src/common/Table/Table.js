@@ -1,16 +1,16 @@
-import React, {useCallback, useEffect, useMemo, useReducer, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from 'rc-tooltip';
 import 'rc-tooltip/assets/bootstrap.css';
 import moment from 'moment';
 import Drawer from '../Drawer/Drawer';
-import {processTableDataByType} from '../../helpers/TableDataProcessHelper';
+import { processTableDataByType } from '../../helpers/TableDataProcessHelper';
 import TableApiService from './TableApiService';
 import Checkbox from '../Checkbox/Checkbox';
 import DropdownMenu from '../DropdownMenu/DropdownMenu';
-import {successNotification} from '../Toast';
+import { successNotification } from '../Toast';
 import ExpandedTableHelper from '../../screens/Overdues/Components/ExpandedTableHelper';
-import {NumberCommaSeparator} from '../../helpers/NumberCommaSeparator';
+import { NumberCommaSeparator } from '../../helpers/NumberCommaSeparator';
 import EditableDrawer from './EditableDrawer';
 
 export const TABLE_ROW_ACTIONS = {
@@ -69,7 +69,7 @@ const Table = props => {
     showCheckbox,
     onChangeRowSelection,
     isEditableDrawer,
-      handleRedirectClick
+    handleRedirectClick,
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -166,7 +166,7 @@ const Table = props => {
       handleDrawerState,
       handleCheckBoxState,
       handleViewDocument,
-      handleRedirectClick
+      handleRedirectClick,
     };
 
     return data.map((e, index) => {
@@ -180,7 +180,14 @@ const Table = props => {
       finalObj.dataToExpand = isExpandable ? e?.debtors : undefined;
       return finalObj;
     });
-  }, [data, handleDrawerState, isExpandable, handleCheckBoxState, handleViewDocument,handleRedirectClick]);
+  }, [
+    data,
+    handleDrawerState,
+    isExpandable,
+    handleCheckBoxState,
+    handleViewDocument,
+    handleRedirectClick,
+  ]);
 
   const onRowSelectedDataChange = useCallback(
     current => {
@@ -322,7 +329,7 @@ Table.defaultProps = {
   refreshData: () => {},
   onChangeRowSelection: () => {},
   isEditableDrawer: false,
-  handleRedirectClick: () => {}
+  handleRedirectClick: () => {},
 };
 
 export default Table;
@@ -489,11 +496,11 @@ function Row(props) {
             align={align}
             valign={valign}
             style={{ position: 'sticky', right: 0 }}
-            className={
+            className={`${
               data?.isCompleted?.props?.children?.props?.checked
                 ? `completedTask ${rowClass}`
                 : rowClass
-            }
+            } ${dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}`}
           >
             {element(data)}
           </td>

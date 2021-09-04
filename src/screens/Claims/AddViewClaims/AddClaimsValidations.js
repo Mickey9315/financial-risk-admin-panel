@@ -2,14 +2,14 @@ import { NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { addClaim, handleClaimChange } from '../redux/ClaimsAction';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 
-export const addClaimsValidations = async (dispatch, data, backToClaimList) => {
+export const addClaimsValidations = async (dispatch, history, data) => {
   let validated = true;
   const errors = {};
   let preparedData = {};
 
   if (!data.accountid || data?.accountid?.length <= 0) {
     validated = false;
-    errors.accountid = 'Please select stage';
+    errors.accountid = 'Please select client name';
   }
 
   if (!data.name || data?.name?.toString()?.trim().length <= 0) {
@@ -116,8 +116,10 @@ export const addClaimsValidations = async (dispatch, data, backToClaimList) => {
   if (validated) {
     const finalData = { ...preparedData };
     try {
-      await dispatch(addClaim(finalData));
-      backToClaimList();
+      const response = await dispatch(addClaim(finalData));
+      if (response) {
+        history.replace(`/claims/view/${response}`);
+      }
     } catch (e) {
       displayErrors(e);
     }

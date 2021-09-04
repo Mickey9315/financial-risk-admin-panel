@@ -370,7 +370,7 @@ const ApplicationConfirmationStep = () => {
       type: 'line',
     },
     partners?.length > 0 && {
-      title: 'Director Details',
+      title: 'Entity Details',
       type: 'main-title-director-detail',
     },
     partners?.length > 0 && {
@@ -420,7 +420,7 @@ const ApplicationConfirmationStep = () => {
           return (
             <>
               <span className="radio-title">{detail.title}</span>
-              <span className="radio-buttons">
+              <span className="radio-buttons d-flex">
                 <RadioButton
                   disabled
                   id={`${detail.id}-yes`}

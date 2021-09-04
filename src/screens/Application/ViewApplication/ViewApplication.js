@@ -30,6 +30,9 @@ import { errorNotification } from '../../../common/Toast';
 import Loader from '../../../common/Loader/Loader';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import ViewApplicationStatusComponent from './component/ViewApplicationStatusComponent';
+import ViewApplicationEditableRowComponent from './component/ViewApplicationEditableRowComponent';
+import ApplicationClientReferenceAccordion from './component/ApplicationClientReferenceAccordion';
+import ApplicationCommentAccordion from './component/ApplicationCommentAccordion';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -89,6 +92,8 @@ const ViewApplication = () => {
     country,
     registrationNumber,
     acn,
+    clientReference,
+    comment,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const [isAUSOrNZL, setIsAUZOrNZL] = useState(false);
@@ -260,9 +265,9 @@ const ViewApplication = () => {
                   <div className="common-white-container">
                     <div className="font-field">Status</div>
                     <ViewApplicationStatusComponent isApprovedOrDeclined={isApprovedOrDeclined} />
-                    {/*     <ViewApplicationEditableRowComponent
+                    <ViewApplicationEditableRowComponent
                       isApprovedOrDeclined={isApprovedOrDeclined}
-                    /> */}
+                    />
                     <div className="application-details-grid">
                       {applicationDetails?.map(detail => (
                         <div>
@@ -304,14 +309,14 @@ const ViewApplication = () => {
                       </>
                     )}
                     {/* <div className="current-business-address-title">Current Business Address</div> */}
-                    {/*   <div className="application-comment">
+                    <div className="application-comment">
                       <div className="font-field mr-15">Comment</div>
                       <div className="font-primary">{comment || '-'}</div>
                     </div>
                     <div className="client-reference">
                       <div className="font-field mr-15">Client reference</div>
                       <div className="font-primary">{clientReference || '-'}</div>
-                    </div> */}
+                    </div>
                     <div className="current-business-address">
                       <div className="font-field mr-15">Address</div>
                       <div className="font-primary">{applicationDetail?.address || '-'}</div>
@@ -345,8 +350,8 @@ const ViewApplication = () => {
                       <ApplicationAlertsAccordion index={3} />
                       <ApplicationDocumentsAccordion applicationId={id} index={4} />
                       <ApplicationLogsAccordion index={5} />
-                      {/*  <ApplicationClientReferenceAccordion index={6} />
-                      <ApplicationCommentAccordion index={7} /> */}
+                      <ApplicationClientReferenceAccordion index={6} />
+                      <ApplicationCommentAccordion index={7} />
                     </Accordion>
                   </div>
                 </div>

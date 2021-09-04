@@ -38,16 +38,14 @@ const ApplicationCommentAccordion = props => {
     <>
       <AccordionItem index={index} header="Comment" suffix="expand_more">
         <div className="common-accordion-item-content-box">
-          <div>
-            <textarea
-              rows={3}
-              name="comment"
-              className="mt-5"
-              placeholder="Enter Comment"
-              value={commentText}
-              onChange={e => setCommentText(e?.target?.value)}
-            />
-          </div>
+          <textarea
+            rows={3}
+            name="comment"
+            className="mt-5 w-100"
+            placeholder="Enter Comment"
+            value={commentText}
+            onChange={e => setCommentText(e?.target?.value)}
+          />
           <div className="d-flex just-end align-center mt-5">
             <Button
               buttonType="primary"

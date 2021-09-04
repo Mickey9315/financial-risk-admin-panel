@@ -54,14 +54,6 @@
     border-top-right-radius: 10px;
   }
 
-  tr:not(:nth-child(1)) td:first-child {
-    border-left: 1px solid white;
-  }
-
-  tr:not(:nth-child(1)) td:last-child {
-    border-right: 1px solid white;
-  }
-
   td.fixed-action-menu {
     overflow: visible;
   }

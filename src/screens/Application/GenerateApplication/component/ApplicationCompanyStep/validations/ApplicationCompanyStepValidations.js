@@ -7,7 +7,6 @@ import { NUMBER_REGEX, SPECIAL_CHARACTER_REGEX } from '../../../../../../constan
 export const applicationCompanyStepValidations = async (dispatch, data, editApplicationData) => {
   const errors = {};
   let validated = true;
-
   if (data?.country?.value === 'AUS' || data?.country?.value === 'NZL') {
     if (!data?.abn || data?.abn?.trim()?.length <= 0) {
       validated = false;
@@ -67,9 +66,15 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.streetNumber = 'Street number should be number';
   }
-  if (!data?.state || data?.state?.length <= 0) {
+  if (
+    (!data?.state && data?.entityType?.value === 'TRUST') ||
+    (data?.state?.length <= 0 && data?.entityType?.value === 'TRUST')
+  ) {
     validated = false;
-    if (data?.country?.value === 'AUS' || data?.country?.value === 'NZL') {
+    if (
+      (data?.country?.value === 'AUS' && data?.entityType?.value === 'TRUST') ||
+      (data?.country?.value === 'NZL' && data?.entityType?.value === 'TRUST')
+    ) {
       errors.state = 'Please select state before continue';
     } else {
       errors.state = 'Please enter state before continue';
@@ -92,7 +97,10 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.state = 'Please enter valid state';
   }
-  if (!data?.postCode || data?.postCode?.length <= 0) {
+  if (
+    (!data?.postCode && data?.entityType?.value === 'TRUST') ||
+    (data?.postCode?.length <= 0 && data?.entityType?.value === 'TRUST')
+  ) {
     validated = false;
     errors.postCode = 'Please enter post code before continue';
   }

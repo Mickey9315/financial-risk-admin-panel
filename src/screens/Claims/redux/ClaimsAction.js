@@ -135,26 +135,6 @@ export const handleClaimChange = (name, value) => {
   };
 };
 
-export const addClaim = data => {
-  return async dispatch => {
-    try {
-      startGeneralLoaderOnRequest('saveClaimsButtonLoaderAction');
-      const response = await ClaimsApiServices.addClaim(data);
-
-      if (response?.data?.status === 'SUCCESS') {
-        successNotification(response?.data?.message ?? 'Claim added successfully');
-        dispatch({
-          type: CLAIMS_REDUX_CONSTANTS.RESET_CLAIMS_DETAILS,
-        });
-        stopGeneralLoaderOnSuccessOrFail('saveClaimsButtonLoaderAction');
-      }
-    } catch (e) {
-      stopGeneralLoaderOnSuccessOrFail('saveClaimsButtonLoaderAction');
-      displayErrors(e);
-    }
-  };
-};
-
 export const getClaimDetails = id => {
   return async dispatch => {
     try {
@@ -172,6 +152,29 @@ export const getClaimDetails = id => {
       stopGeneralLoaderOnSuccessOrFail('viewClaimLoader');
       displayErrors(e);
     }
+  };
+};
+
+export const addClaim = data => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('saveClaimsButtonLoaderAction');
+      const response = await ClaimsApiServices.addClaim(data);
+
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message ?? 'Claim added successfully');
+        dispatch({
+          type: CLAIMS_REDUX_CONSTANTS.RESET_CLAIMS_DETAILS,
+        });
+        stopGeneralLoaderOnSuccessOrFail('saveClaimsButtonLoaderAction');
+        return response?.data?.claimId;
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('saveClaimsButtonLoaderAction');
+      displayErrors(e);
+      return false;
+    }
+    return false;
   };
 };
 

@@ -54,9 +54,8 @@ export const fetchOrgDetailSuccess = data => ({
 });
 
 export const updateOrgDetails = data => ({
-  type:
-    SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
-      .UPDATE_ORGANIZATION_DETAILS,
+  type: SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+    .UPDATE_ORGANIZATION_DETAILS,
   data,
 });
 
@@ -198,8 +197,8 @@ export const getApiIntegration = data => {
 export const changeApiIntegrationDetails = data => {
   return async dispatch => {
     dispatch({
-      type:
-        SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION.CHANGE_API_INTEGRATION_DATA,
+      type: SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION
+        .CHANGE_API_INTEGRATION_DATA,
       data,
     });
   };
@@ -212,7 +211,7 @@ export const updateApiIntegrationDetails = data => {
       const response = await SettingApiIntegrationService.updateApiIntegrationDetails(data);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(
-          response?.data?.message || 'API integration details tested successfully'
+          response?.data?.message || 'API integration details updated successfully'
         );
         stopGeneralLoaderOnSuccessOrFail(`settingApiIntegrationButtonLoaderAction`);
         dispatch(updateApiIntegration(data));
@@ -231,7 +230,7 @@ export const testApiIntegrationDetails = params => {
       const response = await SettingApiIntegrationService.testApiIntegrationDetails(params);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(
-          response?.data?.message || 'API integration details updated successfully'
+          response?.data?.message || 'API integration details tested successfully'
         );
         stopGeneralLoaderOnSuccessOrFail(`settingApiIntegrationTestButtonLoaderAction`);
       }
@@ -261,9 +260,8 @@ export const getOrganizationDetails = data => {
 export const changeOrganizationDetails = data => {
   return async dispatch => {
     dispatch({
-      type:
-        SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
-          .CHANGE_ORGANIZATION_DETAILS,
+      type: SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+        .CHANGE_ORGANIZATION_DETAILS,
       data,
     });
   };
