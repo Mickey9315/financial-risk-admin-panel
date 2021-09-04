@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect, { createFilter } from 'react-select';
+import AsyncSelect from 'react-select/async';
 import Input from '../../../../../common/Input/Input';
 import {
   changeEditApplicationFieldValue,
@@ -85,6 +85,13 @@ const ApplicationCompanyStep = () => {
   const [warningModal, setWarningModal] = useState(false);
 
   const prevRef = useRef({});
+
+  const loadOptions = (searchText, { data }) => {
+    const text = new RegExp(searchText ?? '', 'ig');
+    const filteredData = data?.filter(i => i?.label?.match(text))?.slice(0, 150);
+
+    return filteredData;
+  };
 
   useEffect(() => {
     const country = companyState?.country?.value ?? '';
@@ -677,18 +684,21 @@ const ApplicationCompanyStep = () => {
           );
           break;
         case 'select': {
+          const defaultOptions = input?.data?.slice(0, 150);
           let handleOnChange = handleSelectInputChange;
+
           if (input.name === 'debtorId') {
             handleOnChange = handleDebtorSelectChange;
           }
+
           component = (
-            <ReactSelect
+            <AsyncSelect
               className="react-select-container"
               classNamePrefix="react-select"
               placeholder={input.placeholder}
               name={input.name}
-              filterOption={createFilter({ ignoreAccents: false })}
-              options={input.data}
+              loadOptions={async text => loadOptions(text, input)}
+              defaultOptions={defaultOptions}
               isSearchable
               value={companyState?.[input?.name] ?? []}
               onChange={handleOnChange}
