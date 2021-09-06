@@ -390,10 +390,12 @@ const MyWorkTasks = () => {
     });
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'assigneeId',
+      value: userId,
     });
 
     applyFilterOnClick();
-  }, []);
+  }, [userId]);
 
   const filterModalButtons = useMemo(
     () => [

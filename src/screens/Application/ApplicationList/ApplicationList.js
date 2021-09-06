@@ -236,6 +236,11 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
+    dispatchFilter({
+      type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+      name: 'status',
+      value: defaultApplicationStatus,
+    });
     await onClickApplyFilter();
   }, [dispatchFilter]);
 
