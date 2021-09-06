@@ -169,8 +169,10 @@ const ClaimsDocumentsTab = () => {
       const checkExtension =
         fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
       const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-
-      if (!(checkExtension || checkMimeTypes)) {
+      const checkFileSize = e.target.files[0].size > 10485760;
+      if (checkFileSize) {
+        errorNotification('File size should be less than 10 mb.');
+      } else if (!(checkExtension || checkMimeTypes)) {
         errorNotification('Only image and document type files are allowed');
       } else {
         onChangeDocumentUploadData('fileData', e.target.files[0]);

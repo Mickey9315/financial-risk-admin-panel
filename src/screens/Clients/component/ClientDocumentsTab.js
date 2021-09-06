@@ -298,15 +298,14 @@ const ClientDocumentsTab = () => {
         const checkExtension =
           fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
         const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-        // const checkFileSize = e.target.files[0].size > 4194304;
 
         if (!(checkExtension || checkMimeTypes)) {
           errorNotification('Only image and document type files are allowed');
         }
-        // else if (checkFileSize) {
-        //   errorNotification('File size should be less than 4 mb');
-        // }
-        else {
+        const checkFileSize = e.target.files[0].size > 10485760;
+        if (checkFileSize) {
+          errorNotification('File size should be less than 10 mb.');
+        } else {
           setFileData(e.target.files[0]);
         }
       }
