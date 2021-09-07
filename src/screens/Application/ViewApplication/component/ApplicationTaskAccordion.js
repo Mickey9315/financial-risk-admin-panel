@@ -359,7 +359,7 @@ const ApplicationTaskAccordion = props => {
                 isSearchable
                 value={selectedValues}
                 onChange={handleSelectInputChange}
-                isDisabled={['entityId', 'entityType', 'assigneeId'].includes(input.name)}
+                isDisabled={['entityId', 'entityType'].includes(input.name)}
               />
             </>
           );
