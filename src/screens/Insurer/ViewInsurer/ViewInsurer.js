@@ -63,10 +63,9 @@ const ViewInsurer = () => {
     return temp;
   }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, access]);
 
-  const { name, address, contactNumber, website, email } = useMemo(
-    () => insurerData,
-    [insurerData]
-  );
+  const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
+    insurerData,
+  ]);
   useEffect(() => {
     dispatch(getInsurerById(id));
     return () => {

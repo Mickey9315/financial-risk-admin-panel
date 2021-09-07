@@ -20,10 +20,11 @@ const Pagination = props => {
   const [recordLimit, setRecordLimit] = useState([{ label: '15', value: 15 }]);
 
   const fromRecordCount = useMemo(() => (page - 1) * limit + 1, [page, limit, total]);
-  const toRecordCount = useMemo(
-    () => (total < page * limit ? total : page * limit),
-    [page, limit, total]
-  );
+  const toRecordCount = useMemo(() => (total < page * limit ? total : page * limit), [
+    page,
+    limit,
+    total,
+  ]);
 
   const onNextClick = () => (page < pages ? pageActionClick(page + 1) : null);
   const onPrevClick = () => (page > 1 ? pageActionClick(page - 1) : null);

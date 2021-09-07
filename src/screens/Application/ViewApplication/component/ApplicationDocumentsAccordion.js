@@ -87,10 +87,9 @@ const ApplicationDocumentsAccordion = props => {
     [setUploadModel]
   );
 
-  const { documentType, description, isPublic } = useMemo(
-    () => selectedApplicationDocuments,
-    [selectedApplicationDocuments]
-  );
+  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
+    selectedApplicationDocuments,
+  ]);
 
   const documentTypeOptions = useMemo(() => {
     const finalData = documentTypeList || [];
