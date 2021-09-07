@@ -4,8 +4,8 @@ import { APPLICATION_URLS } from '../../../constants/UrlConstants';
 const ApplicationApiServices = {
   getApplicationListByFilter: params =>
     ApiService.getData(APPLICATION_URLS.APPLICATION_LIST_URL, { params }),
-  searchDebtorDropdownData: params =>
-    ApiService.getData(APPLICATION_URLS.APPLICATION_SEARCH_DEBTOR_DROPDOWN_DATA, { params }),
+  searchDropdownDataBySearch: params =>
+    ApiService.getData(APPLICATION_URLS.APPLICATION_DROPDOWN_DATA_BY_SEARCH, { params }),
   getApplicationColumnNameList: () =>
     ApiService.getData(APPLICATION_URLS.APPLICATION_COLUMN_NAME_LIST_URL),
   updateApplicationColumnNameList: data =>
