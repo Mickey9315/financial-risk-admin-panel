@@ -1,19 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-select';
-import _ from 'lodash';
 import Input from '../../../../../common/Input/Input';
 import {
   changeEditApplicationFieldValue,
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
+  getApplicationDropDownDataBySearch,
   resetEntityTableData,
   saveApplicationStepDataToBackend,
   searchApplicationCompanyEntityName,
   updateEditApplicationData,
   updateEditApplicationField,
-  getApplicationDebtorDropDownData,
 } from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
 import Loader from '../../../../../common/Loader/Loader';
@@ -22,6 +20,7 @@ import Modal from '../../../../../common/Modal/Modal';
 import IconButton from '../../../../../common/IconButton/IconButton';
 import { applicationErrorHelper } from '../../../../../helpers/applicationErrorHelper';
 import { APPLICATION_REDUX_CONSTANTS } from '../../../redux/ApplicationReduxConstants';
+import Select from '../../../../../common/Select/Select';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -116,157 +115,6 @@ const ApplicationCompanyStep = () => {
     australianStates,
     newZealandStates,
   ]);
-
-  const INPUTS = useMemo(
-    () => [
-      {
-        label: 'Client',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'clientId',
-        data: clients,
-      },
-      {
-        label: 'Country*',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'country',
-        data: countryList,
-      },
-      {
-        type: 'section',
-        mainTitle: 'Debtor Search',
-      },
-      {
-        label: 'Existing Debtors',
-        placeholder: 'Select',
-        type: 'select',
-        isOr: isAusOrNew,
-        name: 'debtorId',
-        data: debtors,
-      },
-      {
-        label: 'ABN/NZBN*',
-        placeholder: '01234',
-        type: 'search',
-        isOr: isAusOrNew,
-        name: 'abn',
-        data: [],
-      },
-      {
-        label: 'ACN/NCN',
-        placeholder: '01234',
-        type: 'search',
-        name: 'acn',
-        data: [],
-      },
-      {
-        label: 'Entity Name*',
-        placeholder: 'Enter Entity',
-        type: 'entityName',
-        isOr: isAusOrNew,
-        name: 'entityName',
-        data: [],
-      },
-      {
-        type: 'section',
-        mainTitle: 'Address and Other details',
-      },
-      {
-        label: 'Unit Number',
-        placeholder: 'Unit Number',
-        type: 'text',
-        name: 'unitNumber',
-        data: [],
-      },
-      {
-        label: 'Street Number',
-        placeholder: 'Street Number',
-        type: 'text',
-        name: 'streetNumber',
-        data: [],
-      },
-      {
-        label: 'Street Name',
-        placeholder: 'Street Name',
-        type: 'text',
-        name: 'streetName',
-        data: [],
-      },
-      {
-        label: 'Street Type',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'streetType',
-        data: streetType,
-      },
-      {
-        label: 'Suburb',
-        placeholder: 'Suburb',
-        type: 'text',
-        name: 'suburb',
-        data: [],
-      },
-      {
-        label: 'Entity Type*',
-        placeholder: 'Select',
-        type: 'select',
-        name: 'entityType',
-        data: entityType,
-      },
-      {
-        label: 'Trading Name',
-        placeholder: 'Trading Name',
-        type: 'text',
-        name: 'tradingName',
-        data: [],
-      },
-      {
-        label: 'State*',
-        placeholder: isAusOrNew ? 'Select' : 'Enter State',
-        type: isAusOrNew ? 'select' : 'text',
-        name: 'state',
-        data: stateValue,
-      },
-      {
-        label: 'Property',
-        placeholder: 'Property',
-        type: 'text',
-        name: 'property',
-        data: [],
-      },
-      {
-        label: 'Postcode*',
-        placeholder: 'Postcode',
-        type: 'text',
-        name: 'postCode',
-        data: [],
-      },
-      {
-        label: 'Phone Number',
-        placeholder: '1234567890',
-        type: 'text',
-        name: 'phoneNumber',
-        data: [],
-      },
-    ],
-    [clients, debtors, streetType, entityType, stateValue, isAusOrNew, countryList]
-  );
-
-  const finalInputs = useMemo(() => {
-    if (isAusOrNew) {
-      return [...INPUTS];
-    }
-    const filteredData = [...INPUTS];
-    filteredData.splice(4, 1, {
-      label: 'Company Registration No.*',
-      placeholder: 'Registration no',
-      type: 'text',
-      name: 'registrationNumber',
-    });
-    filteredData.splice(5, 1);
-    return filteredData;
-  }, [INPUTS, isAusOrNew]);
 
   /**/
   const handleApplicationErrors = useCallback(response => {
@@ -384,8 +232,8 @@ const ApplicationCompanyStep = () => {
     ]
   );
 
-  const handleDebtorInputChange = useCallback(text => {
-    dispatch(getApplicationDebtorDropDownData(text));
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    dispatch(getApplicationDropDownDataBySearch(searchEntity, text));
   }, []);
 
   const onHandleSearchClick = useCallback(
@@ -630,6 +478,176 @@ const ApplicationCompanyStep = () => {
     [companyState, updateCompanyState, prevRef.current]
   );
 
+  const INPUTS = useMemo(
+    () => [
+      {
+        label: 'Client',
+        placeholder: 'Select Client',
+        type: 'select',
+        name: 'clientId',
+        data: clients,
+        onSelectChange: handleSelectInputChange,
+        onInputChange: text => handleOnSelectSearchInputChange('clients', text),
+      },
+      {
+        label: 'Country*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'country',
+        data: countryList,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        type: 'section',
+        mainTitle: 'Debtor Search',
+      },
+      {
+        label: 'Existing Debtors',
+        placeholder: 'Select',
+        type: 'select',
+        isOr: isAusOrNew,
+        name: 'debtorId',
+        data: debtors,
+        onSelectChange: handleDebtorSelectChange,
+        onInputChange: text => handleOnSelectSearchInputChange('debtors', text),
+      },
+      {
+        label: 'ABN/NZBN*',
+        placeholder: '01234',
+        type: 'search',
+        isOr: isAusOrNew,
+        name: 'abn',
+        data: [],
+      },
+      {
+        label: 'ACN/NCN',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
+        data: [],
+      },
+      {
+        label: 'Entity Name*',
+        placeholder: 'Enter Entity',
+        type: 'entityName',
+        isOr: isAusOrNew,
+        name: 'entityName',
+        data: [],
+      },
+      {
+        type: 'section',
+        mainTitle: 'Address and Other details',
+      },
+      {
+        label: 'Unit Number',
+        placeholder: 'Unit Number',
+        type: 'text',
+        name: 'unitNumber',
+        data: [],
+      },
+      {
+        label: 'Street Number',
+        placeholder: 'Street Number',
+        type: 'text',
+        name: 'streetNumber',
+        data: [],
+      },
+      {
+        label: 'Street Name',
+        placeholder: 'Street Name',
+        type: 'text',
+        name: 'streetName',
+        data: [],
+      },
+      {
+        label: 'Street Type',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'streetType',
+        data: streetType,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        label: 'Suburb',
+        placeholder: 'Suburb',
+        type: 'text',
+        name: 'suburb',
+        data: [],
+      },
+      {
+        label: 'Entity Type*',
+        placeholder: 'Select',
+        type: 'select',
+        name: 'entityType',
+        data: entityType,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        label: 'Trading Name',
+        placeholder: 'Trading Name',
+        type: 'text',
+        name: 'tradingName',
+        data: [],
+      },
+      {
+        label: 'State*',
+        placeholder: isAusOrNew ? 'Select' : 'Enter State',
+        type: isAusOrNew ? 'select' : 'text',
+        name: 'state',
+        data: stateValue,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        label: 'Property',
+        placeholder: 'Property',
+        type: 'text',
+        name: 'property',
+        data: [],
+      },
+      {
+        label: 'Postcode*',
+        placeholder: 'Postcode',
+        type: 'text',
+        name: 'postCode',
+        data: [],
+      },
+      {
+        label: 'Phone Number',
+        placeholder: '1234567890',
+        type: 'text',
+        name: 'phoneNumber',
+        data: [],
+      },
+    ],
+    [
+      clients,
+      debtors,
+      streetType,
+      entityType,
+      stateValue,
+      isAusOrNew,
+      countryList,
+      handleDebtorSelectChange,
+      handleSelectInputChange,
+      handleOnSelectSearchInputChange,
+    ]
+  );
+
+  const finalInputs = useMemo(() => {
+    if (isAusOrNew) {
+      return [...INPUTS];
+    }
+    const filteredData = [...INPUTS];
+    filteredData.splice(4, 1, {
+      label: 'Company Registration No.*',
+      placeholder: 'Registration no',
+      type: 'text',
+      name: 'registrationNumber',
+    });
+    filteredData.splice(5, 1);
+    return filteredData;
+  }, [INPUTS, isAusOrNew]);
+
   const getComponentFromType = useCallback(
     input => {
       let component = null;
@@ -683,25 +701,15 @@ const ApplicationCompanyStep = () => {
           );
           break;
         case 'select': {
-          let handleOnChange = handleSelectInputChange;
-          let handleInputChange;
-
-          if (input.name === 'debtorId') {
-            handleInputChange = _.debounce(handleDebtorInputChange, 800);
-            handleOnChange = handleDebtorSelectChange;
-          }
-
           component = (
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder={input.placeholder}
               name={input?.name}
               options={input?.data ?? []}
               isSearchable
               value={companyState?.[input?.name] ?? []}
-              onChange={handleOnChange}
-              onInputChange={handleInputChange}
+              onChange={input?.onSelectChange}
+              onInputChange={input?.onInputChange}
             />
           );
           break;

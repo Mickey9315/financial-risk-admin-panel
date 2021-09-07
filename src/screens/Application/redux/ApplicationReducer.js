@@ -255,7 +255,7 @@ export const application = (state = initialApplicationList, action) => {
         companyData,
       };
     }
-    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_DEBTOR_DROP_DOWN_DATA: {
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_SEARCH_DROP_DOWN_DATA: {
       const dropdownData = {
         ...state?.companyData?.dropdownData,
         [action?.name]: action?.data?.map(entity => ({

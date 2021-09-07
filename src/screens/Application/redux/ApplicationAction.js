@@ -206,21 +206,22 @@ export const getApplicationCompanyDropDownData = () => {
   };
 };
 
-export const getApplicationDebtorDropDownData = searchString => {
+export const getApplicationDropDownDataBySearch = (searchEntity, searchString) => {
   return async dispatch => {
     try {
       const options = {
         searchString,
         page: 1,
-        limit: 250,
+        limit: 150,
+        entity: searchEntity,
       };
-      const response = await ApplicationApiServices.searchDebtorDropdownData(options);
+      const response = await ApplicationApiServices.searchDropdownDataBySearch(options);
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_DEBTOR_DROP_DOWN_DATA,
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_SEARCH_DROP_DOWN_DATA,
           data: response?.data?.data,
-          name: 'debtors',
+          name: searchEntity,
         });
       }
     } catch (e) {
