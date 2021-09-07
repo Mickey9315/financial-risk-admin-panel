@@ -3,19 +3,19 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import Tooltip from 'rc-tooltip';
-import AccordionItem from '../../../../common/Accordion/AccordionItem';
-import Button from '../../../../common/Button/Button';
+import AccordionItem from '../../../../../common/Accordion/AccordionItem';
+import Button from '../../../../../common/Button/Button';
 import {
   addApplicationNoteAction,
   deleteApplicationNoteAction,
   getApplicationNotesList,
   updateApplicationNoteAction,
-} from '../../redux/ApplicationAction';
-import Modal from '../../../../common/Modal/Modal';
-import Input from '../../../../common/Input/Input';
-import Switch from '../../../../common/Switch/Switch';
-import DropdownMenu from '../../../../common/DropdownMenu/DropdownMenu';
-import { errorNotification } from '../../../../common/Toast';
+} from '../../../redux/ApplicationAction';
+import Modal from '../../../../../common/Modal/Modal';
+import Switch from '../../../../../common/Switch/Switch';
+import DropdownMenu from '../../../../../common/DropdownMenu/DropdownMenu';
+import { errorNotification } from '../../../../../common/Toast';
+import NotesDescription from './NotesDescription';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -267,31 +267,32 @@ const ApplicationNotesAccordion = props => {
           {applicationNoteList?.length > 0 ? (
             applicationNoteList.map(note => (
               <div className="common-accordion-item-content-box" key={note._id}>
-                <div className="note-title-row just-end">
+                <div className="d-flex just-bet align-center">
+                  <div>
+                    <span className="font-field mr-5">Date:</span>
+                    <span className="font-primary">
+                      {moment(note.createdAt).format('DD-MMM-YYYY')}
+                    </span>
+                  </div>
                   <span
-                    className="material-icons-round font-placeholder just-end"
+                    className="material-icons-round font-placeholder cursor-pointer"
                     onClick={e => onClickActionToggleButton(e, note)}
                   >
                     more_vert
                   </span>
                 </div>
-                <div className="date-owner-row">
-                  <span className="title mr-5">Date:</span>
-                  <span className="details">{moment(note.createdAt).format('DD-MMM-YYYY')}</span>
-
-                  <span className="title">Owner:</span>
+                <div className="d-flex">
+                  <span className="font-field mr-5">Owner:</span>
                   <Tooltip
                     overlayClassName="tooltip-left-class"
                     overlay={note.createdById || 'No owner name added'}
                     placement="left"
                   >
-                    <span className="details">{note.createdById || '-'}</span>
+                    <span className="note-owner-name">{note.createdById || '-'}</span>
                   </Tooltip>
                 </div>
-                <div className="font-field">Note Description:</div>
-                <div className="view-application-accordion-description">
-                  {note.description || '-'}
-                </div>
+                <span className="font-field mr-5">Note Description:</span>
+                <NotesDescription description={note?.description} />
               </div>
             ))
           ) : (
@@ -308,15 +309,16 @@ const ApplicationNotesAccordion = props => {
         >
           <div className="add-notes-popup-container">
             <span>Description</span>
-            <Input
+            <textarea
               prefixClass="font-placeholder"
               placeholder="Note description"
               name="description"
               type="text"
+              rows={5}
               value={selectedApplicationNote.description}
               onChange={onChangeSelectedNoteInput}
             />
-            <span>Private/Public</span>
+            <span>Is Public</span>
             <Switch
               id="selected-note"
               name="isPublic"

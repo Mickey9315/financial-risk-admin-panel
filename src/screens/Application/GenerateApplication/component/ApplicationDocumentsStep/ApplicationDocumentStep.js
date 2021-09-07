@@ -50,9 +50,10 @@ const ApplicationDocumentStep = () => {
   const { documentTypeList, uploadDocumentApplicationData } = useSelector(
     ({ application }) => application.editApplication?.documents
   );
-  const documentData = useMemo(() => uploadDocumentApplicationData, [
-    uploadDocumentApplicationData,
-  ]);
+  const documentData = useMemo(
+    () => uploadDocumentApplicationData,
+    [uploadDocumentApplicationData]
+  );
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');
@@ -68,9 +69,10 @@ const ApplicationDocumentStep = () => {
     initialApplicationDocumentState
   );
 
-  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
-    selectedApplicationDocuments,
-  ]);
+  const { documentType, description, isPublic } = useMemo(
+    () => selectedApplicationDocuments,
+    [selectedApplicationDocuments]
+  );
 
   const {
     GenerateApplicationDocumentUploadButtonLoaderAction,
@@ -393,7 +395,7 @@ const ApplicationDocumentStep = () => {
               value={description}
               onChange={onchangeDocumentDescription}
             />
-            <span>Private/Public</span>
+            <span>Is Public</span>
             <Switch
               id="document-type"
               name="isPublic"

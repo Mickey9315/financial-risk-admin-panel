@@ -79,9 +79,10 @@ const ApplicationDocumentsAccordion = props => {
     [setUploadModel]
   );
 
-  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
-    selectedApplicationDocuments,
-  ]);
+  const { documentType, description, isPublic } = useMemo(
+    () => selectedApplicationDocuments,
+    [selectedApplicationDocuments]
+  );
 
   const documentTypeOptions = useMemo(() => {
     const finalData = documentTypeList || [];
@@ -374,7 +375,7 @@ const ApplicationDocumentsAccordion = props => {
               value={description}
               onChange={onchangeDocumentDescription}
             />
-            <span>Private/Public</span>
+            <span>Is Public</span>
             <Switch
               id="document-type"
               name="isPublic"

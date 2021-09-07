@@ -85,6 +85,14 @@
   }
 }
 
+.note-owner-name {
+  color: $primary-color;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .report-row {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -259,8 +267,32 @@
 
 .view-application-accordion-description {
   color: $primary-color;
-  word-break: break-all;
-  white-space: pre-wrap;
+  overflow: hidden;
+}
+
+.note-container {
+  position: relative;
+}
+
+.read-more-or-less {
+  position: absolute;
+  bottom: 1px;
+  right: 0;
+  padding: 0 0 2px 2px;
+  font: $text $font-medium;
+  color: $primary-color;
+  text-decoration: underline;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.read-more-ellipsis {
+  position: absolute;
+  bottom: 1px;
+  right: 62px;
+  font: $subtitle $font-regular;
+  color: $primary-color;
+  background-color: #fff;
 }
 
 .view-application-accordion-dropdown .menu-name {

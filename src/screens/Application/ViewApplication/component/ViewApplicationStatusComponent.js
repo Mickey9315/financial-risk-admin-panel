@@ -255,11 +255,12 @@ const ViewApplicationStatusComponent = props => {
             {statusToChange?.value === 'DECLINED' && (
               <div className="add-notes-popup-container">
                 <span>Comment</span>
-                <Input
+                <textarea
                   prefixClass="font-placeholder"
                   placeholder="Enter Comment"
                   name="comment"
                   type="text"
+                  rows={5}
                   value={commentText}
                   onChange={e => setCommentText(e?.target?.value)}
                 />

@@ -395,7 +395,10 @@ const ViewReport = () => {
   }, []);
 
   useEffect(() => {
-    return () => dispatch(resetReportListData());
+    return () => {
+      dispatch(resetReportListData());
+      startGeneralLoaderOnRequest('viewReportListLoader');
+    };
   }, []);
 
   // for params in url

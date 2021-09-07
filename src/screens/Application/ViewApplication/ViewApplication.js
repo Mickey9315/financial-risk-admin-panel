@@ -22,7 +22,7 @@ import TableApiService from '../../../common/Table/TableApiService';
 import Drawer from '../../../common/Drawer/Drawer';
 import ApplicationReportAccordion from './component/ApplicationReportAccordion';
 import ApplicationTaskAccordion from './component/ApplicationTaskAccordion';
-import ApplicationNotesAccordion from './component/ApplicationNotesAccordion';
+import ApplicationNotesAccordion from './component/applicationNotesAccordion/ApplicationNotesAccordion';
 import ApplicationAlertsAccordion from './component/ApplicationAlertsAccordion';
 import ApplicationDocumentsAccordion from './component/ApplicationDocumentsAccordion';
 import ApplicationLogsAccordion from './component/ApplicationLogsAccordion';

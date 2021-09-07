@@ -69,9 +69,10 @@ const DebtorsDocumentsTab = () => {
     debtorDocumentReducer,
     initialDebtorDocumentState
   );
-  const { documentType, isPublic, description } = useMemo(() => selectedDebtorDocument ?? {}, [
-    selectedDebtorDocument,
-  ]);
+  const { documentType, isPublic, description } = useMemo(
+    () => selectedDebtorDocument ?? {},
+    [selectedDebtorDocument]
+  );
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
@@ -572,7 +573,7 @@ const DebtorsDocumentsTab = () => {
               value={description}
               onChange={onchangeDocumentDescription}
             />
-            <span>Private/Public</span>
+            <span>Is Public</span>
             <Switch
               id="document-type"
               name="isPublic"

@@ -6,7 +6,6 @@ import BigInput from '../../../common/BigInput/BigInput';
 import Button from '../../../common/Button/Button';
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
-import Input from '../../../common/Input/Input';
 import Table, { TABLE_ROW_ACTIONS } from '../../../common/Table/Table';
 import {
   addDebtorsNoteAction,
@@ -265,15 +264,16 @@ const DebtorsNotesTab = () => {
         >
           <div className="add-notes-popup-container">
             <span>Description</span>
-            <Input
+            <textarea
               prefixClass="font-placeholder"
               placeholder="Note description"
               name="description"
               type="text"
+              rows={5}
               value={selectedDebtorsNote?.description}
               onChange={onChangeSelectedNoteInput}
             />
-            <span>Private/Public</span>
+            <span>Is Public</span>
             <Switch
               id="selected-note"
               name="isPublic"

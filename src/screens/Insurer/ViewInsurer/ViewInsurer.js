@@ -62,9 +62,10 @@ const ViewInsurer = () => {
     return temp;
   }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, checkAccess]);
 
-  const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
-    insurerData,
-  ]);
+  const { name, address, contactNumber, website, email } = useMemo(
+    () => insurerData,
+    [insurerData]
+  );
   useEffect(() => {
     dispatch(getInsurerById(id));
     return () => {
@@ -132,16 +133,20 @@ const ViewInsurer = () => {
                   </div>
                   <div className="common-detail-field view-insurer-website">
                     <span className="common-detail-title">Website</span>
-                    <a
-                      href={website ?? ''}
-                      target="_blank"
-                      className="mail-id-value"
-                      rel="noreferrer"
-                      name="website"
-                      placeholder="No value"
-                    >
-                      {website?.toString()?.trim()?.length > 0 ? website : '-'}
-                    </a>
+                    {website?.toString()?.trim()?.length > 0 ? (
+                      <a
+                        href={website ?? ''}
+                        target="_blank"
+                        className="mail-id-value"
+                        rel="noreferrer"
+                        name="website"
+                        placeholder="No value"
+                      >
+                        {website}
+                      </a>
+                    ) : (
+                      '-'
+                    )}
                   </div>
                 </div>
               </div>

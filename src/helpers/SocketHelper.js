@@ -4,12 +4,7 @@ import { HEADER_NOTIFICATION_REDUX_CONSTANTS } from '../common/Header/redux/Head
 import { updateHeaderNotificationOnNewNotificationAction } from '../common/Header/redux/HeaderAction';
 import { store } from '../redux/store';
 
-const urls = {
-  dev: 'https://client.trad.dev.gradlesol.com',
-  test: 'https://client.trad.test.humanpixel.com.au',
-};
-
-const SOCKET_URI = urls.test;
+const SOCKET_URI = process.env.REACT_APP_SOCKET_URL;
 const TYPE = 'user';
 let socket = null;
 

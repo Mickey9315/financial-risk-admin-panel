@@ -14,6 +14,7 @@ const initialUserManagementListState = {
   page: 1,
   pages: 1,
   isLoading: true,
+  viewAddedOrUpdatedUser: undefined,
 };
 
 const initialUserColumnManagementState = {
@@ -43,6 +44,13 @@ export const userManagementList = (state = initialUserManagementListState, actio
     case USER_MANAGEMENT_REDUX_CONSTANTS.RESET_USER_LIST_DATA: {
       return initialUserManagementListState;
     }
+
+    case USER_MANAGEMENT_REDUX_CONSTANTS.USER_MANAGEMENT_GET_ADDED_USER_ID:
+      return {
+        ...state,
+        viewAddedOrUpdatedUser: action?.data,
+      };
+
     default:
       return state;
   }
@@ -132,6 +140,7 @@ export const selectedUserData = (state = null, action) => {
         ...state,
         moduleAccess: [],
       };
+
     default:
       return state;
   }

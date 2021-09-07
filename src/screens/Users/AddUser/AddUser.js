@@ -21,7 +21,7 @@ import {
 } from '../redux/UserManagementAction';
 import { USER_MODULE_ACCESS, USER_ROLES } from '../../../constants/UserlistConstants';
 import { errorNotification } from '../../../common/Toast';
-import { EMAIL_ADDRESS_REGEX, NUMBER_REGEX } from '../../../constants/RegexConstants';
+import { EMAIL_ADDRESS_REGEX, MOBILE_NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { USER_MANAGEMENT_CRUD_REDUX_CONSTANTS } from '../redux/UserManagementReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
@@ -34,7 +34,9 @@ const AddUser = () => {
   const dispatch = useDispatch();
   const allOrganisationList = useSelector(({ organizationModulesList }) => organizationModulesList);
   const allClientList = useSelector(({ userManagementClientList }) => userManagementClientList);
+
   const selectedUser = useSelector(({ selectedUserData }) => selectedUserData);
+
   const { action, id } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -208,7 +210,7 @@ const AddUser = () => {
       errorNotification('Please enter a valid email');
     } else if (!role || role.trim().length === 0) {
       errorNotification('Please select role');
-    } else if (contactNumber && !contactNumber.match(NUMBER_REGEX)) {
+    } else if (contactNumber && !contactNumber.match(MOBILE_NUMBER_REGEX)) {
       errorNotification('Please enter valid contact number');
       // eslint-disable-next-line no-restricted-globals
     } else if (maxCreditLimit && isNaN(maxCreditLimit)) {
@@ -216,11 +218,14 @@ const AddUser = () => {
     } else {
       try {
         if (action === 'add') {
-          await dispatch(addNewUser(selectedUser));
+          const response = await dispatch(addNewUser(selectedUser));
+          if (response) {
+            history.replace(`/users/user/view/${response}`);
+          }
         } else if (action === 'edit') {
           await dispatch(updateUserDetails(id, selectedUser));
+          history.replace(`/users/user/view/${id}`);
         }
-        backToUser();
       } catch (e) {
         /**/
       }
@@ -408,7 +413,7 @@ const AddUser = () => {
                   <div className="common-detail-field">
                     <div className="common-detail-title">Phone Number</div>
                     {action === 'view' ? (
-                      <span>{contactNumber}</span>
+                      <span>{contactNumber ?? '-'}</span>
                     ) : (
                       <Input
                         name="contactNumber"
@@ -422,7 +427,7 @@ const AddUser = () => {
                   <div className="common-detail-field">
                     <div className="common-detail-title">Max credit limit approval</div>
                     {action === 'view' ? (
-                      <span>{NumberCommaSeparator(maxCreditLimit)}</span>
+                      <span>{maxCreditLimit ? NumberCommaSeparator(maxCreditLimit) : '-'}</span>
                     ) : (
                       <Input
                         name="maxCreditLimit"

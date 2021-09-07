@@ -15,7 +15,6 @@ import {
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
 import { errorNotification } from '../../../common/Toast';
-import Input from '../../../common/Input/Input';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -83,9 +82,10 @@ const ClientNotesTab = () => {
     viewClientDeleteNoteButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList ?? {}, [
-    clientNotesList,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => clientNotesList ?? {},
+    [clientNotesList]
+  );
 
   const getClientNotesList = useCallback(
     (params = {}, cb) => {
@@ -259,15 +259,16 @@ const ClientNotesTab = () => {
         >
           <div className="add-notes-popup-container">
             <span>Description</span>
-            <Input
+            <textarea
               prefixClass="font-placeholder"
               placeholder="Note description"
               name="description"
               type="text"
+              rows={5}
               value={selectedClientNote?.description}
               onChange={onChangeSelectedNoteInput}
             />
-            <span>Private/Public</span>
+            <span>Is Public</span>
             <Switch
               id="selected-note"
               name="isPublic"

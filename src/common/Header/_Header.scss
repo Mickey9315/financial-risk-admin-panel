@@ -195,12 +195,12 @@
 
 .change-password-grid {
   display: grid;
-  align-items: center;
   grid-template-columns: 140px 1fr;
   gap: 10px;
   width: 100%;
 
   span {
+    margin-top: 5px;
     white-space: nowrap;
   }
 
