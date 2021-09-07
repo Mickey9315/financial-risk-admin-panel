@@ -69,10 +69,9 @@ const DebtorsDocumentsTab = () => {
     debtorDocumentReducer,
     initialDebtorDocumentState
   );
-  const { documentType, isPublic, description } = useMemo(
-    () => selectedDebtorDocument ?? {},
-    [selectedDebtorDocument]
-  );
+  const { documentType, isPublic, description } = useMemo(() => selectedDebtorDocument ?? {}, [
+    selectedDebtorDocument,
+  ]);
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();

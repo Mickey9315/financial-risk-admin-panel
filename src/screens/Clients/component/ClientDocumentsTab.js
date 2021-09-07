@@ -69,10 +69,9 @@ const ClientDocumentsTab = () => {
     clientDocumentReducer,
     initialClientDocumentState
   );
-  const { documentType, isPublic, description } = useMemo(
-    () => selectedClientDocument,
-    [selectedClientDocument]
-  );
+  const { documentType, isPublic, description } = useMemo(() => selectedClientDocument, [
+    selectedClientDocument,
+  ]);
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
@@ -123,10 +122,9 @@ const ClientDocumentsTab = () => {
     viewClientDeleteDocumentButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => documentsList ?? {},
-    [documentsList]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => documentsList ?? {}, [
+    documentsList,
+  ]);
 
   const getClientDocumentsList = useCallback(
     (params = {}, cb) => {

@@ -60,7 +60,8 @@ export const getUserColumnListName = () => {
           data: response.data.data,
         });
         dispatch({
-          type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type:
+            USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: response.data.data,
         });
       }
@@ -100,7 +101,8 @@ export const saveUserColumnListName = ({ userColumnNameList = {}, isReset = fals
       const response = await UserManagementApiService.updateUserColumnListName(data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type:
+            USER_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.USER_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: userColumnNameList,
         });
         successNotification(response?.data?.message ?? 'Columns updated successfully.');

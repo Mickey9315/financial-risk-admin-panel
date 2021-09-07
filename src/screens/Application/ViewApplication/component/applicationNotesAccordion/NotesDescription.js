@@ -5,10 +5,10 @@ const NotesDescription = props => {
   const noteRef = useRef();
   const { description } = props;
   const [isReadMore, setIsReadMore] = useState(false);
-  const noteHeight = useMemo(
-    () => noteRef?.current?.offsetHeight,
-    [noteRef?.current, noteRef?.current?.offsetWidth]
-  );
+  const noteHeight = useMemo(() => noteRef?.current?.offsetHeight, [
+    noteRef?.current,
+    noteRef?.current?.offsetWidth,
+  ]);
   const isReadMoreNeeded = useMemo(() => noteHeight > 92, [noteHeight]);
   console.log(noteHeight);
   return (
