@@ -6,7 +6,6 @@ import {
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
-  getApplicationDropDownDataBySearch,
   resetEntityTableData,
   saveApplicationStepDataToBackend,
   searchApplicationCompanyEntityName,
@@ -233,8 +232,9 @@ const ApplicationCompanyStep = () => {
   );
 
   const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
-    if (text?.toString()?.trim()?.length > 0)
-      dispatch(getApplicationDropDownDataBySearch(searchEntity, text));
+    console.log(searchEntity, text);
+    // if (text?.toString()?.trim()?.length > 0)
+    // dispatch(getApplicationDropDownDataBySearch(searchEntity, text));
   }, []);
 
   const onHandleSearchClick = useCallback(
