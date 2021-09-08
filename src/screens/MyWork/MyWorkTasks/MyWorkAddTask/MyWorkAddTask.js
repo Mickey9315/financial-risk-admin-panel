@@ -66,7 +66,6 @@ const MyWorkAddTask = () => {
 
   const handleSelectInputChange = useCallback(
     data => {
-      console.log(data);
       updateAddTaskState(data?.name ?? '', data);
       if (data?.name === 'entityType') {
         dispatch(removeAddTaskEntityId());
