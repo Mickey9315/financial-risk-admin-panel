@@ -16,6 +16,7 @@ import {
   getAssigneeDropDownData,
   getClientTaskColumnList,
   getClientTaskDetail,
+  getClientTaskDropDownDataBySearch,
   getClientTaskListData,
   getDefaultEntityDropDownData,
   getEntityDropDownData,
@@ -30,6 +31,7 @@ import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
 import Select from '../../../common/Select/Select';
+import { SEARCH_ENTITIES } from '../../../constants/EntitySearchConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -56,9 +58,7 @@ const ClientTaskTab = () => {
     clientTaskColumnNameList,
     clientTaskDefaultColumnNameList,
   } = useSelector(({ clientManagement }) => clientManagement?.task ?? {});
-  const { entityType, ...addTaskState } = useSelector(
-    ({ clientManagement }) => clientManagement?.task?.addTask ?? {}
-  );
+  const addTaskState = useSelector(({ clientManagement }) => clientManagement?.task?.addTask ?? {});
 
   const {
     viewClientTaskColumnSaveButtonLoaderAction,
@@ -185,66 +185,6 @@ const ClientTaskTab = () => {
     dispatch(changeClientTaskColumnNameListStatus(data));
   }, []);
 
-  const INPUTS = useMemo(
-    () => [
-      {
-        label: 'Description',
-        placeholder: 'Enter description',
-        type: 'text',
-        name: 'description',
-        data: [],
-      },
-      {
-        label: 'Assignee',
-        placeholder: 'Select assignee',
-        type: 'select',
-        name: 'assigneeId',
-        data: assigneeList ?? [],
-      },
-      {
-        label: 'Priority',
-        placeholder: 'Select priority',
-        type: 'select',
-        name: 'priority',
-        data: priorityData ?? [],
-      },
-      {
-        label: 'Due Date',
-        placeholder: 'Select date',
-        type: 'date',
-        name: 'dueDate',
-        data: [],
-      },
-      {
-        label: 'Task For',
-        placeholder: 'Select task for',
-        type: 'select',
-        name: 'entityType',
-        data: entityTypeData ?? [],
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Entity Labels',
-        placeholder: 'Select entity',
-        type: 'select',
-        name: 'entityId',
-        data: entityList ?? [],
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Comments',
-        placeholder: 'Enter comments',
-        type: 'textarea',
-        name: 'comments',
-      },
-    ],
-    [assigneeList, entityList, addTaskState, priorityData, entityTypeData]
-  );
-
   const [editTaskModal, setEditTaskModal] = useState(false);
 
   const toggleEditTaskModal = useCallback(
@@ -313,7 +253,7 @@ const ClientTaskTab = () => {
           return addTaskState?.priority || [];
         }
         case 'entityType': {
-          return entityType || [];
+          return addTaskState?.entityType || [];
         }
         case 'entityId': {
           return addTaskState?.entityId || [];
@@ -343,7 +283,7 @@ const ClientTaskTab = () => {
       assigneeType: addTaskState?.assigneeId?.type ?? addTaskState?.assigneeType,
       taskFrom: 'client-task',
       priority: addTaskState?.priority?.value ?? undefined,
-      entityType: entityType?.value ?? undefined,
+      entityType: addTaskState?.entityType?.value ?? undefined,
       entityId: addTaskState?.entityId?.value ?? undefined,
       comments: addTaskState?.comments?.trim() ?? undefined,
     };
@@ -362,6 +302,87 @@ const ClientTaskTab = () => {
       }
     }
   }, [addTaskState, toggleAddTaskModal, callBackOnTaskAdd, callBackOnTaskEdit]);
+
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: SEARCH_ENTITIES[searchEntity],
+      requestFrom: 'client',
+    };
+    dispatch(getClientTaskDropDownDataBySearch(options));
+  }, []);
+
+  const INPUTS = useMemo(
+    () => [
+      {
+        label: 'Description',
+        placeholder: 'Enter description',
+        type: 'text',
+        name: 'description',
+        data: [],
+      },
+      {
+        label: 'Assignee',
+        placeholder: 'Select assignee',
+        type: 'select',
+        name: 'assigneeId',
+        data: assigneeList ?? [],
+      },
+      {
+        label: 'Priority',
+        placeholder: 'Select priority',
+        type: 'select',
+        name: 'priority',
+        data: priorityData ?? [],
+      },
+      {
+        label: 'Due Date',
+        placeholder: 'Select date',
+        type: 'date',
+        name: 'dueDate',
+        data: [],
+      },
+      {
+        label: 'Task For',
+        placeholder: 'Select task for',
+        type: 'select',
+        name: 'entityType',
+        data: entityTypeData ?? [],
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Entity Labels',
+        placeholder: 'Select entity',
+        type: 'select',
+        name: 'entityId',
+        data: entityList ?? [],
+        onInputChange: text =>
+          handleOnSelectSearchInputChange(
+            addTaskState?.entityType?.[0]?.value ?? addTaskState?.entityType?.value,
+            text
+          ),
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Comments',
+        placeholder: 'Enter comments',
+        type: 'textarea',
+        name: 'comments',
+      },
+    ],
+    [
+      assigneeList,
+      entityList,
+      addTaskState,
+      priorityData,
+      entityTypeData,
+      handleOnSelectSearchInputChange,
+    ]
+  );
 
   const getComponentFromType = useCallback(
     input => {
@@ -384,8 +405,6 @@ const ClientTaskTab = () => {
           break;
 
         case 'select': {
-          const handleOnChange = handleSelectInputChange;
-
           component = (
             <>
               <span>{input.label}</span>
@@ -395,7 +414,8 @@ const ClientTaskTab = () => {
                 options={input.data}
                 isSearchable
                 value={selectedValues}
-                onChange={handleOnChange}
+                onChange={handleSelectInputChange}
+                onInputChange={input?.onInputChange}
               />
             </>
           );

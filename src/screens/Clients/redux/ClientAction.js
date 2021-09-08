@@ -21,6 +21,7 @@ import {
 import { store } from '../../../redux/store';
 import { ClientOverdueApiServices } from '../services/ClientOverdueApiService';
 import { ClientClaimsApiServices } from '../services/ClientClaimsApiService';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1476,5 +1477,22 @@ export const downloadClientCreditLimitDecisionLetter = id => {
       throw Error();
     }
     return false;
+  };
+};
+
+export const getClientTaskDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_ENTITY_DROP_DOWN_DATA_ACTION,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
   };
 };
