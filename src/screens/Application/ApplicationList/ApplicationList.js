@@ -13,8 +13,8 @@ import {
   applicationDownloadAction,
   changeApplicationColumnNameList,
   getApplicationColumnNameList,
-  getApplicationDropDownDataBySearch,
   getApplicationFilter,
+  getApplicationFilterDropDownDataBySearch,
   getApplicationsListByFilter,
   resetApplicationListPaginationData,
   saveApplicationColumnNameList,
@@ -482,8 +482,12 @@ const ApplicationList = () => {
   }, [docs?.length, appliedFilters]);
 
   const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
-    if (text?.toString()?.trim()?.length > 0)
-      dispatch(getApplicationDropDownDataBySearch(searchEntity, text));
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'application',
+    };
+    dispatch(getApplicationFilterDropDownDataBySearch(options));
   }, []);
 
   useEffect(() => {

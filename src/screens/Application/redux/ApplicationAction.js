@@ -188,29 +188,6 @@ export const getApplicationCompanyDropDownData = () => {
   };
 };
 
-export const getApplicationDropDownDataBySearch = (searchEntity, searchString) => {
-  return async dispatch => {
-    try {
-      const options = {
-        searchString,
-        entityType: searchEntity,
-        requestFrom: 'application',
-      };
-      const response = await DashboardApiService.getEntitiesBySearch(options);
-
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_SEARCH_DROP_DOWN_DATA,
-          data: response?.data?.data,
-          name: searchEntity,
-        });
-      }
-    } catch (e) {
-      displayErrors(e);
-    }
-  };
-};
-
 export const getApplicationCompanyDataFromDebtor = (id, params) => {
   return async dispatch => {
     // eslint-disable-next-line no-useless-catch
@@ -1306,5 +1283,23 @@ export const clearApplicationAlertDetails = () => {
         APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
           .CLEAR_APPLICATION_ALERTS_DETAILS,
     });
+  };
+};
+
+export const getApplicationFilterDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_BY_SEARCH,
+          data: response?.data?.data,
+          name: options.entityType,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
   };
 };

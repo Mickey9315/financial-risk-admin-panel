@@ -911,6 +911,25 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
 
+    case APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_BY_SEARCH: {
+      const dropdownData = {
+        ...state?.applicationFilterList?.dropdownData,
+        [action?.name]: action?.data?.map(entity => ({
+          label: entity.name,
+          name: action?.name,
+          value: entity._id,
+        })),
+      };
+
+      return {
+        ...state,
+        applicationFilterList: {
+          ...state?.applicationFilterList,
+          dropdownData,
+        },
+      };
+    }
+
     default:
       return state;
   }
