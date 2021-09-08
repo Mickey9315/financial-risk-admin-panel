@@ -6,6 +6,7 @@ import {
   startGeneralLoaderOnRequest,
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import ApplicationApiServices from '../../Application/services/ApplicationApiServices';
 
 export const getTaskListByFilter = (params = {}) => {
   return async dispatch => {
@@ -368,10 +369,27 @@ export const clearNotificationData = () => {
   };
 };
 
-export const resetMyWorkTaskData = () => {
-  return dispatch => {
-    dispatch({
-      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_DATA,
-    });
+export const getTaskDropDownDataBySearch = (searchEntity, searchString) => {
+  return async dispatch => {
+    try {
+      const options = {
+        searchString,
+        page: 1,
+        limit: 150,
+        entity: searchEntity,
+      };
+      const response = await ApplicationApiServices.searchDropdownDataBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type:
+            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+              .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
   };
 };

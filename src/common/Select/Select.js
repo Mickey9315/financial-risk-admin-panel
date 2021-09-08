@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 const Select = props => {
   const {
+    className,
     placeholder,
     name,
     options,
@@ -18,7 +19,7 @@ const Select = props => {
 
   return (
     <ReactSelect
-      className="react-select-container"
+      className={`${className} react-select-container`}
       classNamePrefix="react-select"
       placeholder={placeholder}
       name={name}
@@ -33,6 +34,7 @@ const Select = props => {
 };
 
 Select.propTypes = {
+  className: PropTypes.string,
   placeholder: PropTypes.string,
   name: PropTypes.string,
   options: PropTypes.array,
@@ -44,11 +46,12 @@ Select.propTypes = {
 };
 
 Select.defaultProps = {
+  className: '',
   placeholder: 'Select',
   name: '',
   options: [],
   isSearchable: true,
-  value: {},
+  value: [],
   onChange: () => {},
   onInputChange: () => {},
   isDisabled: false,
