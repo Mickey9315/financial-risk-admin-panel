@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -24,6 +23,7 @@ import ApplicationEntityNameTable from '../../components/ApplicationEntityNameTa
 import Modal from '../../../../../../common/Modal/Modal';
 import { errorNotification, successNotification } from '../../../../../../common/Toast';
 import IconButton from '../../../../../../common/IconButton/IconButton';
+import Select from '../../../../../../common/Select/Select';
 
 const drawerInitialState = {
   visible: false,
@@ -823,9 +823,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
           break;
         case 'select':
           component = (
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
