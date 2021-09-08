@@ -14,6 +14,7 @@ import {
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import ImportApplicationApiServices from '../services/ImportApplicationApiServices';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -211,11 +212,10 @@ export const getApplicationDropDownDataBySearch = (searchEntity, searchString) =
     try {
       const options = {
         searchString,
-        page: 1,
-        limit: 150,
-        entity: searchEntity,
+        entityType: searchEntity,
+        requestFrom: 'application',
       };
-      const response = await ApplicationApiServices.searchDropdownDataBySearch(options);
+      const response = await DashboardApiService.getEntitiesBySearch(options);
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({

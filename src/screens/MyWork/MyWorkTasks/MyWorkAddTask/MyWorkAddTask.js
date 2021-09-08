@@ -31,6 +31,12 @@ const entityTypeData = [
   // { value: 'overdue', label: 'Overdue', name: 'entityType' },
 ];
 
+const SEARCH_ENTITIES = {
+  client: 'clients',
+  debtor: 'debtors',
+  application: 'applications',
+};
+
 const MyWorkAddTask = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -142,8 +148,12 @@ const MyWorkAddTask = () => {
   }, [addTaskState]);
 
   const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
-    if (text?.toString()?.trim()?.length > 0)
-      dispatch(getTaskDropDownDataBySearch(searchEntity, text));
+    const options = {
+      searchString: text,
+      entityType: SEARCH_ENTITIES[searchEntity],
+      requestFrom: 'task',
+    };
+    dispatch(getTaskDropDownDataBySearch(options));
   }, []);
 
   const INPUTS = useMemo(
