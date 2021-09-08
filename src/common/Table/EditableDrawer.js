@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import ReactSelect from 'react-select';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import { changeApplicationStatus } from '../../screens/Application/redux/ApplicationAction';
+import Select from '../Select/Select';
 
 const LimitTypeOptions = [
   {
@@ -88,9 +88,7 @@ const EditableDrawer = props => {
       {editableField === 'LIMIT_TYPE' &&
         (isApprovedOrDeclined ? (
           <div className="editable-drawer-field">
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder="Select Limit Type"
               name="limitType"
               value={selectedLimitType ?? []}

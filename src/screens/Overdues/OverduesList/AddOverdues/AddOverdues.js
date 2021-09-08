@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Prompt, useHistory, useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
@@ -22,6 +21,7 @@ import Loader from '../../../../common/Loader/Loader';
 import { OVERDUE_REDUX_CONSTANTS } from '../../redux/OverduesReduxConstants';
 import { setViewClientActiveTabIndex } from '../../../Clients/redux/ClientAction';
 import { setViewDebtorActiveTabIndex } from '../../../Debtors/redux/DebtorsAction';
+import Select from '../../../../common/Select/Select';
 import { DECIMAL_REGEX, usdConverter } from '../../../../constants/RegexConstants';
 
 const AddOverdues = () => {
@@ -327,10 +327,8 @@ const AddOverdues = () => {
         case 'select':
           component = (
             <>
-              <ReactSelect
+              <Select
                 name={input.name}
-                className="react-select-container"
-                classNamePrefix="react-select"
                 placeholder={input.placeholder}
                 options={input?.data}
                 value={input?.value}

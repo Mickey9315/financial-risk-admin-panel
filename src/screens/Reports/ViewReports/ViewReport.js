@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { reportType } from '../../../helpers/reportTypeHelper';
 import {
@@ -29,6 +28,7 @@ import Modal from '../../../common/Modal/Modal';
 import CustomSelect from '../../../common/CustomSelect/CustomSelect';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { startGeneralLoaderOnRequest } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import Select from '../../../common/Select/Select';
 
 const ViewReport = () => {
   const dispatch = useDispatch();
@@ -270,9 +270,8 @@ const ViewReport = () => {
       switch (input.type) {
         case 'select': {
           component = (
-            <ReactSelect
-              className="filter-select react-select-container"
-              classNamePrefix="react-select"
+            <Select
+              className="filter-select"
               placeholder={input.placeHolder}
               name="role"
               isSearchble

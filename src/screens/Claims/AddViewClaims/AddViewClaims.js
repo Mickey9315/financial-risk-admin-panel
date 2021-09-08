@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
@@ -26,6 +25,7 @@ import Loader from '../../../common/Loader/Loader';
 import { setViewClientActiveTabIndex } from '../../Clients/redux/ClientAction';
 import ClaimsTabContainer from '../components/ClaimsTabContainer';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
+import Select from '../../../common/Select/Select';
 
 const AddViewClaims = () => {
   const history = useHistory();
@@ -320,11 +320,10 @@ const AddViewClaims = () => {
                   {input.value && input.value.toString().trim().length > 0 ? input?.value : '-'}
                 </div>
               ) : (
-                <ReactSelect
+                <Select
+                  name={input?.name}
                   placeholder={input.placeholder}
                   options={input?.options}
-                  className="react-select-container"
-                  classNamePrefix="react-select"
                   onChange={onHandleSelectChange}
                   menuPlacement={input?.dropdownPlacement}
                   value={input?.value ?? []}

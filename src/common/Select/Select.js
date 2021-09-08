@@ -13,7 +13,10 @@ const Select = props => {
     onChange,
     onInputChange,
     isDisabled,
+    ...restProps
   } = props;
+
+  console.log(restProps.isMulti);
 
   const handleInputChange = _.debounce(onInputChange, 800);
 
@@ -29,6 +32,12 @@ const Select = props => {
       onChange={onChange}
       onInputChange={handleInputChange}
       isDisabled={isDisabled}
+      color={restProps?.color}
+      dropdownHandle={restProps?.dropdownHandle}
+      keepSelectedInList={restProps?.keepSelectedInList}
+      isMulti={restProps?.isMulti}
+      menuPlacement={restProps?.menuPlacement}
+      dropdownPosition={restProps?.dropdownPosition}
     />
   );
 };

@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import Table from '../../../common/Table/Table';
@@ -25,6 +24,7 @@ import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/List
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 
 const DebtorsList = () => {
   const history = useHistory();
@@ -368,9 +368,8 @@ const DebtorsList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Entity Type</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select"
                   name="role"
                   options={debtorDropDownData?.entityType}

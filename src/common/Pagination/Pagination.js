@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import ReactSelect from 'react-select';
+import Select from '../Select/Select';
 
 const noPerPage = [
   { label: '5', value: 5 },
@@ -53,13 +53,12 @@ const Pagination = props => {
     <div className={paginationClass}>
       <div className="records-per-page-container">
         <span className="font-field mr-10">Show</span>
-        <ReactSelect
+        <Select
           options={noPerPage}
           onChange={onChangeLimit}
           value={recordLimit}
           placeholder="Select"
-          className="no-per-page-select react-select-container"
-          classNamePrefix="react-select"
+          className="no-per-page-select"
           dropdownPosition="auto"
           isSearchable={false}
           menuPlacement="auto"

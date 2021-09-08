@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import _ from 'lodash';
 import IconButton from '../../../../common/IconButton/IconButton';
@@ -35,6 +34,7 @@ import { stakeHolderValidation } from './StakeHolderValidation';
 import { DRAWER_ACTIONS } from '../../../Application/GenerateApplication/component/ApplicationCompanyStep/ApplicationCompanyStep';
 import ApplicationEntityNameTable from '../../../Application/GenerateApplication/component/components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import { DEBTORS_REDUX_CONSTANTS } from '../../redux/DebtorsReduxConstants';
+import Select from '../../../../common/Select/Select';
 
 const drawerInitialState = {
   visible: false,
@@ -894,9 +894,7 @@ const DebtorsStakeHolderTab = () => {
           break;
         case 'select':
           component = (
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder={input.placeholder}
               name={input.name}
               options={input.data}
