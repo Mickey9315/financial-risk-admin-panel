@@ -15,6 +15,7 @@ import {
 import { errorNotification } from '../../../../common/Toast';
 import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
 import Select from '../../../../common/Select/Select';
+import { SEARCH_ENTITIES } from '../../../../constants/EntitySearchConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -30,12 +31,6 @@ const entityTypeData = [
   // { value: 'claim', label: 'Claim', name: 'entityType' },
   // { value: 'overdue', label: 'Overdue', name: 'entityType' },
 ];
-
-const SEARCH_ENTITIES = {
-  client: 'clients',
-  debtor: 'debtors',
-  application: 'applications',
-};
 
 const MyWorkAddTask = () => {
   const history = useHistory();
