@@ -6,6 +6,7 @@ import {
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
+  getApplicationCompanyStepDropDownDataBySearch,
   resetEntityTableData,
   saveApplicationStepDataToBackend,
   searchApplicationCompanyEntityName,
@@ -192,6 +193,7 @@ const ApplicationCompanyStep = () => {
           handleApplicationErrors(e?.response);
         }
       } else {
+        console.log(data);
         updateSingleCompanyState(data?.name, data);
       }
     },
@@ -232,9 +234,12 @@ const ApplicationCompanyStep = () => {
   );
 
   const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
-    console.log(searchEntity, text);
-    // if (text?.toString()?.trim()?.length > 0)
-    // dispatch(getApplicationDropDownDataBySearch(searchEntity, text));
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'application',
+    };
+    dispatch(getApplicationCompanyStepDropDownDataBySearch(options));
   }, []);
 
   const onHandleSearchClick = useCallback(
