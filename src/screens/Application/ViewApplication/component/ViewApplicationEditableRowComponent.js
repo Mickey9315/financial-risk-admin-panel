@@ -1,11 +1,11 @@
-import ReactSelect from 'react-select';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import { changeApplicationStatus } from '../../redux/ApplicationAction';
+import Select from '../../../../common/Select/Select';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 
@@ -97,9 +97,7 @@ const ViewApplicationEditableRowComponent = props => {
         <div className="font-field mt-10">Limit Type</div>
         <div className="view-application-status">
           {isUpdatable ? (
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder={!isApprovedOrDeclined ? 'Select Limit Type' : '-'}
               name="applicationStatus"
               value={selectedLimitType ?? []}

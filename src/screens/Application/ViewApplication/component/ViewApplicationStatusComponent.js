@@ -1,5 +1,4 @@
-import ReactSelect from 'react-select';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
@@ -10,6 +9,7 @@ import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import { errorNotification } from '../../../../common/Toast';
 import { NUMBER_REGEX } from '../../../../constants/RegexConstants';
 import { changeApplicationStatus } from '../../redux/ApplicationAction';
+import Select from '../../../../common/Select/Select';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
@@ -226,9 +226,7 @@ const ViewApplicationStatusComponent = props => {
               )}
             </div>
           ) : (
-            <ReactSelect
-              className="react-select-container view-application-select"
-              classNamePrefix="react-select"
+            <Select
               placeholder={isAllowToUpdate ? 'Select Status' : '-'}
               name="applicationStatus"
               value={!isApprovedOrDeclined ? status : []}
