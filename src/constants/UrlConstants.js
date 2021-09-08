@@ -26,6 +26,8 @@ export const HEADER_URLS = {
 export const DASHBOARD_URLS = {
   DASHBOARD_DETAILS: `${BASE_URL}dashboard`,
   DASHBOARD_USER_LIST: `${BASE_URL}dashboard/user-list`,
+
+  SEARCH_ENTITIES: `${BASE_URL}entity-search/`,
 };
 
 export const USER_MANAGEMENT_URLS = {

@@ -16,8 +16,6 @@ const Select = props => {
     ...restProps
   } = props;
 
-  console.log(restProps.isMulti);
-
   const handleInputChange = _.debounce(onInputChange, 800);
 
   return (

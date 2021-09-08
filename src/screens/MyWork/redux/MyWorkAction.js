@@ -6,7 +6,7 @@ import {
   startGeneralLoaderOnRequest,
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
-import ApplicationApiServices from '../../Application/services/ApplicationApiServices';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
 export const getTaskListByFilter = (params = {}) => {
   return async dispatch => {
@@ -369,16 +369,10 @@ export const clearNotificationData = () => {
   };
 };
 
-export const getTaskDropDownDataBySearch = (searchEntity, searchString) => {
+export const getTaskDropDownDataBySearch = options => {
   return async dispatch => {
     try {
-      const options = {
-        searchString,
-        page: 1,
-        limit: 150,
-        entity: searchEntity,
-      };
-      const response = await ApplicationApiServices.searchDropdownDataBySearch(options);
+      const response = await DashboardApiService.getEntitiesBySearch(options);
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
