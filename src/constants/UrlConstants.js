@@ -77,6 +77,7 @@ export const APPLICATION_URLS = {
       UPLOAD_DOCUMENT_URL: `${BASE_URL}document/upload/`,
       DELETE_DOCUMENT_URL: `${BASE_URL}document/`,
     },
+    DOWNLOAD_DOCUMENTS_URL: `${BASE_URL}document/download`,
     APPLICATION_NOTES: {
       GET_NOTES_LIST: `${BASE_URL}note/`,
     },

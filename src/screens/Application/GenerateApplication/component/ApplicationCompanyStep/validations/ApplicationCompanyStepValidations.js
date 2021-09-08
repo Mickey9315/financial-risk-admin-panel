@@ -68,7 +68,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
   }
   if (
     (!data?.state && data?.entityType?.value === 'TRUST') ||
-    (data?.state?.length <= 0 && data?.entityType?.value === 'TRUST')
+    (data?.state?.toString().trim().length <= 0 && data?.entityType?.value === 'TRUST')
   ) {
     validated = false;
     if (

@@ -67,31 +67,6 @@ export const addOverdueValidations = async (
     errors.insurerId = 'Please select insurer before continue';
   }
 
-  if (data?.currentAmount && !NUMBER_REGEX.test(data?.currentAmount)) {
-    validated = false;
-    errors.currentAmount = 'Amount should be number';
-  }
-
-  if (data?.thirtyDaysAmount && !NUMBER_REGEX.test(data?.thirtyDaysAmount)) {
-    validated = false;
-    errors.thirtyDaysAmount = 'Amount should be number';
-  }
-
-  if (data?.sixtyDaysAmount && !NUMBER_REGEX.test(data?.sixtyDaysAmount)) {
-    validated = false;
-    errors.sixtyDaysAmount = 'Amount should be number';
-  }
-
-  if (data?.ninetyDaysAmount && !NUMBER_REGEX.test(data?.ninetyDaysAmount)) {
-    validated = false;
-    errors.ninetyDaysAmount = 'Amount should be number';
-  }
-
-  if (data?.ninetyPlusDaysAmount && !NUMBER_REGEX.test(data?.ninetyPlusDaysAmount)) {
-    validated = false;
-    errors.ninetyPlusDaysAmount = 'Amount should be number';
-  }
-
   if (data?.outstandingAmount <= 0) {
     validated = false;
     errors.outstandingAmount = 'Outstanding amount cannot be zero';
@@ -129,7 +104,7 @@ export const addOverdueValidations = async (
     sixtyDaysAmount: sixtyDaysAmount ? parseInt(sixtyDaysAmount, 10) : 0,
     ninetyDaysAmount: ninetyDaysAmount ? parseInt(ninetyDaysAmount, 10) : 0,
     ninetyPlusDaysAmount: ninetyPlusDaysAmount ? parseInt(ninetyPlusDaysAmount, 10) : 0,
-    outstandingAmount: outstandingAmount ? parseInt(outstandingAmount, 10) : 0,
+    outstandingAmount: outstandingAmount || 0,
     overdueAction: isAmendOverdueModal && 'AMEND',
     status: !isAmendOverdueModal ? { label: 'Submitted', value: 'SUBMITTED' } : status,
     _id: !isAmendOverdueModal ? Math?.random().toString() : _id,

@@ -6,6 +6,7 @@ import ReactSelect from 'react-select';
 import Tooltip from 'rc-tooltip';
 import {
   deleteViewApplicationDocumentAction,
+  downloadDocuments,
   getApplicationModuleList,
   viewApplicationUploadDocument,
 } from '../../redux/ApplicationAction';
@@ -16,6 +17,7 @@ import FileUpload from '../../../../common/Header/component/FileUpload';
 import Input from '../../../../common/Input/Input';
 import Switch from '../../../../common/Switch/Switch';
 import { errorNotification } from '../../../../common/Toast';
+import { downloadAll } from '../../../../helpers/DownloadHelper';
 
 const initialApplicationDocumentState = {
   description: '',
@@ -52,6 +54,7 @@ const ApplicationDocumentsAccordion = props => {
   const dispatch = useDispatch();
   const { applicationId, index } = props;
   const [fileData, setFileData] = useState('');
+  const [fileExtensionErrorMessage, setFileExtensionErrorMessage] = useState(false);
 
   const applicationDocsList = useSelector(
     ({ application }) => application?.viewApplication?.applicationModulesList?.documents || []
@@ -136,6 +139,7 @@ const ApplicationDocumentsAccordion = props => {
           'tex',
           'xls',
           'xlsx',
+          'csv',
           'doc',
           'docx',
           'odt',
@@ -152,6 +156,7 @@ const ApplicationDocumentsAccordion = props => {
           'application/pdf',
           'image/bmp',
           'image/gif',
+          'text/csv',
           'application/x-tex',
           'application/vnd.ms-excel',
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -166,15 +171,15 @@ const ApplicationDocumentsAccordion = props => {
         const checkExtension =
           fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
         const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-
-        if (!(checkExtension || checkMimeTypes)) {
-          errorNotification('Only image and document type files are allowed');
-        }
         const checkFileSize = e.target.files[0].size > 10485760;
-        if (checkFileSize) {
-          errorNotification('File size should be less than 10 mb.');
+        if (!(checkExtension || checkMimeTypes)) {
+          setFileExtensionErrorMessage(true);
+        } else if (checkFileSize) {
+          setFileExtensionErrorMessage(false);
+          errorNotification('File size should be less than 10MB.');
         } else {
           setFileData(e.target.files[0]);
+          setFileExtensionErrorMessage(false);
           dispatchSelectedApplicationDocuments({
             type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
             name: 'fileData',
@@ -187,6 +192,7 @@ const ApplicationDocumentsAccordion = props => {
   );
 
   const onCloseUploadDocumentButton = useCallback(() => {
+    setFileExtensionErrorMessage(false);
     dispatchSelectedApplicationDocuments({
       type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
     });
@@ -195,6 +201,7 @@ const ApplicationDocumentsAccordion = props => {
   }, [toggleUploadModel, dispatchSelectedApplicationDocuments, setFileData]);
 
   const onClickUploadDocument = useCallback(async () => {
+    setFileExtensionErrorMessage(false);
     if (selectedApplicationDocuments.documentType.length <= 0) {
       errorNotification('Please select document type');
     } else if (!selectedApplicationDocuments.fileData) {
@@ -290,6 +297,16 @@ const ApplicationDocumentsAccordion = props => {
     [toggleConfirmationModal, applicationDocId, viewDocumentDeleteDocumentButtonLoaderAction]
   );
 
+  const onDocumentDownloadClick = useCallback(
+    async documentId => {
+      const response = await downloadDocuments(documentId);
+      if (response) {
+        downloadAll(response);
+      }
+    },
+    [downloadAll]
+  );
+
   return (
     <>
       {applicationDocsList !== undefined && (
@@ -320,12 +337,21 @@ const ApplicationDocumentsAccordion = props => {
                   >
                     <div className="document-title">{doc.documentTypeId || '-'}</div>
                   </Tooltip>
-                  <span
-                    className="material-icons-round font-danger cursor-pointer"
-                    onClick={() => deleteDocument(doc._id)}
-                  >
-                    delete_outline
-                  </span>
+                  <div className="view-application-document-action-buttons">
+                    <span
+                      title="Download this document"
+                      className="download-icon material-icons-round"
+                      onClick={() => onDocumentDownloadClick(doc?._id)}
+                    >
+                      cloud_download
+                    </span>
+                    <span
+                      className="material-icons-round font-danger cursor-pointer"
+                      onClick={() => deleteDocument(doc._id)}
+                    >
+                      delete_outline
+                    </span>
+                  </div>
                 </div>
                 <div className="date-owner-row">
                   <span className="title mr-5">Date:</span>
@@ -361,11 +387,19 @@ const ApplicationDocumentsAccordion = props => {
               isSearchable
             />
             <span>Please upload your documents here</span>
-            <FileUpload
-              isProfile={false}
-              fileName={fileData.name || 'Browse'}
-              handleChange={onUploadClick}
-            />
+            <div>
+              <FileUpload
+                isProfile={false}
+                fileName={fileData.name ?? 'Browse...'}
+                handleChange={onUploadClick}
+              />
+              {fileExtensionErrorMessage && (
+                <div className="ui-state-error">
+                  Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf, png,
+                  pptx, ppt or rtf file types are accepted
+                </div>
+              )}
+            </div>
             <span>Document Description:</span>
             <Input
               prefixClass="font-placeholder"

@@ -22,5 +22,12 @@ const ApplicationApiServices = {
       method: 'GET',
       responseType: 'blob',
     }),
+  downloadDocument: params =>
+    ApiService.request({
+      url: `${APPLICATION_URLS.VIEW_APPLICATION.DOWNLOAD_DOCUMENTS_URL}`,
+      params,
+      method: 'GET',
+      responseType: 'blob',
+    }),
 };
 export default ApplicationApiServices;

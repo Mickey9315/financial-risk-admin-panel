@@ -80,6 +80,7 @@ const ApplicationDocumentStep = () => {
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const [uploadModel, setUploadModel] = useState(false);
+  const [fileExtensionErrorMessage, setFileExtensionErrorMessage] = useState(false);
   const toggleUploadModel = useCallback(
     value => setUploadModel(value !== undefined ? value : e => !e),
 
@@ -108,6 +109,7 @@ const ApplicationDocumentStep = () => {
           'tex',
           'xls',
           'xlsx',
+          'csv',
           'doc',
           'docx',
           'odt',
@@ -124,6 +126,7 @@ const ApplicationDocumentStep = () => {
           'application/pdf',
           'image/bmp',
           'image/gif',
+          'text/csv',
           'application/x-tex',
           'application/vnd.ms-excel',
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -138,14 +141,15 @@ const ApplicationDocumentStep = () => {
         const checkExtension =
           fileExtension.indexOf(e.target.files[0].name.split('.').splice(-1)[0]) !== -1;
         const checkMimeTypes = mimeType.indexOf(e.target.files[0].type) !== -1;
-        if (!(checkExtension || checkMimeTypes)) {
-          errorNotification('Only image and document type files are allowed');
-        }
         const checkFileSize = e.target.files[0].size > 10485760;
-        if (checkFileSize) {
-          errorNotification('File size should be less than 10 mb.');
+        if (!(checkExtension || checkMimeTypes)) {
+          setFileExtensionErrorMessage(true);
+        } else if (checkFileSize) {
+          setFileExtensionErrorMessage(false);
+          errorNotification('File size should be less than 10MB.');
         } else {
           setFileData(e.target.files[0]);
+          setFileExtensionErrorMessage(false);
           dispatchSelectedApplicationDocuments({
             type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.UPDATE_SINGLE_DATA,
             name: 'fileData',
@@ -158,6 +162,7 @@ const ApplicationDocumentStep = () => {
   );
 
   const onCloseUploadDocumentButton = useCallback(() => {
+    setFileExtensionErrorMessage(false);
     dispatchSelectedApplicationDocuments({
       type: APPLICATION_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
     });
@@ -173,6 +178,7 @@ const ApplicationDocumentStep = () => {
   }, [editApplication._id]);
 
   const onClickUploadDocument = useCallback(async () => {
+    setFileExtensionErrorMessage(false);
     if (selectedApplicationDocuments?.documentType?.length <= 0) {
       errorNotification('Please select document type');
     } else if (!fileData) {
@@ -381,11 +387,19 @@ const ApplicationDocumentStep = () => {
               onChange={handleDocumentChange}
             />
             <span>Please upload your documents here</span>
-            <FileUpload
-              isProfile={false}
-              fileName={fileData.name ?? 'Browse'}
-              handleChange={onUploadClick}
-            />
+            <div>
+              <FileUpload
+                isProfile={false}
+                fileName={fileData.name ?? 'Browse...'}
+                handleChange={onUploadClick}
+              />
+              {fileExtensionErrorMessage && (
+                <div className="ui-state-error">
+                  Only jpeg, jpg, png, bmp, gif, tex, xls, xlsx, csv, doc, docx, odt, txt, pdf, png,
+                  pptx, ppt or rtf file types are accepted
+                </div>
+              )}
+            </div>
             <span>Description</span>
             <Input
               prefixClass="font-placeholder"

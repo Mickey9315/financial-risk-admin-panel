@@ -125,10 +125,32 @@
   .material-icons-round:hover {
     color: $field-color;
   }
+  .font-danger.material-icons-round:hover {
+    color: red;
+  }
+
+  .download-icon:hover {
+    color: #26466D;
+  }
 }
 
 .document-title-row .document-title {
   color: $primary-color;
+}
+
+.view-application-document-action-buttons {
+  display: flex;
+  align-items: center;
+
+  .font-danger {
+    width: 24px;
+  }
+}
+
+.download-icon {
+  margin-right: 20px;
+  color: $primary-color;
+  cursor: pointer;
 }
 
 .application-status-grid {
@@ -272,6 +294,7 @@
 
 .note-container {
   position: relative;
+  display: flex;
 }
 
 .read-more-or-less {

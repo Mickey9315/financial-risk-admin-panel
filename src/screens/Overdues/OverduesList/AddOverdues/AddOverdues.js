@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory, useParams, Prompt } from 'react-router-dom';
+import { Prompt, useHistory, useParams } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,13 +22,15 @@ import Loader from '../../../../common/Loader/Loader';
 import { OVERDUE_REDUX_CONSTANTS } from '../../redux/OverduesReduxConstants';
 import { setViewClientActiveTabIndex } from '../../../Clients/redux/ClientAction';
 import { setViewDebtorActiveTabIndex } from '../../../Debtors/redux/DebtorsAction';
+import { DECIMAL_REGEX, usdConverter } from '../../../../constants/RegexConstants';
 
 const AddOverdues = () => {
   const history = useHistory();
   const amountRef = useRef([]);
-  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
-    history,
-  ]);
+  const { isRedirected, redirectedFrom, fromId } = useMemo(
+    () => history?.location?.state ?? {},
+    [history]
+  );
   const { id, period } = useParams();
 
   const dispatch = useDispatch();
@@ -284,14 +286,13 @@ const AddOverdues = () => {
     },
     [setShowSaveAlertModal, isPrompt, alertOnLeftModal, toggleAlertOnLeftModal]
   );
-  const decimalRegex = new RegExp(/(^[0-9]*(\.\d{0,2})?$)/);
   const handleAmountInputChange = useCallback(
     e => {
       const { name, value } = e?.target;
       const updatedVal = value?.toString()?.replaceAll(',', '');
-      if (decimalRegex.test(updatedVal)) changeOverdueFields(name, updatedVal);
+      if (DECIMAL_REGEX.test(updatedVal)) changeOverdueFields(name, updatedVal);
     },
-    [decimalRegex]
+    [DECIMAL_REGEX]
   );
 
   const handleSelectInputChange = useCallback(e => {
@@ -372,7 +373,7 @@ const AddOverdues = () => {
                 amountRef.current[index] = ref;
               }}
               name={input.name}
-              value={input?.value || ''}
+              value={input?.value ? NumberCommaSeparator(input?.value) : ''}
               className="add-overdue-amount-input"
               type="text"
               placeholder="0"
@@ -395,7 +396,7 @@ const AddOverdues = () => {
         case 'total-amount':
           component = (
             <div className="add-overdue-total-amount">
-              {input?.value && input.value !== 'NaN' ? NumberCommaSeparator(input?.value) : 0}
+              {input?.value && input.value !== 'NaN' ? usdConverter(input?.value) : 0}
             </div>
           );
           break;

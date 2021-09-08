@@ -291,7 +291,6 @@ const ApplicationNotesAccordion = props => {
                     <span className="note-owner-name">{note.createdById || '-'}</span>
                   </Tooltip>
                 </div>
-                <span className="font-field mr-5">Note Description:</span>
                 <NotesDescription description={note?.description} />
               </div>
             ))
