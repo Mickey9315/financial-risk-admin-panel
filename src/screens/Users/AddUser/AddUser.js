@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-select';
 import _ from 'lodash';
 import Button from '../../../common/Button/Button';
 import Input from '../../../common/Input/Input';
@@ -28,6 +27,7 @@ import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivi
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import Loader from '../../../common/Loader/Loader';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
+import Select from '../../../common/Select/Select';
 
 const AddUser = () => {
   const history = useHistory();
@@ -396,11 +396,8 @@ const AddUser = () => {
                     {action === 'view' ? (
                       <span>{userRoleSelectedValue?.[0]?.label}</span>
                     ) : (
-                      <ReactSelect
-                        className={`react-select-container ${
-                          action === 'view' && 'disabled-control'
-                        }`}
-                        classNamePrefix="react-select"
+                      <Select
+                        className={action === 'view' && 'disabled-control'}
                         placeholder="Select"
                         name="role"
                         options={USER_ROLES}
@@ -441,14 +438,13 @@ const AddUser = () => {
                   {role !== 'superAdmin' && (
                     <div className="common-detail-field user-select-client">
                       <div className="common-detail-title">Select Client</div>
-                      <ReactSelect
+                      <Select
                         isMulti
                         value={clientIds}
                         onChange={clientSelected}
                         options={clients}
                         isDisabled={action === 'view' || role === 'superAdmin'}
-                        className="react-select-container isMulti-react-select"
-                        classNamePrefix="react-select"
+                        className="isMulti-react-select"
                         color="#003A78"
                         placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
                         dropdownHandle={false}

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import _ from 'lodash';
@@ -28,6 +27,7 @@ import DebtorsNotesTab from '../components/DebtorsNotesTab';
 import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderTab';
 import DebtorsReportsTab from '../components/DebtorsReportsTab';
 import DebtorsAlertsTab from '../components/DebtorsAlertsTab';
+import Select from '../../../common/Select/Select';
 
 const DEBTOR_TABS_CONSTANTS = [{ label: 'Credit Limits', component: <DebtorsCreditLimitTab /> }];
 const DEBTOR_TABS_WITH_ACCESS = [
@@ -381,12 +381,10 @@ const ViewInsurer = () => {
               {action === 'view' ? (
                 <span className="view-debtor-value">{input?.value?.label}</span>
               ) : (
-                <ReactSelect
-                  className={`select-client-list-container react-select-container ${
+                <Select
+                  className={`select-client-list-container ${
                     action === 'view' && 'disabled-control'
                   }`}
-                  classNamePrefix="react-select"
-                  type="text"
                   name={input.name}
                   placeholder={action === 'view' || !input.isEditable ? '-' : input.placeholder}
                   options={input.data}

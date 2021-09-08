@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } 
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-select';
 import moment from 'moment';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -41,6 +40,7 @@ import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/List
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 
 const ClientList = () => {
   const history = useHistory();
@@ -593,9 +593,8 @@ const ClientList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title client-filter-title">Service Manager Name</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select"
                   name="serviceManagerId"
                   options={serviceManagerFilterListData}
@@ -606,9 +605,8 @@ const ClientList = () => {
               </div>
               <div className="filter-modal-row">
                 <div className="form-title client-filter-title">Risk Analyst Name</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select"
                   name="riskAnalystId"
                   options={riskAnalystFilterListData}

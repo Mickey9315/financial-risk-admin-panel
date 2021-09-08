@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import ReactSelect from 'react-select';
 import Tooltip from 'rc-tooltip';
 import {
   deleteViewApplicationDocumentAction,
@@ -16,6 +15,7 @@ import FileUpload from '../../../../common/Header/component/FileUpload';
 import Input from '../../../../common/Input/Input';
 import Switch from '../../../../common/Switch/Switch';
 import { errorNotification } from '../../../../common/Toast';
+import Select from '../../../../common/Select/Select';
 
 const initialApplicationDocumentState = {
   description: '',
@@ -350,9 +350,7 @@ const ApplicationDocumentsAccordion = props => {
         >
           <div className="document-upload-popup-container">
             <span>Document Type</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder="Select"
               options={documentTypeOptions}
               value={documentType}

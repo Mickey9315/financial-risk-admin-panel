@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import moment from 'moment';
 import _ from 'lodash';
 import Button from '../../../common/Button/Button';
@@ -24,6 +23,7 @@ import Switch from '../../../common/Switch/Switch';
 import Loader from '../../../common/Loader/Loader';
 import ClientOverdueTab from '../component/ClientOverdueTab';
 import ClientClaimsTab from '../component/ClientClaimsTab';
+import Select from '../../../common/Select/Select';
 
 const initialAssigneeState = {
   riskAnalystId: [],
@@ -259,9 +259,7 @@ const ViewClient = () => {
                 <span>ACN</span>
                 <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
                 <span>Risk Person</span>
-                <ReactSelect
-                  className="react-select-container"
-                  classNamePrefix="react-select"
+                <Select
                   placeholder="Select"
                   name="riskAnalystId"
                   options={riskAnalysts}
@@ -270,9 +268,7 @@ const ViewClient = () => {
                   isSearchable
                 />
                 <span>Service Person</span>
-                <ReactSelect
-                  className="react-select-container"
-                  classNamePrefix="react-select"
+                <Select
                   placeholder="Select"
                   name="serviceManagerId"
                   options={serviceManagers}

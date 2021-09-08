@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Button from '../../../common/Button/Button';
@@ -20,6 +19,7 @@ import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Pagination from '../../../common/Pagination/Pagination';
 import { errorNotification } from '../../../common/Toast';
 import Loader from '../../../common/Loader/Loader';
+import Select from '../../../common/Select/Select';
 
 const documentForOptions = [
   { label: 'Application', value: 'application', name: 'documentFor' },
@@ -320,9 +320,7 @@ const SettingsDocumentTypeTab = () => {
                       onChange={handleDocumentTypeChange}
                     />
                     <span>Document For</span>
-                    <ReactSelect
-                      className="react-select-container"
-                      classNamePrefix="react-select"
+                    <Select
                       placeholder="Select"
                       name="Document For"
                       searchable={false}

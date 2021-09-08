@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import moment from 'moment';
-import ReactSelect from 'react-select';
 import { useDispatch } from 'react-redux';
 import TableApiService from '../../../common/Table/TableApiService';
 import Drawer from '../../../common/Drawer/Drawer';
 import { changeOverdueStatus } from '../redux/OverduesAction';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
+import Select from '../../../common/Select/Select';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -149,10 +149,8 @@ const TableLinkDrawer = props => {
     switch (row.type) {
       case 'status': {
         return (
-          <ReactSelect
+          <Select
             name="overdueStatus"
-            className="react-select-container"
-            classNamePrefix="react-select"
             placeholder="Select Status"
             options={overdueStatusList}
             value={status ?? []}

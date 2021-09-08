@@ -3,7 +3,6 @@ import Tooltip from 'rc-tooltip';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import React, { useCallback, useMemo, useState } from 'react';
-import ReactSelect from 'react-select';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import Button from '../../../../common/Button/Button';
 import Modal from '../../../../common/Modal/Modal';
@@ -12,6 +11,7 @@ import {
   fetchSelectedReportsForApplication,
   getApplicationReportsListData,
 } from '../../redux/ApplicationAction';
+import Select from '../../../../common/Select/Select';
 
 const ApplicationReportAccordion = props => {
   const { index, debtorId } = props;
@@ -100,10 +100,8 @@ const ApplicationReportAccordion = props => {
             {partners?.length > 0 && (
               <>
                 <span>Stake Holder</span>
-                <ReactSelect
+                <Select
                   name="role"
-                  className="react-select-container"
-                  classNamePrefix="react-select"
                   placeholder="Select Stake Holder"
                   dropdownHandle={false}
                   options={partnersWithCompany}
@@ -114,10 +112,8 @@ const ApplicationReportAccordion = props => {
               </>
             )}
             <span>Report</span>
-            <ReactSelect
+            <Select
               name="role"
-              className="react-select-container"
-              classNamePrefix="react-select"
               placeholder="Select Reports"
               dropdownHandle={false}
               options={reportsListForFetch}

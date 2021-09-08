@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import ReactSelect from 'react-select';
 import { useHistory } from 'react-router-dom';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
@@ -24,6 +23,7 @@ import Modal from '../../../common/Modal/Modal';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 
 const ClaimsList = () => {
   const dispatch = useDispatch();
@@ -332,9 +332,8 @@ const ClaimsList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Clients</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select"
                   name="role"
                   options={filterDropdownClient}

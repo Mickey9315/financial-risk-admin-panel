@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
@@ -18,6 +17,7 @@ import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 
 const OverduesList = () => {
   const dispatch = useDispatch();
@@ -388,9 +388,7 @@ const OverduesList = () => {
               buttons={newSubmissionButtons}
               hideModal={onCloseNewSubmissionModal}
             >
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder="Select Client"
                 name="role"
                 options={entityList?.clientId}
@@ -421,9 +419,8 @@ const OverduesList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Debtor Name</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select Debtor"
                   name="role"
                   options={entityList?.debtorId}

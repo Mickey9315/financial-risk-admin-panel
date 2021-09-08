@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -16,6 +15,7 @@ import {
   getClientOverdueList,
   resetClientOverdueListData,
 } from '../redux/ClientAction';
+import Select from '../../../common/Select/Select';
 
 const ClientOverdueTab = () => {
   const searchInputRef = useRef();
@@ -191,9 +191,7 @@ const ClientOverdueTab = () => {
               buttons={newSubmissionButtons}
               hideModal={onCloseNewSubmissionModal}
             >
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder="Select Client"
                 name="role"
                 options={entityList?.clientId}

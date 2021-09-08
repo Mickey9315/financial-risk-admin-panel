@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -30,6 +29,7 @@ import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import Select from '../../../common/Select/Select';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -389,9 +389,7 @@ const ClientTaskTab = () => {
           component = (
             <>
               <span>{input.label}</span>
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -27,6 +26,7 @@ import Input from '../../../common/Input/Input';
 import FileUpload from '../../../common/Header/component/FileUpload';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import Select from '../../../common/Select/Select';
 
 const initialClientDocumentState = {
   description: '',
@@ -545,9 +545,7 @@ const ClientDocumentsTab = () => {
         >
           <div className="document-upload-popup-container">
             <span>Document Type</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder="Select"
               options={documentTypeOptions}
               value={documentType}
