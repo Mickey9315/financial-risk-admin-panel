@@ -20,6 +20,7 @@ import { store } from '../../../redux/store';
 import DebtorsReportsApiServices from '../services/DebtorsReportsApiServices';
 import { DebtorOverdueApiServices } from '../services/DebtorOverdueApiServices';
 import DebtorAlertsApiServices from '../services/DebtorAlertsApiServices';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1651,5 +1652,22 @@ export const downloadCreditLimitDecisionLetter = id => {
       throw Error();
     }
     return false;
+  };
+};
+
+export const getDebtorTaskDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
   };
 };
