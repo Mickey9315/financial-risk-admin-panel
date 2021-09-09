@@ -10,6 +10,7 @@ import {
   changeClaimsColumnList,
   getClaimsColumnsList,
   getClaimsEntityList,
+  getClaimsFilterDropDownDataBySearch,
   getClaimsListByFilter,
   resetClaimListData,
   saveClaimsColumnsList,
@@ -263,6 +264,15 @@ const ClaimsList = () => {
     };
   }, []);
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'claim',
+    };
+    dispatch(getClaimsFilterDropDownDataBySearch(options));
+  }, []);
+
   useEffect(() => {
     dispatch(saveAppliedFilters('claimsListFilters', finalFilter));
   }, [finalFilter]);
@@ -343,6 +353,7 @@ const ClaimsList = () => {
                   value={entityNameSelectedValue}
                   onChange={handleEntityNameFilterChange}
                   isSearchable
+                  onInputChange={text => handleOnSelectSearchInputChange('clients', text)}
                 />
               </div>
             </Modal>
