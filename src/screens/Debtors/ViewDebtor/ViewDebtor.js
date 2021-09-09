@@ -28,6 +28,7 @@ import DebtorsNotesTab from '../components/DebtorsNotesTab';
 import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderTab';
 import DebtorsReportsTab from '../components/DebtorsReportsTab';
 import DebtorsAlertsTab from '../components/DebtorsAlertsTab';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const DEBTOR_TABS_CONSTANTS = [{ label: 'Credit Limits', component: <DebtorsCreditLimitTab /> }];
 const DEBTOR_TABS_WITH_ACCESS = [
@@ -72,28 +73,16 @@ const ViewInsurer = () => {
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
-  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
-
-  const checkAccess = useCallback(
-    accessFor => {
-      const availableAccess =
-        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
-      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
-      return isAccessible?.length > 0;
-    },
-    [userPrivilegesData]
-  );
-
   const [isAUSOrNZL, setIsAUSOrNAL] = useState(false);
 
   useEffect(() => {
     if (['AUS', 'NZL'].includes(debtorData?.country?.value)) setIsAUSOrNAL(true);
   }, [debtorData?.country]);
-
+  const access = module => useModulePrivileges(module).hasReadAccess;
   const finalTabs = useMemo(() => {
     const tabs = [...DEBTOR_TABS_CONSTANTS];
     DEBTOR_TABS_WITH_ACCESS.forEach(tab => {
-      if (checkAccess(tab.name)) {
+      if (access(tab.name)) {
         tabs.push(tab);
       }
     });
@@ -113,13 +102,7 @@ const ViewInsurer = () => {
     }
     tabs.push({ label: 'Alerts', component: <DebtorsAlertsTab />, name: 'alerts' });
     return tabs ?? [];
-  }, [
-    debtorData?.entityType,
-    isAUSOrNZL,
-    DEBTOR_TABS_CONSTANTS,
-    checkAccess,
-    DEBTOR_TABS_WITH_ACCESS,
-  ]);
+  }, [debtorData?.entityType, isAUSOrNZL, DEBTOR_TABS_CONSTANTS, access, DEBTOR_TABS_WITH_ACCESS]);
 
   const INPUTS = useMemo(
     () => [
