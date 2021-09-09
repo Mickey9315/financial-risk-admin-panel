@@ -6,6 +6,7 @@ import {
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { ClaimsApiServices } from '../services/ClaimsApiService';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
 export const getClaimsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -248,4 +249,21 @@ export const downloadDocumentFromServer = async id => {
     displayErrors(e);
   }
   return false;
+};
+
+export const getClaimsFilterDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_ENTITY_LIST_BY_SEARCH,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
 };

@@ -17,6 +17,7 @@ import {
 import {
   getClaimDetails,
   getClaimsEntityList,
+  getClaimsFilterDropDownDataBySearch,
   handleClaimChange,
   resetClaimDetails,
 } from '../redux/ClaimsAction';
@@ -82,6 +83,15 @@ const AddViewClaims = () => {
     changeClaimDetails(name, checked);
   }, []);
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'claim',
+    };
+    dispatch(getClaimsFilterDropDownDataBySearch(options));
+  }, []);
+
   const inputClaims = useMemo(
     () => [
       {
@@ -92,6 +102,7 @@ const AddViewClaims = () => {
         options: claimClientList,
         value: claimDetails?.accountid,
         isRequired: true,
+        onInputChange: text => handleOnSelectSearchInputChange('clients', text),
       },
       {
         name: 'name',
@@ -304,7 +315,7 @@ const AddViewClaims = () => {
         value: claimDetails?.finalpaymentdate,
       },
     ],
-    [claimDetails, claimClientList]
+    [claimDetails, claimClientList, handleOnSelectSearchInputChange]
   );
 
   const getComponentByType = useCallback(
@@ -326,6 +337,7 @@ const AddViewClaims = () => {
                   onChange={onHandleSelectChange}
                   menuPlacement={input?.dropdownPlacement}
                   value={input?.value ?? []}
+                  onInputChange={input?.onInputChange}
                 />
               )}
             </>
