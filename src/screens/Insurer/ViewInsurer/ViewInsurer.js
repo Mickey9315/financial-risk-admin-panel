@@ -14,6 +14,7 @@ import Button from '../../../common/Button/Button';
 import InsurerMatrixTab from '../Components/InsurerMatrixTab/InsurerMatrixTab';
 import Loader from '../../../common/Loader/Loader';
 import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const INSURER_TABS_CONSTANTS = [
   { label: 'Contacts', component: <InsurerContactTab /> },
@@ -33,8 +34,6 @@ const ViewInsurer = () => {
     setActiveTabIndex(index);
   };
 
-  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
-
   const viewInsurerActiveTabIndex = useSelector(
     ({ insurer }) => insurer?.viewInsurerActiveTabIndex ?? 0
   );
@@ -43,24 +42,15 @@ const ViewInsurer = () => {
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
-  const checkAccess = useCallback(
-    accessFor => {
-      const availableAccess =
-        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
-      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
-      return isAccessible?.length > 0;
-    },
-    [userPrivilegesData]
-  );
-
+  const access = module => useModulePrivileges(module).hasReadAccess;
   const finalTabs = useMemo(() => {
     let temp = [...INSURER_TABS_CONSTANTS];
-    if (checkAccess('policy')) {
+    if (access('policy')) {
       temp.splice(0, 0, { label: 'Policies', component: <InsurerPoliciesTab /> });
     }
     if (insurerData?.isDefault) temp = temp.filter(e => e.label !== 'Contacts');
     return temp;
-  }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, checkAccess]);
+  }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, access]);
 
   const { name, address, contactNumber, website, email } = useMemo(
     () => insurerData,
