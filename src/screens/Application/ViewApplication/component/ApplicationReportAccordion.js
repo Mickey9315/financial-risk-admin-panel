@@ -12,6 +12,7 @@ import {
   fetchSelectedReportsForApplication,
   getApplicationReportsListData,
 } from '../../redux/ApplicationAction';
+import UserPrivilegeWrapper from '../../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const ApplicationReportAccordion = props => {
   const { index, debtorId } = props;
@@ -144,12 +145,14 @@ const ApplicationReportAccordion = props => {
         }
         suffix="expand_more"
       >
-        <Button
-          buttonType="primary-1"
-          title="Fetch Report"
-          className="add-note-button"
-          onClick={toggleFetchReportsModal}
-        />
+        <UserPrivilegeWrapper moduleName="credit-report">
+          <Button
+            buttonType="primary-1"
+            title="Fetch Report"
+            className="add-note-button"
+            onClick={toggleFetchReportsModal}
+          />
+        </UserPrivilegeWrapper>
         {reportListData?.length > 0 ? (
           reportListData?.map(report => (
             <div className="common-accordion-item-content-box" key={report?._id}>

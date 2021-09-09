@@ -23,6 +23,7 @@ import Input from '../../../../common/Input/Input';
 import { errorNotification } from '../../../../common/Toast';
 import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
 import DropdownMenu from '../../../../common/DropdownMenu/DropdownMenu';
+import UserPrivilegeWrapper from '../../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -124,9 +125,8 @@ const ApplicationTaskAccordion = props => {
 
   const backToTaskList = useCallback(() => {
     dispatch({
-      type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -144,9 +144,8 @@ const ApplicationTaskAccordion = props => {
 
   const onCloseTaskModal = useCallback(() => {
     dispatch({
-      type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -488,12 +487,14 @@ const ApplicationTaskAccordion = props => {
           }
           suffix="expand_more"
         >
-          <Button
-            buttonType="primary-1"
-            title="Add Task"
-            className="add-task-button"
-            onClick={onAddTaskClick}
-          />
+          <UserPrivilegeWrapper moduleName="task">
+            <Button
+              buttonType="primary-1"
+              title="Add Task"
+              className="add-task-button"
+              onClick={onAddTaskClick}
+            />
+          </UserPrivilegeWrapper>
           {applicationTaskList?.docs?.length > 0 ? (
             applicationTaskList.docs.map(task => (
               <div className="common-accordion-item-content-box" key={task._id}>

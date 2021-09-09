@@ -16,6 +16,7 @@ import Switch from '../../../../../common/Switch/Switch';
 import DropdownMenu from '../../../../../common/DropdownMenu/DropdownMenu';
 import { errorNotification } from '../../../../../common/Toast';
 import NotesDescription from './NotesDescription';
+import UserPrivilegeWrapper from '../../../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -258,12 +259,14 @@ const ApplicationNotesAccordion = props => {
           }
           suffix="expand_more"
         >
-          <Button
-            buttonType="primary-1"
-            title="Add Note"
-            className="add-note-button"
-            onClick={toggleModifyNotes}
-          />
+          <UserPrivilegeWrapper moduleName="note">
+            <Button
+              buttonType="primary-1"
+              title="Add Note"
+              className="add-note-button"
+              onClick={toggleModifyNotes}
+            />
+          </UserPrivilegeWrapper>
           {applicationNoteList?.length > 0 ? (
             applicationNoteList.map(note => (
               <div className="common-accordion-item-content-box" key={note._id}>

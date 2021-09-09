@@ -19,6 +19,7 @@ import Switch from '../../../../common/Switch/Switch';
 import { errorNotification } from '../../../../common/Toast';
 import { downloadAll } from '../../../../helpers/DownloadHelper';
 import NotesDescription from './applicationNotesAccordion/NotesDescription';
+import UserPrivilegeWrapper from '../../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const initialApplicationDocumentState = {
   description: '',
@@ -321,12 +322,14 @@ const ApplicationDocumentsAccordion = props => {
           }
           suffix="expand_more"
         >
-          <IconButton
-            buttonType="primary-1"
-            title="cloud_upload"
-            className="add-document-button"
-            onClick={() => toggleUploadModel()}
-          />
+          <UserPrivilegeWrapper moduleName="document">
+            <IconButton
+              buttonType="primary-1"
+              title="cloud_upload"
+              className="add-document-button"
+              onClick={() => toggleUploadModel()}
+            />
+          </UserPrivilegeWrapper>
           {applicationDocsList &&
             applicationDocsList.map(doc => (
               <div className="common-accordion-item-content-box" key={Math.random()}>
