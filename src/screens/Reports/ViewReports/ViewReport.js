@@ -11,6 +11,7 @@ import {
   getReportColumnList,
   getReportList,
   getReportsClientDropdownData,
+  getReportsFilterDropDownDataBySearch,
   reportDownloadAction,
   resetCurrentFilter,
   resetReportListData,
@@ -29,6 +30,7 @@ import CustomSelect from '../../../common/CustomSelect/CustomSelect';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { startGeneralLoaderOnRequest } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import Select from '../../../common/Select/Select';
+import { REPORTS_SEARCH_ENTITIES } from '../../../constants/EntitySearchConstants';
 
 const ViewReport = () => {
   const dispatch = useDispatch();
@@ -204,6 +206,7 @@ const ViewReport = () => {
     },
     [getReportListByFilter]
   );
+
   // on pagination changed
   const pageActionClick = useCallback(
     async newPage => {
@@ -264,8 +267,18 @@ const ViewReport = () => {
     changeFilterFields(name, new Date(date).toISOString());
   }, []);
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: REPORTS_SEARCH_ENTITIES?.[searchEntity],
+      requestFrom: 'report',
+    };
+    dispatch(getReportsFilterDropDownDataBySearch(options));
+  }, []);
+
   const getComponentFromType = useCallback(
     input => {
+      console.log(input.name);
       let component = null;
       switch (input.type) {
         case 'select': {
@@ -281,6 +294,11 @@ const ViewReport = () => {
                   data?.value === reportFilters?.[currentFilter.filter]?.tempFilter[input.name]
               )}
               onChange={handleSelectInputChange}
+              onInputChange={
+                ['debtorId'].includes(input?.name)
+                  ? text => handleOnSelectSearchInputChange(input?.name, text)
+                  : undefined
+              }
             />
           );
           break;
@@ -338,6 +356,7 @@ const ViewReport = () => {
       handleDateInputChange,
       handleClientSelectInputChange,
       getClientSelectedValues,
+      handleOnSelectSearchInputChange,
     ]
   );
 

@@ -9,3 +9,13 @@ export const FIELD_NAME_BY_ENTITY = {
   debtors: 'debtorId',
   // applications: 'applications',
 };
+
+export const REPORTS_SEARCH_ENTITIES = {
+  clientIds: 'clients',
+  debtorId: 'debtors',
+};
+
+export const REPORTS_FIELD_NAME_BY_ENTITIES = {
+  clients: 'clientIds',
+  debtors: 'debtorId',
+};

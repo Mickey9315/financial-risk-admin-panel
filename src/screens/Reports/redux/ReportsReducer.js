@@ -1,4 +1,5 @@
 import { REPORTS_REDUX_CONSTANTS } from './ReportsReduxConstants';
+import { REPORTS_FIELD_NAME_BY_ENTITIES } from '../../../constants/EntitySearchConstants';
 
 const initialFilterState = {
   clientList: {
@@ -365,6 +366,23 @@ export const reports = (state = initialReports, action) => {
       return {
         ...state,
         reportEntityListData,
+      };
+    }
+
+    case REPORTS_REDUX_CONSTANTS.GET_DROPDOWN_LIST_BY_SEARCH: {
+      const name = REPORTS_FIELD_NAME_BY_ENTITIES[action?.name];
+      const dropdownData = {
+        ...state?.reportEntityListData,
+        [name]: action?.data?.map(entity => ({
+          label: entity.name,
+          name,
+          value: entity._id,
+          secondValue: name === 'clientIds' ? entity.clientId : undefined,
+        })),
+      };
+      return {
+        ...state,
+        reportEntityListData: dropdownData,
       };
     }
 
