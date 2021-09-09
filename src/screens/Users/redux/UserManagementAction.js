@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import UserManagementApiService from '../services/UserManagementApiService';
 import {
@@ -249,7 +250,13 @@ export const updateUserDetails = (id, data) => {
         _id: undefined,
         maxCreditLimit: data.maxCreditLimit ?? 0,
       };
-
+      const isSame = _.isEqual(finalData?.moduleAccess, finalData?.duplicateModules);
+      if (isSame) {
+        finalData.moduleAccess = undefined;
+        finalData.duplicateModules = undefined;
+      } else {
+        finalData.duplicateModules = undefined;
+      }
       const response = await UserManagementApiService.updateUser(id, finalData);
 
       if (response?.data?.status === 'SUCCESS') {

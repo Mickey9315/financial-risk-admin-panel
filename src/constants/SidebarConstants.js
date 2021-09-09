@@ -1,6 +1,6 @@
 export const SIDEBAR_NAMES = {
   DASHBOARD: 'dashboard',
-  MY_WORK: 'task',
+  MY_WORK: 'myWork',
   APPLICATION: 'application',
   CLIENT: 'client',
   DEBTOR: 'debtor',
