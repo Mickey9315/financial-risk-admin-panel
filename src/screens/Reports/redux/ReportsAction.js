@@ -6,6 +6,7 @@ import {
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
 export const getReportList = params => {
   return async dispatch => {
@@ -179,5 +180,23 @@ export const applyFinalFilter = filterFor => {
       type: REPORTS_REDUX_CONSTANTS.APPLY_REPORT_FILTER_ACTION,
       filterFor,
     });
+  };
+};
+
+export const getReportsFilterDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: REPORTS_REDUX_CONSTANTS.GET_DROPDOWN_LIST_BY_SEARCH,
+          data: response?.data?.data,
+          name: options.entityType,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
   };
 };
