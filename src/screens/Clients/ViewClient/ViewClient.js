@@ -24,6 +24,7 @@ import Switch from '../../../common/Switch/Switch';
 import Loader from '../../../common/Loader/Loader';
 import ClientOverdueTab from '../component/ClientOverdueTab';
 import ClientClaimsTab from '../component/ClientClaimsTab';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const initialAssigneeState = {
   riskAnalystId: [],
@@ -93,28 +94,17 @@ const ViewClient = () => {
   const viewClientData = useSelector(
     ({ clientManagement }) => clientManagement?.selectedClient || {}
   );
-
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
-
-  const checkAccess = useCallback(
-    accessFor => {
-      const availableAccess =
-        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
-      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
-      return isAccessible?.length > 0;
-    },
-    [userPrivilegesData]
-  );
-
+  const access = module => useModulePrivileges(module).hasReadAccess;
   const finalTabs = useMemo(() => {
     const tabs = [...CLIENT_TABS_CONSTANTS];
     CLIENT_TABS_WITH_ACCESS.forEach(tab => {
-      if (checkAccess(tab.name)) {
+      if (access(tab.name)) {
         tabs.push(tab);
       }
     });
     return tabs ?? [];
-  }, [CLIENT_TABS_CONSTANTS, CLIENT_TABS_WITH_ACCESS, checkAccess]);
+  }, [access, CLIENT_TABS_CONSTANTS, CLIENT_TABS_WITH_ACCESS, userPrivilegesData]);
 
   const riskAnalysts = useMemo(
     () =>
