@@ -18,6 +18,7 @@ import Input from '../../../../common/Input/Input';
 import Switch from '../../../../common/Switch/Switch';
 import { errorNotification } from '../../../../common/Toast';
 import { downloadAll } from '../../../../helpers/DownloadHelper';
+import NotesDescription from './applicationNotesAccordion/NotesDescription';
 
 const initialApplicationDocumentState = {
   description: '',
@@ -360,10 +361,7 @@ const ApplicationDocumentsAccordion = props => {
                   <span className="title">Owner:</span>
                   <span className="details">{doc.uploadById || '-'}</span>
                 </div>
-                <div className="font-field">Document Description:</div>
-                <div className="view-application-accordion-description">
-                  {doc.description || '-'}
-                </div>
+                <NotesDescription description={doc?.description} />
               </div>
             ))}
         </AccordionItem>
