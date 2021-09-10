@@ -34,6 +34,8 @@ import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFilter
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import CustomSelect from '../../../common/CustomSelect/CustomSelect';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ApplicationList = () => {
   const history = useHistory();
@@ -57,6 +59,9 @@ const ApplicationList = () => {
   const applicationListWithPageData = useSelector(
     ({ application }) => application?.applicationList ?? {}
   );
+
+  const isApplicationUpdatable = useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess;
+
   const { total, pages, page, limit, docs, headers } = useMemo(
     () => applicationListWithPageData ?? {},
     [applicationListWithPageData]
@@ -520,7 +525,9 @@ const ApplicationList = () => {
                 buttonTitle="Click to select custom fields"
                 onClick={() => toggleCustomField()}
               />
-              <Button title="Generate" buttonType="success" onClick={generateApplicationClick} />
+              {isApplicationUpdatable && (
+                <Button title="Generate" buttonType="success" onClick={generateApplicationClick} />
+              )}
             </div>
           </div>
 

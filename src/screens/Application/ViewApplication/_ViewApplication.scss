@@ -337,3 +337,13 @@
     color: $primary-color;
   }
 }
+
+.react-select--is-disabled.view-application-select.react-select-container .react-select__control{
+  padding: 2px 5px;
+}
+
+.view-application-select .react-select__control--is-disabled {
+  .react-select__single-value {
+    font: $subtitle $font-regular;
+  }
+}
