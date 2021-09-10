@@ -30,6 +30,8 @@ import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -50,12 +52,8 @@ const ClientTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const {
-    taskList,
-    dropDownData,
-    clientTaskColumnNameList,
-    clientTaskDefaultColumnNameList,
-  } = useSelector(({ clientManagement }) => clientManagement?.task ?? {});
+  const { taskList, dropDownData, clientTaskColumnNameList, clientTaskDefaultColumnNameList } =
+    useSelector(({ clientManagement }) => clientManagement?.task ?? {});
   const { entityType, ...addTaskState } = useSelector(
     ({ clientManagement }) => clientManagement?.task?.addTask ?? {}
   );
@@ -69,9 +67,10 @@ const ClientTaskTab = () => {
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { page, pages, total, limit, docs, headers } = useMemo(() => taskList ?? {}, [taskList]);
-  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
-    dropDownData,
-  ]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(
+    () => dropDownData ?? {},
+    [dropDownData]
+  );
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
@@ -629,7 +628,11 @@ const ClientTaskTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName="task">
+              <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

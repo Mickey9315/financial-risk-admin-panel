@@ -18,6 +18,8 @@ import {
   saveClientClaimsColumnsList,
 } from '../redux/ClientAction';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientClaimsTab = () => {
   const { id } = useParams();
@@ -36,9 +38,10 @@ const ClientClaimsTab = () => {
     clientClaimListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => claimsList ?? {}, [
-    claimsList,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => claimsList ?? {},
+    [claimsList]
+  );
 
   const { defaultFields, customFields } = useMemo(
     () =>
@@ -187,7 +190,12 @@ const ClientClaimsTab = () => {
             buttonTitle="Click to select custom fields"
             onClick={toggleCustomField}
           />
-          <Button title="Add" buttonType="success" onClick={addClaims} />
+
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLAIM}>
+              <Button title="Add" buttonType="success" onClick={addClaims} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {!clientClaimListLoader ? (

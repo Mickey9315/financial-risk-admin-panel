@@ -27,6 +27,8 @@ import Input from '../../../common/Input/Input';
 import FileUpload from '../../../common/Header/component/FileUpload';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialClientDocumentState = {
   description: '',
@@ -489,11 +491,15 @@ const ClientDocumentsTab = () => {
             title="format_line_spacing"
             onClick={() => toggleCustomField()}
           />
-          <IconButton
-            buttonType="primary"
-            title="cloud_upload"
-            onClick={() => toggleUploadModel()}
-          />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName="policy">
+              <IconButton
+                buttonType="primary"
+                title="cloud_upload"
+                onClick={() => toggleUploadModel()}
+              />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
           <IconButton
             buttonType="primary-1"
             title="cloud_download"

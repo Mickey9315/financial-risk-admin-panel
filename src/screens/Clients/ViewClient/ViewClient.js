@@ -25,6 +25,8 @@ import Loader from '../../../common/Loader/Loader';
 import ClientOverdueTab from '../component/ClientOverdueTab';
 import ClientClaimsTab from '../component/ClientClaimsTab';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialAssigneeState = {
   riskAnalystId: [],
@@ -250,20 +252,23 @@ const ViewClient = () => {
                 <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
                 <span>Risk Person</span>
                 <ReactSelect
-                  className="react-select-container"
+                  className="react-select-container view-client-select"
                   classNamePrefix="react-select"
                   placeholder="Select"
                   name="riskAnalystId"
+                  isDisabled={<UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT} />}
                   options={riskAnalysts}
                   value={riskAnalystId || []}
                   onChange={onChangeAssignee}
                   isSearchable
                 />
+
                 <span>Service Person</span>
                 <ReactSelect
-                  className="react-select-container"
+                  className="react-select-container view-client-select"
                   classNamePrefix="react-select"
                   placeholder="Select"
+                  isDisabled={<UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT} />}
                   name="serviceManagerId"
                   options={serviceManagers}
                   value={serviceManagerId || []}

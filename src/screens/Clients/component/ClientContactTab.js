@@ -18,6 +18,8 @@ import {
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientContactsTab = () => {
   const dispatch = useDispatch();
@@ -25,11 +27,8 @@ const ClientContactsTab = () => {
   const searchInputRef = useRef();
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const {
-    contactList,
-    clientContactColumnNameList,
-    clientContactDefaultColumnNameList,
-  } = useSelector(({ clientManagement }) => clientManagement?.contact ?? {});
+  const { contactList, clientContactColumnNameList, clientContactDefaultColumnNameList } =
+    useSelector(({ clientManagement }) => clientManagement?.contact ?? {});
 
   const {
     viewClientContactColumnSaveButtonLoaderAction,
@@ -37,9 +36,10 @@ const ClientContactsTab = () => {
     viewClientContactSyncWithCRMButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => contactList ?? {}, [
-    contactList,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => contactList ?? {},
+    [contactList]
+  );
 
   const getClientContactsList = useCallback(
     (params = {}, cb) => {
@@ -191,12 +191,14 @@ const ClientContactsTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button
-            buttonType="secondary"
-            title="Sync With CRM"
-            onClick={syncClientContactData}
-            isLoading={viewClientContactSyncWithCRMButtonLoaderAction}
-          />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <Button
+              buttonType="secondary"
+              title="Sync With CRM"
+              onClick={syncClientContactData}
+              isLoading={viewClientContactSyncWithCRMButtonLoaderAction}
+            />
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

@@ -15,6 +15,8 @@ import {
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
 import { errorNotification } from '../../../common/Toast';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -296,7 +298,11 @@ const ClientNotesTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
-          <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName="note">
+              <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

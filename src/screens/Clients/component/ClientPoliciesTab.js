@@ -18,6 +18,8 @@ import {
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientPoliciesTab = () => {
   const dispatch = useDispatch();
@@ -26,11 +28,8 @@ const ClientPoliciesTab = () => {
 
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const {
-    policiesList,
-    clientPoliciesColumnNameList,
-    clientPoliciesDefaultColumnNameList,
-  } = useSelector(({ clientManagement }) => clientManagement?.policies ?? {});
+  const { policiesList, clientPoliciesColumnNameList, clientPoliciesDefaultColumnNameList } =
+    useSelector(({ clientManagement }) => clientManagement?.policies ?? {});
 
   const {
     viewClientPoliciesColumnSaveButtonLoaderAction,
@@ -38,9 +37,10 @@ const ClientPoliciesTab = () => {
     viewClientPoliciesSyncWithCRMButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
-    policiesList,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => policiesList ?? {},
+    [policiesList]
+  );
 
   const getClientPoliciesList = useCallback(
     (params = {}, cb) => {
@@ -193,12 +193,16 @@ const ClientPoliciesTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button
-            buttonType="secondary"
-            title="Sync With CRM"
-            onClick={syncClientPoliciesData}
-            isLoading={viewClientPoliciesSyncWithCRMButtonLoaderAction}
-          />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName="policy">
+              <Button
+                buttonType="secondary"
+                title="Sync With CRM"
+                onClick={syncClientPoliciesData}
+                isLoading={viewClientPoliciesSyncWithCRMButtonLoaderAction}
+              />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

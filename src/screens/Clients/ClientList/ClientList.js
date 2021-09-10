@@ -41,6 +41,8 @@ import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/List
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientList = () => {
   const history = useHistory();
@@ -120,9 +122,10 @@ const ClientList = () => {
     }));
   }, [filterList]);
 
-  const { total, pages, page, limit } = useMemo(() => clientListWithPageData ?? {}, [
-    clientListWithPageData,
-  ]);
+  const { total, pages, page, limit } = useMemo(
+    () => clientListWithPageData ?? {},
+    [clientListWithPageData]
+  );
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({
@@ -552,7 +555,9 @@ const ClientList = () => {
                 className="mr-10"
                 onClick={() => toggleCustomField()}
               />
-              <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
+              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+                <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
+              </UserPrivilegeWrapper>
             </div>
           </div>
 

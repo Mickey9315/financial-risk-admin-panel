@@ -20,3 +20,13 @@
     cursor: default !important;
   }
 }
+
+.react-select--is-disabled.view-client-select.react-select-container .react-select__control{
+  padding: 2px 5px;
+}
+
+.view-client-select .react-select__control--is-disabled {
+  .react-select__single-value {
+    font: $subtitle $font-regular;
+  }
+}
