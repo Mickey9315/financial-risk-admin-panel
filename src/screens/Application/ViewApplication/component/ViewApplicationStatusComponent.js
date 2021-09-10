@@ -10,6 +10,8 @@ import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import { errorNotification } from '../../../../common/Toast';
 import { NUMBER_REGEX } from '../../../../constants/RegexConstants';
 import { changeApplicationStatus } from '../../redux/ApplicationAction';
+import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 
 const APPLICATION_STATUS = {
   WITHDRAWN: 'Withdraw',
@@ -31,7 +33,7 @@ const ViewApplicationStatusComponent = props => {
     () => applicationDetail ?? {},
     [applicationDetail]
   );
-
+  const isUpdatable = useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess;
   const [showConfirmModal, setShowConfirmationModal] = useState(false);
   const [statusToChange, setStatusToChange] = useState({});
   const [newCreditLimit, setNewCreditLimit] = useState('');
@@ -220,13 +222,13 @@ const ViewApplicationStatusComponent = props => {
             </div>
           ) : (
             <ReactSelect
-              className="react-select-container"
+              className="react-select-container view-application-select"
               classNamePrefix="react-select"
               placeholder={isAllowToUpdate ? 'Select Status' : '-'}
               name="applicationStatus"
               value={!isApprovedOrDeclined ? status : []}
               options={applicationDetail?.applicationStatus}
-              isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
+              isDisabled={!isAllowToUpdate || isApprovedOrDeclined || !isUpdatable}
               onChange={handleApplicationStatusChange}
             />
           )}
