@@ -29,6 +29,8 @@ import {
   updateTaskData,
 } from '../redux/DebtorsAction';
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -49,12 +51,8 @@ const DebtorTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const {
-    taskList,
-    debtorsTaskColumnNameList,
-    debtorsTaskDefaultColumnNameList,
-    dropDownData,
-  } = useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
+  const { taskList, debtorsTaskColumnNameList, debtorsTaskDefaultColumnNameList, dropDownData } =
+    useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
 
   const { entityType, ...addTaskState } = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
@@ -68,12 +66,14 @@ const DebtorTaskTab = () => {
     viewDebtorDeleteTaskButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(() => taskList ?? {}, [
-    taskList,
-  ]);
-  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
-    dropDownData,
-  ]);
+  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(
+    () => taskList ?? {},
+    [taskList]
+  );
+  const { assigneeList, entityList, defaultEntityList } = useMemo(
+    () => dropDownData ?? {},
+    [dropDownData]
+  );
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
@@ -631,7 +631,11 @@ const DebtorTaskTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+            <UserPrivilegeWrapper moduleName="task">
+              <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

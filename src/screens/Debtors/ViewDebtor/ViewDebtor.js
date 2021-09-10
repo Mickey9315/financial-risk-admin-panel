@@ -433,25 +433,23 @@ const ViewInsurer = () => {
                   <span className="material-icons-round">navigate_next</span>
                   <span>View Debtor</span>
                 </div>
-                <div className="buttons-row">
-                  {action === 'view' ? (
-                    <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                  <div className="buttons-row">
+                    {action === 'view' ? (
                       <Button buttonType="primary" title="Edit" onClick={editDebtorClick} />
-                    </UserPrivilegeWrapper>
-                  ) : (
-                    <>
-                      <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
-                      <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                    ) : (
+                      <>
+                        <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
                         <Button
                           buttonType="primary"
                           title="Save"
                           onClick={onClickUpdateDebtor}
                           isLoading={viewDebtorUpdateDebtorButtonLoaderAction}
                         />
-                      </UserPrivilegeWrapper>
-                    </>
-                  )}
-                </div>
+                      </>
+                    )}
+                  </div>
+                </UserPrivilegeWrapper>
               </div>
 
               <div className="common-detail-container">
