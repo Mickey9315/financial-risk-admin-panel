@@ -18,12 +18,15 @@ import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const OverduesList = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [newSubmissionDetails, setNewSubmissionDetails] = useState({});
   const [newSubmissionModal, setNewSubmissionModal] = useState(false);
+  const isOverdueUpdatable = useModulePrivileges(SIDEBAR_NAMES.OVERDUE).hasWriteAccess;
   const [filter, dispatchFilter] = useReducer(filterReducer, {
     tempFilter: {},
     finalFilter: {},
@@ -119,9 +122,10 @@ const OverduesList = () => {
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
-    overdueListWithPageData,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => overdueListWithPageData,
+    [overdueListWithPageData]
+  );
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -348,11 +352,13 @@ const OverduesList = () => {
                 buttonTitle="Click to apply filters on application list"
                 onClick={() => toggleFilterModal()}
               />
-              <Button
-                buttonType="success"
-                title="New Submission"
-                onClick={() => setNewSubmissionModal(e => !e)}
-              />
+              {isOverdueUpdatable && (
+                <Button
+                  buttonType="success"
+                  title="New Submission"
+                  onClick={() => setNewSubmissionModal(e => !e)}
+                />
+              )}
             </div>
           </div>
           {docs?.length > 0 ? (
