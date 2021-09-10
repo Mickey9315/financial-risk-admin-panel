@@ -24,12 +24,15 @@ import Modal from '../../../common/Modal/Modal';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClaimsList = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const [filterModal, setFilterModal] = useState(false);
+  const isClaimUpdatable = useModulePrivileges(SIDEBAR_NAMES.CLAIM).hasWriteAccess;
   const toggleFilterModal = useCallback(
     value => setFilterModal(value !== undefined ? value : e => !e),
     [setFilterModal]
@@ -285,7 +288,7 @@ const ClaimsList = () => {
                 buttonTitle="Click to select custom fields"
                 onClick={() => toggleCustomField()}
               />
-              <Button title="Add" buttonType="success" onClick={addClaims} />
+              {isClaimUpdatable && <Button title="Add" buttonType="success" onClick={addClaims} />}
             </div>
           </div>
           {docs?.length > 0 ? (

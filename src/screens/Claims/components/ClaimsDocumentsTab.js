@@ -16,6 +16,8 @@ import {
   uploadClaimDocument,
 } from '../redux/ClaimsAction';
 import { downloadAll } from '../../../helpers/DownloadHelper';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialClaimDocumentState = {
   description: '',
@@ -61,6 +63,9 @@ const ClaimsDocumentsTab = () => {
 
   const [uploadModel, setUploadModel] = useState(false);
   const [fileExtensionErrorMessage, setFileExtensionErrorMessage] = useState(false);
+  const isDocumentUpdatable =
+    useModulePrivileges(SIDEBAR_NAMES.CLAIM).hasWriteAccess &&
+    useModulePrivileges('document').hasWriteAccess;
 
   const toggleUploadModel = useCallback(
     value => setUploadModel(value !== undefined ? value : e => !e),
@@ -277,11 +282,13 @@ const ClaimsDocumentsTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
-          <IconButton
-            buttonType="primary"
-            title="cloud_upload"
-            onClick={() => toggleUploadModel()}
-          />
+          {isDocumentUpdatable && (
+            <IconButton
+              buttonType="primary"
+              title="cloud_upload"
+              onClick={() => toggleUploadModel()}
+            />
+          )}
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

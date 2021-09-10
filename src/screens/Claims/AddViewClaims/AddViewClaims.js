@@ -29,9 +29,10 @@ import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 
 const AddViewClaims = () => {
   const history = useHistory();
-  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
-    history,
-  ]);
+  const { isRedirected, redirectedFrom, fromId } = useMemo(
+    () => history?.location?.state ?? {},
+    [history]
+  );
   const dispatch = useDispatch();
   const { type, id } = useParams();
   const clientList = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
@@ -409,8 +410,8 @@ const AddViewClaims = () => {
           break;
       }
       return (
-        <div className="d-flex align-center w-100">
-          <span className="claims-title">
+        <div className="d-flex w-100">
+          <span className={`claims-title ${type !== 'view' && 'mt-5'}`}>
             {input.title}
             {input?.isRequired && <b className="f-16"> *</b>}
           </span>
