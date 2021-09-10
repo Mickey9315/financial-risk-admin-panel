@@ -7,6 +7,8 @@ import TableApiService from '../../../common/Table/TableApiService';
 import Drawer from '../../../common/Drawer/Drawer';
 import { changeOverdueStatus } from '../redux/OverduesAction';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -47,6 +49,7 @@ const ExpandedTableHelper = props => {
   const [isStatusChanged, setIsStatusChanged] = useState(false);
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const handleDrawerState = useCallback(async data => {
+    console.log(data);
     try {
       const response = await TableApiService.tableActions({
         url: 'overdue/details',
@@ -126,6 +129,7 @@ export default ExpandedTableHelper;
 const TableLinkDrawer = props => {
   const dispatch = useDispatch();
   const { drawerState, closeDrawer, setIsStatusChanged } = props;
+  const isOverdueUpdatable = useModulePrivileges(SIDEBAR_NAMES.OVERDUE).hasWriteAccess;
   const currentStatus = useMemo(
     () => drawerState?.data?.filter(data => data?.type === 'status')?.[0],
     [drawerState]
@@ -172,12 +176,12 @@ const TableLinkDrawer = props => {
   };
 
   useEffect(() => {
-    if (currentStatus?.value?.value === 'SUBMITTED') {
+    if (currentStatus?.value?.value === 'SUBMITTED' && isOverdueUpdatable) {
       handleOverdueDrawerStatusChange({ label: 'Pending', value: 'PENDING', name: 'status' });
     } else {
       setStatus(currentStatus?.value);
     }
-  }, [currentStatus?.value]);
+  }, [currentStatus?.value, SIDEBAR_NAMES, useModulePrivileges]);
 
   return (
     <Drawer
