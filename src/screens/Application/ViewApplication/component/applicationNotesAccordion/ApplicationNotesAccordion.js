@@ -16,7 +16,8 @@ import Switch from '../../../../../common/Switch/Switch';
 import DropdownMenu from '../../../../../common/DropdownMenu/DropdownMenu';
 import { errorNotification } from '../../../../../common/Toast';
 import NotesDescription from './NotesDescription';
-import UserPrivilegeWrapper from '../../../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { useModulePrivileges } from '../../../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../../../constants/SidebarConstants';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -61,6 +62,9 @@ const ApplicationNotesAccordion = props => {
 
   const [currentNoteId, setCurrentNoteId] = useState('');
   const [editNoteDetails, setEditNoteDetails] = useState([]);
+  const isNoteUpdatable =
+    useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess &&
+    useModulePrivileges('note').hasWriteAccess;
 
   const applicationNoteList = useSelector(
     ({ application }) => application?.viewApplication?.notes?.noteList?.docs || []
@@ -259,14 +263,14 @@ const ApplicationNotesAccordion = props => {
           }
           suffix="expand_more"
         >
-          <UserPrivilegeWrapper moduleName="note">
+          {isNoteUpdatable && (
             <Button
               buttonType="primary-1"
               title="Add Note"
               className="add-note-button"
               onClick={toggleModifyNotes}
             />
-          </UserPrivilegeWrapper>
+          )}
           {applicationNoteList?.length > 0 ? (
             applicationNoteList.map(note => (
               <div className="common-accordion-item-content-box" key={note._id}>
@@ -277,12 +281,14 @@ const ApplicationNotesAccordion = props => {
                       {moment(note.createdAt).format('DD-MMM-YYYY')}
                     </span>
                   </div>
-                  <span
-                    className="material-icons-round font-placeholder cursor-pointer"
-                    onClick={e => onClickActionToggleButton(e, note)}
-                  >
-                    more_vert
-                  </span>
+                  {isNoteUpdatable && (
+                    <span
+                      className="material-icons-round font-placeholder cursor-pointer"
+                      onClick={e => onClickActionToggleButton(e, note)}
+                    >
+                      more_vert
+                    </span>
+                  )}
                 </div>
                 <div className="d-flex">
                   <span className="font-field mr-5">Owner:</span>

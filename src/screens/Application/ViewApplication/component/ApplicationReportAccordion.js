@@ -12,7 +12,8 @@ import {
   fetchSelectedReportsForApplication,
   getApplicationReportsListData,
 } from '../../redux/ApplicationAction';
-import UserPrivilegeWrapper from '../../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 
 const ApplicationReportAccordion = props => {
   const { index, debtorId } = props;
@@ -32,7 +33,9 @@ const ApplicationReportAccordion = props => {
   const [fetchReportsModal, setFetchReportsModal] = useState(false);
   const [selectedReports, setSelectedReports] = useState([]);
   const [selectedStakeHolder, setSelectedStakeHolder] = useState([]);
-
+  const isReportUpdatable =
+    useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess &&
+    useModulePrivileges('credit-report').hasWriteAccess;
   const toggleFetchReportsModal = useCallback(() => {
     setFetchReportsModal(e => !e);
   }, []);
@@ -145,14 +148,14 @@ const ApplicationReportAccordion = props => {
         }
         suffix="expand_more"
       >
-        <UserPrivilegeWrapper moduleName="credit-report">
+        {isReportUpdatable && (
           <Button
             buttonType="primary-1"
             title="Fetch Report"
             className="add-note-button"
             onClick={toggleFetchReportsModal}
           />
-        </UserPrivilegeWrapper>
+        )}
         {reportListData?.length > 0 ? (
           reportListData?.map(report => (
             <div className="common-accordion-item-content-box" key={report?._id}>
