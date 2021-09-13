@@ -11,6 +11,8 @@ import {
   updateOrganizationDetails,
 } from '../redux/SettingAction';
 import { errorNotification } from '../../../common/Toast';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const SettingsOrganizationDetailsTab = () => {
   const organizationDetail = useSelector(
@@ -28,6 +30,7 @@ const SettingsOrganizationDetailsTab = () => {
   }, []);
 
   const [isEdit, setIsEdit] = useState(false);
+  const isSettingsUpdatable = useModulePrivileges(SIDEBAR_NAMES.SETTINGS).hasWriteAccess;
 
   const settingsOrganizationDetails = [
     {
@@ -117,7 +120,9 @@ const SettingsOrganizationDetailsTab = () => {
           !_.isEmpty(organizationDetail) ? (
             <>
               <div className="d-flex just-end mt-15">
-                <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />
+                {isSettingsUpdatable && (
+                  <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />
+                )}
                 {isEdit && (
                   <div className="buttons-row">
                     <Button
