@@ -15,6 +15,7 @@ import InsurerMatrixTab from '../Components/InsurerMatrixTab/InsurerMatrixTab';
 import Loader from '../../../common/Loader/Loader';
 import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const INSURER_TABS_CONSTANTS = [
   { label: 'Contacts', component: <InsurerContactTab /> },
@@ -25,6 +26,8 @@ const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const history = useHistory();
   const dispatch = useDispatch();
+  const isInsurerUpdatable = useModulePrivileges(SIDEBAR_NAMES.INSURER).hasWriteAccess;
+
   const { id } = useParams();
   const backToInsurer = () => {
     history.replace('/insurer');
@@ -52,10 +55,9 @@ const ViewInsurer = () => {
     return temp;
   }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, access]);
 
-  const { name, address, contactNumber, website, email } = useMemo(
-    () => insurerData,
-    [insurerData]
-  );
+  const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
+    insurerData,
+  ]);
   useEffect(() => {
     dispatch(getInsurerById(id));
     return () => {
@@ -84,12 +86,14 @@ const ViewInsurer = () => {
             </div>
             {!_.isEmpty(insurerData) && !insurerData?.isDefault && (
               <div className="buttons-row">
-                <Button
-                  buttonType="secondary"
-                  title="Sync With CRM"
-                  onClick={syncInsurersDataOnClick}
-                  isLoading={viewInsurerSyncInsurerDataButtonLoaderAction}
-                />
+                {isInsurerUpdatable && (
+                  <Button
+                    buttonType="secondary"
+                    title="Sync With CRM"
+                    onClick={syncInsurersDataOnClick}
+                    isLoading={viewInsurerSyncInsurerDataButtonLoaderAction}
+                  />
+                )}
               </div>
             )}
           </div>
