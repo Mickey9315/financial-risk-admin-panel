@@ -20,6 +20,8 @@ import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import Pagination from '../../../common/Pagination/Pagination';
 import { errorNotification } from '../../../common/Toast';
 import Loader from '../../../common/Loader/Loader';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const documentForOptions = [
   { label: 'Application', value: 'application', name: 'documentFor' },
@@ -31,6 +33,9 @@ const SettingsDocumentTypeTab = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [openAddDocModal, setOpenAddModal] = useState(false);
+  const isSettingsDocumentUpdatable =
+    useModulePrivileges(SIDEBAR_NAMES.SETTINGS).hasWriteAccess &&
+    useModulePrivileges('document').hasWriteAccess;
   const toggleAddDocModal = useCallback(
     value => setOpenAddModal(value !== undefined ? value : e => !e),
     [setOpenAddModal]
@@ -281,7 +286,9 @@ const SettingsDocumentTypeTab = () => {
             <>
               <div className="settings-title-row">
                 <div className="title">Document Type List</div>
-                <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />
+                {isSettingsDocumentUpdatable && (
+                  <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />
+                )}
               </div>
               <div className="common-list-container">
                 <Table
