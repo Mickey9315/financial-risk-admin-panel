@@ -18,7 +18,6 @@ import Input from '../../../../common/Input/Input';
 import Switch from '../../../../common/Switch/Switch';
 import { errorNotification } from '../../../../common/Toast';
 import { downloadAll } from '../../../../helpers/DownloadHelper';
-import NotesDescription from './applicationNotesAccordion/NotesDescription';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 
@@ -88,10 +87,9 @@ const ApplicationDocumentsAccordion = props => {
     [setUploadModel]
   );
 
-  const { documentType, description, isPublic } = useMemo(
-    () => selectedApplicationDocuments,
-    [selectedApplicationDocuments]
-  );
+  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
+    selectedApplicationDocuments,
+  ]);
 
   const documentTypeOptions = useMemo(() => {
     const finalData = documentTypeList || [];
@@ -370,7 +368,15 @@ const ApplicationDocumentsAccordion = props => {
                   <span className="title">Owner:</span>
                   <span className="details">{doc.uploadById || '-'}</span>
                 </div>
-                <NotesDescription description={doc?.description} />
+                <span>Document Description:</span>
+                <Input
+                  prefixClass="font-placeholder"
+                  placeholder="Document description"
+                  name="description"
+                  type="text"
+                  value={description}
+                  onChange={onchangeDocumentDescription}
+                />
               </div>
             ))
           ) : (
