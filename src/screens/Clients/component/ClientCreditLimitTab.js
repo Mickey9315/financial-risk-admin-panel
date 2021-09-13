@@ -359,6 +359,7 @@ const ClientCreditLimitTab = () => {
                 tableClass="white-header-table"
                 data={docs}
                 headers={headers}
+                listFor={{ module: 'client' }}
                 tableButtonActions={creditLimitAction}
                 isEditableDrawer
               />
