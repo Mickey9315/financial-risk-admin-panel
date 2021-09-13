@@ -11,6 +11,8 @@ import {
   testApiIntegrationDetails,
   updateApiIntegrationDetails,
 } from '../redux/SettingAction';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const SettingsApiIntegrationTab = () => {
   const dispatch = useDispatch();
@@ -117,6 +119,7 @@ const SettingsApiIntegrationTab = () => {
 
   const [isTestItemIndex, setIsTestItemIndex] = useState(null);
   const [isEditItemIndex, setIsEditItemIndex] = useState(null);
+  const isSettingsUpdatable = useModulePrivileges(SIDEBAR_NAMES.SETTINGS).hasWriteAccess;
   const onEditItemIndex = useCallback(
     i => {
       if (errorElementList.length <= 0) setIsEditItemIndex(i);
@@ -258,26 +261,29 @@ const SettingsApiIntegrationTab = () => {
                       </div>
                     </div>
                     {index !== isEditItemIndex ? (
-                      <div className="buttons-row">
-                        <Button
-                          buttonType="primary"
-                          title="Edit"
-                          name={row.name}
-                          onClick={() => onEditItemIndex(index)}
-                        />
-                        <Button
-                          buttonType="primary"
-                          title="Test"
-                          name={row.name}
-                          onClick={async () => {
-                            setIsTestItemIndex(index);
-                            await onTestItem(row, index);
-                          }}
-                          isLoading={
-                            isTestItemIndex === index && settingApiIntegrationTestButtonLoaderAction
-                          }
-                        />
-                      </div>
+                      isSettingsUpdatable && (
+                        <div className="buttons-row">
+                          <Button
+                            buttonType="primary"
+                            title="Edit"
+                            name={row.name}
+                            onClick={() => onEditItemIndex(index)}
+                          />
+                          <Button
+                            buttonType="primary"
+                            title="Test"
+                            name={row.name}
+                            onClick={async () => {
+                              setIsTestItemIndex(index);
+                              await onTestItem(row, index);
+                            }}
+                            isLoading={
+                              isTestItemIndex === index &&
+                              settingApiIntegrationTestButtonLoaderAction
+                            }
+                          />
+                        </div>
+                      )
                     ) : (
                       <div className="buttons-row">
                         <Button
