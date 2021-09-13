@@ -84,10 +84,9 @@ const ClientNotesTab = () => {
     viewClientDeleteNoteButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => clientNotesList ?? {},
-    [clientNotesList]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList ?? {}, [
+    clientNotesList,
+  ]);
 
   const getClientNotesList = useCallback(
     (params = {}, cb) => {
@@ -317,6 +316,7 @@ const ClientNotesTab = () => {
                 tableClass="white-header-table"
                 headers={headers}
                 recordActionClick={onSelectUserRecordActionClick}
+                listFor={{ module: 'client', subModule: 'note' }}
                 refreshData={getClientNotesList}
                 haveActions
               />
