@@ -53,10 +53,9 @@ const ClaimsDocumentsTab = () => {
     claimsDocumentReducer,
     initialClaimDocumentState
   );
-  const { description, fileData } = useMemo(
-    () => selectedClaimsDocument ?? {},
-    [selectedClaimsDocument]
-  );
+  const { description, fileData } = useMemo(() => selectedClaimsDocument ?? {}, [
+    selectedClaimsDocument,
+  ]);
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
@@ -83,8 +82,10 @@ const ClaimsDocumentsTab = () => {
 
   const { documentList } = useSelector(({ claims }) => claims?.documents ?? {});
 
-  const { viewClaimUploadDocumentButtonLoaderAction, viewClaimDownloadDocumentButtonLoaderAction } =
-    useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
+  const {
+    viewClaimUploadDocumentButtonLoaderAction,
+    viewClaimDownloadDocumentButtonLoaderAction,
+  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => documentList ?? {},
@@ -301,6 +302,7 @@ const ClaimsDocumentsTab = () => {
                 valign="center"
                 data={docs}
                 headers={headers}
+                listFor={{ module: 'claim', subModule: 'document' }}
                 tableClass="white-header-table"
                 refreshData={getClaimsDocumentsList}
                 extraColumns={downloadDocument}
