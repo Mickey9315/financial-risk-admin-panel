@@ -18,12 +18,15 @@ import Loader from '../../../common/Loader/Loader';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import { errorNotification } from '../../../common/Toast';
 import { INSURER_VIEW_REDUX_CONSTANT } from '../redux/InsurerReduxConstants';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const InsurerContactTab = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
   const [customFieldModal, setCustomFieldModal] = useState(false);
+  const isInsurerUpdatable = useModulePrivileges(SIDEBAR_NAMES.INSURER).hasWriteAccess;
   const toggleCustomField = () => setCustomFieldModal(e => !e);
   const {
     contactList,
@@ -193,12 +196,14 @@ const InsurerContactTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button
-            buttonType="secondary"
-            title="Sync With CRM"
-            onClick={syncInsurerContactData}
-            isLoading={viewInsurerSyncInsurerContactButtonLoaderAction}
-          />
+          {isInsurerUpdatable && (
+            <Button
+              buttonType="secondary"
+              title="Sync With CRM"
+              onClick={syncInsurerContactData}
+              isLoading={viewInsurerSyncInsurerContactButtonLoaderAction}
+            />
+          )}
         </div>
       </div>
       {docs ? (
