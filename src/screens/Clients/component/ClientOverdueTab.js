@@ -38,10 +38,9 @@ const ClientOverdueTab = () => {
   const overdueListWithPageData = useSelector(
     ({ clientManagement }) => clientManagement?.overdue?.overdueList ?? {}
   );
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => overdueListWithPageData,
-    [overdueListWithPageData]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
+    overdueListWithPageData,
+  ]);
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -174,6 +173,7 @@ const ClientOverdueTab = () => {
                   data={docs}
                   headers={headers}
                   refreshData={getOverdueListByFilter}
+                  listFor={{ module: 'client', subModule: 'overdue' }}
                   rowClass="cursor-pointer"
                 />
               </div>
