@@ -51,8 +51,12 @@ const DebtorTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const { taskList, debtorsTaskColumnNameList, debtorsTaskDefaultColumnNameList, dropDownData } =
-    useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
+  const {
+    taskList,
+    debtorsTaskColumnNameList,
+    debtorsTaskDefaultColumnNameList,
+    dropDownData,
+  } = useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
 
   const { entityType, ...addTaskState } = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
@@ -66,14 +70,12 @@ const DebtorTaskTab = () => {
     viewDebtorDeleteTaskButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(
-    () => taskList ?? {},
-    [taskList]
-  );
-  const { assigneeList, entityList, defaultEntityList } = useMemo(
-    () => dropDownData ?? {},
-    [dropDownData]
-  );
+  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(() => taskList ?? {}, [
+    taskList,
+  ]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
+    dropDownData,
+  ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
@@ -650,6 +652,7 @@ const DebtorTaskTab = () => {
                 rowClass="cursor-pointer task-row"
                 data={docs}
                 headers={headers}
+                listFor={{ module: 'debtor', subModule: 'task' }}
                 refreshData={getDebtorTaskList}
                 recordSelected={onSelectTaskRecord}
                 extraColumns={deleteTaskColumn}
