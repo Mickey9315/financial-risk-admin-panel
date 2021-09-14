@@ -321,6 +321,7 @@ const DebtorsNotesTab = () => {
                 data={docs}
                 tableClass="white-header-table"
                 headers={headers}
+                listFor={{ module: 'debtor', subModule: 'note' }}
                 recordActionClick={onSelectUserRecordActionClick}
                 refreshData={getDebtorNotesList}
                 haveActions
