@@ -85,6 +85,7 @@ export const APPLICATION_URLS = {
       APPLICATION_REPORTS_LIST: `${BASE_URL}credit-report/`,
       APPLICATION_REPORTS_LIST_FOR_FETCH: `${BASE_URL}credit-report/list/`,
       FETCH_SELECTED_REPORTS_FOR_APPLICATION: `${BASE_URL}credit-report/generate/`,
+      DOWNLOAD_REPORTS_FOR_APPLICATION: `${BASE_URL}credit-report/download/`,
     },
     APPLICATION_ALERTS: {
       APPLICATION_ALERTS_LIST: `${BASE_URL}application/alert-list/`,
