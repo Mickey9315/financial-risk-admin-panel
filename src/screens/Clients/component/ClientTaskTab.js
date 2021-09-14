@@ -52,8 +52,12 @@ const ClientTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const { taskList, dropDownData, clientTaskColumnNameList, clientTaskDefaultColumnNameList } =
-    useSelector(({ clientManagement }) => clientManagement?.task ?? {});
+  const {
+    taskList,
+    dropDownData,
+    clientTaskColumnNameList,
+    clientTaskDefaultColumnNameList,
+  } = useSelector(({ clientManagement }) => clientManagement?.task ?? {});
   const { entityType, ...addTaskState } = useSelector(
     ({ clientManagement }) => clientManagement?.task?.addTask ?? {}
   );
@@ -67,10 +71,9 @@ const ClientTaskTab = () => {
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { page, pages, total, limit, docs, headers } = useMemo(() => taskList ?? {}, [taskList]);
-  const { assigneeList, entityList, defaultEntityList } = useMemo(
-    () => dropDownData ?? {},
-    [dropDownData]
-  );
+  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
+    dropDownData,
+  ]);
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
@@ -647,6 +650,7 @@ const ClientTaskTab = () => {
                 rowClass="cursor-pointer task-row"
                 data={docs}
                 headers={headers}
+                listFor={{ module: 'client', subModule: 'task' }}
                 refreshData={getClientTaskList}
                 recordSelected={onSelectTaskRecord}
                 extraColumns={deleteTaskColumn}
