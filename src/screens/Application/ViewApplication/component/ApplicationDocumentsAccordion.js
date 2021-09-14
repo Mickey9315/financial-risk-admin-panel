@@ -87,9 +87,10 @@ const ApplicationDocumentsAccordion = props => {
     [setUploadModel]
   );
 
-  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
-    selectedApplicationDocuments,
-  ]);
+  const { documentType, description, isPublic } = useMemo(
+    () => selectedApplicationDocuments,
+    [selectedApplicationDocuments]
+  );
 
   const documentTypeOptions = useMemo(() => {
     const finalData = documentTypeList || [];
@@ -343,23 +344,23 @@ const ApplicationDocumentsAccordion = props => {
                   >
                     <div className="document-title">{doc.documentTypeId || '-'}</div>
                   </Tooltip>
-                  {isDocumentUpdatable && (
-                    <div className="view-application-document-action-buttons">
-                      <span
-                        title="Download this document"
-                        className="download-icon material-icons-round"
-                        onClick={() => onDocumentDownloadClick(doc?._id)}
-                      >
-                        cloud_download
-                      </span>
+                  <div className="view-application-document-action-buttons">
+                    <span
+                      title="Download this document"
+                      className="download-icon material-icons-round"
+                      onClick={() => onDocumentDownloadClick(doc?._id)}
+                    >
+                      cloud_download
+                    </span>
+                    {isDocumentUpdatable && (
                       <span
                         className="material-icons-round font-danger cursor-pointer"
                         onClick={() => deleteDocument(doc._id)}
                       >
                         delete_outline
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
                 <div className="date-owner-row">
                   <span className="title mr-5">Date:</span>
@@ -368,15 +369,10 @@ const ApplicationDocumentsAccordion = props => {
                   <span className="title">Owner:</span>
                   <span className="details">{doc.uploadById || '-'}</span>
                 </div>
-                <span>Document Description:</span>
-                <Input
-                  prefixClass="font-placeholder"
-                  placeholder="Document description"
-                  name="description"
-                  type="text"
-                  value={description}
-                  onChange={onchangeDocumentDescription}
-                />
+                <div className="font-field">Document Description:</div>
+                <div className="view-application-accordion-description">
+                  {doc.description || '-'}
+                </div>
               </div>
             ))
           ) : (
