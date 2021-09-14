@@ -49,7 +49,6 @@ const ExpandedTableHelper = props => {
   const [isStatusChanged, setIsStatusChanged] = useState(false);
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
   const handleDrawerState = useCallback(async data => {
-    console.log(data);
     try {
       const response = await TableApiService.tableActions({
         url: 'overdue/details',
@@ -152,7 +151,7 @@ const TableLinkDrawer = props => {
   const checkValue = row => {
     switch (row.type) {
       case 'status': {
-        return (
+        return isOverdueUpdatable ? (
           <ReactSelect
             name="overdueStatus"
             className="react-select-container"
@@ -162,6 +161,8 @@ const TableLinkDrawer = props => {
             value={status ?? []}
             onChange={handleOverdueDrawerStatusChange}
           />
+        ) : (
+          <div>{status?.label ?? '-'}</div>
         );
       }
       case 'dollar':
