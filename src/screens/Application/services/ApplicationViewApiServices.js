@@ -89,6 +89,10 @@ const ApplicationViewApiServices = {
         `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.FETCH_SELECTED_REPORTS_FOR_APPLICATION}`,
         data
       ),
+    downloadReportsForApplication: id =>
+      ApiService.getData(
+        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.DOWNLOAD_REPORTS_FOR_APPLICATION}${id}`
+      ),
   },
   applicationAlertsApiServices: {
     getApplicationAlertsListData: id =>
