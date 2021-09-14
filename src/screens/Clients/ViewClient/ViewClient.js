@@ -25,8 +25,8 @@ import Loader from '../../../common/Loader/Loader';
 import ClientOverdueTab from '../component/ClientOverdueTab';
 import ClientClaimsTab from '../component/ClientClaimsTab';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
-import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const initialAssigneeState = {
   riskAnalystId: [],
@@ -69,6 +69,7 @@ const CLIENT_TABS_WITH_ACCESS = [
 
 const ViewClient = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const isClientUpdatable = useModulePrivileges(SIDEBAR_NAMES.CLIENT).hasWriteAccess;
   const [{ riskAnalystId, serviceManagerId, isAutoApproveAllowed }, dispatchAssignee] = useReducer(
     assigneeReducer,
     initialAssigneeState
@@ -225,12 +226,14 @@ const ViewClient = () => {
                   <span>View Client</span>
                 </div>
                 <div className="buttons-row">
-                  <Button
-                    buttonType="secondary"
-                    title="Sync With CRM"
-                    onClick={syncClientDataClick}
-                    isLoading={viewClientSyncWithCRMButtonLoaderAction}
-                  />
+                  <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+                    <Button
+                      buttonType="secondary"
+                      title="Sync With CRM"
+                      onClick={syncClientDataClick}
+                      isLoading={viewClientSyncWithCRMButtonLoaderAction}
+                    />
+                  </UserPrivilegeWrapper>
                 </div>
               </div>
               <div className="common-white-container client-details-container">
@@ -251,12 +254,13 @@ const ViewClient = () => {
                 <span>ACN</span>
                 <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
                 <span>Risk Person</span>
+
                 <ReactSelect
                   className="react-select-container view-client-select"
                   classNamePrefix="react-select"
                   placeholder="Select"
                   name="riskAnalystId"
-                  isDisabled={<UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT} />}
+                  isDisabled={!isClientUpdatable}
                   options={riskAnalysts}
                   value={riskAnalystId || []}
                   onChange={onChangeAssignee}
@@ -264,17 +268,19 @@ const ViewClient = () => {
                 />
 
                 <span>Service Person</span>
+
                 <ReactSelect
                   className="react-select-container view-client-select"
                   classNamePrefix="react-select"
                   placeholder="Select"
-                  isDisabled={<UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT} />}
                   name="serviceManagerId"
+                  isDisabled={!isClientUpdatable}
                   options={serviceManagers}
                   value={serviceManagerId || []}
                   onChange={onChangeAssignee}
                   isSearchable
                 />
+
                 <span>Insurer Name</span>
                 <div className="client-detail">{viewClientData?.insurerId?.name || 'N/A'}</div>
                 <span>Sales Person</span>
