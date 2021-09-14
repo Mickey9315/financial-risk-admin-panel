@@ -5,8 +5,6 @@ import DatePicker from 'react-datepicker';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import { changeApplicationStatus } from '../../screens/Application/redux/ApplicationAction';
-import { useModulePrivileges } from '../../hooks/userPrivileges/useModulePrivilegesHook';
-import { SIDEBAR_NAMES } from '../../constants/SidebarConstants';
 
 const LimitTypeOptions = [
   {
@@ -42,8 +40,6 @@ const EditableDrawer = props => {
 
   const [selectedLimitType, setSelectedLimitType] = useState([]);
   const [selectedExpiryDate, setSelectedExpiryDate] = useState(new Date());
-  const isOverdueUpdatable = useModulePrivileges(SIDEBAR_NAMES.OVERDUE).hasWriteAccess;
-
   const isApprovedOrDeclined = useMemo(() => {
     const status = drawerData.find(data => data.label === 'Status');
     if (['Approved', 'Declined'].includes(status?.value)) return true;
@@ -90,7 +86,7 @@ const EditableDrawer = props => {
   return (
     <>
       {editableField === 'LIMIT_TYPE' &&
-        (isApprovedOrDeclined && isOverdueUpdatable ? (
+        (isApprovedOrDeclined ? (
           <div className="editable-drawer-field">
             <ReactSelect
               className="react-select-container"
