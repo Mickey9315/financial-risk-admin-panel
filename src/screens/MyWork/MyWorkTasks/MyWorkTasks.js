@@ -45,15 +45,13 @@ const MyWorkTasks = () => {
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
   const isTaskUpdatable = useModulePrivileges('task').hasWriteAccess;
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
-  const { total, pages, page, limit, headers, docs } = useMemo(
-    () => taskListData ?? {},
-    [taskListData]
-  );
+  const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? {}, [
+    taskListData,
+  ]);
 
-  const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(
-    () => taskData ?? {},
-    [taskData]
-  );
+  const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(() => taskData ?? {}, [
+    taskData,
+  ]);
   const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
 
   const { taskListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
@@ -469,6 +467,7 @@ const MyWorkTasks = () => {
                   data={docs}
                   headers={headers}
                   rowClass="cursor-pointer task-row"
+                  listFor={{ module: 'task' }}
                   extraColumns={deleteTaskColumn}
                   refreshData={getTaskListOnRefresh}
                   recordSelected={onSelectTaskRecord}
