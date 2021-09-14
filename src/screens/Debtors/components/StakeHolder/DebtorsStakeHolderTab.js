@@ -1195,6 +1195,7 @@ const DebtorsStakeHolderTab = () => {
                   tableClass="white-header-table"
                   data={docs}
                   headers={headers}
+                  listFor={{ module: 'debtor' }}
                   recordActionClick={onSelectStakeHolderRecordActionClick}
                   refreshData={getDebtorStakeHolderList}
                   haveActions
