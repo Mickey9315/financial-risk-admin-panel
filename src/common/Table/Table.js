@@ -12,6 +12,7 @@ import { successNotification } from '../Toast';
 import ExpandedTableHelper from '../../screens/Overdues/Components/ExpandedTableHelper';
 import { NumberCommaSeparator } from '../../helpers/NumberCommaSeparator';
 import EditableDrawer from './EditableDrawer';
+import { useModulePrivileges } from '../../hooks/userPrivileges/useModulePrivilegesHook';
 
 export const TABLE_ROW_ACTIONS = {
   EDIT_ROW: 'EDIT_ROW',
@@ -59,6 +60,7 @@ const Table = props => {
     stepperColumn,
     tableButtonActions,
     headerClass,
+    listFor,
     data,
     isExpandable,
     rowClass,
@@ -216,6 +218,11 @@ const Table = props => {
       }
     }
   }, [setSelectedRowData, selectedRowData, tableData]);
+  const isUpdatable =
+    listFor?.module?.toString()?.trim()?.length > 0 &&
+    useModulePrivileges(listFor?.module).hasWriteAccess &&
+    listFor?.subModule?.toString()?.trim()?.length > 0 &&
+    useModulePrivileges(listFor?.subModule).hasWriteAccess;
 
   useEffect(() => {
     onChangeRowSelection(selectedRowData);
@@ -252,10 +259,11 @@ const Table = props => {
                   {heading.label}
                 </th>
               ))}
-            {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) && (
-              <th style={{ position: 'sticky', right: 0 }} />
+            {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) &&
+              isUpdatable && <th style={{ position: 'sticky', right: 0 }} />}
+            {tableButtonActions.length > 0 && isUpdatable && (
+              <th align={align}>Credit Limit Actions</th>
             )}
-            {tableButtonActions.length > 0 && <th align={align}>Credit Limit Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -266,6 +274,7 @@ const Table = props => {
               align={align}
               valign={valign}
               dataIndex={index}
+              isUpdatable={isUpdatable}
               extraColumns={extraColumns}
               stepperColumn={stepperColumn}
               tableButtonActions={tableButtonActions}
@@ -297,6 +306,7 @@ Table.propTypes = {
   stepperColumn: PropTypes.arrayOf(PropTypes.element),
   tableButtonActions: PropTypes.arrayOf(PropTypes.element),
   headerClass: PropTypes.string,
+  listFor: PropTypes.object,
   data: PropTypes.array,
   rowClass: PropTypes.string,
   recordSelected: PropTypes.func,
@@ -317,6 +327,7 @@ Table.defaultProps = {
   headers: [],
   headerClass: '',
   data: [],
+  listFor: { module: undefined, subModule: undefined },
   extraColumns: [],
   stepperColumn: [],
   tableButtonActions: [],
@@ -343,6 +354,7 @@ function Row(props) {
     recordSelected,
     isExpandable,
     dataIndex,
+    isUpdatable,
     handleRowExpansion,
     isRowExpanded,
     haveActions,
@@ -461,7 +473,7 @@ function Row(props) {
               );
           }
         })}
-        {haveActions && (
+        {haveActions && isUpdatable && (
           <td
             align="right"
             valign={valign}
@@ -477,39 +489,48 @@ function Row(props) {
             </span>
           </td>
         )}
-        {stepperColumn.map((element, index) => (
-          <td
-            key={index.toString()}
-            width={10}
-            align={align}
-            valign={valign}
-            style={{ position: 'sticky', right: 0 }}
-            className={dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}
-          >
-            {element(data)}
-          </td>
-        ))}
-        {extraColumns.map((element, index) => (
-          <td
-            key={index.toString()}
-            width={10}
-            align={align}
-            valign={valign}
-            style={{ position: 'sticky', right: 0 }}
-            className={`${
-              data?.isCompleted?.props?.children?.props?.checked
-                ? `completedTask ${rowClass}`
-                : rowClass
-            } ${dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}`}
-          >
-            {element(data)}
-          </td>
-        ))}
-        {tableButtonActions.map((element, index) => (
-          <td key={index.toString()} width={10} align={align} valign={valign} className={rowClass}>
-            {element(data)}
-          </td>
-        ))}
+        {isUpdatable &&
+          stepperColumn.map((element, index) => (
+            <td
+              key={index.toString()}
+              width={10}
+              align={align}
+              valign={valign}
+              style={{ position: 'sticky', right: 0 }}
+              className={dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}
+            >
+              {element(data)}
+            </td>
+          ))}
+        {isUpdatable &&
+          extraColumns.map((element, index) => (
+            <td
+              key={index.toString()}
+              width={10}
+              align={align}
+              valign={valign}
+              style={{ position: 'sticky', right: 0 }}
+              className={`${
+                data?.isCompleted?.props?.children?.props?.checked
+                  ? `completedTask ${rowClass}`
+                  : rowClass
+              } ${dataIndex % 2 === 0 ? 'bg-white' : 'bg-background-color'}`}
+            >
+              {element(data)}
+            </td>
+          ))}
+        {isUpdatable &&
+          tableButtonActions.map((element, index) => (
+            <td
+              key={index.toString()}
+              width={10}
+              align={align}
+              valign={valign}
+              className={rowClass}
+            >
+              {element(data)}
+            </td>
+          ))}
       </tr>
       <ExpandedTableHelper
         docs={data?.dataToExpand}
@@ -540,6 +561,7 @@ Row.propTypes = {
   tableButtonActions: PropTypes.arrayOf(PropTypes.func),
   rowClass: PropTypes.string,
   dataIndex: PropTypes.number,
+  isUpdatable: PropTypes.bool.isRequired,
   recordSelected: PropTypes.func,
   isExpandable: PropTypes.bool,
   isRowExpanded: PropTypes.bool.isRequired,
