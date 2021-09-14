@@ -368,6 +368,7 @@ const DebtorsCreditLimitTab = () => {
                 tableClass="white-header-table"
                 data={docs}
                 headers={headers}
+                listFor={{ module: 'debtor' }}
                 tableButtonActions={creditLimitAction}
                 isEditableDrawer
               />
