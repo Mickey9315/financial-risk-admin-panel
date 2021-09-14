@@ -71,10 +71,9 @@ const DebtorsDocumentsTab = () => {
     debtorDocumentReducer,
     initialDebtorDocumentState
   );
-  const { documentType, isPublic, description } = useMemo(
-    () => selectedDebtorDocument ?? {},
-    [selectedDebtorDocument]
-  );
+  const { documentType, isPublic, description } = useMemo(() => selectedDebtorDocument ?? {}, [
+    selectedDebtorDocument,
+  ]);
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
@@ -515,6 +514,7 @@ const DebtorsDocumentsTab = () => {
                 data={docs}
                 headers={headers}
                 tableClass="white-header-table"
+                listFor={{ module: 'debtor', subModule: 'document' }}
                 extraColumns={deleteDocumentAction}
                 refreshData={getDebtorsDocumentsList}
                 showCheckbox
