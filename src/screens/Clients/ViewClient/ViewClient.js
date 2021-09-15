@@ -311,6 +311,9 @@ const ViewClient = () => {
                 <Switch
                   id="automate-applications"
                   name="isAutoApproveAllowed"
+                  className="view-client-automate-application-switch"
+                  labelClass="view-client-automate-application-switch-label"
+                  disabled={!isClientUpdatable}
                   checked={isAutoApproveAllowed}
                   onChange={onChangeApplicationAutomationSwitch}
                 />

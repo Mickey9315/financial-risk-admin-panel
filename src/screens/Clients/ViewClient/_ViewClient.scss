@@ -30,3 +30,7 @@
     font: $subtitle $font-regular;
   }
 }
+
+view-client-automate-application-switch:disabled ~ .view-client-automate-application-switch-label {
+  cursor: not-allowed;
+}
