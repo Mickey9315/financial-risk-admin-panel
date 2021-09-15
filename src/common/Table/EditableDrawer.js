@@ -40,7 +40,6 @@ const EditableDrawer = props => {
 
   const [selectedLimitType, setSelectedLimitType] = useState([]);
   const [selectedExpiryDate, setSelectedExpiryDate] = useState(new Date());
-
   const isApprovedOrDeclined = useMemo(() => {
     const status = drawerData.find(data => data.label === 'Status');
     if (['Approved', 'Declined'].includes(status?.value)) return true;

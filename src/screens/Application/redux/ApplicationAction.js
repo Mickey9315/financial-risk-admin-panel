@@ -1090,6 +1090,21 @@ export const fetchSelectedReportsForApplication = data => {
   };
 };
 
+export const downloadSelectedReportForApplication = async id => {
+  try {
+    const response =
+      await ApplicationViewApiServices.applicationReportsApiServices.downloadReportsForApplication(
+        id
+      );
+    if (response) {
+      return response;
+    }
+  } catch (e) {
+    displayErrors(e);
+  }
+  return false;
+};
+
 export const getApplicationDetailsOnBackToCompanyStep = (applicationId, activeStep) => {
   return async dispatch => {
     try {

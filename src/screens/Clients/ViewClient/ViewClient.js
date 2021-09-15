@@ -24,6 +24,9 @@ import Switch from '../../../common/Switch/Switch';
 import Loader from '../../../common/Loader/Loader';
 import ClientOverdueTab from '../component/ClientOverdueTab';
 import ClientClaimsTab from '../component/ClientClaimsTab';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const initialAssigneeState = {
   riskAnalystId: [],
@@ -66,6 +69,7 @@ const CLIENT_TABS_WITH_ACCESS = [
 
 const ViewClient = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const isClientUpdatable = useModulePrivileges(SIDEBAR_NAMES.CLIENT).hasWriteAccess;
   const [{ riskAnalystId, serviceManagerId, isAutoApproveAllowed }, dispatchAssignee] = useReducer(
     assigneeReducer,
     initialAssigneeState
@@ -93,10 +97,9 @@ const ViewClient = () => {
   const viewClientData = useSelector(
     ({ clientManagement }) => clientManagement?.selectedClient || {}
   );
-
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
 
-  const checkAccess = useCallback(
+  const access = useCallback(
     accessFor => {
       const availableAccess =
         userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
@@ -109,12 +112,12 @@ const ViewClient = () => {
   const finalTabs = useMemo(() => {
     const tabs = [...CLIENT_TABS_CONSTANTS];
     CLIENT_TABS_WITH_ACCESS.forEach(tab => {
-      if (checkAccess(tab.name)) {
+      if (access(tab.name)) {
         tabs.push(tab);
       }
     });
     return tabs ?? [];
-  }, [CLIENT_TABS_CONSTANTS, CLIENT_TABS_WITH_ACCESS, checkAccess]);
+  }, [access, CLIENT_TABS_CONSTANTS, CLIENT_TABS_WITH_ACCESS, userPrivilegesData]);
 
   const riskAnalysts = useMemo(
     () =>
@@ -233,12 +236,14 @@ const ViewClient = () => {
                   <span>View Client</span>
                 </div>
                 <div className="buttons-row">
-                  <Button
-                    buttonType="secondary"
-                    title="Sync With CRM"
-                    onClick={syncClientDataClick}
-                    isLoading={viewClientSyncWithCRMButtonLoaderAction}
-                  />
+                  <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+                    <Button
+                      buttonType="secondary"
+                      title="Sync With CRM"
+                      onClick={syncClientDataClick}
+                      isLoading={viewClientSyncWithCRMButtonLoaderAction}
+                    />
+                  </UserPrivilegeWrapper>
                 </div>
               </div>
               <div className="common-white-container client-details-container">
@@ -259,27 +264,33 @@ const ViewClient = () => {
                 <span>ACN</span>
                 <div className="client-detail">{viewClientData?.acn || 'No ACN number added'}</div>
                 <span>Risk Person</span>
+
                 <ReactSelect
-                  className="react-select-container"
+                  className="react-select-container view-client-select"
                   classNamePrefix="react-select"
-                  placeholder="Select"
+                  placeholder={isClientUpdatable ? 'Select' : '-'}
                   name="riskAnalystId"
+                  isDisabled={!isClientUpdatable}
                   options={riskAnalysts}
                   value={riskAnalystId || []}
                   onChange={onChangeAssignee}
                   isSearchable
                 />
+
                 <span>Service Person</span>
+
                 <ReactSelect
-                  className="react-select-container"
+                  className="react-select-container view-client-select"
                   classNamePrefix="react-select"
-                  placeholder="Select"
+                  placeholder={isClientUpdatable ? 'Select' : '-'}
                   name="serviceManagerId"
+                  isDisabled={!isClientUpdatable}
                   options={serviceManagers}
                   value={serviceManagerId || []}
                   onChange={onChangeAssignee}
                   isSearchable
                 />
+
                 <span>Insurer Name</span>
                 <div className="client-detail">{viewClientData?.insurerId?.name || 'N/A'}</div>
                 <span>Sales Person</span>
@@ -310,6 +321,9 @@ const ViewClient = () => {
                 <Switch
                   id="automate-applications"
                   name="isAutoApproveAllowed"
+                  className="view-client-automate-application-switch"
+                  labelClass="view-client-automate-application-switch-label"
+                  disabled={!isClientUpdatable}
                   checked={isAutoApproveAllowed}
                   onChange={onChangeApplicationAutomationSwitch}
                 />

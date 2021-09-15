@@ -16,6 +16,8 @@ import {
   getClientOverdueList,
   resetClientOverdueListData,
 } from '../redux/ClientAction';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientOverdueTab = () => {
   const searchInputRef = useRef();
@@ -151,11 +153,15 @@ const ClientOverdueTab = () => {
                 placeholder="Search here"
                 onKeyUp={checkIfEnterKeyPressed}
               />
-              <Button
-                buttonType="success"
-                title="New Submission"
-                onClick={() => setNewSubmissionModal(e => !e)}
-              />
+              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.OVERDUE}>
+                  <Button
+                    buttonType="success"
+                    title="New Submission"
+                    onClick={() => setNewSubmissionModal(e => !e)}
+                  />
+                </UserPrivilegeWrapper>
+              </UserPrivilegeWrapper>
             </div>
           </div>
           {docs?.length > 0 ? (
@@ -167,6 +173,7 @@ const ClientOverdueTab = () => {
                   data={docs}
                   headers={headers}
                   refreshData={getOverdueListByFilter}
+                  listFor={{ module: 'client', subModule: 'overdue' }}
                   rowClass="cursor-pointer"
                 />
               </div>

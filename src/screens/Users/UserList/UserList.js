@@ -391,6 +391,7 @@ const UserList = () => {
                   tableClass="main-list-table"
                   data={docs}
                   headers={headers}
+                  listFor={{ module: 'user' }}
                   recordSelected={onSelectUserRecord}
                   recordActionClick={onSelectUserRecordActionClick}
                   rowClass="cursor-pointer"

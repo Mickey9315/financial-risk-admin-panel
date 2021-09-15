@@ -25,6 +25,8 @@ import {
   startGeneralLoaderOnRequest,
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const InsurerPoliciesTab = () => {
   const dispatch = useDispatch();
@@ -163,6 +165,7 @@ const InsurerPoliciesTab = () => {
   const [crmIds, setCrmIds] = useState([]);
   const [syncFromCRM, setSyncFromCRM] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
+  const isInsurerUpdatable = useModulePrivileges(SIDEBAR_NAMES.INSURER).hasWriteAccess;
 
   const toggleSyncWithCRM = useCallback(() => {
     setCrmIds([]);
@@ -286,7 +289,9 @@ const InsurerPoliciesTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Sync With CRM" onClick={toggleSyncWithCRM} />
+          {isInsurerUpdatable && (
+            <Button buttonType="secondary" title="Sync With CRM" onClick={toggleSyncWithCRM} />
+          )}
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

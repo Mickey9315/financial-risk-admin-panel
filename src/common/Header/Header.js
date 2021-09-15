@@ -33,8 +33,11 @@ const Header = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showUserSettings, setShowUserSettings] = React.useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = React.useState(false);
-  const toggleChangePasswordModal = value =>
+  const [isPasswordValidate, setIsPasswordValidate] = useState(true);
+  const toggleChangePasswordModal = value => {
     setShowChangePasswordModal(value !== undefined ? value : e => !e);
+    setIsPasswordValidate(true);
+  };
   const toggleUserSettings = value => setShowUserSettings(value !== undefined ? value : e => !e);
   /** ***
    * edit profile declarations and inits
@@ -45,7 +48,6 @@ const Header = () => {
   const [isEditProfileButton, setIsEditProfileButton] = useState(false);
   const [fileName, setFileName] = useState('Browse...');
   const [file, setFile] = useState(null);
-  const [isPasswordValidate, setIsPasswordValidate] = useState(true);
   const toggleEditProfileModal = value =>
     setShowEditProfileModal(value !== undefined ? value : e => !e);
 
@@ -420,7 +422,7 @@ const Header = () => {
                 type="password"
                 placeholder="Enter Current Password"
                 value={currentPassword}
-                autocomplete="off"
+                autoComplete="new-password"
                 onChange={onChangeCurrentPassword}
               />
             </div>

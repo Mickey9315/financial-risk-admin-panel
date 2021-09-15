@@ -3,6 +3,8 @@ import { displayErrors } from './ErrorNotifyHelper';
 import { HEADER_NOTIFICATION_REDUX_CONSTANTS } from '../common/Header/redux/HeaderConstants';
 import { updateHeaderNotificationOnNewNotificationAction } from '../common/Header/redux/HeaderAction';
 import { store } from '../redux/store';
+import { USER_MANAGEMENT_REDUX_CONSTANTS } from '../screens/Users/redux/UserManagementReduxConstants';
+import { getAllUserPrivileges } from '../screens/Users/redux/UserManagementAction';
 
 const SOCKET_URI = process.env.REACT_APP_SOCKET_URL;
 const TYPE = 'user';
@@ -23,10 +25,14 @@ export const dispatchActionsOnSocketEvents = data => {
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.REVIEW_DEBTOR:
       store.dispatch(updateHeaderNotificationOnNewNotificationAction(data?.data));
       break;
+    case USER_MANAGEMENT_REDUX_CONSTANTS.PRIVILEGES.UPDATE_USER_PRIVILEGE:
+      store.dispatch(getAllUserPrivileges());
+      break;
     default:
       break;
   }
 };
+
 export const connectWebSocket = AUTH_TOKEN => {
   try {
     socket = socketIOClient(`${SOCKET_URI}?token=${AUTH_TOKEN}&type=${TYPE}`);

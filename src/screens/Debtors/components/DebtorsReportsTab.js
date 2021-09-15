@@ -22,6 +22,8 @@ import Loader from '../../../common/Loader/Loader';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Button from '../../../common/Button/Button';
 import Modal from '../../../common/Modal/Modal';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const DebtorsReportsTab = () => {
   const { id } = useParams();
@@ -41,9 +43,10 @@ const DebtorsReportsTab = () => {
     viewDebtorFetchReportButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(() => reportsList ?? {}, [
-    reportsList,
-  ]);
+  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
+    () => reportsList ?? {},
+    [reportsList]
+  );
 
   const getDebtorReportsList = useCallback(
     (params = {}, cb) => {
@@ -304,7 +307,15 @@ const DebtorsReportsTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="secondary" title="Fetch Report" onClick={toggleFetchReportsModal} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.REPORT}>
+              <Button
+                buttonType="secondary"
+                title="Fetch Report"
+                onClick={toggleFetchReportsModal}
+              />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}

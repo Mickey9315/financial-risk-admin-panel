@@ -75,6 +75,17 @@ const ViewApplication = () => {
 
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+
+  const checkAccess = useCallback(
+    accessFor => {
+      const availableAccess =
+        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData]
+  );
 
   const {
     tradingName,
@@ -106,21 +117,27 @@ const ViewApplication = () => {
 
   useEffect(() => {
     dispatch(getApplicationDetailById(id));
-    dispatch(getAssigneeDropDownData());
-    dispatch(getApplicationTaskDefaultEntityDropDownData({ entityName: 'application' }));
-    dispatch(getApplicationNotesList(id));
+    if (checkAccess('note')) {
+      dispatch(getApplicationNotesList(id));
+    }
     dispatch(getApplicationModuleList(id));
-    dispatch(getViewApplicationDocumentTypeList());
-    dispatch(getApplicationTaskList(id));
+    if (checkAccess('document')) {
+      dispatch(getViewApplicationDocumentTypeList());
+    }
+    if (checkAccess('task')) {
+      dispatch(getApplicationTaskList(id));
+      dispatch(getAssigneeDropDownData());
+      dispatch(getApplicationTaskDefaultEntityDropDownData({ entityName: 'application' }));
+    }
     return () => dispatch(resetApplicationDetail());
-  }, [id]);
+  }, [id, checkAccess]);
 
   useEffect(() => {
-    if (debtorId?.length > 0 && isAUSOrNZL) {
+    if (debtorId?.length > 0 && isAUSOrNZL && checkAccess('credit-report')) {
       dispatch(getApplicationReportsListData(debtorId?.[0]?._id));
       dispatch(getApplicationReportsListForFetch(debtorId?.[0]?._id));
     }
-  }, [debtorId, isAUSOrNZL]);
+  }, [debtorId, isAUSOrNZL, checkAccess]);
 
   useEffect(() => {
     if (debtorId?.length > 0) {
@@ -342,13 +359,19 @@ const ViewApplication = () => {
                 <div className="view-application-details-right">
                   <div className="common-white-container">
                     <Accordion className="view-application-accordion">
-                      {isAUSOrNZL && (
+                      {isAUSOrNZL && checkAccess('credit-report') && (
                         <ApplicationReportAccordion debtorId={debtorId?.[0]?._id} index={0} />
                       )}
-                      <ApplicationTaskAccordion applicationId={id} index={1} />
-                      <ApplicationNotesAccordion applicationId={id} index={2} />
+                      {checkAccess('task') && (
+                        <ApplicationTaskAccordion applicationId={id} index={1} />
+                      )}
+                      {checkAccess('note') && (
+                        <ApplicationNotesAccordion applicationId={id} index={2} />
+                      )}
                       <ApplicationAlertsAccordion index={3} />
-                      <ApplicationDocumentsAccordion applicationId={id} index={4} />
+                      {checkAccess('document') && (
+                        <ApplicationDocumentsAccordion applicationId={id} index={4} />
+                      )}
                       <ApplicationLogsAccordion index={5} />
                       <ApplicationClientReferenceAccordion index={6} />
                       <ApplicationCommentAccordion index={7} />

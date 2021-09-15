@@ -27,6 +27,8 @@ import Input from '../../../common/Input/Input';
 import FileUpload from '../../../common/Header/component/FileUpload';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialClientDocumentState = {
   description: '',
@@ -69,10 +71,9 @@ const ClientDocumentsTab = () => {
     clientDocumentReducer,
     initialClientDocumentState
   );
-  const { documentType, isPublic, description } = useMemo(
-    () => selectedClientDocument,
-    [selectedClientDocument]
-  );
+  const { documentType, isPublic, description } = useMemo(() => selectedClientDocument, [
+    selectedClientDocument,
+  ]);
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
@@ -124,10 +125,9 @@ const ClientDocumentsTab = () => {
     viewClientDeleteDocumentButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => documentsList ?? {},
-    [documentsList]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => documentsList ?? {}, [
+    documentsList,
+  ]);
 
   const getClientDocumentsList = useCallback(
     (params = {}, cb) => {
@@ -489,11 +489,15 @@ const ClientDocumentsTab = () => {
             title="format_line_spacing"
             onClick={() => toggleCustomField()}
           />
-          <IconButton
-            buttonType="primary"
-            title="cloud_upload"
-            onClick={() => toggleUploadModel()}
-          />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName="policy">
+              <IconButton
+                buttonType="primary"
+                title="cloud_upload"
+                onClick={() => toggleUploadModel()}
+              />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
@@ -515,6 +519,7 @@ const ClientDocumentsTab = () => {
                 tableClass="white-header-table"
                 extraColumns={deleteDocumentAction}
                 refreshData={getClientDocumentsList}
+                listFor={{ module: 'client', subModule: 'document' }}
                 showCheckbox
                 onChangeRowSelection={data => setSelectedCheckBoxData(data)}
               />

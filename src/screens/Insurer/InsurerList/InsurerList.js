@@ -30,6 +30,8 @@ import {
   startGeneralLoaderOnRequest,
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const InsurerList = () => {
   const history = useHistory();
@@ -39,7 +41,7 @@ const InsurerList = () => {
   const { insurerColumnNameList, insurerDefaultColumnNameList } = useSelector(
     ({ insurer }) => insurer ?? {}
   );
-
+  const isInsurerUpdatable = useModulePrivileges(SIDEBAR_NAMES.INSURER).hasWriteAccess;
   const {
     insurerListColumnSaveButtonLoaderAction,
     insurerListColumnResetButtonLoaderAction,
@@ -288,7 +290,9 @@ const InsurerList = () => {
                 buttonTitle="Click to select custom fields"
                 onClick={() => toggleCustomField()}
               />
-              <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
+              {isInsurerUpdatable && (
+                <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
+              )}
             </div>
           </div>
           {docs?.length > 0 ? (

@@ -29,6 +29,8 @@ import {
   updateTaskData,
 } from '../redux/DebtorsAction';
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -631,7 +633,11 @@ const DebtorTaskTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+            <UserPrivilegeWrapper moduleName="task">
+              <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
@@ -646,6 +652,7 @@ const DebtorTaskTab = () => {
                 rowClass="cursor-pointer task-row"
                 data={docs}
                 headers={headers}
+                listFor={{ module: 'debtor', subModule: 'task' }}
                 refreshData={getDebtorTaskList}
                 recordSelected={onSelectTaskRecord}
                 extraColumns={deleteTaskColumn}

@@ -106,7 +106,7 @@ export const userManagementColumnList = (state = initialUserColumnManagementStat
 export const selectedUserData = (state = null, action) => {
   switch (action?.type) {
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION:
-      return action?.data;
+      return { ...action.data, duplicateModules: action?.data?.moduleAccess };
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION:
       return {
         ...state,

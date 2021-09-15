@@ -16,6 +16,8 @@ import {
   getDebtorOverdueList,
   resetDebtorOverdueListData,
 } from '../redux/DebtorsAction';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientOverdueTab = () => {
   const { id } = useParams();
@@ -150,11 +152,15 @@ const ClientOverdueTab = () => {
                 placeholder="Search here"
                 // onKeyUp={checkIfEnterKeyPressed}
               />
-              <Button
-                buttonType="success"
-                title="New Submission"
-                onClick={() => setNewSubmissionModal(e => !e)}
-              />
+              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.OVERDUE}>
+                  <Button
+                    buttonType="success"
+                    title="New Submission"
+                    onClick={() => setNewSubmissionModal(e => !e)}
+                  />
+                </UserPrivilegeWrapper>
+              </UserPrivilegeWrapper>
             </div>
           </div>
           {docs?.length > 0 ? (
@@ -165,6 +171,7 @@ const ClientOverdueTab = () => {
                   tableClass="main-list-table white-header-table"
                   data={docs}
                   headers={headers}
+                  listFor={{ module: 'debtor', subModule: 'overdue' }}
                   refreshData={getOverdueListByFilter}
                   rowClass="cursor-pointer"
                 />

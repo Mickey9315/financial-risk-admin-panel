@@ -9,9 +9,13 @@ import Button from '../../../../common/Button/Button';
 import Modal from '../../../../common/Modal/Modal';
 import { errorNotification } from '../../../../common/Toast';
 import {
+  downloadSelectedReportForApplication,
   fetchSelectedReportsForApplication,
   getApplicationReportsListData,
 } from '../../redux/ApplicationAction';
+import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
+import { downloadAll } from '../../../../helpers/DownloadHelper';
 
 const ApplicationReportAccordion = props => {
   const { index, debtorId } = props;
@@ -31,7 +35,9 @@ const ApplicationReportAccordion = props => {
   const [fetchReportsModal, setFetchReportsModal] = useState(false);
   const [selectedReports, setSelectedReports] = useState([]);
   const [selectedStakeHolder, setSelectedStakeHolder] = useState([]);
-
+  const isReportUpdatable =
+    useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess &&
+    useModulePrivileges('credit-report').hasWriteAccess;
   const toggleFetchReportsModal = useCallback(() => {
     setFetchReportsModal(e => !e);
   }, []);
@@ -92,6 +98,16 @@ const ApplicationReportAccordion = props => {
     setSelectedStakeHolder(value);
   }, []);
 
+  const onReportDownloadClick = useCallback(
+    async id => {
+      const response = await downloadSelectedReportForApplication(id);
+      if (response) {
+        downloadAll(response);
+      }
+    },
+    [downloadAll]
+  );
+
   return (
     <>
       {fetchReportsModal && (
@@ -144,15 +160,26 @@ const ApplicationReportAccordion = props => {
         }
         suffix="expand_more"
       >
-        <Button
-          buttonType="primary-1"
-          title="Fetch Report"
-          className="add-note-button"
-          onClick={toggleFetchReportsModal}
-        />
+        {isReportUpdatable && (
+          <Button
+            buttonType="primary-1"
+            title="Fetch Report"
+            className="add-note-button"
+            onClick={toggleFetchReportsModal}
+          />
+        )}
         {reportListData?.length > 0 ? (
           reportListData?.map(report => (
             <div className="common-accordion-item-content-box" key={report?._id}>
+              <div className="d-flex just-end">
+                <span
+                  className="material-icons-round font-primary cursor-pointer"
+                  title="Download this report"
+                  onClick={() => onReportDownloadClick(report?._id)}
+                >
+                  cloud_download
+                </span>
+              </div>
               <div className="report-row">
                 <span className="title">Name:</span>
                 <Tooltip

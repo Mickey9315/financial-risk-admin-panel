@@ -15,6 +15,8 @@ import {
 import Modal from '../../../common/Modal/Modal';
 import Switch from '../../../common/Switch/Switch';
 import { errorNotification } from '../../../common/Toast';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -82,10 +84,9 @@ const ClientNotesTab = () => {
     viewClientDeleteNoteButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => clientNotesList ?? {},
-    [clientNotesList]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => clientNotesList ?? {}, [
+    clientNotesList,
+  ]);
 
   const getClientNotesList = useCallback(
     (params = {}, cb) => {
@@ -296,7 +297,11 @@ const ClientNotesTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
-          <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName="note">
+              <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
@@ -311,6 +316,7 @@ const ClientNotesTab = () => {
                 tableClass="white-header-table"
                 headers={headers}
                 recordActionClick={onSelectUserRecordActionClick}
+                listFor={{ module: 'client', subModule: 'note' }}
                 refreshData={getClientNotesList}
                 haveActions
               />

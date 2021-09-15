@@ -30,6 +30,8 @@ import Modal from '../../../common/Modal/Modal';
 import Input from '../../../common/Input/Input';
 import { errorNotification } from '../../../common/Toast';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -629,7 +631,11 @@ const ClientTaskTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+            <UserPrivilegeWrapper moduleName="task">
+              <Button buttonType="success" title="Add" onClick={onClickAddTask} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
@@ -644,6 +650,7 @@ const ClientTaskTab = () => {
                 rowClass="cursor-pointer task-row"
                 data={docs}
                 headers={headers}
+                listFor={{ module: 'client', subModule: 'task' }}
                 refreshData={getClientTaskList}
                 recordSelected={onSelectTaskRecord}
                 extraColumns={deleteTaskColumn}

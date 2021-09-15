@@ -23,6 +23,8 @@ import Input from '../../../../common/Input/Input';
 import { errorNotification } from '../../../../common/Toast';
 import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
 import DropdownMenu from '../../../../common/DropdownMenu/DropdownMenu';
+import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
+import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -42,7 +44,9 @@ const entityTypeData = [
 const ApplicationTaskAccordion = props => {
   const dispatch = useDispatch();
   const { applicationId, index } = props;
-
+  const isTaskUpdatable =
+    useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess &&
+    useModulePrivileges('task').hasWriteAccess;
   const applicationTaskList = useSelector(
     ({ application }) => application?.viewApplication?.task?.taskList || []
   );
@@ -124,9 +128,8 @@ const ApplicationTaskAccordion = props => {
 
   const backToTaskList = useCallback(() => {
     dispatch({
-      type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -144,9 +147,8 @@ const ApplicationTaskAccordion = props => {
 
   const onCloseTaskModal = useCallback(() => {
     dispatch({
-      type:
-        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-          .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+        .APPLICATION_RESET_ADD_TASK_STATE_ACTION,
     });
     if (addTaskModal) toggleAddTaskModal();
     if (editTaskModal) toggleEditTaskModal();
@@ -488,12 +490,15 @@ const ApplicationTaskAccordion = props => {
           }
           suffix="expand_more"
         >
-          <Button
-            buttonType="primary-1"
-            title="Add Task"
-            className="add-task-button"
-            onClick={onAddTaskClick}
-          />
+          {isTaskUpdatable && (
+            <Button
+              buttonType="primary-1"
+              title="Add Task"
+              className="add-task-button"
+              onClick={onAddTaskClick}
+            />
+          )}
+
           {applicationTaskList?.docs?.length > 0 ? (
             applicationTaskList.docs.map(task => (
               <div className="common-accordion-item-content-box" key={task._id}>
@@ -506,18 +511,20 @@ const ApplicationTaskAccordion = props => {
                     <div className="document-title">{task.description || '-'}</div>
                   </Tooltip>
 
-                  <div className="d-flex">
-                    <Checkbox
-                      checked={task.isCompleted}
-                      onClick={() => handleTaskCheckbox(task._id, !task.isCompleted)}
-                    />
-                    <span
-                      className="material-icons-round font-placeholder cursor-pointer"
-                      onClick={e => onClickActionToggleButton(e, task._id)}
-                    >
-                      more_vert
-                    </span>
-                  </div>
+                  {isTaskUpdatable && (
+                    <div className="d-flex">
+                      <Checkbox
+                        checked={task.isCompleted}
+                        onClick={() => handleTaskCheckbox(task._id, !task.isCompleted)}
+                      />
+                      <span
+                        className="material-icons-round font-placeholder cursor-pointer"
+                        onClick={e => onClickActionToggleButton(e, task._id)}
+                      >
+                        more_vert
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className={`task-priority-${task.priority}`}>{task.priority}</div>
                 <div className="date-owner-row">

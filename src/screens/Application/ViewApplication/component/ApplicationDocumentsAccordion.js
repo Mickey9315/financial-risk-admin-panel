@@ -18,6 +18,8 @@ import Input from '../../../../common/Input/Input';
 import Switch from '../../../../common/Switch/Switch';
 import { errorNotification } from '../../../../common/Toast';
 import { downloadAll } from '../../../../helpers/DownloadHelper';
+import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 
 const initialApplicationDocumentState = {
   description: '',
@@ -63,6 +65,9 @@ const ApplicationDocumentsAccordion = props => {
     ({ application }) =>
       application?.viewApplication?.applicationModulesList?.viewApplicationDocumentType || []
   );
+  const isDocumentUpdatable =
+    useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess &&
+    useModulePrivileges('document').hasWriteAccess;
 
   const [selectedApplicationDocuments, dispatchSelectedApplicationDocuments] = useReducer(
     applicationDocumentReducer,
@@ -320,13 +325,15 @@ const ApplicationDocumentsAccordion = props => {
           }
           suffix="expand_more"
         >
-          <IconButton
-            buttonType="primary-1"
-            title="cloud_upload"
-            className="add-document-button"
-            onClick={() => toggleUploadModel()}
-          />
-          {applicationDocsList &&
+          {isDocumentUpdatable && (
+            <IconButton
+              buttonType="primary-1"
+              title="cloud_upload"
+              className="add-document-button"
+              onClick={() => toggleUploadModel()}
+            />
+          )}
+          {applicationDocsList?.length > 0 ? (
             applicationDocsList.map(doc => (
               <div className="common-accordion-item-content-box" key={Math.random()}>
                 <div className="document-title-row">
@@ -345,12 +352,14 @@ const ApplicationDocumentsAccordion = props => {
                     >
                       cloud_download
                     </span>
-                    <span
-                      className="material-icons-round font-danger cursor-pointer"
-                      onClick={() => deleteDocument(doc._id)}
-                    >
-                      delete_outline
-                    </span>
+                    {isDocumentUpdatable && (
+                      <span
+                        className="material-icons-round font-danger cursor-pointer"
+                        onClick={() => deleteDocument(doc._id)}
+                      >
+                        delete_outline
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="date-owner-row">
@@ -365,7 +374,10 @@ const ApplicationDocumentsAccordion = props => {
                   {doc.description || '-'}
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="no-record-found">Nothing To Show</div>
+          )}
         </AccordionItem>
       )}
       {uploadModel && (

@@ -41,6 +41,8 @@ import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/List
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientList = () => {
   const history = useHistory();
@@ -83,8 +85,10 @@ const ClientList = () => {
     limit: paramLimit,
     riskAnalystId: paramRiskAnalyst,
     serviceManagerId: paramServiceManager,
-    startDate: paramStartDate,
-    endDate: paramEndDate,
+    inceptionStartDate: paramInceptionStartDate,
+    inceptionEndDate: paramInceptionEndDate,
+    expiryStartDate: paramExpiryStartDate,
+    expiryEndDate: paramExpiryEndDate,
   } = useQueryParams();
 
   const appliedFilters = useMemo(() => {
@@ -97,8 +101,10 @@ const ClientList = () => {
         (tempFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
           ? tempFilter?.serviceManagerId
           : undefined,
-      startDate: tempFilter?.startDate ?? undefined,
-      endDate: tempFilter?.endDate ?? undefined,
+      inceptionStartDate: tempFilter?.inceptionStartDate ?? undefined,
+      inceptionEndDate: tempFilter?.inceptionEndDate ?? undefined,
+      expiryStartDate: tempFilter?.expiryStartDate ?? undefined,
+      expiryEndDate: tempFilter?.expiryEndDate ?? undefined,
     };
   }, [{ ...tempFilter }]);
 
@@ -120,25 +126,27 @@ const ClientList = () => {
     }));
   }, [filterList]);
 
-  const { total, pages, page, limit } = useMemo(() => clientListWithPageData ?? {}, [
-    clientListWithPageData,
-  ]);
+  const { total, pages, page, limit } = useMemo(
+    () => clientListWithPageData ?? {},
+    [clientListWithPageData]
+  );
 
-  const handleStartDateChange = useCallback(date => {
+  const handleStartDateChange = useCallback((name, date) => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-      name: 'startDate',
+      name,
       value: date ? new Date(date).toISOString() : null,
     });
   }, []);
 
-  const handleEndDateChange = useCallback(date => {
+  const handleEndDateChange = useCallback((name, date) => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
-      name: 'endDate',
+      name,
       value: date ? new Date(date).toISOString() : null,
     });
   }, []);
+
   const resetFilterDates = useCallback(() => {
     handleStartDateChange(null);
     handleEndDateChange(null);
@@ -147,12 +155,18 @@ const ClientList = () => {
   const getClientListByFilter = useCallback(
     async (params = {}, cb) => {
       if (
-        tempFilter?.startDate &&
-        tempFilter?.endDate &&
-        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+        tempFilter?.inceptionStartDate &&
+        tempFilter?.inceptionEndDate &&
+        moment(tempFilter?.inceptionEndDate).isBefore(tempFilter?.inceptionStartDate)
       ) {
-        errorNotification('Please enter a valid date range');
+        errorNotification('Please enter a valid inception date range');
         resetFilterDates();
+      } else if (
+        tempFilter?.expiryStartDate &&
+        tempFilter?.expiryEndDate &&
+        moment(tempFilter?.expiryEndDate).isBefore(tempFilter?.expiryStartDate)
+      ) {
+        errorNotification('Please enter a valid expiry date range');
       } else {
         const data = {
           page: page ?? 1,
@@ -187,8 +201,18 @@ const ClientList = () => {
         (paramServiceManager?.trim()?.length ?? -1) > 0
           ? paramServiceManager
           : clientListFilters?.serviceManagerId,
-      startDate: paramStartDate ? new Date(paramStartDate) : clientListFilters?.startDate,
-      endDate: paramEndDate ? new Date(paramEndDate) : clientListFilters?.endDate,
+      inceptionStartDate: paramInceptionStartDate
+        ? new Date(paramInceptionStartDate)
+        : clientListFilters?.inceptionStartDate,
+      inceptionEndDate: paramInceptionEndDate
+        ? new Date(paramInceptionEndDate)
+        : clientListFilters?.inceptionEndDate,
+      expiryStartDate: paramExpiryStartDate
+        ? new Date(paramInceptionStartDate)
+        : clientListFilters?.expiryStartDate,
+      expiryEndDate: paramExpiryEndDate
+        ? new Date(paramInceptionEndDate)
+        : clientListFilters?.expiryEndDate,
     };
 
     Object.entries(filters).forEach(([name, value]) => {
@@ -215,8 +239,10 @@ const ClientList = () => {
         (finalFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
           ? finalFilter?.serviceManagerId
           : undefined,
-      startDate: finalFilter?.startDate || undefined,
-      endDate: finalFilter?.endDate || undefined,
+      inceptionStartDate: finalFilter?.inceptionStartDate || undefined,
+      inceptionEndDate: finalFilter?.inceptionEndDate || undefined,
+      expiryStartDate: finalFilter?.expiryStartDate || undefined,
+      expiryEndDate: finalFilter?.expiryEndDate || undefined,
     },
     [page, limit, { ...finalFilter }]
   );
@@ -552,7 +578,9 @@ const ClientList = () => {
                 className="mr-10"
                 onClick={() => toggleCustomField()}
               />
-              <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
+              <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
+                <Button title="Add From CRM" buttonType="success" onClick={onClickAddFromCRM} />
+              </UserPrivilegeWrapper>
             </div>
           </div>
 
@@ -618,15 +646,19 @@ const ClientList = () => {
                 />
               </div>
               <div className="filter-modal-row">
-                <div className="form-title client-filter-title">Date</div>
+                <div className="form-title client-filter-title">Inception Date</div>
                 <div className="date-picker-container filter-date-picker-container mr-15">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={tempFilter?.startDate ? new Date(tempFilter?.startDate) : null}
+                    selected={
+                      tempFilter?.inceptionStartDate
+                        ? new Date(tempFilter?.inceptionStartDate)
+                        : null
+                    }
                     showMonthDropdown
                     showYearDropdown
                     scrollableYearDropdown
-                    onChange={handleStartDateChange}
+                    onChange={date => handleStartDateChange('inceptionStartDate', date)}
                     placeholderText="From Date"
                     dateFormat="dd/MM/yyyy"
                   />
@@ -635,11 +667,46 @@ const ClientList = () => {
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
                     className="filter-date-picker"
-                    selected={tempFilter?.endDate ? new Date(tempFilter?.endDate) : null}
+                    selected={
+                      tempFilter?.inceptionEndDate ? new Date(tempFilter?.inceptionEndDate) : null
+                    }
                     showMonthDropdown
                     showYearDropdown
                     scrollableYearDropdown
-                    onChange={handleEndDateChange}
+                    onChange={date => handleEndDateChange('inceptionEndDate', date)}
+                    placeholderText="To Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+              </div>
+              <div className="filter-modal-row">
+                <div className="form-title client-filter-title">Expiry Date</div>
+                <div className="date-picker-container filter-date-picker-container mr-15">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={
+                      tempFilter?.expiryStartDate ? new Date(tempFilter?.expiryStartDate) : null
+                    }
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={date => handleStartDateChange('expiryStartDate', date)}
+                    placeholderText="From Date"
+                    dateFormat="dd/MM/yyyy"
+                  />
+                  <span className="material-icons-round">event_available</span>
+                </div>
+                <div className="date-picker-container filter-date-picker-container">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={
+                      tempFilter?.expiryEndDate ? new Date(tempFilter?.expiryEndDate) : null
+                    }
+                    showMonthDropdown
+                    showYearDropdown
+                    scrollableYearDropdown
+                    onChange={date => handleEndDateChange('expiryEndDate', date)}
                     placeholderText="To Date"
                     dateFormat="dd/MM/yyyy"
                   />

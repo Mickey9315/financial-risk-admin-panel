@@ -13,10 +13,23 @@
     padding: 0.344rem;
     min-width: 170px;
     color: $field-color;
-    cursor: not-allowed;
   }
 
   input {
     cursor: default !important;
   }
+}
+
+.react-select--is-disabled.view-client-select.react-select-container .react-select__control{
+  padding: 2px 5px;
+}
+
+.view-client-select .react-select__control--is-disabled {
+  .react-select__single-value {
+    font: $subtitle $font-regular;
+  }
+}
+
+view-client-automate-application-switch:disabled ~ .view-client-automate-application-switch-label {
+  cursor: not-allowed;
 }

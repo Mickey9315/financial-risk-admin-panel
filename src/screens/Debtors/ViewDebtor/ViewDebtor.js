@@ -72,9 +72,13 @@ const ViewInsurer = () => {
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
-  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+  const [isAUSOrNZL, setIsAUSOrNAL] = useState(false);
 
-  const checkAccess = useCallback(
+  useEffect(() => {
+    if (['AUS', 'NZL'].includes(debtorData?.country?.value)) setIsAUSOrNAL(true);
+  }, [debtorData?.country]);
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+  const access = useCallback(
     accessFor => {
       const availableAccess =
         userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
@@ -83,17 +87,10 @@ const ViewInsurer = () => {
     },
     [userPrivilegesData]
   );
-
-  const [isAUSOrNZL, setIsAUSOrNAL] = useState(false);
-
-  useEffect(() => {
-    if (['AUS', 'NZL'].includes(debtorData?.country?.value)) setIsAUSOrNAL(true);
-  }, [debtorData?.country]);
-
   const finalTabs = useMemo(() => {
     const tabs = [...DEBTOR_TABS_CONSTANTS];
     DEBTOR_TABS_WITH_ACCESS.forEach(tab => {
-      if (checkAccess(tab.name)) {
+      if (access(tab.name)) {
         tabs.push(tab);
       }
     });
@@ -113,13 +110,7 @@ const ViewInsurer = () => {
     }
     tabs.push({ label: 'Alerts', component: <DebtorsAlertsTab />, name: 'alerts' });
     return tabs ?? [];
-  }, [
-    debtorData?.entityType,
-    isAUSOrNZL,
-    DEBTOR_TABS_CONSTANTS,
-    checkAccess,
-    DEBTOR_TABS_WITH_ACCESS,
-  ]);
+  }, [debtorData?.entityType, isAUSOrNZL, DEBTOR_TABS_CONSTANTS, access, DEBTOR_TABS_WITH_ACCESS]);
 
   const INPUTS = useMemo(
     () => [
@@ -450,25 +441,23 @@ const ViewInsurer = () => {
                   <span className="material-icons-round">navigate_next</span>
                   <span>View Debtor</span>
                 </div>
-                <div className="buttons-row">
-                  {action === 'view' ? (
-                    <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                  <div className="buttons-row">
+                    {action === 'view' ? (
                       <Button buttonType="primary" title="Edit" onClick={editDebtorClick} />
-                    </UserPrivilegeWrapper>
-                  ) : (
-                    <>
-                      <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
-                      <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+                    ) : (
+                      <>
+                        <Button buttonType="primary-1" title="Close" onClick={backToDebtor} />
                         <Button
                           buttonType="primary"
                           title="Save"
                           onClick={onClickUpdateDebtor}
                           isLoading={viewDebtorUpdateDebtorButtonLoaderAction}
                         />
-                      </UserPrivilegeWrapper>
-                    </>
-                  )}
-                </div>
+                      </>
+                    )}
+                  </div>
+                </UserPrivilegeWrapper>
               </div>
 
               <div className="common-detail-container">

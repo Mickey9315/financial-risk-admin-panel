@@ -16,6 +16,8 @@ import {
 import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
 import Pagination from '../../../common/Pagination/Pagination';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const NOTE_ACTIONS = {
   ADD: 'ADD',
@@ -301,7 +303,11 @@ const DebtorsNotesTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
-          <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+            <UserPrivilegeWrapper moduleName="note">
+              <Button buttonType="success" title="Add" onClick={toggleModifyNotes} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
@@ -315,6 +321,7 @@ const DebtorsNotesTab = () => {
                 data={docs}
                 tableClass="white-header-table"
                 headers={headers}
+                listFor={{ module: 'debtor', subModule: 'note' }}
                 recordActionClick={onSelectUserRecordActionClick}
                 refreshData={getDebtorNotesList}
                 haveActions

@@ -27,6 +27,8 @@ import {
   uploadDocument,
 } from '../redux/DebtorsAction';
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const initialDebtorDocumentState = {
   description: '',
@@ -69,10 +71,9 @@ const DebtorsDocumentsTab = () => {
     debtorDocumentReducer,
     initialDebtorDocumentState
   );
-  const { documentType, isPublic, description } = useMemo(
-    () => selectedDebtorDocument ?? {},
-    [selectedDebtorDocument]
-  );
+  const { documentType, isPublic, description } = useMemo(() => selectedDebtorDocument ?? {}, [
+    selectedDebtorDocument,
+  ]);
   const dispatch = useDispatch();
   const { id } = useParams();
   const searchInputRef = useRef();
@@ -485,11 +486,15 @@ const DebtorsDocumentsTab = () => {
             title="format_line_spacing"
             onClick={() => toggleCustomField()}
           />
-          <IconButton
-            buttonType="primary"
-            title="cloud_upload"
-            onClick={() => toggleUploadModel()}
-          />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
+            <UserPrivilegeWrapper moduleName="document">
+              <IconButton
+                buttonType="primary"
+                title="cloud_upload"
+                onClick={() => toggleUploadModel()}
+              />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
@@ -509,6 +514,7 @@ const DebtorsDocumentsTab = () => {
                 data={docs}
                 headers={headers}
                 tableClass="white-header-table"
+                listFor={{ module: 'debtor', subModule: 'document' }}
                 extraColumns={deleteDocumentAction}
                 refreshData={getDebtorsDocumentsList}
                 showCheckbox

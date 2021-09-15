@@ -14,6 +14,8 @@ import Button from '../../../common/Button/Button';
 import InsurerMatrixTab from '../Components/InsurerMatrixTab/InsurerMatrixTab';
 import Loader from '../../../common/Loader/Loader';
 import InsurerPoliciesTab from '../Components/InsurerPoliciesTab';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const INSURER_TABS_CONSTANTS = [
   { label: 'Contacts', component: <InsurerContactTab /> },
@@ -24,6 +26,8 @@ const ViewInsurer = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const history = useHistory();
   const dispatch = useDispatch();
+  const isInsurerUpdatable = useModulePrivileges(SIDEBAR_NAMES.INSURER).hasWriteAccess;
+
   const { id } = useParams();
   const backToInsurer = () => {
     history.replace('/insurer');
@@ -33,8 +37,6 @@ const ViewInsurer = () => {
     setActiveTabIndex(index);
   };
 
-  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
-
   const viewInsurerActiveTabIndex = useSelector(
     ({ insurer }) => insurer?.viewInsurerActiveTabIndex ?? 0
   );
@@ -42,8 +44,8 @@ const ViewInsurer = () => {
   const { viewInsurerSyncInsurerDataButtonLoaderAction, viewInsurerPageLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
-
-  const checkAccess = useCallback(
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+  const access = useCallback(
     accessFor => {
       const availableAccess =
         userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
@@ -52,15 +54,14 @@ const ViewInsurer = () => {
     },
     [userPrivilegesData]
   );
-
   const finalTabs = useMemo(() => {
     let temp = [...INSURER_TABS_CONSTANTS];
-    if (checkAccess('policy')) {
+    if (access('policy')) {
       temp.splice(0, 0, { label: 'Policies', component: <InsurerPoliciesTab /> });
     }
     if (insurerData?.isDefault) temp = temp.filter(e => e.label !== 'Contacts');
     return temp;
-  }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, checkAccess]);
+  }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, access]);
 
   const { name, address, contactNumber, website, email } = useMemo(
     () => insurerData,
@@ -94,12 +95,14 @@ const ViewInsurer = () => {
             </div>
             {!_.isEmpty(insurerData) && !insurerData?.isDefault && (
               <div className="buttons-row">
-                <Button
-                  buttonType="secondary"
-                  title="Sync With CRM"
-                  onClick={syncInsurersDataOnClick}
-                  isLoading={viewInsurerSyncInsurerDataButtonLoaderAction}
-                />
+                {isInsurerUpdatable && (
+                  <Button
+                    buttonType="secondary"
+                    title="Sync With CRM"
+                    onClick={syncInsurersDataOnClick}
+                    isLoading={viewInsurerSyncInsurerDataButtonLoaderAction}
+                  />
+                )}
               </div>
             )}
           </div>

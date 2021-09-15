@@ -30,6 +30,7 @@ import { errorNotification } from '../../../common/Toast';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const priorityListData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -42,6 +43,7 @@ const MyWorkTasks = () => {
   const history = useHistory();
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
+  const isTaskUpdatable = useModulePrivileges('task').hasWriteAccess;
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
   const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? {}, [
     taskListData,
@@ -450,7 +452,7 @@ const MyWorkTasks = () => {
               buttonTitle="Click to select custom fields"
               onClick={toggleCustomField}
             />
-            <Button buttonType="success" title="Add" onClick={addTask} />
+            {isTaskUpdatable && <Button buttonType="success" title="Add" onClick={addTask} />}
           </div>
           {docs?.length > 0 ? (
             <>
@@ -465,6 +467,7 @@ const MyWorkTasks = () => {
                   data={docs}
                   headers={headers}
                   rowClass="cursor-pointer task-row"
+                  listFor={{ module: 'task' }}
                   extraColumns={deleteTaskColumn}
                   refreshData={getTaskListOnRefresh}
                   recordSelected={onSelectTaskRecord}
