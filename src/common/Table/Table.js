@@ -218,11 +218,21 @@ const Table = props => {
       }
     }
   }, [setSelectedRowData, selectedRowData, tableData]);
-  const isUpdatable =
-    listFor?.module?.toString()?.trim()?.length > 0 &&
-    useModulePrivileges(listFor?.module).hasWriteAccess &&
-    listFor?.subModule?.toString()?.trim()?.length > 0 &&
-    useModulePrivileges(listFor?.subModule).hasWriteAccess;
+
+  const isUpdatable = () => {
+    let updatable = false;
+    if (listFor?.module) {
+      updatable = useModulePrivileges(listFor?.module).hasWriteAccess;
+      return updatable;
+    }
+    if (listFor?.module && listFor?.subModule) {
+      updatable =
+        useModulePrivileges(listFor?.module).hasWriteAccess &&
+        useModulePrivileges(listFor?.subModule).hasWriteAccess;
+      return updatable;
+    }
+    return updatable;
+  };
 
   useEffect(() => {
     onChangeRowSelection(selectedRowData);
