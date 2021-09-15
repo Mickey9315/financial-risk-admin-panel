@@ -4,9 +4,10 @@ import { useMemo } from 'react';
 export const useModulePrivileges = moduleName => {
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
 
-  const foundModule = useMemo(() => userPrivilegesData.find(module => module.name === moduleName), [
-    userPrivilegesData,
-  ]);
+  const foundModule = useMemo(
+    () => userPrivilegesData.find(module => module.name === moduleName),
+    [userPrivilegesData, moduleName]
+  );
 
   const access = {
     hasWriteAccess: false,
