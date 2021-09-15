@@ -1,23 +1,32 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Tab from '../../common/Tab/Tab';
 import MyWorkTasks from './MyWorkTasks/MyWorkTasks';
 
 import MyWorkNotifications from './MyWorkNotifications/MyWorkNotifications';
-import { useModulePrivileges } from '../../hooks/userPrivileges/useModulePrivilegesHook';
 import Loader from '../../common/Loader/Loader';
 
 const MyWork = () => {
-  const access = useModulePrivileges('task');
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+  const access = useCallback(
+    accessFor => {
+      const availableAccess =
+        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData]
+  );
 
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   const myWorkTabs = useMemo(
-    () => (access.hasReadAccess ? ['Tasks', 'Notifications'] : ['Notifications']),
+    () => (access('policy') ? ['Tasks', 'Notifications'] : ['Notifications']),
     [access]
   );
   const myWorkTabContent = useMemo(
     () =>
-      access.hasReadAccess ? [<MyWorkTasks />, <MyWorkNotifications />] : [<MyWorkNotifications />],
+      access('policy') ? [<MyWorkTasks />, <MyWorkNotifications />] : [<MyWorkNotifications />],
     [access]
   );
   const tabActive = useCallback(
