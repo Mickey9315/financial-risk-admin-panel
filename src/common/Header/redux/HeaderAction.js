@@ -20,7 +20,11 @@ export const changePassword = async (oldPassword, newPassword) => {
     const response = await HeaderApiService.changePassword(data);
 
     if (response?.data?.status === 'SUCCESS') {
-      successNotification(response?.data?.message || 'Password changed successfully.');
+      successNotification(
+        response?.data?.message ||
+          'You have been logged out to every device aa you changed password'
+      );
+      // successNotification(response?.data?.message || 'Password changed successfully.');
       stopGeneralLoaderOnSuccessOrFail('changePasswordHeaderButtonLoaderAction');
     }
   } catch (e) {

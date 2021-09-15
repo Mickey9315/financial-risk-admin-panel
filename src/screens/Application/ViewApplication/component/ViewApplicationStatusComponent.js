@@ -10,6 +10,7 @@ import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import { errorNotification } from '../../../../common/Toast';
 import { NUMBER_REGEX } from '../../../../constants/RegexConstants';
 import { changeApplicationStatus } from '../../redux/ApplicationAction';
+import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
 
 const APPLICATION_STATUS = {
   WITHDRAWN: 'Withdraw',
@@ -23,14 +24,11 @@ const ViewApplicationStatusComponent = props => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const { applicationDetail } = useSelector(
-    ({ application }) => application?.viewApplication ?? {}
-  );
+  const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
 
-  const { creditLimit, isAllowToUpdate, status, _id, comments } = useMemo(
-    () => applicationDetail ?? {},
-    [applicationDetail]
-  );
+  const { creditLimit, isAllowToUpdate, status, _id, comments } = useMemo(() => applicationDetail ?? {}, [
+    applicationDetail,
+  ]);
 
   const [showConfirmModal, setShowConfirmationModal] = useState(false);
   const [statusToChange, setStatusToChange] = useState({});
@@ -79,10 +77,7 @@ const ViewApplicationStatusComponent = props => {
       newCreditLimit < creditLimit
     ) {
       errorNotification('Please enter comment to continue!');
-    } else if (
-      statusToChange?.value === 'DECLINED' &&
-      (!commentText || commentText?.toString()?.trim()?.length <= 0)
-    ) {
+    } else if (statusToChange?.value === 'DECLINED' && (!commentText || commentText?.toString()?.trim()?.length <= 0)) {
       errorNotification('Please enter comment to continue!');
     } else {
       try {
@@ -91,9 +86,12 @@ const ViewApplicationStatusComponent = props => {
           status: statusToChange?.value,
           comments: commentText,
         };
-        if (statusToChange?.value === 'APPROVED')
-          data.creditLimit = newCreditLimit?.toString()?.trim();
+        if (statusToChange?.value === 'APPROVED') data.creditLimit = newCreditLimit?.toString()?.trim();
         await dispatch(changeApplicationStatus(id, data, statusToChange));
+        await dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_COMMENT_CHANGE,
+          data: commentText,
+        });
         statusChangeCallback();
       } catch (e) {
         /**/
@@ -117,17 +115,13 @@ const ViewApplicationStatusComponent = props => {
         onClick: modifyLimit,
       },
     ],
-    [toggleModifyLimitModal, modifyLimit, creditLimit]
+    [toggleModifyLimitModal, modifyLimit, creditLimit],
   );
 
   const handleStatusChange = useCallback(async () => {
     try {
       await dispatch(
-        changeApplicationStatus(
-          _id,
-          { update: 'credit-limit', status: statusToChange?.value },
-          statusToChange
-        )
+        changeApplicationStatus(_id, { update: 'credit-limit', status: statusToChange?.value }, statusToChange),
       );
       toggleConfirmationModal();
       setStatusToChange([]);
@@ -143,15 +137,13 @@ const ViewApplicationStatusComponent = props => {
         toggleConfirmationModal();
       } else {
         try {
-          await dispatch(
-            changeApplicationStatus(_id, { update: 'credit-limit', status: e?.value }, e)
-          );
+          await dispatch(changeApplicationStatus(_id, { update: 'credit-limit', status: e?.value }, e));
         } catch (err) {
           /**/
         }
       }
     },
-    [toggleConfirmationModal, _id, setStatusToChange, statusToChange]
+    [toggleConfirmationModal, _id, setStatusToChange, statusToChange],
   );
   const changeStatusButton = useMemo(
     () => [
@@ -159,12 +151,10 @@ const ViewApplicationStatusComponent = props => {
       {
         title: APPLICATION_STATUS[statusToChange?.value],
         buttonType: 'danger',
-        onClick: ['DECLINED', 'APPROVED'].includes(statusToChange?.value)
-          ? modifyLimit
-          : handleStatusChange,
+        onClick: ['DECLINED', 'APPROVED'].includes(statusToChange?.value) ? modifyLimit : handleStatusChange,
       },
     ],
-    [toggleConfirmationModal, statusToChange, _id, modifyLimit]
+    [toggleConfirmationModal, statusToChange, _id, modifyLimit],
   );
 
   useEffect(() => {
@@ -208,14 +198,10 @@ const ViewApplicationStatusComponent = props => {
           {isApprovedOrDeclined ? (
             <div>
               {['APPROVED'].includes(status?.value) && (
-                <div className="application-status approved-application-status">
-                  {status?.label}
-                </div>
+                <div className="application-status approved-application-status">{status?.label}</div>
               )}
               {['DECLINED'].includes(status?.value) && (
-                <div className="application-status declined-application-status">
-                  {status?.label}
-                </div>
+                <div className="application-status declined-application-status">{status?.label}</div>
               )}
             </div>
           ) : (

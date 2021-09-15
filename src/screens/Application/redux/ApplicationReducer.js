@@ -575,6 +575,20 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+    // comments
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_COMMENT_CHANGE: {
+      console.log('action.data',action.data)
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          applicationDetail: {
+            ...state?.viewApplication?.applicationDetail,
+            comments: action?.data,
+          },
+        },
+      };
+    }
 
     // application task
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK.APPLICATION_TASK_LIST_ACTION:

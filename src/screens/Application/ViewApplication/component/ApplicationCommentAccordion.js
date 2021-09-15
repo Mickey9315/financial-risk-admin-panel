@@ -5,18 +5,17 @@ import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import Button from '../../../../common/Button/Button';
 import { errorNotification } from '../../../../common/Toast';
 import { changeApplicationStatus } from '../../redux/ApplicationAction';
+import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
 
 const ApplicationCommentAccordion = props => {
-  const { applicationDetail } = useSelector(
-    ({ application }) => application?.viewApplication ?? {}
-  );
+  const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
 
   const dispatch = useDispatch();
   const { index } = props;
 
   const [commentText, setCommentText] = useState('');
 
-  const { comments, _id } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
+  const { comments, _id, status } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
 
   const saveClientComment = useCallback(async () => {
     if (!commentText || commentText?.toString()?.trim()?.length <= 0) {
@@ -27,6 +26,10 @@ const ApplicationCommentAccordion = props => {
         comments: commentText,
       };
       await dispatch(changeApplicationStatus(_id, data));
+      await dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_COMMENT_CHANGE,
+        data: commentText,
+      });
     }
   }, [_id, commentText]);
 
@@ -38,22 +41,28 @@ const ApplicationCommentAccordion = props => {
     <>
       <AccordionItem index={index} header="Comment" suffix="expand_more">
         <div className="common-accordion-item-content-box">
-          <textarea
-            rows={3}
-            name="comment"
-            className="mt-5 w-100"
-            placeholder="Enter Comment"
-            value={commentText}
-            onChange={e => setCommentText(e?.target?.value)}
-          />
-          <div className="d-flex just-end align-center mt-5">
-            <Button
-              buttonType="primary"
-              className="small-button"
-              title="save"
-              onClick={saveClientComment}
+          {status?.value === 'DECLINED' || status?.value === 'APPROVED' ? (
+            <textarea
+              className="mt-5 w-100"
+              style={{ border: 'none' }}
+              disabled
+              value={comments ? `${comments}` : '-'}
             />
-          </div>
+          ) : (
+            <>
+              <textarea
+                rows={3}
+                name="comment"
+                className="mt-5 w-100"
+                placeholder="Enter Comment"
+                value={commentText}
+                onChange={e => setCommentText(e?.target?.value)}
+              />
+              <div className="d-flex just-end align-center mt-5">
+                <Button buttonType="primary" className="small-button" title="save" onClick={saveClientComment} />
+              </div>
+            </>
+          )}
         </div>
       </AccordionItem>
     </>
