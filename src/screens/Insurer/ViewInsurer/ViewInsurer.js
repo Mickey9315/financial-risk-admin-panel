@@ -44,8 +44,16 @@ const ViewInsurer = () => {
   const { viewInsurerSyncInsurerDataButtonLoaderAction, viewInsurerPageLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
-
-  const access = module => useModulePrivileges(module).hasReadAccess;
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+  const access = useCallback(
+    accessFor => {
+      const availableAccess =
+        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData]
+  );
   const finalTabs = useMemo(() => {
     let temp = [...INSURER_TABS_CONSTANTS];
     if (access('policy')) {
@@ -55,9 +63,10 @@ const ViewInsurer = () => {
     return temp;
   }, [INSURER_TABS_CONSTANTS, insurerData?.isDefault, access]);
 
-  const { name, address, contactNumber, website, email } = useMemo(() => insurerData, [
-    insurerData,
-  ]);
+  const { name, address, contactNumber, website, email } = useMemo(
+    () => insurerData,
+    [insurerData]
+  );
   useEffect(() => {
     dispatch(getInsurerById(id));
     return () => {
