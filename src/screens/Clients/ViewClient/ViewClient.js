@@ -99,7 +99,16 @@ const ViewClient = () => {
   );
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
 
-  const access = module => useModulePrivileges(module).hasReadAccess;
+  const access = useCallback(
+    accessFor => {
+      const availableAccess =
+        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData]
+  );
+
   const finalTabs = useMemo(() => {
     const tabs = [...CLIENT_TABS_CONSTANTS];
     CLIENT_TABS_WITH_ACCESS.forEach(tab => {
