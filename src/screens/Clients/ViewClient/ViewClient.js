@@ -98,6 +98,7 @@ const ViewClient = () => {
     ({ clientManagement }) => clientManagement?.selectedClient || {}
   );
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+
   const access = module => useModulePrivileges(module).hasReadAccess;
   const finalTabs = useMemo(() => {
     const tabs = [...CLIENT_TABS_CONSTANTS];
@@ -258,7 +259,7 @@ const ViewClient = () => {
                 <ReactSelect
                   className="react-select-container view-client-select"
                   classNamePrefix="react-select"
-                  placeholder="Select"
+                  placeholder={isClientUpdatable ? 'Select' : '-'}
                   name="riskAnalystId"
                   isDisabled={!isClientUpdatable}
                   options={riskAnalysts}
@@ -272,7 +273,7 @@ const ViewClient = () => {
                 <ReactSelect
                   className="react-select-container view-client-select"
                   classNamePrefix="react-select"
-                  placeholder="Select"
+                  placeholder={isClientUpdatable ? 'Select' : '-'}
                   name="serviceManagerId"
                   isDisabled={!isClientUpdatable}
                   options={serviceManagers}
