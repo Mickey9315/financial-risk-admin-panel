@@ -344,7 +344,11 @@ const AddUser = () => {
                     </>
                   ) : (
                     <>
-                      <Button buttonType="primary-1" title="Close" onClick={backToUser} />
+                      <Button
+                        buttonType="primary-1"
+                        title="Close"
+                        onClick={() => history.replace(`/users/user/view/${id}`)}
+                      />
                       <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
                         <Button
                           buttonType="primary"
