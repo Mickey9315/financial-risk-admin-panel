@@ -1015,7 +1015,7 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
         status
       );
       if (response?.data?.status === 'SUCCESS') {
-        successNotification(response?.data?.message ?? 'Application status updated successfully.');
+        successNotification(response?.data?.message ?? 'Application status updated successfully');
         if (statusToChange) {
           dispatch({
             type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_STATUS_CHANGE_ACTION,
@@ -1030,6 +1030,22 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
       throw Error();
     }
   };
+};
+
+export const downloadDecisionLetterForApplication = async (id, param) => {
+  try {
+    const response = await ApplicationViewApiServices.downloadDecisionLetterForApplication(
+      id,
+      param
+    );
+    if (response) {
+      return response;
+    }
+  } catch (e) {
+    displayErrors(e);
+    return false;
+  }
+  return false;
 };
 
 // reports

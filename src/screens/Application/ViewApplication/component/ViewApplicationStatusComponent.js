@@ -1,5 +1,5 @@
 import ReactSelect from 'react-select';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
@@ -9,10 +9,14 @@ import Input from '../../../../common/Input/Input';
 import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import { errorNotification } from '../../../../common/Toast';
 import { NUMBER_REGEX } from '../../../../constants/RegexConstants';
-import { changeApplicationStatus } from '../../redux/ApplicationAction';
+import {
+  changeApplicationStatus,
+  downloadDecisionLetterForApplication,
+} from '../../redux/ApplicationAction';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
+import { downloadAll } from '../../../../helpers/DownloadHelper';
 
 const APPLICATION_STATUS = {
   WITHDRAWN: 'Withdraw',
@@ -30,7 +34,11 @@ const ViewApplicationStatusComponent = props => {
     ({ application }) => application?.viewApplication ?? {}
   );
 
-  const { creditLimit, isAllowToUpdate, status, _id, comments } = useMemo(
+  const { applicationDecisionLetterDownloadButtonLoaderAction } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+  );
+
+  const { creditLimit, isAllowToUpdate, status, _id, clientDebtorId, comments } = useMemo(
     () => applicationDetail ?? {},
     [applicationDetail]
   );
@@ -174,6 +182,22 @@ const ViewApplicationStatusComponent = props => {
     [toggleConfirmationModal, statusToChange, _id, modifyLimit]
   );
 
+  const downloadDecisionLetter = useCallback(async () => {
+    if (clientDebtorId) {
+      try {
+        const param = {
+          requestFrom: 'application',
+        };
+        const res = await downloadDecisionLetterForApplication(clientDebtorId, param);
+        if (res) downloadAll(res);
+      } catch (e) {
+        // errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+      }
+    } else {
+      errorNotification('You have no records to download');
+    }
+  }, [id]);
+
   useEffect(() => {
     setNewCreditLimit(creditLimit);
     setCommentText(comments);
@@ -204,8 +228,19 @@ const ViewApplicationStatusComponent = props => {
         </div>
       );
     }
-
-    return <></>;
+    return (
+      <>
+        <Button
+          buttonType="primary"
+          title="Download Decision Letter"
+          buttonTitle="Click to download decision letter"
+          className="download-decision-letter-icon small-button"
+          onClick={() => {
+            if (!applicationDecisionLetterDownloadButtonLoaderAction) downloadDecisionLetter();
+          }}
+        />
+      </>
+    );
   }, [status, toggleModifyLimitModal, setStatusToChange, toggleConfirmationModal]);
 
   return (
