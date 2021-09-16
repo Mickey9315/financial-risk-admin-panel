@@ -8,6 +8,7 @@ import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
 import {
   changeDebtorReportsColumnListStatus,
+  downloadReportForDebtor,
   fetchSelectedReportsForDebtor,
   getDebtorReportsColumnNameList,
   getDebtorReportsListData,
@@ -24,6 +25,7 @@ import Button from '../../../common/Button/Button';
 import Modal from '../../../common/Modal/Modal';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const DebtorsReportsTab = () => {
   const { id } = useParams();
@@ -80,6 +82,29 @@ const DebtorsReportsTab = () => {
   const [customFieldModal, setCustomFieldModal] = React.useState(false);
   const toggleCustomField = () => setCustomFieldModal(e => !e);
 
+  const downloadReport = useCallback(
+    async data => {
+      const response = await downloadReportForDebtor(data.id);
+      if (response) {
+        downloadAll(response);
+      }
+    },
+    [downloadAll]
+  );
+
+  const downloadReportAction = useMemo(
+    () => [
+      data => (
+        <span
+          className="material-icons-round font-primary cursor-pointer"
+          onClick={() => downloadReport(data)}
+        >
+          cloud_download
+        </span>
+      ),
+    ],
+    []
+  );
   const onChangeSelectedColumn = useCallback(
     (type, name, value) => {
       const data = { type, name, value };
@@ -327,6 +352,7 @@ const DebtorsReportsTab = () => {
                 align="left"
                 valign="center"
                 tableClass="white-header-table"
+                extraColumns={downloadReportAction}
                 data={docs}
                 headers={headers}
                 refreshData={getDebtorReportsList}

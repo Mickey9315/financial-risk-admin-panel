@@ -268,6 +268,7 @@ export const DEBTORS_URLS = {
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}credit-report/column-name/`,
     DEBTOR_REPORTS_LIST_FOR_FETCH: `${BASE_URL}credit-report/list/`,
     FETCH_SELECTED_REPORTS_FOR_DEBTOR: `${BASE_URL}credit-report/generate/`,
+    DOWNLOAD_REPORTS_FOR_DEBTOR: `${BASE_URL}credit-report/download/`,
   },
   DEBTOR_OVERDUE: {
     GET_DEBTOR_OVERDUE_LIST: `${BASE_URL}overdue/`,
