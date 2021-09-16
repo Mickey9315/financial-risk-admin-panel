@@ -90,9 +90,11 @@ const ApplicationViewApiServices = {
         data
       ),
     downloadReportsForApplication: id =>
-      ApiService.getData(
-        `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.DOWNLOAD_REPORTS_FOR_APPLICATION}${id}`
-      ),
+      ApiService.request({
+        url: `${APPLICATION_URLS.VIEW_APPLICATION.APPLICATION_REPORTS.DOWNLOAD_REPORTS_FOR_APPLICATION}${id}`,
+        method: 'GET',
+        responseType: 'blob',
+      }),
   },
   applicationAlertsApiServices: {
     getApplicationAlertsListData: id =>
