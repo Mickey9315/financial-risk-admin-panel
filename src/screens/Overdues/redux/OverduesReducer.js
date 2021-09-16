@@ -1,5 +1,6 @@
 import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
 import { OVERDUE_REDUX_CONSTANTS } from './OverduesReduxConstants';
+import { FIELD_NAME_BY_ENTITY } from '../../../constants/EntitySearchConstants';
 
 const initialOverdueState = {
   overdueList: {},
@@ -47,6 +48,24 @@ export const overdue = (state = initialOverdueState, action) => {
         entityList,
       };
     }
+
+    case OVERDUE_REDUX_CONSTANTS.GET_OVERDUE_ENTITY_DATA_BY_SEARCH: {
+      const entityName = FIELD_NAME_BY_ENTITY?.[action?.name];
+      const entityList = {
+        ...state?.entityList,
+        [entityName]: action?.data?.map(entity => ({
+          label: entity.name,
+          name: entityName,
+          value: entity._id,
+        })),
+      };
+
+      return {
+        ...state,
+        entityList,
+      };
+    }
+
     case OVERDUE_REDUX_CONSTANTS.OVERDUE_CRUD_CONSTANTS.CHANGE_OVERDUE_FIELD_VALUE:
       return {
         ...state,

@@ -9,6 +9,7 @@ import Modal from '../../../../common/Modal/Modal';
 import Button from '../../../../common/Button/Button';
 import {
   getEntityDetails,
+  getOverdueFilterDropDownDataBySearch,
   getOverdueListByDate,
   handleOverdueFieldChange,
   resetOverdueFormData,
@@ -27,10 +28,9 @@ import { DECIMAL_REGEX, usdConverter } from '../../../../constants/RegexConstant
 const AddOverdues = () => {
   const history = useHistory();
   const amountRef = useRef([]);
-  const { isRedirected, redirectedFrom, fromId } = useMemo(
-    () => history?.location?.state ?? {},
-    [history]
-  );
+  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
+    history,
+  ]);
   const { id, period } = useParams();
 
   const dispatch = useDispatch();
@@ -161,6 +161,15 @@ const AddOverdues = () => {
     [entityList, handleDebtorChange, selectedDebtor]
   );
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'overdue',
+    };
+    dispatch(getOverdueFilterDropDownDataBySearch(options));
+  }, []);
+
   const addModalInputs = useMemo(
     () => [
       {
@@ -171,6 +180,7 @@ const AddOverdues = () => {
         data: entityList?.debtorId,
         value: overdueDetails?.debtorId ?? [],
         isOr: true,
+        onInputChange: text => handleOnSelectSearchInputChange('debtors', text),
       },
       {
         title: 'Month/ Year',
@@ -276,7 +286,7 @@ const AddOverdues = () => {
         value: overdueDetails?.outstandingAmount ?? '',
       },
     ],
-    [overdueDetails, entityList]
+    [overdueDetails, entityList, handleOnSelectSearchInputChange]
   );
 
   const toggleSaveAlertModal = useCallback(
@@ -337,6 +347,7 @@ const AddOverdues = () => {
                     ? e => handleDebtorChange(e, false)
                     : handleSelectInputChange
                 }
+                onInputChange={input?.onInputChange}
               />
               {input?.isOr && <div className="or-text">OR</div>}
             </>

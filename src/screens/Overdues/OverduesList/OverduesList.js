@@ -9,7 +9,12 @@ import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Modal from '../../../common/Modal/Modal';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
-import { getEntityDetails, getOverdueList, resetOverdueListData } from '../redux/OverduesAction';
+import {
+  getEntityDetails,
+  getOverdueFilterDropDownDataBySearch,
+  getOverdueList,
+  resetOverdueListData,
+} from '../redux/OverduesAction';
 import { errorNotification } from '../../../common/Toast';
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
@@ -122,10 +127,9 @@ const OverduesList = () => {
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => overdueListWithPageData,
-    [overdueListWithPageData]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
+    overdueListWithPageData,
+  ]);
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -338,6 +342,15 @@ const OverduesList = () => {
     [onAddNewSubmission, onCloseNewSubmissionModal]
   );
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'overdue',
+    };
+    dispatch(getOverdueFilterDropDownDataBySearch(options));
+  }, []);
+
   return (
     <>
       {!overdueListPageLoaderAction ? (
@@ -400,6 +413,7 @@ const OverduesList = () => {
                 options={entityList?.clientId}
                 value={newSubmissionDetails?.clientId}
                 onChange={e => setNewSubmissionDetails({ ...newSubmissionDetails, clientId: e })}
+                onInputChange={text => handleOnSelectSearchInputChange('clients', text)}
                 isSearchble
               />
               <div className="date-picker-container month-year-picker">
