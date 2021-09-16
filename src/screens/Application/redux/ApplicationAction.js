@@ -1121,6 +1121,16 @@ export const downloadSelectedReportForApplication = async id => {
   return false;
 };
 
+export const fetchReportNotification = data => {
+  if (data?.fetchStatus === 'SUCCESS') {
+    successNotification(data?.message ?? 'Your report download is completed successfully');
+  } else {
+    errorNotification(
+      data?.message ?? 'Unfortunately your report download is failed, please try again!'
+    );
+  }
+};
+
 export const getApplicationDetailsOnBackToCompanyStep = (applicationId, activeStep) => {
   return async dispatch => {
     try {

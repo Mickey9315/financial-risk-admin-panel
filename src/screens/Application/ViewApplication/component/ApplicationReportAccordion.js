@@ -120,7 +120,11 @@ const ApplicationReportAccordion = props => {
                   name="role"
                   className="react-select-container"
                   classNamePrefix="react-select"
-                  placeholder="Select Stake Holder"
+                  placeholder={
+                    partners?.length > 0 && partnersWithCompany?.length <= 0
+                      ? '-'
+                      : 'Select Stake Holder'
+                  }
                   dropdownHandle={false}
                   options={partnersWithCompany}
                   value={selectedStakeHolder}
@@ -134,7 +138,9 @@ const ApplicationReportAccordion = props => {
               name="role"
               className="react-select-container"
               classNamePrefix="react-select"
-              placeholder="Select Reports"
+              placeholder={
+                partners?.length > 0 && partnersWithCompany?.length <= 0 ? '-' : 'Select Reports'
+              }
               dropdownHandle={false}
               options={reportsListForFetch}
               value={selectedReports}

@@ -5,6 +5,10 @@ import { updateHeaderNotificationOnNewNotificationAction } from '../common/Heade
 import { store } from '../redux/store';
 import { USER_MANAGEMENT_REDUX_CONSTANTS } from '../screens/Users/redux/UserManagementReduxConstants';
 import { getAllUserPrivileges } from '../screens/Users/redux/UserManagementAction';
+import {
+  fetchReportNotification,
+  getApplicationReportsListData,
+} from '../screens/Application/redux/ApplicationAction';
 
 const SOCKET_URI = process.env.REACT_APP_SOCKET_URL;
 const TYPE = 'user';
@@ -24,6 +28,10 @@ export const dispatchActionsOnSocketEvents = data => {
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.DUE_TASK:
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.REVIEW_DEBTOR:
       store.dispatch(updateHeaderNotificationOnNewNotificationAction(data?.data));
+      break;
+    case HEADER_NOTIFICATION_REDUX_CONSTANTS.REPORT_NOTIFICATION:
+      fetchReportNotification(data);
+      store.dispatch(getApplicationReportsListData(data?.debtorId));
       break;
     case USER_MANAGEMENT_REDUX_CONSTANTS.PRIVILEGES.UPDATE_USER_PRIVILEGE:
       store.dispatch(getAllUserPrivileges());
