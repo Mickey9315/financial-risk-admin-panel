@@ -45,13 +45,15 @@ const MyWorkTasks = () => {
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
   const isTaskUpdatable = useModulePrivileges('task').hasWriteAccess;
   const taskListData = useMemo(() => taskData?.taskList ?? {}, [taskData]);
-  const { total, pages, page, limit, headers, docs } = useMemo(() => taskListData ?? {}, [
-    taskListData,
-  ]);
+  const { total, pages, page, limit, headers, docs } = useMemo(
+    () => taskListData ?? {},
+    [taskListData]
+  );
 
-  const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(() => taskData ?? {}, [
-    taskData,
-  ]);
+  const { taskColumnNameList, taskDefaultColumnNameList } = useMemo(
+    () => taskData ?? {},
+    [taskData]
+  );
   const { assigneeList } = useMemo(() => taskData?.filterDropDownData ?? [], [taskData]);
 
   const { taskListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
@@ -159,7 +161,11 @@ const MyWorkTasks = () => {
 
   const onSelectTaskRecord = useCallback(
     id => {
-      history.push(`/my-work/edit/${id}`);
+      if (isTaskUpdatable) {
+        history.push(`/my-work/edit/${id}`);
+      } else {
+        history.push(`/my-work/view/${id}`);
+      }
     },
     [history]
   );
@@ -471,7 +477,6 @@ const MyWorkTasks = () => {
                   extraColumns={deleteTaskColumn}
                   refreshData={getTaskListOnRefresh}
                   recordSelected={onSelectTaskRecord}
-                  // onChangeRowSelection={data => setSelectedCheckBoxData(data)}
                 />
               </div>
               <Pagination
