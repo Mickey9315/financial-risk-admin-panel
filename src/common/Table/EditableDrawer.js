@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import { useDispatch } from 'react-redux';
-import moment from 'moment';
 import { changeApplicationStatus } from '../../screens/Application/redux/ApplicationAction';
 import Select from '../Select/Select';
 
@@ -39,7 +39,7 @@ const EditableDrawer = props => {
   const dispatch = useDispatch();
 
   const [selectedLimitType, setSelectedLimitType] = useState([]);
-  const [selectedExpiryDate, setSelectedExpiryDate] = useState(new Date());
+  const [selectedExpiryDate, setSelectedExpiryDate] = useState('');
   const isApprovedOrDeclined = useMemo(() => {
     const status = drawerData.find(data => data.label === 'Status');
     if (['Approved', 'Declined'].includes(status?.value)) return true;
@@ -80,7 +80,8 @@ const EditableDrawer = props => {
 
   useEffect(() => {
     setSelectedLimitType(LimitTypeOptions.find(limitType => limitType?.name === row?.value));
-    setSelectedExpiryDate(new Date(row?.value));
+
+    setSelectedExpiryDate(row?.value ? new Date(row?.value) : new Date());
   }, [row]);
 
   return (
@@ -100,11 +101,11 @@ const EditableDrawer = props => {
           <div>{row?.value || '-'}</div>
         ))}
       {editableField === 'EXPIRY_DATE' &&
-        (!isApprovedOrDeclined ? (
+        (isApprovedOrDeclined ? (
           <div className="editable-drawer-field">
             <div className="date-picker-container">
               <DatePicker
-                selected={selectedExpiryDate || new Date()}
+                selected={selectedExpiryDate ? new Date(selectedExpiryDate) : new Date()}
                 onChange={handleExpiryDateChange}
                 placeholderText="Select Expiry Date"
                 minDate={new Date()}
