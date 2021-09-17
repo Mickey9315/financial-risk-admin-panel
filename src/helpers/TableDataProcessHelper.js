@@ -16,7 +16,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
       if (currentData?.value) {
         return (
           <>
-            {currentData?._id ? (
+            {currentData?._id || currentData?.id ? (
               <div
                 className="link"
                 onClick={e => {
