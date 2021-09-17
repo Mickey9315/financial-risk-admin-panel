@@ -6,12 +6,8 @@ import { NumberCommaSeparator } from './NumberCommaSeparator';
 export const processTableDataByType = ({ header, row, actions }) => {
   const { type } = header;
   const currentData = row[`${header.name}`];
-  const {
-    handleDrawerState,
-    handleCheckBoxState,
-    handleViewDocument,
-    handleRedirectClick,
-  } = actions;
+  const { handleDrawerState, handleCheckBoxState, handleViewDocument, handleRedirectClick } =
+    actions;
 
   switch (type) {
     case 'date':
@@ -19,15 +15,21 @@ export const processTableDataByType = ({ header, row, actions }) => {
     case 'modal':
       if (currentData?.value) {
         return (
-          <div
-            className="link"
-            onClick={e => {
-              e.stopPropagation();
-              handleDrawerState(header, currentData, row);
-            }}
-          >
-            {currentData?.value}
-          </div>
+          <>
+            {currentData?._id ? (
+              <div
+                className="link"
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDrawerState(header, currentData, row);
+                }}
+              >
+                {currentData?.value}
+              </div>
+            ) : (
+              <div>{currentData?.value}</div>
+            )}
+          </>
         );
       }
       return '-';
