@@ -159,7 +159,7 @@ const MyWorkAddTask = () => {
                 {isTaskUpdatable && (
                   <Button
                     buttonType="primary"
-                    title={!taskDetails?.isCompleted ? `Is Complete` : 'Pending'}
+                    title={!taskDetails?.isCompleted ? `Mark As Complete` : 'Mark As Pending'}
                     onClick={onClickCompleteTask}
                     isLoading={myWorkCompleteTaskLoaderButtonAction}
                   />
