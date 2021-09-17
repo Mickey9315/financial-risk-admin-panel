@@ -3,7 +3,6 @@ import Tooltip from 'rc-tooltip';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import React, { useCallback, useMemo, useState } from 'react';
-import ReactSelect from 'react-select';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
 import Button from '../../../../common/Button/Button';
 import Modal from '../../../../common/Modal/Modal';
@@ -13,6 +12,7 @@ import {
   fetchSelectedReportsForApplication,
   getApplicationReportsListData,
 } from '../../redux/ApplicationAction';
+import Select from '../../../../common/Select/Select';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 import { downloadAll } from '../../../../helpers/DownloadHelper';
@@ -118,16 +118,13 @@ const ApplicationReportAccordion = props => {
             {partners?.length > 0 && (
               <>
                 <span>Stake Holder</span>
-                <ReactSelect
+                <Select
                   name="role"
-                  className="react-select-container"
-                  classNamePrefix="react-select"
                   placeholder={
                     partners?.length > 0 && partnersWithCompany?.length <= 0
                       ? '-'
                       : 'Select Stake Holder'
-                  }
-                  dropdownHandle={false}
+                  }                  dropdownHandle={false}
                   options={partnersWithCompany}
                   value={selectedStakeHolder}
                   onChange={handleOnStakeHolderSelect}
@@ -137,27 +134,23 @@ const ApplicationReportAccordion = props => {
             )}
             {reportsListForFetch?.length > 0 && (
               <>
-                {' '}
-                <span>Report</span>
-                <ReactSelect
-                  name="role"
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                  placeholder={
-                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
-                    reportsListForFetch?.length <= 0
-                      ? '-'
-                      : 'Select Reports'
-                  }
-                  dropdownHandle={false}
-                  options={reportsListForFetch}
-                  value={selectedReports}
-                  onChange={handleOnReportSelect}
-                  isDisabled={
-                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
-                    reportsListForFetch?.length <= 0
-                  }
-                />
+              {' '}
+              <span>Report</span>
+            <Select
+              name="role"
+              placeholder={
+                (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                reportsListForFetch?.length <= 0
+                  ? '-'
+                  : 'Select Reports'
+              }              dropdownHandle={false}
+              options={reportsListForFetch}
+              value={selectedReports}
+              onChange={handleOnReportSelect}
+              isDisabled={
+                (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                reportsListForFetch?.length <= 0
+              }            />
               </>
             )}
             {partners?.length > 0 && partnersWithCompany?.length <= 0 && (

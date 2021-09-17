@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -15,6 +14,7 @@ import {
   changeApplicationColumnNameList,
   getApplicationColumnNameList,
   getApplicationFilter,
+  getApplicationFilterDropDownDataBySearch,
   getApplicationsListByFilter,
   resetApplicationListPaginationData,
   saveApplicationColumnNameList,
@@ -34,6 +34,7 @@ import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFilter
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import CustomSelect from '../../../common/CustomSelect/CustomSelect';
+import Select from '../../../common/Select/Select';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
@@ -485,6 +486,15 @@ const ApplicationList = () => {
     }
   }, [docs?.length, appliedFilters]);
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'application',
+    };
+    dispatch(getApplicationFilterDropDownDataBySearch(options));
+  }, []);
+
   useEffect(() => {
     dispatch(resetApplicationListPaginationData(page, pages, total, limit));
   }, []);
@@ -567,9 +577,8 @@ const ApplicationList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Entity Type</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select Entity Type"
                   name="role"
                   options={dropdownData?.entityType}
@@ -580,27 +589,27 @@ const ApplicationList = () => {
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Client Name</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select Client"
                   name="role"
                   options={dropdownData?.clients}
                   value={clientIdSelectedValue}
                   onChange={handleClientIdFilterChange}
+                  onInputChange={text => handleOnSelectSearchInputChange('clients', text)}
                   isSearchble
                 />
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Debtor Name</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select Debtor"
                   name="role"
                   options={dropdownData?.debtors}
                   value={debtorIdSelectedValue}
                   onChange={handleDebtorIdFilterChange}
+                  onInputChange={text => handleOnSelectSearchInputChange('debtors', text)}
                   isSearchble
                 />
               </div>

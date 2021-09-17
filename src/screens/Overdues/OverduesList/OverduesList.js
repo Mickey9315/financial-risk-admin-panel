@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useHistory } from 'react-router-dom';
@@ -10,7 +9,12 @@ import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Modal from '../../../common/Modal/Modal';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
-import { getEntityDetails, getOverdueList, resetOverdueListData } from '../redux/OverduesAction';
+import {
+  getEntityDetails,
+  getOverdueFilterDropDownDataBySearch,
+  getOverdueList,
+  resetOverdueListData,
+} from '../redux/OverduesAction';
 import { errorNotification } from '../../../common/Toast';
 import Input from '../../../common/Input/Input';
 import Loader from '../../../common/Loader/Loader';
@@ -18,6 +22,7 @@ import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
@@ -122,10 +127,9 @@ const OverduesList = () => {
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(
-    () => overdueListWithPageData,
-    [overdueListWithPageData]
-  );
+  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
+    overdueListWithPageData,
+  ]);
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -338,6 +342,15 @@ const OverduesList = () => {
     [onAddNewSubmission, onCloseNewSubmissionModal]
   );
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'overdue',
+    };
+    dispatch(getOverdueFilterDropDownDataBySearch(options));
+  }, []);
+
   return (
     <>
       {!overdueListPageLoaderAction ? (
@@ -394,14 +407,13 @@ const OverduesList = () => {
               buttons={newSubmissionButtons}
               hideModal={onCloseNewSubmissionModal}
             >
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder="Select Client"
                 name="role"
                 options={entityList?.clientId}
                 value={newSubmissionDetails?.clientId}
                 onChange={e => setNewSubmissionDetails({ ...newSubmissionDetails, clientId: e })}
+                onInputChange={text => handleOnSelectSearchInputChange('clients', text)}
                 isSearchble
               />
               <div className="date-picker-container month-year-picker">
@@ -427,9 +439,8 @@ const OverduesList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Debtor Name</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select Debtor"
                   name="role"
                   options={entityList?.debtorId}

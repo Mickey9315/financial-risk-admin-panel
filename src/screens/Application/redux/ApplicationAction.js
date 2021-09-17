@@ -14,6 +14,7 @@ import {
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import ImportApplicationApiServices from '../services/ImportApplicationApiServices';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -192,35 +193,11 @@ export const getApplicationDetail = applicationId => {
 export const getApplicationCompanyDropDownData = () => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationCompanyStepApiServices.getApplicationCompanyStepDropdownData();
+      const response = await ApplicationCompanyStepApiServices.getApplicationCompanyStepDropdownData();
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_DROP_DOWN_DATA,
           data: response?.data?.data,
-        });
-      }
-    } catch (e) {
-      displayErrors(e);
-    }
-  };
-};
-
-export const getApplicationDebtorDropDownData = searchString => {
-  return async dispatch => {
-    try {
-      const options = {
-        searchString,
-        page: 1,
-        limit: 250,
-      };
-      const response = await ApplicationApiServices.searchDebtorDropdownData(options);
-
-      if (response?.data?.status === 'SUCCESS') {
-        dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_DEBTOR_DROP_DOWN_DATA,
-          data: response?.data?.data,
-          name: 'debtors',
         });
       }
     } catch (e) {
@@ -240,8 +217,8 @@ export const getApplicationCompanyDataFromDebtor = (id, params) => {
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.COMPANY
-            .APPLICATION_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS,
+          type:
+            APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS,
           isDebtor: true,
         });
         return response.data;
@@ -258,16 +235,17 @@ export const getApplicationCompanyDataFromABNOrACN = params => {
   return async dispatch => {
     // eslint-disable-next-line no-useless-catch
     try {
-      const response =
-        await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN({
+      const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN(
+        {
           ...params,
           step: 'company',
-        });
+        }
+      );
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.COMPANY
-            .APPLICATION_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS,
+          type:
+            APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS,
         });
         return response.data;
       }
@@ -347,8 +325,9 @@ export const resetEntityTableData = () => {
 export const changeEditApplicationFieldValue = (name, value) => {
   return dispatch => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
-        .APPLICATION_COMPANY_EDIT_APPLICATION_CHANGE_FIELD_VALUE,
+      type:
+        APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+          .APPLICATION_COMPANY_EDIT_APPLICATION_CHANGE_FIELD_VALUE,
       name,
       value,
     });
@@ -356,15 +335,16 @@ export const changeEditApplicationFieldValue = (name, value) => {
 };
 
 export const resetEditApplicationFieldValue = {
-  type: APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
-    .APPLICATION_COMPANY_EDIT_APPLICATION_RESET_DATA,
+  type:
+    APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION.APPLICATION_COMPANY_EDIT_APPLICATION_RESET_DATA,
 };
 
 export const updateEditApplicationData = (stepName, data) => {
   return dispatch => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
-        .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA,
+      type:
+        APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+          .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_ALL_DATA,
       stepName,
       data,
     });
@@ -374,8 +354,9 @@ export const updateEditApplicationData = (stepName, data) => {
 export const updateEditApplicationField = (stepName, name, value) => {
   return dispatch => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
-        .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_FIELD,
+      type:
+        APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
+          .APPLICATION_COMPANY_EDIT_APPLICATION_UPDATE_FIELD,
       stepName,
       name,
       value,
@@ -444,8 +425,9 @@ export const removePersonDetail = index => {
 export const wipeOutIndividualPerson = (personID, index) => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationCompanyStepApiServices.deleteApplicationPersonIndividualData(personID);
+      const response = await ApplicationCompanyStepApiServices.deleteApplicationPersonIndividualData(
+        personID
+      );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Data deleted successfully');
         dispatch({
@@ -464,11 +446,12 @@ export const wipeOutIndividualPerson = (personID, index) => {
 export const getApplicationPersonDataFromABNOrACN = params => {
   return async () => {
     try {
-      const response =
-        await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN({
+      const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromABNorACN(
+        {
           ...params,
           step: 'person',
-        });
+        }
+      );
 
       if (response?.data?.status === 'SUCCESS') {
         return response?.data?.data;
@@ -655,14 +638,14 @@ export const getApplicationTaskList = id => {
         requestedEntityId: id,
         columnFor: 'application-task',
       };
-      const response =
-        await ApplicationViewApiServices.applicationTaskApiServices.getApplicationTaskListData(
-          data
-        );
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getApplicationTaskListData(
+        data
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-            .APPLICATION_TASK_LIST_ACTION,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .APPLICATION_TASK_LIST_ACTION,
           data: response?.data?.data,
         });
       }
@@ -675,12 +658,12 @@ export const getApplicationTaskList = id => {
 export const getAssigneeDropDownData = () => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationTaskApiServices.getAssigneeDropDownData();
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getAssigneeDropDownData();
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-            .APPLICATION_TASK_ASSIGNEE_DROP_DOWN_DATA_ACTION,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .APPLICATION_TASK_ASSIGNEE_DROP_DOWN_DATA_ACTION,
           data: response?.data?.data,
         });
       }
@@ -693,12 +676,14 @@ export const getAssigneeDropDownData = () => {
 export const getApplicationTaskEntityDropDownData = params => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(params);
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(
+        params
+      );
       if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-            .APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response?.data?.data,
         });
       }
@@ -711,12 +696,14 @@ export const getApplicationTaskEntityDropDownData = params => {
 export const getApplicationTaskDefaultEntityDropDownData = params => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(params);
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getEntityDropDownData(
+        params
+      );
       if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-            .DEFAULT_APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .DEFAULT_APPLICATION_TASK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response?.data?.data,
         });
       }
@@ -729,8 +716,9 @@ export const getApplicationTaskDefaultEntityDropDownData = params => {
 export const updateApplicationTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-        .APPLICATION_UPDATE_TASK_FIELD_STATUS,
+      type:
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+          .APPLICATION_UPDATE_TASK_FIELD_STATUS,
       name,
       value,
     });
@@ -759,14 +747,14 @@ export const saveApplicationTaskData = (data, backToTask) => {
 export const getApplicationTaskDetail = id => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationTaskApiServices.getApplicationTaskDetailById(
-          id
-        );
+      const response = await ApplicationViewApiServices.applicationTaskApiServices.getApplicationTaskDetailById(
+        id
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
-            .GET_APPLICATION_TASK_DETAILS_ACTION,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_TASK
+              .GET_APPLICATION_TASK_DETAILS_ACTION,
           data: response?.data?.data,
         });
       }
@@ -821,14 +809,14 @@ export const deleteApplicationTaskAction = (taskId, cb) => {
 export const getApplicationModuleList = id => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationModulesApiServices.getApplicationModulesListData(
-          id
-        );
+      const response = await ApplicationViewApiServices.applicationModulesApiServices.getApplicationModulesListData(
+        id
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
-            .APPLICATION_MODULE_LIST_DATA,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+              .APPLICATION_MODULE_LIST_DATA,
           data: response?.data?.data,
         });
       }
@@ -844,14 +832,14 @@ export const getViewApplicationDocumentTypeList = () => {
       const params = {
         listFor: 'application',
       };
-      const response =
-        await ApplicationViewApiServices.applicationModulesApiServices.getDocumentTypeListData(
-          params
-        );
+      const response = await ApplicationViewApiServices.applicationModulesApiServices.getDocumentTypeListData(
+        params
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
-            .VIEW_APPLICATION_DOCUMENT_TYPE_LIST_DATA,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+              .VIEW_APPLICATION_DOCUMENT_TYPE_LIST_DATA,
           data: response?.data?.data,
         });
       }
@@ -865,12 +853,15 @@ export const viewApplicationUploadDocument = (data, config) => {
   return async dispatch => {
     try {
       startGeneralLoaderOnRequest('viewDocumentUploadDocumentButtonLoaderAction');
-      const response =
-        await ApplicationViewApiServices.applicationModulesApiServices.uploadDocument(data, config);
+      const response = await ApplicationViewApiServices.applicationModulesApiServices.uploadDocument(
+        data,
+        config
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
-            .VIEW_APPLICATION_UPLOAD_DOCUMENT_DATA,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_MODULES
+              .VIEW_APPLICATION_UPLOAD_DOCUMENT_DATA,
           data: response?.data?.data,
         });
         successNotification(response?.data?.message || 'Document uploaded successfully.');
@@ -886,10 +877,9 @@ export const viewApplicationUploadDocument = (data, config) => {
 export const deleteViewApplicationDocumentAction = async (appDocId, cb) => {
   try {
     startGeneralLoaderOnRequest('viewDocumentDeleteDocumentButtonLoaderAction');
-    const response =
-      await ApplicationViewApiServices.applicationModulesApiServices.deleteApplicationDocument(
-        appDocId
-      );
+    const response = await ApplicationViewApiServices.applicationModulesApiServices.deleteApplicationDocument(
+      appDocId
+    );
     if (response?.data?.status === 'SUCCESS') {
       successNotification(response?.data?.message || 'Document deleted successfully.');
       stopGeneralLoaderOnSuccessOrFail('viewDocumentDeleteDocumentButtonLoaderAction');
@@ -911,15 +901,15 @@ export const getApplicationNotesList = id => {
       const data = {
         noteFor: 'application',
       };
-      const response =
-        await ApplicationViewApiServices.applicationNotesApiServices.getApplicationNotesListData(
-          id,
-          data
-        );
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.getApplicationNotesListData(
+        id,
+        data
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_NOTES
-            .APPLICATION_NOTES_LIST_DATA,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_NOTES
+              .APPLICATION_NOTES_LIST_DATA,
           data: response?.data?.data,
         });
       }
@@ -941,8 +931,9 @@ export const addApplicationNoteAction = (entityId, noteData) => {
         description,
       };
 
-      const response =
-        await ApplicationViewApiServices.applicationNotesApiServices.addApplicationNote(data);
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.addApplicationNote(
+        data
+      );
 
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getApplicationNotesList(entityId));
@@ -968,11 +959,10 @@ export const updateApplicationNoteAction = (entityId, noteData) => {
         description,
       };
 
-      const response =
-        await ApplicationViewApiServices.applicationNotesApiServices.updateApplicationNote(
-          noteId,
-          data
-        );
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.updateApplicationNote(
+        noteId,
+        data
+      );
 
       if (response?.data?.status === 'SUCCESS') {
         await dispatch(getApplicationNotesList(entityId));
@@ -990,8 +980,9 @@ export const deleteApplicationNoteAction = (noteId, cb) => {
   return async () => {
     try {
       startGeneralLoaderOnRequest('viewApplicationDeleteNoteButtonLoaderAction');
-      const response =
-        await ApplicationViewApiServices.applicationNotesApiServices.deleteApplicationNote(noteId);
+      const response = await ApplicationViewApiServices.applicationNotesApiServices.deleteApplicationNote(
+        noteId
+      );
 
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Note deleted successfully.');
@@ -1052,12 +1043,14 @@ export const downloadDecisionLetterForApplication = async (id, param) => {
 export const getApplicationReportsListData = id => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationReportsApiServices.getDebtorsReportListData(id);
+      const response = await ApplicationViewApiServices.applicationReportsApiServices.getDebtorsReportListData(
+        id
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
-            .APPLICATION_REPORTS_LIST_DATA,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
+              .APPLICATION_REPORTS_LIST_DATA,
           data: response?.data?.data,
         });
       }
@@ -1070,14 +1063,14 @@ export const getApplicationReportsListData = id => {
 export const getApplicationReportsListForFetch = id => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationReportsApiServices.getApplicationReportListDataForFetch(
-          id
-        );
+      const response = await ApplicationViewApiServices.applicationReportsApiServices.getApplicationReportListDataForFetch(
+        id
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
-            .FETCH_APPLICATION_REPORTS_LIST_DATA_FOR_FETCH,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
+              .FETCH_APPLICATION_REPORTS_LIST_DATA_FOR_FETCH,
           data: response?.data?.data,
         });
       }
@@ -1091,10 +1084,9 @@ export const fetchSelectedReportsForApplication = data => {
   return async () => {
     try {
       startGeneralLoaderOnRequest('viewApplicationFetchReportButtonLoaderAction');
-      const response =
-        await ApplicationViewApiServices.applicationReportsApiServices.fetchSelectedReportsForApplication(
-          data
-        );
+      const response = await ApplicationViewApiServices.applicationReportsApiServices.fetchSelectedReportsForApplication(
+        data
+      );
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Reports fetched successfully');
         stopGeneralLoaderOnSuccessOrFail('viewApplicationFetchReportButtonLoaderAction');
@@ -1108,10 +1100,9 @@ export const fetchSelectedReportsForApplication = data => {
 
 export const downloadSelectedReportForApplication = async id => {
   try {
-    const response =
-      await ApplicationViewApiServices.applicationReportsApiServices.downloadReportsForApplication(
-        id
-      );
+    const response = await ApplicationViewApiServices.applicationReportsApiServices.downloadReportsForApplication(
+      id
+    );
     if (response) {
       return response;
     }
@@ -1303,14 +1294,14 @@ export const deleteDumpFromBackend = dumpId => {
 export const getApplicationAlertsListData = id => {
   return async dispatch => {
     try {
-      const response =
-        await ApplicationViewApiServices.applicationAlertsApiServices.getApplicationAlertsListData(
-          id
-        );
+      const response = await ApplicationViewApiServices.applicationAlertsApiServices.getApplicationAlertsListData(
+        id
+      );
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
-            .FETCH_APPLICATION_ALERTS_LIST,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+              .FETCH_APPLICATION_ALERTS_LIST,
           data: response?.data?.data,
         });
       }
@@ -1324,15 +1315,15 @@ export const getApplicationAlertsDetail = id => {
   return async dispatch => {
     try {
       startGeneralLoaderOnRequest('applicationAlertDetailsLoader');
-      const response =
-        await ApplicationViewApiServices.applicationAlertsApiServices.getApplicationAlertsDetails(
-          id
-        );
+      const response = await ApplicationViewApiServices.applicationAlertsApiServices.getApplicationAlertsDetails(
+        id
+      );
       if (response?.data?.status === 'SUCCESS') {
         stopGeneralLoaderOnSuccessOrFail('applicationAlertDetailsLoader');
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
-            .GET_APPLICATION_ALERTS_DETAILS,
+          type:
+            APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+              .GET_APPLICATION_ALERTS_DETAILS,
           data: response?.data?.data,
         });
       }
@@ -1346,8 +1337,44 @@ export const getApplicationAlertsDetail = id => {
 export const clearApplicationAlertDetails = () => {
   return dispatch => {
     dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
-        .CLEAR_APPLICATION_ALERTS_DETAILS,
+      type:
+        APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_ALERTS
+          .CLEAR_APPLICATION_ALERTS_DETAILS,
     });
+  };
+};
+
+export const getApplicationFilterDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_BY_SEARCH,
+          data: response?.data?.data,
+          name: options.entityType,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+export const getApplicationCompanyStepDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch(options);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_SEARCH_DROP_DOWN_DATA,
+          data: response?.data?.data,
+          name: options.entityType,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
   };
 };

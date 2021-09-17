@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import _ from 'lodash';
 import moment from 'moment';
@@ -30,6 +29,7 @@ import { errorNotification } from '../../../common/Toast';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const priorityListData = [
@@ -520,9 +520,8 @@ const MyWorkTasks = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Priority</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select"
                   name="role"
                   options={priorityListData}
@@ -570,9 +569,8 @@ const MyWorkTasks = () => {
               <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
                 <div className="filter-modal-row">
                   <div className="form-title">Assignee</div>
-                  <ReactSelect
-                    className="filter-select react-select-container"
-                    classNamePrefix="react-select"
+                  <Select
+                    className="filter-select"
                     placeholder="Select"
                     name="role"
                     options={assigneeList}

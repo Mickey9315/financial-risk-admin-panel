@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import ReactSelect from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import Tooltip from 'rc-tooltip';
 import Input from '../../../../../common/Input/Input';
@@ -14,6 +13,7 @@ import {
   uploadDocument,
 } from '../../../redux/ApplicationAction';
 import { errorNotification } from '../../../../../common/Toast';
+import Select from '../../../../../common/Select/Select';
 
 const initialApplicationDocumentState = {
   description: '',
@@ -50,10 +50,9 @@ const ApplicationDocumentStep = () => {
   const { documentTypeList, uploadDocumentApplicationData } = useSelector(
     ({ application }) => application.editApplication?.documents
   );
-  const documentData = useMemo(
-    () => uploadDocumentApplicationData,
-    [uploadDocumentApplicationData]
-  );
+  const documentData = useMemo(() => uploadDocumentApplicationData, [
+    uploadDocumentApplicationData,
+  ]);
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');
@@ -69,10 +68,9 @@ const ApplicationDocumentStep = () => {
     initialApplicationDocumentState
   );
 
-  const { documentType, description, isPublic } = useMemo(
-    () => selectedApplicationDocuments,
-    [selectedApplicationDocuments]
-  );
+  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
+    selectedApplicationDocuments,
+  ]);
 
   const {
     GenerateApplicationDocumentUploadButtonLoaderAction,
@@ -378,13 +376,12 @@ const ApplicationDocumentStep = () => {
         >
           <div className="document-upload-popup-container">
             <span>Document Type</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder="Select"
               options={documentTypeOptions}
               value={documentType}
               onChange={handleDocumentChange}
+              isSearchable
             />
             <span>Please upload your documents here</span>
             <div>

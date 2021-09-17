@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
@@ -27,6 +26,7 @@ import {
   uploadDocument,
 } from '../redux/DebtorsAction';
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import Select from '../../../common/Select/Select';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
@@ -555,9 +555,7 @@ const DebtorsDocumentsTab = () => {
         >
           <div className="document-upload-popup-container">
             <span>Document Type</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder="Select"
               options={documentTypeOptions}
               value={documentType}

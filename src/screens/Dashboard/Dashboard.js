@@ -1,7 +1,7 @@
-import ReactSelect from 'react-select';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
+import ReactSelect from 'react-select';
 import {
   getDashboardDetails,
   getDashboardUserList,

@@ -67,6 +67,17 @@ export const claims = (state = initialClaims, action) => {
       };
     }
 
+    case CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_ENTITY_LIST_BY_SEARCH: {
+      const list = action.data.map(record => ({
+        label: record.name,
+        value: record._id,
+      }));
+      return {
+        ...state,
+        claimsEntityList: list,
+      };
+    }
+
     case CLAIMS_REDUX_CONSTANTS.ADD_CLAIMS_VALUE_CHANGE: {
       return {
         ...state,

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import ReactSelect from 'react-select';
+import Select from '../Select/Select';
 
 const noPerPage = [
   { label: '5', value: 5 },
@@ -20,10 +20,11 @@ const Pagination = props => {
   const [recordLimit, setRecordLimit] = useState([{ label: '15', value: 15 }]);
 
   const fromRecordCount = useMemo(() => (page - 1) * limit + 1, [page, limit, total]);
-  const toRecordCount = useMemo(
-    () => (total < page * limit ? total : page * limit),
-    [page, limit, total]
-  );
+  const toRecordCount = useMemo(() => (total < page * limit ? total : page * limit), [
+    page,
+    limit,
+    total,
+  ]);
 
   const onNextClick = () => (page < pages ? pageActionClick(page + 1) : null);
   const onPrevClick = () => (page > 1 ? pageActionClick(page - 1) : null);
@@ -52,13 +53,12 @@ const Pagination = props => {
     <div className={paginationClass}>
       <div className="records-per-page-container">
         <span className="font-field mr-10">Show</span>
-        <ReactSelect
+        <Select
           options={noPerPage}
           onChange={onChangeLimit}
           value={recordLimit}
           placeholder="Select"
-          className="no-per-page-select react-select-container"
-          classNamePrefix="react-select"
+          className="no-per-page-select"
           dropdownPosition="auto"
           isSearchable={false}
           menuPlacement="auto"

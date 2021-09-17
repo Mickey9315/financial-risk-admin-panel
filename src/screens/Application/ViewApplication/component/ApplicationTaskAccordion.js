@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import Tooltip from 'rc-tooltip';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
@@ -25,6 +24,7 @@ import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstan
 import DropdownMenu from '../../../../common/DropdownMenu/DropdownMenu';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
+import Select from '../../../../common/Select/Select';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -352,9 +352,7 @@ const ApplicationTaskAccordion = props => {
           component = (
             <>
               <span>{input.label}</span>
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}

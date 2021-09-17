@@ -3,6 +3,7 @@ import {
   APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
   APPLICATION_REDUX_CONSTANTS,
 } from './ApplicationReduxConstants';
+import { FIELD_NAME_BY_ENTITY } from '../../../constants/EntitySearchConstants';
 
 const initialApplicationList = {
   applicationList: {
@@ -255,12 +256,13 @@ export const application = (state = initialApplicationList, action) => {
         companyData,
       };
     }
-    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_DEBTOR_DROP_DOWN_DATA: {
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_SEARCH_DROP_DOWN_DATA: {
+      const name = FIELD_NAME_BY_ENTITY[action?.name];
       const dropdownData = {
         ...state?.companyData?.dropdownData,
         [action?.name]: action?.data?.map(entity => ({
           label: entity.name,
-          name: action?.name,
+          name,
           value: entity._id,
         })),
       };
@@ -923,6 +925,25 @@ export const application = (state = initialApplicationList, action) => {
           },
         },
       };
+
+    case APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_BY_SEARCH: {
+      const dropdownData = {
+        ...state?.applicationFilterList?.dropdownData,
+        [action?.name]: action?.data?.map(entity => ({
+          label: entity.name,
+          name: action?.name,
+          value: entity._id,
+        })),
+      };
+
+      return {
+        ...state,
+        applicationFilterList: {
+          ...state?.applicationFilterList,
+          dropdownData,
+        },
+      };
+    }
 
     default:
       return state;

@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import ReactSelect from 'react-select';
 import Tooltip from 'rc-tooltip';
 import {
   deleteViewApplicationDocumentAction,
@@ -17,6 +16,7 @@ import FileUpload from '../../../../common/Header/component/FileUpload';
 import Input from '../../../../common/Input/Input';
 import Switch from '../../../../common/Switch/Switch';
 import { errorNotification } from '../../../../common/Toast';
+import Select from '../../../../common/Select/Select';
 import { downloadAll } from '../../../../helpers/DownloadHelper';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
@@ -87,10 +87,9 @@ const ApplicationDocumentsAccordion = props => {
     [setUploadModel]
   );
 
-  const { documentType, description, isPublic } = useMemo(
-    () => selectedApplicationDocuments,
-    [selectedApplicationDocuments]
-  );
+  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
+    selectedApplicationDocuments,
+  ]);
 
   const documentTypeOptions = useMemo(() => {
     const finalData = documentTypeList || [];
@@ -389,9 +388,7 @@ const ApplicationDocumentsAccordion = props => {
         >
           <div className="document-upload-popup-container">
             <span>Document Type</span>
-            <ReactSelect
-              className="react-select-container"
-              classNamePrefix="react-select"
+            <Select
               placeholder="Select"
               options={documentTypeOptions}
               value={documentType}

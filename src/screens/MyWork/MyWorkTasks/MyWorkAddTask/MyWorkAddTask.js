@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../../../common/Button/Button';
@@ -8,12 +7,15 @@ import Input from '../../../../common/Input/Input';
 import {
   getAssigneeDropDownData,
   getEntityDropDownData,
+  getTaskDropDownDataBySearch,
   removeAddTaskEntityId,
   saveTaskData,
   updateAddTaskStateFields,
 } from '../../redux/MyWorkAction';
 import { errorNotification } from '../../../../common/Toast';
 import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
+import Select from '../../../../common/Select/Select';
+import { SEARCH_ENTITIES } from '../../../../constants/EntitySearchConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -42,73 +44,13 @@ const MyWorkAddTask = () => {
 
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
-  const { entityType, ...addTaskState } = useMemo(() => taskData?.addTask ?? {}, [taskData]);
+  const addTaskState = useMemo(() => taskData?.addTask ?? {}, [taskData]);
   const { assigneeList, entityList } = useMemo(() => taskData?.myWorkDropDownData ?? {}, [
     taskData,
   ]);
 
   const { myWorkSaveNewTaskLoaderButtonAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
-  );
-
-  const INPUTS = useMemo(
-    () => [
-      {
-        label: 'Description',
-        placeholder: 'Enter description',
-        type: 'text',
-        name: 'description',
-        data: [],
-      },
-      {
-        label: 'Assignee',
-        placeholder: 'Select Assignee',
-        type: 'select',
-        name: 'assigneeId',
-        data: assigneeList,
-      },
-      {
-        label: 'Priority',
-        placeholder: 'Select Priority',
-        type: 'select',
-        name: 'priority',
-        data: priorityData,
-      },
-      {
-        label: 'Due Date',
-        placeholder: 'Select Date',
-        type: 'date',
-        name: 'dueDate',
-        data: [],
-      },
-      {
-        label: 'Task For',
-        placeholder: 'Select Task For',
-        type: 'select',
-        name: 'entityType',
-        data: entityTypeData,
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Entity Labels',
-        placeholder: 'Select Entity',
-        type: 'select',
-        name: 'entityId',
-        data: entityList,
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Comments',
-        placeholder: 'Enter comments',
-        type: 'textarea',
-        name: 'comments',
-      },
-    ],
-    [assigneeList, entityList, addTaskState, priorityData, entityTypeData]
   );
 
   const updateAddTaskState = useCallback((name, value) => {
@@ -141,9 +83,13 @@ const MyWorkAddTask = () => {
   );
 
   useEffect(() => {
-    if (entityType?.[0]?.value ?? entityType?.value)
-      dispatch(getEntityDropDownData({ entityName: entityType?.[0]?.value ?? entityType?.value }));
-  }, [entityType]);
+    if (addTaskState?.entityType?.[0]?.value ?? addTaskState?.entityType?.value)
+      dispatch(
+        getEntityDropDownData({
+          entityName: addTaskState?.entityType?.[0]?.value ?? addTaskState?.entityType?.value,
+        })
+      );
+  }, [addTaskState?.entityType]);
 
   useEffect(() => {
     dispatch(
@@ -169,7 +115,7 @@ const MyWorkAddTask = () => {
       assigneeType: addTaskState?.assigneeId?.type,
       taskFrom: 'task',
       priority: addTaskState?.priority?.value ?? undefined,
-      entityType: entityType?.value ?? undefined,
+      entityType: addTaskState?.entityType?.value ?? undefined,
       entityId: addTaskState?.entityId?.value ?? undefined,
       comments: addTaskState?.comments?.trim() ?? undefined,
     };
@@ -178,13 +124,13 @@ const MyWorkAddTask = () => {
       errorNotification('Please add description');
     } else if (
       addTaskState?.assigneeId?.type === 'client-user' &&
-      entityType?.value === 'insurer'
+      addTaskState?.entityType?.value === 'insurer'
     ) {
       errorNotification('Cannot assign task on insurer to client');
     } else if (
       addTaskState?.assigneeId?.type === 'client-user' &&
       addTaskState?.assigneeId?.value !== addTaskState?.entityId?.value &&
-      entityType?.value === 'client'
+      addTaskState?.entityType?.value === 'client'
     ) {
       errorNotification("Entity label and Assignee don't relate");
     } else {
@@ -195,6 +141,93 @@ const MyWorkAddTask = () => {
       }
     }
   }, [addTaskState]);
+
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: SEARCH_ENTITIES[searchEntity],
+      requestFrom: 'task',
+    };
+    dispatch(getTaskDropDownDataBySearch(options));
+  }, []);
+
+  const INPUTS = useMemo(
+    () => [
+      {
+        label: 'Description',
+        placeholder: 'Enter description',
+        type: 'text',
+        name: 'description',
+        data: [],
+      },
+      {
+        label: 'Assignee',
+        placeholder: 'Select Assignee',
+        type: 'select',
+        name: 'assigneeId',
+        data: assigneeList,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        label: 'Priority',
+        placeholder: 'Select Priority',
+        type: 'select',
+        name: 'priority',
+        data: priorityData,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        label: 'Due Date',
+        placeholder: 'Select Date',
+        type: 'date',
+        name: 'dueDate',
+        data: [],
+      },
+      {
+        label: 'Task For',
+        placeholder: 'Select Task For',
+        type: 'select',
+        name: 'entityType',
+        data: entityTypeData,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Entity Labels',
+        placeholder: 'Select Entity',
+        type: 'select',
+        name: 'entityId',
+        data: entityList,
+        onSelectChange: handleSelectInputChange,
+        onInputChange: text =>
+          handleOnSelectSearchInputChange(
+            addTaskState?.entityType?.[0]?.value ?? addTaskState?.entityType?.value,
+            text
+          ),
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Comments',
+        placeholder: 'Enter comments',
+        type: 'textarea',
+        name: 'comments',
+      },
+    ],
+    [
+      assigneeList,
+      entityList,
+      addTaskState,
+      priorityData,
+      entityTypeData,
+      handleSelectInputChange,
+      handleOnSelectSearchInputChange,
+      addTaskState?.entityType,
+    ]
+  );
 
   const getComponentFromType = useCallback(
     input => {
@@ -221,15 +254,14 @@ const MyWorkAddTask = () => {
           component = (
             <>
               <span>{input.label}</span>
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder={input.placeholder}
                 name={input.name}
-                options={input.data}
-                searchable={false}
+                options={input.data ?? []}
+                isSearchable
                 value={selectedValues}
-                onChange={handleSelectInputChange}
+                onChange={input?.onSelectChange}
+                onInputChange={input?.onInputChange}
               />
             </>
           );

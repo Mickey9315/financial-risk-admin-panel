@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import ReactSelect from 'react-select';
 import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
 import {
@@ -23,6 +22,7 @@ import Loader from '../../../common/Loader/Loader';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Button from '../../../common/Button/Button';
 import Modal from '../../../common/Modal/Modal';
+import Select from '../../../common/Select/Select';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import { downloadAll } from '../../../helpers/DownloadHelper';
@@ -280,10 +280,8 @@ const DebtorsReportsTab = () => {
             {partners?.length > 0 && (
               <>
                 <span>Stake Holder</span>
-                <ReactSelect
+                <Select
                   name="role"
-                  className="react-select-container"
-                  classNamePrefix="react-select"
                   placeholder="Select Stake Holder"
                   dropdownHandle={false}
                   options={partnersWithCompany}
@@ -293,10 +291,8 @@ const DebtorsReportsTab = () => {
               </>
             )}
             <span>Report</span>
-            <ReactSelect
+            <Select
               name="role"
-              className="react-select-container"
-              classNamePrefix="react-select"
               placeholder="Select Reports"
               dropdownHandle={false}
               options={reportsListForFetch}

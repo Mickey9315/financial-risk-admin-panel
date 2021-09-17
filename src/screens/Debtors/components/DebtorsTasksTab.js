@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import _ from 'lodash';
 import BigInput from '../../../common/BigInput/BigInput';
@@ -29,6 +28,9 @@ import {
   updateTaskData,
 } from '../redux/DebtorsAction';
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import Select from '../../../common/Select/Select';
+import { SEARCH_ENTITIES } from '../../../constants/EntitySearchConstants';
+import { getClientTaskDropDownDataBySearch } from '../../Clients/redux/ClientAction';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
@@ -58,7 +60,7 @@ const DebtorTaskTab = () => {
     dropDownData,
   } = useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
 
-  const { entityType, ...addTaskState } = useSelector(
+  const addTaskState = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
   );
 
@@ -189,66 +191,6 @@ const DebtorTaskTab = () => {
     dispatch(changeDebtorTaskColumnNameListStatus(data));
   }, []);
 
-  const INPUTS = useMemo(
-    () => [
-      {
-        label: 'Description',
-        placeholder: 'Enter description',
-        type: 'text',
-        name: 'description',
-        data: [],
-      },
-      {
-        label: 'Assignee',
-        placeholder: 'Select assignee',
-        type: 'select',
-        name: 'assigneeId',
-        data: assigneeList,
-      },
-      {
-        label: 'Priority',
-        placeholder: 'Select priority',
-        type: 'select',
-        name: 'priority',
-        data: priorityData,
-      },
-      {
-        label: 'Due Date',
-        placeholder: 'Select date',
-        type: 'date',
-        name: 'dueDate',
-        data: [],
-      },
-      {
-        label: 'Task For',
-        placeholder: 'Select task for',
-        type: 'select',
-        name: 'entityType',
-        data: entityTypeData,
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Entity Labels',
-        placeholder: 'Select entity',
-        type: 'select',
-        name: 'entityId',
-        data: entityList,
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Comments',
-        placeholder: 'Enter comments',
-        type: 'textarea',
-        name: 'comments',
-      },
-    ],
-    [assigneeList, entityList, addTaskState, priorityData, entityTypeData]
-  );
-
   const [editTaskModal, setEditTaskModal] = useState(false);
 
   const toggleEditTaskModal = useCallback(
@@ -317,7 +259,7 @@ const DebtorTaskTab = () => {
           return addTaskState?.priority || [];
         }
         case 'entityType': {
-          return entityType || [];
+          return addTaskState?.entityType || [];
         }
         case 'entityId': {
           return addTaskState?.entityId || [];
@@ -347,7 +289,7 @@ const DebtorTaskTab = () => {
       assigneeId: addTaskState?.assigneeId?.value,
       taskFrom: 'debtor-task',
       priority: addTaskState?.priority?.value ?? undefined,
-      entityType: entityType?.value ?? undefined,
+      entityType: addTaskState?.entityType?.value ?? undefined,
       entityId: addTaskState?.entityId?.value ?? undefined,
       comments: addTaskState?.comments?.trim() ?? undefined,
     };
@@ -366,6 +308,87 @@ const DebtorTaskTab = () => {
       }
     }
   }, [addTaskState, toggleAddTaskModal, callBackOnTaskAdd, callBackOnTaskEdit]);
+
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: SEARCH_ENTITIES[searchEntity],
+      requestFrom: 'debtor',
+    };
+    dispatch(getClientTaskDropDownDataBySearch(options));
+  }, []);
+
+  const INPUTS = useMemo(
+    () => [
+      {
+        label: 'Description',
+        placeholder: 'Enter description',
+        type: 'text',
+        name: 'description',
+        data: [],
+      },
+      {
+        label: 'Assignee',
+        placeholder: 'Select assignee',
+        type: 'select',
+        name: 'assigneeId',
+        data: assigneeList,
+      },
+      {
+        label: 'Priority',
+        placeholder: 'Select priority',
+        type: 'select',
+        name: 'priority',
+        data: priorityData,
+      },
+      {
+        label: 'Due Date',
+        placeholder: 'Select date',
+        type: 'date',
+        name: 'dueDate',
+        data: [],
+      },
+      {
+        label: 'Task For',
+        placeholder: 'Select task for',
+        type: 'select',
+        name: 'entityType',
+        data: entityTypeData,
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Entity Labels',
+        placeholder: 'Select entity',
+        type: 'select',
+        name: 'entityId',
+        data: entityList,
+        onInputChange: text =>
+          handleOnSelectSearchInputChange(
+            addTaskState?.entityType?.[0]?.value ?? addTaskState?.entityType?.value,
+            text
+          ),
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Comments',
+        placeholder: 'Enter comments',
+        type: 'textarea',
+        name: 'comments',
+      },
+    ],
+    [
+      assigneeList,
+      entityList,
+      addTaskState,
+      priorityData,
+      entityTypeData,
+      handleOnSelectSearchInputChange,
+    ]
+  );
 
   const getComponentFromType = useCallback(
     input => {
@@ -388,19 +411,17 @@ const DebtorTaskTab = () => {
           break;
 
         case 'select': {
-          const handleOnChange = handleSelectInputChange;
           component = (
             <>
               <span>{input.label}</span>
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
                 isSearchable
                 value={selectedValues}
-                onChange={handleOnChange}
+                onChange={handleSelectInputChange}
+                onInputChange={input?.onInputChange}
               />
             </>
           );

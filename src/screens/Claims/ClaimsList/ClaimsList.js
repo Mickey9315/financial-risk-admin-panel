@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import ReactSelect from 'react-select';
 import { useHistory } from 'react-router-dom';
 import IconButton from '../../../common/IconButton/IconButton';
 import Button from '../../../common/Button/Button';
@@ -11,6 +10,7 @@ import {
   changeClaimsColumnList,
   getClaimsColumnsList,
   getClaimsEntityList,
+  getClaimsFilterDropDownDataBySearch,
   getClaimsListByFilter,
   resetClaimListData,
   saveClaimsColumnsList,
@@ -24,6 +24,7 @@ import Modal from '../../../common/Modal/Modal';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
@@ -263,6 +264,15 @@ const ClaimsList = () => {
     };
   }, []);
 
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: searchEntity,
+      requestFrom: 'claim',
+    };
+    dispatch(getClaimsFilterDropDownDataBySearch(options));
+  }, []);
+
   useEffect(() => {
     dispatch(saveAppliedFilters('claimsListFilters', finalFilter));
   }, [finalFilter]);
@@ -335,15 +345,15 @@ const ClaimsList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Clients</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select"
                   name="role"
                   options={filterDropdownClient}
                   value={entityNameSelectedValue}
                   onChange={handleEntityNameFilterChange}
                   isSearchable
+                  onInputChange={text => handleOnSelectSearchInputChange('clients', text)}
                 />
               </div>
             </Modal>

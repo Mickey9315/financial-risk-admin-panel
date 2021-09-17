@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import _ from 'lodash';
@@ -30,6 +29,7 @@ import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import Select from '../../../common/Select/Select';
 
 const UserList = () => {
   const history = useHistory();
@@ -422,9 +422,8 @@ const UserList = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Role</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select"
                   name="role"
                   options={USER_ROLES}

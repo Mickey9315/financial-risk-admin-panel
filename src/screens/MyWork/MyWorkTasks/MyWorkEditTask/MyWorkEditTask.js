@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import ReactSelect from 'react-select';
 import DatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
@@ -11,13 +10,15 @@ import {
   getAssigneeDropDownData,
   getEntityDropDownData,
   getTaskById,
+  getTaskDropDownDataBySearch,
   removeUpdateTaskEntityId,
-  // removeUpdateTaskEntityId,
   updateEditTaskStateFields,
 } from '../../redux/MyWorkAction';
 import { errorNotification } from '../../../../common/Toast';
 import { MY_WORK_REDUX_CONSTANTS } from '../../redux/MyWorkReduxConstants';
 import Loader from '../../../../common/Loader/Loader';
+import Select from '../../../../common/Select/Select';
+import { SEARCH_ENTITIES } from '../../../../constants/EntitySearchConstants';
 
 const priorityData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -45,9 +46,7 @@ const MyWorkAddTask = () => {
     history.push('/my-work');
   }, []);
 
-  const { entityType, ...taskDetails } = useSelector(
-    ({ myWorkReducer }) => myWorkReducer?.task?.taskDetail ?? {}
-  );
+  const taskDetails = useSelector(({ myWorkReducer }) => myWorkReducer?.task?.taskDetail ?? {});
   const dropDownData = useSelector(
     ({ myWorkReducer }) => myWorkReducer?.task?.myWorkDropDownData ?? {}
   );
@@ -56,66 +55,6 @@ const MyWorkAddTask = () => {
 
   const { myWorkEditTaskLoaderButtonAction, myWorkViewTaskLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
-  );
-
-  const INPUTS = useMemo(
-    () => [
-      {
-        label: 'Description',
-        placeholder: 'Enter description',
-        type: 'text',
-        name: 'description',
-        data: [],
-      },
-      {
-        label: 'Assignee',
-        placeholder: 'Select assignee',
-        type: 'select',
-        name: 'assigneeId',
-        data: assigneeList,
-      },
-      {
-        label: 'Priority',
-        placeholder: 'Select priority',
-        type: 'select',
-        name: 'priority',
-        data: priorityData,
-      },
-      {
-        label: 'Due Date',
-        placeholder: 'Select date',
-        type: 'date',
-        name: 'dueDate',
-        data: [],
-      },
-      {
-        label: 'Task For',
-        placeholder: 'Select task for',
-        type: 'select',
-        name: 'entityType',
-        data: entityTypeData,
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Entity Labels',
-        placeholder: 'Select entity',
-        type: 'select',
-        name: 'entityId',
-        data: entityList,
-      },
-      {
-        type: 'blank',
-      },
-      {
-        label: 'Comments',
-        placeholder: 'Enter comment',
-        type: 'textarea',
-        name: 'comments',
-      },
-    ],
-    [assigneeList, entityList, taskDetails, priorityData, entityTypeData]
   );
 
   const updateEditTaskState = useCallback((name, value) => {
@@ -140,11 +79,6 @@ const MyWorkAddTask = () => {
     [updateEditTaskState]
   );
 
-  useEffect(() => {
-    if (entityType?.[0]?.value ?? entityType?.value)
-      dispatch(getEntityDropDownData({ entityName: entityType?.[0]?.value ?? entityType?.value }));
-  }, [entityType]);
-
   const handleDateChange = useCallback(
     (name, value) => {
       updateEditTaskState(name, value);
@@ -162,7 +96,7 @@ const MyWorkAddTask = () => {
           return taskDetails?.priority ?? [];
         }
         case 'entityType': {
-          return entityType ?? [];
+          return taskDetails?.entityType ?? [];
         }
         case 'entityId': {
           return taskDetails?.entityId ?? [];
@@ -171,7 +105,7 @@ const MyWorkAddTask = () => {
           return [];
       }
     },
-    [taskDetails, entityType]
+    [taskDetails, taskDetails?.entityType]
   );
 
   const onCloseEditTask = useCallback(() => {
@@ -189,7 +123,7 @@ const MyWorkAddTask = () => {
       assigneeType: taskDetails?.assigneeId?.type ?? taskDetails?.assigneeType,
       taskFrom: 'task',
       priority: taskDetails?.priority?.value ?? undefined,
-      entityType: entityType?.value ?? undefined,
+      entityType: taskDetails?.entityType?.value ?? undefined,
       entityId: taskDetails?.entityId?.value ?? undefined,
       comments: taskDetails?.comments?.trim() ?? undefined,
     };
@@ -204,6 +138,92 @@ const MyWorkAddTask = () => {
       }
     }
   }, [taskDetails, id, backToTaskList]);
+
+  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+    const options = {
+      searchString: text,
+      entityType: SEARCH_ENTITIES[searchEntity],
+      requestFrom: 'task',
+    };
+    dispatch(getTaskDropDownDataBySearch(options));
+  }, []);
+
+  const INPUTS = useMemo(
+    () => [
+      {
+        label: 'Description',
+        placeholder: 'Enter description',
+        type: 'text',
+        name: 'description',
+        data: [],
+      },
+      {
+        label: 'Assignee',
+        placeholder: 'Select assignee',
+        type: 'select',
+        name: 'assigneeId',
+        data: assigneeList,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        label: 'Priority',
+        placeholder: 'Select priority',
+        type: 'select',
+        name: 'priority',
+        data: priorityData,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        label: 'Due Date',
+        placeholder: 'Select date',
+        type: 'date',
+        name: 'dueDate',
+        data: [],
+      },
+      {
+        label: 'Task For',
+        placeholder: 'Select task for',
+        type: 'select',
+        name: 'entityType',
+        data: entityTypeData,
+        onSelectChange: handleSelectInputChange,
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Entity Labels',
+        placeholder: 'Select entity',
+        type: 'select',
+        name: 'entityId',
+        data: entityList,
+        onSelectChange: handleSelectInputChange,
+        onInputChange: text =>
+          handleOnSelectSearchInputChange(
+            taskDetails?.entityType?.[0]?.value ?? taskDetails?.entityType?.value,
+            text
+          ),
+      },
+      {
+        type: 'blank',
+      },
+      {
+        label: 'Comments',
+        placeholder: 'Enter comment',
+        type: 'textarea',
+        name: 'comments',
+      },
+    ],
+    [
+      assigneeList,
+      entityList,
+      taskDetails,
+      priorityData,
+      entityTypeData,
+      handleSelectInputChange,
+      handleOnSelectSearchInputChange,
+    ]
+  );
 
   const getComponentFromType = useCallback(
     input => {
@@ -232,15 +252,14 @@ const MyWorkAddTask = () => {
           component = (
             <>
               <span>{input.label}</span>
-              <ReactSelect
-                className="react-select-container"
-                classNamePrefix="react-select"
+              <Select
                 placeholder={input.placeholder}
                 name={input.name}
-                options={input.data}
-                isSearchale={false}
-                value={input.name === 'entityType' ? entityType : selectedValues || []}
-                onChange={handleSelectInputChange}
+                options={input.data ?? []}
+                isSearchable
+                value={selectedValues}
+                onChange={input?.onSelectChange}
+                onInputChange={input?.onInputChange}
               />
             </>
           );
@@ -306,7 +325,7 @@ const MyWorkAddTask = () => {
       INPUTS,
       taskDetails,
       handleTextInputChange,
-      entityType,
+      taskDetails?.entityType,
       handleSelectInputChange,
       handleDateChange,
       selectedValuesForDropDown,
@@ -314,6 +333,16 @@ const MyWorkAddTask = () => {
       assigneeList,
     ]
   );
+
+  useEffect(() => {
+    if (taskDetails?.entityType?.[0]?.value ?? taskDetails?.entityType?.value)
+      dispatch(
+        getEntityDropDownData({
+          entityName: taskDetails?.entityType?.[0]?.value ?? taskDetails?.entityType?.value,
+        })
+      );
+  }, [taskDetails?.entityType]);
+
   useEffect(() => {
     dispatch(getAssigneeDropDownData());
     dispatch(getTaskById(id));

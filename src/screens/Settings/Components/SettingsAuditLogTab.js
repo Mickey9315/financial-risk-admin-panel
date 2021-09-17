@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
-import ReactSelect from 'react-select';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
@@ -24,6 +23,7 @@ import { SETTING_REDUX_CONSTANTS } from '../redux/SettingReduxConstants';
 import { filterReducer, LIST_FILTER_REDUCER_ACTIONS } from '../../../common/ListFilters/Filter';
 import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
+import Select from '../../../common/Select/Select';
 
 const SettingsAuditLogTab = () => {
   const { auditLogList, auditLogColumnNameList, auditLogDefaultColumnNameList } = useSelector(
@@ -460,9 +460,8 @@ const SettingsAuditLogTab = () => {
             >
               <div className="filter-modal-row">
                 <div className="form-title">Module</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select module"
                   name="entityType"
                   value={entityTypeSelectedValue ?? []}
@@ -473,9 +472,8 @@ const SettingsAuditLogTab = () => {
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">User Name</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select user name"
                   name="userRefId"
                   options={userNameOptions}
@@ -486,9 +484,8 @@ const SettingsAuditLogTab = () => {
               </div>
               <div className="filter-modal-row">
                 <div className="form-title">Action Type</div>
-                <ReactSelect
-                  className="filter-select react-select-container"
-                  classNamePrefix="react-select"
+                <Select
+                  className="filter-select"
                   placeholder="Select action type"
                   name="actionType"
                   value={actionTypeSelectedValue}
