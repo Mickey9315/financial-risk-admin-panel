@@ -577,7 +577,6 @@ export const application = (state = initialApplicationList, action) => {
     }
     // comments
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_COMMENT_CHANGE: {
-      console.log('action.data',action.data)
       return {
         ...state,
         viewApplication: {

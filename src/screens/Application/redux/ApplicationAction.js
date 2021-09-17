@@ -1123,7 +1123,7 @@ export const downloadSelectedReportForApplication = async id => {
 
 export const fetchReportNotification = data => {
   if (data?.fetchStatus === 'SUCCESS') {
-    successNotification(data?.message ?? 'Your report download is completed successfully');
+    successNotification(data?.message ?? 'Your report download is completed successfully', 6000);
   } else {
     errorNotification(
       data?.message ?? 'Unfortunately your report download is failed, please try again!'
