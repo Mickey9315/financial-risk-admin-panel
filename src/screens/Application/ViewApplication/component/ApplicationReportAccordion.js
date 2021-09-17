@@ -81,7 +81,7 @@ const ApplicationReportAccordion = props => {
         isLoading: viewApplicationFetchReportButtonLoaderAction,
         isDisabled:
           (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
-          reportList?.docs?.length <= 0,
+          reportsListForFetch?.length <= 0,
       },
     ],
     [
@@ -135,7 +135,7 @@ const ApplicationReportAccordion = props => {
                 />
               </>
             )}
-            {reportList?.docs?.length > 0 && (
+            {reportsListForFetch?.length > 0 && (
               <>
                 {' '}
                 <span>Report</span>
@@ -145,7 +145,7 @@ const ApplicationReportAccordion = props => {
                   classNamePrefix="react-select"
                   placeholder={
                     (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
-                    reportList?.docs?.length <= 0
+                    reportsListForFetch?.length <= 0
                       ? '-'
                       : 'Select Reports'
                   }
@@ -155,7 +155,7 @@ const ApplicationReportAccordion = props => {
                   onChange={handleOnReportSelect}
                   isDisabled={
                     (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
-                    reportList?.docs?.length <= 0
+                    reportsListForFetch?.length <= 0
                   }
                 />
               </>
@@ -169,7 +169,7 @@ const ApplicationReportAccordion = props => {
               </>
             )}
           </div>
-          {reportList?.docs?.length <= 0 && (
+          {reportsListForFetch?.length <= 0 && (
             <div className="ui-state-error w-100 text-center">
               Applicant is individual so report cannot be fetched.
             </div>
