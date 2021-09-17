@@ -5,11 +5,13 @@ import moment from 'moment';
 import Button from '../../../common/Button/Button';
 import { getTaskById, markTaskAsComplete } from '../redux/MyWorkAction';
 import Loader from '../../../common/Loader/Loader';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 
 const MyWorkAddTask = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { id } = useParams();
+  const isTaskUpdatable = useModulePrivileges('task').hasWriteAccess;
   const backToTaskList = useCallback(() => {
     history.push('/my-work');
   }, []);
@@ -154,12 +156,14 @@ const MyWorkAddTask = () => {
               </div>
               <div className="buttons-row">
                 <Button buttonType="primary-1" title="Close" onClick={() => backToTaskList()} />
-                <Button
-                  buttonType="primary"
-                  title={!taskDetails?.isCompleted ? `Complete` : 'Pending'}
-                  onClick={onClickCompleteTask}
-                  isLoading={myWorkCompleteTaskLoaderButtonAction}
-                />
+                {isTaskUpdatable && (
+                  <Button
+                    buttonType="primary"
+                    title={!taskDetails?.isCompleted ? `Is Complete` : 'Pending'}
+                    onClick={onClickCompleteTask}
+                    isLoading={myWorkCompleteTaskLoaderButtonAction}
+                  />
+                )}
               </div>
             </div>
             <div className="common-white-container my-work-view-task-container">
