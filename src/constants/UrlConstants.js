@@ -64,6 +64,7 @@ export const APPLICATION_URLS = {
   // View Application
   VIEW_APPLICATION: {
     CHANGE_APPLICATION_STATUS: `${BASE_URL}application/`,
+    DOWNLOAD_APPLICATION_DECISION_LETTER: `${BASE_URL}client/download/decision-letter/`,
     APPLICATION_TASK: {
       GET_TASK_LIST: `${BASE_URL}task/`,
       ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
@@ -268,6 +269,7 @@ export const DEBTORS_URLS = {
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}credit-report/column-name/`,
     DEBTOR_REPORTS_LIST_FOR_FETCH: `${BASE_URL}credit-report/list/`,
     FETCH_SELECTED_REPORTS_FOR_DEBTOR: `${BASE_URL}credit-report/generate/`,
+    DOWNLOAD_REPORTS_FOR_DEBTOR: `${BASE_URL}credit-report/download/`,
   },
   DEBTOR_OVERDUE: {
     GET_DEBTOR_OVERDUE_LIST: `${BASE_URL}overdue/`,

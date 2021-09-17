@@ -33,6 +33,8 @@ import ViewApplicationStatusComponent from './component/ViewApplicationStatusCom
 import ViewApplicationEditableRowComponent from './component/ViewApplicationEditableRowComponent';
 import ApplicationClientReferenceAccordion from './component/ApplicationClientReferenceAccordion';
 import ApplicationCommentAccordion from './component/ApplicationCommentAccordion';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -72,7 +74,8 @@ const ViewApplication = () => {
   const { viewApplicationPageLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
-
+  const isClientReadable = useModulePrivileges(SIDEBAR_NAMES.CLIENT).hasReadAccess;
+  const isDebtorReadable = useModulePrivileges(SIDEBAR_NAMES.DEBTOR).hasReadAccess;
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
@@ -200,15 +203,15 @@ const ViewApplication = () => {
       },
       {
         title: 'Client Name',
-        value: clientId?.[0],
+        value: isClientReadable ? clientId?.[0] : clientId?.[0]?.value,
         name: 'clientId',
-        type: 'link',
+        type: isClientReadable ? 'link' : 'text',
       },
       {
         title: 'Debtor Name',
-        value: debtorId?.[0],
+        value: isDebtorReadable ? debtorId?.[0] : debtorId?.[0]?.value,
         name: 'debtorId',
-        type: 'link',
+        type: isDebtorReadable ? 'link' : 'text',
       },
       {
         title: 'ABN/NZBN',
@@ -241,7 +244,18 @@ const ViewApplication = () => {
         type: 'text',
       },
     ],
-    [tradingName, entityType, entityName, abn, debtorId, clientId, creditLimit, applicationId]
+    [
+      tradingName,
+      entityType,
+      entityName,
+      abn,
+      debtorId,
+      clientId,
+      creditLimit,
+      applicationId,
+      isClientReadable,
+      isDebtorReadable,
+    ]
   );
 
   const applicationDetails = useMemo(() => {

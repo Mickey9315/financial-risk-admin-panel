@@ -79,7 +79,9 @@ const ApplicationReportAccordion = props => {
         buttonType: 'primary',
         onClick: OnClickFetchReportButton,
         isLoading: viewApplicationFetchReportButtonLoaderAction,
-        isDisabled: partners?.length > 0 && partnersWithCompany?.length <= 0,
+        isDisabled:
+          (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+          reportsListForFetch?.length <= 0,
       },
     ],
     [
@@ -120,7 +122,11 @@ const ApplicationReportAccordion = props => {
                   name="role"
                   className="react-select-container"
                   classNamePrefix="react-select"
-                  placeholder="Select Stake Holder"
+                  placeholder={
+                    partners?.length > 0 && partnersWithCompany?.length <= 0
+                      ? '-'
+                      : 'Select Stake Holder'
+                  }
                   dropdownHandle={false}
                   options={partnersWithCompany}
                   value={selectedStakeHolder}
@@ -129,18 +135,31 @@ const ApplicationReportAccordion = props => {
                 />
               </>
             )}
-            <span>Report</span>
-            <ReactSelect
-              name="role"
-              className="react-select-container"
-              classNamePrefix="react-select"
-              placeholder="Select Reports"
-              dropdownHandle={false}
-              options={reportsListForFetch}
-              value={selectedReports}
-              onChange={handleOnReportSelect}
-              isDisabled={partners?.length > 0 && partnersWithCompany?.length <= 0}
-            />
+            {reportsListForFetch?.length > 0 && (
+              <>
+                {' '}
+                <span>Report</span>
+                <ReactSelect
+                  name="role"
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder={
+                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                    reportsListForFetch?.length <= 0
+                      ? '-'
+                      : 'Select Reports'
+                  }
+                  dropdownHandle={false}
+                  options={reportsListForFetch}
+                  value={selectedReports}
+                  onChange={handleOnReportSelect}
+                  isDisabled={
+                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                    reportsListForFetch?.length <= 0
+                  }
+                />
+              </>
+            )}
             {partners?.length > 0 && partnersWithCompany?.length <= 0 && (
               <>
                 <span />
@@ -150,6 +169,11 @@ const ApplicationReportAccordion = props => {
               </>
             )}
           </div>
+          {reportsListForFetch?.length <= 0 && (
+            <div className="ui-state-error w-100 text-center">
+              Applicant is individual so report cannot be fetched.
+            </div>
+          )}
         </Modal>
       )}
       <AccordionItem

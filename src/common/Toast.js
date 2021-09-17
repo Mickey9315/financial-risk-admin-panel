@@ -11,8 +11,8 @@ export const ERROR_TOAST_COLOR = '#DD4B39';
 export const WARNING_TOAST_COLOR = '#F39C12';
 export const TOAST_TIMEOUT = 3000;
 
-export const successNotification = message => {
-  notify.show(message, TOAST_TYPE.success, TOAST_TIMEOUT, SUCCESS_TOAST_COLOR);
+export const successNotification = (message, timeOut = TOAST_TIMEOUT) => {
+  notify.show(message, TOAST_TYPE.success, timeOut, SUCCESS_TOAST_COLOR);
 };
 
 export const errorNotification = (message, timeOut = TOAST_TIMEOUT) => {

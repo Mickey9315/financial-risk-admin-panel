@@ -8,11 +8,12 @@ import { replaceHiddenCharacters } from '../../../helpers/ValidationHelper';
 import { errorNotification } from '../../../common/Toast';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import { setPassword } from './redux/SetPasswordAction';
+import { PASSWORD_REGEX } from '../../../constants/RegexConstants';
 
 function SetPassword() {
   const [makePassword, setMakePassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
+  const [isPasswordRegexMessage, setIsPasswordRegexMessage] = useState(false);
   const { setPasswordButtonLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
@@ -32,13 +33,18 @@ function SetPassword() {
 
   const onClickSetPassword = async () => {
     if (replaceHiddenCharacters(makePassword.toString()).trim().length === 0) {
+      setIsPasswordRegexMessage(false);
       errorNotification('Password is empty, please enter the password');
+    } else if (!PASSWORD_REGEX.test(makePassword)) {
+      setIsPasswordRegexMessage(true);
     } else if (replaceHiddenCharacters(confirmPassword.toString()).trim().length === 0) {
       errorNotification('Re-enter password is empty, please fill it.');
     } else if (makePassword !== confirmPassword) {
+      setIsPasswordRegexMessage(false);
       errorNotification('Password and Re-enter password does not match.');
     } else {
       try {
+        setIsPasswordRegexMessage(false);
         await setPassword(token, makePassword.toString().trim(), () => history.replace('/login'));
       } catch (e) {
         /**/
@@ -55,15 +61,23 @@ function SetPassword() {
   return (
     <AuthScreenContainer>
       <div className="login-field-name">Set Password</div>
-      <BigInput
-        prefix="lock_open"
-        prefixClass="login-input-icon"
-        type="password"
-        placeholder="Enter new password"
-        value={makePassword}
-        onChange={onChangePassword}
-        onKeyDown={onEnterKeyPress}
-      />
+      <div>
+        <BigInput
+          prefix="lock_open"
+          prefixClass="login-input-icon"
+          type="password"
+          placeholder="Enter new password"
+          value={makePassword}
+          onChange={onChangePassword}
+          onKeyDown={onEnterKeyPress}
+        />
+        {isPasswordRegexMessage && (
+          <div className="ui-state-error">
+            Your password should include 8 or more than 8 characters with at least one special
+            character, a number, one uppercase character and a lowercase character
+          </div>
+        )}
+      </div>
       <div className="login-field-name">Re Enter password</div>
       <BigInput
         prefix="lock_open"

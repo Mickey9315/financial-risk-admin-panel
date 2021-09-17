@@ -76,6 +76,12 @@ const ApplicationNotesAccordion = props => {
     viewApplicationDeleteNoteButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
+  const { applicationDetail } = useSelector(
+    ({ application }) => application?.viewApplication ?? {}
+  );
+
+  const { status } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
+
   // add task
   const [modifyNoteModal, setModifyNoteModal] = useState(false);
 
@@ -263,7 +269,7 @@ const ApplicationNotesAccordion = props => {
           }
           suffix="expand_more"
         >
-          {isNoteUpdatable && (
+          {isNoteUpdatable && !['APPROVED', 'DECLINED'].includes(status?.value) && (
             <Button
               buttonType="primary-1"
               title="Add Note"
