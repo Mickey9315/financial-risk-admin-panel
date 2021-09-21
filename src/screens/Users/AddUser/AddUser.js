@@ -297,7 +297,6 @@ const AddUser = () => {
   }, [selectedUser]);
 
   const onClickCloseButton = useCallback(() => {
-    console.log(id);
     if (id === 'new') {
       history.replace('/users');
     } else {
