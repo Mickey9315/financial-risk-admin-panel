@@ -276,6 +276,10 @@ const ViewReport = () => {
     dispatch(getReportsFilterDropDownDataBySearch(options));
   }, []);
 
+  const handleCustomSearch = text => handleOnSelectSearchInputChange('clientIds', text);
+
+  const onSearchChange = _.debounce(handleCustomSearch, 800);
+
   const getComponentFromType = useCallback(
     input => {
       console.log(input.name);
@@ -310,6 +314,7 @@ const ViewReport = () => {
               placeholder="Select Client"
               onChangeCustomSelect={handleClientSelectInputChange}
               value={getClientSelectedValues}
+              onSearchChange={onSearchChange}
             />
           );
           break;

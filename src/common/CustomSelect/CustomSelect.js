@@ -5,7 +5,15 @@ import Input from '../Input/Input';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 
 const CustomSelect = props => {
-  const { options, placeholder, className, onChangeCustomSelect, value, ...restProps } = props;
+  const {
+    options,
+    placeholder,
+    className,
+    onChangeCustomSelect,
+    onSearchChange,
+    value,
+    ...restProps
+  } = props;
   const selectClassName = `custom-select ${className}`;
   const customDropdownRef = useRef();
   const [isOpenCustomSelect, setIsOpenCustomSelect] = useState(false);
@@ -35,8 +43,9 @@ const CustomSelect = props => {
   const onSearchCustomSelect = useCallback(
     e => {
       setSearchedText(e?.target?.value);
+      onSearchChange(e?.target?.value);
     },
-    [isSearching]
+    [isSearching, onSearchChange]
   );
 
   useEffect(() => {
@@ -129,11 +138,13 @@ CustomSelect.propTypes = {
   onChangeCustomSelect: PropTypes.func,
   className: PropTypes.string,
   value: PropTypes.array.isRequired,
+  onSearchChange: PropTypes.string,
 };
 
 CustomSelect.defaultProps = {
   className: 'custom-select ',
   onChangeCustomSelect: () => {},
+  onSearchChange: () => {},
 };
 
 export default CustomSelect;
