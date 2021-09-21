@@ -126,9 +126,10 @@ const MyWorkTasks = () => {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
-        const endDate = moment(tempFilter?.endDate)
-          ?.set({ hour: 23, minute: 59, second: 59 })
-          .toDate();
+        const endDate = tempFilter?.endDate
+          ? moment(tempFilter?.endDate)?.set({ hour: 23, minute: 59, second: 59 }).toDate()
+          : undefined;
+
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,

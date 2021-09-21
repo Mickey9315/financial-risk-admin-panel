@@ -90,6 +90,9 @@ const ApplicationList = () => {
     'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION';
 
   const appliedFilters = useMemo(() => {
+    const endDate = tempFilter?.endDate
+      ? moment(tempFilter?.endDate)?.set({ hour: 23, minute: 59, second: 59 }).toDate()
+      : undefined;
     return {
       entityType:
         tempFilter?.entityType?.toString()?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
@@ -107,7 +110,7 @@ const ApplicationList = () => {
           ? tempFilter?.maxCreditLimit
           : undefined,
       startDate: tempFilter?.startDate || undefined,
-      endDate: tempFilter?.endDate || undefined,
+      endDate,
     };
   }, [{ ...tempFilter }]);
 
