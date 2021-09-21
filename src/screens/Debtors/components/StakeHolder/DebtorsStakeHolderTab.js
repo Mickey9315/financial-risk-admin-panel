@@ -224,15 +224,10 @@ const DebtorsStakeHolderTab = () => {
     ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDetails ?? {}
   );
 
-  const {
-    streetType,
-    australianStates,
-    companyEntityType,
-    countryList,
-    newZealandStates,
-  } = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDropDownData ?? {}
-  );
+  const { streetType, australianStates, companyEntityType, countryList, newZealandStates } =
+    useSelector(
+      ({ debtorsManagement }) => debtorsManagement?.stakeHolder?.stakeHolderDropDownData ?? {}
+    );
 
   const [addStakeHolderModal, setAddStakeHolderModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -445,7 +440,7 @@ const DebtorsStakeHolderTab = () => {
       },
       {
         label:
-          'Do you give your consent for us to check your credit history with external credit agencies?*',
+          'Do you give your consent for us to check your credit history with external credit agencies?',
         type: 'checkbox',
         name: 'allowToCheckCreditHistory',
         value: stakeHolder?.allowToCheckCreditHistory,
