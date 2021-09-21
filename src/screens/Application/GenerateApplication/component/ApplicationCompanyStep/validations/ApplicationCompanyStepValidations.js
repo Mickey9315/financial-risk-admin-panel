@@ -108,10 +108,11 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.postCode = 'Post code should be number';
   }
-  if (data?.phoneNumber && !NUMBER_REGEX.test(data?.phoneNumber?.toString()?.trim())) {
+  if (data?.contactNumber && !NUMBER_REGEX.test(data?.contactNumber?.toString()?.trim())) {
     validated = false;
-    errors.phoneNumber = 'Phone number should be number';
+    errors.contactNumber = 'Phone number should be number';
   }
+
   if (validated) {
     const {
       clientId,
@@ -124,20 +125,16 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       unitNumber,
       property,
       entityType,
-      phoneNumber,
+      contactNumber,
       entityName,
       acn,
       abn,
       tradingName,
-      outstandingAmount,
       debtorId,
       country,
       isActive,
       registrationNumber,
-      wipeOutDetails,
     } = data;
-
-    delete country?.name;
 
     const finalData = {
       stepper: 'company',
@@ -146,10 +143,8 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
       isActive: typeof isActive === 'string' ? isActive === 'Active' : isActive,
       entityName: entityName?.label,
       tradingName,
-      contactNumber: phoneNumber,
-      outstandingAmount,
+      contactNumber,
       entityType: entityType?.value,
-      wipeOutDetails,
       address: {
         property: property?.trim()?.length > 0 ? property : undefined,
         unitNumber: unitNumber?.trim()?.length > 0 ? unitNumber : undefined,
@@ -157,7 +152,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
         streetName: streetName?.trim()?.length > 0 ? streetName : undefined,
         streetType: streetType?.value?.trim()?.length > 0 ? streetType?.value : undefined,
         suburb: suburb?.trim()?.length > 0 ? suburb : undefined,
-        state: state.value ?? state,
+        state: state?.value ?? state,
         country: { name: country?.label, code: country?.value },
         postCode,
       },
@@ -169,7 +164,6 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     } else {
       finalData.registrationNumber = registrationNumber ?? '';
     }
-
     try {
       await dispatch(saveApplicationStepDataToBackend(finalData));
       validated = true;
