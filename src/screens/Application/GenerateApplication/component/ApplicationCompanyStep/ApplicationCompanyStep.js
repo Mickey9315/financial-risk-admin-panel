@@ -193,7 +193,6 @@ const ApplicationCompanyStep = () => {
           handleApplicationErrors(e?.response);
         }
       } else {
-        console.log(data);
         updateSingleCompanyState(data?.name, data);
       }
     },
