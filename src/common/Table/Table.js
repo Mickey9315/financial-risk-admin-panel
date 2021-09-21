@@ -608,11 +608,11 @@ function TableLinkDrawer(props) {
   const checkValue = row => {
     switch (row.type) {
       case 'dollar':
-        return row?.value ? `$ ${NumberCommaSeparator(row?.value)}` : '-';
+        return row?.value && row?.value !== 'N/A' ? `$ ${NumberCommaSeparator(row?.value)}` : '-';
       case 'percent':
-        return row?.value ? `${row?.value} %` : '-';
+        return row?.value && row?.value !== 'N/A' ? `${row?.value} %` : '-';
       case 'date':
-        return row?.value ? moment(row?.value)?.format('DD-MMM-YYYY') : '-';
+        return row?.value && row?.value !== 'N/A' ? moment(row?.value)?.format('DD-MMM-YYYY') : '-';
 
       case 'editableString':
         if (drawerState?.isEditableDrawer) {
