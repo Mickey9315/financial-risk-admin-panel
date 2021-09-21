@@ -67,12 +67,14 @@ const SettingsDocumentTypeTab = () => {
     settingDocumentListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => documentTypeListData ?? {}, [
-    documentTypeListData,
-  ]);
-  const { documentTitle, documentFor } = useMemo(() => documentTypeAddData ?? {}, [
-    documentTypeAddData,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => documentTypeListData ?? {},
+    [documentTypeListData]
+  );
+  const { documentTitle, documentFor } = useMemo(
+    () => documentTypeAddData ?? {},
+    [documentTypeAddData]
+  );
 
   const [docId, setDocId] = useState(null);
 
@@ -281,15 +283,15 @@ const SettingsDocumentTypeTab = () => {
   return (
     <>
       {!settingDocumentListLoader ? (
-        (() =>
-          docs?.length > 0 ? (
+        <>
+          <div className="settings-title-row">
+            <div className="title">Document Type List</div>
+            {isSettingsDocumentUpdatable && (
+              <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />
+            )}
+          </div>
+          {docs?.length > 0 ? (
             <>
-              <div className="settings-title-row">
-                <div className="title">Document Type List</div>
-                {isSettingsDocumentUpdatable && (
-                  <Button buttonType="success" title="Add" onClick={toggleAddDocModal} />
-                )}
-              </div>
               <div className="common-list-container">
                 <Table
                   align="left"
@@ -310,51 +312,52 @@ const SettingsDocumentTypeTab = () => {
                 pageActionClick={pageActionClick}
                 onSelectLimit={onSelectLimit}
               />
-
-              {(openAddDocModal || openEditDocModal) && (
-                <Modal
-                  header={openEditDocModal ? 'Edit Document Type' : 'Add Document Type'}
-                  buttons={openEditDocModal ? editDocButtons : addDocButtons}
-                  className="add-document-modal"
-                  hideModal={toggleAddDocModal}
-                >
-                  <div className="add-document-modal-body">
-                    <span>Document Type</span>
-                    <Input
-                      type="text"
-                      placeholder="Enter document type"
-                      value={documentTitle}
-                      onChange={handleDocumentTypeChange}
-                    />
-                    <span>Document For</span>
-                    <Select
-                      placeholder="Select"
-                      name="Document For"
-                      searchable={false}
-                      options={documentForOptions}
-                      value={documentFor}
-                      onChange={handleDocumentForChange}
-                    />
-                  </div>
-                </Modal>
-              )}
-              {showConfirmModal && (
-                <Modal
-                  header="Delete User"
-                  buttons={deleteDocumentButtons}
-                  hideModal={toggleConfirmationModal}
-                >
-                  <span className="confirmation-message">
-                    Are you sure you want to delete this document?
-                  </span>
-                </Modal>
-              )}
             </>
           ) : (
             <div className="no-record-found">No record found</div>
-          ))()
+          )}
+        </>
       ) : (
         <Loader />
+      )}
+
+      {(openAddDocModal || openEditDocModal) && (
+        <Modal
+          header={openEditDocModal ? 'Edit Document Type' : 'Add Document Type'}
+          buttons={openEditDocModal ? editDocButtons : addDocButtons}
+          className="add-document-modal"
+          hideModal={toggleAddDocModal}
+        >
+          <div className="add-document-modal-body">
+            <span>Document Type</span>
+            <Input
+              type="text"
+              placeholder="Enter document type"
+              value={documentTitle}
+              onChange={handleDocumentTypeChange}
+            />
+            <span>Document For</span>
+            <Select
+              placeholder="Select"
+              name="Document For"
+              searchable={false}
+              options={documentForOptions}
+              value={documentFor}
+              onChange={handleDocumentForChange}
+            />
+          </div>
+        </Modal>
+      )}
+      {showConfirmModal && (
+        <Modal
+          header="Delete User"
+          buttons={deleteDocumentButtons}
+          hideModal={toggleConfirmationModal}
+        >
+          <span className="confirmation-message">
+            Are you sure you want to delete this document?
+          </span>
+        </Modal>
       )}
     </>
   );
