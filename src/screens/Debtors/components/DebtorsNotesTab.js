@@ -148,7 +148,7 @@ const DebtorsNotesTab = () => {
 
   const checkIfEnterKeyPressed = e => {
     const searchKeyword = searchInputRef?.current?.value;
-    if (e?.target?.value?.trim()?.toString().length === 1) {
+    if (e?.target?.value?.trim()?.toString().length === 0) {
       getDebtorNotesList();
     } else if (e.key === 'Enter') {
       if (searchKeyword?.trim()?.toString()?.length !== 0) {
