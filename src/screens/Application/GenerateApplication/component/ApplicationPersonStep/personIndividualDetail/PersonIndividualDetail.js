@@ -899,7 +899,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
                 maxDate={new Date()}
                 popperProps={{ positionFixed: true }}
               />
-              <span className="material-icons-round">event_available</span>
+              <span className="material-icons-round">event</span>
             </div>
           );
           break;

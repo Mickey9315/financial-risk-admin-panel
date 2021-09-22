@@ -660,7 +660,7 @@ const ClientList = () => {
                     placeholderText="From Date"
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
@@ -675,7 +675,7 @@ const ClientList = () => {
                     placeholderText="To Date"
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               </div>
               <div className="filter-modal-row">
@@ -693,7 +693,7 @@ const ClientList = () => {
                     placeholderText="From Date"
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
@@ -708,7 +708,7 @@ const ClientList = () => {
                     placeholderText="To Date"
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               </div>
             </Modal>

@@ -554,7 +554,7 @@ const MyWorkTasks = () => {
                     onChange={handleStartDateChange}
                     placeholderText="From Date"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
@@ -567,7 +567,7 @@ const MyWorkTasks = () => {
                     onChange={handleEndDateChange}
                     placeholderText="To Date"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               </div>
               <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>

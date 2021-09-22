@@ -331,7 +331,7 @@ const ViewReport = () => {
                 scrollableYearDropdown
                 dateFormat="dd/MM/yyyy"
               />
-              <span className="material-icons-round">event_available</span>
+              <span className="material-icons-round">event</span>
             </div>
           ));
           break;
@@ -479,7 +479,7 @@ const ViewReport = () => {
                     placeholderText="Select Month"
                     dateFormat="MMM yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               )}
               {['limit-list', 'pending-application'].includes(paramReport) && (

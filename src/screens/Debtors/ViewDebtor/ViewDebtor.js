@@ -404,7 +404,7 @@ const ViewInsurer = () => {
                 popperProps={{ positionFixed: true }}
                 disabled={action === 'view'}
               />
-              {action !== 'view' && <span className="material-icons-round">event_available</span>}
+              {action !== 'view' && <span className="material-icons-round">event</span>}
             </div>
           );
           break;

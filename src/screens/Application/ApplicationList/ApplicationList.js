@@ -659,7 +659,7 @@ const ApplicationList = () => {
                     scrollableYearDropdown
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                <span className="material-icons-round">event</span>
                 </div>
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
@@ -672,7 +672,7 @@ const ApplicationList = () => {
                     scrollableYearDropdown
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               </div>
             </Modal>
