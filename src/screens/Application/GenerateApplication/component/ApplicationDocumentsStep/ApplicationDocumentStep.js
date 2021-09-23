@@ -50,9 +50,10 @@ const ApplicationDocumentStep = () => {
   const { documentTypeList, uploadDocumentApplicationData } = useSelector(
     ({ application }) => application.editApplication?.documents
   );
-  const documentData = useMemo(() => uploadDocumentApplicationData, [
-    uploadDocumentApplicationData,
-  ]);
+  const documentData = useMemo(
+    () => uploadDocumentApplicationData,
+    [uploadDocumentApplicationData]
+  );
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');
@@ -68,9 +69,10 @@ const ApplicationDocumentStep = () => {
     initialApplicationDocumentState
   );
 
-  const { documentType, description, isPublic } = useMemo(() => selectedApplicationDocuments, [
-    selectedApplicationDocuments,
-  ]);
+  const { documentType, description, isPublic } = useMemo(
+    () => selectedApplicationDocuments,
+    [selectedApplicationDocuments]
+  );
 
   const {
     GenerateApplicationDocumentUploadButtonLoaderAction,
@@ -86,7 +88,7 @@ const ApplicationDocumentStep = () => {
   );
 
   const documentTypeOptions = useMemo(() => {
-    const finalData = documentTypeList?.docs ?? [];
+    const finalData = documentTypeList ?? [];
     return finalData.map(e => ({
       name: 'documentType',
       label: e.documentTitle,
