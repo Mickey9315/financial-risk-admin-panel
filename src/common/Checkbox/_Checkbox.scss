@@ -28,10 +28,6 @@
   background-color: #fff;
 }
 
-.checkbox-container:hover input:disabled:checked ~ .checkmark {
-  background-color: $primary-color;
-}
-
 /* Create a custom checkbox */
 .checkmark {
   position: absolute;
@@ -51,7 +47,7 @@
 }
 
 /* When the checkbox is checked, add a blue background */
-.checkbox-container input:checked ~ .checkmark {
+.checkbox-container input:checked ~ .checkmark, .checkbox-container:hover input:disabled:checked ~ .checkmark {
   background-color: $primary-color;
 }
 
