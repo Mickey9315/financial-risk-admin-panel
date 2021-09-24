@@ -6,9 +6,11 @@ const ApplicationDocumentStepApiServices = {
     ApiService.getData(`${CLIENT_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`, { params }),
   getDocumentTypeListData: params =>
     ApiService.getData(APPLICATION_URLS.DOCUMENTS.GET_DOCUMENT_TYPE_LIST_URL, { params }),
-  uploadDocument: (data, config) =>
-    ApiService.postData(APPLICATION_URLS.DOCUMENTS.UPLOAD_DOCUMENT_URL, data, config),
-  deleteApplicationDocument: id =>
-    ApiService.deleteData(`${APPLICATION_URLS.DOCUMENTS.APPLICATION_DELETE_DOCUMENT}${id}`),
+  uploadDocument: (data, config, params) =>
+    ApiService.postData(APPLICATION_URLS.DOCUMENTS.UPLOAD_DOCUMENT_URL, data, { config, params }),
+  deleteApplicationDocument: (id, params) =>
+    ApiService.deleteData(`${APPLICATION_URLS.DOCUMENTS.APPLICATION_DELETE_DOCUMENT}${id}`, {
+      params,
+    }),
 };
 export default ApplicationDocumentStepApiServices;
