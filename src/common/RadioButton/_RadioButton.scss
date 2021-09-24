@@ -21,8 +21,17 @@ input[type='radio'] + label:before {
   border-radius: 50%;
 }
 
+input[type='radio']:disabled ~ .radio-button {
+  cursor: not-allowed;
+
+  &:hover:before {
+    border: 1px solid $border-color;
+    background-color: #e7e6e7;
+  }
+}
+
 /* appearance of checked radiobutton */
-input[type='radio']:checked + label:before {
+input[type='radio']:checked + .radio-button:before, input[type='radio']:checked:disabled + .radio-button:before {
   background-color: $primary-color;
   border-color: $primary-color;
 }
