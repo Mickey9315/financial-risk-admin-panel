@@ -6,6 +6,7 @@
   border-radius: 10px;
 
   .arrow {
+    margin-right: 5px;
     color: $placeholder-color;
   }
 }
@@ -22,7 +23,7 @@
 .step {
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 7px;
   padding: 15px;
   font: $title $font-medium;
   color: $placeholder-color;

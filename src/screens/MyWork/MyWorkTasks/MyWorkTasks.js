@@ -126,6 +126,10 @@ const MyWorkTasks = () => {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
+        const endDate = tempFilter?.endDate
+          ? moment(tempFilter?.endDate)?.set({ hour: 23, minute: 59, second: 59 }).toDate()
+          : undefined;
+
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
@@ -133,7 +137,7 @@ const MyWorkTasks = () => {
           isCompleted: tempFilter?.isCompleted || undefined,
           assigneeId: (tempFilter?.assigneeId?.length ?? -1) > 0 ? tempFilter?.assigneeId : userId,
           startDate: tempFilter?.startDate ?? undefined,
-          endDate: tempFilter?.endDate ?? undefined,
+          endDate,
           columnFor: 'task',
           ...params,
         };
@@ -550,7 +554,7 @@ const MyWorkTasks = () => {
                     onChange={handleStartDateChange}
                     placeholderText="From Date"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
@@ -563,7 +567,7 @@ const MyWorkTasks = () => {
                     onChange={handleEndDateChange}
                     placeholderText="To Date"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               </div>
               <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>

@@ -193,7 +193,6 @@ const ApplicationCompanyStep = () => {
           handleApplicationErrors(e?.response);
         }
       } else {
-        console.log(data);
         updateSingleCompanyState(data?.name, data);
       }
     },
@@ -621,7 +620,7 @@ const ApplicationCompanyStep = () => {
         label: 'Phone Number',
         placeholder: '1234567890',
         type: 'text',
-        name: 'phoneNumber',
+        name: 'contactNumber',
         data: [],
       },
     ],

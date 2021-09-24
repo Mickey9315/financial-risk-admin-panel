@@ -285,7 +285,7 @@ const MyWorkAddTask = () => {
                   minDate={new Date()}
                   popperProps={{ positionFixed: true }}
                 />
-                <span className="material-icons-round">event_available</span>
+                <span className="material-icons-round">event</span>
               </div>
             </>
           );

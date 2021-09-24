@@ -91,8 +91,9 @@ const ApplicationConfirmationStep = () => {
               title:
                 'Do you give your consent for us to check your credit history with external credit agencies?',
               value: person?.allowToCheckCreditHistory || false,
-              label: 'directorLastName',
+              label: 'consent',
               type: 'checkbox',
+              isDisabled: true,
             },
             {
               title: 'Identification Details',
@@ -443,7 +444,11 @@ const ApplicationConfirmationStep = () => {
         case 'checkbox':
           return (
             <>
-              <Checkbox className="grid-checkbox" title={detail.title} />
+              <Checkbox
+                className="grid-checkbox"
+                title={detail.title}
+                disabled={detail.isDisabled}
+              />
             </>
           );
         case 'main-title':

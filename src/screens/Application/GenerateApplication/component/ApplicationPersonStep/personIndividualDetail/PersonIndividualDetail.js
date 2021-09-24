@@ -65,13 +65,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
   );
   const partners = useSelector(({ application }) => application?.editApplication?.partners ?? []);
 
-  const {
-    streetType,
-    australianStates,
-    countryList,
-    newZealandStates,
-    companyEntityType,
-  } = useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
+  const { streetType, australianStates, countryList, newZealandStates, companyEntityType } =
+    useSelector(({ application }) => application?.companyData?.dropdownData ?? {});
 
   const [stateValue, setStateValue] = useState([]);
   const [isAusOrNew, setIsAusOrNew] = useState(false);
@@ -313,7 +308,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
       },
       {
         label:
-          'Do you give your consent for us to check your credit history with external credit agencies?*',
+          'Do you give your consent for us to check your credit history with external credit agencies?',
         type: 'checkbox',
         name: 'allowToCheckCreditHistory',
         value: allowToCheckCreditHistory ?? false,
@@ -904,7 +899,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
                 maxDate={new Date()}
                 popperProps={{ positionFixed: true }}
               />
-              <span className="material-icons-round">event_available</span>
+              <span className="material-icons-round">event</span>
             </div>
           );
           break;

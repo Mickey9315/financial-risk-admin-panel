@@ -93,15 +93,10 @@ const AddUser = () => {
   }, [id]);
 
   useEffect(() => {
-    if (
-      action === 'add' &&
-      selectedUser === null &&
-      allOrganisationList &&
-      allOrganisationList.length !== 0
-    ) {
+    if (action === 'add' && allOrganisationList && allOrganisationList.length !== 0) {
       dispatch(setNewUserInitialStates(allOrganisationList));
     }
-  }, [selectedUser, allOrganisationList]);
+  }, [allOrganisationList]);
 
   const backToUser = useCallback(() => {
     history.replace('/users');
@@ -301,6 +296,14 @@ const AddUser = () => {
     dispatch(resendVerificationMail(selectedUser?._id));
   }, [selectedUser]);
 
+  const onClickCloseButton = useCallback(() => {
+    if (id === 'new') {
+      history.replace('/users');
+    } else {
+      history.replace(`/users/user/view/${id}`);
+    }
+  }, [history, id]);
+
   return (
     <>
       {!viewUserPageLoaderAction ? (
@@ -344,11 +347,7 @@ const AddUser = () => {
                     </>
                   ) : (
                     <>
-                      <Button
-                        buttonType="primary-1"
-                        title="Close"
-                        onClick={() => history.replace(`/users/user/view/${id}`)}
-                      />
+                      <Button buttonType="primary-1" title="Close" onClick={onClickCloseButton} />
                       <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.USER}>
                         <Button
                           buttonType="primary"

@@ -23,7 +23,7 @@ export const SIDEBAR_URLS = [
   {
     label: 'My Work',
     title: 'My Work',
-    icon: 'event_available',
+    icon: 'event',
     url: '/my-work',
     name: SIDEBAR_NAMES.MY_WORK,
   },

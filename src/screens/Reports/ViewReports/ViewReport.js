@@ -57,10 +57,10 @@ const ViewReport = () => {
   }, [paramReport]);
 
   // filter
-  const currentFilter = useMemo(() => reportType.find(report => report.url === paramReport), [
-    reportType,
-    paramReport,
-  ]);
+  const currentFilter = useMemo(
+    () => reportType.find(report => report.url === paramReport),
+    [reportType, paramReport]
+  );
   const reportFilters = useSelector(({ reports }) => reports?.reportFilters ?? {});
   const reportEntityListData = useSelector(({ reports }) => reports?.reportEntityListData ?? []);
   const [reviewReportFilterDate, setReviewReportFilterDate] = useState(new Date().toISOString());
@@ -110,8 +110,8 @@ const ViewReport = () => {
         page: page ?? 1,
         limit: limit ?? 15,
         columnFor: paramReport ?? '',
-        ...initialParams,
         ...tempFilters,
+        ...initialParams,
       };
       if (currentFilter.filter === 'reviewReport') {
         params.date = reviewReportFilterDate || undefined;
@@ -126,7 +126,7 @@ const ViewReport = () => {
         /**/
       }
     },
-    [reportList, page, limit, tempFilters, currentFilter, reviewReportFilterDate, paramReport]
+    [page, limit, tempFilters, currentFilter, reviewReportFilterDate, paramReport]
   );
 
   const onClickCloseColumnSelection = useCallback(() => {
@@ -282,7 +282,6 @@ const ViewReport = () => {
 
   const getComponentFromType = useCallback(
     input => {
-      console.log(input.name);
       let component = null;
       switch (input.type) {
         case 'select': {
@@ -337,7 +336,7 @@ const ViewReport = () => {
                 scrollableYearDropdown
                 dateFormat="dd/MM/yyyy"
               />
-              <span className="material-icons-round">event_available</span>
+              <span className="material-icons-round">event</span>
             </div>
           ));
           break;
@@ -485,7 +484,7 @@ const ViewReport = () => {
                     placeholderText="Select Month"
                     dateFormat="MMM yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               )}
               {['limit-list', 'pending-application'].includes(paramReport) && (

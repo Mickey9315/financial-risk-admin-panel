@@ -130,7 +130,7 @@ const ViewApplicationEditableRowComponent = props => {
               dateFormat="dd/MM/yyyy"
             />
             {isAllowToUpdate && !isApprovedOrDeclined && (
-              <span className="material-icons-round">event_available</span>
+              <span className="material-icons-round">event</span>
             )}
           </div>
         ) : (

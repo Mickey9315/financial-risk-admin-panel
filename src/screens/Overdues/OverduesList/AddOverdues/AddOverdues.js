@@ -368,7 +368,7 @@ const AddOverdues = () => {
                   scrollableYearDropdown
                   onChange={e => handleDateInputChange(input?.name, e)}
                 />
-                <span className="material-icons-round">event_available</span>
+                <span className="material-icons-round">event</span>
               </div>
             );
           break;

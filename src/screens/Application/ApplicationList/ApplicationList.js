@@ -90,6 +90,9 @@ const ApplicationList = () => {
     'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION';
 
   const appliedFilters = useMemo(() => {
+    const endDate = tempFilter?.endDate
+      ? moment(tempFilter?.endDate)?.set({ hour: 23, minute: 59, second: 59 }).toDate()
+      : undefined;
     return {
       entityType:
         tempFilter?.entityType?.toString()?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
@@ -107,7 +110,7 @@ const ApplicationList = () => {
           ? tempFilter?.maxCreditLimit
           : undefined,
       startDate: tempFilter?.startDate || undefined,
-      endDate: tempFilter?.endDate || undefined,
+      endDate,
     };
   }, [{ ...tempFilter }]);
 
@@ -197,6 +200,7 @@ const ApplicationList = () => {
           ...appliedFilters,
           ...params,
         };
+        console.log({ data });
         try {
           await dispatch(getApplicationsListByFilter(data));
           dispatchFilter({
@@ -248,7 +252,7 @@ const ApplicationList = () => {
       value: defaultApplicationStatus,
     });
     await onClickApplyFilter();
-  }, [dispatchFilter]);
+  }, [dispatchFilter, onClickApplyFilter]);
 
   const filterModalButtons = useMemo(
     () => [
@@ -656,7 +660,7 @@ const ApplicationList = () => {
                     scrollableYearDropdown
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
@@ -669,7 +673,7 @@ const ApplicationList = () => {
                     scrollableYearDropdown
                     dateFormat="dd/MM/yyyy"
                   />
-                  <span className="material-icons-round">event_available</span>
+                  <span className="material-icons-round">event</span>
                 </div>
               </div>
             </Modal>
