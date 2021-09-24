@@ -560,7 +560,6 @@ export const getApplicationDocumentDataList = id => {
 };
 
 export const uploadDocument = (data, config) => {
-  console.log({ config });
   return async dispatch => {
     const params = {
       requestFrom: 'application',
