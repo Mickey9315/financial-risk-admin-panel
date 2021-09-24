@@ -200,6 +200,7 @@ const ApplicationList = () => {
           ...appliedFilters,
           ...params,
         };
+        console.log({ data });
         try {
           await dispatch(getApplicationsListByFilter(data));
           dispatchFilter({
@@ -251,7 +252,7 @@ const ApplicationList = () => {
       value: defaultApplicationStatus,
     });
     await onClickApplyFilter();
-  }, [dispatchFilter]);
+  }, [dispatchFilter, onClickApplyFilter]);
 
   const filterModalButtons = useMemo(
     () => [
@@ -659,7 +660,7 @@ const ApplicationList = () => {
                     scrollableYearDropdown
                     dateFormat="dd/MM/yyyy"
                   />
-                <span className="material-icons-round">event</span>
+                  <span className="material-icons-round">event</span>
                 </div>
                 <div className="date-picker-container filter-date-picker-container">
                   <DatePicker
