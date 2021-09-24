@@ -191,6 +191,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         preparedData.registrationNumber = registrationNumber;
       }
     } else if (type === 'individual' && validated) {
+      console.log('here');
       const {
         _id,
         title,
@@ -219,9 +220,9 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         _id,
         type,
         title: title?.value,
-        firstName: firstName.toString().trim(),
-        middleName: middleName.toString().trim(),
-        lastName: lastName.toString().trim(),
+        firstName: firstName?.toString()?.trim(),
+        middleName: middleName?.toString()?.trim(),
+        lastName: lastName?.toString()?.trim(),
         dateOfBirth,
         driverLicenceNumber,
         phoneNumber,
