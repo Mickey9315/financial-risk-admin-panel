@@ -10,16 +10,26 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  cursor: pointer;
 }
 
 /* Hide the browser's default checkbox */
 .checkbox-container input {
   position: absolute;
   opacity: 0;
-  cursor: pointer;
   height: 0;
   width: 0;
+}
+
+.checkbox-container input:disabled ~ .checkmark {
+  cursor: not-allowed;
+}
+
+.checkbox-container:hover input:disabled ~ .checkmark {
+  background-color: #fff;
+}
+
+.checkbox-container:hover input:disabled:checked ~ .checkmark {
+  background-color: $primary-color;
 }
 
 /* Create a custom checkbox */
@@ -32,15 +42,12 @@
   background-color: #fff;
   border: 1px solid $border-color;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 /* On mouse-over, add a grey background color */
 .checkbox-container:hover input ~ .checkmark {
   background-color: $background-color;
-}
-//TODO Monika
-input[type='checkbox' i]:disabled.checkbox-container:hover input ~ .checkmark {
-  background-color: white !important;
 }
 
 /* When the checkbox is checked, add a blue background */
