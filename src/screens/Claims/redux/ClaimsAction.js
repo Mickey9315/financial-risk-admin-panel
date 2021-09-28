@@ -254,7 +254,10 @@ export const downloadDocumentFromServer = async id => {
 export const getClaimsFilterDropDownDataBySearch = options => {
   return async dispatch => {
     try {
-      const response = await DashboardApiService.getEntitiesBySearch(options);
+      const response = await DashboardApiService.getEntitiesBySearch({
+        ...options,
+        isFromRisk: true,
+      });
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({

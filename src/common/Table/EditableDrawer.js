@@ -79,7 +79,7 @@ const EditableDrawer = props => {
   );
 
   useEffect(() => {
-    setSelectedLimitType(LimitTypeOptions.find(limitType => limitType?.name === row?.value));
+    setSelectedLimitType(LimitTypeOptions.find(limitType => limitType?.value === row?.value));
 
     setSelectedExpiryDate(row?.value ? new Date(row?.value) : new Date());
   }, [row]);

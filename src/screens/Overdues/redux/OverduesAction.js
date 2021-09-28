@@ -190,7 +190,10 @@ export const resetOverdueListData = (page, pages, total, limit) => {
 export const getOverdueFilterDropDownDataBySearch = options => {
   return async dispatch => {
     try {
-      const response = await DashboardApiService.getEntitiesBySearch(options);
+      const response = await DashboardApiService.getEntitiesBySearch({
+        ...options,
+        isFromRisk: true,
+      });
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({

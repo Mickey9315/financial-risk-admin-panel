@@ -1483,7 +1483,10 @@ export const downloadClientCreditLimitDecisionLetter = id => {
 export const getClientTaskDropDownDataBySearch = options => {
   return async dispatch => {
     try {
-      const response = await DashboardApiService.getEntitiesBySearch(options);
+      const response = await DashboardApiService.getEntitiesBySearch({
+        ...options,
+        isFromRisk: true,
+      });
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({

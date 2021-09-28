@@ -372,7 +372,10 @@ export const clearNotificationData = () => {
 export const getTaskDropDownDataBySearch = options => {
   return async dispatch => {
     try {
-      const response = await DashboardApiService.getEntitiesBySearch(options);
+      const response = await DashboardApiService.getEntitiesBySearch({
+        ...options,
+        isFromRisk: true,
+      });
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
