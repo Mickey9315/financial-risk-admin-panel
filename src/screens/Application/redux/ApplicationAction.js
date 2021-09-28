@@ -1364,7 +1364,7 @@ export const getApplicationFilterDropDownDataBySearch = options => {
     try {
       const response = await DashboardApiService.getEntitiesBySearch({
         ...options,
-        isFromRisk: true,
+        isForRisk: true,
       });
 
       if (response?.data?.status === 'SUCCESS') {
@@ -1384,7 +1384,7 @@ export const getApplicationCompanyStepDropDownDataBySearch = options => {
     try {
       const response = await DashboardApiService.getEntitiesBySearch({
         ...options,
-        isFromRisk: true,
+        isForRisk: true,
       });
 
       if (response?.data?.status === 'SUCCESS') {
