@@ -124,7 +124,8 @@ const ApplicationReportAccordion = props => {
                     partners?.length > 0 && partnersWithCompany?.length <= 0
                       ? '-'
                       : 'Select Stake Holder'
-                  }                  dropdownHandle={false}
+                  }
+                  dropdownHandle={false}
                   options={partnersWithCompany}
                   value={selectedStakeHolder}
                   onChange={handleOnStakeHolderSelect}
@@ -134,23 +135,25 @@ const ApplicationReportAccordion = props => {
             )}
             {reportsListForFetch?.length > 0 && (
               <>
-              {' '}
-              <span>Report</span>
-            <Select
-              name="role"
-              placeholder={
-                (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
-                reportsListForFetch?.length <= 0
-                  ? '-'
-                  : 'Select Reports'
-              }              dropdownHandle={false}
-              options={reportsListForFetch}
-              value={selectedReports}
-              onChange={handleOnReportSelect}
-              isDisabled={
-                (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
-                reportsListForFetch?.length <= 0
-              }            />
+                {' '}
+                <span>Report</span>
+                <Select
+                  name="role"
+                  placeholder={
+                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                    reportsListForFetch?.length <= 0
+                      ? '-'
+                      : 'Select Reports'
+                  }
+                  dropdownHandle={false}
+                  options={reportsListForFetch}
+                  value={selectedReports}
+                  onChange={handleOnReportSelect}
+                  isDisabled={
+                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                    reportsListForFetch?.length <= 0
+                  }
+                />
               </>
             )}
             {partners?.length > 0 && partnersWithCompany?.length <= 0 && (

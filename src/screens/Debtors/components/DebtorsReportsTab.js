@@ -45,10 +45,9 @@ const DebtorsReportsTab = () => {
     viewDebtorFetchReportButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
-    () => reportsList ?? {},
-    [reportsList]
-  );
+  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(() => reportsList ?? {}, [
+    reportsList,
+  ]);
 
   const getDebtorReportsList = useCallback(
     (params = {}, cb) => {
@@ -237,9 +236,18 @@ const DebtorsReportsTab = () => {
         buttonType: 'primary',
         onClick: OnClickFetchReportButton,
         isLoading: viewDebtorFetchReportButtonLoaderAction,
+        isDisabled:
+          (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+          reportsListForFetch?.length <= 0,
       },
     ],
-    [toggleFetchReportsModal, OnClickFetchReportButton, viewDebtorFetchReportButtonLoaderAction]
+    [
+      toggleFetchReportsModal,
+      OnClickFetchReportButton,
+      viewDebtorFetchReportButtonLoaderAction,
+      partners,
+      partnersWithCompany,
+    ]
   );
 
   const handleOnReportSelect = useCallback(value => {
@@ -282,23 +290,41 @@ const DebtorsReportsTab = () => {
                 <span>Stake Holder</span>
                 <Select
                   name="role"
-                  placeholder="Select Stake Holder"
+                  placeholder={
+                    partners?.length > 0 && partnersWithCompany?.length <= 0
+                      ? '-'
+                      : 'Select Stake Holder'
+                  }
                   dropdownHandle={false}
                   options={partnersWithCompany}
                   value={selectedStakeHolder}
                   onChange={handleOnStakeHolderSelect}
+                  isDisabled={partnersWithCompany?.length <= 0}
                 />
               </>
             )}
-            <span>Report</span>
-            <Select
-              name="role"
-              placeholder="Select Reports"
-              dropdownHandle={false}
-              options={reportsListForFetch}
-              value={selectedReports}
-              onChange={handleOnReportSelect}
-            />
+            {reportsListForFetch?.length > 0 && (
+              <>
+                <span>Report</span>
+                <Select
+                  name="role"
+                  placeholder={
+                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                    reportsListForFetch?.length <= 0
+                      ? '-'
+                      : 'Select Reports'
+                  }
+                  dropdownHandle={false}
+                  options={reportsListForFetch}
+                  value={selectedReports}
+                  onChange={handleOnReportSelect}
+                  isDisabled={
+                    (partners?.length > 0 && partnersWithCompany?.length <= 0) ||
+                    reportsListForFetch?.length <= 0
+                  }
+                />
+              </>
+            )}
             {partners?.length > 0 && partnersWithCompany?.length <= 0 && (
               <>
                 <span />
