@@ -246,3 +246,17 @@ export const markAllNotificationAsRead = () => {
     }
   };
 };
+
+export const removeProfileDP = () => {
+  return async dispatch => {
+    try {
+      const response = await HeaderApiService.removeProfilePicture();
+      if (response?.data?.status === 'SUCCESS') {
+        successNotification(response?.data?.message || 'Profile picture removed successfully.');
+        dispatch(getLoggedUserDetails());
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};

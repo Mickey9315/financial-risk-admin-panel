@@ -3,9 +3,30 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  .user-dp {
-    margin-left: 0;
+
+  .profile-dp-upload{
+    position: relative;
+    .user-dp {
+      margin-left: 0;
+      cursor: default;
+    }
+    .profile-close-btn {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 16px;
+      height: 16px;
+      font-size: $title;
+      color: $primary-color;
+      border-radius: 50%;
+      cursor: pointer;
+      background: #fff;
+    }
   }
+
   .user-dp-upload {
     background: none;
     border: none;

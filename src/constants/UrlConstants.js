@@ -12,6 +12,7 @@ export const AUTH_URLS = {
 export const HEADER_URLS = {
   LOGGED_USER_DETAILS_URL: `${BASE_URL}profile/`,
   UPLOAD_PROFILE_PICTURE: `${BASE_URL}profile/upload/`,
+  DELETE_PROFILE_PICTURE: `${BASE_URL}profile`,
   CHANGE_PASSWORD_URL: `${BASE_URL}auth/change-password/`,
   LOGOUT_URL: `${BASE_URL}auth/logout/`,
   HEADER_NOTIFICATIONS: {

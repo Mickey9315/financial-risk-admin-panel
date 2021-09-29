@@ -7,6 +7,7 @@ import {
   getHeaderNotificationListURL,
   getLoggedUserDetails,
   logoutUser,
+  removeProfileDP,
   turnOffNotifire,
   updateUserProfile,
   uploadProfilePicture,
@@ -18,7 +19,6 @@ import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 import { errorNotification } from '../Toast';
 import { SIDEBAR_URLS } from '../../constants/SidebarConstants';
 import FileUpload from './component/FileUpload';
-import { SESSION_VARIABLES } from '../../constants/SessionStorage';
 import { getAuthTokenLocalStorage } from '../../helpers/LocalStorageHelper';
 import { connectWebSocket, disconnectWebSocket } from '../../helpers/SocketHelper';
 import GlobalSearch from './component/GlobalSearch';
@@ -269,8 +269,15 @@ const Header = () => {
   };
 
   useEffect(() => {
-    if (SESSION_VARIABLES.USER_TOKEN) dispatch(getLoggedUserDetails());
-  }, [SESSION_VARIABLES.USER_TOKEN]);
+    if (getAuthTokenLocalStorage()) {
+      console.log('nskjhhjsvhg');
+      dispatch(getLoggedUserDetails());
+    }
+  }, []);
+
+  const handleOnDeleteClick = useCallback(() => {
+    dispatch(removeProfileDP());
+  }, []);
 
   const handleChange = useCallback(
     e => {
@@ -357,6 +364,8 @@ const Header = () => {
                   handleChange={handleChange}
                   fileName={fileName}
                   file={file}
+                  isDeleteIcon={profilePictureUrl}
+                  onDeleteClick={handleOnDeleteClick}
                 />
               )}
               <div className="form-title">Name</div>

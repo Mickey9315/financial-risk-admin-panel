@@ -6,6 +6,7 @@ const HeaderApiService = {
   updateUserProfile: data => ApiService.putData(HEADER_URLS.LOGGED_USER_DETAILS_URL, data),
   uploadUserProfilePicture: (data, config) =>
     ApiService.postData(HEADER_URLS.UPLOAD_PROFILE_PICTURE, data, config),
+  removeProfilePicture: () => ApiService.deleteData(HEADER_URLS.DELETE_PROFILE_PICTURE),
   changePassword: data => ApiService.putData(HEADER_URLS.CHANGE_PASSWORD_URL, data),
   logoutUser: () => ApiService.deleteData(HEADER_URLS.LOGOUT_URL),
 
