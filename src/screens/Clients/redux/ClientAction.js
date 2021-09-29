@@ -99,8 +99,7 @@ export const getClientColumnListName = () => {
           data: response?.data?.data,
         });
         dispatch({
-          type:
-            CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: response?.data?.data,
         });
       }
@@ -146,8 +145,7 @@ export const getListFromCrm = data => {
 export const changeClientColumnListStatus = data => {
   return async dispatch => {
     dispatch({
-      type:
-        CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_CLIENT_MANAGEMENT_COLUMN_LIST_ACTION,
+      type: CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.UPDATE_CLIENT_MANAGEMENT_COLUMN_LIST_ACTION,
       data,
     });
   };
@@ -185,8 +183,7 @@ export const saveClientColumnListName = ({ clientColumnList = {}, isReset = fals
       const response = await ClientApiService.updateClientColumnListName(data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: CLIENT_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.CLIENT_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: clientColumnList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully');
@@ -605,8 +602,8 @@ export const getClientDocumentsColumnNamesList = () => {
           data: response?.data?.data,
         });
         dispatch({
-          type:
-            CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.DOCUMENTS
+            .CLIENT_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: response?.data?.data,
         });
       }
@@ -664,8 +661,8 @@ export const saveClientDocumentsColumnListName = ({
       const response = await ClientDocumentsApiService.updateClientDocumentColumnListName(data);
       if (response && response.data && response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            CLIENT_REDUX_CONSTANTS.DOCUMENTS.CLIENT_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
+          type: CLIENT_REDUX_CONSTANTS.DOCUMENTS
+            .CLIENT_DOCUMENTS_MANAGEMENT_DEFAULT_COLUMN_LIST_ACTION,
           data: clientDocumentsColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
@@ -1473,7 +1470,9 @@ export const downloadClientCreditLimitDecisionLetter = id => {
       }
     } catch (e) {
       stopGeneralLoaderOnSuccessOrFail('clientDecisionLetterDownloadButtonLoaderAction');
-      displayErrors(e);
+      if (e?.response?.statusText === 'Bad Request') {
+        errorNotification('No decision letter found');
+      }
       throw Error();
     }
     return false;

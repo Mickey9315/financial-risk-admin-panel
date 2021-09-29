@@ -28,9 +28,10 @@ import { DECIMAL_REGEX, usdConverter } from '../../../../constants/RegexConstant
 const AddOverdues = () => {
   const history = useHistory();
   const amountRef = useRef([]);
-  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [
-    history,
-  ]);
+  const { isRedirected, redirectedFrom, fromId } = useMemo(
+    () => history?.location?.state ?? {},
+    [history]
+  );
   const { id, period } = useParams();
 
   const dispatch = useDispatch();
@@ -150,8 +151,9 @@ const AddOverdues = () => {
         record => record?.value === selectedDebtor?.value
       )?.acn;
 
-      const existingDebtor = entityList?.debtorId?.find(debtor => debtor.acn === e?.target.value);
-
+      const existingDebtor = entityList?.debtorId?.find(
+        debtor => debtor.acn !== '' && debtor.acn === e?.target.value
+      );
       if (existingDebtor) {
         handleDebtorChange(existingDebtor, true);
       } else if (selectedRecordAcn && !existingDebtor) {

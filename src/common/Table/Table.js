@@ -123,9 +123,12 @@ const Table = props => {
     async (value, header, currentData, row) => {
       try {
         const response = await TableApiService.tableActions({
-          url: header.request.url,
-          method: header.request.method,
-          id: currentData.id ?? row._id,
+          url: header?.request?.url,
+          id: currentData?.id ?? row?._id,
+          params: {
+            [`${header.name}`]: value,
+          },
+          method: header?.request?.method,
           data: {
             [`${header.name}`]: value,
           },

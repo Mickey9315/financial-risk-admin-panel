@@ -200,7 +200,6 @@ const ApplicationList = () => {
           ...appliedFilters,
           ...params,
         };
-        console.log({ data });
         try {
           await dispatch(getApplicationsListByFilter(data));
           dispatchFilter({

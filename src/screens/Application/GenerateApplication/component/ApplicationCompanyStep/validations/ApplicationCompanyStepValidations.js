@@ -2,7 +2,11 @@ import {
   saveApplicationStepDataToBackend,
   updateEditApplicationData,
 } from '../../../../redux/ApplicationAction';
-import { NUMBER_REGEX, SPECIAL_CHARACTER_REGEX } from '../../../../../../constants/RegexConstants';
+import {
+  MOBILE_NUMBER_REGEX,
+  NUMBER_REGEX,
+  SPECIAL_CHARACTER_REGEX,
+} from '../../../../../../constants/RegexConstants';
 
 export const applicationCompanyStepValidations = async (dispatch, data, editApplicationData) => {
   const errors = {};
@@ -108,7 +112,7 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.postCode = 'Post code should be number';
   }
-  if (data?.contactNumber && !NUMBER_REGEX.test(data?.contactNumber?.toString()?.trim())) {
+  if (data?.contactNumber && !MOBILE_NUMBER_REGEX.test(data?.contactNumber?.toString()?.trim())) {
     validated = false;
     errors.contactNumber = 'Phone number should be number';
   }

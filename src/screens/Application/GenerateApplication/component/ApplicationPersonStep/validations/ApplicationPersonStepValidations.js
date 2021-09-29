@@ -180,7 +180,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         _id,
         type,
         entityType: entityType?.value,
-        entityName: entityName?.value,
+        entityName: entityName?.label,
         tradingName,
         stakeholderCountry: { name: stakeholderCountry?.label, code: stakeholderCountry?.value },
       };
@@ -191,7 +191,6 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         preparedData.registrationNumber = registrationNumber;
       }
     } else if (type === 'individual' && validated) {
-      console.log('here');
       const {
         _id,
         title,
