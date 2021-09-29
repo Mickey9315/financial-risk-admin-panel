@@ -10,7 +10,6 @@ import { errorNotification } from '../../../../common/Toast';
 import {
   downloadSelectedReportForApplication,
   fetchSelectedReportsForApplication,
-  getApplicationReportsListData,
 } from '../../redux/ApplicationAction';
 import Select from '../../../../common/Select/Select';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
@@ -61,7 +60,6 @@ const ApplicationReportAccordion = props => {
           data.stakeholderId = selectedStakeHolder?.value;
         }
         await dispatch(fetchSelectedReportsForApplication(data));
-        dispatch(getApplicationReportsListData(debtorId));
         setSelectedReports([]);
         setSelectedStakeHolder([]);
         toggleFetchReportsModal();

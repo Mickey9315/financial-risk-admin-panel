@@ -15,6 +15,7 @@ import {
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import ImportApplicationApiServices from '../services/ImportApplicationApiServices';
 import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
+import { DEBTORS_REDUX_CONSTANTS } from '../../Debtors/redux/DebtorsReduxConstants';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1067,6 +1068,10 @@ export const getApplicationReportsListData = id => {
             APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_REPORTS
               .APPLICATION_REPORTS_LIST_DATA,
           data: response?.data?.data,
+        });
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_SUCCESS,
+          data: response.data.data,
         });
       }
     } catch (e) {

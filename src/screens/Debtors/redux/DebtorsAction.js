@@ -1379,7 +1379,7 @@ export const setViewDebtorActiveTabIndex = index => {
 export const getDebtorReportsListData = (id, param) => {
   return async dispatch => {
     try {
-      const response = await DebtorsReportsApiServices.getDebtorsReportListData(id, { ...param });
+      const response = await DebtorsReportsApiServices.getDebtorsReportListData(id, param);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.REPORTS.FETCH_DEBTOR_REPORTS_LIST_SUCCESS,

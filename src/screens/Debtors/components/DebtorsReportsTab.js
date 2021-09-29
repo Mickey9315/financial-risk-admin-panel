@@ -211,7 +211,6 @@ const DebtorsReportsTab = () => {
           data.stakeholderId = selectedStakeHolder?.value;
         }
         await dispatch(fetchSelectedReportsForDebtor(data));
-        getDebtorReportsList();
         setSelectedReports([]);
         setSelectedStakeHolder([]);
         toggleFetchReportsModal();
@@ -259,7 +258,7 @@ const DebtorsReportsTab = () => {
   }, []);
 
   useEffect(() => {
-    getDebtorReportsList(id);
+    getDebtorReportsList();
     dispatch(getDebtorReportsColumnNameList());
   }, []);
 
