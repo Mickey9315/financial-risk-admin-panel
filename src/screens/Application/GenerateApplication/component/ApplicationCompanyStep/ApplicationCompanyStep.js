@@ -154,6 +154,9 @@ const ApplicationCompanyStep = () => {
       if (data?.name === 'country') {
         updateSingleCompanyState(data?.name, data);
         dispatch(updateEditApplicationField('company', 'state', null));
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_WIPE_OUT_DATA_IF_EXIST,
+        });
 
         const finalErrors = { ...errors };
         delete finalErrors.state;

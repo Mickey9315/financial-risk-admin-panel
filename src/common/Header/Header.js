@@ -270,7 +270,6 @@ const Header = () => {
 
   useEffect(() => {
     if (getAuthTokenLocalStorage()) {
-      console.log('nskjhhjsvhg');
       dispatch(getLoggedUserDetails());
     }
   }, []);

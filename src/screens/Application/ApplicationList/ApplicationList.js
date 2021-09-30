@@ -112,7 +112,7 @@ const ApplicationList = () => {
       startDate: tempFilter?.startDate || undefined,
       endDate,
     };
-  }, [{ ...tempFilter }]);
+  }, [tempFilter]);
 
   const handleStartDateChange = useCallback(date => {
     dispatchFilter({
@@ -251,7 +251,7 @@ const ApplicationList = () => {
       value: defaultApplicationStatus,
     });
     await onClickApplyFilter();
-  }, [dispatchFilter, onClickApplyFilter]);
+  }, [defaultApplicationStatus]);
 
   const filterModalButtons = useMemo(
     () => [

@@ -43,9 +43,10 @@ const SettingsAuditLogTab = () => {
     [auditLogColumnNameList]
   );
   const dispatch = useDispatch();
-  const { total, pages, page, limit, docs, headers } = useMemo(() => auditLogList ?? {}, [
-    auditLogList,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => auditLogList ?? {},
+    [auditLogList]
+  );
   const [filterModal, setFilterModal] = useState(false);
 
   const [filter, dispatchFilter] = useReducer(filterReducer, {
@@ -495,7 +496,7 @@ const SettingsAuditLogTab = () => {
                 />
               </div>
               <div className="filter-modal-row">
-                <div className="form-title">Date</div>
+                <div className="form-title">Created Date</div>
                 <div className="date-picker-container filter-date-picker-container mr-15">
                   <DatePicker
                     className="filter-date-picker"

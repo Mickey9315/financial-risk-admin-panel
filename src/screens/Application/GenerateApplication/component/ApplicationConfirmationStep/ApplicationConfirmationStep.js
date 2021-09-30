@@ -212,7 +212,7 @@ const ApplicationConfirmationStep = () => {
   const confirmationDetails = [
     {
       title: 'Client Name',
-      value: company?.clientId || '-',
+      value: company?.clientId,
       label: 'clientName',
       type: 'select',
     },
@@ -221,7 +221,7 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Debtor',
-      value: company?.debtorId || '-',
+      value: company?.debtorId,
       label: 'debtor',
       type: 'select',
     },
@@ -245,7 +245,7 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Entity Name*',
-      value: company?.entityName || '-',
+      value: company?.entityName,
       label: 'entityName',
       type: 'select',
     },
@@ -257,7 +257,7 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Entity Type*',
-      value: company?.entityType || '-',
+      value: company?.entityType,
       label: 'entityType',
       type: 'select',
     },
@@ -300,7 +300,7 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'State',
-      value: company?.state || '-',
+      value: company?.state,
       label: 'state',
       type: 'select',
     },
@@ -312,13 +312,13 @@ const ApplicationConfirmationStep = () => {
     },
     {
       title: 'Street Type',
-      value: company?.streetType || '-',
+      value: company?.streetType,
       label: 'streetType',
       type: 'select',
     },
     {
       title: 'Country',
-      value: company?.country || '-',
+      value: company?.country,
       label: 'country',
       type: 'select',
     },
@@ -401,7 +401,7 @@ const ApplicationConfirmationStep = () => {
           return (
             <>
               <span>{detail?.title}</span>
-              <span className="detail-value">{detail?.value?.label}</span>
+              <span className="detail-value">{detail?.value?.label ?? '-'}</span>
             </>
           );
         case 'ifYesText':

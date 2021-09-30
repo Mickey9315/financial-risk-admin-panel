@@ -127,9 +127,10 @@ const OverduesList = () => {
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
-  const { total, pages, page, limit, docs, headers } = useMemo(() => overdueListWithPageData, [
-    overdueListWithPageData,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => overdueListWithPageData,
+    [overdueListWithPageData]
+  );
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
@@ -478,7 +479,7 @@ const OverduesList = () => {
                 />
               </div>
               <div className="filter-modal-row">
-                <div className="form-title">Date</div>
+                <div className="form-title">Month-Year Range</div>
                 <div className="date-picker-container month-year-picker">
                   <DatePicker
                     className="filter-date-picker"

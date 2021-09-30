@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import BigInput from '../../../common/BigInput/BigInput';
 import IconButton from '../../../common/IconButton/IconButton';
 import Pagination from '../../../common/Pagination/Pagination';
 import Table from '../../../common/Table/Table';
@@ -53,12 +52,12 @@ const ClaimsDocumentsTab = () => {
     claimsDocumentReducer,
     initialClaimDocumentState
   );
-  const { description, fileData } = useMemo(() => selectedClaimsDocument ?? {}, [
-    selectedClaimsDocument,
-  ]);
+  const { description, fileData } = useMemo(
+    () => selectedClaimsDocument ?? {},
+    [selectedClaimsDocument]
+  );
   const dispatch = useDispatch();
   const { id } = useParams();
-  const searchInputRef = useRef();
 
   const [uploadModel, setUploadModel] = useState(false);
   const [fileExtensionErrorMessage, setFileExtensionErrorMessage] = useState(false);
@@ -82,10 +81,8 @@ const ClaimsDocumentsTab = () => {
 
   const { documentList } = useSelector(({ claims }) => claims?.documents ?? {});
 
-  const {
-    viewClaimUploadDocumentButtonLoaderAction,
-    viewClaimDownloadDocumentButtonLoaderAction,
-  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
+  const { viewClaimUploadDocumentButtonLoaderAction, viewClaimDownloadDocumentButtonLoaderAction } =
+    useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, pages, page, limit, docs, headers, isLoading } = useMemo(
     () => documentList ?? {},
@@ -212,19 +209,6 @@ const ClaimsDocumentsTab = () => {
     [onCloseUploadDocumentButton, onClickUploadDocument, viewClaimUploadDocumentButtonLoaderAction]
   );
 
-  const checkIfEnterKeyPressed = e => {
-    const searchKeyword = searchInputRef?.current?.value;
-    if (searchKeyword?.trim()?.toString()?.length === 0 && e.key !== 'Enter') {
-      getClaimsDocumentsList();
-    } else if (e.key === 'Enter') {
-      if (searchKeyword?.trim()?.toString()?.length !== 0) {
-        getClaimsDocumentsList({ search: searchKeyword?.trim()?.toString() });
-      } else {
-        errorNotification('Please enter search text to search');
-      }
-    }
-  };
-
   const pageActionClick = useCallback(
     newPage => {
       getClaimsDocumentsList({ page: newPage, limit });
@@ -272,25 +256,13 @@ const ClaimsDocumentsTab = () => {
     <>
       <div className="tab-content-header-row">
         <div className="tab-content-header">Documents</div>
-        <div className="buttons-row">
-          <BigInput
-            ref={searchInputRef}
-            type="text"
-            className="search"
-            borderClass="tab-search"
-            prefix="search"
-            prefixClass="font-placeholder"
-            placeholder="Search here"
-            onKeyUp={checkIfEnterKeyPressed}
+        {isDocumentUpdatable && (
+          <IconButton
+            buttonType="primary"
+            title="cloud_upload"
+            onClick={() => toggleUploadModel()}
           />
-          {isDocumentUpdatable && (
-            <IconButton
-              buttonType="primary"
-              title="cloud_upload"
-              onClick={() => toggleUploadModel()}
-            />
-          )}
-        </div>
+        )}
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
       {!isLoading && docs ? (

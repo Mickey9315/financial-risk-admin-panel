@@ -218,7 +218,7 @@ const MyWorkNotifications = () => {
           className="filter-modal application-filter-modal"
         >
           <div className="filter-modal-row">
-            <div className="form-title">Select Date</div>
+            <div className="form-title">Month-Year</div>
             <div className="date-picker-container month-year-picker filter-date-picker-container mr-15">
               <DatePicker
                 selected={filterDate}

@@ -69,7 +69,7 @@ const initialFilterState = {
       },
       {
         type: 'dateRange',
-        label: 'Date',
+        label: 'Expiry Date',
         range: [
           {
             type: 'date',
@@ -107,7 +107,7 @@ const initialFilterState = {
       },
       {
         type: 'dateRange',
-        label: 'Date',
+        label: 'Applied Date',
         range: [
           {
             type: 'date',
@@ -195,7 +195,7 @@ const initialFilterState = {
       },
       {
         type: 'dateRange',
-        label: 'Date',
+        label: 'Expiry Date',
         range: [
           {
             type: 'date',
@@ -248,7 +248,7 @@ const initialFilterState = {
       },
       {
         type: 'dateRange',
-        label: 'Limit Date',
+        label: 'Limit Expiry Date',
         range: [
           {
             type: 'date',
@@ -264,7 +264,7 @@ const initialFilterState = {
       },
       {
         type: 'dateRange',
-        label: 'Report Date',
+        label: 'Report Expiry Date',
         range: [
           {
             type: 'date',
