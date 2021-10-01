@@ -25,8 +25,8 @@ import {
   startGeneralLoaderOnRequest,
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
-import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 
 const InsurerPoliciesTab = () => {
   const dispatch = useDispatch();
@@ -38,11 +38,8 @@ const InsurerPoliciesTab = () => {
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
     [setCustomFieldModal]
   );
-  const {
-    policiesList,
-    insurerPoliciesColumnNameList,
-    insurerPoliciesDefaultColumnNameList,
-  } = useSelector(({ insurer }) => insurer?.policies ?? {});
+  const { policiesList, insurerPoliciesColumnNameList, insurerPoliciesDefaultColumnNameList } =
+    useSelector(({ insurer }) => insurer?.policies ?? {});
 
   const {
     viewInsurerPoliciesColumnResetButtonLoaderAction,
@@ -50,12 +47,12 @@ const InsurerPoliciesTab = () => {
     viewInsurerPoliciesSyncWithCRMButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, pages, page, limit, docs, headers } = useMemo(() => policiesList ?? {}, [
-    policiesList,
-  ]);
+  const { total, pages, page, limit, docs, headers } = useMemo(
+    () => policiesList ?? {},
+    [policiesList]
+  );
 
   const syncListFromCrm = useSelector(({ insurer }) => insurer?.policies?.policySyncList ?? []);
-
   const getInsurerPoliciesList = useCallback(
     (params = {}, cb) => {
       const data = {
@@ -165,7 +162,6 @@ const InsurerPoliciesTab = () => {
   const [crmIds, setCrmIds] = useState([]);
   const [syncFromCRM, setSyncFromCRM] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
-  const isInsurerUpdatable = useModulePrivileges(SIDEBAR_NAMES.INSURER).hasWriteAccess;
 
   const toggleSyncWithCRM = useCallback(() => {
     setCrmIds([]);
@@ -289,9 +285,11 @@ const InsurerPoliciesTab = () => {
             title="format_line_spacing"
             onClick={toggleCustomField}
           />
-          {isInsurerUpdatable && (
-            <Button buttonType="secondary" title="Sync With CRM" onClick={toggleSyncWithCRM} />
-          )}
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.INSURER}>
+            <UserPrivilegeWrapper moduleName="policy">
+              <Button buttonType="secondary" title="Sync With CRM" onClick={toggleSyncWithCRM} />
+            </UserPrivilegeWrapper>
+          </UserPrivilegeWrapper>
         </div>
       </div>
       {/* eslint-disable-next-line no-nested-ternary */}
