@@ -21,12 +21,11 @@ const MyWork = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   const myWorkTabs = useMemo(
-    () => (access('policy') ? ['Tasks', 'Notifications'] : ['Notifications']),
+    () => (access('task') ? ['Tasks', 'Notifications'] : ['Notifications']),
     [access]
   );
   const myWorkTabContent = useMemo(
-    () =>
-      access('policy') ? [<MyWorkTasks />, <MyWorkNotifications />] : [<MyWorkNotifications />],
+    () => (access('task') ? [<MyWorkTasks />, <MyWorkNotifications />] : [<MyWorkNotifications />]),
     [access]
   );
   const tabActive = useCallback(
