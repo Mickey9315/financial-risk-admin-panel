@@ -134,8 +134,8 @@ const ViewReport = () => {
       type: REPORTS_REDUX_CONSTANTS.GET_REPORT_COLUMN_LIST,
       data: reportDefaultColumnList,
     });
-    toggleCustomField();
-  }, [reportDefaultColumnList, toggleCustomField]);
+    setCustomFieldModal(false);
+  }, [reportDefaultColumnList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
@@ -164,11 +164,11 @@ const ViewReport = () => {
       await dispatch(saveReportColumnList({ isReset: true, reportFor: paramReport }));
       dispatch(getReportColumnList(paramReport));
       await getReportListByFilter();
-      toggleCustomField();
+      setCustomFieldModal(false);
     } catch (e) {
       /**/
     }
-  }, [toggleCustomField, getReportListByFilter]);
+  }, [getReportListByFilter]);
 
   const customFieldsModalButtons = useMemo(
     () => [
