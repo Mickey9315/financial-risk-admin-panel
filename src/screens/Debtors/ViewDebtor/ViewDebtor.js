@@ -36,6 +36,7 @@ const DEBTOR_TABS_WITH_ACCESS = [
   { label: 'Tasks', component: <DebtorsTasksTab />, name: 'task' },
   { label: 'Documents', component: <DebtorsDocumentsTab />, name: 'document' },
   { label: 'Notes', component: <DebtorsNotesTab />, name: 'note' },
+  { label: 'Reports', component: <DebtorsReportsTab />, name: 'credit-report' },
 ];
 
 const ViewInsurer = () => {
@@ -101,11 +102,11 @@ const ViewInsurer = () => {
         name: 'stakeHolder',
       });
     }
-    if (isAUSOrNZL) {
+    if (isAUSOrNZL && access('credit-report')) {
       tabs.push({
         label: 'Reports',
         component: <DebtorsReportsTab />,
-        name: 'reports',
+        name: 'credit-report',
       });
     }
     tabs.push({ label: 'Alerts', component: <DebtorsAlertsTab />, name: 'alerts' });
