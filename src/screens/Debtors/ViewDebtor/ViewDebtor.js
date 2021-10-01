@@ -36,7 +36,6 @@ const DEBTOR_TABS_WITH_ACCESS = [
   { label: 'Tasks', component: <DebtorsTasksTab />, name: 'task' },
   { label: 'Documents', component: <DebtorsDocumentsTab />, name: 'document' },
   { label: 'Notes', component: <DebtorsNotesTab />, name: 'note' },
-  { label: 'Reports', component: <DebtorsReportsTab />, name: 'credit-report' },
 ];
 
 const ViewInsurer = () => {
