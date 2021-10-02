@@ -184,37 +184,40 @@ const ApplicationList = () => {
     [dispatchFilter]
   );
 
-  const getApplicationsByFilter = useCallback(
-    async (params = {}, cb) => {
-      if (
-        tempFilter?.startDate &&
-        tempFilter?.endDate &&
-        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
-      ) {
-        errorNotification('Please enter a valid date range');
-        resetFilterDates();
-      } else {
-        const data = {
-          page: page ?? 1,
-          limit: limit ?? 15,
-          ...appliedFilters,
+  const getApplicationsByFilter = async (params = {}, cb, overrideParams = false) => {
+    if (
+      tempFilter?.startDate &&
+      tempFilter?.endDate &&
+      moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+    ) {
+      errorNotification('Please enter a valid date range');
+      resetFilterDates();
+    } else {
+      let data = {
+        page: page ?? 1,
+        limit: limit ?? 15,
+        ...appliedFilters,
+        ...params,
+      };
+      if (overrideParams) {
+        data = {
           ...params,
         };
-        try {
-          await dispatch(getApplicationsListByFilter(data));
-          dispatchFilter({
-            type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
-          });
-          if (cb && typeof cb === 'function') {
-            cb();
-          }
-        } catch (e) {
-          /**/
-        }
       }
-    },
-    [page, limit, appliedFilters, tempFilter?.startDate, tempFilter?.endDate]
-  );
+      try {
+        await dispatch(getApplicationsListByFilter(data));
+        dispatchFilter({
+          type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+        });
+        if (cb && typeof cb === 'function') {
+          cb();
+        }
+      } catch (e) {
+        console.log(216, e);
+        /**/
+      }
+    }
+  };
 
   // on record limit changed
   const onSelectLimit = useCallback(
@@ -236,12 +239,19 @@ const ApplicationList = () => {
     value => setFilterModal(value !== undefined ? value : e => !e),
     [setFilterModal]
   );
-  const onClickApplyFilter = useCallback(async () => {
+  const onClickApplyFilter = async params => {
+    let data = {
+      page: 1,
+      limit,
+    };
     toggleFilterModal();
-    await getApplicationsByFilter({ page: 1, limit });
-  }, [getApplicationsByFilter, toggleFilterModal, page, limit]);
+    if (params) {
+      data = { ...data, ...params };
+    }
+    await getApplicationsByFilter(data, null, !!params);
+  };
 
-  const onClickResetFilter = useCallback(async () => {
+  const onClickResetFilter = async () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
@@ -250,34 +260,32 @@ const ApplicationList = () => {
       name: 'status',
       value: defaultApplicationStatus,
     });
-    await onClickApplyFilter();
-  }, [defaultApplicationStatus]);
 
-  const filterModalButtons = useMemo(
-    () => [
-      {
-        title: 'Reset Defaults',
-        buttonType: 'outlined-primary',
-        onClick: onClickResetFilter,
+    await onClickApplyFilter({ status: defaultApplicationStatus });
+  };
+
+  const filterModalButtons = [
+    {
+      title: 'Reset Defaults',
+      buttonType: 'outlined-primary',
+      onClick: onClickResetFilter,
+    },
+    {
+      title: 'Close',
+      buttonType: 'primary-1',
+      onClick: () => {
+        dispatchFilter({
+          type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+        });
+        toggleFilterModal();
       },
-      {
-        title: 'Close',
-        buttonType: 'primary-1',
-        onClick: () => {
-          dispatchFilter({
-            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
-          });
-          toggleFilterModal();
-        },
-      },
-      {
-        title: 'Apply',
-        buttonType: 'primary',
-        onClick: onClickApplyFilter,
-      },
-    ],
-    [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
-  );
+    },
+    {
+      title: 'Apply',
+      buttonType: 'primary',
+      onClick: () => onClickApplyFilter(),
+    },
+  ];
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
