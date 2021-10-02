@@ -314,7 +314,18 @@ export const reports = (state = initialReports, action) => {
     case REPORTS_REDUX_CONSTANTS.INITIALIZE_FILTERS:
       return {
         ...state,
-        reportFilters: initialFilterState,
+        reportFilters: {
+          clientList: state?.reportFilters?.clientList || initialFilterState?.clientList,
+          limitList: state?.reportFilters?.limitList || initialFilterState?.limitList,
+          pendingApplications:
+            state?.reportFilters?.pendingApplications || initialFilterState?.pendingApplications,
+          usageReport: state?.reportFilters?.usageReport || initialFilterState?.usageReport,
+          usagePerClient:
+            state?.reportFilters?.usagePerClient || initialFilterState?.usagePerClient,
+          limitHistory: state?.reportFilters?.limitHistory || initialFilterState?.limitHistory,
+          claimsReport: state?.reportFilters?.claimsReport || initialFilterState?.claimsReport,
+          reviewReport: state?.reportFilters?.reviewReport || initialFilterState?.reviewReport,
+        },
       };
 
     case REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS:

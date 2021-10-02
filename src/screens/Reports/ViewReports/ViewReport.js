@@ -372,7 +372,7 @@ const ViewReport = () => {
   const resetReportsFilter = useCallback(async () => {
     await dispatch(resetCurrentFilter(currentFilter.filter));
     toggleFilterModal();
-    await getReportListByFilter();
+    await getReportListByFilter({});
   }, [currentFilter, toggleFilterModal]);
 
   const filterModalButtons = useMemo(
