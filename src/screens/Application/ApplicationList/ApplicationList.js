@@ -213,7 +213,6 @@ const ApplicationList = () => {
           cb();
         }
       } catch (e) {
-        console.log(216, e);
         /**/
       }
     }
