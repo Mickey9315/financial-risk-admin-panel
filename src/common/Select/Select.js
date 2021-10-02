@@ -1,8 +1,10 @@
 import ReactSelect from 'react-select';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { useState } from 'react';
 
 const Select = props => {
+  const [isBlur, setIsBlur] = useState(false);
   const {
     className,
     placeholder,
@@ -16,7 +18,14 @@ const Select = props => {
     ...restProps
   } = props;
 
-  const handleInputChange = _.debounce(onInputChange, 800);
+  const temp = e => {
+    if (isBlur) {
+      onInputChange(e);
+      setIsBlur(false);
+    }
+  };
+
+  const handleInputChange = _.debounce(temp, 800);
 
   return (
     <ReactSelect
@@ -36,6 +45,8 @@ const Select = props => {
       isMulti={restProps?.isMulti}
       menuPlacement={restProps?.menuPlacement}
       dropdownPosition={restProps?.dropdownPosition}
+      onFocus={() => setIsBlur(true)}
+      onBlur={() => setIsBlur(false)}
     />
   );
 };
