@@ -33,9 +33,10 @@ const SettingsDocumentTypeTab = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [openAddDocModal, setOpenAddModal] = useState(false);
-  const isSettingsDocumentUpdatable =
-    useModulePrivileges(SIDEBAR_NAMES.SETTINGS).hasWriteAccess &&
-    useModulePrivileges('document').hasWriteAccess;
+  const hasSettingsUpdateRight = useModulePrivileges(SIDEBAR_NAMES.SETTINGS).hasWriteAccess;
+  const hasDocumentUpdateRight = useModulePrivileges('document').hasWriteAccess;
+
+  const isSettingsDocumentUpdatable = hasSettingsUpdateRight && hasDocumentUpdateRight;
   const toggleAddDocModal = useCallback(
     value => setOpenAddModal(value !== undefined ? value : e => !e),
     [setOpenAddModal]
