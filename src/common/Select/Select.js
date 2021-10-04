@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useState } from 'react';
 
 const Select = props => {
-  const [isBlur, setIsBlur] = useState(false);
+  const [IsFocus, setIsFocus] = useState(false);
   const {
     className,
     placeholder,
@@ -18,14 +18,14 @@ const Select = props => {
     ...restProps
   } = props;
 
-  const temp = e => {
-    if (isBlur) {
+  const inputChangeEventHandling = e => {
+    if (IsFocus) {
       onInputChange(e);
-      setIsBlur(false);
+      setIsFocus(false);
     }
   };
 
-  const handleInputChange = _.debounce(temp, 800);
+  const handleInputChange = _.debounce(inputChangeEventHandling, 800);
 
   return (
     <ReactSelect
@@ -45,8 +45,8 @@ const Select = props => {
       isMulti={restProps?.isMulti}
       menuPlacement={restProps?.menuPlacement}
       dropdownPosition={restProps?.dropdownPosition}
-      onFocus={() => setIsBlur(true)}
-      onBlur={() => setIsBlur(false)}
+      onFocus={() => setIsFocus(true)}
+      onBlur={() => setIsFocus(false)}
     />
   );
 };
