@@ -197,6 +197,10 @@
   margin: 2px 5px 2px 2px !important;
 }
 
+.task-select.react-select-container.react-select--is-disabled .react-select__control.react-select__control--is-disabled {
+  border: 1px solid $border-color !important;
+}
+
 .react-datepicker {
   min-height: 245px;
   min-width: 310px;

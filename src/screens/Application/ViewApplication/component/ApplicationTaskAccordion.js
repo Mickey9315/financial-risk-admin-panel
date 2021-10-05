@@ -288,7 +288,7 @@ const ApplicationTaskAccordion = props => {
           return entityType || [];
         }
         case 'entityId': {
-          return addTaskState?.entityId || [];
+          return applicationTaskList?.selectedEntityDetails || addTaskState?.entityId || [];
         }
         case 'comments': {
           return addTaskState?.comments || '';
@@ -297,7 +297,7 @@ const ApplicationTaskAccordion = props => {
           return [];
       }
     },
-    [addTaskState, assigneeList, priorityData, entityList, entityTypeData]
+    [addTaskState, assigneeList, priorityData, entityList, entityTypeData, applicationTaskList]
   );
 
   const onSaveTaskClick = useCallback(async () => {

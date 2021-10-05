@@ -247,6 +247,7 @@ const ApplicationList = () => {
     if (params) {
       data = { ...data, ...params };
     }
+    console.log(data);
     await getApplicationsByFilter(data, null, !!params);
   };
 

@@ -37,9 +37,8 @@ export const getAssigneeDropDownData = () => {
       const response = await MyWorkApiServices.getAssigneeDropDownData();
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
-              .MY_WORK_ASSIGNEE_DROP_DOWN_DATA_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+            .MY_WORK_ASSIGNEE_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
@@ -52,16 +51,18 @@ export const getAssigneeDropDownData = () => {
 export const getEntityDropDownData = params => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('getMyWorkTaskEntityDataLoader');
       const response = await MyWorkApiServices.getEntityDropDownData(params);
       if (response?.data?.status === 'SUCCESS' && response.data.data) {
+        stopGeneralLoaderOnSuccessOrFail('getMyWorkTaskEntityDataLoader');
         dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
-              .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+            .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('getMyWorkTaskEntityDataLoader');
       displayErrors(e);
     }
   };
@@ -70,8 +71,8 @@ export const getEntityDropDownData = params => {
 export const removeUpdateTaskEntityId = () => {
   return dispatch => {
     dispatch({
-      type:
-        MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.RESET_MY_WORK_TASK_UPDATE_ENTITY_ID,
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+        .RESET_MY_WORK_TASK_UPDATE_ENTITY_ID,
     });
   };
 };
@@ -87,8 +88,8 @@ export const removeAddTaskEntityId = () => {
 export const updateAddTaskStateFields = (name, value) => {
   return dispatch => {
     dispatch({
-      type:
-        MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.MY_WORK_UPDATE_ADD_TASK_FIELD_ACTION,
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+        .MY_WORK_UPDATE_ADD_TASK_FIELD_ACTION,
       name,
       value,
     });
@@ -140,9 +141,8 @@ export const getTaskListColumnList = () => {
           data: response.data.data,
         });
         dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
-              .TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+            .TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
           data: response.data.data,
         });
       }
@@ -155,8 +155,8 @@ export const getTaskListColumnList = () => {
 export const changeTaskListColumnStatus = data => {
   return async dispatch => {
     dispatch({
-      type:
-        MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.UPDATE_TASK_COLUMN_NAME_LIST_ACTION,
+      type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+        .UPDATE_TASK_COLUMN_NAME_LIST_ACTION,
       data,
     });
   };
@@ -196,9 +196,8 @@ export const saveTaskListColumnListName = ({ taskColumnNameList = {}, isReset = 
       const response = await MyWorkApiServices.saveColumnNameList(data);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
-              .TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+            .TASK_DEFAULT_COLUMN_NAME_LIST_ACTION,
           data: taskColumnNameList,
         });
         successNotification(response?.data?.message || 'Columns updated successfully.');
@@ -221,8 +220,8 @@ export const getTaskFilter = () => {
       const response = await MyWorkApiServices.getAssigneeDropDownData();
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS.ASSIGNEE_DROP_DOWN_DATA_FOR_FILTER,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+            .ASSIGNEE_DROP_DOWN_DATA_FOR_FILTER,
           data: response.data.data,
         });
       }
@@ -329,9 +328,8 @@ export const getMyWorkNotificationList = (params = {}) => {
       const response = await MyWorkApiServices.notification.getMyWorkNotificationListData(params);
       if (response?.data?.status === 'SUCCESS') {
         await dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
-              .GET_MY_WORK_NOTIFICATION_LIST_SUCCESS_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+            .GET_MY_WORK_NOTIFICATION_LIST_SUCCESS_ACTION,
           data: response?.data?.data,
         });
       }
@@ -349,9 +347,8 @@ export const deleteMyWorkNotification = notificationId => {
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'Notification deleted successfully');
         dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
-              .DELETE_MY_WORK_NOTIFICATION_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_NOTIFICATION_REDUX_CONSTANTS
+            .DELETE_MY_WORK_NOTIFICATION_ACTION,
           data: notificationId,
         });
       }
@@ -379,9 +376,8 @@ export const getTaskDropDownDataBySearch = options => {
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type:
-            MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
-              .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
+          type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
+            .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response?.data?.data,
         });
       }

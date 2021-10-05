@@ -637,14 +637,17 @@ export const getAssigneeDropDownData = () => {
 export const getEntityDropDownData = params => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('getDebtorTaskEntityDataLoader');
       const response = await DebtorTaskApiService.getEntityDropDownData(params);
       if (response?.data?.status === 'SUCCESS' && response?.data?.data) {
+        stopGeneralLoaderOnSuccessOrFail('getDebtorTaskEntityDataLoader');
         dispatch({
           type: DEBTORS_REDUX_CONSTANTS.TASK.ADD_TASK.DEBTOR_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response?.data?.data,
         });
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('getDebtorTaskEntityDataLoader');
       displayErrors(e);
     }
   };

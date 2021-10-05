@@ -54,12 +54,8 @@ const ClientTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const {
-    taskList,
-    dropDownData,
-    clientTaskColumnNameList,
-    clientTaskDefaultColumnNameList,
-  } = useSelector(({ clientManagement }) => clientManagement?.task ?? {});
+  const { taskList, dropDownData, clientTaskColumnNameList, clientTaskDefaultColumnNameList } =
+    useSelector(({ clientManagement }) => clientManagement?.task ?? {});
   const addTaskState = useSelector(({ clientManagement }) => clientManagement?.task?.addTask ?? {});
 
   const {
@@ -68,12 +64,14 @@ const ClientTaskTab = () => {
     viewClientSaveNewTaskButtonLoaderAction,
     viewClientUpdateTaskButtonLoaderAction,
     viewClientDeleteTaskButtonLoaderAction,
+    getClientTaskEntityDataLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { page, pages, total, limit, docs, headers } = useMemo(() => taskList ?? {}, [taskList]);
-  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
-    dropDownData,
-  ]);
+  const { assigneeList, entityList, defaultEntityList } = useMemo(
+    () => dropDownData ?? {},
+    [dropDownData]
+  );
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
@@ -305,14 +303,16 @@ const ClientTaskTab = () => {
     }
   }, [addTaskState, toggleAddTaskModal, callBackOnTaskAdd, callBackOnTaskEdit]);
 
-  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+  const handleOnSelectSearchInputChange = (searchEntity, text) => {
     const options = {
       searchString: text,
       entityType: SEARCH_ENTITIES[searchEntity],
       requestFrom: 'client',
     };
-    dispatch(getClientTaskDropDownDataBySearch(options));
-  }, []);
+    if (searchEntity !== 'insurer') {
+      dispatch(getClientTaskDropDownDataBySearch(options));
+    }
+  };
 
   const INPUTS = useMemo(
     () => [
@@ -415,6 +415,8 @@ const ClientTaskTab = () => {
                 name={input.name}
                 options={input.data}
                 isSearchable
+                isDisabled={input.name === 'entityId' && getClientTaskEntityDataLoader}
+                className="client-task-select"
                 value={selectedValues}
                 onChange={handleSelectInputChange}
                 onInputChange={input?.onInputChange}
@@ -601,19 +603,14 @@ const ClientTaskTab = () => {
         assigneeList?.find(e => e.value === _id)
       )
     );
-    dispatch(
-      updateAddTaskStateFields(
-        'entityId',
-        defaultEntityList?.find(e => e.value === id)
-      )
-    );
+    dispatch(updateAddTaskStateFields('entityId', taskList?.selectedEntityDetails));
     dispatch(
       updateAddTaskStateFields(
         'entityType',
         entityTypeData?.find(e => e.value === 'client')
       )
     );
-  }, [assigneeList, defaultEntityList, entityTypeData]);
+  }, [assigneeList, defaultEntityList, entityTypeData, taskList]);
 
   const onClickAddTask = useCallback(() => {
     setDefaultValuesForAddTask();
