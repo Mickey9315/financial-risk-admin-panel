@@ -7,6 +7,11 @@ const SettingApiIntegrationServices = {
   updateApiIntegrationDetails: data =>
     ApiService.putData(SETTING_URL.API_INTEGRATION.UPDATE_API_INTEGRATION, data),
   testApiIntegrationDetails: params =>
-    ApiService.getData(SETTING_URL.API_INTEGRATION.TEST_API_INTEGRATION, { params }),
+    ApiService.request({
+      url: SETTING_URL.API_INTEGRATION.TEST_API_INTEGRATION,
+      params,
+      method: 'GET',
+      timeout: 20000,
+    }),
 };
 export default SettingApiIntegrationServices;
