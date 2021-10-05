@@ -21,7 +21,6 @@ export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => 
   return async dispatch => {
     startGeneralLoaderOnRequest('applicationListPageLoader');
     try {
-      console.log(params);
       const response = await ApplicationApiServices.getApplicationListByFilter(params);
 
       if (response?.data?.status === 'SUCCESS') {
