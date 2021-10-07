@@ -231,11 +231,8 @@ const DebtorsList = () => {
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
   const entityTypeSelectedValue = useMemo(() => {
-    const foundValue = debtorDropDownData?.entityType?.find(e => {
-      return e.value === tempFilter?.entityType?.value;
-    });
-    return foundValue || '';
-  }, [tempFilter?.entityType, debtorDropDownData]);
+    return tempFilter?.entityType;
+  }, [tempFilter?.entityType]);
 
   useUrlParamsUpdate(
     {
