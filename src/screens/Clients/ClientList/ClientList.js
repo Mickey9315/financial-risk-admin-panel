@@ -232,8 +232,8 @@ const ClientList = () => {
       page: page ?? 1,
       limit: limit ?? 15,
       riskAnalystId:
-        (finalFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
-          ? finalFilter?.riskAnalystId
+        (finalFilter?.riskAnalystId?.value?.trim()?.length ?? -1) > 0
+          ? finalFilter?.riskAnalystId?.value
           : undefined,
       serviceManagerId:
         (finalFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
@@ -480,32 +480,13 @@ const ClientList = () => {
   }, []);
 
   const clientRiskAnalystSelectedValue = useMemo(() => {
-    const foundValue = filterList?.riskAnalystList?.find(e => {
-      return e._id === tempFilter?.riskAnalystId?.value;
-    });
-    return foundValue
-      ? [
-          {
-            label: foundValue?.name,
-            value: foundValue?._id,
-          },
-        ]
-      : [];
-  }, [filterList, tempFilter?.riskAnalystId]);
+    return tempFilter?.riskAnalystId;
+  }, [tempFilter?.riskAnalystId]);
 
   const clientServiceManagerSelectedValue = useMemo(() => {
-    const foundValue = filterList?.serviceManagerList?.find(e => {
-      return e._id === tempFilter?.serviceManagerId?.value;
-    });
-    return foundValue
-      ? [
-          {
-            label: foundValue?.name,
-            value: foundValue?._id,
-          },
-        ]
-      : [];
-  }, [filterList, tempFilter?.serviceManagerId]);
+    return tempFilter?.serviceManagerId;
+  }, [tempFilter?.serviceManagerId]);
+
   const selectClientFromCrm = useCallback(
     crmId => {
       let arr = [...crmIds];
