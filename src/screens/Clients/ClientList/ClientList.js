@@ -98,8 +98,8 @@ const ClientList = () => {
           ? tempFilter?.riskAnalystId
           : undefined,
       serviceManagerId:
-        (tempFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
-          ? tempFilter?.serviceManagerId
+        (tempFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
+          ? tempFilter?.serviceManagerId?.value
           : undefined,
       inceptionStartDate: tempFilter?.inceptionStartDate ?? undefined,
       inceptionEndDate: tempFilter?.inceptionEndDate ?? undefined,
@@ -200,7 +200,7 @@ const ClientList = () => {
       serviceManagerId:
         (paramServiceManager?.trim()?.length ?? -1) > 0
           ? paramServiceManager
-          : clientListFilters?.serviceManagerId,
+          : clientListFilters?.serviceManagerId?.value,
       inceptionStartDate: paramInceptionStartDate
         ? new Date(paramInceptionStartDate)
         : clientListFilters?.inceptionStartDate,
@@ -236,8 +236,8 @@ const ClientList = () => {
           ? finalFilter?.riskAnalystId
           : undefined,
       serviceManagerId:
-        (finalFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
-          ? finalFilter?.serviceManagerId
+        (finalFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
+          ? finalFilter?.serviceManagerId?.value
           : undefined,
       inceptionStartDate: finalFilter?.inceptionStartDate || undefined,
       inceptionEndDate: finalFilter?.inceptionEndDate || undefined,
@@ -470,11 +470,11 @@ const ClientList = () => {
     }
   }, []);
   const handleServiceManagerFilterChange = useCallback(event => {
-    if (event && event.value) {
+    if (event) {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'serviceManagerId',
-        value: event.value,
+        value: event,
       });
     }
   }, []);
@@ -495,7 +495,7 @@ const ClientList = () => {
 
   const clientServiceManagerSelectedValue = useMemo(() => {
     const foundValue = filterList?.serviceManagerList?.find(e => {
-      return e._id === tempFilter?.serviceManagerId;
+      return e._id === tempFilter?.serviceManagerId?.value;
     });
     return foundValue
       ? [
