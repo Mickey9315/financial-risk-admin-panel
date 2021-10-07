@@ -94,8 +94,8 @@ const ClientList = () => {
   const appliedFilters = useMemo(() => {
     return {
       riskAnalystId:
-        (tempFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
-          ? tempFilter?.riskAnalystId
+        (tempFilter?.riskAnalystId?.value?.trim()?.length ?? -1) > 0
+          ? tempFilter?.riskAnalystId?.value
           : undefined,
       serviceManagerId:
         (tempFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
@@ -196,7 +196,7 @@ const ClientList = () => {
       riskAnalystId:
         (paramRiskAnalyst?.trim()?.length ?? -1) > 0
           ? paramRiskAnalyst
-          : clientListFilters?.riskAnalystId,
+          : clientListFilters?.riskAnalystId?.value,
       serviceManagerId:
         (paramServiceManager?.trim()?.length ?? -1) > 0
           ? paramServiceManager
@@ -461,11 +461,11 @@ const ClientList = () => {
   }, [searchInputRef, setIsModalLoading, setCrmIds]);
 
   const handleRiskAnalystFilterChange = useCallback(event => {
-    if (event && event.value) {
+    if (event) {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'riskAnalystId',
-        value: event.value,
+        value: event,
       });
     }
   }, []);
@@ -481,7 +481,7 @@ const ClientList = () => {
 
   const clientRiskAnalystSelectedValue = useMemo(() => {
     const foundValue = filterList?.riskAnalystList?.find(e => {
-      return e._id === tempFilter?.riskAnalystId;
+      return e._id === tempFilter?.riskAnalystId?.value;
     });
     return foundValue
       ? [
