@@ -99,7 +99,7 @@ const ApplicationList = () => {
       clientId:
         tempFilter?.clientId?.toString()?.trim()?.length > 0 ? tempFilter?.clientId : undefined,
       debtorId:
-        tempFilter?.debtorId?.toString()?.trim()?.length > 0 ? tempFilter?.debtorId : undefined,
+          tempFilter?.debtorId?.value?.toString()?.trim()?.length > 0 ? tempFilter?.debtorId?.value : undefined,
       status: tempFilter?.status?.toString()?.trim()?.length > 0 ? tempFilter?.status : undefined,
       minCreditLimit:
         tempFilter?.minCreditLimit?.toString()?.trim()?.length > 0
@@ -150,10 +150,11 @@ const ApplicationList = () => {
     });
   }, []);
   const handleDebtorIdFilterChange = useCallback(event => {
+    console.log('handleDebtorIdFilterChange',event)
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'debtorId',
-      value: event?.value,
+      value: event,
     });
   }, []);
   const handleApplicationStatusFilterChange = useCallback(event => {
@@ -382,7 +383,7 @@ const ApplicationList = () => {
       debtorId:
         (paramDebtorId?.trim()?.length ?? -1) > 0
           ? paramDebtorId
-          : applicationListFilters?.debtorId,
+          : applicationListFilters?.debtorId?.value,
       status:
         (paramStatus?.trim()?.length ?? -1) > 0
           ? paramStatus
@@ -432,7 +433,7 @@ const ApplicationList = () => {
       clientId:
         finalFilter?.clientId?.toString()?.trim()?.length > 0 ? finalFilter?.clientId : undefined,
       debtorId:
-        finalFilter?.debtorId?.toString()?.trim()?.length > 0 ? finalFilter?.debtorId : undefined,
+        finalFilter?.debtorId?.value?.toString()?.trim()?.length > 0 ? finalFilter?.debtorId?.value : undefined,
       status: finalFilter?.status?.toString()?.trim()?.length > 0 ? finalFilter?.status : undefined,
       minCreditLimit:
         finalFilter?.minCreditLimit?.toString()?.trim()?.length > 0
@@ -462,7 +463,7 @@ const ApplicationList = () => {
   }, [tempFilter?.clientId, dropdownData]);
   const debtorIdSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.debtors?.find(e => {
-      return (e?.value ?? '') === tempFilter?.debtorId;
+      return (e?.value ?? '') === tempFilter?.debtorId?.value;
     });
     return foundValue ?? [];
   }, [tempFilter?.debtorId, dropdownData]);
