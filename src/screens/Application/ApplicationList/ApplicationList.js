@@ -95,7 +95,9 @@ const ApplicationList = () => {
       : undefined;
     return {
       entityType:
-        tempFilter?.entityType?.toString()?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
+        tempFilter?.entityType?.value?.toString()?.trim()?.length > 0
+          ? tempFilter?.entityType?.value
+          : undefined,
       clientId:
         tempFilter?.clientId?.value?.toString()?.trim()?.length > 0
           ? tempFilter?.clientId?.value
@@ -143,7 +145,7 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'entityType',
-      value: event?.value,
+      value: event,
     });
   }, []);
   const handleClientIdFilterChange = useCallback(event => {
@@ -378,7 +380,7 @@ const ApplicationList = () => {
       entityType:
         (paramEntityType?.trim()?.length ?? -1) > 0
           ? paramEntityType
-          : applicationListFilters?.entityType ?? undefined,
+          : applicationListFilters?.entityType?.value ?? undefined,
       clientId:
         (paramClientId?.trim()?.length ?? -1) > 0
           ? paramClientId
@@ -431,7 +433,7 @@ const ApplicationList = () => {
       limit: limit ?? 15,
       entityType:
         finalFilter?.entityType?.toString()?.trim()?.length > 0
-          ? finalFilter?.entityType
+          ? finalFilter?.entityType?.value
           : undefined,
       clientId:
         finalFilter?.clientId?.toString()?.trim()?.length > 0
@@ -458,7 +460,7 @@ const ApplicationList = () => {
 
   const entityTypeSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.entityType?.find(e => {
-      return (e?.value ?? '') === tempFilter?.entityType;
+      return (e?.value ?? '') === tempFilter?.entityType?.value;
     });
     return foundValue ?? [];
   }, [tempFilter?.entityType, dropdownData]);
