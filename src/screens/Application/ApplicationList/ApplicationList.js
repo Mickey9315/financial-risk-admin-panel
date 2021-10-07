@@ -97,9 +97,13 @@ const ApplicationList = () => {
       entityType:
         tempFilter?.entityType?.toString()?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
       clientId:
-        tempFilter?.clientId?.toString()?.trim()?.length > 0 ? tempFilter?.clientId : undefined,
+        tempFilter?.clientId?.value?.toString()?.trim()?.length > 0
+          ? tempFilter?.clientId?.value
+          : undefined,
       debtorId:
-          tempFilter?.debtorId?.value?.toString()?.trim()?.length > 0 ? tempFilter?.debtorId?.value : undefined,
+        tempFilter?.debtorId?.value?.toString()?.trim()?.length > 0
+          ? tempFilter?.debtorId?.value
+          : undefined,
       status: tempFilter?.status?.toString()?.trim()?.length > 0 ? tempFilter?.status : undefined,
       minCreditLimit:
         tempFilter?.minCreditLimit?.toString()?.trim()?.length > 0
@@ -146,11 +150,10 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'clientId',
-      value: event?.value,
+      value: event,
     });
   }, []);
   const handleDebtorIdFilterChange = useCallback(event => {
-    console.log('handleDebtorIdFilterChange',event)
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'debtorId',
@@ -379,7 +382,7 @@ const ApplicationList = () => {
       clientId:
         (paramClientId?.trim()?.length ?? -1) > 0
           ? paramClientId
-          : applicationListFilters?.clientId,
+          : applicationListFilters?.clientId?.value,
       debtorId:
         (paramDebtorId?.trim()?.length ?? -1) > 0
           ? paramDebtorId
@@ -431,9 +434,13 @@ const ApplicationList = () => {
           ? finalFilter?.entityType
           : undefined,
       clientId:
-        finalFilter?.clientId?.toString()?.trim()?.length > 0 ? finalFilter?.clientId : undefined,
+        finalFilter?.clientId?.toString()?.trim()?.length > 0
+          ? finalFilter?.clientId?.value
+          : undefined,
       debtorId:
-        finalFilter?.debtorId?.value?.toString()?.trim()?.length > 0 ? finalFilter?.debtorId?.value : undefined,
+        finalFilter?.debtorId?.value?.toString()?.trim()?.length > 0
+          ? finalFilter?.debtorId?.value
+          : undefined,
       status: finalFilter?.status?.toString()?.trim()?.length > 0 ? finalFilter?.status : undefined,
       minCreditLimit:
         finalFilter?.minCreditLimit?.toString()?.trim()?.length > 0
@@ -457,7 +464,7 @@ const ApplicationList = () => {
   }, [tempFilter?.entityType, dropdownData]);
   const clientIdSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.clients?.find(e => {
-      return (e?.value ?? '') === tempFilter?.clientId;
+      return (e?.value ?? '') === tempFilter?.clientId?.value;
     });
     return foundValue ?? [];
   }, [tempFilter?.clientId, dropdownData]);
