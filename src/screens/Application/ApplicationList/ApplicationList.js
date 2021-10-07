@@ -459,23 +459,14 @@ const ApplicationList = () => {
   );
 
   const entityTypeSelectedValue = useMemo(() => {
-    const foundValue = dropdownData?.entityType?.find(e => {
-      return (e?.value ?? '') === tempFilter?.entityType?.value;
-    });
-    return foundValue ?? [];
-  }, [tempFilter?.entityType, dropdownData]);
+    return tempFilter?.entityType;
+  }, [tempFilter?.entityType]);
   const clientIdSelectedValue = useMemo(() => {
-    const foundValue = dropdownData?.clients?.find(e => {
-      return (e?.value ?? '') === tempFilter?.clientId?.value;
-    });
-    return foundValue ?? [];
-  }, [tempFilter?.clientId, dropdownData]);
+    return tempFilter?.clientId;
+  }, [tempFilter?.clientId]);
   const debtorIdSelectedValue = useMemo(() => {
-    const foundValue = dropdownData?.debtors?.find(e => {
-      return (e?.value ?? '') === tempFilter?.debtorId?.value;
-    });
-    return foundValue ?? [];
-  }, [tempFilter?.debtorId, dropdownData]);
+    return tempFilter?.debtorId;
+  }, [tempFilter?.debtorId]);
 
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.filter(e => {
