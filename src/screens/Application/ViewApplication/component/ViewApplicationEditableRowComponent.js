@@ -11,13 +11,8 @@ import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
 
 const LimitTypeOptions = [
   {
-    label: 'Endorsed',
+    label: 'Endorsed Limit',
     value: 'ENDORSED',
-    name: 'limitType',
-  },
-  {
-    label: 'Discretionary Limit',
-    value: 'DISCRETIONARY_LIMIT',
     name: 'limitType',
   },
   {
@@ -31,8 +26,8 @@ const LimitTypeOptions = [
     name: 'limitType',
   },
   {
-    label: 'Monitoring',
-    value: 'MONITORING',
+    label: '24/7 Alerts',
+    value: '247_ALERT',
     name: 'limitType',
   },
 ];

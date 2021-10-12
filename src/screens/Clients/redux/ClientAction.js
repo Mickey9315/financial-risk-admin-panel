@@ -1113,14 +1113,17 @@ export const getAssigneeDropDownData = () => {
 export const getEntityDropDownData = params => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('getClientTaskEntityDataLoader');
       const response = await ClientTaskApiService.getEntityDropDownData(params);
       if (response?.data?.status === 'SUCCESS' && response.data.data) {
+        stopGeneralLoaderOnSuccessOrFail('getClientTaskEntityDataLoader');
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.TASK.ADD_TASK.CLIENT_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('getClientTaskEntityDataLoader');
       displayErrors(e);
     }
   };

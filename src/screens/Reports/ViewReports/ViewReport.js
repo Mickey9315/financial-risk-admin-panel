@@ -61,7 +61,7 @@ const ViewReport = () => {
     () => reportType.find(report => report.url === paramReport),
     [reportType, paramReport]
   );
-  const reportFilters = useSelector(({ reports }) => reports?.reportFilters ?? {});
+  const reportFilters = useSelector(({reportAllFilters}) => reportAllFilters ?? {});
   const reportEntityListData = useSelector(({ reports }) => reports?.reportEntityListData ?? []);
   const [reviewReportFilterDate, setReviewReportFilterDate] = useState(new Date().toISOString());
   // end
@@ -78,11 +78,27 @@ const ViewReport = () => {
 
   const tempFilters = useMemo(() => {
     const params = {};
-    Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(
+    // eslint-disable-next-line no-unused-vars
+    //  const updatedParams = reportFilters?.[currentFilter?.filter]?.tempFilter && Object.entries(reportFilters?.[currentFilter?.filter]?.tempFilter)?.forEach(
+    //   ([key, value]) => {
+    //     if (_.isArray(value)) {
+    //       params[key] = value
+    //         ?.map(record =>
+    //           currentFilter.filter === 'claimsReport' ? record?.secondValue : record?.value
+    //         )
+    //         .join(',');
+    //     } else if (_.isObject(value)) {
+    //       params[key] = currentFilter.filter === 'claimsReport' ? value?.secondValue : value?.value;
+    //     } else {
+    //     params[key] = value || undefined;
+    //     }
+    //   }
+    // );
+        Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(
       ([key, value]) => {
         params[key] = value || undefined;
       }
-    );
+    ); 
     if (currentFilter.filter === 'reviewReport') {
       params.date = reviewReportFilterDate || undefined;
     }
@@ -91,11 +107,27 @@ const ViewReport = () => {
 
   const finalFilters = useMemo(() => {
     const params = {};
+    // const updatedParams = reportFilters?.[currentFilter?.filter]?.finalFilter && Object.entries(reportFilters?.[currentFilter?.filter]?.finalFilter
+    //   )?.forEach(
+    //   ([key, value]) => {
+    //     if (_.isArray(value)) {
+    //       params[key] = value
+    //         ?.map(record =>
+    //           currentFilter.filter === 'claimsReport' ? record?.secondValue : record?.value
+    //         )
+    //         .join(',');
+    //     } else if (_.isObject(value)) {
+    //       params[key] = currentFilter.filter === 'claimsReport' ? value?.secondValue : value?.value;
+    //     } else {
+    //     params[key] = value || undefined;
+    //     }
+    //   }
+    // );
     Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(
       ([key, value]) => {
         params[key] = value || undefined;
       }
-    );
+    ); 
     if (currentFilter.filter === 'reviewReport') {
       params.date = reviewReportFilterDate || undefined;
     }
@@ -106,6 +138,7 @@ const ViewReport = () => {
 
   const getReportListByFilter = useCallback(
     async (initialParams = { page: 1, limit: 15 }, cb) => {
+      // eslint-disable-next-line no-unused-vars
       const params = {
         page: page ?? 1,
         limit: limit ?? 15,
@@ -117,7 +150,7 @@ const ViewReport = () => {
         params.date = reviewReportFilterDate || undefined;
       }
       try {
-        await dispatch(getReportList(params));
+        await dispatch(getReportList(params, currentFilter?.filter));
         dispatch(applyFinalFilter(currentFilter.filter));
         if (cb && typeof cb === 'function') {
           cb();
@@ -232,7 +265,7 @@ const ViewReport = () => {
     [currentFilter]
   );
 
-  const getClientSelectedValues = useMemo(() => {
+  /* const getClientSelectedValues = useMemo(() => {
     const clients = reportFilters?.[currentFilter.filter]?.tempFilter?.clientIds?.split(',');
     const selectedClients = [];
     if (currentFilter.filter === 'claimsReport') {
@@ -247,19 +280,19 @@ const ViewReport = () => {
       });
     }
     return selectedClients;
-  }, [reportFilters, currentFilter]);
+  }, [reportFilters, currentFilter]); */
 
   const handleSelectInputChange = useCallback(e => {
-    changeFilterFields(e.name, e.value);
+    changeFilterFields(e.name, e);
   }, []);
 
   const handleClientSelectInputChange = useCallback(e => {
     if (currentFilter.filter === 'claimsReport') {
-      const clients = e.map(val => val.secondValue).join(',');
-      changeFilterFields('clientIds', clients);
+      //   const clients = e.map(val => val.secondValue).join(',');
+      changeFilterFields('clientIds', e);
     } else {
-      const clients = e.map(val => val.value).join(',');
-      changeFilterFields('clientIds', clients);
+      //  const clients = e.map(val => val.value).join(',');
+      changeFilterFields('clientIds', e);
     }
   }, []);
 
@@ -292,10 +325,7 @@ const ViewReport = () => {
               name="role"
               isSearchble
               options={reportEntityListData?.[input.name]}
-              value={reportEntityListData?.[input.name]?.find(
-                data =>
-                  data?.value === reportFilters?.[currentFilter.filter]?.tempFilter[input.name]
-              )}
+              value={reportFilters?.[currentFilter.filter]?.tempFilter[input.name]}
               onChange={handleSelectInputChange}
               onInputChange={
                 ['debtorId'].includes(input?.name)
@@ -312,7 +342,7 @@ const ViewReport = () => {
               options={reportEntityListData?.[input.name]}
               placeholder="Select Client"
               onChangeCustomSelect={handleClientSelectInputChange}
-              value={getClientSelectedValues}
+              value={reportFilters?.[currentFilter.filter]?.tempFilter?.clientIds}
               onSearchChange={onSearchChange}
             />
           );
@@ -359,7 +389,6 @@ const ViewReport = () => {
       handleSelectInputChange,
       handleDateInputChange,
       handleClientSelectInputChange,
-      getClientSelectedValues,
       handleOnSelectSearchInputChange,
     ]
   );
@@ -372,7 +401,7 @@ const ViewReport = () => {
   const resetReportsFilter = useCallback(async () => {
     await dispatch(resetCurrentFilter(currentFilter.filter));
     toggleFilterModal();
-    await getReportListByFilter();
+    await getReportListByFilter({});
   }, [currentFilter, toggleFilterModal]);
 
   const filterModalButtons = useMemo(
@@ -409,6 +438,7 @@ const ViewReport = () => {
     };
     startGeneralLoaderOnRequest('viewReportListLoader');
     await dispatch(getReportsClientDropdownData());
+
     Object.entries(restParams).forEach(([key, value]) => {
       changeFilterFields(key, value);
     });
@@ -425,10 +455,24 @@ const ViewReport = () => {
 
   // for params in url
   useEffect(() => {
+    const otherFilters = {};
+    Object.entries(finalFilters).forEach(([key, value]) => {
+      if (_.isArray(value)) {
+        otherFilters[key] = value
+           ?.map(record =>
+             currentFilter?.filter === 'claimsReport' ? record?.secondValue : record?.value
+           )
+           .join(',');
+       } else if (_.isObject(value)) {
+        otherFilters[key] = currentFilter?.filter === 'claimsReport' ? value?.secondValue : value?.value;
+       } else {
+        otherFilters[key] = value || undefined;
+       }
+     });
     const params = {
       page: page ?? 1,
       limit: limit ?? 15,
-      ...finalFilters,
+      ...otherFilters,
     };
     const url = Object.entries(params)
       ?.filter(arr => arr[1] !== undefined)
@@ -487,7 +531,7 @@ const ViewReport = () => {
                   <span className="material-icons-round">event</span>
                 </div>
               )}
-              {['limit-list', 'pending-application'].includes(paramReport) && (
+              {['limit-list', 'pending-application', 'usage'].includes(paramReport) && (
                 <IconButton
                   buttonType="primary-1"
                   title="cloud_download"

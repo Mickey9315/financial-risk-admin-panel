@@ -18,6 +18,7 @@ const ImportApplicationApiServices = {
   importApplicationSaveAndNext: (id, stepName) =>
     ApiService.putData(
       `${APPLICATION_URLS.IMPORT_APPLICATION_URLS.UPLOAD_DUMP}${id}?stepName=${stepName}`,
+      {},
       {
         timeout: 2 * 60 * 1000,
       }

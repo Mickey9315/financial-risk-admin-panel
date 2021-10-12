@@ -54,9 +54,8 @@ export const fetchOrgDetailSuccess = data => ({
 });
 
 export const updateOrgDetails = data => ({
-  type:
-    SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
-      .UPDATE_ORGANIZATION_DETAILS,
+  type: SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+    .UPDATE_ORGANIZATION_DETAILS,
   data,
 });
 
@@ -113,12 +112,13 @@ export const updateDocumentFieldStatus = (name, value) => {
 };
 
 export const addNewSettingDocType = (data, cb) => {
-  return async () => {
+  return async dispatch => {
     try {
       startGeneralLoaderOnRequest('settingAddNewDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.addNewDocumentType(data);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'New document type added successfully');
+        dispatch(resetAddDocType());
         stopGeneralLoaderOnSuccessOrFail('settingAddNewDocumentTypeButtonLoaderAction');
         cb();
       }
@@ -143,12 +143,13 @@ export const getDocumentTypeDetailsById = id => {
 };
 
 export const updateSettingDocType = (id, data, cb) => {
-  return async () => {
+  return async dispatch => {
     try {
       startGeneralLoaderOnRequest('settingUpdateDocumentTypeButtonLoaderAction');
       const response = await SettingDocumentTypeApiServices.editDocumentTypeById(id, data);
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message || 'Document type updated successfully');
+        dispatch(resetAddDocType());
         stopGeneralLoaderOnSuccessOrFail('settingUpdateDocumentTypeButtonLoaderAction');
         cb();
       }
@@ -198,8 +199,8 @@ export const getApiIntegration = data => {
 export const changeApiIntegrationDetails = data => {
   return async dispatch => {
     dispatch({
-      type:
-        SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION.CHANGE_API_INTEGRATION_DATA,
+      type: SETTING_REDUX_CONSTANTS.API_INTEGRATION.EDIT_API_INTEGRATION
+        .CHANGE_API_INTEGRATION_DATA,
       data,
     });
   };
@@ -261,9 +262,8 @@ export const getOrganizationDetails = data => {
 export const changeOrganizationDetails = data => {
   return async dispatch => {
     dispatch({
-      type:
-        SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
-          .CHANGE_ORGANIZATION_DETAILS,
+      type: SETTING_REDUX_CONSTANTS.ORGANIZATION_DETAILS.EDIT_ORGANIZATION_DETAILS
+        .CHANGE_ORGANIZATION_DETAILS,
       data,
     });
   };

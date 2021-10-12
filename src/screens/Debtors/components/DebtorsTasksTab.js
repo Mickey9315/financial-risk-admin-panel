@@ -20,6 +20,7 @@ import {
   getAssigneeDropDownData,
   getDebtorTaskColumnList,
   getDebtorTaskDetail,
+  getDebtorTaskDropDownDataBySearch,
   getDebtorTaskListData,
   getEntityDropDownData,
   saveDebtorTaskColumnNameListName,
@@ -30,7 +31,6 @@ import {
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 import Select from '../../../common/Select/Select';
 import { SEARCH_ENTITIES } from '../../../constants/EntitySearchConstants';
-import { getClientTaskDropDownDataBySearch } from '../../Clients/redux/ClientAction';
 import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
@@ -53,13 +53,8 @@ const DebtorTaskTab = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const searchInputRef = useRef();
-  const {
-    taskList,
-    debtorsTaskColumnNameList,
-    debtorsTaskDefaultColumnNameList,
-    dropDownData,
-  } = useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
-
+  const { taskList, debtorsTaskColumnNameList, debtorsTaskDefaultColumnNameList, dropDownData } =
+    useSelector(({ debtorsManagement }) => debtorsManagement?.task ?? {});
   const addTaskState = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.task?.addTask ?? {}
   );
@@ -70,14 +65,17 @@ const DebtorTaskTab = () => {
     viewDebtorAddNewTaskButtonLoaderAction,
     viewDebtorUpdateTaskButtonLoaderAction,
     viewDebtorDeleteTaskButtonLoaderAction,
+    getDebtorTaskEntityDataLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(() => taskList ?? {}, [
-    taskList,
-  ]);
-  const { assigneeList, entityList, defaultEntityList } = useMemo(() => dropDownData ?? {}, [
-    dropDownData,
-  ]);
+  const { page, pages, total, limit, docs, headers, isLoading } = useMemo(
+    () => taskList ?? {},
+    [taskList]
+  );
+  const { assigneeList, entityList, defaultEntityList } = useMemo(
+    () => dropDownData ?? {},
+    [dropDownData]
+  );
   const [isCompletedChecked, setIsCompletedChecked] = useState(false);
 
   const loggedUserDetail = useSelector(({ loggedUserProfile }) => loggedUserProfile ?? {});
@@ -309,14 +307,16 @@ const DebtorTaskTab = () => {
     }
   }, [addTaskState, toggleAddTaskModal, callBackOnTaskAdd, callBackOnTaskEdit]);
 
-  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+  const handleOnSelectSearchInputChange = (searchEntity, text) => {
     const options = {
       searchString: text,
       entityType: SEARCH_ENTITIES[searchEntity],
       requestFrom: 'debtor',
     };
-    dispatch(getClientTaskDropDownDataBySearch(options));
-  }, []);
+    if (searchEntity !== 'insurer') {
+      dispatch(getDebtorTaskDropDownDataBySearch(options));
+    }
+  };
 
   const INPUTS = useMemo(
     () => [
@@ -418,6 +418,8 @@ const DebtorTaskTab = () => {
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data}
+                isDisabled={input.name === 'entityId' && getDebtorTaskEntityDataLoader}
+                className="task-select"
                 isSearchable
                 value={selectedValues}
                 onChange={handleSelectInputChange}
@@ -606,19 +608,14 @@ const DebtorTaskTab = () => {
         assigneeList?.find(e => e.value === _id)
       )
     );
-    dispatch(
-      updateAddTaskStateFields(
-        'entityId',
-        entityList?.find(e => e.value === id)
-      )
-    );
+    dispatch(updateAddTaskStateFields('entityId', taskList?.selectedEntityDetails));
     dispatch(
       updateAddTaskStateFields(
         'entityType',
         entityTypeData?.find(e => e.value === 'debtor')
       )
     );
-  }, [assigneeList, defaultEntityList, entityTypeData, entityList]);
+  }, [assigneeList, defaultEntityList, entityTypeData, taskList]);
 
   const onClickAddTask = useCallback(() => {
     setDefaultValuesForAddTask();

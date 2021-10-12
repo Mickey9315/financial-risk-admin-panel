@@ -50,7 +50,6 @@ const OverduesList = () => {
   const {
     page: paramPage,
     limit: paramLimit,
-    debtorId: paramDebtorId,
     minOutstandingAmount: paramMinOutstandingAmount,
     maxOutstandingAmount: paramMaxOutstandingAmount,
     startDate: paramStartDate,
@@ -89,7 +88,7 @@ const OverduesList = () => {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'debtorId',
-        value: event?.value,
+        value: event,
       });
     },
     [dispatchFilter]
@@ -118,13 +117,6 @@ const OverduesList = () => {
     [dispatchFilter]
   );
 
-  const debtorIdSelectedValue = useMemo(() => {
-    const foundValue = entityList?.debtorId?.find(e => {
-      return (e?.value ?? '') === tempFilter?.debtorId;
-    });
-    return foundValue ?? [];
-  }, [tempFilter?.debtorId, entityList]);
-
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
   const { total, pages, page, limit, docs, headers } = useMemo(
@@ -146,7 +138,7 @@ const OverduesList = () => {
           page: page ?? 1,
           limit: limit ?? 15,
           debtorId:
-            (tempFilter?.debtorId?.trim()?.length ?? -1) > 0 ? tempFilter?.debtorId : undefined,
+            (tempFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? tempFilter?.debtorId : undefined,
           minOutstandingAmount:
             (tempFilter?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
               ? tempFilter?.minOutstandingAmount
@@ -224,8 +216,7 @@ const OverduesList = () => {
       limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
-      debtorId:
-        (paramDebtorId?.trim()?.length ?? -1) > 0 ? paramDebtorId : overdueListFilters?.debtorId,
+      debtorId: overdueListFilters?.debtorId,
       minOutstandingAmount:
         (paramMinOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
           ? paramMinOutstandingAmount
@@ -261,7 +252,7 @@ const OverduesList = () => {
       page: page ?? 1,
       limit: limit ?? 15,
       debtorId:
-        (finalFilter?.debtorId?.trim()?.length ?? -1) > 0 ? finalFilter?.debtorId : undefined,
+        (finalFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? finalFilter?.debtorId?.value : undefined,
       minOutstandingAmount:
         (finalFilter?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
           ? finalFilter?.minOutstandingAmount
@@ -343,14 +334,14 @@ const OverduesList = () => {
     [onAddNewSubmission, onCloseNewSubmissionModal]
   );
 
-  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+  const handleOnSelectSearchInputChange = (searchEntity, text) => {
     const options = {
       searchString: text,
       entityType: searchEntity,
       requestFrom: 'overdue',
     };
     dispatch(getOverdueFilterDropDownDataBySearch(options));
-  }, []);
+  };
 
   return (
     <>
@@ -445,8 +436,9 @@ const OverduesList = () => {
                   placeholder="Select Debtor"
                   name="role"
                   options={entityList?.debtorId}
-                  value={debtorIdSelectedValue}
+                  value={tempFilter?.debtorId}
                   onChange={handleDebtorIdFilterChange}
+                  onInputChange={text => handleOnSelectSearchInputChange('debtorId', text)}
                   isSearchble
                 />
               </div>

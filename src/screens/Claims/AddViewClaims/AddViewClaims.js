@@ -27,6 +27,7 @@ import { setViewClientActiveTabIndex } from '../../Clients/redux/ClientAction';
 import ClaimsTabContainer from '../components/ClaimsTabContainer';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
 import Select from '../../../common/Select/Select';
+import { DECIMAL_REGEX } from '../../../constants/RegexConstants';
 
 const AddViewClaims = () => {
   const history = useHistory();
@@ -66,11 +67,14 @@ const AddViewClaims = () => {
     changeClaimDetails(name, value);
   }, []);
 
-  const onHandleAmountInputTextChange = useCallback(e => {
-    const { name, value } = e.target;
-    dispatch(handleClaimChange(name, parseInt(value?.toString()?.replaceAll(',', ''), 10)));
-  }, []);
-
+  const onHandleAmountInputTextChange = useCallback(
+    e => {
+      const { name, value } = e.target;
+      const updatedVal = value?.toString()?.replaceAll(',', '');
+      if (DECIMAL_REGEX.test(updatedVal)) dispatch(handleClaimChange(name, updatedVal));
+    },
+    [DECIMAL_REGEX]
+  );
   const onHandleSelectChange = useCallback(e => {
     changeClaimDetails(e.name, e);
   }, []);

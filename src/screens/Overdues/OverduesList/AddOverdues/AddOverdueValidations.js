@@ -32,6 +32,42 @@ export const addOverdueValidations = async (
     errors.acn = 'You have to provide at least one - either a debtor or ACN number';
   }
 
+  if (
+    data?.currentAmount.toString()?.trim().includes('.') &&
+    data?.currentAmount?.toString()?.trim()?.length <= 1
+  ) {
+    validated = false;
+    errors.currentAmount = 'Please enter valid current amount';
+  }
+  if (
+    data?.thirtyDaysAmount.toString()?.trim().includes('.') &&
+    data?.thirtyDaysAmount?.toString()?.trim()?.length <= 1
+  ) {
+    validated = false;
+    errors.thirtyDaysAmount = 'Please enter valid amount';
+  }
+  if (
+    data?.sixtyDaysAmount.toString()?.trim().includes('.') &&
+    data?.sixtyDaysAmount?.toString()?.trim()?.length <= 1
+  ) {
+    validated = false;
+    errors.sixtyDaysAmount = 'Please enter valid amount';
+  }
+  if (
+    data?.ninetyDaysAmount.toString()?.trim().includes('.') &&
+    data?.ninetyDaysAmount?.toString()?.trim()?.length <= 1
+  ) {
+    validated = false;
+    errors.ninetyDaysAmount = 'Please enter valid amount';
+  }
+  if (
+    data?.ninetyPlusDaysAmount.toString()?.trim().includes('.') &&
+    data?.ninetyPlusDaysAmount?.toString()?.trim()?.length <= 1
+  ) {
+    validated = false;
+    errors.ninetyPlusDaysAmount = 'Please enter valid amount';
+  }
+
   if (data?.debtorId && !isAmendOverdueModal) {
     const isExist = docs?.filter(doc => doc?.debtorId?.value === data?.debtorId?.value);
 
@@ -67,7 +103,7 @@ export const addOverdueValidations = async (
     errors.insurerId = 'Please select insurer before continue';
   }
 
-  if (data?.outstandingAmount <= 0) {
+  if (data?.outstandingAmount <= 0 || data?.outstandingAmount.isNaN) {
     validated = false;
     errors.outstandingAmount = 'Outstanding amount cannot be zero';
   }

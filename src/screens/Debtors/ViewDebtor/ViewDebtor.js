@@ -101,11 +101,11 @@ const ViewInsurer = () => {
         name: 'stakeHolder',
       });
     }
-    if (isAUSOrNZL) {
+    if (isAUSOrNZL && access('credit-report')) {
       tabs.push({
         label: 'Reports',
         component: <DebtorsReportsTab />,
-        name: 'reports',
+        name: 'credit-report',
       });
     }
     tabs.push({ label: 'Alerts', component: <DebtorsAlertsTab />, name: 'alerts' });

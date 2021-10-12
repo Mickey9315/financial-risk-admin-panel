@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { ReportsApiService } from '../services/ReportsApiService';
 import { REPORTS_REDUX_CONSTANTS } from './ReportsReduxConstants';
@@ -8,10 +9,25 @@ import {
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 
-export const getReportList = params => {
+export const getReportList = (params, currentFilter) => {
   return async dispatch => {
     try {
-      const response = await ReportsApiService.getReportsList(params);
+      const finalParams = {}
+       // eslint-disable-next-line no-unused-vars
+       Object.entries(params).forEach(([key, value]) => {
+       if (_.isArray(value)) {
+        finalParams[key] = value
+            ?.map(record =>
+              currentFilter === 'claimsReport' ? record?.secondValue : record?.value
+            )
+            .join(',');
+        } else if (_.isObject(value)) {
+          finalParams[key] = currentFilter === 'claimsReport' ? value?.secondValue : value?.value;
+        } else {
+          finalParams[key] = value || undefined;
+        }
+      });
+      const response = await ReportsApiService.getReportsList(finalParams);
       if (response.data.status === 'SUCCESS') {
         dispatch({
           type: REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS,
@@ -161,7 +177,13 @@ export const reportDownloadAction = async (reportFor, filters) => {
     }
   } catch (e) {
     stopGeneralLoaderOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
-    displayErrors(e);
+    if (e?.response?.status === 400) {
+      errorNotification(
+        'User cannot download more than 500 records at a time. Please apply filter to narrow down the list'
+      );
+    } else {
+      displayErrors(e);
+    }
   }
   return false;
 };

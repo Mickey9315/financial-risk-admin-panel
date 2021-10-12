@@ -103,3 +103,10 @@
   border-width: 1px;
   overflow-y: auto;
 }
+
+.no-option-text {
+  padding: 10px;
+  font-size: $subtitle;
+  color: $field-color;
+  text-align: center;
+}

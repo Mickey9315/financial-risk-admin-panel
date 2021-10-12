@@ -10,9 +10,13 @@ import { DashboardApiService } from '../../Dashboard/services/DashboardApiServic
 
 export const getClaimsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
+    const finalParams = {
+      ...params,
+      clientId: params?.clientId?.value
+    }
     try {
       startGeneralLoaderOnRequest('claimListLoader');
-      const response = await ClaimsApiServices.getClaimsListByFilter(params);
+      const response = await ClaimsApiServices.getClaimsListByFilter(finalParams);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.CLAIMS_LIST_SUCCESS,

@@ -45,11 +45,12 @@ const MyWorkAddTask = () => {
   const taskData = useSelector(({ myWorkReducer }) => myWorkReducer?.task ?? {});
   const userId = useSelector(({ loggedUserProfile }) => loggedUserProfile?._id ?? '');
   const addTaskState = useMemo(() => taskData?.addTask ?? {}, [taskData]);
-  const { assigneeList, entityList } = useMemo(() => taskData?.myWorkDropDownData ?? {}, [
-    taskData,
-  ]);
+  const { assigneeList, entityList } = useMemo(
+    () => taskData?.myWorkDropDownData ?? {},
+    [taskData]
+  );
 
-  const { myWorkSaveNewTaskLoaderButtonAction } = useSelector(
+  const { myWorkSaveNewTaskLoaderButtonAction, getMyWorkTaskEntityDataLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
@@ -142,14 +143,16 @@ const MyWorkAddTask = () => {
     }
   }, [addTaskState]);
 
-  const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
+  const handleOnSelectSearchInputChange = (searchEntity, text) => {
     const options = {
       searchString: text,
       entityType: SEARCH_ENTITIES[searchEntity],
       requestFrom: 'task',
     };
-    dispatch(getTaskDropDownDataBySearch(options));
-  }, []);
+    if (searchEntity !== 'insurer') {
+      dispatch(getTaskDropDownDataBySearch(options));
+    }
+  };
 
   const INPUTS = useMemo(
     () => [
@@ -258,6 +261,8 @@ const MyWorkAddTask = () => {
                 placeholder={input.placeholder}
                 name={input.name}
                 options={input.data ?? []}
+                isDisabled={input.name === 'entityId' && getMyWorkTaskEntityDataLoader}
+                className="task-select"
                 isSearchable
                 value={selectedValues}
                 onChange={input?.onSelectChange}

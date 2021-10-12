@@ -40,7 +40,6 @@ const ClaimsList = () => {
   );
 
   const { claimsListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
-
   const [filter, dispatchFilter] = useReducer(filterReducer, {
     tempFilter: {},
     finalFilter: {},
@@ -50,7 +49,7 @@ const ClaimsList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'clientId',
-      value: event.value,
+      value: event,
     });
   }, []);
   const claimsList = useSelector(({ claims }) => claims?.claimsList ?? {});
@@ -75,25 +74,25 @@ const ClaimsList = () => {
     [claimsColumnList]
   );
 
-  const { page: paramPage, limit: paramLimit, clientId: paramClientId } = useQueryParams();
+  const { page: paramPage, limit: paramLimit} = useQueryParams();
 
   const getClaimsByFilter = useCallback(
     async (initialParams = { page: 1, limit: 15 }) => {
       const params = {
         page: page ?? 1,
         limit: limit ?? 15,
+        ...initialParams,
         clientId:
-          (tempFilter?.clientId?.toString()?.trim()?.length ?? -1) > 0
+          (tempFilter?.clientId?.value?.toString()?.trim()?.length ?? -1) > 0
             ? tempFilter?.clientId
             : undefined,
-        ...initialParams,
       };
       await dispatch(getClaimsListByFilter(params));
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
       });
     },
-    [page, limit, { ...tempFilter }]
+    [page, limit, {...tempFilter}]
   );
 
   const onClickApplyFilter = useCallback(async () => {
@@ -129,13 +128,6 @@ const ClaimsList = () => {
     ],
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
-
-  const entityNameSelectedValue = useMemo(() => {
-    const foundValue = filterDropdownClient?.filter(e => {
-      return e.value === tempFilter?.clientId;
-    });
-    return foundValue || [];
-  }, [tempFilter?.clientId, filterDropdownClient]);
 
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
@@ -233,11 +225,11 @@ const ClaimsList = () => {
       page: page ?? 1,
       limit: limit ?? 15,
       clientId:
-        (finalFilter?.clientId?.toString()?.trim()?.length ?? -1) > 0
-          ? finalFilter?.clientId
+        (finalFilter?.clientId?.value?.toString()?.trim()?.length ?? -1) > 0
+          ? finalFilter?.clientId?.value
           : undefined,
     },
-    [page, limit, finalFilter?.clientId]
+    [page, limit, finalFilter]
   );
 
   useEffect(async () => {
@@ -246,8 +238,7 @@ const ClaimsList = () => {
       limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
-      clientId:
-        (paramClientId?.trim().length ?? -1) > 0 ? paramClientId : claimsListFilters?.clientId,
+      clientId: claimsListFilters?.clientId,
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
@@ -348,9 +339,9 @@ const ClaimsList = () => {
                 <Select
                   className="filter-select"
                   placeholder="Select"
-                  name="role"
+                  name="client"
                   options={filterDropdownClient}
-                  value={entityNameSelectedValue}
+                  value={tempFilter?.clientId}
                   onChange={handleEntityNameFilterChange}
                   isSearchable
                   onInputChange={text => handleOnSelectSearchInputChange('clients', text)}

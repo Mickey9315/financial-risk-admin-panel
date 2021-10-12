@@ -8,7 +8,7 @@ export const SIDEBAR_NAMES = {
   OVERDUE: 'overdue',
   INSURER: 'insurer',
   USER: 'user',
-  REPORT: 'credit-report',
+  REPORT: 'report',
   SETTINGS: 'settings',
 };
 

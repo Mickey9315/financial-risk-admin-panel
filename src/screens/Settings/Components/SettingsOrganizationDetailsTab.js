@@ -19,10 +19,8 @@ const SettingsOrganizationDetailsTab = () => {
     ({ settingReducer }) => settingReducer?.organizationDetails ?? {}
   );
 
-  const {
-    settingUpdateOrganizationDetailsButtonLoaderAction,
-    settingOrganizationTabLoader,
-  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
+  const { settingUpdateOrganizationDetailsButtonLoaderAction, settingOrganizationTabLoader } =
+    useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -120,7 +118,7 @@ const SettingsOrganizationDetailsTab = () => {
           !_.isEmpty(organizationDetail) ? (
             <>
               <div className="d-flex just-end mt-15">
-                {isSettingsUpdatable && (
+                {isSettingsUpdatable && !isEdit && (
                   <Button buttonType="primary" title="Edit" onClick={() => setIsEdit(true)} />
                 )}
                 {isEdit && (

@@ -13,7 +13,7 @@ const initialSettingState = {
     isLoading: true,
     error: null,
   },
-  addDocumentType: [],
+  addDocumentType: {},
   organizationDetails: {
     isLoading: true,
     error: null,
@@ -105,7 +105,7 @@ export const settingReducer = (state = initialSettingState, action) => {
     case SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.ADD_DOCUMENT_TYPE.RESET_ADD_DOC_TYPE_DATA:
       return {
         ...state,
-        addDocumentType: [],
+        addDocumentType: {},
       };
 
     case SETTING_REDUX_CONSTANTS.DOCUMENT_TYPE.EDIT_DOCUMENT_TYPE.GET_DOCTYPE_DETAIL:

@@ -45,8 +45,6 @@ const ApplicationList = () => {
     page: paramPage,
     limit: paramLimit,
     entityType: paramEntityType,
-    clientId: paramClientId,
-    debtorId: paramDebtorId,
     status: paramStatus,
     minCreditLimit: paramMinCreditLimit,
     maxCreditLimit: paramMaxCreditLimit,
@@ -97,9 +95,13 @@ const ApplicationList = () => {
       entityType:
         tempFilter?.entityType?.toString()?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
       clientId:
-        tempFilter?.clientId?.toString()?.trim()?.length > 0 ? tempFilter?.clientId : undefined,
+        tempFilter?.clientId?.value?.toString()?.trim()?.length > 0
+          ? tempFilter?.clientId?.value
+          : undefined,
       debtorId:
-        tempFilter?.debtorId?.toString()?.trim()?.length > 0 ? tempFilter?.debtorId : undefined,
+        tempFilter?.debtorId?.value?.toString()?.trim()?.length > 0
+          ? tempFilter?.debtorId
+          : undefined,
       status: tempFilter?.status?.toString()?.trim()?.length > 0 ? tempFilter?.status : undefined,
       minCreditLimit:
         tempFilter?.minCreditLimit?.toString()?.trim()?.length > 0
@@ -146,14 +148,14 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'clientId',
-      value: event?.value,
+      value: event,
     });
   }, []);
   const handleDebtorIdFilterChange = useCallback(event => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'debtorId',
-      value: event?.value,
+      value: event,
     });
   }, []);
   const handleApplicationStatusFilterChange = useCallback(event => {
@@ -184,37 +186,39 @@ const ApplicationList = () => {
     [dispatchFilter]
   );
 
-  const getApplicationsByFilter = useCallback(
-    async (params = {}, cb) => {
-      if (
-        tempFilter?.startDate &&
-        tempFilter?.endDate &&
-        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
-      ) {
-        errorNotification('Please enter a valid date range');
-        resetFilterDates();
-      } else {
-        const data = {
-          page: page ?? 1,
-          limit: limit ?? 15,
-          ...appliedFilters,
+  const getApplicationsByFilter = async (params = {}, cb, overrideParams = false) => {
+    if (
+      tempFilter?.startDate &&
+      tempFilter?.endDate &&
+      moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
+    ) {
+      errorNotification('Please enter a valid date range');
+      resetFilterDates();
+    } else {
+      let data = {
+        page: page ?? 1,
+        limit: limit ?? 15,
+        ...appliedFilters,
+        ...params,
+      };
+      if (overrideParams) {
+        data = {
           ...params,
         };
-        try {
-          await dispatch(getApplicationsListByFilter(data));
-          dispatchFilter({
-            type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
-          });
-          if (cb && typeof cb === 'function') {
-            cb();
-          }
-        } catch (e) {
-          /**/
-        }
       }
-    },
-    [page, limit, appliedFilters, tempFilter?.startDate, tempFilter?.endDate]
-  );
+      try {
+        await dispatch(getApplicationsListByFilter(data));
+        dispatchFilter({
+          type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
+        });
+        if (cb && typeof cb === 'function') {
+          cb();
+        }
+      } catch (e) {
+        /**/
+      }
+    }
+  };
 
   // on record limit changed
   const onSelectLimit = useCallback(
@@ -236,12 +240,19 @@ const ApplicationList = () => {
     value => setFilterModal(value !== undefined ? value : e => !e),
     [setFilterModal]
   );
-  const onClickApplyFilter = useCallback(async () => {
+  const onClickApplyFilter = async params => {
+    let data = {
+      page: 1,
+      limit,
+    };
     toggleFilterModal();
-    await getApplicationsByFilter({ page: 1, limit });
-  }, [getApplicationsByFilter, toggleFilterModal, page, limit]);
+    if (params) {
+      data = { ...data, ...params };
+    }
+    await getApplicationsByFilter(data, null, !!params);
+  };
 
-  const onClickResetFilter = useCallback(async () => {
+  const onClickResetFilter = async () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.RESET_STATE,
     });
@@ -250,34 +261,32 @@ const ApplicationList = () => {
       name: 'status',
       value: defaultApplicationStatus,
     });
-    await onClickApplyFilter();
-  }, [defaultApplicationStatus]);
 
-  const filterModalButtons = useMemo(
-    () => [
-      {
-        title: 'Reset Defaults',
-        buttonType: 'outlined-primary',
-        onClick: onClickResetFilter,
+    await onClickApplyFilter({ status: defaultApplicationStatus });
+  };
+
+  const filterModalButtons = [
+    {
+      title: 'Reset Defaults',
+      buttonType: 'outlined-primary',
+      onClick: onClickResetFilter,
+    },
+    {
+      title: 'Close',
+      buttonType: 'primary-1',
+      onClick: () => {
+        dispatchFilter({
+          type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
+        });
+        toggleFilterModal();
       },
-      {
-        title: 'Close',
-        buttonType: 'primary-1',
-        onClick: () => {
-          dispatchFilter({
-            type: LIST_FILTER_REDUCER_ACTIONS.CLOSE_FILTER,
-          });
-          toggleFilterModal();
-        },
-      },
-      {
-        title: 'Apply',
-        buttonType: 'primary',
-        onClick: onClickApplyFilter,
-      },
-    ],
-    [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
-  );
+    },
+    {
+      title: 'Apply',
+      buttonType: 'primary',
+      onClick: () => onClickApplyFilter(),
+    },
+  ];
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
@@ -368,14 +377,8 @@ const ApplicationList = () => {
         (paramEntityType?.trim()?.length ?? -1) > 0
           ? paramEntityType
           : applicationListFilters?.entityType ?? undefined,
-      clientId:
-        (paramClientId?.trim()?.length ?? -1) > 0
-          ? paramClientId
-          : applicationListFilters?.clientId,
-      debtorId:
-        (paramDebtorId?.trim()?.length ?? -1) > 0
-          ? paramDebtorId
-          : applicationListFilters?.debtorId,
+      clientId: applicationListFilters?.clientId,
+      debtorId: applicationListFilters?.debtorId,
       status:
         (paramStatus?.trim()?.length ?? -1) > 0
           ? paramStatus
@@ -423,9 +426,13 @@ const ApplicationList = () => {
           ? finalFilter?.entityType
           : undefined,
       clientId:
-        finalFilter?.clientId?.toString()?.trim()?.length > 0 ? finalFilter?.clientId : undefined,
+        finalFilter?.clientId?.value?.toString()?.trim()?.length > 0
+          ? finalFilter?.clientId?.value
+          : undefined,
       debtorId:
-        finalFilter?.debtorId?.toString()?.trim()?.length > 0 ? finalFilter?.debtorId : undefined,
+        finalFilter?.debtorId?.value?.toString()?.trim()?.length > 0
+          ? finalFilter?.debtorId?.value
+          : undefined,
       status: finalFilter?.status?.toString()?.trim()?.length > 0 ? finalFilter?.status : undefined,
       minCreditLimit:
         finalFilter?.minCreditLimit?.toString()?.trim()?.length > 0
@@ -447,18 +454,6 @@ const ApplicationList = () => {
     });
     return foundValue ?? [];
   }, [tempFilter?.entityType, dropdownData]);
-  const clientIdSelectedValue = useMemo(() => {
-    const foundValue = dropdownData?.clients?.find(e => {
-      return (e?.value ?? '') === tempFilter?.clientId;
-    });
-    return foundValue ?? [];
-  }, [tempFilter?.clientId, dropdownData]);
-  const debtorIdSelectedValue = useMemo(() => {
-    const foundValue = dropdownData?.debtors?.find(e => {
-      return (e?.value ?? '') === tempFilter?.debtorId;
-    });
-    return foundValue ?? [];
-  }, [tempFilter?.debtorId, dropdownData]);
 
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.filter(e => {
@@ -597,7 +592,7 @@ const ApplicationList = () => {
                   placeholder="Select Client"
                   name="role"
                   options={dropdownData?.clients}
-                  value={clientIdSelectedValue}
+                  value={tempFilter?.clientId}
                   onChange={handleClientIdFilterChange}
                   onInputChange={text => handleOnSelectSearchInputChange('clients', text)}
                   isSearchble
@@ -610,7 +605,7 @@ const ApplicationList = () => {
                   placeholder="Select Debtor"
                   name="role"
                   options={dropdownData?.debtors}
-                  value={debtorIdSelectedValue}
+                  value={tempFilter?.debtorId}
                   onChange={handleDebtorIdFilterChange}
                   onInputChange={text => handleOnSelectSearchInputChange('debtors', text)}
                   isSearchble

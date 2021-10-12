@@ -61,8 +61,12 @@ export const addNewOverdueDetails = data => {
 export const getOverdueList = params => {
   return async dispatch => {
     try {
+      const finalParams = {
+        ...params,
+        debtorId: params?.debtorId?.value
+      }
       startGeneralLoaderOnRequest('overdueListPageLoaderAction');
-      const response = await OverdueApiServices.getOverdueList(params);
+      const response = await OverdueApiServices.getOverdueList(finalParams);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: OVERDUE_REDUX_CONSTANTS.GET_OVERDUE_LIST,

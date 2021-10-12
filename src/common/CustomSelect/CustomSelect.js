@@ -45,7 +45,7 @@ const CustomSelect = props => {
       setSearchedText(e?.target?.value);
       onSearchChange(e?.target?.value);
     },
-    [isSearching, onSearchChange]
+    [isSearching, onSearchChange, options]
   );
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const CustomSelect = props => {
           item.label.toLowerCase().includes(searchedText.toString().toLowerCase())
       )
     );
-  }, [selectedList, searchedText]);
+  }, [selectedList, searchedText, options]);
 
   useEffect(() => {
     if (selectedList !== value) onChangeCustomSelect(selectedList);
@@ -113,19 +113,25 @@ const CustomSelect = props => {
             isOpenCustomSelect && 'active-custom-select-dropdown'
           }`}
         >
-          <ul className="selected-list">
-            {selectedList?.map(selectedItem => (
-              <li onClick={() => onItemUnselect(selectedItem)}>
-                <>{selectedItem?.label || ''}</>
-                <span className="material-icons-round">task_alt</span>
-              </li>
-            ))}
-          </ul>
-          <ul>
-            {notSelectedList?.map(unselectedItem => (
-              <li onClick={() => onItemSelection(unselectedItem)}>{unselectedItem?.label}</li>
-            ))}
-          </ul>
+          {selectedList?.length > 0 || notSelectedList?.length > 0 ? (
+            <>
+              <ul className="selected-list">
+                {selectedList?.map(selectedItem => (
+                  <li onClick={() => onItemUnselect(selectedItem)}>
+                    <>{selectedItem?.label || ''}</>
+                    <span className="material-icons-round">task_alt</span>
+                  </li>
+                ))}
+              </ul>
+              <ul>
+                {notSelectedList?.map(unselectedItem => (
+                  <li onClick={() => onItemSelection(unselectedItem)}>{unselectedItem?.label}</li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <div className="no-option-text">No options</div>
+          )}
         </div>
       </div>
     </>
