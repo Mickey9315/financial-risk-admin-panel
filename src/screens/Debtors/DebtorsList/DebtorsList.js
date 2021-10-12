@@ -61,7 +61,9 @@ const DebtorsList = () => {
   const appliedFilters = useMemo(() => {
     return {
       entityType:
-        (tempFilter?.entityType?.trim()?.length ?? -1) > 0 ? tempFilter?.entityType : undefined,
+        (tempFilter?.entityType?.value?.trim()?.length ?? -1) > 0
+          ? tempFilter?.entityType?.value
+          : undefined,
     };
   }, [{ ...tempFilter }]);
 
@@ -69,7 +71,7 @@ const DebtorsList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'entityType',
-      value: event.value,
+      value: event,
     });
   }, []);
 
@@ -229,18 +231,17 @@ const DebtorsList = () => {
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
   const entityTypeSelectedValue = useMemo(() => {
-    const foundValue = debtorDropDownData?.entityType?.find(e => {
-      return e.value === tempFilter?.entityType;
-    });
-    return foundValue || '';
-  }, [tempFilter?.entityType, debtorDropDownData]);
+    return tempFilter?.entityType;
+  }, [tempFilter?.entityType]);
 
   useUrlParamsUpdate(
     {
       page: page ?? 1,
       limit: limit ?? 15,
       entityType:
-        (finalFilter?.entityType?.trim()?.length ?? -1) > 0 ? finalFilter?.entityType : undefined,
+        (finalFilter?.entityType?.value?.trim()?.length ?? -1) > 0
+          ? finalFilter?.entityType?.value
+          : undefined,
     },
     [page, limit, { ...finalFilter }]
   );
@@ -253,7 +254,9 @@ const DebtorsList = () => {
     };
     const filters = {
       entityType:
-        (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : debtorListFilters?.entityType,
+        (paramEntity?.trim()?.length ?? -1) > 0
+          ? paramEntity
+          : debtorListFilters?.entityType?.value,
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({

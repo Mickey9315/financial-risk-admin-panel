@@ -93,7 +93,9 @@ const ApplicationList = () => {
       : undefined;
     return {
       entityType:
-        tempFilter?.entityType?.toString()?.trim()?.length > 0 ? tempFilter?.entityType : undefined,
+        tempFilter?.entityType?.value?.toString()?.trim()?.length > 0
+          ? tempFilter?.entityType?.value
+          : undefined,
       clientId:
         tempFilter?.clientId?.value?.toString()?.trim()?.length > 0
           ? tempFilter?.clientId?.value
@@ -101,6 +103,7 @@ const ApplicationList = () => {
       debtorId:
         tempFilter?.debtorId?.value?.toString()?.trim()?.length > 0
           ? tempFilter?.debtorId
+
           : undefined,
       status: tempFilter?.status?.toString()?.trim()?.length > 0 ? tempFilter?.status : undefined,
       minCreditLimit:
@@ -141,7 +144,7 @@ const ApplicationList = () => {
     dispatchFilter({
       type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
       name: 'entityType',
-      value: event?.value,
+      value: event,
     });
   }, []);
   const handleClientIdFilterChange = useCallback(event => {
@@ -379,6 +382,7 @@ const ApplicationList = () => {
           : applicationListFilters?.entityType ?? undefined,
       clientId: applicationListFilters?.clientId,
       debtorId: applicationListFilters?.debtorId,
+
       status:
         (paramStatus?.trim()?.length ?? -1) > 0
           ? paramStatus
@@ -423,10 +427,11 @@ const ApplicationList = () => {
       limit: limit ?? 15,
       entityType:
         finalFilter?.entityType?.toString()?.trim()?.length > 0
-          ? finalFilter?.entityType
+          ? finalFilter?.entityType?.value
           : undefined,
       clientId:
         finalFilter?.clientId?.value?.toString()?.trim()?.length > 0
+
           ? finalFilter?.clientId?.value
           : undefined,
       debtorId:
@@ -454,7 +459,6 @@ const ApplicationList = () => {
     });
     return foundValue ?? [];
   }, [tempFilter?.entityType, dropdownData]);
-
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.filter(e => {
       return tempFilter?.status?.split(',').includes(e.value);

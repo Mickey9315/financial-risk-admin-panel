@@ -20,6 +20,7 @@ const initialReports = {
 export const reports = (state = initialReports, action) => {
   switch (action.type) {
 
+
     case REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS:
       return {
         ...state,

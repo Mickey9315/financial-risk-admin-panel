@@ -94,12 +94,12 @@ const ClientList = () => {
   const appliedFilters = useMemo(() => {
     return {
       riskAnalystId:
-        (tempFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
-          ? tempFilter?.riskAnalystId
+        (tempFilter?.riskAnalystId?.value?.trim()?.length ?? -1) > 0
+          ? tempFilter?.riskAnalystId?.value
           : undefined,
       serviceManagerId:
-        (tempFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
-          ? tempFilter?.serviceManagerId
+        (tempFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
+          ? tempFilter?.serviceManagerId?.value
           : undefined,
       inceptionStartDate: tempFilter?.inceptionStartDate ?? undefined,
       inceptionEndDate: tempFilter?.inceptionEndDate ?? undefined,
@@ -196,11 +196,11 @@ const ClientList = () => {
       riskAnalystId:
         (paramRiskAnalyst?.trim()?.length ?? -1) > 0
           ? paramRiskAnalyst
-          : clientListFilters?.riskAnalystId,
+          : clientListFilters?.riskAnalystId?.value,
       serviceManagerId:
         (paramServiceManager?.trim()?.length ?? -1) > 0
           ? paramServiceManager
-          : clientListFilters?.serviceManagerId,
+          : clientListFilters?.serviceManagerId?.value,
       inceptionStartDate: paramInceptionStartDate
         ? new Date(paramInceptionStartDate)
         : clientListFilters?.inceptionStartDate,
@@ -232,12 +232,12 @@ const ClientList = () => {
       page: page ?? 1,
       limit: limit ?? 15,
       riskAnalystId:
-        (finalFilter?.riskAnalystId?.trim()?.length ?? -1) > 0
-          ? finalFilter?.riskAnalystId
+        (finalFilter?.riskAnalystId?.value?.trim()?.length ?? -1) > 0
+          ? finalFilter?.riskAnalystId?.value
           : undefined,
       serviceManagerId:
-        (finalFilter?.serviceManagerId?.trim()?.length ?? -1) > 0
-          ? finalFilter?.serviceManagerId
+        (finalFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
+          ? finalFilter?.serviceManagerId?.value
           : undefined,
       inceptionStartDate: finalFilter?.inceptionStartDate || undefined,
       inceptionEndDate: finalFilter?.inceptionEndDate || undefined,
@@ -461,51 +461,32 @@ const ClientList = () => {
   }, [searchInputRef, setIsModalLoading, setCrmIds]);
 
   const handleRiskAnalystFilterChange = useCallback(event => {
-    if (event && event.value) {
+    if (event) {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'riskAnalystId',
-        value: event.value,
+        value: event,
       });
     }
   }, []);
   const handleServiceManagerFilterChange = useCallback(event => {
-    if (event && event.value) {
+    if (event) {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'serviceManagerId',
-        value: event.value,
+        value: event,
       });
     }
   }, []);
 
   const clientRiskAnalystSelectedValue = useMemo(() => {
-    const foundValue = filterList?.riskAnalystList?.find(e => {
-      return e._id === tempFilter?.riskAnalystId;
-    });
-    return foundValue
-      ? [
-          {
-            label: foundValue?.name,
-            value: foundValue?._id,
-          },
-        ]
-      : [];
-  }, [filterList, tempFilter?.riskAnalystId]);
+    return tempFilter?.riskAnalystId;
+  }, [tempFilter?.riskAnalystId]);
 
   const clientServiceManagerSelectedValue = useMemo(() => {
-    const foundValue = filterList?.serviceManagerList?.find(e => {
-      return e._id === tempFilter?.serviceManagerId;
-    });
-    return foundValue
-      ? [
-          {
-            label: foundValue?.name,
-            value: foundValue?._id,
-          },
-        ]
-      : [];
-  }, [filterList, tempFilter?.serviceManagerId]);
+    return tempFilter?.serviceManagerId;
+  }, [tempFilter?.serviceManagerId]);
+
   const selectClientFromCrm = useCallback(
     crmId => {
       let arr = [...crmIds];
