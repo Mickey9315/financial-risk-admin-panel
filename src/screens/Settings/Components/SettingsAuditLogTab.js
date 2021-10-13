@@ -478,7 +478,7 @@ const SettingsAuditLogTab = () => {
                   placeholder="Select user name"
                   name="userRefId"
                   options={userNameOptions}
-                  value={userNameSelectedValue ?? []}
+                  value={userNameSelectedValue}
                   onChange={handleUserNameFilterChange}
                   isSearchable
                 />

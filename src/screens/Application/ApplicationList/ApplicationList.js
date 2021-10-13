@@ -452,13 +452,10 @@ const ApplicationList = () => {
     },
     [page, limit, { ...finalFilter }]
   );
-
-  const entityTypeSelectedValue = useMemo(() => {
-    const foundValue = dropdownData?.entityType?.find(e => {
-      return (e?.value ?? '') === tempFilter?.entityType;
-    });
-    return foundValue ?? [];
-  }, [tempFilter?.entityType, dropdownData]);
+console.log(dropdownData?.entityType?.find(e => {
+  return e?.value === tempFilter?.entityType?.value;
+}));
+ 
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.filter(e => {
       return tempFilter?.status?.split(',').includes(e.value);
@@ -584,7 +581,7 @@ const ApplicationList = () => {
                   placeholder="Select Entity Type"
                   name="role"
                   options={dropdownData?.entityType}
-                  value={entityTypeSelectedValue}
+                  value={tempFilter?.entityType}
                   onChange={handleEntityTypeFilterChange}
                   isSearchble
                 />

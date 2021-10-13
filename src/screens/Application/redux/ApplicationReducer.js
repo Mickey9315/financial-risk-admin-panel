@@ -374,6 +374,38 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
 
+    case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ON_COUNTRY_CHANGE_WIPE_OUT_DATA: {
+      return {
+        ...state,
+        editApplication: {
+          ...state?.editApplication,
+          company: {
+            ...state?.editApplication?.company,
+            clientId: [],
+            postCode: '',
+            state: [],
+            country: action?.data,
+            suburb: '',
+            streetType: [],
+            streetName: '',
+            streetNumber: '',
+            unitNumber: '',
+            property: '',
+            address: '',
+            entityType: [],
+            phoneNumber: '',
+            entityName: [],
+            acn: '',
+            abn: '',
+            tradingName: '',
+            debtorId: [],
+            clientList: [],
+            registrationNo: '',
+          },
+        },
+      };
+    }
+
     // edit application
     case APPLICATION_REDUX_CONSTANTS.EDIT_APPLICATION
       .APPLICATION_COMPANY_EDIT_APPLICATION_CHANGE_FIELD_VALUE: {

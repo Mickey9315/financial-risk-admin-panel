@@ -26,8 +26,13 @@ import { DashboardApiService } from '../../Dashboard/services/DashboardApiServic
 export const getClientList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     try {
+      const finalParams = {
+        ...params,
+        riskAnalystId: params?.riskAnalystId?.value,
+        serviceManagerId: params?.serviceManagerId?.value
+      }
       startGeneralLoaderOnRequest('clientListLoader');
-      const response = await ClientApiService.getAllClientList(params);
+      const response = await ClientApiService.getAllClientList(finalParams);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLIENT_REDUX_CONSTANTS.FETCH_CLIENT_LIST_SUCCESS,

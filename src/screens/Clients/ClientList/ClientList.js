@@ -94,12 +94,12 @@ const ClientList = () => {
   const appliedFilters = useMemo(() => {
     return {
       riskAnalystId:
-        (tempFilter?.riskAnalystId?.value?.trim()?.length ?? -1) > 0
-          ? tempFilter?.riskAnalystId?.value
+        (tempFilter?.riskAnalystId?.toString()?.trim()?.length ?? -1) > 0
+          ? tempFilter?.riskAnalystId
           : undefined,
       serviceManagerId:
-        (tempFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
-          ? tempFilter?.serviceManagerId?.value
+        (tempFilter?.serviceManagerId?.toString()?.trim()?.length ?? -1) > 0
+          ? tempFilter?.serviceManagerId
           : undefined,
       inceptionStartDate: tempFilter?.inceptionStartDate ?? undefined,
       inceptionEndDate: tempFilter?.inceptionEndDate ?? undefined,
@@ -194,13 +194,13 @@ const ClientList = () => {
 
     const filters = {
       riskAnalystId:
-        (paramRiskAnalyst?.trim()?.length ?? -1) > 0
+        (paramRiskAnalyst?.toString()?.trim()?.length ?? -1) > 0
           ? paramRiskAnalyst
-          : clientListFilters?.riskAnalystId?.value,
+          : clientListFilters?.riskAnalystId,
       serviceManagerId:
-        (paramServiceManager?.trim()?.length ?? -1) > 0
+        (paramServiceManager?.toString().trim()?.length ?? -1) > 0
           ? paramServiceManager
-          : clientListFilters?.serviceManagerId?.value,
+          : clientListFilters?.serviceManagerId,
       inceptionStartDate: paramInceptionStartDate
         ? new Date(paramInceptionStartDate)
         : clientListFilters?.inceptionStartDate,
@@ -232,11 +232,11 @@ const ClientList = () => {
       page: page ?? 1,
       limit: limit ?? 15,
       riskAnalystId:
-        (finalFilter?.riskAnalystId?.value?.trim()?.length ?? -1) > 0
+        (finalFilter?.riskAnalystId?.value?.toString().trim()?.length ?? -1) > 0
           ? finalFilter?.riskAnalystId?.value
           : undefined,
       serviceManagerId:
-        (finalFilter?.serviceManagerId?.value?.trim()?.length ?? -1) > 0
+        (finalFilter?.serviceManagerId?.value?.toString().trim()?.length ?? -1) > 0
           ? finalFilter?.serviceManagerId?.value
           : undefined,
       inceptionStartDate: finalFilter?.inceptionStartDate || undefined,
