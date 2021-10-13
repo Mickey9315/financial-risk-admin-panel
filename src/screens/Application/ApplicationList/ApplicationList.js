@@ -452,9 +452,6 @@ const ApplicationList = () => {
     },
     [page, limit, { ...finalFilter }]
   );
-console.log(dropdownData?.entityType?.find(e => {
-  return e?.value === tempFilter?.entityType?.value;
-}));
  
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.filter(e => {
