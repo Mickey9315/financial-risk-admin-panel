@@ -151,7 +151,7 @@ const AddUser = () => {
   const onChangeUserAccess = useCallback((module, access) => {
     const { name } = module;
     const { value } = access;
-
+    
     const hasFullAccess = module.accessTypes.includes('full-access');
     const hasReadAccess = module.accessTypes.includes('read');
     const hasWriteAccess = module.accessTypes.includes('write');
@@ -306,8 +306,7 @@ const AddUser = () => {
 
   return (
     <>
-      {!viewUserPageLoaderAction ? (
-        (() =>
+      {!viewUserPageLoaderAction ? [(
           !_.isEmpty(selectedUser) ? (
             <>
               {showModal && (
@@ -493,9 +492,9 @@ const AddUser = () => {
               </div>
             </>
           ) : (
-            <div className="no-record-found">No record found</div>
-          ))()
-      ) : (
+            id !== 'new' && <div className="no-record-found">No record found</div>
+          )
+      )] : (
         <Loader />
       )}
     </>
