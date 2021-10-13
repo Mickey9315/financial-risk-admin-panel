@@ -158,6 +158,11 @@
     }
   }
 
+  li.global-search-loading-text {
+    display: block;
+    color: $field-color;
+  }
+
   li:hover {
     background-color: #deebff;
   }

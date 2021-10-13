@@ -18,7 +18,9 @@ const GlobalSearch = () => {
   const globalSearchResult = useSelector(
     ({ globalSearchReducer }) => globalSearchReducer?.searchResults ?? []
   );
-
+  const { gloabalSearchLoaderAction } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+  );
   const searchOnFocus = () => setHeaderSearchFocused(true);
   const searchOutsideClick = () => {
     setSearchStart(false);
@@ -102,9 +104,15 @@ const GlobalSearch = () => {
         />
         <span className="material-icons-round ga-search-icon">search</span>
       </div>
-      {searchStart && (
+      {searchStart &&
         <ul className="header-search-results">
-          {searchStart && globalSearchResult?.length > 0 ? (
+          {gloabalSearchLoaderAction ? (<li className="global-search-loading-text">
+            Loading
+            <span className="loader__dot">.</span>
+            <span className="loader__dot">.</span>
+            <span className="loader__dot">.</span>
+            </li>) :
+           [searchStart && globalSearchResult?.length > 0 ? (
             globalSearchResult?.map((searchResult, index) => (
               <li
                 className={index === cursor && 'header-active-search'}
@@ -124,9 +132,9 @@ const GlobalSearch = () => {
             ))
           ) : (
             <li>No Record Found</li>
-          )}
+          )]}
         </ul>
-      )}
+      }
     </div>
   );
 };

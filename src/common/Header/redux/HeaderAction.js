@@ -178,14 +178,17 @@ export const searchGlobalData = value => {
       const params = {
         searchString: value,
       };
+      startGeneralLoaderOnRequest('gloabalSearchLoaderAction');
       const response = await HeaderApiService.globalSearchApiServices.getGlobalSearchData(params);
       if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('gloabalSearchLoaderAction');
         dispatch({
           type: HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS.GET_SEARCH_RESULT_LIST,
           data: response?.data?.data,
         });
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('gloabalSearchLoaderAction');
       errorNotification(e);
     }
   };
