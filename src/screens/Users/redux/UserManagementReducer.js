@@ -141,6 +141,9 @@ export const selectedUserData = (state = null, action) => {
         moduleAccess: [],
       };
 
+      case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_DUPLICATE_MODULE_ACCESS:
+        return { ...state, duplicateModules: action?.data };
+
     default:
       return state;
   }
