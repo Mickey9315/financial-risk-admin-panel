@@ -165,9 +165,23 @@ export const resetCurrentFilter = filterFor => {
 
 export const reportDownloadAction = async (reportFor, filters) => {
   startGeneralLoaderOnRequest('reportDownloadButtonLoaderAction');
+  const finalFilters = {};
+  Object.entries(filters).forEach(([key, value]) => {
+    if (_.isArray(value)) {
+     finalFilters[key] = value
+         ?.map(record =>
+          reportFor === 'claimsReport' ? record?.secondValue : record?.value
+         )
+         .join(',');
+     } else if (_.isObject(value)) {
+      finalFilters[key] = reportFor === 'claimsReport' ? value?.secondValue : value?.value;
+     } else {
+      finalFilters[key] = value || undefined;
+     }
+   });
   const config = {
     columnFor: reportFor,
-    ...filters,
+    ...finalFilters,
   };
   try {
     const response = await ReportsApiService.downloadReportList(config);
