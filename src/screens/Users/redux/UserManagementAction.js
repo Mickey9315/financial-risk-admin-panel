@@ -243,7 +243,7 @@ export const addNewUser = data => {
 };
 
 export const updateUserDetails = (id, data) => {
-  return async () => {
+  return async dispatch => {
     try {
       startGeneralLoaderOnRequest('viewUserUpdateUserButtonLoaderAction');
       const finalData = {
@@ -264,6 +264,10 @@ export const updateUserDetails = (id, data) => {
       if (response?.data?.status === 'SUCCESS') {
         successNotification(response?.data?.message ?? 'User details updated successfully.');
         stopGeneralLoaderOnSuccessOrFail('viewUserUpdateUserButtonLoaderAction');
+        dispatch({
+          type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_DUPLICATE_MODULE_ACCESS,
+          data: finalData.moduleAccess,
+        });
       }
     } catch (e) {
       stopGeneralLoaderOnSuccessOrFail('viewUserUpdateUserButtonLoaderAction');
