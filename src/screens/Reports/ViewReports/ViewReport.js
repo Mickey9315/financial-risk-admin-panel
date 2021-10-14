@@ -3,6 +3,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import { reportType } from '../../../helpers/reportTypeHelper';
 import {
   applyFinalFilter,
@@ -74,7 +75,6 @@ const ViewReport = () => {
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
     [setCustomFieldModal]
   );
-
   const tempFilters = useMemo(() => {
     const params = {};
         Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(
@@ -82,11 +82,13 @@ const ViewReport = () => {
         params[key] = value || undefined;
       }
     ); 
+    console.log('in tempFilters', reportFilters?.[currentFilter.filter]?.tempFilter);
     if (currentFilter.filter === 'reviewReport') {
       params.date = reviewReportFilterDate || undefined;
     }
     return { ...params };
   }, [reportFilters, currentFilter, reviewReportFilterDate]);
+  console.log('baar tempFilters', tempFilters);
 
   const finalFilters = useMemo(() => {
     const params = {};
@@ -113,12 +115,12 @@ const ViewReport = () => {
         ...tempFilters,
         ...initialParams,
       };
+      console.log({tempFilters});
       if (currentFilter.filter === 'reviewReport') {
         params.date = reviewReportFilterDate || undefined;
       }
       try {
         await dispatch(getReportList(params, currentFilter?.filter));
-        dispatch(applyFinalFilter(currentFilter.filter));
         if (cb && typeof cb === 'function') {
           cb();
         }
@@ -168,7 +170,7 @@ const ViewReport = () => {
     } catch (e) {
       /**/
     }
-  }, [getReportListByFilter]);
+  }, [getReportListByFilter, paramReport]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -227,9 +229,17 @@ const ViewReport = () => {
 
   const changeFilterFields = useCallback(
     (name, value) => {
-      dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
+      console.log({name, value});
+      const startDate = reportFilters?.[currentFilter.filter]?.tempFilter?.startDate;
+      const endDate = reportFilters?.[currentFilter.filter]?.tempFilter?.endDate;
+      console.log(name === 'endDate' && startDate && moment(value).isBefore(startDate));
+      if((name === 'endDate' && startDate && moment(value).isBefore(startDate)) || (name === 'startDate' && endDate && moment(endDate).isBefore(value))) {
+        errorNotification('Please enter a valid date range')
+      } else {
+        dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
+      }
     },
-    [currentFilter]
+    [reportFilters,currentFilter]
   );
 
   const handleSelectInputChange = useCallback(e => {
@@ -339,12 +349,14 @@ const ViewReport = () => {
   const applyReportsFilter = useCallback(async () => {
     toggleFilterModal();
     await getReportListByFilter();
+    dispatch(applyFinalFilter(currentFilter.filter));
   }, [getReportListByFilter, toggleFilterModal]);
 
   const resetReportsFilter = useCallback(async () => {
     await dispatch(resetCurrentFilter(currentFilter.filter));
     toggleFilterModal();
     await getReportListByFilter({});
+    dispatch(applyFinalFilter(currentFilter.filter));
   }, [currentFilter, toggleFilterModal]);
 
   const filterModalButtons = useMemo(
@@ -471,7 +483,7 @@ const ViewReport = () => {
                   <span className="material-icons-round">event</span>
                 </div>
               )}
-              {['limit-list', 'pending-application', 'usage'].includes(paramReport) && (
+              {['limit-list', 'pending-application', 'usage', 'review'].includes(paramReport) && (
                 <IconButton
                   buttonType="primary-1"
                   title="cloud_download"
