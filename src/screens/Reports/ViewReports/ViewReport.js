@@ -36,8 +36,7 @@ const ViewReport = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { type: paramReport } = useParams();
-  const { page: paramPage, limit: paramLimit, ...restParams } = useQueryParams();
-  // const customSelectFor = ['limit-list', 'usage-per-client', 'limit-history', 'claims'];
+  const { page: paramPage, limit: paramLimit } = useQueryParams();
   const [customFieldModal, setCustomFieldModal] = useState(false);
 
   const reportList = useSelector(({ reports }) => reports?.reportsList ?? {});
@@ -78,22 +77,6 @@ const ViewReport = () => {
 
   const tempFilters = useMemo(() => {
     const params = {};
-    // eslint-disable-next-line no-unused-vars
-    //  const updatedParams = reportFilters?.[currentFilter?.filter]?.tempFilter && Object.entries(reportFilters?.[currentFilter?.filter]?.tempFilter)?.forEach(
-    //   ([key, value]) => {
-    //     if (_.isArray(value)) {
-    //       params[key] = value
-    //         ?.map(record =>
-    //           currentFilter.filter === 'claimsReport' ? record?.secondValue : record?.value
-    //         )
-    //         .join(',');
-    //     } else if (_.isObject(value)) {
-    //       params[key] = currentFilter.filter === 'claimsReport' ? value?.secondValue : value?.value;
-    //     } else {
-    //     params[key] = value || undefined;
-    //     }
-    //   }
-    // );
         Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(
       ([key, value]) => {
         params[key] = value || undefined;
@@ -107,22 +90,6 @@ const ViewReport = () => {
 
   const finalFilters = useMemo(() => {
     const params = {};
-    // const updatedParams = reportFilters?.[currentFilter?.filter]?.finalFilter && Object.entries(reportFilters?.[currentFilter?.filter]?.finalFilter
-    //   )?.forEach(
-    //   ([key, value]) => {
-    //     if (_.isArray(value)) {
-    //       params[key] = value
-    //         ?.map(record =>
-    //           currentFilter.filter === 'claimsReport' ? record?.secondValue : record?.value
-    //         )
-    //         .join(',');
-    //     } else if (_.isObject(value)) {
-    //       params[key] = currentFilter.filter === 'claimsReport' ? value?.secondValue : value?.value;
-    //     } else {
-    //     params[key] = value || undefined;
-    //     }
-    //   }
-    // );
     Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(
       ([key, value]) => {
         params[key] = value || undefined;
@@ -265,35 +232,12 @@ const ViewReport = () => {
     [currentFilter]
   );
 
-  /* const getClientSelectedValues = useMemo(() => {
-    const clients = reportFilters?.[currentFilter.filter]?.tempFilter?.clientIds?.split(',');
-    const selectedClients = [];
-    if (currentFilter.filter === 'claimsReport') {
-      reportEntityListData?.clientIds?.forEach(data => {
-        if (clients?.includes(data.secondValue)) selectedClients.push(data);
-        return [];
-      });
-    } else {
-      reportEntityListData?.clientIds?.forEach(data => {
-        if (clients?.includes(data.value)) selectedClients.push(data);
-        return [];
-      });
-    }
-    return selectedClients;
-  }, [reportFilters, currentFilter]); */
-
   const handleSelectInputChange = useCallback(e => {
     changeFilterFields(e.name, e);
   }, []);
 
   const handleClientSelectInputChange = useCallback(e => {
-    if (currentFilter.filter === 'claimsReport') {
-      //   const clients = e.map(val => val.secondValue).join(',');
       changeFilterFields('clientIds', e);
-    } else {
-      //  const clients = e.map(val => val.value).join(',');
-      changeFilterFields('clientIds', e);
-    }
   }, []);
 
   const handleDateInputChange = useCallback((name, date) => {
@@ -312,7 +256,6 @@ const ViewReport = () => {
   const handleCustomSearch = text => handleOnSelectSearchInputChange('clientIds', text);
 
   const onSearchChange = _.debounce(handleCustomSearch, 800);
-
   const getComponentFromType = useCallback(
     input => {
       let component = null;
@@ -439,10 +382,7 @@ const ViewReport = () => {
     startGeneralLoaderOnRequest('viewReportListLoader');
     await dispatch(getReportsClientDropdownData());
 
-    Object.entries(restParams).forEach(([key, value]) => {
-      changeFilterFields(key, value);
-    });
-    await getReportListByFilter({ ...params, ...restParams });
+    await getReportListByFilter({ ...params, ...finalFilters });
     await dispatch(getReportColumnList(paramReport));
   }, []);
 
