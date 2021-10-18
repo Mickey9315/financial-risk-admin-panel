@@ -91,7 +91,7 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
         dispatch(importApplicaionGoToNextStep());
       }
     } else {
-      errorNotification('No application to be process.');
+      errorNotification('No application to be processed.');
     }
   }, [activeStep, validate, toBeProcessedApplicationCount]);
 

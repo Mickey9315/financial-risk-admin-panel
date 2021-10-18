@@ -28,7 +28,7 @@ const ImportApplicationGenerateApplicationStep = () => {
     <div className="ia-generate-step">
       <div className="ia-generate-status-count">
         <div className="ia-validate-count">
-          <div className="font-success f-16">{`To Be Processes : ${
+          <div className="font-success f-16">{`To Be Processed : ${
             toBeProcessedApplicationCount ?? 0
           }`}</div>
           <div className="font-danger f-16 mt-10">{`Rejected : ${docs?.length ?? 0}`}</div>
