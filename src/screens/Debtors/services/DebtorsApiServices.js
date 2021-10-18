@@ -17,6 +17,7 @@ const DebtorsApiServices = {
       params,
       method: 'GET',
       responseType: 'blob',
+      timeout: 60000,
     }),
   debtorReportsApi: {
     downloadDebtorReport: id =>

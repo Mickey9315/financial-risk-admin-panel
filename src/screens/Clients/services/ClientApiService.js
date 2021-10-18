@@ -20,6 +20,7 @@ const ClientApiService = {
       params,
       method: 'GET',
       responseType: 'blob',
+      timeout: 60000,
     }),
 };
 

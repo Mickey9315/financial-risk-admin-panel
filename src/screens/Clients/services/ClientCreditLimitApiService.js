@@ -17,6 +17,7 @@ const ClientCreditLimitApiService = {
       url: `${CLIENT_URLS.CREDIT_LIMIT.DOWNLOAD_CLIENT_CREDIT_LIMIT_CSV}${id}`,
       method: 'GET',
       responseType: 'blob',
+      timeout: 60000,
     }),
   downloadCreditLimitDecisionLetter: id =>
     ApiService.request({
