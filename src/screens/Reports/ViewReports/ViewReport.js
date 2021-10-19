@@ -3,7 +3,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
 import { reportType } from '../../../helpers/reportTypeHelper';
 import {
   applyFinalFilter,
@@ -32,6 +31,7 @@ import { downloadAll } from '../../../helpers/DownloadHelper';
 import { startGeneralLoaderOnRequest } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import Select from '../../../common/Select/Select';
 import { REPORTS_SEARCH_ENTITIES } from '../../../constants/EntitySearchConstants';
+import { filterDateValidations } from '../reportFilterValidations';
 
 const ViewReport = () => {
   const dispatch = useDispatch();
@@ -82,13 +82,11 @@ const ViewReport = () => {
         params[key] = value || undefined;
       }
     ); 
-    console.log('in tempFilters', reportFilters?.[currentFilter.filter]?.tempFilter);
     if (currentFilter.filter === 'reviewReport') {
       params.date = reviewReportFilterDate || undefined;
     }
     return { ...params };
   }, [reportFilters, currentFilter, reviewReportFilterDate]);
-  console.log('baar tempFilters', tempFilters);
 
   const finalFilters = useMemo(() => {
     const params = {};
@@ -106,24 +104,32 @@ const ViewReport = () => {
   const backToReports = useCallback(() => history.replace('/reports'), [history]);
 
   const getReportListByFilter = useCallback(
-    async (initialParams = { page: 1, limit: 15 }, cb) => {
+    async (initialParams = { page: 1, limit: 15 }, cb, isReset) => {
       // eslint-disable-next-line no-unused-vars
+      const appliedFilters = isReset ? {} : tempFilters
       const params = {
         page: page ?? 1,
         limit: limit ?? 15,
         columnFor: paramReport ?? '',
-        ...tempFilters,
+        ...appliedFilters,
         ...initialParams,
       };
-      console.log({tempFilters});
+    let isFiltersValid = true;
+    if(currentFilter?.filter === 'clientList' || currentFilter?.filter === 'limitList' || currentFilter?.filter === 'pendingApplications') {
+      isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters)
+    }
       if (currentFilter.filter === 'reviewReport') {
         params.date = reviewReportFilterDate || undefined;
       }
       try {
+        if(isFiltersValid){
         await dispatch(getReportList(params, currentFilter?.filter));
         if (cb && typeof cb === 'function') {
           cb();
         }
+      } else {
+        await dispatch(resetCurrentFilter(currentFilter.filter));
+      }
       } catch (e) {
         /**/
       }
@@ -229,15 +235,7 @@ const ViewReport = () => {
 
   const changeFilterFields = useCallback(
     (name, value) => {
-      console.log({name, value});
-      const startDate = reportFilters?.[currentFilter.filter]?.tempFilter?.startDate;
-      const endDate = reportFilters?.[currentFilter.filter]?.tempFilter?.endDate;
-      console.log(name === 'endDate' && startDate && moment(value).isBefore(startDate));
-      if((name === 'endDate' && startDate && moment(value).isBefore(startDate)) || (name === 'startDate' && endDate && moment(endDate).isBefore(value))) {
-        errorNotification('Please enter a valid date range')
-      } else {
-        dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
-      }
+      dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
     },
     [reportFilters,currentFilter]
   );
@@ -355,9 +353,9 @@ const ViewReport = () => {
   const resetReportsFilter = useCallback(async () => {
     await dispatch(resetCurrentFilter(currentFilter.filter));
     toggleFilterModal();
-    await getReportListByFilter({});
+    await getReportListByFilter({}, () => {}, true);
     dispatch(applyFinalFilter(currentFilter.filter));
-  }, [currentFilter, toggleFilterModal]);
+  }, [currentFilter, toggleFilterModal, tempFilters]);
 
   const filterModalButtons = useMemo(
     () => [
@@ -395,7 +393,7 @@ const ViewReport = () => {
     await dispatch(getReportsClientDropdownData());
 
     await getReportListByFilter({ ...params, ...finalFilters });
-    await dispatch(getReportColumnList(paramReport));
+    dispatch(getReportColumnList(paramReport));
   }, []);
 
   useEffect(() => {
@@ -408,7 +406,7 @@ const ViewReport = () => {
   // for params in url
   useEffect(() => {
     const otherFilters = {};
-    Object.entries(finalFilters).forEach(([key, value]) => {
+    Object.entries(tempFilters).forEach(([key, value]) => {
       if (_.isArray(value)) {
         otherFilters[key] = value
            ?.map(record =>
@@ -431,7 +429,7 @@ const ViewReport = () => {
       ?.map(([k, v]) => `${k}=${v}`)
       ?.join('&');
     history.push(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, finalFilters]);
+  }, [history, total, pages, page, limit, tempFilters]);
 
   // extra filter for reviewReport
   const handleSelectDateChange = useCallback(date => {
