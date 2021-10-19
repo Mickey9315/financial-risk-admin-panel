@@ -3,15 +3,19 @@ import { errorNotification } from '../../common/Toast';
 
 export const filterDateValidations = (appliedFilter, appliedParams) => {
   if(appliedFilter === 'clientList') {
-
+    if(appliedParams?.inceptionEndDate || appliedParams?.inceptionStartDate) {
      if(moment(appliedParams?.inceptionEndDate)?.isBefore(appliedParams?.inceptionStartDate)) {
         errorNotification('Please enter valid inception date range');
        return false;
      }
+    }
+    
+    if(appliedParams?.expiryEndDate || appliedParams?.expiryStartDate) {
      if(moment(appliedParams?.expiryEndDate)?.isBefore(appliedParams?.expiryStartDate)) {
       errorNotification('Please enter valid expiry date range');
       return false;
     }
+  }
 
     } 
 
