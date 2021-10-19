@@ -245,46 +245,10 @@ const initialFilterState = {
           label: 'Debtor',
           placeHolder: 'Select debtor',
         },
-        {
-          type: 'dateRange',
-          label: 'Limit Expiry Date',
-          range: [
-            {
-              type: 'date',
-              name: 'limitStartDate',
-              placeHolder: 'Select start date',
-            },
-            {
-              type: 'date',
-              name: 'limitEndDate',
-              placeHolder: 'Select end date',
-            },
-          ],
-        },
-        {
-          type: 'dateRange',
-          label: 'Report Expiry Date',
-          range: [
-            {
-              type: 'date',
-              name: 'reportStartDate',
-              placeHolder: 'Select start date',
-            },
-            {
-              type: 'date',
-              name: 'reportEndDate',
-              placeHolder: 'Select end date',
-            },
-          ],
-        },
       ],
       tempFilter: {
         clientIds: '',
         debtorId: '',
-        limitStartDate: null,
-        limitEndDate: null,
-        reportStartDate: null,
-        reportEndDate: null,
       },
       finalFilter: {},
     },
