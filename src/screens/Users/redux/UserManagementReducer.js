@@ -106,16 +106,15 @@ export const userManagementColumnList = (state = initialUserColumnManagementStat
 export const selectedUserData = (state = null, action) => {
   switch (action?.type) {
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION:
-      const { name, role, email, clientIds, contactNumber, maxCreditLimit } = action?.data;
       return {
         ...action.data,
         duplicateModules: action?.data?.moduleAccess,
-        duplicateName: name,
-        duplicateRole: role,
-        duplicateEmail: email,
-        duplicateContactNumber: contactNumber,
-        duplicateMaxCreditLimit: maxCreditLimit,
-        duplicateClientIds: clientIds,
+        duplicateName: action?.data?.name,
+        duplicateRole: action?.data?.role,
+        duplicateEmail: action?.data?.email,
+        duplicateContactNumber: action?.data?.contactNumber,
+        duplicateMaxCreditLimit: action?.data?.maxCreditLimit,
+        duplicateClientIds: action?.data?.clientIds,
       };
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION:
       return {
