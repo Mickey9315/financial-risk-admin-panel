@@ -34,9 +34,11 @@ export const getReportList = (params, currentFilter) => {
           data: response?.data?.data,
         });
         stopGeneralLoaderOnSuccessOrFail('viewReportListLoader');
+        stopGeneralLoaderOnSuccessOrFail('onlyReportListLoader');
       }
     } catch (e) {
       stopGeneralLoaderOnSuccessOrFail('viewReportListLoader');
+      stopGeneralLoaderOnSuccessOrFail('onlyReportListLoader');
       displayErrors(e);
     }
   };
