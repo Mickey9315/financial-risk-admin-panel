@@ -103,11 +103,11 @@ const ExpandedTableHelper = props => {
                       await handleDrawerState(data);
                     }}
                   >
-                    <td>{data?.name}</td>
-                    <td>{data?.acn}</td>
+                    <td>{data?.name?.toString().trim().length > 0 ? data?.name : '-'}</td>
+                    <td>{data?.acn?.toString().trim().length > 0 ? data?.acn : '-'}</td>
                     <td>{data?.overdueType}</td>
                     <td>{data?.status}</td>
-                    <td>{data?.amount ? NumberCommaSeparator(data?.amount) : ''}</td>
+                    <td>{data?.amount?.toString().trim().length > 0 ? NumberCommaSeparator(data?.amount) : '-'}</td>
                   </tr>
                 ))}
               </tbody>
