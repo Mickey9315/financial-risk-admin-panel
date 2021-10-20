@@ -48,6 +48,7 @@ const ViewReport = () => {
     reportListColumnResetButtonLoaderAction,
     reportDownloadButtonLoaderAction,
     viewReportListLoader,
+    onlyReportListLoader
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { docs, headers, page, limit, pages, total } = useMemo(() => reportList, [reportList]);
@@ -116,13 +117,13 @@ const ViewReport = () => {
       };
     let isFiltersValid = true;
     if(currentFilter?.filter === 'clientList' || currentFilter?.filter === 'limitList' || currentFilter?.filter === 'pendingApplications') {
-      isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters)
+      isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters);
     }
       if (currentFilter.filter === 'reviewReport') {
         params.date = reviewReportFilterDate || undefined;
       }
       try {
-        if(isFiltersValid){
+        if(isFiltersValid) {
         await dispatch(getReportList(params, currentFilter?.filter));
         if (cb && typeof cb === 'function') {
           cb();
@@ -149,13 +150,16 @@ const ViewReport = () => {
     try {
       const isBothEqual = _.isEqual(reportColumnList, reportDefaultColumnList);
       if (!isBothEqual) {
+
         await dispatch(saveReportColumnList({ reportColumnList, reportFor: paramReport }));
+        toggleCustomField();
+        startGeneralLoaderOnRequest('onlyReportListLoader');
         await getReportListByFilter();
       } else {
         errorNotification('Please select different columns to apply changes.');
+        toggleCustomField();
         throw Error();
       }
-      toggleCustomField();
     } catch (e) {
       /**/
     }
@@ -506,7 +510,7 @@ const ViewReport = () => {
               />
             </div>
           </div>
-          {docs?.length > 0 ? (
+          {docs?.length > 0 ? [!onlyReportListLoader ? (
             <>
               <div className="common-list-container">
                 <Table
@@ -527,7 +531,7 @@ const ViewReport = () => {
                 onSelectLimit={onSelectLimit}
               />
             </>
-          ) : (
+          ) : <Loader/>] : (
             <div className="no-record-found">No record found</div>
           )}
 
