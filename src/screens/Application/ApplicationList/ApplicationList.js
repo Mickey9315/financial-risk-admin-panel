@@ -98,7 +98,7 @@ const ApplicationList = () => {
           : undefined,
       clientId:
         tempFilter?.clientId?.value?.toString()?.trim()?.length > 0
-          ? tempFilter?.clientId?.value
+          ? tempFilter?.clientId
           : undefined,
       debtorId:
         tempFilter?.debtorId?.value?.toString()?.trim()?.length > 0
@@ -198,6 +198,7 @@ const ApplicationList = () => {
       errorNotification('Please enter a valid date range');
       resetFilterDates();
     } else {
+      console.log(appliedFilters);
       let data = {
         page: page ?? 1,
         limit: limit ?? 15,
