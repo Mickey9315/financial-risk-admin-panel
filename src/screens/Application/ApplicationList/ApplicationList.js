@@ -198,7 +198,6 @@ const ApplicationList = () => {
       errorNotification('Please enter a valid date range');
       resetFilterDates();
     } else {
-      console.log(appliedFilters);
       let data = {
         page: page ?? 1,
         limit: limit ?? 15,
