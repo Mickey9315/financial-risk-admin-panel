@@ -40,6 +40,7 @@ const AddUser = () => {
   const { action, id } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState(null);
+
   const prevUserRoleData = useRef(null);
 
   const {
@@ -301,6 +302,7 @@ const AddUser = () => {
       history.replace('/users');
     } else {
       history.replace(`/users/user/view/${id}`);
+      dispatch({type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UNDO_SELECTED_USER_DATA_ON_CLOSE})
     }
   }, [history, id]);
 
@@ -403,6 +405,7 @@ const AddUser = () => {
                         placeholder="Select"
                         name="role"
                         options={USER_ROLES}
+                        menuIsOpen
                         value={userRoleSelectedValue}
                         onChange={onChangeUserRole}
                         searchable={false}

@@ -91,7 +91,7 @@ export const userManagementColumnList = (state = initialUserColumnManagementStat
               ...e,
               isChecked: value,
             }
-          : e
+          : e,
       );
 
       return {
@@ -106,7 +106,17 @@ export const userManagementColumnList = (state = initialUserColumnManagementStat
 export const selectedUserData = (state = null, action) => {
   switch (action?.type) {
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_GET_USER_ACTION:
-      return { ...action.data, duplicateModules: action?.data?.moduleAccess };
+      const { name, role, email, clientIds, contactNumber, maxCreditLimit } = action?.data;
+      return {
+        ...action.data,
+        duplicateModules: action?.data?.moduleAccess,
+        duplicateName: name,
+        duplicateRole: role,
+        duplicateEmail: email,
+        duplicateContactNumber: contactNumber,
+        duplicateMaxCreditLimit: maxCreditLimit,
+        duplicateClientIds: clientIds,
+      };
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION:
       return {
         ...state,
@@ -141,8 +151,20 @@ export const selectedUserData = (state = null, action) => {
         moduleAccess: [],
       };
 
-      case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_DUPLICATE_MODULE_ACCESS:
-        return { ...state, duplicateModules: action?.data };
+    case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_DUPLICATE_MODULE_ACCESS:
+      return { ...state, duplicateModules: action?.data };
+
+    case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UNDO_SELECTED_USER_DATA_ON_CLOSE:
+      return {
+        ...state,
+        moduleAccess: [...state?.duplicateModules],
+        name: state?.duplicateName,
+        role: state?.duplicateRole,
+        email: state?.duplicateEmail,
+        contactNumber: state?.duplicateContactNumber,
+        maxCreditLimit: state?.duplicateMaxCreditLimit,
+        clientIds: state?.duplicateClientIds,
+      };
 
     default:
       return state;
