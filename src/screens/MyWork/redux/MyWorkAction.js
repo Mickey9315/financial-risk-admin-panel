@@ -54,12 +54,12 @@ export const getEntityDropDownData = params => {
       startGeneralLoaderOnRequest('getMyWorkTaskEntityDataLoader');
       const response = await MyWorkApiServices.getEntityDropDownData(params);
       if (response?.data?.status === 'SUCCESS' && response.data.data) {
-        stopGeneralLoaderOnSuccessOrFail('getMyWorkTaskEntityDataLoader');
         dispatch({
           type: MY_WORK_REDUX_CONSTANTS.MY_WORK_TASK_REDUX_CONSTANTS
             .MY_WORK_ENTITY_DROP_DOWN_DATA_ACTION,
           data: response.data.data,
         });
+        stopGeneralLoaderOnSuccessOrFail('getMyWorkTaskEntityDataLoader');
       }
     } catch (e) {
       stopGeneralLoaderOnSuccessOrFail('getMyWorkTaskEntityDataLoader');
