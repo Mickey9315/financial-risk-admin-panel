@@ -11,19 +11,33 @@ const instance = axios.create({
   params: {}, // do not remove this, its added to add params later in the config
 });
 
+// Store requests
+const sourceRequest = {};
+
 // Add a request interceptor
 instance.interceptors.request.use(
-  async config => {
+  async request => {
     const token = getAuthTokenLocalStorage();
 
     if (token) {
-      config.headers.common.authorization = token;
+      request.headers.common.authorization = token;
     }
-    return config;
+
+    // If the application exists cancel
+    if (sourceRequest[request.url]) {
+      sourceRequest[request.url].cancel('Automatic cancellation');
+    }
+
+    // Store or update application token
+    const axiosSource = axios.CancelToken.source();
+    sourceRequest[request.url] = { cancel: axiosSource.cancel };
+    request.cancelToken = axiosSource.token;
+
+    return request;
   },
   error => {
     return Promise.reject(error);
-  }
+  },
 );
 
 const ApiService = {
@@ -66,15 +80,9 @@ instance.interceptors.response.use(
           store.dispatch({
             type: LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION,
           });
-          errorNotification(
-            'For security purposes you have been logged out, you need to re login',
-            5000
-          );
+          errorNotification('For security purposes you have been logged out, you need to re login', 5000);
         }
-        errorNotification(
-          'For security purposes you have been logged out, you need to re login',
-          5000
-        );
+        errorNotification('For security purposes you have been logged out, you need to re login', 5000);
         return false;
       case 403:
         window.location.href = '/forbidden-access';
@@ -83,7 +91,7 @@ instance.interceptors.response.use(
         break;
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default ApiService;
