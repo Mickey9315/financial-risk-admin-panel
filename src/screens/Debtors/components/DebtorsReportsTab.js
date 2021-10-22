@@ -354,7 +354,7 @@ const DebtorsReportsTab = () => {
             onClick={toggleCustomField}
           />
           <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
-            <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.REPORT}>
+            <UserPrivilegeWrapper moduleName='credit-report'>
               <Button
                 buttonType="secondary"
                 title="Fetch Report"
