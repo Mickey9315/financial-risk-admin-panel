@@ -26,6 +26,8 @@ import Input from '../../../common/Input/Input';
 import { NUMBER_REGEX } from '../../../constants/RegexConstants';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { NumberCommaSeparator } from '../../../helpers/NumberCommaSeparator';
+import UserPrivilegeWrapper from '../../../common/UserPrivilegeWrapper/UserPrivilegeWrapper';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const ClientCreditLimitTab = () => {
   const { id } = useParams();
@@ -235,6 +237,7 @@ const ClientCreditLimitTab = () => {
               if (!clientDecisionLetterDownloadButtonLoaderAction) downloadDecisionLetter(data?.id);
             }}
           />
+          <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
           <Button
             buttonType="outlined-primary-small"
             title="Modify"
@@ -251,6 +254,7 @@ const ClientCreditLimitTab = () => {
               toggleSurrenderModal();
             }}
           />
+          </UserPrivilegeWrapper>
         </span>
       ),
     ],
