@@ -490,7 +490,7 @@ const ClientDocumentsTab = () => {
             onClick={() => toggleCustomField()}
           />
           <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
-            <UserPrivilegeWrapper moduleName="policy">
+            <UserPrivilegeWrapper moduleName="document">
               <IconButton
                 buttonType="primary"
                 title="cloud_upload"
