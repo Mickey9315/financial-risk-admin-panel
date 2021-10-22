@@ -214,12 +214,12 @@ const AddUser = () => {
     } else {
       try {
         if (action === 'add') {
-          const response = await dispatch(addNewUser(selectedUser));
+          const response = await dispatch(addNewUser({...selectedUser, duplicateUserDetails: undefined}));
           if (response) {
             history.replace(`/users/user/view/${response}`);
           }
         } else if (action === 'edit') {
-          await dispatch(updateUserDetails(id, selectedUser));
+          await dispatch(updateUserDetails(id, {...selectedUser, duplicateUserDetails: undefined}));
           history.replace(`/users/user/view/${id}`);
         }
       } catch (e) {

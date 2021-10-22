@@ -109,12 +109,14 @@ export const selectedUserData = (state = null, action) => {
       return {
         ...action.data,
         duplicateModules: action?.data?.moduleAccess,
-        duplicateName: action?.data?.name,
-        duplicateRole: action?.data?.role,
-        duplicateEmail: action?.data?.email,
-        duplicateContactNumber: action?.data?.contactNumber,
-        duplicateMaxCreditLimit: action?.data?.maxCreditLimit,
-        duplicateClientIds: action?.data?.clientIds,
+        duplicateUserDetails: {
+          name: action?.data?.name,
+          role: action?.data?.role,
+          email: action?.data?.email,
+          contactNumber: action?.data?.contactNumber,
+          maxCreditLimit: action?.data?.maxCreditLimit,
+          clientIds: action?.data?.clientIds
+        }
       };
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION:
       return {
@@ -157,12 +159,12 @@ export const selectedUserData = (state = null, action) => {
       return {
         ...state,
         moduleAccess: [...state?.duplicateModules],
-        name: state?.duplicateName,
-        role: state?.duplicateRole,
-        email: state?.duplicateEmail,
-        contactNumber: state?.duplicateContactNumber,
-        maxCreditLimit: state?.duplicateMaxCreditLimit,
-        clientIds: state?.duplicateClientIds,
+        name: state?.duplicateUserDetails?.name,
+        role: state?.duplicateUserDetails?.role,
+        email: state?.duplicateUserDetails?.email,
+        contactNumber: state?.duplicateUserDetails?.contactNumber,
+        maxCreditLimit: state?.duplicateUserDetails?.maxCreditLimit,
+        clientIds: state?.duplicateUserDetails?.clientIds,
       };
 
     default:
