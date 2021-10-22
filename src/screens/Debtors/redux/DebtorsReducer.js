@@ -220,7 +220,36 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
       return {
         ...state,
         selectedDebtorData: action?.data,
+        duplicateSelectedDebtorData: {
+          tradingName: action?.data?.tradingName,
+          property: action?.data?.property,
+          streetNumber: action?.data?.streetNumber,
+          streetType: action?.data?.streetType,
+          postCode: action?.data?.postCode,
+          contactNumber: action?.data?.contactNumber,
+          unitNumber: action?.data?.unitNumber,
+          streetName: action?.data?.streetName,
+          suburb: action?.data?.suburb
+        }
       };
+
+      case DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE:
+        return {
+          ...state,
+          selectedDebtorData: {
+            ...state?.selectedDebtorData,
+            tradingName: state?.duplicateSelectedDebtorData?.tradingName,
+          property: state?.duplicateSelectedDebtorData?.property,
+          streetNumber: state?.duplicateSelectedDebtorData?.streetNumber,
+          streetType: state?.duplicateSelectedDebtorData?.streetType,
+          postCode: state?.duplicateSelectedDebtorData?.postCode,
+          contactNumber: state?.duplicateSelectedDebtorData?.contactNumber,
+          unitNumber: state?.duplicateSelectedDebtorData?.unitNumber,
+          streetName: state?.duplicateSelectedDebtorData?.streetName,
+          suburb: state?.duplicateSelectedDebtorData?.suburb
+          }
+        }
+
     case DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS: {
       const dropdownData = { ...state?.dropdownData };
       // eslint-disable-next-line no-shadow
