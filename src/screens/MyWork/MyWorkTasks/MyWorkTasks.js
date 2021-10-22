@@ -136,7 +136,9 @@ const MyWorkTasks = () => {
           priority: (tempFilter?.priority?.length ?? -1) > 0 ? tempFilter?.priority : undefined,
           isCompleted: tempFilter?.isCompleted || undefined,
           assigneeId: (tempFilter?.assigneeId?.length ?? -1) > 0 ? tempFilter?.assigneeId : userId,
-          startDate: tempFilter?.startDate ?? undefined,
+          startDate: tempFilter?.startDate
+          ? moment(tempFilter?.startDate)?.set({ hour: 23, minute: 59, second: 59 }).toDate()
+          : undefined,
           endDate,
           columnFor: 'task',
           ...params,
@@ -197,7 +199,7 @@ const MyWorkTasks = () => {
         (paramAssigneeId?.trim()?.length ?? -1) > 0
           ? paramAssigneeId
           : taskListFilters?.assigneeId || userId,
-      startDate: paramStartDate ?? taskListFilters?.start,
+      startDate: paramStartDate ?? taskListFilters?.startDate,
       endDate: paramEndDate ?? taskListFilters?.endDate,
     };
     Object.entries(filters).forEach(([name, value]) => {
