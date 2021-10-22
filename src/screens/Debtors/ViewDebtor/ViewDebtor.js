@@ -28,6 +28,7 @@ import DebtorsStakeHolderTab from '../components/StakeHolder/DebtorsStakeHolderT
 import DebtorsReportsTab from '../components/DebtorsReportsTab';
 import DebtorsAlertsTab from '../components/DebtorsAlertsTab';
 import Select from '../../../common/Select/Select';
+import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
 
 const DEBTOR_TABS_CONSTANTS = [{ label: 'Credit Limits', component: <DebtorsCreditLimitTab /> }];
 const DEBTOR_TABS_WITH_ACCESS = [
@@ -51,6 +52,7 @@ const ViewInsurer = () => {
 
   const backToDebtor = useCallback(() => {
     history.push(`/debtors/debtor/view/${id}`);
+    dispatch({type: DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE})
   }, []);
 
   const backToDebtorList = useCallback(() => {
