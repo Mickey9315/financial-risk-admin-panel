@@ -25,7 +25,7 @@ instance.interceptors.request.use(
 
     // If the application exists cancel
     if (sourceRequest[request.url]) {
-      sourceRequest[request.url].cancel('Automatic cancellation');
+      sourceRequest[request.url].cancel('Previous call cancellation');
     }
 
     // Store or update application token
