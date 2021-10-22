@@ -124,6 +124,7 @@ const ViewReport = () => {
       }
       try {
         if(isFiltersValid) {
+          startGeneralLoaderOnRequest('viewReportListLoader');
         await dispatch(getReportList(params, currentFilter?.filter));
         if (cb && typeof cb === 'function') {
           cb();
@@ -436,14 +437,11 @@ const ViewReport = () => {
   }, [history, total, pages, page, limit, tempFilters]);
 
   // extra filter for reviewReport
-  const handleSelectDateChange = useCallback(date => {
+  const handleSelectDateChange = useCallback(async date => {
     setReviewReportFilterDate(new Date(date).toISOString());
+    await getReportListByFilter()
   }, []);
-
-  useEffect(async () => {
-    if (['review'].includes(paramReport)) await getReportListByFilter();
-  }, [reviewReportFilterDate, paramReport]);
-
+  
   useEffect(() => {
     dispatch({ type: REPORTS_REDUX_CONSTANTS.INITIALIZE_FILTERS });
   }, []);
