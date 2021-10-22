@@ -217,9 +217,13 @@ export const getApplicationCompanyDataFromDebtor = (id, params) => {
   return async dispatch => {
     // eslint-disable-next-line no-useless-catch
     try {
+      const finalParams = {
+        ...params,
+        requestFrom: 'application'
+      }
       const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromDebtor(
         id,
-        params
+        finalParams,
       );
 
       if (response?.data?.status === 'SUCCESS') {
