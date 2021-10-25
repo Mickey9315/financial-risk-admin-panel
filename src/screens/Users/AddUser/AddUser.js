@@ -442,7 +442,7 @@ const AddUser = () => {
                   </div>
                   {role !== 'superAdmin' && (
                     <div className="common-detail-field user-select-client">
-                      <div className="common-detail-title">Select Client</div>
+                      <div className="common-detail-title">{action === 'view' ? 'Selected Clients' : 'Select Client'}</div>
                       <Select
                         isMulti
                         value={clientIds}
