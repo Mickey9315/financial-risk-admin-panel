@@ -9,6 +9,7 @@ import {
   deleteSettingDocumentType,
   getDocumentTypeDetailsById,
   getSettingDocumentTypeList,
+  resetAddDocType,
   resetPageData,
   resetSettingTabsData,
   updateDocumentFieldStatus,
@@ -175,6 +176,11 @@ const SettingsDocumentTypeTab = () => {
     }
   }, [documentFor, documentTitle, callBackOnAdd]);
 
+const closeAddDocumentType = () => {
+  toggleAddDocModal();
+  dispatch(resetAddDocType())
+}
+
   const deleteDocument = useCallback(
     data => {
       setDocId(data);
@@ -188,7 +194,7 @@ const SettingsDocumentTypeTab = () => {
       {
         title: 'Close',
         buttonType: 'primary-1',
-        onClick: () => toggleAddDocModal(),
+        onClick: closeAddDocumentType,
       },
       {
         title: 'Add',
