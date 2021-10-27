@@ -48,9 +48,10 @@ const ClientCreditLimitTab = () => {
     clientDecisionLetterDownloadButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, headers, pages, docs, page, limit } = useMemo(() => creditLimitList ?? {}, [
-    creditLimitList,
-  ]);
+  const { total, headers, pages, docs, page, limit } = useMemo(
+    () => creditLimitList ?? {},
+    [creditLimitList]
+  );
 
   const getCreditLimitList = useCallback(
     (params = {}, cb) => {
@@ -238,22 +239,22 @@ const ClientCreditLimitTab = () => {
             }}
           />
           <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.CLIENT}>
-          <Button
-            buttonType="outlined-primary-small"
-            title="Modify"
-            onClick={() => {
-              setCurrentCreditLimitData(data);
-              toggleModifyLimitModal();
-            }}
-          />
-          <Button
-            buttonType="outlined-red-small"
-            title="Surrender"
-            onClick={() => {
-              setCurrentCreditLimitData(data);
-              toggleSurrenderModal();
-            }}
-          />
+            <Button
+              buttonType="outlined-primary-small"
+              title="Modify"
+              onClick={() => {
+                setCurrentCreditLimitData(data);
+                toggleModifyLimitModal();
+              }}
+            />
+            <Button
+              buttonType="outlined-red-small"
+              title="Surrender"
+              onClick={() => {
+                setCurrentCreditLimitData(data);
+                toggleSurrenderModal();
+              }}
+            />
           </UserPrivilegeWrapper>
         </span>
       ),
@@ -275,7 +276,7 @@ const ClientCreditLimitTab = () => {
       } else {
         const data = {
           action: 'modify',
-          creditLimit: newCreditLimit,
+          creditLimit: parseInt(newCreditLimit, 10),
         };
         await dispatch(modifyClientCreditLimit(currentCreditLimitData?.id, data));
         getCreditLimitList();
@@ -418,9 +419,7 @@ const ClientCreditLimitTab = () => {
               name="creditLimit"
               type="text"
               value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
-              onChange={e =>
-                setNewCreditLimit(parseInt(e?.target?.value?.toString()?.replaceAll(',', ''), 10))
-              }
+              onChange={e => setNewCreditLimit(e?.target?.value?.toString()?.replaceAll(',', ''))}
             />
           </div>
         </Modal>
