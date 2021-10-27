@@ -411,7 +411,7 @@ const ViewReport = () => {
   // for params in url
   useEffect(() => {
     const otherFilters = {};
-    Object.entries(tempFilters).forEach(([key, value]) => {
+    Object.entries(finalFilters).forEach(([key, value]) => {
       if (_.isArray(value)) {
         otherFilters[key] = value
            ?.map(record =>
