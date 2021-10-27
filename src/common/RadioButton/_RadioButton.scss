@@ -16,8 +16,8 @@ input[type='radio'] + label:before {
   margin-right: 5px;
   /* background-color only for content */
   background-clip: content-box;
-  border: 1px solid $border-color;
-  background-color: #e7e6e7;
+  border: 1px solid $placeholder-color;
+  background-color: $placeholder-color;
   border-radius: 50%;
 }
 
