@@ -58,17 +58,6 @@
   font: $subtitle $font-regular;
   color: $primary-color;
 }
-.is-or-container {
-  position: relative;
-}
-.is-or-container::after {
-  content: 'or';
-  position: absolute;
-  bottom: -16px;
-  left: calc(50% - 8px);
-  font: $subtitle $font-medium;
-  color: $primary-color;
-}
 
 .application-search-suffix {
   display: flex;
@@ -89,4 +78,17 @@
   grid-column: 1 / span 4;
   margin: 10px 0;
   border-top: 1px solid $primary-color-1;
+}
+
+.application-input-or {
+  position: relative;
+}
+
+.application-input-or::after {
+  content: 'OR';
+  position: absolute;
+  bottom: -15px;
+  left: calc(50% - 10px);
+  font: $text $font-medium;
+  color: $primary-color;
 }

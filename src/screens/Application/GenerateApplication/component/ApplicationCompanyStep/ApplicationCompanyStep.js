@@ -529,18 +529,18 @@ const ApplicationCompanyStep = () => {
         data: [],
       },
       {
-        label: 'ACN/NCN',
-        placeholder: '01234',
-        type: 'search',
-        name: 'acn',
-        data: [],
-      },
-      {
         label: 'Entity Name*',
         placeholder: 'Enter Entity',
         type: 'entityName',
         isOr: isAusOrNew,
         name: 'entityName',
+        data: [],
+      },
+      {
+        label: 'ACN/NCN*',
+        placeholder: '01234',
+        type: 'search',
+        name: 'acn',
         data: [],
       },
       {
@@ -685,7 +685,6 @@ const ApplicationCompanyStep = () => {
               suffix="search"
               suffixClass="application-search-suffix"
               suffixClick={onHandleSearchClick}
-              borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               value={companyState?.[input.name] ?? ''}
               onChange={handleTextInputChange}
@@ -702,7 +701,6 @@ const ApplicationCompanyStep = () => {
               suffixClick={isAusOrNew ? handleEntityNameSearchOnSearchClick : null}
               suffixClass="application-search-suffix"
               placeholder={input.placeholder}
-              borderClass={input?.isOr && 'is-or-container'}
               onKeyDown={isAusOrNew ? handleEntityNameSearch : null}
               value={companyState?.entityName?.label ?? ''}
               onChange={handleEntityChange}
@@ -733,7 +731,7 @@ const ApplicationCompanyStep = () => {
       return (
         <React.Fragment key={input.label}>
           <span>{input.label}</span>
-          <div>
+          <div className={input.name === 'abn' && 'application-input-or'}>
             {component}
             {companyState?.errors?.[input.name] && (
               <div className="ui-state-error">{companyState?.errors?.[input.name]}</div>
