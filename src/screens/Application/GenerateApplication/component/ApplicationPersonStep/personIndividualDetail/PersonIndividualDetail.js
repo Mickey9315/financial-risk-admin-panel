@@ -211,7 +211,8 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
         type: 'search',
         name: 'abn',
         value: abn ?? '',
-        data: [],
+        data: [], 
+        isOr: true
       },
       {
         label: 'Entity Type*',
@@ -222,7 +223,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
         data: companyEntityType ?? [],
       },
       {
-        label: 'ACN/NCN',
+        label: 'ACN/NCN*',
         placeholder: '01234',
         type: 'search',
         name: 'acn',
@@ -802,18 +803,19 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
           break;
         case 'search':
           component = (
+            <div className={input?.isOr && 'application-input-or is-or-person-step'}>
             <Input
               type="text"
               name={input.name}
               suffix="search"
               suffixClick={handleSearchTextOnSearchClick}
               suffixClass="application-search-suffix"
-              borderClass={input?.isOr && 'is-or-container'}
               placeholder={input.placeholder}
               value={input?.value || ''}
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
             />
+            </div>
           );
           break;
         case 'select':

@@ -20,20 +20,22 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
       if (type === 'company') {
         if (['AUS', 'NZL'].includes(item?.stakeholderCountry?.value)) {
           if (
-            (!item?.abn && editApplicationData?.company?.entityType?.value !== 'TRUST') ||
-            (item?.abn?.trim()?.length <= 0 &&
-              editApplicationData?.company?.entityType?.value !== 'TRUST')
-          ) {
-            validated = false;
-            errors.abn = 'Please enter ABN number before continue';
-          }
-          if (
             (!item?.acn && editApplicationData?.company?.entityType?.value === 'TRUST') ||
             (item?.acn?.trim()?.length <= 0 &&
               editApplicationData?.company?.entityType?.value === 'TRUST')
           ) {
             validated = false;
             errors.acn = 'Please enter ACN number before continue';
+          }
+          if (
+            (!item?.abn ||
+            item?.abn?.trim()?.length <= 0) &&
+            (!item?.acn ||
+            item?.acn?.trim()?.length <= 0) && 
+             editApplicationData?.company?.entityType?.value !== 'TRUST'
+          ) {
+            validated = false;
+            errors.acn = 'Please enter ABN or ACN number before continue';
           }
           if (
             item?.abn &&
@@ -272,9 +274,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
     } catch (e) {
       throw Error();
     }
-  } else {
-    errorNotification('Please fill the details.');
-  }
+  } 
 
   return validated;
 };

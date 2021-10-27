@@ -8,7 +8,7 @@
   grid-template-columns: 15% calc(35% - 15px) 15% calc(35% - 15px);
   align-items: center;
   padding: 5px 30px 30px;
-  gap: 10px;
+  gap: 15px;
   font: $subtitle $font-regular !important;
 
   > span {
@@ -94,4 +94,8 @@
   left: calc(50% - 8px);
   font: $subtitle $font-medium;
   color: $primary-color;
+}
+
+.is-or-person-step::after {
+  left: calc(35% - 8px);
 }
