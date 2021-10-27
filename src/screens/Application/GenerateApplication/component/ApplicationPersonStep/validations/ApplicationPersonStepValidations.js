@@ -273,8 +273,10 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
       }
     } catch (e) {
       throw Error();
-    }
-  } 
+    } 
+  } else {
+    errorNotification('Please fill the details.');
+  }
 
   return validated;
 };
