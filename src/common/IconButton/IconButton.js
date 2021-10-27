@@ -11,6 +11,7 @@ const IconButton = props => {
     iconColor,
     className,
     buttonTitle,
+    disabled,
     ...restProps
   } = props;
   const buttonClass = `button ${buttonType}-button icon-button ${className}`;
@@ -21,7 +22,7 @@ const IconButton = props => {
       className={buttonClass}
       {...restProps}
       title={buttonTitle}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
     >
       {isBadge && (
         <span className="notification-badge">{badgeCount < 99 ? badgeCount : '99+'}</span>
@@ -51,6 +52,7 @@ IconButton.propTypes = {
   isLoading: PropTypes.bool,
   isBadge: PropTypes.bool,
   badgeCount: PropTypes.number,
+  disabled: PropTypes.bool
 };
 
 IconButton.defaultProps = {
@@ -60,6 +62,7 @@ IconButton.defaultProps = {
   isLoading: false,
   isBadge: false,
   badgeCount: 0,
+  disabled: false
 };
 
 export default IconButton;
