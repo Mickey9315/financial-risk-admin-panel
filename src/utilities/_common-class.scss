@@ -17,16 +17,17 @@
   display: flex;
   align-items: center;
   font: $h6 $font-medium;
-  color: $field-color;
+  color: rgba(0,58,120, .85);
   cursor: pointer;
 
-  > span:first-child {
-    opacity: 0.5;
+  > span:first-child:hover {
+    color: rgba(0,58,120, 1);
   }
 
   > span:last-child {
-    color: $primary-color;
+    color: $field-color;
     cursor: text;
+    opacity: 0.5;
   }
 }
 
