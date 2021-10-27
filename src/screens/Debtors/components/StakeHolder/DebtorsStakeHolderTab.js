@@ -349,6 +349,7 @@ const DebtorsStakeHolderTab = () => {
         type: 'search',
         name: 'abn',
         value: stakeHolder?.abn,
+        isOr: true
       },
       {
         label: 'Trading Name',
@@ -358,7 +359,7 @@ const DebtorsStakeHolderTab = () => {
         value: stakeHolder?.tradingName,
       },
       {
-        label: 'ACN/NCN',
+        label: 'ACN/NCN*',
         placeholder: '01234',
         type: 'search',
         name: 'acn',
@@ -874,6 +875,7 @@ const DebtorsStakeHolderTab = () => {
           break;
         case 'search':
           component = (
+            <div className={input?.isOr && 'application-input-or is-or-person-step'}>
             <Input
               type="text"
               name={input.name}
@@ -885,6 +887,7 @@ const DebtorsStakeHolderTab = () => {
               onKeyDown={handleSearchTextInputKeyDown}
               onChange={handleTextInputChange}
             />
+            </div>
           );
           break;
         case 'select':

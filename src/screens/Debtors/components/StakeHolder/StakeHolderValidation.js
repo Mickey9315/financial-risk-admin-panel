@@ -15,14 +15,14 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
   let preparedData = {};
   if (data?.type === 'company') {
     if (['AUS', 'NZL'].includes(data?.stakeholderCountry?.value)) {
-      if (!data?.abn || data?.abn?.trim()?.length <= 0) {
+      if ((!data?.abn || data?.abn?.trim()?.length <= 0) && (!data?.acn || data?.acn?.toString()?.trim()?.length <= 0)) {
         validated = false;
-        errors.abn = 'Please enter ABN number before continue';
+        errors.acn = 'Please enter ABN or ACN number before continue';
       }
       if (
         data?.abn &&
         (!NUMBER_REGEX.test(data?.abn) ||
-          data?.abn?.trim()?.length < 11 ||
+        data?.abn?.trim()?.length < 11 ||
           data?.abn?.trim()?.length > 13)
       ) {
         validated = false;
