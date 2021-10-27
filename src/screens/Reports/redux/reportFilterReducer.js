@@ -234,16 +234,10 @@ const initialFilterState = {
     reviewReport: {
       filterInputs: [
         {
-          type: 'clientSelect',
-          name: 'clientIds',
-          label: 'Client',
-          placeHolder: 'Select clients',
-        },
-        {
           type: 'select',
-          name: 'debtorId',
-          label: 'Debtor',
-          placeHolder: 'Select debtor',
+          name: 'entityType',
+          label: 'Entity Type',
+          placeHolder: 'Select entity type',
         },
       ],
       tempFilter: {
