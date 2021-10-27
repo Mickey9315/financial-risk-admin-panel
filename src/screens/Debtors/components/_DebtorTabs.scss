@@ -163,3 +163,8 @@
 .button.icon-button.download-decision-letter-icon:hover {
   background-color: $border-color;
 }
+
+.button.icon-button.download-decision-letter-icon.disable-download-button {
+  background-color: $border-color;
+  opacity: .3;
+}

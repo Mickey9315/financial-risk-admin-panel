@@ -237,8 +237,9 @@ const DebtorsCreditLimitTab = () => {
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
-            buttonTitle="Click to download decision letter"
-            className="download-decision-letter-icon"
+            buttonTitle={data?.limitType === 'Credit Check' && 'Click to download decision letter'}
+            disabled={data?.limitType !== 'Credit Check'}
+            className={`download-decision-letter-icon ${data?.limitType !== 'Credit Check' && 'disable-download-button'}`}
             onClick={() => {
               if (!decisionLetterDownloadButtonLoaderAction) downloadDecisionLetter(data?.id);
             }}
