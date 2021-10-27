@@ -33,7 +33,7 @@ const LimitTypeOptions = [
 ];
 
 const ViewApplicationEditableRowComponent = props => {
-  const { isApprovedOrDeclined } = props;
+  const { isApprovedOrDeclined, isApprovedOrdDeclineButtonClicked } = props;
 
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -41,14 +41,9 @@ const ViewApplicationEditableRowComponent = props => {
   const [selectedLimitType, setSelectedLimitType] = useState([]);
   const [selectedExpiryDate, setSelectedExpiryDate] = useState(null);
   const isUpdatable = useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess;
-  const { applicationDetail } = useSelector(
-    ({ application }) => application?.viewApplication ?? {}
-  );
+  const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
 
-  const { limitType, isAllowToUpdate, expiryDate } = useMemo(
-    () => applicationDetail ?? {},
-    [applicationDetail]
-  );
+  const { limitType, isAllowToUpdate, expiryDate } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
   const handleApplicationLimitTypeChange = useCallback(
     e => {
       setSelectedLimitType(e);
@@ -62,7 +57,7 @@ const ViewApplicationEditableRowComponent = props => {
         /**/
       }
     },
-    [id]
+    [id],
   );
 
   const handleExpiryDateChange = useCallback(
@@ -78,7 +73,7 @@ const ViewApplicationEditableRowComponent = props => {
         /**/
       }
     },
-    [id]
+    [id],
   );
 
   useEffect(() => {
@@ -90,28 +85,26 @@ const ViewApplicationEditableRowComponent = props => {
     <div className="application-editable-row-grid">
       <div>
         <div className="font-field mt-10">Limit Type</div>
-        <div className="view-application-status">
-          {isUpdatable ? (
-            <Select
-              placeholder={!isApprovedOrDeclined ? 'Select Limit Type' : '-'}
-              name="applicationStatus"
-              value={selectedLimitType ?? []}
-              options={LimitTypeOptions}
-              isDisabled={!isAllowToUpdate || isApprovedOrDeclined}
-              onChange={handleApplicationLimitTypeChange}
-            />
-          ) : (
-            selectedLimitType?.label ?? '-'
-          )}
+        <div className="mt-5 mr-10">
+          <Select
+            placeholder={!isApprovedOrDeclined ? 'Select Limit Type' : '-'}
+            name="applicationStatus"
+            className={
+              !isUpdatable || !isAllowToUpdate || (isApprovedOrDeclined && 'view-application-limit-type-disabled')
+            }
+            value={selectedLimitType ?? []}
+            options={LimitTypeOptions}
+            isDisabled={!isUpdatable || !isAllowToUpdate || isApprovedOrDeclined}
+            onChange={handleApplicationLimitTypeChange}
+          />
+         {isApprovedOrdDeclineButtonClicked && !selectedLimitType?.value && <div className="ui-state-error">Please select appropriate limit type</div>}
         </div>
       </div>
       <div className={!isUpdatable && 'ml-15'}>
         <div className="font-field mt-10">Expiry Date</div>
         {isUpdatable ? (
           <div
-            className={`date-picker-container ${
-              isApprovedOrDeclined && 'disabled-control'
-            } view-application-status `}
+            className={`date-picker-container ${isApprovedOrDeclined && 'view-application-disabled-datepicker f-14'} view-application-status `}
           >
             <DatePicker
               selected={selectedExpiryDate ? new Date(selectedExpiryDate) : null}
@@ -124,9 +117,7 @@ const ViewApplicationEditableRowComponent = props => {
               disabled={!isAllowToUpdate || isApprovedOrDeclined}
               dateFormat="dd/MM/yyyy"
             />
-            {isAllowToUpdate && !isApprovedOrDeclined && (
-              <span className="material-icons-round">event</span>
-            )}
+            {isAllowToUpdate && !isApprovedOrDeclined && <span className="material-icons-round">event</span>}
           </div>
         ) : (
           <div className="view-application-status">
@@ -140,6 +131,11 @@ const ViewApplicationEditableRowComponent = props => {
 
 ViewApplicationEditableRowComponent.propTypes = {
   isApprovedOrDeclined: PropTypes.string.isRequired,
+  isApprovedOrdDeclineButtonClicked: PropTypes.bool
 };
+
+ViewApplicationEditableRowComponent.defaultProps = {
+  isApprovedOrdDeclineButtonClicked: false
+}
 
 export default ViewApplicationEditableRowComponent;

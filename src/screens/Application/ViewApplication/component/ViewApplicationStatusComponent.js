@@ -23,19 +23,17 @@ const APPLICATION_STATUS = {
 };
 
 const ViewApplicationStatusComponent = props => {
-  const { isApprovedOrDeclined } = props;
+  const { isApprovedOrDeclined, setIsApprovedOrdDeclineButtonClicked } = props;
   const { id } = useParams();
   const dispatch = useDispatch();
 
   const { applicationDetail } = useSelector(
     ({ application }) => application?.viewApplication ?? {}
   );
-
   const { applicationDecisionLetterDownloadButtonLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
-
-  const { creditLimit, isAllowToUpdate, status, _id, clientDebtorId, comments } = useMemo(
+  const { creditLimit, isAllowToUpdate, limitType, status, _id, comments } = useMemo(
     () => applicationDetail ?? {},
     [applicationDetail]
   );
@@ -45,7 +43,7 @@ const ViewApplicationStatusComponent = props => {
   const [newCreditLimit, setNewCreditLimit] = useState('');
   const [modifyLimitModal, setModifyLimitModal] = useState(false);
   const [commentText, setCommentText] = useState('');
-
+ 
   const toggleConfirmationModal = useCallback(() => {
     setShowConfirmationModal(!showConfirmModal);
   }, [showConfirmModal]);
@@ -180,12 +178,12 @@ const ViewApplicationStatusComponent = props => {
   );
 
   const downloadDecisionLetter = useCallback(async () => {
-    if (clientDebtorId) {
+    if (_id) {
       try {
         const param = {
           requestFrom: 'application',
         };
-        const res = await downloadDecisionLetterForApplication(clientDebtorId, param);
+        const res = await downloadDecisionLetterForApplication(_id, param);
         if (res) downloadAll(res);
       } catch (e) {
         // errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
@@ -194,6 +192,22 @@ const ViewApplicationStatusComponent = props => {
       errorNotification('You have no records to download');
     }
   }, [id]);
+
+const onClickApproveButton = () => {
+  setIsApprovedOrdDeclineButtonClicked(true);
+  if(limitType && limitType?.toString()?.trim()?.length > 0) {
+    setStatusToChange({ label: 'Approved', value: 'APPROVED' });
+    toggleModifyLimitModal();
+  } 
+}
+
+const onClickDeclineButton = () => {
+  setIsApprovedOrdDeclineButtonClicked(true);
+  if(limitType && limitType?.toString()?.trim()?.length > 0) {
+    setStatusToChange({ label: 'Declined', value: 'DECLINED' });
+    toggleConfirmationModal();
+  }
+}
 
   useEffect(() => {
     setNewCreditLimit(creditLimit);
@@ -208,26 +222,19 @@ const ViewApplicationStatusComponent = props => {
             buttonType="success"
             className="small-button"
             title="Approve"
-            onClick={() => {
-              setStatusToChange({ label: 'Approved', value: 'APPROVED' });
-              toggleModifyLimitModal();
-            }}
+            onClick={onClickApproveButton}
           />
           <Button
             buttonType="danger"
             className="small-button"
             title="Decline"
-            onClick={() => {
-              setStatusToChange({ label: 'Declined', value: 'DECLINED' });
-              toggleConfirmationModal();
-            }}
+            onClick={onClickDeclineButton}
           />
         </div>
       );
     }
     return (
-      <>
-        <Button
+      limitType === 'CREDIT_CHECK' && <Button
           buttonType="primary"
           title="Download Decision Letter"
           buttonTitle="Click to download decision letter"
@@ -236,7 +243,6 @@ const ViewApplicationStatusComponent = props => {
             if (!applicationDecisionLetterDownloadButtonLoaderAction) downloadDecisionLetter();
           }}
         />
-      </>
     );
   }, [status, toggleModifyLimitModal, setStatusToChange, toggleConfirmationModal]);
 
@@ -341,6 +347,11 @@ const ViewApplicationStatusComponent = props => {
 
 ViewApplicationStatusComponent.propTypes = {
   isApprovedOrDeclined: PropTypes.string.isRequired,
+  setIsApprovedOrdDeclineButtonClicked: PropTypes.func
 };
+
+ViewApplicationStatusComponent.defaultProps = {
+  setIsApprovedOrdDeclineButtonClicked: () => {}
+}
 
 export default ViewApplicationStatusComponent;

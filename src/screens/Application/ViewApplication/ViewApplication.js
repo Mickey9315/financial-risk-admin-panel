@@ -78,6 +78,7 @@ const ViewApplication = () => {
   const isDebtorReadable = useModulePrivileges(SIDEBAR_NAMES.DEBTOR).hasReadAccess;
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
+  const [isApprovedOrdDeclineButtonClicked, setIsApprovedOrdDeclineButtonClicked] = useState(false);
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
 
   const checkAccess = useCallback(
@@ -295,9 +296,12 @@ const ViewApplication = () => {
                 <div className="view-application-details-left">
                   <div className="common-white-container">
                     <div className="font-field">Status</div>
-                    <ViewApplicationStatusComponent isApprovedOrDeclined={isApprovedOrDeclined} />
+                    <ViewApplicationStatusComponent isApprovedOrDeclined={isApprovedOrDeclined}  
+                    setIsApprovedOrdDeclineButtonClicked={setIsApprovedOrdDeclineButtonClicked}
+                    />
                     <ViewApplicationEditableRowComponent
                       isApprovedOrDeclined={isApprovedOrDeclined}
+                      isApprovedOrdDeclineButtonClicked={isApprovedOrdDeclineButtonClicked}
                     />
                     <div className="application-details-grid">
                       {applicationDetails?.map(detail => (
