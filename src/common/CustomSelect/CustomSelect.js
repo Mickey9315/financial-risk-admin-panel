@@ -85,9 +85,9 @@ const CustomSelect = props => {
             placeholder={placeholder}
             onChange={onSearchCustomSelect}
             onBlur={e => {
-              setIsSearching(true);
-              setInputVal('');
-              onSearchCustomSelect(e, 'isBlur')
+              setIsSearching(false);
+              onSearchCustomSelect(e, 'isBlur');
+              setInputVal(selectedList.length > 0 ? selectedList[0].label : '');
             }}
             onFocus={() => {
               setIsSearching(true);
