@@ -386,7 +386,7 @@ const ApplicationList = () => {
       status:
         (paramStatus?.trim()?.length ?? -1) > 0
           ? paramStatus
-          : applicationListFilters?.status || defaultApplicationStatus,
+          : applicationListFilters?.status,
       minCreditLimit:
         (paramMinCreditLimit?.trim()?.length ?? -1) > 0
           ? paramMinCreditLimit

@@ -10,6 +10,7 @@ import { errorNotification } from '../../../common/Toast';
 import { checkForEmail, replaceHiddenCharacters } from '../../../helpers/ValidationHelper';
 import { LOGIN_REDUX_CONSTANTS } from './redux/LoginReduxConstants';
 import { getAuthTokenLocalStorage } from '../../../helpers/LocalStorageHelper';
+import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 
 function LoginScreen() {
   const history = useHistory();
@@ -31,6 +32,7 @@ function LoginScreen() {
     else {
       try {
         await dispatch(loginUser({ email, password }));
+        dispatch(saveAppliedFilters('applicationListFilters', {status:'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION'}));
         history.replace('/dashboard');
       } catch (e) {
         /**/
