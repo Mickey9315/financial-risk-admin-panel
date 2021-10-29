@@ -246,7 +246,6 @@ const Table = props => {
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
       <table className={tableClassName}>
         <thead>
-          <tr>
             {showCheckbox && (
               <th width={10} align={align} valign={valign}>
                 <Checkbox
@@ -277,7 +276,6 @@ const Table = props => {
             {tableButtonActions.length > 0 && isUpdatable && (
               <th align={align}>Credit Limit Actions</th>
             )}
-          </tr>
         </thead>
         <tbody>
           {tableData.map((e, index) => (
