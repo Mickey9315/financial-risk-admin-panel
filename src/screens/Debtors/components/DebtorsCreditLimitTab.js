@@ -237,9 +237,9 @@ const DebtorsCreditLimitTab = () => {
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
-            buttonTitle={docs.find(record => record._id === data?.id)?.limitType === 'Credit Check' && 'Click to download decision letter'}
-            disabled={docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check'}
-            className={`download-decision-letter-icon ${docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check' && 'disable-download-button'}`}
+            buttonTitle={docs?.length > 0 && docs.find(record => record._id === data?.id)?.limitType === 'Credit Check' && 'Click to download decision letter'}
+            disabled={docs?.length > 0 && docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check'}
+            className={`download-decision-letter-icon ${docs?.length > 0 && docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check' && 'disable-download-button'}`}
             onClick={() => {
               if (!decisionLetterDownloadButtonLoaderAction) downloadDecisionLetter(data?.id);
             }}
