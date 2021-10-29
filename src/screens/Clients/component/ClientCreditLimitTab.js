@@ -244,7 +244,7 @@ const ClientCreditLimitTab = () => {
               buttonType="outlined-primary-small"
               title="Modify"
               onClick={() => {
-                setCurrentCreditLimitData(data);
+                setCurrentCreditLimitData(docs?.length > 0 && docs.find(record => record?._id === data.id));
                 toggleModifyLimitModal();
               }}
             />
