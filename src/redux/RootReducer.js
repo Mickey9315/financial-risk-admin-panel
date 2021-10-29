@@ -86,7 +86,9 @@ const rootReducer = (state, action) => {
     clearAuthToken();
     const emptyState = {};
     Object.keys(state).forEach(key => {
-      emptyState[key] = null;
+      if (key !== 'listFilterReducer' || key !== 'reportAllFilters') {
+        emptyState[key] = null;
+      }
     });
     return emptyState;
   }
