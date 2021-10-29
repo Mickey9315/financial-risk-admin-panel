@@ -67,7 +67,7 @@ export const APPLICATION_URLS = {
   // View Application
   VIEW_APPLICATION: {
     CHANGE_APPLICATION_STATUS: `${BASE_URL}application/`,
-    DOWNLOAD_APPLICATION_DECISION_LETTER: `${BASE_URL}client/download/decision-letter/`,
+    DOWNLOAD_APPLICATION_DECISION_LETTER: `${BASE_URL}application/download/decision-letter/`,
     APPLICATION_TASK: {
       GET_TASK_LIST: `${BASE_URL}task/`,
       ASSIGNEE_DROP_DOWN_DATA: `${BASE_URL}task/user-list/`,
