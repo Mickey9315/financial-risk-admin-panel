@@ -237,9 +237,9 @@ const DebtorsCreditLimitTab = () => {
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
-            buttonTitle={data?.limitType === 'Credit Check' && 'Click to download decision letter'}
-            disabled={data?.limitType !== 'Credit Check'}
-            className={`download-decision-letter-icon ${data?.limitType !== 'Credit Check' && 'disable-download-button'}`}
+            buttonTitle={docs.find(record => record._id === data?.id)?.limitType === 'Credit Check' && 'Click to download decision letter'}
+            disabled={docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check'}
+            className={`download-decision-letter-icon ${docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check' && 'disable-download-button'}`}
             onClick={() => {
               if (!decisionLetterDownloadButtonLoaderAction) downloadDecisionLetter(data?.id);
             }}
@@ -329,8 +329,6 @@ const DebtorsCreditLimitTab = () => {
     ],
     [toggleSurrenderModal, surrenderLimit, ViewDebtorSurrenderCreditLimitButtonLoaderAction]
   );
-
-  console.log(newCreditLimit);
 
   return (
     <>
