@@ -621,7 +621,7 @@ const AddOverdues = () => {
               {overdueListByDate?.previousEntries && <span>
                   Previous Entries : {overdueListByDate?.previousEntries}
               </span>}
-              {overdueListByDate?.docs?.length === 0 && <Checkbox title="Nill Overdue" checked={(isNillOverdue)} onChange={() => setIsNillOverdue(e => !e)}/>}
+              {overdueListByDate?.docs?.length === 0 && <Checkbox title="Nill Overdue" checked={isNillOverdue} onChange={() => setIsNillOverdue(e => !e)}/>}
               <Button buttonType="success" title="Add New" isDisabled={isNillOverdue} onClick={toggleOverdueFormModal} />
             </div>
             <AddOverdueTable

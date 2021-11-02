@@ -1,4 +1,6 @@
 .button {
+  display: inline-flex;
+  align-items: center;
   padding: 14px 25px;
   font: $sub-text;
   color: #ffffff;
@@ -6,8 +8,6 @@
   border: 1px solid $primary-color;
   outline: none;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
 }
 .button:disabled {
   cursor: not-allowed;
