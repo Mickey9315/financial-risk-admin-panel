@@ -24,6 +24,7 @@ import { setViewClientActiveTabIndex } from '../../../Clients/redux/ClientAction
 import { setViewDebtorActiveTabIndex } from '../../../Debtors/redux/DebtorsAction';
 import Select from '../../../../common/Select/Select';
 import { DECIMAL_REGEX, usdConverter } from '../../../../constants/RegexConstants';
+import Checkbox from '../../../../common/Checkbox/Checkbox';
 
 const AddOverdues = () => {
   const history = useHistory();
@@ -36,6 +37,7 @@ const AddOverdues = () => {
 
   const dispatch = useDispatch();
   const [overdueFormModal, setOverdueFormModal] = useState(false);
+  const [isNillOverdue, setIsNillOverdue] = useState(false);
   const [isAmendOverdueModal, setIsAmendOverdueModal] = useState(false);
   const [showSaveAlertModal, setShowSaveAlertModal] = useState(false);
   const [alertOnLeftModal, setAlertOnLeftModal] = useState(false);
@@ -616,11 +618,11 @@ const AddOverdues = () => {
           <div className="common-white-container add-overdues-container">
             <div className="client-entry-details">
               <span>{overdueListByDate?.client ?? '-'}</span>
-              <span>
-                {overdueListByDate?.previousEntries &&
-                  `Previous Entries : ${overdueListByDate?.previousEntries}`}
-              </span>
-              <Button buttonType="success" title="Add New" onClick={toggleOverdueFormModal} />
+              {overdueListByDate?.previousEntries && <span>
+                  Previous Entries : {overdueListByDate?.previousEntries}
+              </span>}
+              {overdueListByDate?.docs?.length === 0 && <Checkbox title="Nill Overdue" checked={(isNillOverdue)} onChange={() => setIsNillOverdue(e => !e)}/>}
+              <Button buttonType="success" title="Add New" isDisabled={isNillOverdue} onClick={toggleOverdueFormModal} />
             </div>
             <AddOverdueTable
               setIsAmendOverdueModal={setIsAmendOverdueModal}
@@ -631,6 +633,7 @@ const AddOverdues = () => {
             <Button
               buttonType="primary"
               title="Save"
+              isDisabled={overdueListByDate?.docs?.length === 0 && !isNillOverdue}
               onClick={overdueListByDate?.docs?.length > 0 && onCLickOverdueSave}
               isLoading={saveOverdueToBackEndPageLoaderAction}
             />
