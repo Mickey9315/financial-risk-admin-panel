@@ -13,7 +13,7 @@
   cursor: not-allowed;
 }
 
-.primary-button {
+.primary-button, .primary-button:hover:disabled {
   background-color: $primary-color;
   border-color: $primary-color;
 }
@@ -23,7 +23,7 @@
   border-color: $primary-variant-color;
 }
 
-.secondary-button {
+.secondary-button, .secondary-button:hover:disabled {
   background-color: $secondary-color;
   border-color: $secondary-color;
 }
@@ -33,7 +33,7 @@
   border-color: $secondary-variant-color;
 }
 
-.outlined-primary-button {
+.outlined-primary-button, .outlined-primary-button:hover:disabled {
   background-color: transparent;
   color: $primary-color;
   border-color: $primary-color;
@@ -44,18 +44,18 @@
   border-radius: 8px;
 }
 
-.outlined-secondary-button {
+.outlined-secondary-button, .outlined-secondary-button:hover:disabled {
   background-color: #ffffff;
   color: $secondary-color;
   border-color: $secondary-color;
 }
 
-.outlined-red-button {
+.outlined-red-button, .outlined-red-button:hover:disabled {
   background-color: #ffffff;
   color: $error-color;
   border-color: $error-color;
 }
-.outlined-red-small-button {
+.outlined-red-small-button, .outlined-red-small-button:hover:disabled {
   @extend .outlined-red-button;
   padding: 6px 15px;
   border-radius: 8px;
@@ -73,7 +73,7 @@
   background-color: $border-color;
 }
 
-.success-button {
+.success-button, .success-button:hover:disabled {
   background-color: $success-color;
   border-color: $success-color;
 }
@@ -83,7 +83,7 @@
   border-color: $success-variant-color;
 }
 
-.danger-button {
+.danger-button, .danger-button:hover:disabled {
   background-color: $error-color;
   border-color: $error-color;
 }
@@ -93,7 +93,7 @@
   border-color: $error-variant-color;
 }
 
-.primary-1-button {
+.primary-1-button, .primary-1-button:hover:disabled {
   background-color: $primary-color-1;
   color: $primary-color;
   border-color: $primary-color-1;
