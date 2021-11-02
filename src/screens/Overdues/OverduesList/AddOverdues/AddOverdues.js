@@ -519,7 +519,7 @@ const AddOverdues = () => {
     ],
     [toggleSaveAlertModal]
   );
-  const onCLickOverdueSave = useCallback(async () => {
+  const onClickOverdueSave = useCallback(async () => {
     let validated = true;
     docs?.forEach(doc => {
       if (doc?.isExistingData) {
@@ -586,10 +586,10 @@ const AddOverdues = () => {
       {
         title: 'Save',
         buttonType: 'primary',
-        onClick: onCLickOverdueSave,
+        onClick: onClickOverdueSave,
       },
     ],
-    [onCLickOverdueSave, overdueListByDateCopy, isPrompt, setIsPrompt, backToOverdueList]
+    [onClickOverdueSave, overdueListByDateCopy, isPrompt, setIsPrompt, backToOverdueList]
   );
 
   const handleBlockedRoute = useCallback(() => {
@@ -634,7 +634,7 @@ const AddOverdues = () => {
               buttonType="primary"
               title="Save"
               isDisabled={overdueListByDate?.docs?.length === 0 && !isNillOverdue}
-              onClick={overdueListByDate?.docs?.length > 0 && onCLickOverdueSave}
+              onClick={overdueListByDate?.docs?.length > 0 && onClickOverdueSave}
               isLoading={saveOverdueToBackEndPageLoaderAction}
             />
           </div>
