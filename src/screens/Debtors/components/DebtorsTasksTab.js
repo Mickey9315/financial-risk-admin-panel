@@ -281,7 +281,7 @@ const DebtorTaskTab = () => {
 
   const onSaveTask = useCallback(() => {
     const data = {
-      description: addTaskState?.description?.trim(),
+      description: addTaskState?.description?.trim()?.length > 0 ? addTaskState?.description : undefined,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeType: addTaskState?.assigneeId?.type ?? addTaskState?.assigneeType,
       assigneeId: addTaskState?.assigneeId?.value,
@@ -289,7 +289,7 @@ const DebtorTaskTab = () => {
       priority: addTaskState?.priority?.value ?? undefined,
       entityType: addTaskState?.entityType?.value ?? undefined,
       entityId: addTaskState?.entityId?.value ?? undefined,
-      comments: addTaskState?.comments?.trim() ?? undefined,
+      comments: addTaskState?.comments?.trim().length > 0 ? addTaskState?.comments : undefined,
     };
 
     if (!data?.description && data?.description?.length === 0) {
@@ -469,7 +469,7 @@ const DebtorTaskTab = () => {
               <span>{input.label}</span>
               <textarea
                 name={input.name}
-                value={input?.value}
+                value={addTaskState[input.name]}
                 rows={4}
                 className={input?.class}
                 placeholder={input.placeholder}
