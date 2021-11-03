@@ -29,15 +29,12 @@ import Checkbox from '../../../../common/Checkbox/Checkbox';
 const AddOverdues = () => {
   const history = useHistory();
   const amountRef = useRef([]);
-  const { isRedirected, redirectedFrom, fromId } = useMemo(
-    () => history?.location?.state ?? {},
-    [history]
-  );
+  const { isRedirected, redirectedFrom, fromId } = useMemo(() => history?.location?.state ?? {}, [history]);
   const { id, period } = useParams();
 
   const dispatch = useDispatch();
   const [overdueFormModal, setOverdueFormModal] = useState(false);
-  const [isNillOverdue, setIsNillOverdue] = useState(false);
+  const [isNilOverdue, setIsNilOverdue] = useState(false);
   const [isAmendOverdueModal, setIsAmendOverdueModal] = useState(false);
   const [showSaveAlertModal, setShowSaveAlertModal] = useState(false);
   const [alertOnLeftModal, setAlertOnLeftModal] = useState(false);
@@ -45,19 +42,17 @@ const AddOverdues = () => {
   const [isPrompt, setIsPrompt] = useState(false);
   const toggleAlertOnLeftModal = useCallback(
     value => setAlertOnLeftModal(value !== undefined ? value : e => !e),
-    [setAlertOnLeftModal]
+    [setAlertOnLeftModal],
   );
 
-  const { addOverduePageLoaderAction } = useSelector(
-    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
-  );
+  const { addOverduePageLoaderAction } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const toggleOverdueFormModal = useCallback(() => {
     setOverdueFormModal(e => !e);
   }, []);
 
   const { overdueDetails, entityList, overdueListByDate, overdueListByDateCopy } = useSelector(
-    ({ overdue }) => overdue ?? {}
+    ({ overdue }) => overdue ?? {},
   );
 
   const { docs } = useMemo(() => overdueListByDate ?? [], [overdueListByDate]);
@@ -89,7 +84,7 @@ const AddOverdues = () => {
             callbackOnFormAddORAmend,
             docs,
             id,
-            period
+            period,
           );
         },
       },
@@ -101,11 +96,11 @@ const AddOverdues = () => {
       callbackOnFormAddORAmend,
       setIsAmendOverdueModal,
       period,
-    ]
+    ],
   );
 
   const { saveOverdueToBackEndPageLoaderAction } = useSelector(
-    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false,
   );
   const selectedDate = useMemo(() => moment(period, 'MMM/YYYY'), [period]);
   const month = useMemo(() => selectedDate.format('M'), [selectedDate]);
@@ -124,7 +119,7 @@ const AddOverdues = () => {
       const { name, value } = e?.target;
       changeOverdueFields(name, value);
     },
-    [entityList, changeOverdueFields]
+    [entityList, changeOverdueFields],
   );
 
   const handleDebtorChange = useCallback(
@@ -141,28 +136,24 @@ const AddOverdues = () => {
               value: entityList?.debtorId?.find(debtor => debtor?.value === e.value)?.acn,
             },
           },
-          true
+          true,
         );
       }
     },
-    [handleTextInputChange, changeOverdueFields, entityList, selectedDebtor]
+    [handleTextInputChange, changeOverdueFields, entityList, selectedDebtor],
   );
   const onBlurACN = useCallback(
     e => {
-      const selectedRecordAcn = entityList?.debtorId?.find(
-        record => record?.value === selectedDebtor?.value
-      )?.acn;
+      const selectedRecordAcn = entityList?.debtorId?.find(record => record?.value === selectedDebtor?.value)?.acn;
 
-      const existingDebtor = entityList?.debtorId?.find(
-        debtor => debtor.acn !== '' && debtor.acn === e?.target.value
-      );
+      const existingDebtor = entityList?.debtorId?.find(debtor => debtor.acn !== '' && debtor.acn === e?.target.value);
       if (existingDebtor) {
         handleDebtorChange(existingDebtor, true);
       } else if (selectedRecordAcn && !existingDebtor) {
         handleDebtorChange([], true);
       }
     },
-    [entityList, handleDebtorChange, selectedDebtor]
+    [entityList, handleDebtorChange, selectedDebtor],
   );
 
   const handleOnSelectSearchInputChange = useCallback((searchEntity, text) => {
@@ -290,7 +281,7 @@ const AddOverdues = () => {
         value: overdueDetails?.outstandingAmount ?? '',
       },
     ],
-    [overdueDetails, entityList, handleOnSelectSearchInputChange]
+    [overdueDetails, entityList, handleOnSelectSearchInputChange],
   );
 
   const toggleSaveAlertModal = useCallback(
@@ -298,7 +289,7 @@ const AddOverdues = () => {
       setShowSaveAlertModal(value !== undefined ? value : e => !e);
       if (isPrompt && alertOnLeftModal) toggleAlertOnLeftModal();
     },
-    [setShowSaveAlertModal, isPrompt, alertOnLeftModal, toggleAlertOnLeftModal]
+    [setShowSaveAlertModal, isPrompt, alertOnLeftModal, toggleAlertOnLeftModal],
   );
   const handleAmountInputChange = useCallback(
     e => {
@@ -306,7 +297,7 @@ const AddOverdues = () => {
       const updatedVal = value?.toString()?.replaceAll(',', '');
       if (DECIMAL_REGEX.test(updatedVal)) changeOverdueFields(name, updatedVal);
     },
-    [DECIMAL_REGEX]
+    [DECIMAL_REGEX],
   );
 
   const handleSelectInputChange = useCallback(e => {
@@ -318,8 +309,7 @@ const AddOverdues = () => {
   }, []);
 
   useEffect(() => {
-    if (amountRef.current[12])
-      amountRef.current[12].value = NumberCommaSeparator(amountRef.current[12].value);
+    if (amountRef.current[12]) amountRef.current[12].value = NumberCommaSeparator(amountRef.current[12].value);
   });
 
   const getComponentFromType = useCallback(
@@ -346,11 +336,7 @@ const AddOverdues = () => {
                 placeholder={input.placeholder}
                 options={input?.data}
                 value={input?.value}
-                onChange={
-                  input?.name === 'debtorId'
-                    ? e => handleDebtorChange(e, false)
-                    : handleSelectInputChange
-                }
+                onChange={input?.name === 'debtorId' ? e => handleDebtorChange(e, false) : handleSelectInputChange}
                 onInputChange={input?.onInputChange}
               />
               {input?.isOr && <div className="or-text">OR</div>}
@@ -435,9 +421,9 @@ const AddOverdues = () => {
       return (
         <div
           key={input?.name}
-          className={`add-overdue-field-container ${
-            input.type === 'textarea' && 'add-overdue-textarea'
-          } ${input?.class}`}
+          className={`add-overdue-field-container ${input.type === 'textarea' && 'add-overdue-textarea'} ${
+            input?.class
+          }`}
         >
           {input.name && (
             <div
@@ -452,7 +438,7 @@ const AddOverdues = () => {
         </div>
       );
     },
-    [overdueDetails, handleDateInputChange, handleSelectInputChange, handleTextInputChange, period]
+    [overdueDetails, handleDateInputChange, handleSelectInputChange, handleTextInputChange, period],
   );
 
   const backToOverdueList = useCallback(() => {
@@ -483,8 +469,7 @@ const AddOverdues = () => {
 
   useEffect(() => {
     const currentAmount =
-      overdueDetails?.currentAmount?.toString()?.trim()?.length > 0 &&
-      (parseFloat(overdueDetails?.currentAmount) ?? 0);
+      overdueDetails?.currentAmount?.toString()?.trim()?.length > 0 && (parseFloat(overdueDetails?.currentAmount) ?? 0);
     const thirtyDaysAmount =
       overdueDetails?.thirtyDaysAmount?.toString()?.trim()?.length > 0 &&
       (parseFloat(overdueDetails?.thirtyDaysAmount) ?? 0);
@@ -498,8 +483,7 @@ const AddOverdues = () => {
       overdueDetails?.sixtyDaysAmount?.toString()?.trim()?.length > 0 &&
       (parseFloat(overdueDetails?.sixtyDaysAmount) ?? 0);
 
-    const total =
-      sixtyDaysAmount + ninetyDaysAmount + ninetyPlusDaysAmount + thirtyDaysAmount + currentAmount;
+    const total = sixtyDaysAmount + ninetyDaysAmount + ninetyPlusDaysAmount + thirtyDaysAmount + currentAmount;
     changeOverdueFields('outstandingAmount', total.toString() ?? 0);
   }, [
     overdueDetails?.currentAmount,
@@ -517,10 +501,11 @@ const AddOverdues = () => {
         onClick: () => toggleSaveAlertModal(),
       },
     ],
-    [toggleSaveAlertModal]
+    [toggleSaveAlertModal],
   );
   const onClickOverdueSave = useCallback(async () => {
     let validated = true;
+
     docs?.forEach(doc => {
       if (doc?.isExistingData) {
         if (!['AMEND', 'MARK_AS_PAID', 'UNCHANGED']?.includes(doc?.overdueAction)) {
@@ -528,6 +513,7 @@ const AddOverdues = () => {
         }
       }
     });
+
     if (!validated) {
       toggleSaveAlertModal();
     } else {
@@ -556,14 +542,28 @@ const AddOverdues = () => {
           if (doc?.analystComment) data.analystComment = doc?.analystComment;
           return data;
         });
-        await dispatch(saveOverdueList({ list: finalData }));
+        const withoutListData = {
+          list: [],
+          month:
+            Number(moment().month(selectedMonth).format('M')) < 10
+              ? `0${moment().month(selectedMonth).format('M')}`
+              : moment().month(selectedMonth).format('M'),
+          year: selectedYear,
+          clientId: id,
+          nilOverdue: isNilOverdue,
+        };
+        const withListData = {
+          list: finalData,
+          nilOverdue: isNilOverdue,
+        };
+        await dispatch(saveOverdueList(finalData?.length === 0 ? withoutListData : withListData));
         if (isPrompt) setIsPrompt(false);
         backToOverdueList();
       } catch (e) {
         /**/
       }
     }
-  }, [toggleSaveAlertModal, docs, isPrompt, setIsPrompt, backToOverdueList]);
+  }, [toggleSaveAlertModal, docs, isPrompt, setIsPrompt, backToOverdueList, isNilOverdue]);
 
   const alertOnLeftModalButtons = useMemo(
     () => [
@@ -589,7 +589,7 @@ const AddOverdues = () => {
         onClick: onClickOverdueSave,
       },
     ],
-    [onClickOverdueSave, overdueListByDateCopy, isPrompt, setIsPrompt, backToOverdueList]
+    [onClickOverdueSave, overdueListByDateCopy, isPrompt, setIsPrompt, backToOverdueList],
   );
 
   const handleBlockedRoute = useCallback(() => {
@@ -600,10 +600,7 @@ const AddOverdues = () => {
 
   return (
     <>
-      <Prompt
-        when={!_.isEqual(overdueListByDate, overdueListByDateCopy)}
-        message={handleBlockedRoute}
-      />
+      <Prompt when={!_.isEqual(overdueListByDate, overdueListByDateCopy)} message={handleBlockedRoute} />
       {!addOverduePageLoaderAction ? (
         <>
           <div className="breadcrumb-button-row mt-15">
@@ -618,11 +615,13 @@ const AddOverdues = () => {
           <div className="common-white-container add-overdues-container">
             <div className="client-entry-details">
               <span>{overdueListByDate?.client ?? '-'}</span>
-              {overdueListByDate?.previousEntries && <span>
-                  Previous Entries : {overdueListByDate?.previousEntries}
-              </span>}
-              {overdueListByDate?.docs?.length === 0 && <Checkbox title="Nill Overdue" checked={isNillOverdue} onChange={() => setIsNillOverdue(e => !e)}/>}
-              <Button buttonType="success" title="Add New" isDisabled={isNillOverdue} onClick={toggleOverdueFormModal} />
+              {overdueListByDate?.previousEntries && (
+                <span>Previous Entries : {overdueListByDate?.previousEntries}</span>
+              )}
+              {overdueListByDate?.docs?.length === 0 && (
+                <Checkbox title="Nil Overdue" checked={isNilOverdue} onChange={() => setIsNilOverdue(e => !e)} />
+              )}
+              <Button buttonType="success" title="Add New" isDisabled={isNilOverdue} onClick={toggleOverdueFormModal} />
             </div>
             <AddOverdueTable
               setIsAmendOverdueModal={setIsAmendOverdueModal}
@@ -633,8 +632,8 @@ const AddOverdues = () => {
             <Button
               buttonType="primary"
               title="Save"
-              isDisabled={overdueListByDate?.docs?.length === 0 && !isNillOverdue}
-              onClick={overdueListByDate?.docs?.length > 0 && onClickOverdueSave}
+              isDisabled={overdueListByDate?.docs?.length === 0 && !isNilOverdue}
+              onClick={onClickOverdueSave}
               isLoading={saveOverdueToBackEndPageLoaderAction}
             />
           </div>
@@ -653,16 +652,12 @@ const AddOverdues = () => {
       )}
       {showSaveAlertModal && (
         <Modal header="Overdue Action" buttons={overdueSaveAlertModalButtons}>
-          <span className="confirmation-message">
-            Please take necessary actions on existing overdue.
-          </span>
+          <span className="confirmation-message">Please take necessary actions on existing overdue.</span>
         </Modal>
       )}
       {alertOnLeftModal && (
         <Modal header="Save Overdue" buttons={alertOnLeftModalButtons}>
-          <span className="confirmation-message">
-            Please save overdue, otherwise you may lose your changes.
-          </span>
+          <span className="confirmation-message">Please save overdue, otherwise you may lose your changes.</span>
         </Modal>
       )}
     </>
