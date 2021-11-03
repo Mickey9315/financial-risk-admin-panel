@@ -264,6 +264,7 @@ const DebtorsCreditLimitTab = () => {
       ),
     ],
     [
+      docs,
       toggleModifyLimitModal,
       toggleSurrenderModal,
       setCurrentCreditLimitData,

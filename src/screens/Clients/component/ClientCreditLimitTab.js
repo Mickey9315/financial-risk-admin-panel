@@ -261,6 +261,7 @@ const ClientCreditLimitTab = () => {
       ),
     ],
     [
+      docs,
       toggleModifyLimitModal,
       toggleSurrenderModal,
       setCurrentCreditLimitData,
