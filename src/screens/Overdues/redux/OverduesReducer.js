@@ -92,6 +92,7 @@ export const overdue = (state = initialOverdueState, action) => {
           ...state?.overdueListByDate,
           client: action?.data?.client,
           previousEntries: action?.data?.previousEntries,
+          isNilOverdue: action?.data?.isNilOverdue,
           docs,
         },
       };
@@ -106,6 +107,7 @@ export const overdue = (state = initialOverdueState, action) => {
         overdueListByDateCopy: {
           ...state?.overdueListByDateCopy,
           client: action?.data?.client,
+          isNilOverdue: action?.data?.isNilOverdue,
           previousEntries: action?.data?.previousEntries,
           docs,
         },
