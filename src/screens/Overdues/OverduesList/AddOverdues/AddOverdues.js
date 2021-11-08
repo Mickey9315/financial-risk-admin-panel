@@ -55,8 +55,8 @@ const AddOverdues = () => {
     ({ overdue }) => overdue ?? {},
   );
 
-  const { docs } = useMemo(() => overdueListByDate ?? [], [overdueListByDate]);
-
+  const { docs, isNilOverdue:nilOverdue } = useMemo(() => overdueListByDate ?? {}, [overdueListByDate]);
+  
   const callbackOnFormAddORAmend = useCallback(() => {
     toggleOverdueFormModal();
     if (isAmendOverdueModal) setIsAmendOverdueModal(false);
@@ -466,6 +466,10 @@ const AddOverdues = () => {
   useEffect(async () => {
     await getOverdueList();
   }, [period, id]);
+
+useEffect(() => {
+  setIsNilOverdue(nilOverdue ?? false)
+}, [nilOverdue]);
 
   useEffect(() => {
     const currentAmount =

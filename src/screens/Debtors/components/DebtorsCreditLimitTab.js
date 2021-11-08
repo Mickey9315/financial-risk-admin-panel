@@ -283,7 +283,7 @@ const DebtorsCreditLimitTab = () => {
           action: 'modify',
           creditLimit: parseInt(newCreditLimit, 10),
         };
-        await dispatch(modifyDebtorCreditLimit(currentCreditLimitData?.id, data));
+        await dispatch(modifyDebtorCreditLimit(currentCreditLimitData?._id, data));
         getCreditLimitList();
         toggleModifyLimitModal();
       }
@@ -425,7 +425,7 @@ const DebtorsCreditLimitTab = () => {
               name="creditLimit"
               type="text"
               value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
-              onChange={e => setNewCreditLimit(e.target.value.toString().replaceAll(',', ''))}
+              onChange={e => setNewCreditLimit(e.target.value * 1 === 0 ? e.target.value.replace(/^0+(\d)/, '$1') : e.target.value.toString().replaceAll(',', ''))}
             />
           </div>
         </Modal>
