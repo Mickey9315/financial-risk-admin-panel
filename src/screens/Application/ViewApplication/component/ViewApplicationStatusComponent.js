@@ -194,7 +194,6 @@ const ViewApplicationStatusComponent = props => {
   }, [id]);
 
 const onClickApproveButton = () => {
-  console.log(applicationDetail)
   if(limitType && limitType?.toString()?.trim()?.length > 0) {
     setStatusToChange({ label: 'Approved', value: 'APPROVED' });
     toggleModifyLimitModal();
