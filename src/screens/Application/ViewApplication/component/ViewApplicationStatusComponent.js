@@ -260,7 +260,7 @@ const onClickDeclineButton = () => {
   return (
     <div className="application-status-grid">
      
-        <div className="view-application-status-select">
+        <div className="view-application-status-select view-application-select">
           {isApprovedOrDeclined ? (
             <>
               {['APPROVED'].includes(status?.value) && (
