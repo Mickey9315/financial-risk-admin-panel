@@ -1,21 +1,21 @@
-import ApplicationApiServices from '../services/ApplicationApiServices';
-import { errorNotification, successNotification } from '../../../common/Toast';
 import {
-  APPLICATION_COLUMN_LIST_REDUX_CONSTANTS,
-  APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
-  APPLICATION_REDUX_CONSTANTS,
-} from './ApplicationReduxConstants';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import { errorNotification, successNotification } from '../../../common/Toast';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
+import { DEBTORS_REDUX_CONSTANTS } from '../../Debtors/redux/DebtorsReduxConstants';
+import ApplicationApiServices from '../services/ApplicationApiServices';
 import ApplicationCompanyStepApiServices from '../services/ApplicationCompanyStepApiServices';
 import ApplicationDocumentStepApiServices from '../services/ApplicationDocumentStepApiServices';
 import ApplicationViewApiServices from '../services/ApplicationViewApiServices';
-import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
-import {
-  startGeneralLoaderOnRequest,
-  stopGeneralLoaderOnSuccessOrFail,
-} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import ImportApplicationApiServices from '../services/ImportApplicationApiServices';
-import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
-import { DEBTORS_REDUX_CONSTANTS } from '../../Debtors/redux/DebtorsReduxConstants';
+import {
+  APPLICATION_COLUMN_LIST_REDUX_CONSTANTS,
+  APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
+  APPLICATION_REDUX_CONSTANTS
+} from './ApplicationReduxConstants';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
