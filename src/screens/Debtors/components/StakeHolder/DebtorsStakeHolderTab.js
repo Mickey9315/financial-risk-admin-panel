@@ -35,6 +35,7 @@ import { DRAWER_ACTIONS } from '../../../Application/GenerateApplication/compone
 import ApplicationEntityNameTable from '../../../Application/GenerateApplication/component/components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import { DEBTORS_REDUX_CONSTANTS } from '../../redux/DebtorsReduxConstants';
 import Select from '../../../../common/Select/Select';
+import { ALPHA_NEUMERIC_REGEX } from '../../../../constants/RegexConstants';
 
 const drawerInitialState = {
   visible: false,
@@ -577,7 +578,14 @@ const DebtorsStakeHolderTab = () => {
   const handleTextInputChange = useCallback(
     e => {
       const { name, value } = e.target;
+      if(name === 'driverLicenceNumber') {
+        if(ALPHA_NEUMERIC_REGEX.test(value)) {
+          updateStakeHolderSingleDetail(name, value);
+        }
+      }
+     else {
       updateStakeHolderSingleDetail(name, value);
+     }
     },
     [updateStakeHolderSingleDetail]
   );

@@ -335,23 +335,37 @@
   }
 }
 
+.view-application-status-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  .react-select-container {
+  min-width: 180px;
+}
+}
+
 .react-select--is-disabled.view-application-select.react-select-container .react-select__control{
   padding: 2px 5px;
 }
 
-.view-application-select .react-select__control--is-disabled {
-  .react-select__single-value {
+.view-application-select .react-select-container .react-select__control.react-select__control--is-disabled .react-select__single-value {
     font: $subtitle $font-regular;
+    color: $primary-color;
   }
-}
+
 
 .react-select-container.view-application-limit-type-disabled .react-select__control--is-disabled {
-  
 padding: 0;
+
   .react-select__single-value {
   font: $subtitle $font-regular;
-  color: $primary-color !important;
+  color: $primary-color;
 }
+}
+
+.react-select-container .react-select__control .react-select__value-container {
+  padding: 0;
 }
 
 .view-application-disabled-datepicker {

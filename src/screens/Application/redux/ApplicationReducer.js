@@ -609,6 +609,20 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
     }
+    
+    case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE: {
+      return {
+        ...state,
+        viewApplication: {
+          ...state?.viewApplication,
+          applicationDetail: {
+            ...state?.viewApplication?.applicationDetail,
+            [`${action?.fieldName}`]: action?.value,
+          },
+        },
+      };
+    }
+
     // comments
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_COMMENT_CHANGE: {
       return {
