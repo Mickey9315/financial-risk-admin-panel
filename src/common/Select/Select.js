@@ -1,10 +1,10 @@
 import ReactSelect from 'react-select';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useRef } from 'react';
 
 const Select = props => {
-  const [IsFocus, setIsFocus] = useState(false);
+  const isFocus = useRef(false);
   const {
     className,
     placeholder,
@@ -19,7 +19,7 @@ const Select = props => {
   } = props;
 
   const inputChangeEventHandling = e => {
-    if (IsFocus) {
+    if (isFocus.current) {
       onInputChange(e);
     }
   };
@@ -44,8 +44,8 @@ const Select = props => {
       isMulti={restProps?.isMulti}
       menuPlacement={restProps?.menuPlacement}
       dropdownPosition={restProps?.dropdownPosition}
-      onFocus={() => setIsFocus(true)}
-      onBlur={() => setIsFocus(false)}
+      onFocus={() => {isFocus.current = true}}
+      onBlur={() => {isFocus.current = false}}
     />
   );
 };
