@@ -460,7 +460,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
   const handleTextInputChange = useCallback(
     e => {
       const { name, value } = e.target;
-      if(name === 'driverLicenceNumber') {
+      if(name === 'driverLicenceNumber' && value.toString().trim().length > 0) {
         if(ALPHA_NEUMERIC_REGEX.test(value)) {
           updateSinglePersonState(name, value);
         }

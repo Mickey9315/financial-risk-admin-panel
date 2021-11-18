@@ -578,7 +578,7 @@ const DebtorsStakeHolderTab = () => {
   const handleTextInputChange = useCallback(
     e => {
       const { name, value } = e.target;
-      if(name === 'driverLicenceNumber') {
+      if(name === 'driverLicenceNumber' && value.toString().trim().length > 0) {
         if(ALPHA_NEUMERIC_REGEX.test(value)) {
           updateStakeHolderSingleDetail(name, value);
         }
