@@ -60,7 +60,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
       );
 
     case 'amount':
-      return currentData.toString().trim().length > 0
+      return currentData?.toString()?.trim()?.length > 0
         ? NumberCommaSeparator(currentData)
         : '-';
 
