@@ -132,14 +132,16 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
           validated = false;
           errors.country = 'Please select country before continue';
         }
-        if (!item?.dateOfBirth && item?.driverLicenceNumber?.trim()?.length <= 0) {
+        if (item?.dateOfBirth === undefined && item?.driverLicenceNumber?.toString()?.trim()?.length === 0 || 
+        (item?.dateOfBirth === undefined && item?.driverLicenceNumber === undefined)) {
           validated = false;
           errors.driverLicenceNumber =
             'Please provide at least one - either a driver licence number or date of birth';
         }
-        if (item?.driverLicenceNumber && !NUMBER_REGEX.test(item?.driverLicenceNumber)) {
+
+        if (item?.dateOfBirthitem && item?.driverLicenceNumber?.toString().trim().length < 0) {
           validated = false;
-          errors.driverLicenceNumber = 'Please enter driver valid licence number';
+          errors.driverLicenceNumber = 'Please enter valid driver licence number';
         }
         if (!item?.streetNumber || item?.streetNumber?.length <= 0) {
           validated = false;
@@ -225,7 +227,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         middleName: middleName?.toString()?.trim(),
         lastName: lastName?.toString()?.trim(),
         dateOfBirth,
-        driverLicenceNumber,
+        driverLicenceNumber: driverLicenceNumber?.toString().trim(),
         phoneNumber,
         mobileNumber,
         email,
