@@ -111,15 +111,19 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.country = 'Please select country before continue';
     }
-    if (!data?.dateOfBirth && data?.driverLicenceNumber?.trim()?.length <= 0) {
+
+    if (data?.dateOfBirth === undefined && data?.driverLicenceNumber?.toString()?.trim()?.length === 0 || 
+    (data?.dateOfBirth === undefined && data?.driverLicenceNumber === undefined)) {
       validated = false;
       errors.driverLicenceNumber =
         'Please provide at least one - either a driver licence number or date of birth';
     }
-    if (data?.driverLicenceNumber && !NUMBER_REGEX.test(data?.driverLicenceNumber)) {
+
+    if (data?.dateOfBirthitem && data?.driverLicenceNumber?.toString().trim().length < 0) {
       validated = false;
-      errors.driverLicenceNumber = 'Please enter driver valid licence number';
+      errors.driverLicenceNumber = 'Please enter valid driver licence number';
     }
+
     if (!data?.streetNumber || data?.streetNumber?.length <= 0) {
       validated = false;
       errors.streetNumber = 'Please enter street number before continue';
