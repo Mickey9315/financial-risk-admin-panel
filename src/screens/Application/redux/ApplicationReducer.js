@@ -588,6 +588,18 @@ export const application = (state = initialApplicationList, action) => {
         },
       };
 
+      case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.UPDATE_CLIENT_REFERENCE:
+        return {
+          ...state,
+          viewApplication: {
+            ...state?.viewApplication,
+            applicationDetail: {
+              ...state.viewApplication.applicationDetail,
+              clientReference: action.data,
+            }
+          }
+        }
+
     case APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_DETAIL_FAIL_ACTION:
       return {
         ...state,

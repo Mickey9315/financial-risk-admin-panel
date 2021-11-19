@@ -1025,6 +1025,12 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
             data: statusToChange,
           });
         }
+        if(Object.prototype.hasOwnProperty.call(status  , 'clientReference')) {
+       dispatch({
+         type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.UPDATE_CLIENT_REFERENCE,
+         data: status?.clientReference
+       })
+     }
       }
     } catch (e) {
       if (e?.response?.data?.status === 'AUTOMATION_IN_PROCESS') {
