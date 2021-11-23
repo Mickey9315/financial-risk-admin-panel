@@ -25,13 +25,6 @@ const Select = props => {
       onInputChange(e);
     }
   };
-useEffect(() => {
-  if(options) {
-    console.log(true);
-  } else {
-    console.log(false);
-  }
-},[options])
 
 const temp = _.debounce(inputChangeEventHandling, 300);
 
@@ -39,8 +32,6 @@ const handleInputChange = (e) => {
   setIsInputChanging(true);
   temp(e)
 }
-
-console.log({isInputChanging});
 
   return (
     <ReactSelect
