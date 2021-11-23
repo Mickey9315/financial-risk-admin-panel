@@ -1,11 +1,11 @@
 import ReactSelect from 'react-select';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 
 const Select = props => {
   const isFocus = useRef(false);
-  const [isInputChanging, setIsInputChanging] = useState(false);
+  
   const {
     className,
     placeholder,
@@ -29,7 +29,6 @@ const Select = props => {
 const temp = _.debounce(inputChangeEventHandling, 300);
 
 const handleInputChange = (e) => {
-  setIsInputChanging(true);
   temp(e)
 }
 
