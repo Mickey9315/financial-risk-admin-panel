@@ -357,10 +357,10 @@ const ViewReport = () => {
 
   const resetReportsFilter = useCallback(async () => {
     await dispatch(resetCurrentFilter(currentFilter.filter));
-    toggleFilterModal();
+    setFilterModal(false);
     await getReportListByFilter({}, () => {}, true);
     dispatch(applyFinalFilter(currentFilter.filter));
-  }, [currentFilter, toggleFilterModal, tempFilters]);
+  }, [currentFilter, tempFilters]);
 
   const filterModalButtons = useMemo(
     () => [
@@ -439,6 +439,7 @@ const ViewReport = () => {
   // extra filter for reviewReport
   const handleSelectDateChange = useCallback(async date => {
     setReviewReportFilterDate(new Date(date).toISOString());
+    resetReportsFilter();
     await getReportListByFilter()
   }, []);
   
