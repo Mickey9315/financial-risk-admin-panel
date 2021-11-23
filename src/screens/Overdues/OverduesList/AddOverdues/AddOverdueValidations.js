@@ -33,7 +33,7 @@ export const addOverdueValidations = async (
   }
 
   if (
-    data?.currentAmount.toString()?.trim().includes('.') &&
+    data?.currentAmount?.toString()?.trim().includes('.') &&
     data?.currentAmount?.toString()?.trim()?.length <= 1
   ) {
     validated = false;
