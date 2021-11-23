@@ -41,16 +41,11 @@ const CustomSelect = props => {
   });
 
   const onSearchCustomSelect = useCallback(
-    (e, isBlur) => {
-      if(isBlur) {
-        setSearchedText('');
-        onSearchChange('');
-      } else {
+      e => {
         setSearchedText(e?.target?.value);
         onSearchChange(e?.target?.value);
-      }
-    },
-    [isSearching, onSearchChange, options]
+      },
+      [isSearching, onSearchChange]
   );
 
   useEffect(() => {
@@ -84,10 +79,10 @@ const CustomSelect = props => {
             value={inputVal}
             placeholder={placeholder}
             onChange={onSearchCustomSelect}
-            onBlur={e => {
+            onBlur={() => {
               setIsSearching(false);
-              onSearchCustomSelect(e, 'isBlur');
-              setInputVal(selectedList.length > 0 ? selectedList[0].label : '');
+              // onSearchCustomSelect(e, 'isBlur');
+              // setInputVal(selectedList.length > 0 ? selectedList[0].label : '');
             }}
             onFocus={() => {
               setIsSearching(true);
