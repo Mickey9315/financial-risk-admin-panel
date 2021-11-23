@@ -1370,12 +1370,14 @@ export const clearApplicationAlertDetails = () => {
 export const getApplicationFilterDropDownDataBySearch = options => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('onApplicationFilterDropDownDataSearchLoaderOption')
       const response = await DashboardApiService.getEntitiesBySearch({
         ...options,
         isForRisk: true,
       });
 
       if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('onApplicationFilterDropDownDataSearchLoaderOption');
         dispatch({
           type: APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_BY_SEARCH,
           data: response?.data?.data,
@@ -1383,6 +1385,7 @@ export const getApplicationFilterDropDownDataBySearch = options => {
         });
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('onApplicationFilterDropDownDataSearchLoaderOption');
       displayErrors(e);
     }
   };
