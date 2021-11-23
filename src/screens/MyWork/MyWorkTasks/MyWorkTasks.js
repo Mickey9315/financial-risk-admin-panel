@@ -9,6 +9,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import {
   changeTaskListColumnStatus,
   deleteTaskAction,
+  downloadMyWorkTask,
   getTaskFilter,
   getTaskListByFilter,
   getTaskListColumnList,
@@ -31,6 +32,7 @@ import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 import Select from '../../../common/Select/Select';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const priorityListData = [
   { value: 'low', label: 'Low', name: 'priority' },
@@ -428,6 +430,21 @@ const MyWorkTasks = () => {
     [resetFilterOnClick, toggleFilterModal, applyFilterOnClick, applyFilterOnClick]
   );
 
+  const downloadTask = async () => {
+    if (docs?.length !== 0) {
+      try {
+        const res = await dispatch(downloadMyWorkTask(finalFilter));
+        if (res) {
+          downloadAll(res);
+        }
+      } catch (e) {
+        errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+      }
+    } else {
+      errorNotification('You have no records to download');
+    }
+  };
+
   useEffect(() => {
     dispatch(getTaskListColumnList());
     dispatch(getTaskFilter());
@@ -450,6 +467,13 @@ const MyWorkTasks = () => {
       {!myWorkTasksListLoader ? (
         <>
           <div className="my-work-task-action-row">
+          <IconButton
+              className="mr-10"
+              buttonType="primary"
+              title="cloud_download"
+              buttonTitle="Click to download task list"
+              onClick={downloadTask}
+            />
             <IconButton
               buttonType="secondary"
               title="filter_list"
