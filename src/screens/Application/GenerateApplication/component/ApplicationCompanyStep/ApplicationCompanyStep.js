@@ -653,7 +653,7 @@ const ApplicationCompanyStep = () => {
       type: 'text',
       name: 'registrationNumber',
     });
-    filteredData.splice(5, 1);
+    filteredData.splice(6, 1);
     return filteredData;
   }, [INPUTS, isAusOrNew]);
 
