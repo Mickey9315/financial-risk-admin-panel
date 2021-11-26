@@ -18,5 +18,6 @@ const ApplicationCompanyStepApiServices = {
     }),
   deleteApplicationPersonIndividualData: personId =>
     ApiService.deleteData(`${APPLICATION_URLS.COMPANY.DELETE_APPLICATION_PERSONS}${personId}`),
+    generateRandomRegistrationNumber: params => ApiService.getData(APPLICATION_URLS.COMPANY.GENERATE_RANDOM_REGISTRATION_NUMBER, {params})
 };
 export default ApplicationCompanyStepApiServices;
