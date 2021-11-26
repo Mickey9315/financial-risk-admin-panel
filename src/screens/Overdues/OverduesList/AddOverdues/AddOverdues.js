@@ -464,6 +464,9 @@ const AddOverdues = () => {
   }, []);
 
   useEffect(async () => {
+    if(moment().subtract(1,'month').isBefore(moment(period,'MMMM-YYYY').toDate())){
+      history.push('/over-dues')
+    }
     await getOverdueList();
   }, [period, id]);
 
