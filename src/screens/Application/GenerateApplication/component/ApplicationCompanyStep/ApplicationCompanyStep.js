@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../../../../common/Input/Input';
 import {
   changeEditApplicationFieldValue,
+  generateRandomRegistrationNumber,
   getApplicationCompanyDataFromABNOrACN,
   getApplicationCompanyDataFromDebtor,
   getApplicationCompanyDropDownData,
@@ -17,6 +18,7 @@ import { errorNotification } from '../../../../../common/Toast';
 import Loader from '../../../../../common/Loader/Loader';
 import ApplicationEntityNameTable from '../components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import Modal from '../../../../../common/Modal/Modal';
+import Button from '../../../../../common/Button/Button';
 import IconButton from '../../../../../common/IconButton/IconButton';
 import { applicationErrorHelper } from '../../../../../helpers/applicationErrorHelper';
 import { APPLICATION_REDUX_CONSTANTS } from '../../../redux/ApplicationReduxConstants';
@@ -155,8 +157,9 @@ const ApplicationCompanyStep = () => {
         updateSingleCompanyState(data?.name, data);
         dispatch(updateEditApplicationField('company', 'state', null));
         dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ON_COUNTRY_CHANGE_WIPE_OUT_DATA,
-          data
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY
+            .APPLICATION_COMPANY_ON_COUNTRY_CHANGE_WIPE_OUT_DATA,
+          data,
         });
 
         const finalErrors = { ...errors };
@@ -487,6 +490,10 @@ const ApplicationCompanyStep = () => {
     [companyState, updateCompanyState, prevRef.current]
   );
 
+  const onGenerateRegistrationNumber = () => {
+    dispatch(generateRandomRegistrationNumber({ requestFrom: 'application' }));
+  };
+
   const INPUTS = useMemo(
     () => [
       {
@@ -542,6 +549,12 @@ const ApplicationCompanyStep = () => {
         type: 'search',
         name: 'acn',
         data: [],
+      },
+      {
+        label: 'Generate Registration Number',
+        type: 'button',
+        name: 'randomNumber',
+        onClick: onGenerateRegistrationNumber,
       },
       {
         type: 'section',
@@ -639,6 +652,7 @@ const ApplicationCompanyStep = () => {
       handleDebtorSelectChange,
       handleSelectInputChange,
       handleOnSelectSearchInputChange,
+      onGenerateRegistrationNumber,
     ]
   );
 
@@ -721,6 +735,12 @@ const ApplicationCompanyStep = () => {
           );
           break;
         }
+        case 'button': {
+          component = !isAusOrNew && (
+            <Button buttonType="primary-small" title={input.label} onClick={input.onClick} />
+          );
+          break;
+        }
         default:
           return (
             <div className="application-stepper-divider">
@@ -730,7 +750,7 @@ const ApplicationCompanyStep = () => {
       }
       return (
         <React.Fragment key={input.label}>
-          <span>{input.label}</span>
+          {input.type === 'button' ? <div /> : <span>{input.label}</span>}
           <div className={input.name === 'abn' && 'application-input-or'}>
             {component}
             {companyState?.errors?.[input.name] && (

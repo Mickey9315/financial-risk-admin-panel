@@ -57,6 +57,7 @@ export const APPLICATION_URLS = {
     SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
     SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}application/search-entity-list/`,
     DELETE_APPLICATION_PERSONS: `${BASE_URL}debtor/stakeholder/`,
+    GENERATE_RANDOM_REGISTRATION_NUMBER: `${BASE_URL}debtor/generate/registration-number`,
   },
   DOCUMENTS: {
     GET_DOCUMENT_TYPE_LIST_URL: `${BASE_URL}document/document-type-list/`,

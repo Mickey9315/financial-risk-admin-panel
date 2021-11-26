@@ -18,9 +18,15 @@
   border-color: $primary-color;
 }
 
-.primary-button:hover {
+.primary-button:hover, .primary-small-button:hover {
   background-color: $primary-variant-color;
   border-color: $primary-variant-color;
+}
+
+.primary-small-button {
+  @extend .primary-button;
+  padding: 6px 15px;
+  border-radius: 8px;
 }
 
 .secondary-button, .secondary-button:hover:disabled {
