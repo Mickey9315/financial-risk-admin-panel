@@ -374,6 +374,19 @@ export const application = (state = initialApplicationList, action) => {
       };
     }
 
+case APPLICATION_REDUX_CONSTANTS.COMPANY.SET_RANDOM_GENERATED_REGISTRATION_NUMBER: {
+  return {
+    ...state,
+    editApplication: {
+      ...state.editApplication,
+      company: {
+        ...state.editApplication.company,
+        registrationNumber: action.data
+      }
+    }
+  }
+}
+
     case APPLICATION_REDUX_CONSTANTS.COMPANY.APPLICATION_COMPANY_ON_COUNTRY_CHANGE_WIPE_OUT_DATA: {
       return {
         ...state,
