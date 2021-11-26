@@ -63,6 +63,7 @@ export const getOverdueList = params => {
     try {
       const finalParams = {
         ...params,
+        clientId: params?.clientId?.value,
         debtorId: params?.debtorId?.value
       }
       startGeneralLoaderOnRequest('overdueListPageLoaderAction');

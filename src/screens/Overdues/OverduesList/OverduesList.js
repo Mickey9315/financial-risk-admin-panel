@@ -83,6 +83,17 @@ const OverduesList = () => {
     handleEndDateChange(null);
   }, [handleStartDateChange, handleEndDateChange]);
 
+  const handleClientIdFilterChange = useCallback(
+    event => {
+      dispatchFilter({
+        type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
+        name: 'clientId',
+        value: event,
+      });
+    },
+    [dispatchFilter]
+  );
+
   const handleDebtorIdFilterChange = useCallback(
     event => {
       dispatchFilter({
@@ -137,6 +148,8 @@ const OverduesList = () => {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
+          clientId:
+            (tempFilter?.clientId?.value?.trim()?.length ?? -1) > 0 ? tempFilter?.clientId : undefined,
           debtorId:
             (tempFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? tempFilter?.debtorId : undefined,
           minOutstandingAmount:
@@ -216,6 +229,7 @@ const OverduesList = () => {
       limit: paramLimit ?? limit ?? 15,
     };
     const filters = {
+      clientId: overdueListFilters?.clientId,
       debtorId: overdueListFilters?.debtorId,
       minOutstandingAmount:
         (paramMinOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
@@ -251,6 +265,7 @@ const OverduesList = () => {
     {
       page: page ?? 1,
       limit: limit ?? 15,
+      clientId: finalFilter?.clientId?.value ?? undefined,
       debtorId:
         (finalFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? finalFilter?.debtorId?.value : undefined,
       minOutstandingAmount:
@@ -413,7 +428,7 @@ const OverduesList = () => {
                   placeholderText="Select month and year"
                   onChange={date => onDateSelection(date)}
                   dateFormat="MM/yyyy"
-                  maxDate={moment().toDate()}
+                  maxDate={moment().subtract(1,'month').toDate()}
                   selected={newSubmissionDetails?.submissionDate}
                   showMonthYearPicker
                   showYearDropdown
@@ -430,6 +445,19 @@ const OverduesList = () => {
               buttons={filterModalButtons}
               className="filter-modal overdue-filter-modal"
             >
+              <div className="filter-modal-row">
+                <div className="form-title">Client Name</div>
+                <Select
+                  className="filter-select"
+                  placeholder="Select Debtor"
+                  name="role"
+                  options={entityList?.clientId}
+                  value={tempFilter?.clientId}
+                  onChange={handleClientIdFilterChange}
+                  onInputChange={text => handleOnSelectSearchInputChange('clientId', text)}
+                  isSearchble
+                />
+              </div>
               <div className="filter-modal-row">
                 <div className="form-title">Debtor Name</div>
                 <Select
