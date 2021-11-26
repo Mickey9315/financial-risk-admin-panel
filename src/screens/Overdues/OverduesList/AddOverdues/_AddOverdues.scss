@@ -119,6 +119,15 @@
 
 .table-class td.add-overdue-buttons {
   max-width: unset;
+  
+  button {
+    min-width: 110px;
+
+    div {
+    width: 100%;
+    text-align: center;
+    }
+  }
 }
 
 .date-picker-container .add-overdue-month-picker {
