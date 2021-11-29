@@ -909,6 +909,18 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
 
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER: 
+      return {
+        ...state,
+        stakeHolder: {
+          ...state.stakeHolder,
+          stakeHolderDetails: {
+            ...state.stakeHolder.stakeHolderDetails,
+            registrationNumber: action?.data
+          }
+        }
+      }
+
     case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA: {
       const dropDownData = { ...state?.stakeHolder?.stakeHolderDropDownData };
       // eslint-disable-next-line no-shadow
