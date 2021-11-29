@@ -14,6 +14,7 @@ import {
   changeDebtorStakeHolderColumnListStatus,
   changeStakeHolderPersonType,
   deleteStakeHolderDetails,
+  generateRandomRegistrationNumberForDebtorStakeholder,
   getDebtorStakeHolderColumnNameList,
   getDebtorStakeHolderListData,
   getstakeholderCountryDataFromABNorACN,
@@ -316,6 +317,10 @@ const DebtorsStakeHolderTab = () => {
     return RADIO_INPUTS;
   }, [entityType?.value]);
 
+  const onGenerateRegistrationNumber = () => {
+    dispatch(generateRandomRegistrationNumberForDebtorStakeholder());
+  };
+
   const COMPANY_INPUT = useMemo(
     () => [
       {
@@ -365,6 +370,12 @@ const DebtorsStakeHolderTab = () => {
         type: 'search',
         name: 'acn',
         value: stakeHolder?.acn,
+      },
+      {
+        label: 'Generate Registration Number',
+        type: 'button',
+        name: 'randomNumber',
+        onClick: onGenerateRegistrationNumber,
       },
       {
         type: 'blank',
@@ -954,6 +965,13 @@ const DebtorsStakeHolderTab = () => {
             </div>
           );
           break;
+          case 'button':
+            component = 
+              !isAusOrNewStakeHolder && (
+                <Button buttonType="primary-small" title={input.label} onClick={input.onClick} />
+              )
+              break;
+            
         case 'main-title':
           component = <div className="main-title">{input.label}</div>;
           break;
@@ -1003,7 +1021,7 @@ const DebtorsStakeHolderTab = () => {
       return (
         <>
           {!['main-title', 'checkbox', 'blank', 'radio'].includes(input.type) && (
-            <span>{input.label}</span>
+            input.type === 'button' ? <div /> : <span>{input.label}</span>
           )}
           {['main-title', 'radio', 'blank', 'checkbox'].includes(input.type) ? (
             finalComponent

@@ -21,6 +21,7 @@ import DebtorsReportsApiServices from '../services/DebtorsReportsApiServices';
 import { DebtorOverdueApiServices } from '../services/DebtorOverdueApiServices';
 import DebtorAlertsApiServices from '../services/DebtorAlertsApiServices';
 import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
+import ApplicationCompanyStepApiServices from '../../Application/services/ApplicationCompanyStepApiServices';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1684,3 +1685,21 @@ export const getDebtorTaskDropDownDataBySearch = options => {
     }
   };
 };
+
+export const generateRandomRegistrationNumberForDebtorStakeholder = () => {
+  return async dispatch => {
+    try {
+      const response = await ApplicationCompanyStepApiServices.generateRandomRegistrationNumber();
+      if(response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER,
+          data: response.data.data
+        })
+      return response.data.data;
+      }
+    } catch(e) {
+      displayErrors(e);
+    }
+    return false;
+  }
+}
