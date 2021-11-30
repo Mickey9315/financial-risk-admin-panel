@@ -515,7 +515,12 @@ const ClientList = () => {
   const downloadClients = useCallback(async () => {
     if (docs?.length > 0) {
       try {
-        const response = await clientsDownloadAction(appliedFilters);
+        const finalFilters = {
+          ...appliedFilters,
+          riskAnalystId: appliedFilters?.riskAnalystId?.value,
+          serviceManagerId: appliedFilters?.serviceManagerId?.value
+        }
+        const response = await clientsDownloadAction(finalFilters);
         if (response) downloadAll(response);
       } catch (e) {
         /**/
