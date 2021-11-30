@@ -413,7 +413,7 @@ const DebtorsCreditLimitTab = () => {
               value={
                 currentCreditLimitData?.creditLimit
                   ? NumberCommaSeparator(currentCreditLimitData?.creditLimit)
-                  : ''
+                  : 0
               }
               disabled
               borderClass="disabled-control"
