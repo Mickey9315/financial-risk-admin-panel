@@ -6,7 +6,6 @@ export const displayErrors = e => {
   } else if(e?.status === 'ERROR') {
     errorNotification(e?.message)
   } else {
-    console.log(e?.response);
     switch (e?.response?.data?.status) {
       case 'INTERNAL_SERVER_ERROR':
         errorNotification('Internal server error');
