@@ -13,7 +13,7 @@ const PageNotFound = () => {
       <div className="invalid-url">
         Please check your URL or return to {token ? 'dashboard' : 'login'}.
       </div>
-      <Link to="/">
+      <Link to="/" className="page-not-found__back-button">
         <Button
           className="button primary-button mt-20"
           title={`Back to ${token ? 'Dashboard' : 'Login'}`}

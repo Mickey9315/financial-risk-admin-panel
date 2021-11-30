@@ -178,6 +178,10 @@
   color: $primary-color;
 }
 
+.page-not-found__back-button {
+  text-decoration: none;
+}
+
 .mail-id-value {
   text-overflow: ellipsis;
   overflow: hidden;
