@@ -89,14 +89,13 @@ const ViewApplicationEditableRowComponent = props => {
     setSelectedLimitType(LimitTypeOptions.filter(e => e.value === limitType) ?? []);
     setSelectedExpiryDate(expiryDate);
   }, [limitType, expiryDate]);
-
   return (
     <div className="application-editable-row-grid">
       <div>
         <div className="font-field mt-10">Limit Type</div>
         <div className="mt-5 mr-10 view-application-select">
           <Select
-            placeholder={!isApprovedOrDeclined ? 'Select Limit Type' : '-'}
+            placeholder={!isApprovedOrDeclined && isAllowToUpdate ? 'Select Limit Type' : '-'}
             name="applicationStatus"
             className={
               !isUpdatable || !isAllowToUpdate || (isApprovedOrDeclined && 'view-application-limit-type-disabled')
