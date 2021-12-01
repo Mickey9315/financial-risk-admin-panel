@@ -558,6 +558,7 @@ useEffect(() => {
           : moment().month(selectedMonth).format('M'),
           year: selectedYear,
           nilOverdue: isNilOverdue,
+          clientId: listData?.length === 0 ?  id : undefined,
           oldNilOverdue
         };
         
