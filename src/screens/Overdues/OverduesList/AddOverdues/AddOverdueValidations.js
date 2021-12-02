@@ -152,7 +152,7 @@ export const addOverdueValidations = async (
     try {
       validated = true;
       if (isAmendOverdueModal) {
-        await dispatch(amendOverdue(data?._id, finalData));
+        await dispatch(amendOverdue(data?.index, finalData));
       } else {
         await dispatch(addNewOverdueDetails(finalData));
       }
