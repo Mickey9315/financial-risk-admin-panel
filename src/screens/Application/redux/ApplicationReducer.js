@@ -394,7 +394,7 @@ case APPLICATION_REDUX_CONSTANTS.COMPANY.SET_RANDOM_GENERATED_REGISTRATION_NUMBE
           ...state?.editApplication,
           company: {
             ...state?.editApplication?.company,
-            clientId: [],
+            clientId: state?.editApplication?.company?.clientId,
             postCode: '',
             state: [],
             country: action?.data,
