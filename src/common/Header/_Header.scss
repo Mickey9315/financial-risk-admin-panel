@@ -99,9 +99,15 @@
 
   .ga-search-icon {
     margin-left: 10px;
+    padding: 5px;
     font-size: $h4;
     color: $primary-color;
     cursor: pointer;
+
+    &:hover {
+      background-color: $primary-color-1;
+      border-radius: 50%;
+    }
   }
 }
 
