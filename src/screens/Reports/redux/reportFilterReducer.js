@@ -140,6 +140,12 @@ const initialFilterState = {
       },
       {
         type: 'select',
+        name: 'limitType',
+        label: 'Limit Type',
+        placeHolder: 'Select Limit Type',
+      },
+      {
+        type: 'select',
         name: 'insurerId',
         label: 'Insurer',
         placeHolder: 'Select insurer',
@@ -159,7 +165,8 @@ const initialFilterState = {
     ],
     tempFilter: {
       clientIds: '',
-      debtorId: '',
+      limitType: '',
+      insurerId:'',
       riskAnalystId: '',
       serviceManagerId: '',
     },
