@@ -76,13 +76,7 @@ const GlobalSearch = () => {
     if (value?.trim()?.length > 0 && headerSearchFocused) {
       setSearchStart(true);
       dispatch(searchGlobalData(value));
-    } else {
-      const { module, _id, hasSubModule, subModule, status } = globalSearchResult?.[cursor];
-      handleGlobalSearchSelect(history, module, _id, hasSubModule, subModule, status);
-      setSearchStart(false);
-      setSearchedString('');
-      setCursor(0);
-    }
+    } 
   }
 
   const handleOnSearchChange = useCallback(e => {
