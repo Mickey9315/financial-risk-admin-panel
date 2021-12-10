@@ -25,6 +25,7 @@ const DebtorsApiServices = {
         url: `${DEBTORS_URLS.REPORTS.DOWNLOAD_REPORTS_FOR_DEBTOR}${id}`,
         method: 'GET',
         responseType: 'blob',
+        timeout: 60000
       }),
   },
 };

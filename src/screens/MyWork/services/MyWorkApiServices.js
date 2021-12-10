@@ -20,6 +20,7 @@ const MyWorkApiServices = {
       params,
       method: 'GET',
       responseType: 'blob',
+      timeout: 60000
     }),
 
   notification: {
