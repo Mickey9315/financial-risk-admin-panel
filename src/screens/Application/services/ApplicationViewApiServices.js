@@ -42,7 +42,6 @@ const ApplicationViewApiServices = {
         data,
         config,
         method: 'POST',
-        responseType: 'blob',
         timeout: 60000,
       }),
     deleteApplicationDocument: id =>
