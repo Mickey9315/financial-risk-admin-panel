@@ -13,7 +13,6 @@ const ApplicationDocumentStepApiServices = {
     params,
     config,
     method: 'POST',
-    responseType: 'blob',
     timeout: 60000,
   }),
   deleteApplicationDocument: (id, params) =>
