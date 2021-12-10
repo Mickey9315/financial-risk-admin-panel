@@ -11,7 +11,7 @@ const SettingApiIntegrationServices = {
       url: SETTING_URL.API_INTEGRATION.TEST_API_INTEGRATION,
       params,
       method: 'GET',
-      timeout: 20000,
+      timeout: 60000,
     }),
 };
 export default SettingApiIntegrationServices;
