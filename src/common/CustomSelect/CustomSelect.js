@@ -34,7 +34,7 @@ const CustomSelect = props => {
   });
 
   useOnClickOutside(customSelectRef, () => {
-    setInputVal('');
+    setSearchedText('');
     onSearchChange('');
   });
 
