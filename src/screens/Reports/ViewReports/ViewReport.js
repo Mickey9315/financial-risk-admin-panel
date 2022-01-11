@@ -107,7 +107,7 @@ const ViewReport = () => {
   const getReportListByFilter = useCallback(
     async (initialParams = { page: 1, limit: 15 }, cb, isReset) => {
       // eslint-disable-next-line no-unused-vars
-      const appliedFilters = isReset ? {} : tempFilters
+      const appliedFilters = isReset ? {} : tempFilters;
       const params = {
         page: page ?? 1,
         limit: limit ?? 15,
@@ -242,15 +242,15 @@ const ViewReport = () => {
     (name, value) => {
       dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
     },
-    [reportFilters,currentFilter]
+    [reportFilters, currentFilter]
   );
 
   const handleSelectInputChange = useCallback(e => {
     changeFilterFields(e.name, e);
   }, []);
 
-  const handleClientSelectInputChange = useCallback(e => {
-      changeFilterFields('clientIds', e);
+  const handleMultiSelectInputChange = useCallback((fieldName, selectedList) => {
+    changeFilterFields(fieldName, selectedList?.length > 0 ? selectedList : undefined);
   }, []);
 
   const handleDateInputChange = useCallback((name, date) => {
@@ -266,7 +266,11 @@ const ViewReport = () => {
     dispatch(getReportsFilterDropDownDataBySearch(options));
   }, []);
 
-  const handleCustomSearch = text => handleOnSelectSearchInputChange('clientIds', text);
+  const handleCustomSearch = (text, fieldName) => {
+    if (fieldName !== 'limitType') {
+      handleOnSelectSearchInputChange(fieldName, text);
+    }
+  };
 
   const onSearchChange = _.debounce(handleCustomSearch, 800);
   const getComponentFromType = useCallback(
@@ -292,14 +296,16 @@ const ViewReport = () => {
           );
           break;
         }
-        case 'clientSelect': {
+        case 'multiSelect': {
           component = (
             <CustomSelect
               options={reportEntityListData?.[input.name]}
-              placeholder="Select Client"
-              onChangeCustomSelect={handleClientSelectInputChange}
-              value={reportFilters?.[currentFilter.filter]?.tempFilter?.clientIds}
-              onSearchChange={onSearchChange}
+              placeholder={input.placeHolder}
+              onChangeCustomSelect={selectedList =>
+                handleMultiSelectInputChange(input.name, selectedList)
+              }
+              value={reportFilters?.[currentFilter.filter]?.tempFilter?.[input.name]}
+              onSearchChange={text => onSearchChange(text, input.name)}
             />
           );
           break;
@@ -344,7 +350,7 @@ const ViewReport = () => {
       currentFilter,
       handleSelectInputChange,
       handleDateInputChange,
-      handleClientSelectInputChange,
+      handleMultiSelectInputChange,
       handleOnSelectSearchInputChange,
     ]
   );
