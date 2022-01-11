@@ -7,6 +7,7 @@ import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 const CustomSelect = props => {
   const { options, placeholder, className, onChangeCustomSelect, onSearchChange, value, ...restProps } = props;
   const selectClassName = `custom-select ${className}`;
+  const customSelectRef = useRef();
   const customDropdownRef = useRef();
   const [isOpenCustomSelect, setIsOpenCustomSelect] = useState(false);
   const [selectedList, setSelectedList] = useState(value || []);
@@ -32,14 +33,14 @@ const CustomSelect = props => {
     setIsOpenCustomSelect(false);
   });
 
-  const onSearchCustomSelect = useCallback(
-    (e, isBlur) => {
-      if (isBlur) {
-        setSearchedText('');
-        onSearchChange('');
-      } else {
-        setSearchedText(e?.target?.value);
-      }
+  useOnClickOutside(customSelectRef, () => {
+    setInputVal('');
+    onSearchChange('');
+  });
+
+  const onSearchCustomSelect = useCallback(e => {
+      setSearchedText(e?.target?.value);
+      onSearchChange(e?.target?.value);
     },
     [isSearching, onSearchChange]
   );
@@ -68,7 +69,7 @@ const CustomSelect = props => {
   
   return (
     <>
-      <div className={selectClassName} {...restProps}>
+      <div ref={customSelectRef} className={selectClassName} {...restProps}>
         <div className="custom-select__control" onClick={() => setIsOpenCustomSelect(e => !e)}>
           <Input
             type="text"
