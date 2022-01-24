@@ -26,11 +26,11 @@ const LimitTypeOptions = [
     label: '24/7 Alerts',
     value: '247_ALERT',
     name: 'limitType',
-  }
+  },
 ];
 
 const EditableDrawer = props => {
-  const { row, editableField, id, drawerData } = props;
+  const { row, editableField, dateType, id, drawerData } = props;
   const dispatch = useDispatch();
 
   const [selectedLimitType, setSelectedLimitType] = useState([]);
@@ -54,7 +54,23 @@ const EditableDrawer = props => {
         /**/
       }
     },
-    [id]
+    [id],
+  );
+
+  const handleapprovalOrDecliningDate = useCallback(
+    e => {
+      setSelectedExpiryDate(e);
+      try {
+        const data = {
+          update: 'field',
+          approvalOrDecliningDate: e,
+        };
+        dispatch(changeApplicationStatus(id, data));
+      } catch (err) {
+        /**/
+      }
+    },
+    [id],
   );
 
   const handleApplicationLimitTypeChange = useCallback(
@@ -70,7 +86,7 @@ const EditableDrawer = props => {
         /**/
       }
     },
-    [id]
+    [id],
   );
 
   useEffect(() => {
@@ -95,14 +111,17 @@ const EditableDrawer = props => {
         ) : (
           <div>{row?.value || '-'}</div>
         ))}
-      {editableField === 'EXPIRY_DATE' &&
+      {editableField === 'DATE' &&
         (isApprovedOrDeclined ? (
           <div className="editable-drawer-field">
             <div className="date-picker-container">
               <DatePicker
                 selected={selectedExpiryDate ? new Date(selectedExpiryDate) : new Date()}
-                onChange={handleExpiryDateChange}
                 placeholderText="Select Expiry Date"
+                onChange={
+                  (dateType === 'Expiry Date' && handleExpiryDateChange) ||
+                  (dateType === 'Approval Date' && handleapprovalOrDecliningDate)
+                }
                 minDate={new Date()}
                 showMonthDropdown
                 showYearDropdown
@@ -123,6 +142,12 @@ EditableDrawer.propTypes = {
   row: PropTypes.object.isRequired,
   editableField: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
+  dateType: PropTypes.string,
   drawerData: PropTypes.array.isRequired,
 };
+
+EditableDrawer.defaultProps = {
+  dateType: '',
+};
+
 export default EditableDrawer;
