@@ -633,7 +633,8 @@ function TableLinkDrawer(props) {
           return (
             <EditableDrawer
               row={row}
-              editableField="EXPIRY_DATE"
+              editableField="DATE"
+              dateType={row?.label}
               id={drawerState?.id}
               drawerData={drawerState?.data}
             />
