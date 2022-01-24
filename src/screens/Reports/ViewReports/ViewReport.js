@@ -48,7 +48,7 @@ const ViewReport = () => {
     reportListColumnResetButtonLoaderAction,
     reportDownloadButtonLoaderAction,
     viewReportListLoader,
-    onlyReportListLoader
+    onlyReportListLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { docs, headers, page, limit, pages, total } = useMemo(() => reportList, [reportList]);
@@ -58,46 +58,40 @@ const ViewReport = () => {
   }, [paramReport]);
 
   // filter
-  const currentFilter = useMemo(
-    () => reportType.find(report => report.url === paramReport),
-    [reportType, paramReport]
-  );
-  const reportFilters = useSelector(({reportAllFilters}) => reportAllFilters ?? {});
+  const currentFilter = useMemo(() => reportType.find(report => report.url === paramReport), [reportType, paramReport]);
+  const reportFilters = useSelector(({ reportAllFilters }) => reportAllFilters ?? {});
   const reportEntityListData = useSelector(({ reports }) => reports?.reportEntityListData ?? []);
-  const [reviewReportFilterDate, setReviewReportFilterDate] = useState(new Date().toISOString());
+  const [reviewReportFilterDate, setReviewReportFilterDate] = useState(new Date());
   // end
 
   const { defaultFields, customFields } = useMemo(
     () => reportColumnList ?? { defaultFields: [], customFields: [] },
-    [reportColumnList]
+    [reportColumnList],
   );
 
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
-    [setCustomFieldModal]
+    [setCustomFieldModal],
   );
   const tempFilters = useMemo(() => {
     const params = {};
-        Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(
-      ([key, value]) => {
-        params[key] = value || undefined;
-      }
-    ); 
+    Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(([key, value]) => {
+      params[key] = value || undefined;
+    });
+
     if (currentFilter.filter === 'reviewReport') {
-      params.date = reviewReportFilterDate || undefined;
+      params.date = reviewReportFilterDate.toISOString() || undefined;
     }
     return { ...params };
   }, [reportFilters, currentFilter, reviewReportFilterDate]);
-
   const finalFilters = useMemo(() => {
     const params = {};
-    Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(
-      ([key, value]) => {
-        params[key] = value || undefined;
-      }
-    ); 
+    Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(([key, value]) => {
+      params[key] = value || undefined;
+    });
+
     if (currentFilter.filter === 'reviewReport') {
-      params.date = reviewReportFilterDate || undefined;
+      params.date = reviewReportFilterDate.toISOString() || undefined;
     }
     return { ...params };
   }, [reportFilters, currentFilter, reviewReportFilterDate]);
@@ -112,31 +106,40 @@ const ViewReport = () => {
         page: page ?? 1,
         limit: limit ?? 15,
         columnFor: paramReport ?? '',
-        ...appliedFilters,
         ...initialParams,
+        ...appliedFilters,
       };
-    let isFiltersValid = true;
-    if(currentFilter?.filter === 'clientList' || currentFilter?.filter === 'limitList' || currentFilter?.filter === 'pendingApplications') {
-      isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters);
-    }
+
+      let isFiltersValid = true;
+      if (
+        currentFilter?.filter === 'clientList' ||
+        currentFilter?.filter === 'limitList' ||
+        currentFilter?.filter === 'pendingApplications'
+      ) {
+        isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters);
+      }
       if (currentFilter.filter === 'reviewReport') {
-        params.date = reviewReportFilterDate || undefined;
+        if (initialParams?.date) {
+          params.date = new Date(initialParams?.date)?.toISOString();
+        } else {
+          params.date = new Date(reviewReportFilterDate).toISOString();
+        }
       }
       try {
-        if(isFiltersValid) {
+        if (isFiltersValid) {
           startGeneralLoaderOnRequest('viewReportListLoader');
-        await dispatch(getReportList(params, currentFilter?.filter));
-        if (cb && typeof cb === 'function') {
-          cb();
+          await dispatch(getReportList(params, currentFilter?.filter));
+          if (cb && typeof cb === 'function') {
+            cb();
+          }
+        } else {
+          await dispatch(resetCurrentFilter(currentFilter.filter));
         }
-      } else {
-        await dispatch(resetCurrentFilter(currentFilter.filter));
-      }
       } catch (e) {
         /**/
       }
     },
-    [page, limit, tempFilters, currentFilter, reviewReportFilterDate, paramReport]
+    [page, limit, tempFilters, currentFilter, reviewReportFilterDate, paramReport],
   );
 
   const onClickCloseColumnSelection = useCallback(() => {
@@ -151,7 +154,6 @@ const ViewReport = () => {
     try {
       const isBothEqual = _.isEqual(reportColumnList, reportDefaultColumnList);
       if (!isBothEqual) {
-
         await dispatch(saveReportColumnList({ reportColumnList, reportFor: paramReport }));
         toggleCustomField();
         startGeneralLoaderOnRequest('onlyReportListLoader');
@@ -164,13 +166,7 @@ const ViewReport = () => {
     } catch (e) {
       /**/
     }
-  }, [
-    toggleCustomField,
-    reportColumnList,
-    getReportListByFilter,
-    reportDefaultColumnList,
-    paramReport,
-  ]);
+  }, [toggleCustomField, reportColumnList, getReportListByFilter, reportDefaultColumnList, paramReport]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
@@ -205,7 +201,7 @@ const ViewReport = () => {
       onClickSaveColumnSelection,
       reportListColumnSaveButtonLoaderAction,
       reportListColumnResetButtonLoaderAction,
-    ]
+    ],
   );
   const onChangeSelectedColumn = useCallback((type, name, value) => {
     const data = { type, name, value };
@@ -217,7 +213,7 @@ const ViewReport = () => {
     async newLimit => {
       await getReportListByFilter({ page: 1, limit: newLimit });
     },
-    [getReportListByFilter]
+    [getReportListByFilter],
   );
 
   // on pagination changed
@@ -225,7 +221,7 @@ const ViewReport = () => {
     async newPage => {
       await getReportListByFilter({ page: newPage, limit });
     },
-    [getReportListByFilter, limit]
+    [getReportListByFilter, limit],
   );
 
   /*
@@ -235,14 +231,14 @@ const ViewReport = () => {
   const [filterModal, setFilterModal] = useState(false);
   const toggleFilterModal = useCallback(
     value => setFilterModal(value !== undefined ? value : e => !e),
-    [setFilterModal]
+    [setFilterModal],
   );
 
   const changeFilterFields = useCallback(
     (name, value) => {
       dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
     },
-    [reportFilters, currentFilter]
+    [reportFilters, currentFilter],
   );
 
   const handleSelectInputChange = useCallback(e => {
@@ -301,9 +297,7 @@ const ViewReport = () => {
             <CustomSelect
               options={reportEntityListData?.[input.name]}
               placeholder={input.placeHolder}
-              onChangeCustomSelect={selectedList =>
-                handleMultiSelectInputChange(input.name, selectedList)
-              }
+              onChangeCustomSelect={selectedList => handleMultiSelectInputChange(input.name, selectedList)}
               value={reportFilters?.[currentFilter.filter]?.tempFilter?.[input.name]}
               onSearchChange={text => onSearchChange(text, input.name)}
             />
@@ -352,7 +346,7 @@ const ViewReport = () => {
       handleDateInputChange,
       handleMultiSelectInputChange,
       handleOnSelectSearchInputChange,
-    ]
+    ],
   );
 
   const applyReportsFilter = useCallback(async () => {
@@ -361,12 +355,15 @@ const ViewReport = () => {
     dispatch(applyFinalFilter(currentFilter.filter));
   }, [getReportListByFilter, toggleFilterModal]);
 
-  const resetReportsFilter = useCallback(async () => {
-    await dispatch(resetCurrentFilter(currentFilter.filter));
-    setFilterModal(false);
-    await getReportListByFilter({}, () => {}, true);
-    dispatch(applyFinalFilter(currentFilter.filter));
-  }, [currentFilter, tempFilters]);
+  const resetReportsFilter = useCallback(
+    async params => {
+      await dispatch(resetCurrentFilter(currentFilter.filter));
+      setFilterModal(false);
+      await getReportListByFilter(params ?? {}, () => {}, true);
+      dispatch(applyFinalFilter(currentFilter.filter));
+    },
+    [currentFilter, tempFilters]
+  );
 
   const filterModalButtons = useMemo(
     () => [
@@ -392,7 +389,7 @@ const ViewReport = () => {
         onClick: applyReportsFilter,
       },
     ],
-    [toggleFilterModal, applyReportsFilter, resetReportsFilter, currentFilter]
+    [toggleFilterModal, applyReportsFilter, resetReportsFilter, currentFilter],
   );
 
   useEffect(async () => {
@@ -420,16 +417,14 @@ const ViewReport = () => {
     Object.entries(finalFilters).forEach(([key, value]) => {
       if (_.isArray(value)) {
         otherFilters[key] = value
-           ?.map(record =>
-             currentFilter?.filter === 'claimsReport' ? record?.secondValue : record?.value
-           )
-           .join(',');
-       } else if (_.isObject(value)) {
+          ?.map(record => (currentFilter?.filter === 'claimsReport' ? record?.secondValue : record?.value))
+          .join(',');
+      } else if (_.isObject(value)) {
         otherFilters[key] = currentFilter?.filter === 'claimsReport' ? value?.secondValue : value?.value;
-       } else {
+      } else {
         otherFilters[key] = value || undefined;
-       }
-     });
+      }
+    });
     const params = {
       page: page ?? 1,
       limit: limit ?? 15,
@@ -443,12 +438,11 @@ const ViewReport = () => {
   }, [history, total, pages, page, limit, tempFilters]);
 
   // extra filter for reviewReport
-  const handleSelectDateChange = useCallback(async date => {
-    setReviewReportFilterDate(new Date(date).toISOString());
-    resetReportsFilter();
-    await getReportListByFilter()
-  }, []);
-  
+  const handleSelectDateChange = async date => {
+    setReviewReportFilterDate(date);
+    resetReportsFilter({ date });
+  };
+
   useEffect(() => {
     dispatch({ type: REPORTS_REDUX_CONSTANTS.INITIALIZE_FILTERS });
   }, []);
@@ -480,7 +474,7 @@ const ViewReport = () => {
               {currentFilter.filter === 'reviewReport' && (
                 <div className="date-picker-container month-year-picker filter-date-picker-container mr-15 review-report-month-picker">
                   <DatePicker
-                    selected={new Date(reviewReportFilterDate)}
+                    selected={reviewReportFilterDate}
                     onChange={handleSelectDateChange}
                     showMonthYearPicker
                     showFullMonthYearPicker
@@ -515,28 +509,28 @@ const ViewReport = () => {
               />
             </div>
           </div>
-          {docs?.length > 0 ? [!onlyReportListLoader ? (
-            <>
-              <div className="common-list-container">
-                <Table
-                  align="left"
-                  valign="center"
-                  tableClass="main-list-table"
-                  data={docs}
-                  headers={headers}
-                />
-              </div>
-              <Pagination
-                className="common-list-pagination"
-                total={total}
-                pages={pages}
-                page={page}
-                limit={limit}
-                pageActionClick={pageActionClick}
-                onSelectLimit={onSelectLimit}
-              />
-            </>
-          ) : <Loader/>] : (
+          {docs?.length > 0 ? (
+            [
+              !onlyReportListLoader ? (
+                <>
+                  <div className="common-list-container">
+                    <Table align="left" valign="center" tableClass="main-list-table" data={docs} headers={headers} />
+                  </div>
+                  <Pagination
+                    className="common-list-pagination"
+                    total={total}
+                    pages={pages}
+                    page={page}
+                    limit={limit}
+                    pageActionClick={pageActionClick}
+                    onSelectLimit={onSelectLimit}
+                  />
+                </>
+              ) : (
+                <Loader />
+              ),
+            ]
+          ) : (
             <div className="no-record-found">No record found</div>
           )}
 
