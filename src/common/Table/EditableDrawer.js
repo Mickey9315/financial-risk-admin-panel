@@ -54,23 +54,23 @@ const EditableDrawer = props => {
         /**/
       }
     },
-    [id],
+    [id]
   );
 
   const handleapprovalOrDecliningDate = useCallback(
-    e => {
+    async e => {
       setSelectedExpiryDate(e);
       try {
         const data = {
           update: 'field',
           approvalOrDecliningDate: e,
         };
-        dispatch(changeApplicationStatus(id, data));
+        await dispatch(changeApplicationStatus(id, data));
       } catch (err) {
-        /**/
+        setSelectedExpiryDate(null);
       }
     },
-    [id],
+    [id]
   );
 
   const handleApplicationLimitTypeChange = useCallback(
@@ -116,13 +116,13 @@ const EditableDrawer = props => {
           <div className="editable-drawer-field">
             <div className="date-picker-container">
               <DatePicker
-                selected={selectedExpiryDate ? new Date(selectedExpiryDate) : new Date()}
+                selected={selectedExpiryDate ? new Date(selectedExpiryDate) : null}
                 placeholderText="Select Expiry Date"
                 onChange={
                   (dateType === 'Expiry Date' && handleExpiryDateChange) ||
                   (dateType === 'Approval Date' && handleapprovalOrDecliningDate)
                 }
-                minDate={new Date()}
+                minDate={dateType === 'Expiry Date' && new Date()}
                 showMonthDropdown
                 showYearDropdown
                 scrollableYearDropdown
