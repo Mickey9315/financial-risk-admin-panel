@@ -48,9 +48,9 @@ const ViewApplicationStatusComponent = props => {
     setShowConfirmationModal(!showConfirmModal);
   }, [showConfirmModal]);
 
-  const toggleModifyLimitModal = useCallback(() => {
+  const toggleModifyLimitModal = () => {
     setModifyLimitModal(!modifyLimitModal);
-  }, [modifyLimitModal]);
+  }
 
   const onChangeCreditLimit = useCallback(e => {
     const val = e?.target?.value?.toString()?.replaceAll(',', '');
@@ -194,11 +194,16 @@ const ViewApplicationStatusComponent = props => {
   }, [id]);
 
 const onClickApproveButton = () => {
-  setIsApprovedOrdDeclineButtonClicked(true);
   if(limitType && limitType?.toString()?.trim()?.length > 0) {
     setStatusToChange({ label: 'Approved', value: 'APPROVED' });
     toggleModifyLimitModal();
-  } 
+  } else {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+      fieldName:'limitTypeError',
+      value:'Please Select Limit Type'
+    })
+  }
 }
 
 const onClickDeclineButton = () => {
@@ -206,6 +211,12 @@ const onClickDeclineButton = () => {
   if(limitType && limitType?.toString()?.trim()?.length > 0) {
     setStatusToChange({ label: 'Declined', value: 'DECLINED' });
     toggleConfirmationModal();
+  } else {
+    dispatch({
+      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+      fieldName:'limitTypeError',
+      value:'Please Select Limit Type'
+    })
   }
 }
 
@@ -214,7 +225,7 @@ const onClickDeclineButton = () => {
     setCommentText(comments);
   }, [creditLimit, comments]);
 
-  const rightSideStatusButtons = useMemo(() => {
+  const rightSideStatusButtons = () => {
     if (!['DECLINED', 'APPROVED'].includes(status?.value) && isUpdatable) {
       return (
         <div className="right-side-status">
@@ -244,14 +255,14 @@ const onClickDeclineButton = () => {
           }}
         />
     );
-  }, [status, toggleModifyLimitModal, setStatusToChange, toggleConfirmationModal]);
+  };
 
   return (
     <div className="application-status-grid">
-      <div>
-        <div className="view-application-status">
+     
+        <div className="view-application-status-select view-application-select">
           {isApprovedOrDeclined ? (
-            <div>
+            <>
               {['APPROVED'].includes(status?.value) && (
                 <div className="application-status approved-application-status">
                   {status?.label}
@@ -262,7 +273,7 @@ const onClickDeclineButton = () => {
                   {status?.label}
                 </div>
               )}
-            </div>
+            </>
           ) : (
             <Select
               placeholder={isAllowToUpdate ? 'Select Status' : '-'}
@@ -280,8 +291,8 @@ const onClickDeclineButton = () => {
             </div>
           )}
         </div>
-      </div>
-      {isAllowToUpdate && rightSideStatusButtons}
+     
+      {isAllowToUpdate && rightSideStatusButtons()}
       {showConfirmModal && (
         <Modal
           className="add-to-crm-modal"

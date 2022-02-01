@@ -26,11 +26,11 @@ const LimitTypeOptions = [
     label: '24/7 Alerts',
     value: '247_ALERT',
     name: 'limitType',
-  }
+  },
 ];
 
 const EditableDrawer = props => {
-  const { row, editableField, id, drawerData } = props;
+  const { row, editableField, dateType, id, drawerData } = props;
   const dispatch = useDispatch();
 
   const [selectedLimitType, setSelectedLimitType] = useState([]);
@@ -57,6 +57,22 @@ const EditableDrawer = props => {
     [id]
   );
 
+  const handleapprovalOrDecliningDate = useCallback(
+    async e => {
+      setSelectedExpiryDate(e);
+      try {
+        const data = {
+          update: 'field',
+          approvalOrDecliningDate: e,
+        };
+        await dispatch(changeApplicationStatus(id, data));
+      } catch (err) {
+        setSelectedExpiryDate(null);
+      }
+    },
+    [id]
+  );
+
   const handleApplicationLimitTypeChange = useCallback(
     e => {
       setSelectedLimitType(e);
@@ -70,7 +86,7 @@ const EditableDrawer = props => {
         /**/
       }
     },
-    [id]
+    [id],
   );
 
   useEffect(() => {
@@ -95,15 +111,18 @@ const EditableDrawer = props => {
         ) : (
           <div>{row?.value || '-'}</div>
         ))}
-      {editableField === 'EXPIRY_DATE' &&
+      {editableField === 'DATE' &&
         (isApprovedOrDeclined ? (
           <div className="editable-drawer-field">
             <div className="date-picker-container">
               <DatePicker
-                selected={selectedExpiryDate ? new Date(selectedExpiryDate) : new Date()}
-                onChange={handleExpiryDateChange}
+                selected={selectedExpiryDate ? new Date(selectedExpiryDate) : null}
                 placeholderText="Select Expiry Date"
-                minDate={new Date()}
+                onChange={
+                  (dateType === 'Expiry Date' && handleExpiryDateChange) ||
+                  (dateType === 'Approval Date' && handleapprovalOrDecliningDate)
+                }
+                minDate={dateType === 'Expiry Date' && new Date()}
                 showMonthDropdown
                 showYearDropdown
                 scrollableYearDropdown
@@ -123,6 +142,12 @@ EditableDrawer.propTypes = {
   row: PropTypes.object.isRequired,
   editableField: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
+  dateType: PropTypes.string,
   drawerData: PropTypes.array.isRequired,
 };
+
+EditableDrawer.defaultProps = {
+  dateType: '',
+};
+
 export default EditableDrawer;

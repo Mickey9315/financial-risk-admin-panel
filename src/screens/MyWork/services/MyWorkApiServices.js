@@ -14,6 +14,14 @@ const MyWorkApiServices = {
   deleteTask: taskId => ApiService.deleteData(`${MY_WORK_URL.TASK.TASK_LIST_URL}${taskId}`),
   getTaskDetailById: id => ApiService.getData(`${MY_WORK_URL.TASK.TASK_DETAIL_BY_ID_URL}${id}`),
   updateTask: (id, data) => ApiService.putData(`${MY_WORK_URL.TASK.UPDATE_TASK}${id}`, data),
+  downloadTask: params =>
+    ApiService.request({
+      url: MY_WORK_URL.TASK.DOWNLOAD_TASK,
+      params,
+      method: 'GET',
+      responseType: 'blob',
+      timeout: 60000
+    }),
 
   notification: {
     getMyWorkNotificationListData: params =>

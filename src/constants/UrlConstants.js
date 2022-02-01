@@ -57,6 +57,7 @@ export const APPLICATION_URLS = {
     SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
     SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}application/search-entity-list/`,
     DELETE_APPLICATION_PERSONS: `${BASE_URL}debtor/stakeholder/`,
+    GENERATE_RANDOM_REGISTRATION_NUMBER: `${BASE_URL}debtor/generate/registration-number`,
   },
   DOCUMENTS: {
     GET_DOCUMENT_TYPE_LIST_URL: `${BASE_URL}document/document-type-list/`,
@@ -310,6 +311,7 @@ export const MY_WORK_URL = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name/`,
     TASK_DETAIL_BY_ID_URL: `${BASE_URL}task/details/`,
     UPDATE_TASK: `${BASE_URL}task/`,
+    DOWNLOAD_TASK: `${BASE_URL}/task/download`
   },
   MY_WORK_NOTIFICATION: {
     MY_WORK_NOTIFICATION_LIST: `${BASE_URL}notification/`,

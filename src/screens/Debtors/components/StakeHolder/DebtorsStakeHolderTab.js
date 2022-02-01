@@ -14,6 +14,7 @@ import {
   changeDebtorStakeHolderColumnListStatus,
   changeStakeHolderPersonType,
   deleteStakeHolderDetails,
+  generateRandomRegistrationNumberForDebtorStakeholder,
   getDebtorStakeHolderColumnNameList,
   getDebtorStakeHolderListData,
   getstakeholderCountryDataFromABNorACN,
@@ -35,6 +36,7 @@ import { DRAWER_ACTIONS } from '../../../Application/GenerateApplication/compone
 import ApplicationEntityNameTable from '../../../Application/GenerateApplication/component/components/ApplicationEntityNameTable/ApplicationEntityNameTable';
 import { DEBTORS_REDUX_CONSTANTS } from '../../redux/DebtorsReduxConstants';
 import Select from '../../../../common/Select/Select';
+import { ALPHA_NEUMERIC_REGEX } from '../../../../constants/RegexConstants';
 
 const drawerInitialState = {
   visible: false,
@@ -315,6 +317,10 @@ const DebtorsStakeHolderTab = () => {
     return RADIO_INPUTS;
   }, [entityType?.value]);
 
+  const onGenerateRegistrationNumber = () => {
+    dispatch(generateRandomRegistrationNumberForDebtorStakeholder());
+  };
+
   const COMPANY_INPUT = useMemo(
     () => [
       {
@@ -364,6 +370,12 @@ const DebtorsStakeHolderTab = () => {
         type: 'search',
         name: 'acn',
         value: stakeHolder?.acn,
+      },
+      {
+        label: 'Generate Registration Number',
+        type: 'button',
+        name: 'randomNumber',
+        onClick: onGenerateRegistrationNumber,
       },
       {
         type: 'blank',
@@ -577,7 +589,14 @@ const DebtorsStakeHolderTab = () => {
   const handleTextInputChange = useCallback(
     e => {
       const { name, value } = e.target;
+      if(name === 'driverLicenceNumber' && value.toString().trim().length > 0) {
+        if(ALPHA_NEUMERIC_REGEX.test(value)) {
+          updateStakeHolderSingleDetail(name, value);
+        }
+      }
+     else {
       updateStakeHolderSingleDetail(name, value);
+     }
     },
     [updateStakeHolderSingleDetail]
   );
@@ -946,6 +965,13 @@ const DebtorsStakeHolderTab = () => {
             </div>
           );
           break;
+          case 'button':
+            component = 
+              !isAusOrNewStakeHolder && (
+                <Button buttonType="primary-small" title={input.label} onClick={input.onClick} />
+              )
+              break;
+            
         case 'main-title':
           component = <div className="main-title">{input.label}</div>;
           break;
@@ -995,7 +1021,7 @@ const DebtorsStakeHolderTab = () => {
       return (
         <>
           {!['main-title', 'checkbox', 'blank', 'radio'].includes(input.type) && (
-            <span>{input.label}</span>
+            input.type === 'button' ? <div /> : <span>{input.label}</span>
           )}
           {['main-title', 'radio', 'blank', 'checkbox'].includes(input.type) ? (
             finalComponent

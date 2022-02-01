@@ -9,6 +9,7 @@ import { HEADER_GLOBAL_SEARCH_REDUX_CONSTANTS } from '../redux/HeaderConstants';
 const GlobalSearch = () => {
   const history = useHistory();
   const headerSearchRef = useRef();
+  const globalSearchInputRef = useRef();
   const dispatch = useDispatch();
   const [headerSearchFocused, setHeaderSearchFocused] = useState(false);
   const [searchedString, setSearchedString] = useState('');
@@ -70,6 +71,14 @@ const GlobalSearch = () => {
     [setSearchStart, cursor, globalSearchResult?.length, headerSearchFocused, target]
   );
 
+  const onSearchButtonClick = () => {
+    const { value } = globalSearchInputRef?.current;
+    if (value?.trim()?.length > 0 && headerSearchFocused) {
+      setSearchStart(true);
+      dispatch(searchGlobalData(value));
+    } 
+  }
+
   const handleOnSearchChange = useCallback(e => {
     setSearchedString(e?.target?.value);
     setHeaderSearchFocused(true);
@@ -97,12 +106,13 @@ const GlobalSearch = () => {
         <input
           type="text"
           placeholder="Search Here"
+          ref={globalSearchInputRef}
           onFocus={searchOnFocus}
           onKeyDown={onSearchEnterKeyPress}
           onChange={handleOnSearchChange}
           value={searchedString}
         />
-        <span className="material-icons-round ga-search-icon">search</span>
+        <span className="material-icons-round ga-search-icon" onClick={onSearchButtonClick}>search</span>
       </div>
       {searchStart && (
         <div className="header-search-results">

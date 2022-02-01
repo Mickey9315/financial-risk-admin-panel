@@ -154,9 +154,9 @@
 
 .button.icon-button.download-decision-letter-icon {
   display: inline-flex;
-  background-color: #ffffff;
-  //color: $primary-color;
   padding: 3px 15px;
+  white-space: nowrap;
+  background-color: #ffffff;
   border-radius: 8px;
   border: 1px solid $primary-color;
 }

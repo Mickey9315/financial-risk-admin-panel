@@ -8,6 +8,7 @@ import { changeApplicationStatus } from '../../redux/ApplicationAction';
 import Select from '../../../../common/Select/Select';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
+import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
 
 const LimitTypeOptions = [
   {
@@ -33,7 +34,7 @@ const LimitTypeOptions = [
 ];
 
 const ViewApplicationEditableRowComponent = props => {
-  const { isApprovedOrDeclined, isApprovedOrdDeclineButtonClicked } = props;
+  const { isApprovedOrDeclined } = props;
 
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -44,7 +45,7 @@ const ViewApplicationEditableRowComponent = props => {
   const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
 
   const { limitType, isAllowToUpdate, expiryDate } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
-  const handleApplicationLimitTypeChange = useCallback(
+  const handleApplicationLimitTypeChange = 
     e => {
       setSelectedLimitType(e);
       try {
@@ -53,12 +54,20 @@ const ViewApplicationEditableRowComponent = props => {
           limitType: e?.value,
         };
         dispatch(changeApplicationStatus(id, data));
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+          fieldName: 'limitType',
+          value: e?.value,
+        });
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+          fieldName:'limitTypeError',
+          value:undefined
+        });
       } catch (err) {
         /**/
       }
-    },
-    [id],
-  );
+    }
 
   const handleExpiryDateChange = useCallback(
     e => {
@@ -80,14 +89,13 @@ const ViewApplicationEditableRowComponent = props => {
     setSelectedLimitType(LimitTypeOptions.filter(e => e.value === limitType) ?? []);
     setSelectedExpiryDate(expiryDate);
   }, [limitType, expiryDate]);
-
   return (
     <div className="application-editable-row-grid">
       <div>
         <div className="font-field mt-10">Limit Type</div>
-        <div className="mt-5 mr-10">
+        <div className="mt-5 mr-10 view-application-select">
           <Select
-            placeholder={!isApprovedOrDeclined ? 'Select Limit Type' : '-'}
+            placeholder={!isApprovedOrDeclined && isAllowToUpdate ? 'Select Limit Type' : '-'}
             name="applicationStatus"
             className={
               !isUpdatable || !isAllowToUpdate || (isApprovedOrDeclined && 'view-application-limit-type-disabled')
@@ -97,30 +105,31 @@ const ViewApplicationEditableRowComponent = props => {
             isDisabled={!isUpdatable || !isAllowToUpdate || isApprovedOrDeclined}
             onChange={handleApplicationLimitTypeChange}
           />
-         {isApprovedOrdDeclineButtonClicked && !selectedLimitType?.value && <div className="ui-state-error">Please select appropriate limit type</div>}
+          {applicationDetail?.limitTypeError && (
+            <div className="ui-state-error">{applicationDetail?.limitTypeError}</div>
+          )}
         </div>
       </div>
       <div className={!isUpdatable && 'ml-15'}>
         <div className="font-field mt-10">Expiry Date</div>
-        {isUpdatable ? (
+        {isUpdatable && isAllowToUpdate && !isApprovedOrDeclined  ? (
           <div
-            className={`date-picker-container ${isApprovedOrDeclined && 'view-application-disabled-datepicker f-14'} view-application-status `}
+            className={`date-picker-container view-application-status `}
           >
             <DatePicker
               selected={selectedExpiryDate ? new Date(selectedExpiryDate) : null}
               onChange={handleExpiryDateChange}
-              placeholderText={!isApprovedOrDeclined ? 'Select Expiry Date' : '-'}
+              placeholderText='Select Expiry Date'
               minDate={new Date()}
               showMonthDropdown
               showYearDropdown
               scrollableYearDropdown
-              disabled={!isAllowToUpdate || isApprovedOrDeclined}
               dateFormat="dd/MM/yyyy"
             />
-            {isAllowToUpdate && !isApprovedOrDeclined && <span className="material-icons-round">event</span>}
+            <span className="material-icons-round">event</span>
           </div>
         ) : (
-          <div className="view-application-status">
+          <div className='f-14 font-primary mt-10 pt-5'>
             {selectedExpiryDate ? moment(new Date(selectedExpiryDate)).format('DD-MM-YYYY') : '-'}
           </div>
         )}
@@ -131,11 +140,6 @@ const ViewApplicationEditableRowComponent = props => {
 
 ViewApplicationEditableRowComponent.propTypes = {
   isApprovedOrDeclined: PropTypes.string.isRequired,
-  isApprovedOrdDeclineButtonClicked: PropTypes.bool
 };
-
-ViewApplicationEditableRowComponent.defaultProps = {
-  isApprovedOrdDeclineButtonClicked: false
-}
 
 export default ViewApplicationEditableRowComponent;

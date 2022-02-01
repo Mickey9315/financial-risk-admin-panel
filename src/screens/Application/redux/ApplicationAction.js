@@ -1,21 +1,21 @@
-import ApplicationApiServices from '../services/ApplicationApiServices';
-import { errorNotification, successNotification } from '../../../common/Toast';
 import {
-  APPLICATION_COLUMN_LIST_REDUX_CONSTANTS,
-  APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
-  APPLICATION_REDUX_CONSTANTS,
-} from './ApplicationReduxConstants';
+  startGeneralLoaderOnRequest,
+  stopGeneralLoaderOnSuccessOrFail
+} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import { errorNotification, successNotification } from '../../../common/Toast';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
+import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
+import { DEBTORS_REDUX_CONSTANTS } from '../../Debtors/redux/DebtorsReduxConstants';
+import ApplicationApiServices from '../services/ApplicationApiServices';
 import ApplicationCompanyStepApiServices from '../services/ApplicationCompanyStepApiServices';
 import ApplicationDocumentStepApiServices from '../services/ApplicationDocumentStepApiServices';
 import ApplicationViewApiServices from '../services/ApplicationViewApiServices';
-import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
-import {
-  startGeneralLoaderOnRequest,
-  stopGeneralLoaderOnSuccessOrFail,
-} from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import ImportApplicationApiServices from '../services/ImportApplicationApiServices';
-import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
-import { DEBTORS_REDUX_CONSTANTS } from '../../Debtors/redux/DebtorsReduxConstants';
+import {
+  APPLICATION_COLUMN_LIST_REDUX_CONSTANTS,
+  APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
+  APPLICATION_REDUX_CONSTANTS
+} from './ApplicationReduxConstants';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -1025,12 +1025,20 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
             data: statusToChange,
           });
         }
+        if(Object.prototype.hasOwnProperty.call(status  , 'clientReference')) {
+       dispatch({
+         type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.UPDATE_CLIENT_REFERENCE,
+         data: status?.clientReference
+       })
+     }
       }
     } catch (e) {
       if (e?.response?.data?.status === 'AUTOMATION_IN_PROCESS') {
         errorNotification(e?.response?.data?.message);
-      } else displayErrors(e);
-      throw Error();
+      } else { 
+        displayErrors(e);
+        throw(e);
+      }
     }
   };
 };
@@ -1364,12 +1372,14 @@ export const clearApplicationAlertDetails = () => {
 export const getApplicationFilterDropDownDataBySearch = options => {
   return async dispatch => {
     try {
+      startGeneralLoaderOnRequest('onApplicationFilterDropDownDataSearchLoaderOption')
       const response = await DashboardApiService.getEntitiesBySearch({
         ...options,
         isForRisk: true,
       });
 
       if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('onApplicationFilterDropDownDataSearchLoaderOption');
         dispatch({
           type: APPLICATION_FILTER_LIST_REDUX_CONSTANTS.APPLICATION_FILTER_LIST_BY_SEARCH,
           data: response?.data?.data,
@@ -1377,6 +1387,7 @@ export const getApplicationFilterDropDownDataBySearch = options => {
         });
       }
     } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('onApplicationFilterDropDownDataSearchLoaderOption');
       displayErrors(e);
     }
   };
@@ -1401,3 +1412,21 @@ export const getApplicationCompanyStepDropDownDataBySearch = options => {
     }
   };
 };
+
+export const generateRandomRegistrationNumber = params => {
+  return async(dispatch) => {
+    try {
+      const response = await ApplicationCompanyStepApiServices.generateRandomRegistrationNumber(params);
+      if(response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: APPLICATION_REDUX_CONSTANTS.COMPANY.SET_RANDOM_GENERATED_REGISTRATION_NUMBER,
+          data: response.data.data
+        })
+      return response.data.data;
+      }
+    } catch(e) {
+      displayErrors(e);
+    }
+    return false;
+  }
+}

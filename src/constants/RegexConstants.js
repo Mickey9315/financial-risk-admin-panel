@@ -4,6 +4,7 @@ export const NUMBER_REGEX = /^\d+$/;
 export const SPECIAL_CHARACTER_REGEX = /[^A-Za-z 0-9]/;
 export const PASSWORD_REGEX = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 export const DECIMAL_REGEX = /^[0-9]*(\.\d{0,2})?$/;
+export const ALPHA_NEUMERIC_REGEX = /^[A-Za-z0-9]+$/;
 
 export const usdConverter = number => {
   const numberToUSD = new Intl.NumberFormat('en-US', {

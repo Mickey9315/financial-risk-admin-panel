@@ -56,7 +56,7 @@ const AddOverdues = () => {
   );
 
   const { docs, isNilOverdue:nilOverdue } = useMemo(() => overdueListByDate ?? {}, [overdueListByDate]);
-  
+  const oldNilOverdue = nilOverdue;
   const callbackOnFormAddORAmend = useCallback(() => {
     toggleOverdueFormModal();
     if (isAmendOverdueModal) setIsAmendOverdueModal(false);
@@ -464,6 +464,9 @@ const AddOverdues = () => {
   }, []);
 
   useEffect(async () => {
+    if(moment().subtract(1,'month').isBefore(moment(period,'MMMM-YYYY').toDate())){
+      history.push('/over-dues')
+    }
     await getOverdueList();
   }, [period, id]);
 
@@ -522,7 +525,7 @@ useEffect(() => {
       toggleSaveAlertModal();
     } else {
       try {
-        const finalData = docs?.map(doc => {
+        const listData = docs?.map(doc => {
           const data = {};
           if (doc?.isExistingData) data._id = doc?._id;
           data.isExistingData = doc?.isExistingData ? doc?.isExistingData : false;
@@ -546,21 +549,20 @@ useEffect(() => {
           if (doc?.analystComment) data.analystComment = doc?.analystComment;
           return data;
         });
-        const withoutListData = {
-          list: [],
+
+        const finalData = {
+          list: listData?.length === 0 ? [] : listData,
           month:
-            Number(moment().month(selectedMonth).format('M')) < 10
-              ? `0${moment().month(selectedMonth).format('M')}`
-              : moment().month(selectedMonth).format('M'),
+          Number(moment().month(selectedMonth).format('M')) < 10
+          ? `0${moment().month(selectedMonth).format('M')}`
+          : moment().month(selectedMonth).format('M'),
           year: selectedYear,
-          clientId: id,
           nilOverdue: isNilOverdue,
+          clientId: listData?.length === 0 ?  id : undefined,
+          oldNilOverdue
         };
-        const withListData = {
-          list: finalData,
-          nilOverdue: isNilOverdue,
-        };
-        await dispatch(saveOverdueList(finalData?.length === 0 ? withoutListData : withListData));
+        
+        await dispatch(saveOverdueList(finalData));
         if (isPrompt) setIsPrompt(false);
         backToOverdueList();
       } catch (e) {

@@ -1,10 +1,11 @@
 import ReactSelect from 'react-select';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useRef } from 'react';
 
 const Select = props => {
-  const [IsFocus, setIsFocus] = useState(false);
+  const isFocus = useRef(false);
+  
   const {
     className,
     placeholder,
@@ -14,17 +15,22 @@ const Select = props => {
     value,
     onChange,
     onInputChange,
+    isLoadingNeeded,
     isDisabled,
     ...restProps
   } = props;
 
   const inputChangeEventHandling = e => {
-    if (IsFocus) {
+    if (isFocus.current) {
       onInputChange(e);
     }
   };
 
-  const handleInputChange = _.debounce(inputChangeEventHandling, 800);
+const temp = _.debounce(inputChangeEventHandling, 300);
+
+const handleInputChange = (e) => {
+  temp(e)
+}
 
   return (
     <ReactSelect
@@ -33,6 +39,7 @@ const Select = props => {
       placeholder={placeholder}
       name={name}
       options={options}
+      noOptionsMessage={() => isLoadingNeeded ? 'Loading...' : 'No Options'}
       isSearchable={isSearchable}
       value={value}
       onChange={onChange}
@@ -44,8 +51,8 @@ const Select = props => {
       isMulti={restProps?.isMulti}
       menuPlacement={restProps?.menuPlacement}
       dropdownPosition={restProps?.dropdownPosition}
-      onFocus={() => setIsFocus(true)}
-      onBlur={() => setIsFocus(false)}
+      onFocus={() => {isFocus.current = true}}
+      onBlur={() => {isFocus.current = false}}
     />
   );
 };
@@ -60,6 +67,7 @@ Select.propTypes = {
   onChange: PropTypes.func,
   onInputChange: PropTypes.func,
   isDisabled: PropTypes.bool,
+  isLoadingNeeded: PropTypes.bool
 };
 
 Select.defaultProps = {
@@ -72,6 +80,7 @@ Select.defaultProps = {
   onChange: () => {},
   onInputChange: () => {},
   isDisabled: false,
+  isLoadingNeeded: false
 };
 
 export default Select;

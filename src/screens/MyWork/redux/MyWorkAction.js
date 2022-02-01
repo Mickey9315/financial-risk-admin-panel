@@ -386,3 +386,21 @@ export const getTaskDropDownDataBySearch = options => {
     }
   };
 };
+
+export const downloadMyWorkTask = params => {
+  return async() => {
+    try {
+      startGeneralLoaderOnRequest('myWorkTaskDownloadLoaderAction');
+      const response = await MyWorkApiServices.downloadTask(params);
+      if (response?.statusText === 'OK') {
+        stopGeneralLoaderOnSuccessOrFail('myWorkTaskDownloadLoaderAction');
+        return response;
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('myWorkTaskDownloadLoaderAction');
+      displayErrors(e);
+      throw Error();
+    }
+    return false;
+  }
+}

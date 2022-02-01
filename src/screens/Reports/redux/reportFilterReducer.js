@@ -62,10 +62,16 @@ const initialFilterState = {
   limitList: {
     filterInputs: [
       {
-        type: 'clientSelect',
+        type: 'multiSelect',
         name: 'clientIds',
         label: 'Client',
         placeHolder: 'Select clients',
+      },
+      {
+        type: 'multiSelect',
+        name: 'limitType',
+        label: 'Limit Type',
+        placeHolder: 'Select Limit Type',
       },
       {
         type: 'dateRange',
@@ -94,10 +100,16 @@ const initialFilterState = {
   pendingApplications: {
     filterInputs: [
       {
-        type: 'clientSelect',
+        type: 'multiSelect',
         name: 'clientIds',
         label: 'Client',
         placeHolder: 'Select clients',
+      },
+      {
+        type: 'multiSelect',
+        name: 'limitType',
+        label: 'Limit Type',
+        placeHolder: 'Select Limit Type',
       },
       {
         type: 'select',
@@ -133,7 +145,7 @@ const initialFilterState = {
   usageReport: {
     filterInputs: [
       {
-        type: 'clientSelect',
+        type: 'multiSelect',
         name: 'clientIds',
         label: 'Client',
         placeHolder: 'Select clients',
@@ -159,7 +171,7 @@ const initialFilterState = {
     ],
     tempFilter: {
       clientIds: '',
-      debtorId: '',
+      insurerId:'',
       riskAnalystId: '',
       serviceManagerId: '',
     },
@@ -168,24 +180,37 @@ const initialFilterState = {
   usagePerClient: {
     filterInputs: [
       {
-        type: 'clientSelect',
+        type: 'multiSelect',
         name: 'clientIds',
         label: 'Client',
         placeHolder: 'Select clients',
       },
+      {
+        type: 'multiSelect',
+        name: 'limitType',
+        label: 'Limit Type',
+        placeHolder: 'Select Limit Type',
+      },
     ],
     tempFilter: {
       clientIds: '',
+      limitType: '',
     },
     finalFilter: {},
   },
   limitHistory: {
     filterInputs: [
       {
-        type: 'clientSelect',
+        type: 'multiSelect',
         name: 'clientIds',
         label: 'Client',
         placeHolder: 'Select clients',
+      },
+      {
+        type: 'multiSelect',
+        name: 'limitType',
+        label: 'Limit Type',
+        placeHolder: 'Select Limit Type',
       },
       {
         type: 'select',
@@ -221,7 +246,7 @@ const initialFilterState = {
   claimsReport: {
     filterInputs: [
       {
-        type: 'clientSelect',
+        type: 'multiSelect',
         name: 'clientIds',
         label: 'Client',
         placeHolder: 'Select clients',

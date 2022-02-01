@@ -306,7 +306,7 @@ const closeAddDocumentType = () => {
                   tableClass="main-list-table"
                   data={docs}
                   headers={headers}
-                  haveActions
+                  haveActions={isSettingsDocumentUpdatable}
                   recordActionClick={recordActionClick}
                 />
               </div>

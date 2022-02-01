@@ -17,8 +17,8 @@
   max-height: unset !important;
 }
 
-.react-select__value-container {
-  padding: 0 8px !important;
+.react-select-container .react-select__control .react-select__value-container {
+  padding: 0 8px;
 }
 
 .react-select__control:focus,
@@ -28,16 +28,18 @@
   box-shadow: none !important;
 }
 
-.react-select__value-container {
-  padding-left: 0 !important;
-  font: $subtitle $font-regular !important;
-  color: $field-color !important;
+.react-select-container .react-select__control {
+  padding-left: 5px;
+  .react-select__value-container {
+  font: $subtitle $font-regular;
+  color: $field-color;
+}
 }
 
-.react-select__single-value {
+.react-select-container .react-select__single-value {
   display: flex;
   align-items: center;
-  color: $field-color !important;
+  color: $field-color;
 }
 
 .react-select__indicator-separator {
