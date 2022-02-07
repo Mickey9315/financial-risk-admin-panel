@@ -1,0 +1,51 @@
+name: deploy-test
+on:
+  push:
+    branches:
+      - "staging"
+
+jobs:
+  deploy-on-test:
+    name: "Deploy on test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare Node Environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.TEST_SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.TEST_KNOWN_HOSTS }}
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('package.json') }}
+      - name: NPM install
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm i
+      - name: Compile
+        run: |
+          npm run build-test
+      - name: Upload to Server
+        run: |
+          rsync -avrc --rsh="ssh -p ${{ env.TEST_SSH_PORT }}"  --delete  "$PWD/build/" ${{ env.TEST_SSH_USERNAME }}@${{ env.TEST_SSH_HOST }}:${{ env.TEST_PROJECT_PATH }}dist-new
+        env:
+          TEST_SSH_PORT: ${{ secrets.TEST_SSH_PORT}}
+          TEST_SSH_USERNAME: ${{ secrets.TEST_SSH_USERNAME }}
+          TEST_SSH_HOST: ${{ secrets.TEST_SSH_HOST }}
+          TEST_PROJECT_PATH: ${{ secrets.TEST_PROJECT_PATH }}
+      - name: Backup previous folder
+        run: |
+          ssh -tt ${{ env.TEST_SSH_USERNAME }}@${{ env.TEST_SSH_HOST }} -p ${{ env.TEST_SSH_PORT }} "cd ${{ env.TEST_PROJECT_PATH }}; mkdir \"dist($(date +"%d-%m-%Y-%T"))\"; mv dist \"dist($(date +"%d-%m-%Y-%T"))\"; mv dist-new dist; ls -t | tail -n +6 | xargs rm -rf --; exit;"
+        env:
+          TEST_SSH_PORT: ${{ secrets.TEST_SSH_PORT}}
+          TEST_SSH_USERNAME: ${{ secrets.TEST_SSH_USERNAME }}
+          TEST_SSH_HOST: ${{ secrets.TEST_SSH_HOST }}
+          TEST_PROJECT_PATH: ${{ secrets.TEST_PROJECT_PATH }}
