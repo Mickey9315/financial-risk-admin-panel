@@ -34,11 +34,11 @@
   },
   "scripts": {
     "dev": "env-cmd -e development react-scripts start",
-    "build-dev": "CI= DISABLE_ESLINT_PLUGIN=true env-cmd -e development react-scripts build",
+    "build-dev": "CI= env-cmd -e development react-scripts build",
     "prod": "env-cmd -e production react-scripts start",
-    "build-prod": "env-cmd -e production react-scripts build",
+    "build-prod": "CI= env-cmd -e production react-scripts build",
     "test": "env-cmd -e test react-scripts start",
-    "build-test": "env-cmd -e test react-scripts build",
+    "build-test": "CI= env-cmd -e test react-scripts build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
