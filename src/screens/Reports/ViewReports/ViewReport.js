@@ -484,7 +484,7 @@ const ViewReport = () => {
                   <span className="material-icons-round">event</span>
                 </div>
               )}
-              {['limit-list', 'pending-application', 'usage', 'review', 'usage-per-client'].includes(paramReport) && (
+              {['limit-list', 'limit-history', 'pending-application', 'usage', 'review', 'usage-per-client'].includes(paramReport) && (
                 <IconButton
                   buttonType="primary-1"
                   title="cloud_download"
