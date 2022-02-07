@@ -1,0 +1,51 @@
+name: deploy-dev
+on:
+  push:
+    branches:
+      - "development"
+
+jobs:
+  deploy-on-dev:
+    name: "Deploy on development"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare Node Environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.DEV_SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.DEV_KNOWN_HOSTS }}
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('package.json') }}
+      - name: NPM install --legacy-peer-deps
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm i
+      - name: Compile
+        run: |
+          npm run build-dev
+      - name: Upload to Server
+        run: |
+          rsync -avrc --rsh="ssh -p ${{ env.DEV_SSH_PORT }}"  --delete  "$PWD/build/" ${{ env.DEV_SSH_USERNAME }}@${{ env.DEV_SSH_HOST }}:${{ env.DEV_PROJECT_PATH }}dist-new
+        env:
+          DEV_SSH_PORT: ${{ secrets.DEV_SSH_PORT}}
+          DEV_SSH_USERNAME: ${{ secrets.DEV_SSH_USERNAME }}
+          DEV_SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
+          DEV_PROJECT_PATH: ${{ secrets.DEV_PROJECT_PATH }}
+      - name: Backup previous folder
+        run: |
+          ssh -tt ${{ env.DEV_SSH_USERNAME }}@${{ env.DEV_SSH_HOST }} -p ${{ env.DEV_SSH_PORT }} "cd ${{ env.DEV_PROJECT_PATH }}; mkdir \"dist($(date +"%d-%m-%Y-%T"))\"; mv dist \"dist($(date +"%d-%m-%Y-%T"))\"; mv dist-new dist; ls -t | tail -n +6 | xargs rm -rf --; exit;"
+        env:
+          DEV_SSH_PORT: ${{ secrets.DEV_SSH_PORT}}
+          DEV_SSH_USERNAME: ${{ secrets.DEV_SSH_USERNAME }}
+          DEV_SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
+          DEV_PROJECT_PATH: ${{ secrets.DEV_PROJECT_PATH }}

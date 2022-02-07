@@ -1,0 +1,51 @@
+name: deploy-prod
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  deploy-on-prod:
+    name: "Deploy on production"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare Node Environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PROD_SSH_KEY }}
+          name: id_rsa
+          known_hosts: ${{ secrets.PROD_KNOWN_HOSTS }}
+      - name: Cache node modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('package.json') }}
+      - name: NPM install
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm i
+      - name: Compile
+        run: |
+          npm run build-prod
+      - name: Upload to Server
+        run: |
+          rsync -avrc --rsh="ssh -p ${{ env.PROD_SSH_PORT }}"  --delete  "$PWD/build/" ${{ env.PROD_SSH_USERNAME }}@${{ env.PROD_SSH_HOST }}:${{ env.PROD_PROJECT_PATH }}dist-new
+        env:
+          PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT}}
+          PROD_SSH_USERNAME: ${{ secrets.PROD_SSH_USERNAME }}
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_PROJECT_PATH: ${{ secrets.PROD_PROJECT_PATH }}
+      - name: Backup previous folder
+        run: |
+          ssh -tt ${{ env.PROD_SSH_USERNAME }}@${{ env.PROD_SSH_HOST }} -p ${{ env.PROD_SSH_PORT }} "cd ${{ env.PROD_PROJECT_PATH }}; mkdir \"dist($(date +"%d-%m-%Y-%T"))\"; mv dist \"dist($(date +"%d-%m-%Y-%T"))\"; mv dist-new dist; ls -t | tail -n +6 | xargs rm -rf --; exit;"
+        env:
+          PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT}}
+          PROD_SSH_USERNAME: ${{ secrets.PROD_SSH_USERNAME }}
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_PROJECT_PATH: ${{ secrets.PROD_PROJECT_PATH }}
