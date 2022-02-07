@@ -34,7 +34,7 @@
   },
   "scripts": {
     "dev": "env-cmd -e development react-scripts start",
-    "build-dev": "env-cmd -e development react-scripts build",
+    "build-dev": "DISABLE_ESLINT_PLUGIN=true env-cmd -e development react-scripts build",
     "prod": "env-cmd -e production react-scripts start",
     "build-prod": "env-cmd -e production react-scripts build",
     "test": "env-cmd -e test react-scripts start",
