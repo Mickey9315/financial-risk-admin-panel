@@ -29,7 +29,7 @@ const HeaderNotification = () => {
     ({ headerNotificationReducer }) => headerNotificationReducer ?? {},
   );
 
-  const { notificationList, page, pages } = notificationData ?? {};
+  const { notificationList, page, pages, total } = notificationData ?? {};
   const { notificationAlertDetailsLoader, markAllAsReadLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false,
   );
@@ -54,11 +54,6 @@ const HeaderNotification = () => {
   }, [notificationList]);
 
   const openNotificationDrawer = useCallback(value => setNotificationDrawer(value !== undefined ? value : e => !e), []);
-
-  const notificationBadge = useMemo(() => {
-    const result = notificationList?.filter(notification => notification?.isRead !== true);
-    return result?.length ?? 0;
-  }, [notificationList]);
 
   const onClickNotification = useCallback(notification => {
     if (notification?.entityType === 'alert') {
@@ -125,12 +120,12 @@ const HeaderNotification = () => {
   return (
     <>
       <IconButton
-        isBadge={notificationBadge > 0}
+        isBadge={total > 0}
         title="notifications_active"
         buttonType="outlined-bg"
         className="notification"
         onClick={openNotificationDrawer}
-        badgeCount={notificationBadge}
+        badgeCount={total}
       />
       <Drawer
         header={<NotificationDrawerHeader />}

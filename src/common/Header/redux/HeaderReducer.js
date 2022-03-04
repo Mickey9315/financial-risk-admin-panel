@@ -30,8 +30,8 @@ export const headerNotificationReducer = (
       const list = state?.notificationData?.notificationList ?? [];
       let notificationReceived = false;
 
-      const { page, pages, docs } = action?.data;
-    
+      const { page, pages, total, docs } = action?.data;
+
       if (action?.data?.length > 0) notificationReceived = true;
       return {
         ...state,
@@ -39,6 +39,7 @@ export const headerNotificationReducer = (
           notificationList: [...new Set([...list, ...docs])],
           page,
           pages,
+          total,
         },
 
         notificationReceived,
@@ -52,6 +53,7 @@ export const headerNotificationReducer = (
         notificationData: {
           ...state.notificationData,
           notificationList: notifications,
+          total: state.notificationData.total + 1,
         },
         notificationReceived: true,
       };
