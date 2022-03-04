@@ -23,40 +23,58 @@ export const loggedUserProfile = (state = { changed: false }, action) => {
 
 export const headerNotificationReducer = (
   state = { notificationList: [], notificationReceived: false, alertDetail: {} },
-  action
+  action,
 ) => {
   switch (action.type) {
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.GET_HEADER_NOTIFICATION: {
+      const list= state?.notificationData?.notificationList ?? [];
       let notificationReceived = false;
+
+      const { page, pages, docs } = action?.data;
+    
       if (action?.data?.length > 0) notificationReceived = true;
       return {
         ...state,
-        notificationList: action?.data,
+        notificationData: {
+          notificationList: [...new Set([...list, ...docs])],
+          page,
+          pages,
+        },
+
         notificationReceived,
       };
     }
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.ADD_NOTIFICATION: {
-      const notifications = [...state?.notificationList];
+      const notifications = [...state?.notificationData?.notificationList];
       notifications.unshift(action?.data);
       return {
         ...state,
-        notificationList: notifications,
+        notificationData: {
+          ...state.notificationData,
+          notificationList: notifications,
+        },
         notificationReceived: true,
       };
     }
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.TASK_DELETED_READ: {
-      const notificationList = [...state?.notificationList];
+      const notificationList = [...state?.notificationData?.notificationList];
       let finalList = [];
       finalList = notificationList?.filter(notification => notification?._id !== action?.id);
       return {
         ...state,
-        notificationList: finalList,
+        notificationData: {
+          ...state.notificationData,
+          notificationList: finalList,
+        },
       };
     }
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.MARKED_ALL_AS_READ:
       return {
         ...state,
-        notificationList: [],
+        notificationData: {
+          ...state.notificationData,
+          notificationList: [],
+        },
       };
 
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.OFF_NOTIFIRE: {
