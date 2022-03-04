@@ -121,7 +121,7 @@ export const logoutUser = () => {
   };
 };
 
-export const getHeaderNotificationListURL = (page) => {
+export const getHeaderNotificationListURL = page => {
   return async dispatch => {
     try {
       const response = await HeaderApiService.notificationApiServices.getHeaderNotificationList(page);
