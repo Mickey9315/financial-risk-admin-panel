@@ -100,7 +100,7 @@ const ImportApplicationStepper = ({ oncancelImportApplicationModal }) => {
       <div className="ia-stepper-container">
         {STEPS.map((step, index) => (
           <div
-            key={index.toString()}
+            key={step.text}
             className={`ia-stepper-item ${index <= activeStep && 'ia-done-step'}`}
           >
             <div className={`ia-step-circle ${index <= activeStep && 'ia-done-step'} `} />
