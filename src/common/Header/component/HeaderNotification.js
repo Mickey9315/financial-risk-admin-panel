@@ -29,7 +29,7 @@ const HeaderNotification = () => {
     ({ headerNotificationReducer }) => headerNotificationReducer ?? {},
   );
 
-  const { notificationList, page, pages, total } = notificationData ?? {};
+  const { notificationList, page, pages, total, hasMoreData } = notificationData ?? {};
   const { notificationAlertDetailsLoader, markAllAsReadLoader } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false,
   );
@@ -97,8 +97,8 @@ const HeaderNotification = () => {
     try {
       setTimeout(async () => {
         const changedPage = page + 1;
-        await dispatch(getHeaderNotificationListURL({ page: changedPage }));
-        setIsFetching(false);
+       await dispatch(getHeaderNotificationListURL({ page: changedPage }));
+       setIsFetching(false);
       }, [500]);
     } catch (e) {
       /**/
@@ -106,16 +106,14 @@ const HeaderNotification = () => {
   };
 
   const handleScroll = e => {
-    if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight)
-      if (sortedNotificationList?.length > 0) {
-        setIsFetching(true);
-      }
+    if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight && sortedNotificationList?.length)
+      setIsFetching(true);
   };
 
   useEffect(() => {
     if (!isFetching) return;
-    if (pages > page) fetchMoreListItems();
-  }, [isFetching, pages, page]);
+    if (hasMoreData) fetchMoreListItems();
+  }, [isFetching, hasMoreData]);
 
   return (
     <>
