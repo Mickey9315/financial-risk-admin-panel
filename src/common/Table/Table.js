@@ -531,9 +531,9 @@ function Row(props) {
             </td>
           ))}
         {isUpdatable &&
-          tableButtonActions.map((element, index) => (
+          tableButtonActions.map(element => (
             <td
-              key={index.toString()}
+              key={JSON.stringify(element)}
               width={10}
               align={align}
               valign={valign}
