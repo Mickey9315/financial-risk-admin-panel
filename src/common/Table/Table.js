@@ -280,7 +280,7 @@ const Table = props => {
         <tbody>
           {tableData.map((e, index) => (
             <Row
-              key={index.toString()}
+              key={e?.id}
               data={e}
               align={align}
               valign={valign}
@@ -437,19 +437,19 @@ function Row(props) {
             </span>
           </td>
         )}
-        {Object.entries(data).map(([key, value], index) => {
+        {Object.entries(data).map(([key, value]) => {
           switch (key) {
             case 'id':
               return null;
             case 'priority':
               return (
-                <td key={index.toString()} align={align}>
+                <td key={key} align={align}>
                   <span className={`task-priority-${value}`}>{value ?? '-'}</span>
                 </td>
               );
             case 'isCompleted':
               return (
-                <td key={index.toString()} align={align}>
+                <td key={key} align={align}>
                   {value?.length > 50 ? (
                     <Tooltip
                       overlayClassName="tooltip-top-class"
@@ -467,7 +467,7 @@ function Row(props) {
               return null;
             default:
               return (
-                <td key={index.toString()} align={align}>
+                <td key={key} align={align}>
                   {value?.length > 50 ? (
                     <Tooltip
                       overlayClassName="tooltip-top-class"
@@ -501,9 +501,9 @@ function Row(props) {
           </td>
         )}
         {isUpdatable &&
-          stepperColumn.map((element, index) => (
+          stepperColumn.map((element) => (
             <td
-              key={index.toString()}
+              key={JSON.stringify(element)}
               width={10}
               align={align}
               valign={valign}
@@ -514,9 +514,9 @@ function Row(props) {
             </td>
           ))}
         {isUpdatable &&
-          extraColumns.map((element, index) => (
+          extraColumns.map((element) => (
             <td
-              key={index.toString()}
+              key={JSON.stringify(element)}
               width={10}
               align={align}
               valign={valign}

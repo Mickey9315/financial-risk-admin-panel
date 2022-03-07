@@ -63,7 +63,7 @@ const Stepper = props => {
       <div className="stepper-container">
         {steps.map((step, index) => (
           <div
-            key={index.toString()}
+            key={step.text}
             className={`step-container ${activeStep === index && 'active-step'} ${
               index < activeStep && 'done-step'
             }`}
