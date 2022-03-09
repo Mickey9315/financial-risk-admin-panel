@@ -97,8 +97,8 @@ const HeaderNotification = () => {
     try {
       setTimeout(async () => {
         const changedPage = page + 1;
-       await dispatch(getHeaderNotificationListURL({ page: changedPage }));
-       setIsFetching(false);
+        await dispatch(getHeaderNotificationListURL({ page: changedPage }));
+        setIsFetching(false);
       }, [500]);
     } catch (e) {
       /**/
@@ -107,7 +107,7 @@ const HeaderNotification = () => {
 
   const handleScroll = e => {
     if (
-      Math.abs(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight) < 5 &&
+      Math.abs(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight) < 100 &&
       sortedNotificationList?.length > 0
     )
       setIsFetching(true);
