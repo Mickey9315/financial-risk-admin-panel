@@ -4,11 +4,7 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import logo from '../../../assets/images/logo.svg';
-import {
-  clearNotificationData,
-  deleteMyWorkNotification,
-  getMyWorkNotificationList,
-} from '../redux/MyWorkAction';
+import { clearNotificationData, deleteMyWorkNotification, getMyWorkNotificationList } from '../redux/MyWorkAction';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import IconButton from '../../../common/IconButton/IconButton';
 import Modal from '../../../common/Modal/Modal';
@@ -19,9 +15,9 @@ const MyWorkNotifications = () => {
   const history = useHistory();
   const [isFetching, setIsFetching] = useState(false);
   const { notificationList, page, pages, total, hasMoreData } = useSelector(
-    ({ myWorkReducer }) => myWorkReducer?.notification ?? {}
+    ({ myWorkReducer }) => myWorkReducer?.notification ?? {},
   );
-
+  const { myWorkNotificationLoaderAction } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
   const sortedNotification = useMemo(() => {
     notificationList?.sort((a, b) => new Date(b.title) - new Date(a.title));
     return notificationList;
@@ -41,7 +37,7 @@ const MyWorkNotifications = () => {
     date => {
       setFilterDate(date);
     },
-    [setFilterDate]
+    [setFilterDate],
   );
 
   const getMyWorkNotificationListByFilter = useCallback(
@@ -61,14 +57,14 @@ const MyWorkNotifications = () => {
         /**/
       }
     },
-    [total, pages, page, month, year]
+    [total, pages, page, month, year],
   );
 
   // filter
   const [filterModal, setFilterModal] = useState(false);
   const toggleFilterModal = useCallback(
     value => setFilterModal(value !== undefined ? value : e => !e),
-    [setFilterModal]
+    [setFilterModal],
   );
   const closeFilterOnClick = useCallback(() => {
     toggleFilterModal();
@@ -99,7 +95,7 @@ const MyWorkNotifications = () => {
         onClick: applyFilterOnClick,
       },
     ],
-    [resetFilterOnClick, toggleFilterModal, applyFilterOnClick, applyFilterOnClick]
+    [resetFilterOnClick, toggleFilterModal, applyFilterOnClick, applyFilterOnClick],
   );
 
   useEffect(() => {
@@ -168,47 +164,47 @@ const MyWorkNotifications = () => {
           />
         )}
       </div>
-      {sortedNotification?.length > 0 ? (
-        <>
-          <div
-            className="common-white-container notification-white-container"
-            onScroll={handleScroll}
-          >
-            {sortedNotification?.map(e => (
-              <>
-                <div className="notification-date">{moment(e?.title).format('DD-MMM-YYYY')}</div>
-                <div className="notification-container">
-                  {e?.data?.map(data => (
-                    <div className="notification-row">
-                      <div className="notification-circle-container">
-                        <div className="notification-vertical-line" />
-                        <div className="notification-circle">
-                          <img src={logo} alt="logo" />
-                        </div>
-                      </div>
-
-                      <div className="notification-detail-row">
-                        <span className="font-field">{data?.description}</span>
-                        <span className="notification-time">
-                          {moment(data?.createdAt).format('hh:mm A')}
-                        </span>
-                        <span
-                          className="material-icons-round"
-                          onClick={() => dispatch(deleteMyWorkNotification(data?._id))}
-                        >
-                          delete_outline
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ))}
-            {hasMoreData && <Loader />}
-          </div>
-        </>
+      {myWorkNotificationLoaderAction && page === 1 || page === undefined ? (
+        <Loader />
       ) : (
-        <div className="no-record-found">No record found</div>
+        (() =>
+          sortedNotification?.length > 0 ? (
+            <>
+              <div className="common-white-container notification-white-container" onScroll={handleScroll}>
+                {sortedNotification?.map(e => (
+                  <>
+                    <div className="notification-date">{moment(e?.title).format('DD-MMM-YYYY')}</div>
+                    <div className="notification-container">
+                      {e?.data?.map(data => (
+                        <div className="notification-row">
+                          <div className="notification-circle-container">
+                            <div className="notification-vertical-line" />
+                            <div className="notification-circle">
+                              <img src={logo} alt="logo" />
+                            </div>
+                          </div>
+
+                          <div className="notification-detail-row">
+                            <span className="font-field">{data?.description}</span>
+                            <span className="notification-time">{moment(data?.createdAt).format('hh:mm A')}</span>
+                            <span
+                              className="material-icons-round"
+                              onClick={() => dispatch(deleteMyWorkNotification(data?._id))}
+                            >
+                              delete_outline
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ))}
+                {hasMoreData && <Loader />}
+              </div>
+            </>
+          ) : (
+            <div className="no-record-found">No record found</div>
+          ))()
       )}
       {filterModal && (
         <Modal
