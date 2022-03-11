@@ -128,10 +128,9 @@ const MyWorkNotifications = () => {
   }, []);
 
   const handleScroll = e => {
-    if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight)
-      if (sortedNotification?.length > 0) {
+    if (Math.abs(e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight) < 100 &&
+      sortedNotification?.length > 0)
         setIsFetching(true);
-      }
   };
 
   const fetchMoreListItems = () => {
