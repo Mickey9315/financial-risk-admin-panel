@@ -48,8 +48,8 @@ const Modal = props => {
         </div>
         <div className={dialogBodyClass}>{children}</div>
         <div className="modal-footer">
-          {buttons.map((e, index) => (
-            <Button key={index.toString()} type="button" className="modal-footer-buttons" {...e} />
+          {buttons.map(e => (
+            <Button key={e?.title} type="button" className="modal-footer-buttons" {...e} />
           ))}
         </div>
       </div>

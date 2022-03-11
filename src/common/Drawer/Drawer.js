@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
+import React, { useRef } from 'react';
 import { useOnClickOutside } from '../../hooks/UserClickOutsideHook';
 
 const Drawer = props => {
-  const { drawerState, closeDrawer, header, className, children, ...restProps } = props;
+  const { drawerState, closeDrawer, header, className, children, onDrawerScroll, ...restProps } =
+    props;
   const drawerMenuRef = useRef();
   useOnClickOutside(drawerMenuRef, () => {
     if (drawerState) closeDrawer();
@@ -25,7 +26,9 @@ const Drawer = props => {
               close
             </span>
           </div>
-          <div className="drawer-content">{children}</div>
+          <div className="drawer-content" onScroll={onDrawerScroll} >
+            {children}
+          </div>
         </div>
       </div>
     </>
@@ -38,6 +41,7 @@ Drawer.propTypes = {
   children: PropTypes.element,
   drawerState: PropTypes.bool,
   closeDrawer: PropTypes.func,
+  onDrawerScroll: PropTypes.func,
 };
 
 Drawer.defaultProps = {
@@ -46,6 +50,7 @@ Drawer.defaultProps = {
   drawerState: false,
   children: null,
   closeDrawer: () => {},
+  onDrawerScroll: () => {},
 };
 
 export default Drawer;
