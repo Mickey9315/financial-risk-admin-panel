@@ -39,4 +39,9 @@ export const reportType = [
     name: 'Claims Report',
     filter: 'claimsReport',
   },
+  {
+    url: 'alert',
+    name: 'Alert Report',
+    filter: 'alertReport',
+  },
 ];
