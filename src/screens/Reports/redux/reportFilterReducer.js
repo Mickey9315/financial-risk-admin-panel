@@ -171,7 +171,7 @@ const initialFilterState = {
     ],
     tempFilter: {
       clientIds: '',
-      insurerId:'',
+      insurerId: '',
       riskAnalystId: '',
       serviceManagerId: '',
     },
@@ -272,6 +272,52 @@ const initialFilterState = {
     },
     finalFilter: {},
   },
+  alertReport: {
+    filterInputs: [
+      {
+        type: 'multiSelect',
+        name: 'clientIds',
+        label: 'Client',
+        placeHolder: 'Select clients',
+      },
+      {
+        type: 'dateRange',
+        label: 'Alert Date',
+        range: [
+          {
+            type: 'date',
+            name: 'startDate',
+            placeHolder: 'Select start date',
+          },
+          {
+            type: 'date',
+            name: 'endDate',
+            placeHolder: 'Select end date',
+          },
+        ],
+      },
+      {
+        type: 'select',
+        name: 'alertType',
+        label: 'Alert Type',
+        placeHolder: 'Select alert type',
+      },
+      {
+        type: 'select',
+        name: 'alertPriority',
+        label: 'Alert Priority',
+        placeHolder: 'Select alert priority',
+      },
+    ],
+    tempFilter: {
+      clientIds: '',
+      alertPriority: '',
+      alertType: '',
+      startDate: '',
+      endDate: '',
+    },
+    finalFilter: {},
+  },
 };
 
 export const reportAllFilters = (state = {}, action) => {
@@ -286,6 +332,7 @@ export const reportAllFilters = (state = {}, action) => {
         limitHistory: state?.limitHistory || initialFilterState?.limitHistory,
         claimsReport: state?.claimsReport || initialFilterState?.claimsReport,
         reviewReport: state?.reviewReport || initialFilterState?.reviewReport,
+        alertReport: state?.alertReport || initialFilterState?.alertReport,
       };
     case REPORTS_REDUX_CONSTANTS.UPDATE_REPORT_FILTER_FIELDS:
       return {
@@ -313,7 +360,7 @@ export const reportAllFilters = (state = {}, action) => {
         ...state,
         [action?.filterFor]: {
           ...state[action?.filterFor],
-          tempFilter: state[action?.filterFor].finalFilter,
+          tempFilter: state?.[action?.filterFor]?.finalFilter,
         },
       };
 
