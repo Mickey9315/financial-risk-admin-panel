@@ -1,13 +1,13 @@
 import _ from 'lodash';
-import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
-import { ReportsApiService } from '../services/ReportsApiService';
-import { REPORTS_REDUX_CONSTANTS } from './ReportsReduxConstants';
 import {
   startGeneralLoaderOnRequest,
-  stopGeneralLoaderOnSuccessOrFail,
+  stopGeneralLoaderOnSuccessOrFail
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
+import { ReportsApiService } from '../services/ReportsApiService';
+import { REPORTS_REDUX_CONSTANTS } from './ReportsReduxConstants';
 
 export const getReportList = (params, currentFilter) => {
   return async dispatch => {
@@ -218,6 +218,22 @@ export const getReportsFilterDropDownDataBySearch = options => {
           type: REPORTS_REDUX_CONSTANTS.GET_DROPDOWN_LIST_BY_SEARCH,
           data: response?.data?.data,
           name: options.entityType,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const getAlertFilterDropdownData = () => {
+  return async dispatch => {
+    try {
+      const response = await ReportsApiService.getAlertFilterDropdownData();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: REPORTS_REDUX_CONSTANTS.GET_ALERT_FILTER_DROPDOWN_DATA,
+          data: response.data.data,
         });
       }
     } catch (e) {

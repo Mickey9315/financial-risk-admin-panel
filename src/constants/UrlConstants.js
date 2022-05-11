@@ -300,6 +300,7 @@ export const REPORTS_URLS = {
   UPDATE_REPORTS_COLUMN_LIST: `${BASE_URL}report/column-name`,
   GET_REPORT_CLIENT_LIST: `${BASE_URL}report/entity-list`,
   DOWNLOAD_REPORT: `${BASE_URL}report/download`,
+  GET_ALERT_FILTER_DATA: `${BASE_URL}report/alert-entity-list`,
 };
 
 export const MY_WORK_URL = {
