@@ -8,6 +8,7 @@ import {
   applyFinalFilter,
   changeReportColumnList,
   changeReportsFilterFields,
+  getAlertFilterDropdownData,
   getReportColumnList,
   getReportList,
   getReportsClientDropdownData,
@@ -114,7 +115,8 @@ const ViewReport = () => {
       if (
         currentFilter?.filter === 'clientList' ||
         currentFilter?.filter === 'limitList' ||
-        currentFilter?.filter === 'pendingApplications'
+        currentFilter?.filter === 'pendingApplications' ||
+        currentFilter?.filter === 'alert'
       ) {
         isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters);
       }
@@ -362,7 +364,7 @@ const ViewReport = () => {
       await getReportListByFilter(params ?? {}, () => {}, true);
       dispatch(applyFinalFilter(currentFilter.filter));
     },
-    [currentFilter, tempFilters]
+    [currentFilter, tempFilters],
   );
 
   const filterModalButtons = useMemo(
@@ -399,12 +401,11 @@ const ViewReport = () => {
     };
     startGeneralLoaderOnRequest('viewReportListLoader');
     await dispatch(getReportsClientDropdownData());
-
+    if (paramReport === 'alert') {
+      await dispatch(getAlertFilterDropdownData());
+    }
     await getReportListByFilter({ ...params, ...finalFilters });
     dispatch(getReportColumnList(paramReport));
-  }, []);
-
-  useEffect(() => {
     return () => {
       dispatch(resetReportListData());
       startGeneralLoaderOnRequest('viewReportListLoader');
@@ -484,7 +485,9 @@ const ViewReport = () => {
                   <span className="material-icons-round">event</span>
                 </div>
               )}
-              {['limit-list', 'limit-history', 'pending-application', 'usage', 'review', 'usage-per-client'].includes(paramReport) && (
+              {['limit-list', 'limit-history', 'pending-application', 'usage', 'review', 'usage-per-client'].includes(
+                paramReport,
+              ) && (
                 <IconButton
                   buttonType="primary-1"
                   title="cloud_download"

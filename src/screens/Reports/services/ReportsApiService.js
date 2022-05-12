@@ -9,7 +9,7 @@ export const ReportsApiService = {
     ApiService.putData(REPORTS_URLS.UPDATE_REPORTS_COLUMN_LIST, data),
 
   getReportClientList: () => ApiService.getData(REPORTS_URLS.GET_REPORT_CLIENT_LIST),
-
+  getAlertFilterDropdownData: () => ApiService.getData(REPORTS_URLS.GET_ALERT_FILTER_DATA),
   downloadReportList: params =>
     ApiService.request({
       url: `${REPORTS_URLS.DOWNLOAD_REPORT}`,

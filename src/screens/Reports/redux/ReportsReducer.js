@@ -19,8 +19,6 @@ const initialReports = {
 
 export const reports = (state = initialReports, action) => {
   switch (action.type) {
-
-
     case REPORTS_REDUX_CONSTANTS.GET_REPORT_LIST_SUCCESS:
       return {
         ...state,
@@ -47,9 +45,7 @@ export const reports = (state = initialReports, action) => {
         ...state.reportColumnList,
       };
       const { type, name, value } = action?.data;
-      columnList[type] = columnList[type].map(field =>
-        field.name === name ? { ...field, isChecked: value } : field
-      );
+      columnList[type] = columnList[type].map(field => (field.name === name ? { ...field, isChecked: value } : field));
       return {
         ...state,
         reportColumnList: columnList,
@@ -65,6 +61,24 @@ export const reports = (state = initialReports, action) => {
           value: entity._id,
           secondValue: key === 'clientIds' ? entity.clientId : undefined,
         }));
+      });
+
+      return {
+        ...state,
+        reportEntityListData,
+      };
+    }
+
+    case REPORTS_REDUX_CONSTANTS.GET_ALERT_FILTER_DROPDOWN_DATA: {
+      const reportEntityListData = { ...state?.reportEntityListData };
+
+      Object.entries(action?.data)?.forEach(([key, value]) => {
+        if (key !== 'clientIds')
+          reportEntityListData[key] = value.map(record => ({
+            label: record,
+            name: key,
+            value: record,
+          }));
       });
 
       return {
