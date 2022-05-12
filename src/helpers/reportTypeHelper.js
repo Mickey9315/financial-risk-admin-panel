@@ -42,6 +42,6 @@ export const reportType = [
   {
     url: 'alert',
     name: 'Alert Report',
-    filter: 'alertReport',
+    filter: 'alert',
   },
 ];
