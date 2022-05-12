@@ -115,7 +115,8 @@ const ViewReport = () => {
       if (
         currentFilter?.filter === 'clientList' ||
         currentFilter?.filter === 'limitList' ||
-        currentFilter?.filter === 'pendingApplications'
+        currentFilter?.filter === 'pendingApplications' ||
+        currentFilter?.filter === 'alert'
       ) {
         isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters);
       }
