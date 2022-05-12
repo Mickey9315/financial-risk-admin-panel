@@ -272,7 +272,7 @@ const initialFilterState = {
     },
     finalFilter: {},
   },
-  alertReport: {
+  alert: {
     filterInputs: [
       {
         type: 'multiSelect',
@@ -332,7 +332,7 @@ export const reportAllFilters = (state = {}, action) => {
         limitHistory: state?.limitHistory || initialFilterState?.limitHistory,
         claimsReport: state?.claimsReport || initialFilterState?.claimsReport,
         reviewReport: state?.reviewReport || initialFilterState?.reviewReport,
-        alertReport: state?.alertReport || initialFilterState?.alertReport,
+        alert: state?.alert || initialFilterState?.alert,
       };
     case REPORTS_REDUX_CONSTANTS.UPDATE_REPORT_FILTER_FIELDS:
       return {
