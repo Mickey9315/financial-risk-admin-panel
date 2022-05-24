@@ -261,6 +261,12 @@ const initialFilterState = {
     filterInputs: [
       {
         type: 'select',
+        name: 'clientId',
+        label: 'Client',
+        placeHolder: 'Select client',
+      },
+      {
+        type: 'select',
         name: 'entityType',
         label: 'Entity Type',
         placeHolder: 'Select entity type',
