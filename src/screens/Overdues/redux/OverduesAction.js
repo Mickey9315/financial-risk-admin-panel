@@ -1,12 +1,12 @@
-import { OVERDUE_REDUX_CONSTANTS } from './OverduesReduxConstants';
-import { OverdueApiServices } from '../services/OverdueApiServices';
-import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
-import { successNotification } from '../../../common/Toast';
 import {
   startGeneralLoaderOnRequest,
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
+import { successNotification } from '../../../common/Toast';
+import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
+import { OverdueApiServices } from '../services/OverdueApiServices';
+import { OVERDUE_REDUX_CONSTANTS } from './OverduesReduxConstants';
 
 export const getEntityDetails = () => {
   return async dispatch => {
@@ -64,8 +64,8 @@ export const getOverdueList = params => {
       const finalParams = {
         ...params,
         clientId: params?.clientId?.value,
-        debtorId: params?.debtorId?.value
-      }
+        debtorId: params?.debtorId?.value,
+      };
       startGeneralLoaderOnRequest('overdueListPageLoaderAction');
       const response = await OverdueApiServices.getOverdueList(finalParams);
       if (response?.data?.status === 'SUCCESS') {
@@ -209,6 +209,25 @@ export const getOverdueFilterDropDownDataBySearch = options => {
       }
     } catch (e) {
       displayErrors(e);
+    }
+  };
+};
+
+export const downloadOVerduesForSelectedDateRange = params => {
+  return async () => {
+    try {
+      startGeneralLoaderOnRequest('overdueDownloadButtonLoaderAction');
+      const response = await OverdueApiServices.downloadOverdues(params);
+
+      if (response?.statusText === 'OK') {
+        successNotification('Overdues for given date range downloaded successfully');
+      }
+      return true;
+    } catch (e) {
+      displayErrors(e);
+      return false;
+    } finally {
+      stopGeneralLoaderOnSuccessOrFail('overdueDownloadButtonLoaderAction');
     }
   };
 };
