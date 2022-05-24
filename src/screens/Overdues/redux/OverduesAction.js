@@ -3,6 +3,7 @@ import {
   stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { successNotification } from '../../../common/Toast';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
 import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
 import { OverdueApiServices } from '../services/OverdueApiServices';
@@ -220,6 +221,7 @@ export const downloadOVerduesForSelectedDateRange = params => {
       const response = await OverdueApiServices.downloadOverdues(params);
 
       if (response?.statusText === 'OK') {
+        downloadAll(response);
         successNotification('Overdues for given date range downloaded successfully');
       }
       return true;
