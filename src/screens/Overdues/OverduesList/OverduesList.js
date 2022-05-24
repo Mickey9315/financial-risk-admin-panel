@@ -10,6 +10,7 @@ import Pagination from '../../../common/Pagination/Pagination';
 import Modal from '../../../common/Modal/Modal';
 import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import {
+  downloadOVerduesForSelectedDateRange,
   getEntityDetails,
   getOverdueFilterDropDownDataBySearch,
   getOverdueList,
@@ -31,6 +32,8 @@ const OverduesList = () => {
   const history = useHistory();
   const [newSubmissionDetails, setNewSubmissionDetails] = useState({});
   const [newSubmissionModal, setNewSubmissionModal] = useState(false);
+  const [isDownloadOverdueModalOpen, setIsDownloadOverdueModalOpen] = useState(false);
+  const [downloadOverdueDateRange, setDownloadOverdueDateRange] = useState({ startDate: null, endDate: null });
   const isOverdueUpdatable = useModulePrivileges(SIDEBAR_NAMES.OVERDUE).hasWriteAccess;
   const [filter, dispatchFilter] = useReducer(filterReducer, {
     tempFilter: {},
@@ -39,8 +42,8 @@ const OverduesList = () => {
 
   const entityList = useSelector(({ overdue }) => overdue?.entityList ?? {});
 
-  const { overdueListPageLoaderAction } = useSelector(
-    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+  const { overdueListPageLoaderAction, overdueDownloadButtonLoaderAction } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false,
   );
 
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
@@ -61,10 +64,10 @@ const OverduesList = () => {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'startDate',
-        value: date.toISOString(),
+        value: date?.toISOString(),
       });
     },
-    [dispatchFilter]
+    [dispatchFilter],
   );
 
   const handleEndDateChange = useCallback(
@@ -72,10 +75,10 @@ const OverduesList = () => {
       dispatchFilter({
         type: LIST_FILTER_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'endDate',
-        value: date.toISOString(),
+        value: date?.toISOString(),
       });
     },
-    [dispatchFilter]
+    [dispatchFilter],
   );
 
   const resetFilterDates = useCallback(() => {
@@ -91,7 +94,7 @@ const OverduesList = () => {
         value: event,
       });
     },
-    [dispatchFilter]
+    [dispatchFilter],
   );
 
   const handleDebtorIdFilterChange = useCallback(
@@ -102,7 +105,7 @@ const OverduesList = () => {
         value: event,
       });
     },
-    [dispatchFilter]
+    [dispatchFilter],
   );
 
   const handleMinOutstandingAmount = useCallback(
@@ -114,7 +117,7 @@ const OverduesList = () => {
         value: parseInt(updatedVal, 10),
       });
     },
-    [dispatchFilter]
+    [dispatchFilter],
   );
   const handleMaxOutstandingAmount = useCallback(
     event => {
@@ -125,33 +128,27 @@ const OverduesList = () => {
         value: parseInt(updatedVal, 10),
       });
     },
-    [dispatchFilter]
+    [dispatchFilter],
   );
 
   // listing
   const overdueListWithPageData = useSelector(({ overdue }) => overdue?.overdueList ?? {});
   const { total, pages, page, limit, docs, headers } = useMemo(
     () => overdueListWithPageData,
-    [overdueListWithPageData]
+    [overdueListWithPageData],
   );
 
   const getOverdueListByFilter = useCallback(
     async (params = {}, cb) => {
-      if (
-        tempFilter?.startDate &&
-        tempFilter?.endDate &&
-        moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)
-      ) {
+      if (tempFilter?.startDate && tempFilter?.endDate && moment(tempFilter?.endDate).isBefore(tempFilter?.startDate)) {
         errorNotification('Please enter a valid date range');
         resetFilterDates();
       } else {
         const data = {
           page: page ?? 1,
           limit: limit ?? 15,
-          clientId:
-            (tempFilter?.clientId?.value?.trim()?.length ?? -1) > 0 ? tempFilter?.clientId : undefined,
-          debtorId:
-            (tempFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? tempFilter?.debtorId : undefined,
+          clientId: (tempFilter?.clientId?.value?.trim()?.length ?? -1) > 0 ? tempFilter?.clientId : undefined,
+          debtorId: (tempFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? tempFilter?.debtorId : undefined,
           minOutstandingAmount:
             (tempFilter?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
               ? tempFilter?.minOutstandingAmount
@@ -177,13 +174,13 @@ const OverduesList = () => {
         }
       }
     },
-    [page, limit, { ...tempFilter }]
+    [page, limit, { ...tempFilter }],
   );
 
   const [filterModal, setFilterModal] = useState(false);
   const toggleFilterModal = useCallback(
     value => setFilterModal(value !== undefined ? value : e => !e),
-    [setFilterModal]
+    [setFilterModal],
   );
   const onClickApplyFilter = useCallback(async () => {
     toggleFilterModal();
@@ -220,8 +217,55 @@ const OverduesList = () => {
         onClick: onClickApplyFilter,
       },
     ],
-    [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
+    [toggleFilterModal, onClickApplyFilter, onClickResetFilter],
   );
+
+  const handleDownloadDateChange = (e, name) => {
+    setDownloadOverdueDateRange({
+      ...downloadOverdueDateRange,
+      [name]: e,
+    });
+  };
+
+  const onClickDownloadOverdues = async () => {
+    if (
+      downloadOverdueDateRange.startDate &&
+      moment(downloadOverdueDateRange.endDate).isBefore(downloadOverdueDateRange.startDate)
+    ) {
+      errorNotification('Please select a valid date range');
+    } else {
+      const response = await dispatch(downloadOVerduesForSelectedDateRange(downloadOverdueDateRange));
+      if (response) {
+        setIsDownloadOverdueModalOpen(false);
+        setDownloadOverdueDateRange({
+          startDate: null,
+          endDate: null,
+        });
+      }
+    }
+  };
+
+  const onCloseDownloadOverdueModal = () => {
+    setIsDownloadOverdueModalOpen(false);
+    setDownloadOverdueDateRange({
+      startDate: null,
+      endDate: null,
+    });
+  };
+
+  const downloadModalButtons = [
+    {
+      title: 'Close',
+      buttonType: 'primary-1',
+      onClick: onCloseDownloadOverdueModal,
+    },
+    {
+      title: 'Download',
+      buttonType: 'primary',
+      onClick: onClickDownloadOverdues,
+      isLoading: overdueDownloadButtonLoaderAction,
+    },
+  ];
 
   useEffect(async () => {
     const params = {
@@ -266,8 +310,7 @@ const OverduesList = () => {
       page: page ?? 1,
       limit: limit ?? 15,
       clientId: finalFilter?.clientId?.value ?? undefined,
-      debtorId:
-        (finalFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? finalFilter?.debtorId?.value : undefined,
+      debtorId: (finalFilter?.debtorId?.value?.trim()?.length ?? -1) > 0 ? finalFilter?.debtorId?.value : undefined,
       minOutstandingAmount:
         (finalFilter?.minOutstandingAmount?.toString()?.trim()?.length ?? -1) > 0
           ? finalFilter?.minOutstandingAmount
@@ -279,20 +322,20 @@ const OverduesList = () => {
       startDate: finalFilter?.startDate ?? undefined,
       endDate: finalFilter?.endDate ?? undefined,
     },
-    [total, pages, page, limit, { ...finalFilter }]
+    [total, pages, page, limit, { ...finalFilter }],
   );
 
   const pageActionClick = useCallback(
     async newPage => {
       await getOverdueListByFilter({ page: newPage, limit });
     },
-    [getOverdueListByFilter, limit]
+    [getOverdueListByFilter, limit],
   );
   const onSelectLimit = useCallback(
     async newLimit => {
       await getOverdueListByFilter({ page: 1, limit: newLimit });
     },
-    [getOverdueListByFilter]
+    [getOverdueListByFilter],
   );
 
   const onDateSelection = useCallback(
@@ -306,7 +349,7 @@ const OverduesList = () => {
         submissionDate: date,
       });
     },
-    [newSubmissionDetails]
+    [newSubmissionDetails],
   );
 
   const onAddNewSubmission = useCallback(() => {
@@ -321,9 +364,9 @@ const OverduesList = () => {
       errorNotification('Please select client and month/year to add new submission');
     } else {
       history.push(
-        `over-dues/${newSubmissionDetails?.clientId?.value}/${moment(
-          newSubmissionDetails?.submissionDate
-        )?.format('MMMM-YYYY')}`
+        `over-dues/${newSubmissionDetails?.clientId?.value}/${moment(newSubmissionDetails?.submissionDate)?.format(
+          'MMMM-YYYY',
+        )}`,
       );
     }
   }, [newSubmissionDetails]);
@@ -346,7 +389,7 @@ const OverduesList = () => {
         onClick: onAddNewSubmission,
       },
     ],
-    [onAddNewSubmission, onCloseNewSubmissionModal]
+    [onAddNewSubmission, onCloseNewSubmissionModal],
   );
 
   const handleOnSelectSearchInputChange = (searchEntity, text) => {
@@ -366,6 +409,13 @@ const OverduesList = () => {
             <div className="page-header-name">List of Overdues</div>
             <div className="page-header-button-container">
               <IconButton
+                buttonType="primary-1"
+                title="cloud_download"
+                className="mr-10"
+                buttonTitle="Click to download selected range overdues"
+                onClick={() => setIsDownloadOverdueModalOpen(true)}
+              />
+              <IconButton
                 buttonType="secondary"
                 title="filter_list"
                 className="mr-10"
@@ -373,11 +423,7 @@ const OverduesList = () => {
                 onClick={() => toggleFilterModal()}
               />
               {isOverdueUpdatable && (
-                <Button
-                  buttonType="success"
-                  title="New Submission"
-                  onClick={() => setNewSubmissionModal(e => !e)}
-                />
+                <Button buttonType="success" title="New Submission" onClick={() => setNewSubmissionModal(e => !e)} />
               )}
             </div>
           </div>
@@ -428,13 +474,52 @@ const OverduesList = () => {
                   placeholderText="Select month and year"
                   onChange={date => onDateSelection(date)}
                   dateFormat="MM/yyyy"
-                  maxDate={moment().subtract(1,'month').toDate()}
+                  maxDate={moment().subtract(1, 'month').toDate()}
                   selected={newSubmissionDetails?.submissionDate}
                   showMonthYearPicker
                   showYearDropdown
                   showFullMonthYearPicker
                 />
                 <span className="material-icons-round">expand_more</span>
+              </div>
+            </Modal>
+          )}
+          {isDownloadOverdueModalOpen && (
+            <Modal
+              header="Download Overdue"
+              headerIcon="download"
+              className="overdue-download-modal"
+              buttons={downloadModalButtons}
+            >
+              <div className="overdue-download-modal-row">
+                <div className="form-title">Month-Year Range</div>
+                <div className="date-picker-container month-year-picker">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={downloadOverdueDateRange.startDate}
+                    onChange={e => handleDownloadDateChange(e, 'startDate')}
+                    placeholderText="From Date"
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    showYearDropdown
+                    showFullMonthYearPicker
+                  />
+                  <span className="material-icons-round">event</span>
+                </div>
+
+                <div className="date-picker-container month-year-picker">
+                  <DatePicker
+                    className="filter-date-picker"
+                    selected={downloadOverdueDateRange.endDate}
+                    onChange={e => handleDownloadDateChange(e, 'endDate')}
+                    placeholderText="To Date"
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    showYearDropdown
+                    showFullMonthYearPicker
+                  />
+                  <span className="material-icons-round">event</span>
+                </div>
               </div>
             </Modal>
           )}
