@@ -498,6 +498,7 @@ const OverduesList = () => {
                     className="filter-date-picker"
                     selected={downloadOverdueDateRange.startDate}
                     onChange={e => handleDownloadDateChange(e, 'startDate')}
+                    maxDate={moment().subtract(1, 'month').toDate()}
                     placeholderText="From Date"
                     dateFormat="MM/yyyy"
                     showMonthYearPicker
@@ -512,6 +513,7 @@ const OverduesList = () => {
                     className="filter-date-picker"
                     selected={downloadOverdueDateRange.endDate}
                     onChange={e => handleDownloadDateChange(e, 'endDate')}
+                    maxDate={moment().subtract(1, 'month').toDate()}
                     placeholderText="To Date"
                     dateFormat="MM/yyyy"
                     showMonthYearPicker
