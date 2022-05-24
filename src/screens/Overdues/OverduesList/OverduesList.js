@@ -229,8 +229,9 @@ const OverduesList = () => {
 
   const onClickDownloadOverdues = async () => {
     if (
-      downloadOverdueDateRange.startDate &&
-      moment(downloadOverdueDateRange.endDate).isBefore(downloadOverdueDateRange.startDate)
+      (downloadOverdueDateRange.startDate &&
+        moment(downloadOverdueDateRange.endDate).isBefore(downloadOverdueDateRange.startDate)) ||
+      !downloadOverdueDateRange.startDate
     ) {
       errorNotification('Please select a valid date range');
     } else {
