@@ -260,10 +260,10 @@ const initialFilterState = {
   reviewReport: {
     filterInputs: [
       {
-        type: 'select',
-        name: 'clientId',
-        label: 'Client',
-        placeHolder: 'Select client',
+        type: 'multiSelect',
+        name: 'clientIds',
+        label: 'Clients',
+        placeHolder: 'Select clients',
       },
       {
         type: 'select',
