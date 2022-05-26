@@ -312,7 +312,7 @@ export const MY_WORK_URL = {
     COLUMN_NAME_LIST_URL: `${BASE_URL}task/column-name/`,
     TASK_DETAIL_BY_ID_URL: `${BASE_URL}task/details/`,
     UPDATE_TASK: `${BASE_URL}task/`,
-    DOWNLOAD_TASK: `${BASE_URL}/task/download`
+    DOWNLOAD_TASK: `${BASE_URL}/task/download`,
   },
   MY_WORK_NOTIFICATION: {
     MY_WORK_NOTIFICATION_LIST: `${BASE_URL}notification/`,
@@ -351,4 +351,5 @@ export const OVERDUE_URLS = {
   GET_ENTITY_LIST: `${BASE_URL}overdue/entity-list/`,
   CHANGE_OVERDUE_STATUS: `${BASE_URL}overdue/status/`,
   SAVE_OVERDUE_LIST: `${BASE_URL}overdue/list/`,
+  DOWNLOAD_OVERDUES: `${BASE_URL}overdue/download`,
 };

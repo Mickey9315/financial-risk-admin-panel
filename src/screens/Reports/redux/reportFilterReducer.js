@@ -260,6 +260,12 @@ const initialFilterState = {
   reviewReport: {
     filterInputs: [
       {
+        type: 'multiSelect',
+        name: 'clientIds',
+        label: 'Clients',
+        placeHolder: 'Select clients',
+      },
+      {
         type: 'select',
         name: 'entityType',
         label: 'Entity Type',
