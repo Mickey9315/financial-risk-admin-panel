@@ -520,8 +520,8 @@ const ViewReport = () => {
                 only be determined by reference to the original limit endorsements issued by your
                 insurer. The list provided is a summary of your credit limits only, based on
                 information obtained from the insurer&apos;s website. Whilst every precaution has been
-                been been been taken by TCR to provide you with accurate and up-to-date information,
-                cannot be held responsible for any errors or omissions contained herein.
+                taken by TCR to provide you with accurate and up-to-date information, TCR cannot be
+                held responsible for any errors or omissions contained herein.
               </div>
             </div>
           )}
