@@ -18,3 +18,14 @@
 .review-report-month-picker {
   height: auto;
 }
+.disclaimer-title{
+  font: 14px $font-medium;
+  color: rgba(0,58,120, .85);
+  padding-left: 10px;
+}
+.disclaimer-body{
+  padding: 5px 10px 0;
+  text-align: justify;
+  color: $field-color;
+  font-size: 14px;
+}
