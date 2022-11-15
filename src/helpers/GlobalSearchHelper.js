@@ -17,7 +17,7 @@ const ClientTabMapper = {
 };
 const DebtorsTabMapper = {
   creditLimit: 0,
-  stakeholder: 1,
+  stakeHolder: 1,
   application: 2,
   overdues: 3,
   claims: 4,
@@ -39,7 +39,7 @@ const handleSearchWithSubModules = (path, module, hasSubModule, subModule, histo
       case 'client':
         setViewClientActiveTabIndex(ClientTabMapper?.[subModule]);
         break;
-      case 'debtors':
+      case 'debtor':
         setViewDebtorActiveTabIndex(DebtorsTabMapper?.[subModule]);
         break;
       case 'insurer':
@@ -74,7 +74,7 @@ export const handleGlobalSearchSelect = (history, module, id, hasSubModule, subM
           history
         );
         break;
-      case 'debtors':
+      case 'debtor':
         handleSearchWithSubModules(
           `/debtors/debtor/view/${id}`,
           module,
