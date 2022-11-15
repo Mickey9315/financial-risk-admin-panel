@@ -20,6 +20,7 @@
     "jsx-a11y/alt-text": "off",
     "react/react-in-jsx-scope": "off",
     "react/forbid-prop-types": "off",
+    "react/no-unknown-property": "off",
     "react/jsx-filename-extension": [
       1,
       {
