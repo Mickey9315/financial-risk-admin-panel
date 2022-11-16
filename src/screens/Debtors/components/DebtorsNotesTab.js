@@ -267,7 +267,7 @@ const DebtorsNotesTab = () => {
           <div className="add-notes-popup-container">
             <span>Description</span>
             <textarea
-              prefixClass="font-placeholder"
+              className="prefix font-placeholder"
               placeholder="Note description"
               name="description"
               type="text"
