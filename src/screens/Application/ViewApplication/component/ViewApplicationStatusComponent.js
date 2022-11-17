@@ -310,7 +310,7 @@ const onClickDeclineButton = () => {
               <div className="add-notes-popup-container">
                 <span>Comment</span>
                 <textarea
-                  prefixClass="font-placeholder"
+                  className="prefix font-placeholder"
                   placeholder="Enter Comment"
                   name="comment"
                   type="text"
