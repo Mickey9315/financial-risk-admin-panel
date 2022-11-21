@@ -89,6 +89,9 @@ const ViewApplicationEditableRowComponent = props => {
     setSelectedLimitType(LimitTypeOptions.filter(e => e.value === limitType) ?? []);
     setSelectedExpiryDate(expiryDate);
   }, [limitType, expiryDate]);
+
+  const aYearFromNow = new Date();
+  aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
   return (
     <div className="application-editable-row-grid">
       <div>
@@ -129,8 +132,10 @@ const ViewApplicationEditableRowComponent = props => {
             <span className="material-icons-round">event</span>
           </div>
         ) : (
-          <div className='f-14 font-primary mt-10 pt-5'>
-            {selectedExpiryDate ? moment(new Date(selectedExpiryDate)).format('DD-MM-YYYY') : '-'}
+          <div className="f-14 font-primary mt-10 pt-5">
+            {selectedExpiryDate
+              ? moment(new Date(selectedExpiryDate)).format('DD-MM-YYYY')
+              : moment(new Date(aYearFromNow)).format('DD-MM-YYYY')}
           </div>
         )}
       </div>
