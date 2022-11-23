@@ -74,8 +74,8 @@ const ViewApplicationEditableRowComponent = props => {
 
   const handleExpiryDateChange = useCallback(
     e => {
-      if(e === null || e === '' ){
-        setSelectedExpiryDate(null || "");
+      if(e === null){
+        setSelectedExpiryDate(null);
         try {
           const dataNew = {
             update: 'field',
