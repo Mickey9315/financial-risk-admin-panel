@@ -33,7 +33,7 @@ const ViewApplicationStatusComponent = props => {
   const { applicationDecisionLetterDownloadButtonLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
-  const { creditLimit, isAllowToUpdate, limitType, status, _id, comments } = useMemo(
+  const { creditLimit, isAllowToUpdate, limitType, status, _id, comments} = useMemo(
     () => applicationDetail ?? {},
     [applicationDetail]
   );

@@ -69,29 +69,52 @@ const ViewApplicationEditableRowComponent = props => {
       }
     }
 
+  const aYearFromNow = new Date();
+  aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+
   const handleExpiryDateChange = useCallback(
     e => {
+      console.log(e)
+      if(e === null || e === '' ){
+        setSelectedExpiryDate(null || "");
+        try {
+          const dataNew = {
+            update: 'field',
+            expiryDate: aYearFromNow,
+          };
+          console.log(dataNew)
+          dispatch(changeApplicationStatus(id, dataNew));
+          dispatch({
+            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+            fieldName: 'expiryDate',
+            value: aYearFromNow,
+          });
+        } catch (err) {
+          /**/
+        }
+      }else{
       setSelectedExpiryDate(e);
       try {
         const data = {
           update: 'field',
           expiryDate: e,
         };
+        console.log(data)
         dispatch(changeApplicationStatus(id, data));
       } catch (err) {
         /**/
       }
+      }
     },
     [id],
   );
+
 
   useEffect(() => {
     setSelectedLimitType(LimitTypeOptions.filter(e => e.value === limitType) ?? []);
     setSelectedExpiryDate(expiryDate);
   }, [limitType, expiryDate]);
 
-  const aYearFromNow = new Date();
-  aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
   return (
     <div className="application-editable-row-grid">
       <div>
