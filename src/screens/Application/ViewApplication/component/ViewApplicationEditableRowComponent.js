@@ -82,7 +82,6 @@ const ViewApplicationEditableRowComponent = props => {
             update: 'field',
             expiryDate: aYearFromNow,
           };
-          console.log(dataNew)
           dispatch(changeApplicationStatus(id, dataNew));
           dispatch({
             type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
@@ -97,9 +96,8 @@ const ViewApplicationEditableRowComponent = props => {
       try {
         const data = {
           update: 'field',
-          expiryDate: e,
+          expiryDate: moment(e),
         };
-        console.log(data)
         dispatch(changeApplicationStatus(id, data));
       } catch (err) {
         /**/
