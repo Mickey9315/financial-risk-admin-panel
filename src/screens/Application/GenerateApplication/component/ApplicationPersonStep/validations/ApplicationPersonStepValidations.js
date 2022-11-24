@@ -132,16 +132,10 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
           validated = false;
           errors.country = 'Please select country before continue';
         }
-        if (item?.dateOfBirth === undefined && item?.driverLicenceNumber?.toString()?.trim()?.length === 0 || 
-        (item?.dateOfBirth === undefined && item?.driverLicenceNumber === undefined)) {
+        if (!item?.dateOfBirth) {
           validated = false;
-          errors.driverLicenceNumber =
-            'Please provide at least one - either a driver licence number or date of birth';
-        }
-
-        if (item?.dateOfBirthitem && item?.driverLicenceNumber?.toString().trim().length < 0) {
-          validated = false;
-          errors.driverLicenceNumber = 'Please enter valid driver licence number';
+          errors.dateOfBirth =
+            'Please select Date of Birth before continue';
         }
         if (!item?.streetNumber || item?.streetNumber?.length <= 0) {
           validated = false;
