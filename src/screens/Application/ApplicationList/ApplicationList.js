@@ -504,6 +504,41 @@ const ApplicationList = () => {
     dispatch(saveAppliedFilters('applicationListFilters', finalFilter));
   }, [finalFilter]);
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [applicationId, setApplicationId] = useState('');
+  const toggleConfirmationModal = useCallback(
+    value => setShowConfirmModal(value !== undefined ? value : e => !e),
+    [setShowConfirmModal]
+  );
+
+  const deleteButtons = useMemo(
+    () => [
+      { title: 'Close', buttonType: 'primary-1', onClick: () => toggleConfirmationModal() },
+      {
+        title: 'Delete',
+        buttonType: 'danger',
+        onClick : console.log(applicationId)
+      },
+    ],
+  );
+
+  // const deleteApplication = useCallback(
+  //   AppId => {
+  //     console.log('app', AppId);
+  //     setApplicationId(AppId);
+  //     setShowConfirmModal(true);
+  //     console.log('in', showConfirmModal);
+  //     console.log('delete');
+  //   },
+  //   [showConfirmModal],
+  // );
+
+  const deleteApplication = (appId) => {
+    setApplicationId(appId)
+    setShowConfirmModal(true)
+  }
+
+
   return (
     <>
       {!applicationListPageLoader ? (
@@ -553,6 +588,7 @@ const ApplicationList = () => {
                   headers={headers}
                   recordSelected={viewApplicationOnSelectRecord}
                   rowClass="cursor-pointer"
+                  deleteApplication={deleteApplication}
                 />
               </div>
               <Pagination
@@ -567,6 +603,12 @@ const ApplicationList = () => {
             </>
           ) : (
             <div className="no-record-found">No record found</div>
+          )}
+
+          {showConfirmModal && (
+            <Modal header="Delete Application" buttons={deleteButtons} hideModal={toggleConfirmationModal}>
+              <span className="confirmation-message">Are you sure you want to delete this Application?</span>
+            </Modal>
           )}
 
           {filterModal && (

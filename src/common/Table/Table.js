@@ -72,6 +72,7 @@ const Table = props => {
     onChangeRowSelection,
     isEditableDrawer,
     handleRedirectClick,
+    deleteApplication
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -300,6 +301,7 @@ const Table = props => {
               isSelected={selectedRowData.some(f => f.id === e.id)}
               onRowSelectedDataChange={onRowSelectedDataChange}
               refreshData={refreshData}
+              deleteApplication={deleteApplication}
             />
           ))}
         </tbody>
@@ -329,6 +331,7 @@ Table.propTypes = {
   onChangeRowSelection: PropTypes.func,
   isEditableDrawer: PropTypes.bool,
   handleRedirectClick: PropTypes.func,
+  deleteApplication:PropTypes.func
 };
 
 Table.defaultProps = {
@@ -352,6 +355,7 @@ Table.defaultProps = {
   onChangeRowSelection: () => {},
   isEditableDrawer: false,
   handleRedirectClick: () => {},
+  deleteApplication: () => {}
 };
 
 export default Table;
@@ -377,6 +381,7 @@ function Row(props) {
     isSelected,
     onRowSelectedDataChange,
     refreshData,
+    deleteApplication,
   } = props;
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -542,6 +547,19 @@ function Row(props) {
               {element(data)}
             </td>
           ))}
+        {data.status === 'Draft' ? (
+          <td align="right">
+            <span
+              className="material-icons-round font-danger cursor-pointer"
+              onClick={e => {
+                e.stopPropagation();
+                deleteApplication(data?.id);
+              }}
+            >
+              delete_outline
+            </span>
+          </td>
+        ): <td>  </td>}
       </tr>
       <ExpandedTableHelper
         docs={data?.dataToExpand}
@@ -583,6 +601,7 @@ Row.propTypes = {
   onRowSelectedDataChange: PropTypes.func,
   showCheckbox: PropTypes.bool,
   refreshData: PropTypes.func,
+  deleteApplication: PropTypes.func
 };
 
 Row.defaultProps = {
@@ -602,6 +621,7 @@ Row.defaultProps = {
   recordActionClick: () => {},
   onRowSelectedDataChange: () => {},
   refreshData: () => {},
+  deleteApplication: () => {}
 };
 
 function TableLinkDrawer(props) {
