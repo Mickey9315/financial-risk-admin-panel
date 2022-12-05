@@ -242,41 +242,46 @@ const Table = props => {
     onChangeRowSelection(selectedRowData);
   }, [selectedRowData, onChangeRowSelection]);
 
+  const [applicationDeleteHeader, setApplicationDeleteHeader] = useState(false);
+  useEffect(() => {
+    data.forEach(item => {
+      if ('applicationId' in item) {
+        setApplicationDeleteHeader(true);
+      }
+    });
+  }, [applicationDeleteHeader]);
+
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
       <table className={tableClassName}>
         <thead>
-            {showCheckbox && (
-              <th width={10} align={align} valign={valign}>
-                <Checkbox
-                  className="crm-checkbox-list"
-                  checked={tableData.length !== 0 && selectedRowData.length === tableData.length}
-                  onChange={onSelectAllRow}
-                />
+          {showCheckbox && (
+            <th width={10} align={align} valign={valign}>
+              <Checkbox
+                className="crm-checkbox-list"
+                checked={tableData.length !== 0 && selectedRowData.length === tableData.length}
+                onChange={onSelectAllRow}
+              />
+            </th>
+          )}
+          {isExpandable && <th align="center" />}
+          {headers.length > 0 &&
+            headers.map(heading => (
+              <th
+                key={heading.label}
+                align={data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align}
+                valign={valign}
+                className={`${headerClass} ${heading.type === 'boolean' ? 'table-checkbox-header' : ''}  `}
+              >
+                {heading.label}
               </th>
-            )}
-            {isExpandable && <th align="center" />}
-            {headers.length > 0 &&
-              headers.map(heading => (
-                <th
-                  key={heading.label}
-                  align={
-                    data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align
-                  }
-                  valign={valign}
-                  className={`${headerClass} ${
-                    heading.type === 'boolean' ? 'table-checkbox-header' : ''
-                  }  `}
-                >
-                  {heading.label}
-                </th>
-              ))}
-            {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) &&
-              isUpdatable && <th style={{ position: 'sticky', right: 0 }} />}
-            {tableButtonActions.length > 0 && isUpdatable && (
-              <th align={align}>Credit Limit Actions</th>
-            )}
+            ))}
+          {applicationDeleteHeader && <th> </th>}
+          {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) && isUpdatable && (
+            <th style={{ position: 'sticky', right: 0 }} />
+          )}
+          {tableButtonActions.length > 0 && isUpdatable && <th align={align}>Credit Limit Actions</th>}
         </thead>
         <tbody>
           {tableData.map((e, index) => (
