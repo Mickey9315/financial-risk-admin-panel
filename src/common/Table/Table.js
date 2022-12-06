@@ -242,15 +242,6 @@ const Table = props => {
     onChangeRowSelection(selectedRowData);
   }, [selectedRowData, onChangeRowSelection]);
 
-  const [applicationDeleteHeader, setApplicationDeleteHeader] = useState(false);
-  useEffect(() => {
-    data.forEach(item => {
-      if ('applicationId' in item) {
-        setApplicationDeleteHeader(true);
-      }
-    });
-  }, [applicationDeleteHeader]);
-
   return (
     <>
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
@@ -277,7 +268,6 @@ const Table = props => {
                 {heading.label}
               </th>
             ))}
-          {applicationDeleteHeader && <th> </th>}
           {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) && isUpdatable && (
             <th style={{ position: 'sticky', right: 0 }} />
           )}
@@ -451,6 +441,24 @@ function Row(props) {
           switch (key) {
             case 'id':
               return null;
+            case 'delete':
+              return (
+                <td align="right">
+                  {data.status === 'Draft' ? (
+                    <span
+                      className="material-icons-round font-danger cursor-pointer"
+                      onClick={e => {
+                        e.stopPropagation();
+                        deleteApplication(data?.id);
+                      }}
+                    >
+                      delete_outline
+                    </span>
+                  ) : (
+                    <span> </span>
+                  )}
+                </td>
+              );
             case 'priority':
               return (
                 <td key={key} align={align}>
@@ -552,19 +560,6 @@ function Row(props) {
               {element(data)}
             </td>
           ))}
-        {data.status === 'Draft' ? (
-          <td align="right">
-            <span
-              className="material-icons-round font-danger cursor-pointer"
-              onClick={e => {
-                e.stopPropagation();
-                deleteApplication(data?.id);
-              }}
-            >
-              delete_outline
-            </span>
-          </td>
-        ): <td>  </td>}
       </tr>
       <ExpandedTableHelper
         docs={data?.dataToExpand}
