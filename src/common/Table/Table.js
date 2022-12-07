@@ -72,6 +72,7 @@ const Table = props => {
     onChangeRowSelection,
     isEditableDrawer,
     handleRedirectClick,
+    deleteApplication
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -246,36 +247,31 @@ const Table = props => {
       <TableLinkDrawer drawerState={drawerState} closeDrawer={closeDrawer} />
       <table className={tableClassName}>
         <thead>
-            {showCheckbox && (
-              <th width={10} align={align} valign={valign}>
-                <Checkbox
-                  className="crm-checkbox-list"
-                  checked={tableData.length !== 0 && selectedRowData.length === tableData.length}
-                  onChange={onSelectAllRow}
-                />
+          {showCheckbox && (
+            <th width={10} align={align} valign={valign}>
+              <Checkbox
+                className="crm-checkbox-list"
+                checked={tableData.length !== 0 && selectedRowData.length === tableData.length}
+                onChange={onSelectAllRow}
+              />
+            </th>
+          )}
+          {isExpandable && <th align="center" />}
+          {headers.length > 0 &&
+            headers.map(heading => (
+              <th
+                key={heading.label}
+                align={data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align}
+                valign={valign}
+                className={`${headerClass} ${heading.type === 'boolean' ? 'table-checkbox-header' : ''}  `}
+              >
+                {heading.label}
               </th>
-            )}
-            {isExpandable && <th align="center" />}
-            {headers.length > 0 &&
-              headers.map(heading => (
-                <th
-                  key={heading.label}
-                  align={
-                    data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align
-                  }
-                  valign={valign}
-                  className={`${headerClass} ${
-                    heading.type === 'boolean' ? 'table-checkbox-header' : ''
-                  }  `}
-                >
-                  {heading.label}
-                </th>
-              ))}
-            {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) &&
-              isUpdatable && <th style={{ position: 'sticky', right: 0 }} />}
-            {tableButtonActions.length > 0 && isUpdatable && (
-              <th align={align}>Credit Limit Actions</th>
-            )}
+            ))}
+          {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) && isUpdatable && (
+            <th style={{ position: 'sticky', right: 0 }} />
+          )}
+          {tableButtonActions.length > 0 && isUpdatable && <th align={align}>Credit Limit Actions</th>}
         </thead>
         <tbody>
           {tableData.map((e, index) => (
@@ -300,6 +296,7 @@ const Table = props => {
               isSelected={selectedRowData.some(f => f.id === e.id)}
               onRowSelectedDataChange={onRowSelectedDataChange}
               refreshData={refreshData}
+              deleteApplication={deleteApplication}
             />
           ))}
         </tbody>
@@ -329,6 +326,7 @@ Table.propTypes = {
   onChangeRowSelection: PropTypes.func,
   isEditableDrawer: PropTypes.bool,
   handleRedirectClick: PropTypes.func,
+  deleteApplication:PropTypes.func
 };
 
 Table.defaultProps = {
@@ -352,6 +350,7 @@ Table.defaultProps = {
   onChangeRowSelection: () => {},
   isEditableDrawer: false,
   handleRedirectClick: () => {},
+  deleteApplication: () => {}
 };
 
 export default Table;
@@ -377,6 +376,7 @@ function Row(props) {
     isSelected,
     onRowSelectedDataChange,
     refreshData,
+    deleteApplication,
   } = props;
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -441,6 +441,24 @@ function Row(props) {
           switch (key) {
             case 'id':
               return null;
+            case 'delete':
+              return (
+                <td align="right">
+                  {data.status === 'Draft' ? (
+                    <span
+                      className="material-icons-round font-danger cursor-pointer"
+                      onClick={e => {
+                        e.stopPropagation();
+                        deleteApplication(data?.id);
+                      }}
+                    >
+                      delete_outline
+                    </span>
+                  ) : (
+                    <span> </span>
+                  )}
+                </td>
+              );
             case 'priority':
               return (
                 <td key={key} align={align}>
@@ -583,6 +601,7 @@ Row.propTypes = {
   onRowSelectedDataChange: PropTypes.func,
   showCheckbox: PropTypes.bool,
   refreshData: PropTypes.func,
+  deleteApplication: PropTypes.func
 };
 
 Row.defaultProps = {
@@ -602,6 +621,7 @@ Row.defaultProps = {
   recordActionClick: () => {},
   onRowSelectedDataChange: () => {},
   refreshData: () => {},
+  deleteApplication: () => {}
 };
 
 function TableLinkDrawer(props) {
