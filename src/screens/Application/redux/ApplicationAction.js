@@ -618,6 +618,26 @@ export const deleteApplicationDocumentAction = async (appDocId, cb) => {
     displayErrors(e);
   }
 };
+ 
+export const deleteApplicationApiCall = async (appId, callBack) => {
+  const params = {
+    requestFrom: 'application',
+  };
+  try {
+    startGeneralLoaderOnRequest('generateApplicationDeleteButtonLoaderAction');
+    const response = await ApplicationApiServices.deleteApplication(appId, params);
+    if (response.data.status === 'SUCCESS') {
+      successNotification(response?.data?.message || 'Application deleted successfully.');
+      stopGeneralLoaderOnSuccessOrFail('generateApplicationDeleteButtonLoaderAction');
+      if (callBack) {
+        callBack();
+      }
+    }
+  } catch (e) {
+    stopGeneralLoaderOnSuccessOrFail('generateApplicationDeleteButtonLoaderAction');
+    displayErrors(e);
+  }
+};
 
 // View Application
 
