@@ -1506,3 +1506,22 @@ export const getClientTaskDropDownDataBySearch = options => {
     }
   };
 };
+
+export const downloadClientTabApplicationCSV = id => {
+  return async () => {
+    try {
+      startGeneralLoaderOnRequest('ClientDownloadApplicationCSVButtonLoaderAction');
+      const response = await ClientApplicationApiService.downloadApplicationCSVFile(id);
+      if (response?.statusText === 'OK') {
+        stopGeneralLoaderOnSuccessOrFail(`ClientDownloadApplicationCSVButtonLoaderAction`);
+        return response;
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('ClientDownloadApplicationCSVButtonLoaderAction');
+      displayErrors(e);
+      throw Error();
+    }
+    return false;
+  };
+};
+

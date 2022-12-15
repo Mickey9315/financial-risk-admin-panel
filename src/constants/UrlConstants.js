@@ -131,6 +131,7 @@ export const CLIENT_URLS = {
     APPLICATION_LIST: `${BASE_URL}application/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
+    DOWNLOAD_APPLICATION_CSV: `${BASE_URL}application/download/`,
   },
 
   CONTACT: {
@@ -239,6 +240,7 @@ export const DEBTORS_URLS = {
     APPLICATION_LIST: `${BASE_URL}application/`,
     COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
     UPDATE_COLUMN_NAME_LIST_URL: `${BASE_URL}application/column-name/`,
+    DOWNLOAD_APPLICATION_CSV: `${BASE_URL}application/download/`,
   },
 
   ALERTS: {
