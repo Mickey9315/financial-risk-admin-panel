@@ -11,12 +11,14 @@ import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
 import {
   changeDebtorApplicationColumnListStatus,
+  downloadDebtorTabApplicationCSV,
   getDebtorApplicationColumnNameList,
   getDebtorApplicationListData,
   getDebtorsColumnNameList,
   saveDebtorApplicationColumnNameList,
 } from '../redux/DebtorsAction';
 import { DEBTORS_REDUX_CONSTANTS } from '../redux/DebtorsReduxConstants';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const DebtorsApplicationTab = () => {
   const { id } = useParams();
@@ -33,6 +35,7 @@ const DebtorsApplicationTab = () => {
   const {
     viewDebtorApplicationColumnSaveButtonLoaderAction,
     viewDebtorApplicationColumnResetButtonLoaderAction,
+    DebtorDownloadApplicationCSVButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
@@ -177,6 +180,21 @@ const DebtorsApplicationTab = () => {
     );
   }, []);
 
+  const onClickDownloadButton = useCallback(async () => {
+    if (docs?.length > 0) {
+      try {
+        const res = await dispatch(downloadDebtorTabApplicationCSV(id));
+        if (res) downloadAll(res);
+      } catch (e) {
+        errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+      }
+    } else {
+      errorNotification('You have no records to download');
+    }
+  }, [docs, id]);
+
+
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -192,10 +210,14 @@ const DebtorsApplicationTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
+          <IconButton buttonType="primary" title="format_line_spacing" onClick={toggleCustomField} />
           <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            onClick={toggleCustomField}
+            buttonType="primary-1"
+            title="cloud_download"
+            className="mr-10"
+            buttonTitle="Click to download applications"
+            onClick={onClickDownloadButton}
+            isLoading={DebtorDownloadApplicationCSVButtonLoaderAction}
           />
         </div>
       </div>
