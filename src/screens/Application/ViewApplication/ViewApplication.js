@@ -270,7 +270,6 @@ const ViewApplication = () => {
       name: 'registrationNumber',
       value: registrationNumber,
     });
-    console.log('Filter', filteredData);
     return filteredData;
   }, [registrationNumber, INPUTS, country]);
 
