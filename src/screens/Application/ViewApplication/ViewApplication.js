@@ -186,7 +186,7 @@ const ViewApplication = () => {
       },
       {
         title: 'Credit Limit Amount',
-        value: creditLimit ? NumberCommaSeparator(creditLimit) : '',
+        value: NumberCommaSeparator(creditLimit),
         name: 'creditLimit',
         type: 'text',
       },
@@ -270,6 +270,7 @@ const ViewApplication = () => {
       name: 'registrationNumber',
       value: registrationNumber,
     });
+    console.log('Filter', filteredData);
     return filteredData;
   }, [registrationNumber, INPUTS, country]);
 
