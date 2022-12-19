@@ -1033,6 +1033,24 @@ export const downloadCreditLimitCSV = id => {
   };
 };
 
+export const downloadDebtorTabApplicationCSV = id => {
+  return async () => {
+    try {
+      startGeneralLoaderOnRequest('DebtorDownloadApplicationCSVButtonLoaderAction');
+      const response = await DebtorApplicationApiServices.downloadApplicationCSVFile(id);
+      if (response?.statusText === 'OK') {
+        stopGeneralLoaderOnSuccessOrFail(`DebtorDownloadApplicationCSVButtonLoaderAction`);
+        return response;
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('DebtorDownloadApplicationCSVButtonLoaderAction');
+      displayErrors(e);
+      throw Error();
+    }
+    return false;
+  };
+};
+
 // Stake Holder
 export const getDebtorStakeHolderListData = (id, param) => {
   return async dispatch => {
