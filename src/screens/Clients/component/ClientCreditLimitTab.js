@@ -428,7 +428,7 @@ const ClientCreditLimitTab = () => {
       )}
       {surrenderModal && (
         <Modal
-          header="Modify Credit Limit"
+          header="Surrender Credit Limit"
           buttons={surrenderLimitButtons}
           hideModal={toggleSurrenderModal}
         >
