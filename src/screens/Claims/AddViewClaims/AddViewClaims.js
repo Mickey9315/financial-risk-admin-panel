@@ -18,6 +18,7 @@ import {
   getClaimDetails,
   getClaimsEntityList,
   getClaimsFilterDropDownDataBySearch,
+  getCliamsManagerListAction,
   handleClaimChange,
   resetClaimDetails,
 } from '../redux/ClaimsAction';
@@ -39,6 +40,7 @@ const AddViewClaims = () => {
   const { type, id } = useParams();
   const clientList = useSelector(({ claims }) => claims?.claimsEntityList ?? []);
   const claimDetails = useSelector(({ claims }) => claims?.claimDetails ?? {});
+  const claimsmanager = useSelector(({ claims }) => claims?.claimsmanager ?? []);
 
   const backToClaimsList = useCallback(() => {
     if (isRedirected) {
@@ -55,6 +57,10 @@ const AddViewClaims = () => {
 
   const claimClientList = clientList?.map(client => {
     return { name: 'accountid', label: client?.label, value: client?.value };
+  });
+
+  const managerList = claimsmanager?.map(client => {
+    return { name: 'claimsmanager', label: client?.label, value: client?.value };
   });
 
   const changeClaimDetails = useCallback(
@@ -313,11 +319,14 @@ const AddViewClaims = () => {
         value: claimDetails?.repaymentplanlength,
       },
       {
-        name: 'finalpaymentdate',
-        title: 'Final Payment Date',
+        name: 'claimsmanager',
+        title: 'Claims Manager',
         placeholder: 'Select',
-        type: 'date',
-        value: claimDetails?.finalpaymentdate,
+        type: 'select',
+        options: managerList,
+        isRequired: true,
+        value: claimDetails?.claimsmanager ?? [],
+        dropdownPlacement: 'top',
       },
     ],
     [claimDetails, claimClientList, handleOnSelectSearchInputChange]
@@ -392,7 +401,9 @@ const AddViewClaims = () => {
           component = (
             <>
               {type === 'view' ? (
-                <div className="view-claim-detail">{input?.value ?NumberCommaSeparator(input?.value) : '-'}</div>
+                <div className="view-claim-detail">
+                  {input?.value ? NumberCommaSeparator(input?.value) : '-'}
+                </div>
               ) : (
                 <Input
                   type="text"
@@ -410,7 +421,9 @@ const AddViewClaims = () => {
           component = (
             <>
               {type === 'view' ? (
-                <div className="view-claim-detail">{input?.value?.toString().trim().length > 0 ? input?.value : '-'}</div>
+                <div className="view-claim-detail">
+                  {input?.value?.toString().trim().length > 0 ? input?.value : '-'}
+                </div>
               ) : (
                 <Input
                   type="text"
@@ -455,6 +468,7 @@ const AddViewClaims = () => {
 
   useEffect(() => {
     dispatch(getClaimsEntityList());
+    dispatch(getCliamsManagerListAction());
     if (type === 'view') dispatch(getClaimDetails(id));
   }, [id, type]);
 
