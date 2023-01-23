@@ -90,9 +90,12 @@ export const claims = (state = initialClaims, action) => {
     }
 
     case CLAIMS_REDUX_CONSTANTS.GET_CLAIM_DETAILS: {
+      const manager = state.claimsmanager.filter(
+        item => item.value.toString() === action.data.claimsmanager
+      );
       return {
         ...state,
-        claimDetails: action.data,
+        claimDetails: { ...action.data, claimsmanager: manager[0].label },
       };
     }
 
