@@ -47,6 +47,11 @@ export const addClaimsValidations = async (dispatch, history, data) => {
     errors.reimbursementspaid = 'Amount should be number';
   }
 
+  if (!data.claimsmanager || data?.claimsmanager?.length <= 0) {
+    validated = false;
+    errors.claimsmanager = 'Please select claim Manager';
+  }
+
   const {
     accountid,
     name,
@@ -76,7 +81,7 @@ export const addClaimsValidations = async (dispatch, history, data) => {
     dateofoldestinvoice,
     instalmentamounts,
     frequency,
-    finalpaymentdate,
+    claimsmanager,
     repaymentplanlength,
   } = data;
 
@@ -109,7 +114,7 @@ export const addClaimsValidations = async (dispatch, history, data) => {
     dateofoldestinvoice,
     instalmentamounts: instalmentamounts ? parseInt(instalmentamounts, 10) : undefined,
     frequency,
-    finalpaymentdate,
+    claimsmanager: claimsmanager?.value?.toString(),
     repaymentplanlength,
   };
 
