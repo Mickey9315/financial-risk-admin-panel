@@ -95,7 +95,7 @@ export const claims = (state = initialClaims, action) => {
       );
       return {
         ...state,
-        claimDetails: { ...action.data, claimsmanager: manager[0].label },
+        claimDetails: { ...action.data, claimsmanager: manager[0]?.label },
       };
     }
 
