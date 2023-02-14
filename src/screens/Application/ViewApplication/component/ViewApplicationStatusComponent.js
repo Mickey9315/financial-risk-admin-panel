@@ -393,7 +393,13 @@ const ViewApplicationStatusComponent = props => {
           hideModal={toggleApprovalConfirmationModal}
         >
           <div className="align-center">
-            Application has Blockers, are you sure you want to approve application?
+            Application has Blockers, are you sure you want to approve application? <br />
+            <br /> Blockers :-
+            <ul>
+              {blockers?.map(blocker => (
+                <li>{blocker}</li>
+              ))}
+            </ul>
           </div>
         </Modal>
       )}
