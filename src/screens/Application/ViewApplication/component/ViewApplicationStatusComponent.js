@@ -8,7 +8,10 @@ import Input from '../../../../common/Input/Input';
 import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 import { errorNotification } from '../../../../common/Toast';
 import { NUMBER_REGEX } from '../../../../constants/RegexConstants';
-import { changeApplicationStatus,downloadDecisionLetterForApplication } from '../../redux/ApplicationAction';
+import {
+  changeApplicationStatus,
+  downloadDecisionLetterForApplication,
+} from '../../redux/ApplicationAction';
 import Select from '../../../../common/Select/Select';
 import { useModulePrivileges } from '../../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../../constants/SidebarConstants';
@@ -33,7 +36,7 @@ const ViewApplicationStatusComponent = props => {
   const { applicationDecisionLetterDownloadButtonLoaderAction } = useSelector(
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
-  const { creditLimit, isAllowToUpdate, limitType, status, _id, comments} = useMemo(
+  const { creditLimit, isAllowToUpdate, limitType, status, _id, comments, blockers } = useMemo(
     () => applicationDetail ?? {},
     [applicationDetail]
   );
@@ -42,15 +45,20 @@ const ViewApplicationStatusComponent = props => {
   const [statusToChange, setStatusToChange] = useState({});
   const [newCreditLimit, setNewCreditLimit] = useState('');
   const [modifyLimitModal, setModifyLimitModal] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useState(false);
   const [commentText, setCommentText] = useState('');
- 
+
   const toggleConfirmationModal = useCallback(() => {
     setShowConfirmationModal(!showConfirmModal);
   }, [showConfirmModal]);
 
   const toggleModifyLimitModal = () => {
     setModifyLimitModal(!modifyLimitModal);
-  }
+  };
+
+  const toggleApprovalConfirmationModal = () => {
+    setConfirmationModal(!confirmationModal);
+  };
 
   const onChangeCreditLimit = useCallback(e => {
     const val = e?.target?.value?.toString()?.replaceAll(',', '');
@@ -111,6 +119,12 @@ const ViewApplicationStatusComponent = props => {
     }
   }, [newCreditLimit, toggleModifyLimitModal, statusToChange, id, creditLimit, commentText]);
 
+  const onConfirmation = () => {
+    toggleApprovalConfirmationModal();
+    setStatusToChange({ label: 'Approved', value: 'APPROVED' });
+    toggleModifyLimitModal();
+  };
+
   const modifyLimitButtons = useMemo(
     () => [
       {
@@ -128,6 +142,24 @@ const ViewApplicationStatusComponent = props => {
       },
     ],
     [toggleModifyLimitModal, modifyLimit, creditLimit]
+  );
+
+  const confirmationButtons = useMemo(
+    () => [
+      {
+        title: 'Close',
+        buttonType: 'primary-1',
+        onClick: () => {
+          toggleApprovalConfirmationModal();
+        },
+      },
+      {
+        title: 'Yes',
+        buttonType: 'primary',
+        onClick: onConfirmation,
+      },
+    ],
+    [toggleApprovalConfirmationModal]
   );
 
   const handleStatusChange = useCallback(async () => {
@@ -193,32 +225,36 @@ const ViewApplicationStatusComponent = props => {
     }
   }, [id]);
 
-const onClickApproveButton = () => {
-  if(limitType && limitType?.toString()?.trim()?.length > 0) {
-    setStatusToChange({ label: 'Approved', value: 'APPROVED' });
-    toggleModifyLimitModal();
-  } else {
-    dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
-      fieldName:'limitTypeError',
-      value:'Please Select Limit Type'
-    })
-  }
-}
+  const onClickApproveButton = () => {
+    if (limitType && limitType?.toString()?.trim()?.length > 0) {
+      if (blockers && blockers?.length > 0) {
+        toggleApprovalConfirmationModal();
+      } else {
+        setStatusToChange({ label: 'Approved', value: 'APPROVED' });
+        toggleModifyLimitModal();
+      }
+    } else {
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+        fieldName: 'limitTypeError',
+        value: 'Please Select Limit Type',
+      });
+    }
+  };
 
-const onClickDeclineButton = () => {
-  setIsApprovedOrdDeclineButtonClicked(true);
-  if(limitType && limitType?.toString()?.trim()?.length > 0) {
-    setStatusToChange({ label: 'Declined', value: 'DECLINED' });
-    toggleConfirmationModal();
-  } else {
-    dispatch({
-      type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
-      fieldName:'limitTypeError',
-      value:'Please Select Limit Type'
-    })
-  }
-}
+  const onClickDeclineButton = () => {
+    setIsApprovedOrdDeclineButtonClicked(true);
+    if (limitType && limitType?.toString()?.trim()?.length > 0) {
+      setStatusToChange({ label: 'Declined', value: 'DECLINED' });
+      toggleConfirmationModal();
+    } else {
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+        fieldName: 'limitTypeError',
+        value: 'Please Select Limit Type',
+      });
+    }
+  };
 
   useEffect(() => {
     setNewCreditLimit(creditLimit);
@@ -245,7 +281,8 @@ const onClickDeclineButton = () => {
       );
     }
     return (
-      limitType === 'CREDIT_CHECK' && <Button
+      limitType === 'CREDIT_CHECK' && (
+        <Button
           buttonType="primary"
           title="Download Decision Letter"
           buttonTitle="Click to download decision letter"
@@ -254,44 +291,40 @@ const onClickDeclineButton = () => {
             if (!applicationDecisionLetterDownloadButtonLoaderAction) downloadDecisionLetter();
           }}
         />
+      )
     );
   };
 
   return (
     <div className="application-status-grid">
-     
-        <div className="view-application-status-select view-application-select">
-          {isApprovedOrDeclined ? (
-            <>
-              {['APPROVED'].includes(status?.value) && (
-                <div className="application-status approved-application-status">
-                  {status?.label}
-                </div>
-              )}
-              {['DECLINED'].includes(status?.value) && (
-                <div className="application-status declined-application-status">
-                  {status?.label}
-                </div>
-              )}
-            </>
-          ) : (
-            <Select
-              placeholder={isAllowToUpdate ? 'Select Status' : '-'}
-              name="applicationStatus"
-              value={!isApprovedOrDeclined ? status : []}
-              options={applicationDetail?.applicationStatus}
-              isDisabled={!isAllowToUpdate || isApprovedOrDeclined || !isUpdatable}
-              onChange={handleApplicationStatusChange}
-            />
-          )}
+      <div className="view-application-status-select view-application-select">
+        {isApprovedOrDeclined ? (
+          <>
+            {['APPROVED'].includes(status?.value) && (
+              <div className="application-status approved-application-status">{status?.label}</div>
+            )}
+            {['DECLINED'].includes(status?.value) && (
+              <div className="application-status declined-application-status">{status?.label}</div>
+            )}
+          </>
+        ) : (
+          <Select
+            placeholder={isAllowToUpdate ? 'Select Status' : '-'}
+            name="applicationStatus"
+            value={!isApprovedOrDeclined ? status : []}
+            options={applicationDetail?.applicationStatus}
+            isDisabled={!isAllowToUpdate || isApprovedOrDeclined || !isUpdatable}
+            onChange={handleApplicationStatusChange}
+          />
+        )}
 
-          {!isAllowToUpdate && !isApprovedOrDeclined && (
-            <div className="ui-state-error">
-              You don&apos;t have access to approve application, please contact admin for that.
-            </div>
-          )}
-        </div>
-     
+        {!isAllowToUpdate && !isApprovedOrDeclined && (
+          <div className="ui-state-error">
+            You don&apos;t have access to approve application, please contact admin for that.
+          </div>
+        )}
+      </div>
+
       {isAllowToUpdate && rightSideStatusButtons()}
       {showConfirmModal && (
         <Modal
@@ -352,17 +385,35 @@ const onClickDeclineButton = () => {
           </div>
         </Modal>
       )}
+      {confirmationModal && (
+        <Modal
+          className="add-to-crm-modal"
+          header="Confirmation"
+          buttons={confirmationButtons}
+          hideModal={toggleApprovalConfirmationModal}
+        >
+          <div className="align-center">
+            Application has Blockers, are you sure you want to approve application? <br />
+            <br /> Blockers :-
+            <ul>
+              {blockers?.map(blocker => (
+                <li>{blocker}</li>
+              ))}
+            </ul>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
 
 ViewApplicationStatusComponent.propTypes = {
   isApprovedOrDeclined: PropTypes.string.isRequired,
-  setIsApprovedOrdDeclineButtonClicked: PropTypes.func
+  setIsApprovedOrdDeclineButtonClicked: PropTypes.func,
 };
 
 ViewApplicationStatusComponent.defaultProps = {
-  setIsApprovedOrdDeclineButtonClicked: () => {}
-}
+  setIsApprovedOrdDeclineButtonClicked: () => {},
+};
 
 export default ViewApplicationStatusComponent;
