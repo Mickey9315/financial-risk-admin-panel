@@ -12,7 +12,7 @@ function AuthScreenContainer(props) {
           <img alt="TCR" src={logo} className="logo" />
           <div className="header">
             <div>Welcome To</div>
-            <div>Trade Credit Risk</div>
+            <div>PSC Trade Credit Risk</div>
           </div>
           {children}
           <div className="fixed-right-strips">
