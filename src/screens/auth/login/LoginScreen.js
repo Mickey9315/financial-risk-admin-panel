@@ -35,7 +35,7 @@ function LoginScreen() {
         dispatch(
           saveAppliedFilters('applicationListFilters', {
             status:
-              'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION,DRAFT,REVIEW_SURRENDER',
+              'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION,DRAFT,REVIEW_SURRENDERED',
           })
         );
         history.replace('/dashboard');
