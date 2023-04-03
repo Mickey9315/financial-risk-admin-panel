@@ -450,7 +450,7 @@ const AddUser = () => {
                         options={clients}
                         isDisabled={action === 'view' || role === 'superAdmin'}
                         className="isMulti-react-select"
-                        color="#003A78"
+                        color="#0073ab"
                         placeholder={action === 'view' ? 'No client selected' : 'Select Client'}
                         dropdownHandle={false}
                         keepSelectedInList={false}
