@@ -156,7 +156,7 @@ const ViewClient = () => {
   }, [viewClientActiveTabIndex]);
 
   useEffect(() => {
-    if (viewClientData?.riskAnalystId && viewClientData?.serviceManagerId) {
+    if (viewClientData?.riskAnalystId) {
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'riskAnalystId',
@@ -165,6 +165,8 @@ const ViewClient = () => {
           value: viewClientData?.riskAnalystId?._id || '',
         },
       });
+    }
+    if (viewClientData?.serviceManagerId) {
       dispatchAssignee({
         type: ASSIGNEE_REDUCER_ACTIONS.UPDATE_DATA,
         name: 'serviceManagerId',
