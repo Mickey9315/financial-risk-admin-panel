@@ -11,11 +11,13 @@ import Loader from '../../../common/Loader/Loader';
 import { errorNotification } from '../../../common/Toast';
 import {
   changeClientApplicationColumnListStatus,
+  downloadClientTabApplicationCSV,
   getClientApplicationColumnNameList,
   getClientApplicationListData,
   saveClientApplicationColumnNameList,
 } from '../redux/ClientAction';
 import { CLIENT_REDUX_CONSTANTS } from '../redux/ClientReduxConstants';
+import { downloadAll } from '../../../helpers/DownloadHelper';
 
 const ClientApplicationTab = () => {
   const { id } = useParams();
@@ -30,6 +32,7 @@ const ClientApplicationTab = () => {
   const {
     viewClientApplicationColumnSaveButtonLoaderAction,
     viewClientApplicationColumnResetButtonLoaderAction,
+    ClientDownloadApplicationCSVButtonLoaderAction
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const { total, headers, pages, docs, page, limit } = useMemo(() => applicationList ?? {}, [
@@ -166,6 +169,19 @@ const ClientApplicationTab = () => {
     }
   };
 
+  const onClickDownloadButton = useCallback(async () => {
+    if (docs?.length > 0) {
+      try {
+        const res = await dispatch(downloadClientTabApplicationCSV(id));
+        if (res) downloadAll(res);
+      } catch (e) {
+        errorNotification(e?.response?.request?.statusText ?? 'Internal server error');
+      }
+    } else {
+      errorNotification('You have no records to download');
+    }
+  }, [docs, id]);
+
   return (
     <>
       <div className="tab-content-header-row">
@@ -181,10 +197,14 @@ const ClientApplicationTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
+          <IconButton buttonType="primary" title="format_line_spacing" onClick={toggleCustomField} />
           <IconButton
-            buttonType="primary"
-            title="format_line_spacing"
-            onClick={toggleCustomField}
+            buttonType="primary-1"
+            title="cloud_download"
+            className="mr-10"
+            buttonTitle="Click to download applications"
+            onClick={onClickDownloadButton}
+            isLoading={ClientDownloadApplicationCSVButtonLoaderAction}
           />
         </div>
       </div>
@@ -193,13 +213,7 @@ const ClientApplicationTab = () => {
         docs.length > 0 ? (
           <>
             <div className="tab-table-container">
-              <Table
-                align="left"
-                valign="center"
-                tableClass="white-header-table"
-                data={docs}
-                headers={headers}
-              />
+              <Table align="left" valign="center" tableClass="white-header-table" data={docs} headers={headers} />
             </div>
             <Pagination
               className="common-list-pagination"

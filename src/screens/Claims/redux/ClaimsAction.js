@@ -12,8 +12,8 @@ export const getClaimsListByFilter = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
     const finalParams = {
       ...params,
-      clientId: params?.clientId?.value
-    }
+      clientId: params?.clientId?.value,
+    };
     try {
       startGeneralLoaderOnRequest('claimListLoader');
       const response = await ClaimsApiServices.getClaimsListByFilter(finalParams);
@@ -266,6 +266,22 @@ export const getClaimsFilterDropDownDataBySearch = options => {
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_ENTITY_LIST_BY_SEARCH,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const getCliamsManagerListAction = () => {
+  return async dispatch => {
+    try {
+      const response = await ClaimsApiServices.getClaimsManagerList();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: CLAIMS_REDUX_CONSTANTS.GET_CLAIMS_MANAGER_LIST,
           data: response?.data?.data,
         });
       }

@@ -232,9 +232,23 @@ const ClientCreditLimitTab = () => {
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
-            buttonTitle={docs?.length > 0 && docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check' && 'Click to download decision letter'}
-            disabled={docs?.length > 0 && docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check'}
-            className={`download-decision-letter-icon ${docs?.length > 0 && docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check' && 'disable-download-button'}`}
+            buttonTitle={
+              docs?.length > 0 &&
+              (docs.find(record => record._id === data?.id)?.limitType === 'Credit Check' ||
+                docs.find(record => record._id === data?.id)?.limitType === 'Credit Check Nz') &&
+              'Click to download decision letter'
+            }
+            disabled={
+              docs?.length > 0 &&
+              docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check' &&
+              docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check Nz'
+            }
+            className={`download-decision-letter-icon ${
+              docs?.length > 0 &&
+              docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check' &&
+              docs.find(record => record._id === data?.id)?.limitType !== 'Credit Check Nz' &&
+              'disable-download-button'
+            }`}
             onClick={() => {
               if (!clientDecisionLetterDownloadButtonLoaderAction) downloadDecisionLetter(data?.id);
             }}
@@ -244,7 +258,9 @@ const ClientCreditLimitTab = () => {
               buttonType="outlined-primary-small"
               title="Modify"
               onClick={() => {
-                setCurrentCreditLimitData(docs?.length > 0 && docs.find(record => record?._id === data.id));
+                setCurrentCreditLimitData(
+                  docs?.length > 0 && docs.find(record => record?._id === data.id)
+                );
                 toggleModifyLimitModal();
               }}
             />
@@ -421,14 +437,20 @@ const ClientCreditLimitTab = () => {
               name="creditLimit"
               type="text"
               value={newCreditLimit ? NumberCommaSeparator(newCreditLimit) : ''}
-              onChange={e => setNewCreditLimit(e.target.value * 1 === 0 ? e.target.value.replace(/^0+(\d)/, '$1') : e.target.value.toString().replaceAll(',', ''))}
+              onChange={e =>
+                setNewCreditLimit(
+                  e.target.value * 1 === 0
+                    ? e.target.value.replace(/^0+(\d)/, '$1')
+                    : e.target.value.toString().replaceAll(',', '')
+                )
+              }
             />
           </div>
         </Modal>
       )}
       {surrenderModal && (
         <Modal
-          header="Modify Credit Limit"
+          header="Surrender Credit Limit"
           buttons={surrenderLimitButtons}
           hideModal={toggleSurrenderModal}
         >

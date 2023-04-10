@@ -22,6 +22,11 @@ const LimitTypeOptions = [
     name: 'limitType',
   },
   {
+    label: 'Credit Check NZ',
+    value: 'CREDIT_CHECK_NZ',
+    name: 'limitType',
+  },
+  {
     label: 'Health Check',
     value: 'HEALTH_CHECK',
     name: 'limitType',
@@ -69,26 +74,49 @@ const ViewApplicationEditableRowComponent = props => {
       }
     }
 
+  const aYearFromNow = new Date();
+  aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+
   const handleExpiryDateChange = useCallback(
     e => {
+      if(e === null){
+        setSelectedExpiryDate(null);
+        try {
+          const dataNew = {
+            update: 'field',
+            expiryDate: aYearFromNow,
+          };
+          dispatch(changeApplicationStatus(id, dataNew));
+          dispatch({
+            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+            fieldName: 'expiryDate',
+            value: aYearFromNow,
+          });
+        } catch (err) {
+          /**/
+        }
+      }else{
       setSelectedExpiryDate(e);
       try {
         const data = {
           update: 'field',
-          expiryDate: e,
+          expiryDate: moment(e),
         };
         dispatch(changeApplicationStatus(id, data));
       } catch (err) {
         /**/
       }
+      }
     },
     [id],
   );
+
 
   useEffect(() => {
     setSelectedLimitType(LimitTypeOptions.filter(e => e.value === limitType) ?? []);
     setSelectedExpiryDate(expiryDate);
   }, [limitType, expiryDate]);
+
   return (
     <div className="application-editable-row-grid">
       <div>
@@ -129,8 +157,10 @@ const ViewApplicationEditableRowComponent = props => {
             <span className="material-icons-round">event</span>
           </div>
         ) : (
-          <div className='f-14 font-primary mt-10 pt-5'>
-            {selectedExpiryDate ? moment(new Date(selectedExpiryDate)).format('DD-MM-YYYY') : '-'}
+          <div className="f-14 font-primary mt-10 pt-5">
+            {selectedExpiryDate
+              ? moment(new Date(selectedExpiryDate)).format('DD-MM-YYYY')
+              : moment(new Date(aYearFromNow)).format('DD-MM-YYYY')}
           </div>
         )}
       </div>

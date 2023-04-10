@@ -18,6 +18,11 @@ const LimitTypeOptions = [
     name: 'limitType',
   },
   {
+    label: 'Credit Check NZ',
+    value: 'CREDIT_CHECK_NZ',
+    name: 'limitType',
+  },
+  {
     label: 'Health Check',
     value: 'HEALTH_CHECK',
     name: 'limitType',
@@ -86,7 +91,7 @@ const EditableDrawer = props => {
         /**/
       }
     },
-    [id],
+    [id]
   );
 
   useEffect(() => {
