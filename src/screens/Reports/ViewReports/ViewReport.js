@@ -485,7 +485,7 @@ const ViewReport = () => {
                   <span className="material-icons-round">event</span>
                 </div>
               )}
-              {['limit-list', 'limit-history', 'pending-application', 'usage', 'review', 'usage-per-client'].includes(
+              {['limit-list', 'limit-history', 'pending-application', 'usage', 'review', 'usage-per-client', 'alert'].includes(
                 paramReport,
               ) && (
                 <IconButton
