@@ -302,7 +302,7 @@ const PersonIndividualDetail = ({ itemHeader, index, entityTypeFromCompany, acti
         value: lastName ?? '',
       },
       {
-        label: 'Date of Birth',
+        label: 'Date of Birth*',
         placeholder: 'Select date',
         type: 'date',
         name: 'dateOfBirth',

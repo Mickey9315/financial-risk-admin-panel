@@ -17,16 +17,6 @@ export const addClaimsValidations = async (dispatch, history, data) => {
     errors.name = 'Please enter claim name';
   }
 
-  if (!data?.stage || data?.stage?.length <= 0) {
-    validated = false;
-    errors.stage = 'Please select stage';
-  }
-
-  if (!data?.underwriter || data?.underwriter?.length <= 0) {
-    validated = false;
-    errors.underwriter = 'Please select underwriter';
-  }
-
   if (data?.grossdebtamount && !NUMBER_REGEX.test(data?.grossdebtamount)) {
     validated = false;
     errors.grossdebtamount = 'Amount should be number';
@@ -45,11 +35,6 @@ export const addClaimsValidations = async (dispatch, history, data) => {
   if (data?.reimbursementspaid && !NUMBER_REGEX.test(data?.reimbursementspaid)) {
     validated = false;
     errors.reimbursementspaid = 'Amount should be number';
-  }
-
-  if (!data.claimsmanager || data?.claimsmanager?.length <= 0) {
-    validated = false;
-    errors.claimsmanager = 'Please select claim Manager';
   }
 
   const {
