@@ -470,9 +470,9 @@ const AddOverdues = () => {
     await getOverdueList();
   }, [period, id]);
 
-useEffect(() => {
-  setIsNilOverdue(nilOverdue ?? false)
-}, [nilOverdue]);
+  useEffect(() => {
+    setIsNilOverdue(nilOverdue ?? false)
+  }, [nilOverdue]);
 
   useEffect(() => {
     const currentAmount =

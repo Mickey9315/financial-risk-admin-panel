@@ -296,8 +296,9 @@ const ViewApplication = () => {
                 <div className="view-application-details-left">
                   <div className="common-white-container">
                     <div className="font-field">Status</div>
-                    <ViewApplicationStatusComponent isApprovedOrDeclined={isApprovedOrDeclined}  
-                    setIsApprovedOrdDeclineButtonClicked={setIsApprovedOrdDeclineButtonClicked}
+                    <ViewApplicationStatusComponent
+                      isApprovedOrDeclined={isApprovedOrDeclined}
+                      setIsApprovedOrdDeclineButtonClicked={setIsApprovedOrdDeclineButtonClicked}
                     />
                     <ViewApplicationEditableRowComponent
                       isApprovedOrDeclined={isApprovedOrDeclined}
