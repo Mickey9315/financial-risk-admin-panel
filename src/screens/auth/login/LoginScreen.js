@@ -32,7 +32,12 @@ function LoginScreen() {
     else {
       try {
         await dispatch(loginUser({ email, password }));
-        dispatch(saveAppliedFilters('applicationListFilters', {status:'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION'}));
+        dispatch(
+          saveAppliedFilters('applicationListFilters', {
+            status:
+              'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION,DRAFT,REVIEW_SURRENDERED',
+          })
+        );
         history.replace('/dashboard');
       } catch (e) {
         /**/
