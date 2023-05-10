@@ -248,6 +248,51 @@
   display: grid;
   grid-template-columns: 150px auto;
   margin: 10px 0;
+
+  &__label {
+    padding-top: 10px;
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    &--button {
+      background-color: transparent;
+      border: none;
+      outline: none;
+      padding: 5px;
+      color: white;
+      background-color: #003a78;
+      border-radius: 5px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      
+      & > span {
+        font-size: 18px;
+        color: white;
+      }
+    }
+
+    & > div[contenteditable] {
+      outline: none;
+      background-color: #ffffff;
+      border-radius: 0.4rem;
+      padding: 10px 15px 10px 0;
+      flex-grow: 1;
+      border: 0.063rem solid transparent;
+      transition: all .3s;
+    }
+
+    & > div[contentEditable*="true"] {
+      border-color: #003a78;
+      background-color: #e7ecf2;
+      padding-left: 10px;
+    }
+  }
 }
 
 .guideline {
