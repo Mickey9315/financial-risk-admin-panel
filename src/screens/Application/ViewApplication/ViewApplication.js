@@ -368,12 +368,12 @@ const ViewApplication = () => {
                     <div className="application-comment">
                       <div className="font-field mr-15 application-comment__label">Comment</div>
                       <div className="font-primary application-comment__action">
-                        <div contentEditable={isEditable} ref={editContentRef} suppressContentEditableWarning={true}>
+                        <div contentEditable={isEditable} ref={editContentRef} suppressContentEditableWarning>
                           {comments || '-'}
                         </div>
                         {isApprovedOrDeclined && (
                           <div>
-                            <button onClick={handleEdit} className="application-comment__action--button">
+                            <button type='button' onClick={handleEdit} className="application-comment__action--button">
                               <span className="material-icons-round">{!isEditable ? 'edit' : 'check'}</span>
                             </button>
                           </div>
