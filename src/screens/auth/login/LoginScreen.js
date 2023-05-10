@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import grayLogo from '../../../assets/images/logo-light.svg';
+import grayLogo from '../../../assets/images/logo.svg';
 import Button from '../../../common/Button/Button';
 import AuthScreenContainer from '../common/CommonAuthScreen/AuthScreenContainer';
 import BigInput from '../../../common/BigInput/BigInput';

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import logo from '../../../../assets/images/logo.svg';
-import grayLogo from '../../../../assets/images/logo-light.svg';
 
 function AuthScreenContainer(props) {
   const { children } = props;
@@ -18,8 +17,9 @@ function AuthScreenContainer(props) {
           <div className="fixed-right-strips">
             <div className="blue-strip" />
             <div className="orange-strip" />
+            <div className="green-strip" />
           </div>
-          <img alt="TCR" className="gray-logo" src={grayLogo} />
+          <img alt="TCR" className="gray-logo" src={logo} />
         </div>
       </div>
     </div>
