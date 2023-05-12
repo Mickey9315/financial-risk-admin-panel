@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState, useRef } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Accordion from '../../../common/Accordion/Accordion';
 import {
+  changeApplicationStatus,
   getApplicationAlertsListData,
   getApplicationDetailById,
   getApplicationModuleList,
@@ -35,6 +36,7 @@ import ApplicationClientReferenceAccordion from './component/ApplicationClientRe
 import ApplicationCommentAccordion from './component/ApplicationCommentAccordion';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
+import { APPLICATION_REDUX_CONSTANTS } from '../redux/ApplicationReduxConstants';
 
 export const DRAWER_ACTIONS = {
   SHOW_DRAWER: 'SHOW_DRAWER',
@@ -67,29 +69,16 @@ const ViewApplication = () => {
   const history = useHistory();
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { applicationDetail } = useSelector(
-    ({ application }) => application?.viewApplication ?? {}
-  );
+  const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
 
-  const { viewApplicationPageLoader } = useSelector(
-    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
-  );
+  const { viewApplicationPageLoader } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
   const isClientReadable = useModulePrivileges(SIDEBAR_NAMES.CLIENT).hasReadAccess;
   const isDebtorReadable = useModulePrivileges(SIDEBAR_NAMES.DEBTOR).hasReadAccess;
   // status logic
   const [isApprovedOrDeclined, setIsApprovedOrDeclined] = useState(false);
   const [isApprovedOrdDeclineButtonClicked, setIsApprovedOrdDeclineButtonClicked] = useState(false);
-  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
-
-  const checkAccess = useCallback(
-    accessFor => {
-      const availableAccess =
-        userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
-      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
-      return isAccessible?.length > 0;
-    },
-    [userPrivilegesData]
-  );
+  const [isEditable, setIsEditable] = useState(false);
+  const editContentRef = useRef(null);
 
   const {
     tradingName,
@@ -109,7 +98,42 @@ const ViewApplication = () => {
     acn,
     clientReference,
     comments,
+    _id,
   } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
+
+  const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
+
+  const saveClientComment = useCallback(
+    async commentText => {
+      const data = {
+        update: 'field',
+        comments: commentText,
+      };
+      await dispatch(changeApplicationStatus(_id, data));
+      await dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_COMMENT_CHANGE,
+        data: commentText,
+      });
+    },
+    [_id],
+  );
+
+  const handleEdit = () => {
+    if (isEditable && comments !== editContentRef.current.innerText) {
+      saveClientComment(editContentRef.current.innerText);
+    }
+
+    setIsEditable(prev => !prev);
+  };
+
+  const checkAccess = useCallback(
+    accessFor => {
+      const availableAccess = userPrivilegesData.filter(module => module.accessTypes.length > 0) ?? [];
+      const isAccessible = availableAccess.filter(module => module?.name === accessFor);
+      return isAccessible?.length > 0;
+    },
+    [userPrivilegesData],
+  );
 
   const [isAUSOrNZL, setIsAUZOrNZL] = useState(false);
 
@@ -256,7 +280,7 @@ const ViewApplication = () => {
       applicationId,
       isClientReadable,
       isDebtorReadable,
-    ]
+    ],
   );
 
   const applicationDetails = useMemo(() => {
@@ -306,11 +330,9 @@ const ViewApplication = () => {
                     />
                     <div className="application-details-grid">
                       {applicationDetails?.map(detail => (
-                        <div>
+                        <div key={detail.id}>
                           <div className="font-field mb-5">{detail?.title}</div>
-                          {detail?.type === 'text' && (
-                            <div className="detail">{detail.value || '-'}</div>
-                          )}
+                          {detail?.type === 'text' && <div className="detail">{detail.value || '-'}</div>}
                           {detail?.type === 'link' && (
                             <div
                               style={{
@@ -321,9 +343,7 @@ const ViewApplication = () => {
                               onClick={() => {
                                 handleDrawerState(
                                   detail?.value?._id,
-                                  applicationDetail?.headers?.filter(
-                                    header => header?.name === detail?.name
-                                  )
+                                  applicationDetail?.headers?.filter(header => header?.name === detail?.name),
                                 );
                               }}
                             >
@@ -346,8 +366,19 @@ const ViewApplication = () => {
                     )}
                     {/* <div className="current-business-address-title">Current Business Address</div> */}
                     <div className="application-comment">
-                      <div className="font-field mr-15">Comment</div>
-                      <div className="font-primary">{comments || '-'}</div>
+                      <div className="font-field mr-15 application-comment__label">Comment</div>
+                      <div className="font-primary application-comment__action">
+                        <div contentEditable={isEditable} ref={editContentRef} suppressContentEditableWarning>
+                          {comments || '-'}
+                        </div>
+                        {isApprovedOrDeclined && (
+                          <div>
+                            <button type='button' onClick={handleEdit} className="application-comment__action--button">
+                              <span className="material-icons-round">{!isEditable ? 'edit' : 'check'}</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="client-reference">
                       <div className="font-field mr-15">Client reference</div>
@@ -369,9 +400,7 @@ const ViewApplication = () => {
                       Any overdue amounts passed your maximum extension period / Credit period?
                     </div>
                     <div className="view-application-answer">
-                      {applicationDetail?.isPassedOverdueAmount
-                        ? applicationDetail?.passedOverdueDetails
-                        : ' No'}
+                      {applicationDetail?.isPassedOverdueAmount ? applicationDetail?.passedOverdueDetails : ' No'}
                     </div>
                   </div>
                 </div>
@@ -381,16 +410,10 @@ const ViewApplication = () => {
                       {isAUSOrNZL && checkAccess('credit-report') && (
                         <ApplicationReportAccordion debtorId={debtorId?.[0]?._id} index={0} />
                       )}
-                      {checkAccess('task') && (
-                        <ApplicationTaskAccordion applicationId={id} index={1} />
-                      )}
-                      {checkAccess('note') && (
-                        <ApplicationNotesAccordion applicationId={id} index={2} />
-                      )}
+                      {checkAccess('task') && <ApplicationTaskAccordion applicationId={id} index={1} />}
+                      {checkAccess('note') && <ApplicationNotesAccordion applicationId={id} index={2} />}
                       <ApplicationAlertsAccordion index={3} />
-                      {checkAccess('document') && (
-                        <ApplicationDocumentsAccordion applicationId={id} index={4} />
-                      )}
+                      {checkAccess('document') && <ApplicationDocumentsAccordion applicationId={id} index={4} />}
                       <ApplicationLogsAccordion index={5} />
                       <ApplicationClientReferenceAccordion index={6} />
                       <ApplicationCommentAccordion index={7} />
@@ -427,11 +450,7 @@ function TableLinkDrawer(props) {
   };
 
   return (
-    <Drawer
-      header={drawerState.drawerHeader}
-      drawerState={drawerState.visible}
-      closeDrawer={closeDrawer}
-    >
+    <Drawer header={drawerState.drawerHeader} drawerState={drawerState.visible} closeDrawer={closeDrawer}>
       <div className="contacts-grid">
         {drawerState?.data?.map(row => (
           <>
