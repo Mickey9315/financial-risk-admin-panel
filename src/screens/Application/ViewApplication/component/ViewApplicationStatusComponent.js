@@ -281,7 +281,8 @@ const ViewApplicationStatusComponent = props => {
       );
     }
     return (
-      ['CREDIT_CHECK', 'CREDIT_CHECK_NZ'].includes(limitType) && <Button
+      ['CREDIT_CHECK', 'CREDIT_CHECK_NZ'].includes(limitType) && (
+        <Button
           buttonType="primary"
           title="Download Decision Letter"
           buttonTitle="Click to download decision letter"
@@ -290,6 +291,7 @@ const ViewApplicationStatusComponent = props => {
             if (!applicationDecisionLetterDownloadButtonLoaderAction) downloadDecisionLetter();
           }}
         />
+      )
     );
   };
 
