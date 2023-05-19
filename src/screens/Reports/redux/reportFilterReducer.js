@@ -191,10 +191,28 @@ const initialFilterState = {
         label: 'Limit Type',
         placeHolder: 'Select Limit Type',
       },
+      {
+        type: 'dateRange',
+        label: 'Date',
+        range: [
+          {
+            type: 'date',
+            name: 'startDate',
+            placeHolder: 'Select start date',
+          },
+          {
+            type: 'date',
+            name: 'endDate',
+            placeHolder: 'Select end date',
+          },
+        ],
+      },
     ],
     tempFilter: {
       clientIds: '',
       limitType: '',
+      startDate: null,
+      endDate: null,
     },
     finalFilter: {},
   },
