@@ -1,0 +1,94 @@
+.debtor-company-container {
+  @extend .client-details-container;
+  padding: 0 10px !important;
+  font: $subtitle $font-regular;
+
+  > div {
+    width: 100%;
+  }
+}
+
+.debtor-entity-name-modal {
+  min-height: 30vh;
+  max-height: 70vh;
+  width: 75vw;
+  background-color: white;
+
+  .modal-body {
+    max-height: calc(70vh - 80px);
+    padding: 0;
+    overflow: auto;
+
+    tr:hover {
+      background-color: $background-color;
+    }
+
+    .debtor-entity-name-modal-search-records {
+      max-height: calc(70vh - 80px);
+      overflow: auto;
+
+      .table-class {
+        width: calc(100% - 6px);
+      }
+    }
+  }
+
+  table {
+    background-color: white !important;
+    th {
+      padding: 1rem 1.25rem 0.6rem 1.25rem;
+      text-align: left;
+    }
+    th:first-child,
+    th:last-child,
+    td:first-child,
+    td:last-child {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+  }
+}
+
+.debtor-entity-name-modal-retry-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+  font: $subtitle $font-regular;
+  color: $primary-color;
+}
+
+.debtor-search-suffix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background-color: $primary-color;
+}
+
+.debtor-company-step--main-title {
+  margin-top: 5px;
+  font: $title $font-medium;
+  color: $secondary-color;
+}
+
+.debtor-stepper-divider {
+  width: 100% !important;
+  grid-column: 1 / span 4;
+  margin: 10px 0;
+  border-top: 1px solid $primary-color-1;
+}
+
+.debtor-input-or {
+  position: relative;
+}
+
+.debtor-input-or::after {
+  content: 'OR';
+  position: absolute;
+  bottom: -15px;
+  left: calc(50% - 10px);
+  font: $text $font-medium;
+  color: $primary-color;
+}

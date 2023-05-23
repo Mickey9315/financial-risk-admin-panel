@@ -126,6 +126,14 @@ const ViewInsurer = () => {
       },
       {
         isEditable: false,
+        label: 'Status',
+        placeholder: '-',
+        type: 'text',
+        name: 'status',
+        value: debtorData?.status || 'SUBMITTED',
+      },
+      {
+        isEditable: false,
         label: 'Entity Name',
         placeholder: 'Enter entity name',
         type: 'text',

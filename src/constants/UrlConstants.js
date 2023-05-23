@@ -210,9 +210,11 @@ export const INSURER_URLS = {
 export const DEBTORS_URLS = {
   DEBTORS_LIST_URL: `${BASE_URL}debtor/`,
   DEBTORS_COLUMNS_NAME_LIST_URL: `${BASE_URL}debtor/column-name/`,
-  SELECTED_DEBTOR_DETAILS_URL: `${BASE_URL}debtor/`,
+  SELECTED_DEBTOR_DETAILS_BY_ID_URL: `${BASE_URL}debtor/`,
+  SELECTED_DEBTOR_DETAILS_URL: `${BASE_URL}debtor/details/`,
   DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list/`,
   DOWNLOAD_DEBTOR: `${BASE_URL}debtor/download/`,
+  DEBTORS_SAVE_STEP_DATA: `${BASE_URL}debtor/generate/`,
 
   NOTES: {
     NOTES_LIST: `${BASE_URL}note/`,
@@ -280,6 +282,14 @@ export const DEBTORS_URLS = {
   DEBTOR_OVERDUE: {
     GET_DEBTOR_OVERDUE_LIST: `${BASE_URL}overdue/`,
     GET_DEBTOR_OVERDUE_ENTITY_LIST: `${BASE_URL}overdue/entity-list/`,
+  },
+  COMPANY: {
+    DROP_DOWN_DATA_URL: `${BASE_URL}debtor/entity-list/`,
+    SEARCH_APPLICATION_BY_DEBTOR_DETAILS: `${BASE_URL}debtor/details/`,
+    SEARCH_APPLICATION_BY_ABN_ACN_DETAILS: `${BASE_URL}application/search-entity/`,
+    SEARCH_APPLICATION_ENTITY_TYPE: `${BASE_URL}application/search-entity-list/`,
+    DELETE_APPLICATION_PERSONS: `${BASE_URL}debtor/stakeholder/`,
+    GENERATE_RANDOM_REGISTRATION_NUMBER: `${BASE_URL}debtor/generate/registration-number`,
   },
 };
 

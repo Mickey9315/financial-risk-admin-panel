@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useReducer, useState } from 're
 import { useHistory } from 'react-router-dom';
 import _ from 'lodash';
 import IconButton from '../../../common/IconButton/IconButton';
+import Button from '../../../common/Button/Button';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
@@ -14,6 +15,7 @@ import {
   getDebtorsList,
   resetDebtorListPaginationData,
   saveDebtorsColumnListName,
+  updateEditDebtorField,
 } from '../redux/DebtorsAction';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import Modal from '../../../common/Modal/Modal';
@@ -25,6 +27,8 @@ import { useUrlParamsUpdate } from '../../../hooks/useUrlParamsUpdate';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { saveAppliedFilters } from '../../../common/ListFilters/redux/ListFiltersAction';
 import Select from '../../../common/Select/Select';
+import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
+import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 
 const DebtorsList = () => {
   const history = useHistory();
@@ -44,6 +48,8 @@ const DebtorsList = () => {
   );
 
   const { debtorListFilters } = useSelector(({ listFilterReducer }) => listFilterReducer ?? {});
+
+  const isDebtorUpdatable = useModulePrivileges(SIDEBAR_NAMES.DEBTOR).hasWriteAccess;
 
   const {
     DebtorListColumnSaveButtonLoaderAction,
@@ -269,9 +275,16 @@ const DebtorsList = () => {
     dispatch(getDebtorDropdownData());
   }, []);
 
-  const onClickViewDebtor = useCallback(id => history.replace(`debtors/debtor/view/${id}`), [
-    history,
-  ]);
+  const onClickViewDebtor = useCallback(
+    (id, data) => {
+      if (data?.status === 'DRAFT') {
+        history.replace(`debtors/generate/?debtorId=${id}`);
+      } else {
+        history.replace(`debtors/debtor/view/${id}`);
+      }
+    },
+    [history],
+  );
 
   const downloadDebtor = useCallback(async () => {
     if (docs?.length > 0) {
@@ -292,6 +305,17 @@ const DebtorsList = () => {
 
   useEffect(() => {
     dispatch(resetDebtorListPaginationData(page, pages, total, limit));
+  }, []);
+
+  const generateDebtorClick = useCallback(() => {
+    dispatch(
+      updateEditDebtorField('company', 'country', {
+        label: 'Australia',
+        name: 'country',
+        value: 'AUS',
+      }),
+    );
+    history.push(`/debtors/generate/`);
   }, []);
 
   return (
@@ -319,9 +343,11 @@ const DebtorsList = () => {
               <IconButton
                 buttonType="primary"
                 title="format_line_spacing"
+                className="mr-10"
                 buttonTitle="Click to select custom fields"
                 onClick={() => toggleCustomField()}
               />
+              {isDebtorUpdatable && <Button title="Add Debtor" buttonType="success" onClick={generateDebtorClick} />}
             </div>
           </div>
 
