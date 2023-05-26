@@ -23,7 +23,7 @@ export const loggedUserProfile = (state = { changed: false }, action) => {
 
 export const headerNotificationReducer = (
   state = { notificationList: [], notificationReceived: false, alertDetail: {} },
-  action,
+  action
 ) => {
   switch (action.type) {
     case HEADER_NOTIFICATION_REDUX_CONSTANTS.GET_HEADER_NOTIFICATION: {

@@ -59,7 +59,10 @@ const ViewReport = () => {
   }, [paramReport]);
 
   // filter
-  const currentFilter = useMemo(() => reportType.find(report => report.url === paramReport), [reportType, paramReport]);
+  const currentFilter = useMemo(
+    () => reportType.find(report => report.url === paramReport),
+    [reportType, paramReport]
+  );
   const reportFilters = useSelector(({ reportAllFilters }) => reportAllFilters ?? {});
   const reportEntityListData = useSelector(({ reports }) => reports?.reportEntityListData ?? []);
   const [reviewReportFilterDate, setReviewReportFilterDate] = useState(new Date());
@@ -67,18 +70,20 @@ const ViewReport = () => {
 
   const { defaultFields, customFields } = useMemo(
     () => reportColumnList ?? { defaultFields: [], customFields: [] },
-    [reportColumnList],
+    [reportColumnList]
   );
 
   const toggleCustomField = useCallback(
     value => setCustomFieldModal(value !== undefined ? value : e => !e),
-    [setCustomFieldModal],
+    [setCustomFieldModal]
   );
   const tempFilters = useMemo(() => {
     const params = {};
-    Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(([key, value]) => {
-      params[key] = value || undefined;
-    });
+    Object.entries(reportFilters?.[currentFilter.filter]?.tempFilter ?? {})?.forEach(
+      ([key, value]) => {
+        params[key] = value || undefined;
+      }
+    );
 
     if (currentFilter.filter === 'reviewReport') {
       params.date = reviewReportFilterDate.toISOString() || undefined;
@@ -87,9 +92,11 @@ const ViewReport = () => {
   }, [reportFilters, currentFilter, reviewReportFilterDate]);
   const finalFilters = useMemo(() => {
     const params = {};
-    Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(([key, value]) => {
-      params[key] = value || undefined;
-    });
+    Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(
+      ([key, value]) => {
+        params[key] = value || undefined;
+      }
+    );
 
     if (currentFilter.filter === 'reviewReport') {
       params.date = reviewReportFilterDate.toISOString() || undefined;
@@ -141,7 +148,7 @@ const ViewReport = () => {
         /**/
       }
     },
-    [page, limit, tempFilters, currentFilter, reviewReportFilterDate, paramReport],
+    [page, limit, tempFilters, currentFilter, reviewReportFilterDate, paramReport]
   );
 
   const onClickCloseColumnSelection = useCallback(() => {
@@ -168,7 +175,13 @@ const ViewReport = () => {
     } catch (e) {
       /**/
     }
-  }, [toggleCustomField, reportColumnList, getReportListByFilter, reportDefaultColumnList, paramReport]);
+  }, [
+    toggleCustomField,
+    reportColumnList,
+    getReportListByFilter,
+    reportDefaultColumnList,
+    paramReport,
+  ]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
@@ -203,7 +216,7 @@ const ViewReport = () => {
       onClickSaveColumnSelection,
       reportListColumnSaveButtonLoaderAction,
       reportListColumnResetButtonLoaderAction,
-    ],
+    ]
   );
   const onChangeSelectedColumn = useCallback((type, name, value) => {
     const data = { type, name, value };
@@ -215,7 +228,7 @@ const ViewReport = () => {
     async newLimit => {
       await getReportListByFilter({ page: 1, limit: newLimit });
     },
-    [getReportListByFilter],
+    [getReportListByFilter]
   );
 
   // on pagination changed
@@ -223,7 +236,7 @@ const ViewReport = () => {
     async newPage => {
       await getReportListByFilter({ page: newPage, limit });
     },
-    [getReportListByFilter, limit],
+    [getReportListByFilter, limit]
   );
 
   /*
@@ -233,14 +246,14 @@ const ViewReport = () => {
   const [filterModal, setFilterModal] = useState(false);
   const toggleFilterModal = useCallback(
     value => setFilterModal(value !== undefined ? value : e => !e),
-    [setFilterModal],
+    [setFilterModal]
   );
 
   const changeFilterFields = useCallback(
     (name, value) => {
       dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
     },
-    [reportFilters, currentFilter],
+    [reportFilters, currentFilter]
   );
 
   const handleSelectInputChange = useCallback(e => {
@@ -299,7 +312,9 @@ const ViewReport = () => {
             <CustomSelect
               options={reportEntityListData?.[input.name]}
               placeholder={input.placeHolder}
-              onChangeCustomSelect={selectedList => handleMultiSelectInputChange(input.name, selectedList)}
+              onChangeCustomSelect={selectedList =>
+                handleMultiSelectInputChange(input.name, selectedList)
+              }
               value={reportFilters?.[currentFilter.filter]?.tempFilter?.[input.name]}
               onSearchChange={text => onSearchChange(text, input.name)}
             />
@@ -348,7 +363,7 @@ const ViewReport = () => {
       handleDateInputChange,
       handleMultiSelectInputChange,
       handleOnSelectSearchInputChange,
-    ],
+    ]
   );
 
   const applyReportsFilter = useCallback(async () => {
@@ -364,7 +379,7 @@ const ViewReport = () => {
       await getReportListByFilter(params ?? {}, () => {}, true);
       dispatch(applyFinalFilter(currentFilter.filter));
     },
-    [currentFilter, tempFilters],
+    [currentFilter, tempFilters]
   );
 
   const filterModalButtons = useMemo(
@@ -391,7 +406,7 @@ const ViewReport = () => {
         onClick: applyReportsFilter,
       },
     ],
-    [toggleFilterModal, applyReportsFilter, resetReportsFilter, currentFilter],
+    [toggleFilterModal, applyReportsFilter, resetReportsFilter, currentFilter]
   );
 
   useEffect(async () => {
@@ -418,10 +433,13 @@ const ViewReport = () => {
     Object.entries(finalFilters).forEach(([key, value]) => {
       if (_.isArray(value)) {
         otherFilters[key] = value
-          ?.map(record => (currentFilter?.filter === 'claimsReport' ? record?.secondValue : record?.value))
+          ?.map(record =>
+            currentFilter?.filter === 'claimsReport' ? record?.secondValue : record?.value
+          )
           .join(',');
       } else if (_.isObject(value)) {
-        otherFilters[key] = currentFilter?.filter === 'claimsReport' ? value?.secondValue : value?.value;
+        otherFilters[key] =
+          currentFilter?.filter === 'claimsReport' ? value?.secondValue : value?.value;
       } else {
         otherFilters[key] = value || undefined;
       }
@@ -485,9 +503,15 @@ const ViewReport = () => {
                   <span className="material-icons-round">event</span>
                 </div>
               )}
-              {['limit-list', 'limit-history', 'pending-application', 'usage', 'review', 'usage-per-client', 'alert'].includes(
-                paramReport,
-              ) && (
+              {[
+                'limit-list',
+                'limit-history',
+                'pending-application',
+                'usage',
+                'review',
+                'usage-per-client',
+                'alert',
+              ].includes(paramReport) && (
                 <IconButton
                   buttonType="primary-1"
                   title="cloud_download"
@@ -519,9 +543,9 @@ const ViewReport = () => {
                 Full details of the terms and conditions relating to individual credit limits can
                 only be determined by reference to the original limit endorsements issued by your
                 insurer. The list provided is a summary of your credit limits only, based on
-                information obtained from the insurer&apos;s website. Whilst every precaution has been
-                taken by TCR to provide you with accurate and up-to-date information, TCR cannot be
-                held responsible for any errors or omissions contained herein.
+                information obtained from the insurer&apos;s website. Whilst every precaution has
+                been taken by TCR to provide you with accurate and up-to-date information, TCR
+                cannot be held responsible for any errors or omissions contained herein.
               </div>
             </div>
           )}
@@ -530,7 +554,13 @@ const ViewReport = () => {
               !onlyReportListLoader ? (
                 <>
                   <div className="common-list-container">
-                    <Table align="left" valign="center" tableClass="main-list-table" data={docs} headers={headers} />
+                    <Table
+                      align="left"
+                      valign="center"
+                      tableClass="main-list-table"
+                      data={docs}
+                      headers={headers}
+                    />
                   </div>
                   <Pagination
                     className="common-list-pagination"

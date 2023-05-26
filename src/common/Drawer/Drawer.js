@@ -26,7 +26,7 @@ const Drawer = props => {
               close
             </span>
           </div>
-          <div className="drawer-content" onScroll={onDrawerScroll} >
+          <div className="drawer-content" onScroll={onDrawerScroll}>
             {children}
           </div>
         </div>

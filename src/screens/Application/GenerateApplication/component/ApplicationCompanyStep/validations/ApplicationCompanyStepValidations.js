@@ -12,7 +12,10 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
   const errors = {};
   let validated = true;
   if (data?.country?.value === 'AUS' || data?.country?.value === 'NZL') {
-    if ((!data?.abn || data?.abn?.trim()?.length <= 0) && (!data?.acn || data?.acn?.toString()?.trim()?.length <= 0)) {
+    if (
+      (!data?.abn || data?.abn?.trim()?.length <= 0) &&
+      (!data?.acn || data?.acn?.toString()?.trim()?.length <= 0)
+    ) {
       validated = false;
       errors.acn = 'Please enter ABN or ACN number before continue';
     }

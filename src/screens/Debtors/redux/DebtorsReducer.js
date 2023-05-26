@@ -329,16 +329,16 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           contactNumber: action?.data?.contactNumber,
           unitNumber: action?.data?.unitNumber,
           streetName: action?.data?.streetName,
-          suburb: action?.data?.suburb
-        }
+          suburb: action?.data?.suburb,
+        },
       };
 
-      case DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE:
-        return {
-          ...state,
-          selectedDebtorData: {
-            ...state?.selectedDebtorData,
-            tradingName: state?.duplicateSelectedDebtorData?.tradingName,
+    case DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE:
+      return {
+        ...state,
+        selectedDebtorData: {
+          ...state?.selectedDebtorData,
+          tradingName: state?.duplicateSelectedDebtorData?.tradingName,
           property: state?.duplicateSelectedDebtorData?.property,
           streetNumber: state?.duplicateSelectedDebtorData?.streetNumber,
           streetType: state?.duplicateSelectedDebtorData?.streetType,
@@ -346,9 +346,9 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           contactNumber: state?.duplicateSelectedDebtorData?.contactNumber,
           unitNumber: state?.duplicateSelectedDebtorData?.unitNumber,
           streetName: state?.duplicateSelectedDebtorData?.streetName,
-          suburb: state?.duplicateSelectedDebtorData?.suburb
-          }
-        }
+          suburb: state?.duplicateSelectedDebtorData?.suburb,
+        },
+      };
 
     case DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS: {
       const dropdownData = { ...state?.dropdownData };
@@ -1033,17 +1033,17 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
 
-    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER: 
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER:
       return {
         ...state,
         stakeHolder: {
           ...state.stakeHolder,
           stakeHolderDetails: {
             ...state.stakeHolder.stakeHolderDetails,
-            registrationNumber: action?.data
-          }
-        }
-      }
+            registrationNumber: action?.data,
+          },
+        },
+      };
 
     case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA: {
       const dropDownData = { ...state?.stakeHolder?.stakeHolderDropDownData };

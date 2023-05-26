@@ -72,7 +72,7 @@ const Table = props => {
     onChangeRowSelection,
     isEditableDrawer,
     handleRedirectClick,
-    deleteApplication
+    deleteApplication,
   } = props;
   const tableClassName = `table-class ${tableClass}`;
   const [drawerState, dispatchDrawerState] = useReducer(drawerReducer, drawerInitialState);
@@ -263,7 +263,9 @@ const Table = props => {
                 key={heading.label}
                 align={data?.isCompleted?.props?.className === 'table-checkbox' ? 'center' : align}
                 valign={valign}
-                className={`${headerClass} ${heading.type === 'boolean' ? 'table-checkbox-header' : ''}  `}
+                className={`${headerClass} ${
+                  heading.type === 'boolean' ? 'table-checkbox-header' : ''
+                }  `}
               >
                 {heading.label}
               </th>
@@ -271,7 +273,9 @@ const Table = props => {
           {(haveActions || extraColumns.length > 0 || stepperColumn.length > 0) && isUpdatable && (
             <th style={{ position: 'sticky', right: 0 }} />
           )}
-          {tableButtonActions.length > 0 && isUpdatable && <th align={align}>Credit Limit Actions</th>}
+          {tableButtonActions.length > 0 && isUpdatable && (
+            <th align={align}>Credit Limit Actions</th>
+          )}
         </thead>
         <tbody>
           {tableData.map((e, index) => (
@@ -326,7 +330,7 @@ Table.propTypes = {
   onChangeRowSelection: PropTypes.func,
   isEditableDrawer: PropTypes.bool,
   handleRedirectClick: PropTypes.func,
-  deleteApplication:PropTypes.func
+  deleteApplication: PropTypes.func,
 };
 
 Table.defaultProps = {
@@ -350,7 +354,7 @@ Table.defaultProps = {
   onChangeRowSelection: () => {},
   isEditableDrawer: false,
   handleRedirectClick: () => {},
-  deleteApplication: () => {}
+  deleteApplication: () => {},
 };
 
 export default Table;
@@ -519,7 +523,7 @@ function Row(props) {
           </td>
         )}
         {isUpdatable &&
-          stepperColumn.map((element) => (
+          stepperColumn.map(element => (
             <td
               key={JSON.stringify(element)}
               width={10}
@@ -532,7 +536,7 @@ function Row(props) {
             </td>
           ))}
         {isUpdatable &&
-          extraColumns.map((element) => (
+          extraColumns.map(element => (
             <td
               key={JSON.stringify(element)}
               width={10}
@@ -601,7 +605,7 @@ Row.propTypes = {
   onRowSelectedDataChange: PropTypes.func,
   showCheckbox: PropTypes.bool,
   refreshData: PropTypes.func,
-  deleteApplication: PropTypes.func
+  deleteApplication: PropTypes.func,
 };
 
 Row.defaultProps = {
@@ -621,7 +625,7 @@ Row.defaultProps = {
   recordActionClick: () => {},
   onRowSelectedDataChange: () => {},
   refreshData: () => {},
-  deleteApplication: () => {}
+  deleteApplication: () => {},
 };
 
 function TableLinkDrawer(props) {

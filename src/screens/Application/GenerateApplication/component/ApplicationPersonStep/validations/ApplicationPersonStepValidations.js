@@ -28,11 +28,9 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
             errors.acn = 'Please enter ACN number before continue';
           }
           if (
-            (!item?.abn ||
-            item?.abn?.trim()?.length <= 0) &&
-            (!item?.acn ||
-            item?.acn?.trim()?.length <= 0) && 
-             editApplicationData?.company?.entityType?.value !== 'TRUST'
+            (!item?.abn || item?.abn?.trim()?.length <= 0) &&
+            (!item?.acn || item?.acn?.trim()?.length <= 0) &&
+            editApplicationData?.company?.entityType?.value !== 'TRUST'
           ) {
             validated = false;
             errors.acn = 'Please enter ABN or ACN number before continue';
@@ -134,8 +132,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
         }
         if (!item?.dateOfBirth) {
           validated = false;
-          errors.dateOfBirth =
-            'Please select Date of Birth before continue';
+          errors.dateOfBirth = 'Please select Date of Birth before continue';
         }
         if (!item?.streetNumber || item?.streetNumber?.length <= 0) {
           validated = false;
@@ -269,7 +266,7 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
       }
     } catch (e) {
       throw Error();
-    } 
+    }
   } else {
     errorNotification('Please fill the details.');
   }

@@ -45,12 +45,12 @@ const persistConfig = {
 const filterPersistConfig = {
   key: 'allFilters',
   storage: storageSession,
-}
+};
 
 const reportFilterPersistConfig = {
   key: 'reportFilters',
-  storage: storageSession
-}
+  storage: storageSession,
+};
 
 const appReducer = combineReducers({
   dashboard,
@@ -77,9 +77,8 @@ const appReducer = combineReducers({
   claims,
   reports,
   reportAllFilters: persistReducer(reportFilterPersistConfig, reportAllFilters),
-  listFilterReducer: persistReducer(filterPersistConfig, listFilterReducer)
+  listFilterReducer: persistReducer(filterPersistConfig, listFilterReducer),
 });
-
 
 const rootReducer = (state, action) => {
   if (action.type === LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION) {

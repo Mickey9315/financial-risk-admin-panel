@@ -47,39 +47,43 @@ const ViewApplicationEditableRowComponent = props => {
   const [selectedLimitType, setSelectedLimitType] = useState([]);
   const [selectedExpiryDate, setSelectedExpiryDate] = useState(null);
   const isUpdatable = useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess;
-  const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
+  const { applicationDetail } = useSelector(
+    ({ application }) => application?.viewApplication ?? {}
+  );
 
-  const { limitType, isAllowToUpdate, expiryDate } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
-  const handleApplicationLimitTypeChange = 
-    e => {
-      setSelectedLimitType(e);
-      try {
-        const data = {
-          update: 'field',
-          limitType: e?.value,
-        };
-        dispatch(changeApplicationStatus(id, data));
-        dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
-          fieldName: 'limitType',
-          value: e?.value,
-        });
-        dispatch({
-          type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
-          fieldName:'limitTypeError',
-          value:undefined
-        });
-      } catch (err) {
-        /**/
-      }
+  const { limitType, isAllowToUpdate, expiryDate } = useMemo(
+    () => applicationDetail ?? {},
+    [applicationDetail]
+  );
+  const handleApplicationLimitTypeChange = e => {
+    setSelectedLimitType(e);
+    try {
+      const data = {
+        update: 'field',
+        limitType: e?.value,
+      };
+      dispatch(changeApplicationStatus(id, data));
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+        fieldName: 'limitType',
+        value: e?.value,
+      });
+      dispatch({
+        type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+        fieldName: 'limitTypeError',
+        value: undefined,
+      });
+    } catch (err) {
+      /**/
     }
+  };
 
   const aYearFromNow = new Date();
   aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
 
   const handleExpiryDateChange = useCallback(
     e => {
-      if(e === null){
+      if (e === null) {
         setSelectedExpiryDate(null);
         try {
           const dataNew = {
@@ -88,29 +92,29 @@ const ViewApplicationEditableRowComponent = props => {
           };
           dispatch(changeApplicationStatus(id, dataNew));
           dispatch({
-            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION
+              .APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
             fieldName: 'expiryDate',
             value: aYearFromNow,
           });
         } catch (err) {
           /**/
         }
-      }else{
-      setSelectedExpiryDate(e);
-      try {
-        const data = {
-          update: 'field',
-          expiryDate: moment(e),
-        };
-        dispatch(changeApplicationStatus(id, data));
-      } catch (err) {
-        /**/
-      }
+      } else {
+        setSelectedExpiryDate(e);
+        try {
+          const data = {
+            update: 'field',
+            expiryDate: moment(e),
+          };
+          dispatch(changeApplicationStatus(id, data));
+        } catch (err) {
+          /**/
+        }
       }
     },
-    [id],
+    [id]
   );
-
 
   useEffect(() => {
     setSelectedLimitType(LimitTypeOptions.filter(e => e.value === limitType) ?? []);
@@ -126,7 +130,9 @@ const ViewApplicationEditableRowComponent = props => {
             placeholder={!isApprovedOrDeclined && isAllowToUpdate ? 'Select Limit Type' : '-'}
             name="applicationStatus"
             className={
-              !isUpdatable || !isAllowToUpdate || (isApprovedOrDeclined && 'view-application-limit-type-disabled')
+              !isUpdatable ||
+              !isAllowToUpdate ||
+              (isApprovedOrDeclined && 'view-application-limit-type-disabled')
             }
             value={selectedLimitType ?? []}
             options={LimitTypeOptions}
@@ -140,14 +146,12 @@ const ViewApplicationEditableRowComponent = props => {
       </div>
       <div className={!isUpdatable && 'ml-15'}>
         <div className="font-field mt-10">Expiry Date</div>
-        {isUpdatable && isAllowToUpdate && !isApprovedOrDeclined  ? (
-          <div
-            className={`date-picker-container view-application-status `}
-          >
+        {isUpdatable && isAllowToUpdate && !isApprovedOrDeclined ? (
+          <div className={`date-picker-container view-application-status `}>
             <DatePicker
               selected={selectedExpiryDate ? new Date(selectedExpiryDate) : null}
               onChange={handleExpiryDateChange}
-              placeholderText='Select Expiry Date'
+              placeholderText="Select Expiry Date"
               minDate={new Date()}
               showMonthDropdown
               showYearDropdown

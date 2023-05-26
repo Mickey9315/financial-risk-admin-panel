@@ -281,7 +281,8 @@ const DebtorTaskTab = () => {
 
   const onSaveTask = useCallback(() => {
     const data = {
-      description: addTaskState?.description?.trim()?.length > 0 ? addTaskState?.description : undefined,
+      description:
+        addTaskState?.description?.trim()?.length > 0 ? addTaskState?.description : undefined,
       dueDate: addTaskState?.dueDate || new Date().toISOString(),
       assigneeType: addTaskState?.assigneeId?.type ?? addTaskState?.assigneeType,
       assigneeId: addTaskState?.assigneeId?.value,

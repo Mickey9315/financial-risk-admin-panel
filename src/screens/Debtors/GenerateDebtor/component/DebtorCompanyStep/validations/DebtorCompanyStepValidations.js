@@ -1,11 +1,18 @@
 import { saveDebtorStepDataToBackend, updateEditDebtorData } from '../../../../redux/DebtorsAction';
-import { MOBILE_NUMBER_REGEX, NUMBER_REGEX, SPECIAL_CHARACTER_REGEX } from '../../../../../../constants/RegexConstants';
+import {
+  MOBILE_NUMBER_REGEX,
+  NUMBER_REGEX,
+  SPECIAL_CHARACTER_REGEX,
+} from '../../../../../../constants/RegexConstants';
 
 export const debtorCompanyStepValidations = async (dispatch, data, editDebtorData) => {
   const errors = {};
   let validated = true;
   if (data?.country?.value === 'AUS' || data?.country?.value === 'NZL') {
-    if ((!data?.abn || data?.abn?.trim()?.length <= 0) && (!data?.acn || data?.acn?.toString()?.trim()?.length <= 0)) {
+    if (
+      (!data?.abn || data?.abn?.trim()?.length <= 0) &&
+      (!data?.acn || data?.acn?.toString()?.trim()?.length <= 0)
+    ) {
       validated = false;
       errors.acn = 'Please enter ABN or ACN number before continue';
     }
@@ -43,7 +50,11 @@ export const debtorCompanyStepValidations = async (dispatch, data, editDebtorDat
       errors.acn = 'Please enter NCN number before continue';
     }
   }
-  if (!data?.entityName || data?.entityName?.length <= 0 || data?.entityName?.value?.trim()?.length <= 0) {
+  if (
+    !data?.entityName ||
+    data?.entityName?.length <= 0 ||
+    data?.entityName?.value?.trim()?.length <= 0
+  ) {
     validated = false;
     errors.entityName = 'Please enter entity name before continue';
   }

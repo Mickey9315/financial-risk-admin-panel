@@ -11,7 +11,10 @@ const ClientDocumentsApiService = {
   getDocumentTypeList: params =>
     ApiService.getData(`${DEBTORS_URLS.DOCUMENTS.GET_DOCUMENT_TYPE_URL}`, { params }),
   uploadDocument: (data, config) =>
-    ApiService.postData(DEBTORS_URLS.DOCUMENTS.UPLOAD_DOCUMENT_URL, data, {...config, timeout: 60000}),
+    ApiService.postData(DEBTORS_URLS.DOCUMENTS.UPLOAD_DOCUMENT_URL, data, {
+      ...config,
+      timeout: 60000,
+    }),
   downloadDocuments: params =>
     ApiService.request({
       url: `${DEBTORS_URLS.DOCUMENTS.DOWNLOAD_DOCUMENTS_URL}`,
@@ -20,7 +23,8 @@ const ClientDocumentsApiService = {
       responseType: 'blob',
       timeout: 60000,
     }),
-  deleteDebtorDocument: id => ApiService.deleteData(`${DEBTORS_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`),
+  deleteDebtorDocument: id =>
+    ApiService.deleteData(`${DEBTORS_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`),
 };
 export default ClientDocumentsApiService;
 
@@ -50,7 +54,8 @@ export default ClientDocumentsApiService;
 export const DebtorsDocumentApiServices = {
   getDebtorDocumentsList: (id, params) =>
     ApiService.getData(`${DEBTORS_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`, { params }),
-  getDocumentTypeListData: params => ApiService.getData(DEBTORS_URLS.DOCUMENTS.GET_DOCUMENT_TYPE_URL, { params }),
+  getDocumentTypeListData: params =>
+    ApiService.getData(DEBTORS_URLS.DOCUMENTS.GET_DOCUMENT_TYPE_URL, { params }),
   uploadDocument: (data, config, params) =>
     ApiService.request({
       url: `${DEBTORS_URLS.DOCUMENTS.UPLOAD_DOCUMENT_URL}`,
@@ -66,7 +71,7 @@ export const DebtorsDocumentApiServices = {
       params,
       method: 'GET',
       responseType: 'blob',
-      timeout: 60000
+      timeout: 60000,
     }),
   deleteDebtorDocument: id =>
     ApiService.deleteData(`${DEBTORS_URLS.DOCUMENTS.DOCUMENTS_LIST}${id}`),

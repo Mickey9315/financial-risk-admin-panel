@@ -5,7 +5,7 @@ import { useRef } from 'react';
 
 const Select = props => {
   const isFocus = useRef(false);
-  
+
   const {
     className,
     placeholder,
@@ -26,11 +26,11 @@ const Select = props => {
     }
   };
 
-const temp = _.debounce(inputChangeEventHandling, 300);
+  const temp = _.debounce(inputChangeEventHandling, 300);
 
-const handleInputChange = (e) => {
-  temp(e)
-}
+  const handleInputChange = e => {
+    temp(e);
+  };
 
   return (
     <ReactSelect
@@ -39,7 +39,7 @@ const handleInputChange = (e) => {
       placeholder={placeholder}
       name={name}
       options={options}
-      noOptionsMessage={() => isLoadingNeeded ? 'Loading...' : 'No Options'}
+      noOptionsMessage={() => (isLoadingNeeded ? 'Loading...' : 'No Options')}
       isSearchable={isSearchable}
       value={value}
       onChange={onChange}
@@ -51,8 +51,12 @@ const handleInputChange = (e) => {
       isMulti={restProps?.isMulti}
       menuPlacement={restProps?.menuPlacement}
       dropdownPosition={restProps?.dropdownPosition}
-      onFocus={() => {isFocus.current = true}}
-      onBlur={() => {isFocus.current = false}}
+      onFocus={() => {
+        isFocus.current = true;
+      }}
+      onBlur={() => {
+        isFocus.current = false;
+      }}
     />
   );
 };
@@ -67,7 +71,7 @@ Select.propTypes = {
   onChange: PropTypes.func,
   onInputChange: PropTypes.func,
   isDisabled: PropTypes.bool,
-  isLoadingNeeded: PropTypes.bool
+  isLoadingNeeded: PropTypes.bool,
 };
 
 Select.defaultProps = {
@@ -80,7 +84,7 @@ Select.defaultProps = {
   onChange: () => {},
   onInputChange: () => {},
   isDisabled: false,
-  isLoadingNeeded: false
+  isLoadingNeeded: false,
 };
 
 export default Select;

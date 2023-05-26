@@ -39,9 +39,10 @@ const DebtorsList = () => {
   const { debtorsColumnNameList, debtorsDefaultColumnNameList } = useSelector(
     ({ debtorsManagement }) => debtorsManagement ?? {}
   );
-  const { docs, headers, page, pages, limit, total } = useMemo(() => debtorListWithPageData ?? {}, [
-    debtorListWithPageData,
-  ]);
+  const { docs, headers, page, pages, limit, total } = useMemo(
+    () => debtorListWithPageData ?? {},
+    [debtorListWithPageData]
+  );
 
   const debtorDropDownData = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.dropdownData ?? {}
@@ -237,7 +238,9 @@ const DebtorsList = () => {
     [toggleFilterModal, onClickApplyFilter, onClickResetFilter]
   );
   const entityTypeSelectedValue = useMemo(() => {
-    return debtorDropDownData?.entityType?.filter(entity => entity?.value === tempFilter?.entityType);
+    return debtorDropDownData?.entityType?.filter(
+      entity => entity?.value === tempFilter?.entityType
+    );
   }, [tempFilter?.entityType]);
   useUrlParamsUpdate(
     {
@@ -259,9 +262,7 @@ const DebtorsList = () => {
     };
     const filters = {
       entityType:
-        (paramEntity?.trim()?.length ?? -1) > 0
-          ? paramEntity
-          : debtorListFilters?.entityType,
+        (paramEntity?.trim()?.length ?? -1) > 0 ? paramEntity : debtorListFilters?.entityType,
     };
     Object.entries(filters).forEach(([name, value]) => {
       dispatchFilter({
@@ -283,7 +284,7 @@ const DebtorsList = () => {
         history.replace(`debtors/debtor/view/${id}`);
       }
     },
-    [history],
+    [history]
   );
 
   const downloadDebtor = useCallback(async () => {
@@ -313,7 +314,7 @@ const DebtorsList = () => {
         label: 'Australia',
         name: 'country',
         value: 'AUS',
-      }),
+      })
     );
     history.push(`/debtors/generate/`);
   }, []);
@@ -347,7 +348,9 @@ const DebtorsList = () => {
                 buttonTitle="Click to select custom fields"
                 onClick={() => toggleCustomField()}
               />
-              {isDebtorUpdatable && <Button title="Add Debtor" buttonType="success" onClick={generateDebtorClick} />}
+              {isDebtorUpdatable && (
+                <Button title="Add Debtor" buttonType="success" onClick={generateDebtorClick} />
+              )}
             </div>
           </div>
 

@@ -8,7 +8,9 @@ import { changeApplicationStatus } from '../../redux/ApplicationAction';
 import { APPLICATION_REDUX_CONSTANTS } from '../../redux/ApplicationReduxConstants';
 
 const ApplicationCommentAccordion = props => {
-  const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
+  const { applicationDetail } = useSelector(
+    ({ application }) => application?.viewApplication ?? {}
+  );
 
   const dispatch = useDispatch();
   const { index } = props;
@@ -61,13 +63,23 @@ const ApplicationCommentAccordion = props => {
             />
             <div className="d-flex just-end align-center mt-5">
               {status?.value === 'DECLINED' || status?.value === 'APPROVED' ? (
-                <Button buttonType="primary" className="small-button" title="Edit" onClick={saveClientComment} />
+                <Button
+                  buttonType="primary"
+                  className="small-button"
+                  title="Edit"
+                  onClick={saveClientComment}
+                />
               ) : (
-                <Button buttonType="primary" className="small-button" title="Save" onClick={saveClientComment} />
+                <Button
+                  buttonType="primary"
+                  className="small-button"
+                  title="Save"
+                  onClick={saveClientComment}
+                />
               )}
             </div>
           </>
-          
+
           {/* )} */}
         </div>
       </AccordionItem>
