@@ -41,17 +41,23 @@ const GenerateDebtor = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { debtorStage, ...editDebtorData } = useSelector(
-    ({ debtorsManagement }) => debtorsManagement?.editDebtor ?? {},
+    ({ debtorsManagement }) => debtorsManagement?.editDebtor ?? {}
   );
 
   const { debtorId } = useQueryParams();
 
-  const { generateDebtorPageLoaderAction } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
+  const { generateDebtorPageLoaderAction } = useSelector(
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
+  );
 
   // for stepper components
   const FILTERED_STEP_COMPONENT = useMemo(() => {
     const finalSteps = [...STEP_COMPONENT];
-    if (!['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(editDebtorData?.company?.entityType?.value ?? '')) {
+    if (
+      !['PARTNERSHIP', 'TRUST', 'SOLE_TRADER'].includes(
+        editDebtorData?.company?.entityType?.value ?? ''
+      )
+    ) {
       // finalSteps.splice(1, 1);
     }
 
@@ -116,7 +122,11 @@ const GenerateDebtor = () => {
     try {
       switch (FILTERED_STEPS?.[debtorStage ?? 0]?.name) {
         case 'company': {
-          const validationResult = await debtorCompanyStepValidations(dispatch, data, editDebtorData);
+          const validationResult = await debtorCompanyStepValidations(
+            dispatch,
+            data,
+            editDebtorData
+          );
           return validationResult;
         }
 

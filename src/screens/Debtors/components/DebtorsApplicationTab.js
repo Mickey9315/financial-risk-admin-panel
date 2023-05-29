@@ -193,8 +193,6 @@ const DebtorsApplicationTab = () => {
     }
   }, [docs, id]);
 
-
-
   return (
     <>
       <div className="tab-content-header-row">
@@ -210,7 +208,11 @@ const DebtorsApplicationTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
-          <IconButton buttonType="primary" title="format_line_spacing" onClick={toggleCustomField} />
+          <IconButton
+            buttonType="primary"
+            title="format_line_spacing"
+            onClick={toggleCustomField}
+          />
           <IconButton
             buttonType="primary-1"
             title="cloud_download"

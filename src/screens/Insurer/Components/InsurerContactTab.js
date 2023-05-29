@@ -28,11 +28,8 @@ const InsurerContactTab = () => {
   const [customFieldModal, setCustomFieldModal] = useState(false);
   const isInsurerUpdatable = useModulePrivileges(SIDEBAR_NAMES.INSURER).hasWriteAccess;
   const toggleCustomField = () => setCustomFieldModal(e => !e);
-  const {
-    contactList,
-    insurerContactColumnNameList,
-    insurerContactDefaultColumnNameList,
-  } = useSelector(({ insurer }) => insurer?.contact ?? {});
+  const { contactList, insurerContactColumnNameList, insurerContactDefaultColumnNameList } =
+    useSelector(({ insurer }) => insurer?.contact ?? {});
 
   const {
     viewInsurerContactColumnSaveButtonLoaderAction,
@@ -40,9 +37,10 @@ const InsurerContactTab = () => {
     viewInsurerSyncInsurerContactButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { docs, headers, pages, page, total, limit } = useMemo(() => contactList ?? {}, [
-    contactList,
-  ]);
+  const { docs, headers, pages, page, total, limit } = useMemo(
+    () => contactList ?? {},
+    [contactList]
+  );
   const getInsurerContactsList = useCallback(
     (params = {}, cb) => {
       const data = {

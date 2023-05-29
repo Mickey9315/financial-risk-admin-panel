@@ -61,7 +61,9 @@ const DebtorCompanyStep = () => {
   const companyState = useSelector(
     ({ debtorsManagement }) => debtorsManagement?.editDebtor?.company ?? {}
   );
-  const { partners, errors } = useSelector(({ debtorsManagement }) => debtorsManagement?.editDebtor ?? {});
+  const { partners, errors } = useSelector(
+    ({ debtorsManagement }) => debtorsManagement?.editDebtor ?? {}
+  );
   const {
     clients,
     debtors,
@@ -157,8 +159,7 @@ const DebtorCompanyStep = () => {
         updateSingleCompanyState(data?.name, data);
         dispatch(updateEditDebtorField('company', 'state', null));
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.COMPANY
-            .DEBTOR_COMPANY_ON_COUNTRY_CHANGE_WIPE_OUT_DATA,
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_ON_COUNTRY_CHANGE_WIPE_OUT_DATA,
           data,
         });
 
@@ -679,7 +680,7 @@ const DebtorCompanyStep = () => {
         case 'text':
           component = (
             <Input
-              key = {input.key}
+              key={input.key}
               type="text"
               name={input.name}
               placeholder={input.placeholder}
@@ -695,7 +696,7 @@ const DebtorCompanyStep = () => {
         case 'search':
           component = (
             <Input
-              key = {input.key}
+              key={input.key}
               type="text"
               name={input.name}
               suffix="search"
@@ -711,7 +712,7 @@ const DebtorCompanyStep = () => {
         case 'entityName':
           component = (
             <Input
-              key = {input.key}
+              key={input.key}
               type="text"
               name={input.name}
               suffix={isAusOrNew && 'search'}
@@ -727,7 +728,7 @@ const DebtorCompanyStep = () => {
         case 'select': {
           component = (
             <Select
-              key = {input.key}
+              key={input.key}
               placeholder={input.placeholder}
               name={input?.name}
               options={input?.data ?? []}
@@ -741,7 +742,12 @@ const DebtorCompanyStep = () => {
         }
         case 'button': {
           component = !isAusOrNew && (
-            <Button key = {input.key} buttonType="primary-small" title={input.label} onClick={input.onClick} />
+            <Button
+              key={input.key}
+              buttonType="primary-small"
+              title={input.label}
+              onClick={input.onClick}
+            />
           );
           break;
         }

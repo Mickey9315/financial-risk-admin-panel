@@ -33,9 +33,7 @@ const AddOverdues = lazy(() =>
 const Settings = lazy(() => import('../../screens/Settings/Settings'));
 const DebtorsList = lazy(() => import('../../screens/Debtors/DebtorsList/DebtorsList'));
 const ViewDebtor = lazy(() => import('../../screens/Debtors/ViewDebtor/ViewDebtor'));
-const GenerateDebtor = lazy(() =>
-  import('../../screens/Debtors/GenerateDebtor/GenerateDebtor')
-);
+const GenerateDebtor = lazy(() => import('../../screens/Debtors/GenerateDebtor/GenerateDebtor'));
 const Reports = lazy(() => import('../../screens/Reports/Reports'));
 const ViewReports = lazy(() => import('../../screens/Reports/ViewReports/ViewReport'));
 const Claims = lazy(() => import('../../screens/Claims/ClaimsList/ClaimsList'));

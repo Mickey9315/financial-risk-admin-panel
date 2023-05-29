@@ -43,14 +43,14 @@ const DebtorEntityNameTable = props => {
     <div className="application-entity-name-modal-search-records" onScroll={handleScroll}>
       <table className="table-class">
         <thead>
-          {headers?.map((column) => (
+          {headers?.map(column => (
             <th width={10} style={{ backgroundColor: 'white' }}>
               {column}
             </th>
           ))}
         </thead>
         <tbody>
-          {data?.map((row) => (
+          {data?.map(row => (
             <tr>
               <td>
                 <div className="link" onClick={() => handleEntityNameSelect(row)}>

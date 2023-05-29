@@ -518,8 +518,8 @@ const ClientList = () => {
         const finalFilters = {
           ...appliedFilters,
           riskAnalystId: appliedFilters?.riskAnalystId?.value,
-          serviceManagerId: appliedFilters?.serviceManagerId?.value
-        }
+          serviceManagerId: appliedFilters?.serviceManagerId?.value,
+        };
         const response = await clientsDownloadAction(finalFilters);
         if (response) downloadAll(response);
       } catch (e) {

@@ -1709,12 +1709,13 @@ export const generateRandomRegistrationNumberForDebtorStakeholder = () => {
   return async dispatch => {
     try {
       const response = await DebtorsCompanyStepApiServices.generateRandomRegistrationNumber();
-      if(response?.data?.status === 'SUCCESS') {
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER,
-          data: response.data.data
-        })
-      return response.data.data;
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER
+            .GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER,
+          data: response.data.data,
+        });
+        return response.data.data;
       }
     } catch (e) {
       displayErrors(e);
@@ -1829,7 +1830,10 @@ export const getDebtorCompanyDataFromDebtor = (id, params) => {
         ...params,
         requestFrom: 'application',
       };
-      const response = await DebtorsCompanyStepApiServices.getApplicationCompanyDataFromDebtor(id, finalParams);
+      const response = await DebtorsCompanyStepApiServices.getApplicationCompanyDataFromDebtor(
+        id,
+        finalParams
+      );
 
       if (response?.data?.status === 'SUCCESS') {
         dispatch({

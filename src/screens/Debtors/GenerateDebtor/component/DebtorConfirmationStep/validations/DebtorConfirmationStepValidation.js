@@ -1,6 +1,11 @@
 import { getDebtorFilter, saveDebtorStepDataToBackend } from '../../../../redux/DebtorsAction';
 
-export const debtorConfirmationStepValidations = async (dispatch, data, editDebtorData, history) => {
+export const debtorConfirmationStepValidations = async (
+  dispatch,
+  data,
+  editDebtorData,
+  history
+) => {
   let validated = true;
   if (validated) {
     const finalData = {

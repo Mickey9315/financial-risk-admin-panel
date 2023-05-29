@@ -45,9 +45,10 @@ const DebtorsReportsTab = () => {
     viewDebtorFetchReportButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(() => reportsList ?? {}, [
-    reportsList,
-  ]);
+  const { total, headers, pages, docs, page, limit, isLoading } = useMemo(
+    () => reportsList ?? {},
+    [reportsList]
+  );
 
   const getDebtorReportsList = useCallback(
     (params = {}, cb) => {
@@ -354,7 +355,7 @@ const DebtorsReportsTab = () => {
             onClick={toggleCustomField}
           />
           <UserPrivilegeWrapper moduleName={SIDEBAR_NAMES.DEBTOR}>
-            <UserPrivilegeWrapper moduleName='credit-report'>
+            <UserPrivilegeWrapper moduleName="credit-report">
               <Button
                 buttonType="secondary"
                 title="Fetch Report"

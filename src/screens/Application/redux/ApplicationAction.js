@@ -1,6 +1,6 @@
 import {
   startGeneralLoaderOnRequest,
-  stopGeneralLoaderOnSuccessOrFail
+  stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
@@ -14,7 +14,7 @@ import ImportApplicationApiServices from '../services/ImportApplicationApiServic
 import {
   APPLICATION_COLUMN_LIST_REDUX_CONSTANTS,
   APPLICATION_FILTER_LIST_REDUX_CONSTANTS,
-  APPLICATION_REDUX_CONSTANTS
+  APPLICATION_REDUX_CONSTANTS,
 } from './ApplicationReduxConstants';
 
 export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => {
@@ -22,8 +22,8 @@ export const getApplicationsListByFilter = (params = { page: 1, limit: 15 }) => 
     const finalParams = {
       ...params,
       clientId: params?.clientId?.value,
-      debtorId: params?.debtorId?.value
-    }
+      debtorId: params?.debtorId?.value,
+    };
     startGeneralLoaderOnRequest('applicationListPageLoader');
     try {
       const response = await ApplicationApiServices.getApplicationListByFilter(finalParams);
@@ -219,11 +219,11 @@ export const getApplicationCompanyDataFromDebtor = (id, params) => {
     try {
       const finalParams = {
         ...params,
-        requestFrom: 'application'
-      }
+        requestFrom: 'application',
+      };
       const response = await ApplicationCompanyStepApiServices.getApplicationCompanyDataFromDebtor(
         id,
-        finalParams,
+        finalParams
       );
 
       if (response?.data?.status === 'SUCCESS') {
@@ -618,7 +618,7 @@ export const deleteApplicationDocumentAction = async (appDocId, cb) => {
     displayErrors(e);
   }
 };
- 
+
 export const deleteApplicationApiCall = async (appId, callBack) => {
   const params = {
     requestFrom: 'application',
@@ -1045,19 +1045,19 @@ export const changeApplicationStatus = (applicationId, status, statusToChange) =
             data: statusToChange,
           });
         }
-        if(Object.prototype.hasOwnProperty.call(status  , 'clientReference')) {
-       dispatch({
-         type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.UPDATE_CLIENT_REFERENCE,
-         data: status?.clientReference
-       })
-     }
+        if (Object.prototype.hasOwnProperty.call(status, 'clientReference')) {
+          dispatch({
+            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.UPDATE_CLIENT_REFERENCE,
+            data: status?.clientReference,
+          });
+        }
       }
     } catch (e) {
       if (e?.response?.data?.status === 'AUTOMATION_IN_PROCESS') {
         errorNotification(e?.response?.data?.message);
-      } else { 
+      } else {
         displayErrors(e);
-        throw(e);
+        throw e;
       }
     }
   };
@@ -1392,7 +1392,7 @@ export const clearApplicationAlertDetails = () => {
 export const getApplicationFilterDropDownDataBySearch = options => {
   return async dispatch => {
     try {
-      startGeneralLoaderOnRequest('onApplicationFilterDropDownDataSearchLoaderOption')
+      startGeneralLoaderOnRequest('onApplicationFilterDropDownDataSearchLoaderOption');
       const response = await DashboardApiService.getEntitiesBySearch({
         ...options,
         isForRisk: true,
@@ -1434,19 +1434,21 @@ export const getApplicationCompanyStepDropDownDataBySearch = options => {
 };
 
 export const generateRandomRegistrationNumber = params => {
-  return async(dispatch) => {
+  return async dispatch => {
     try {
-      const response = await ApplicationCompanyStepApiServices.generateRandomRegistrationNumber(params);
-      if(response?.data?.status === 'SUCCESS') {
+      const response = await ApplicationCompanyStepApiServices.generateRandomRegistrationNumber(
+        params
+      );
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
           type: APPLICATION_REDUX_CONSTANTS.COMPANY.SET_RANDOM_GENERATED_REGISTRATION_NUMBER,
-          data: response.data.data
-        })
-      return response.data.data;
+          data: response.data.data,
+        });
+        return response.data.data;
       }
-    } catch(e) {
+    } catch (e) {
       displayErrors(e);
     }
     return false;
-  }
-}
+  };
+};

@@ -3,7 +3,10 @@ import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { DATE_FORMAT, DATE_FORMAT_CONSTANT_FOR_CALENDER } from '../../../constants/DateFormatConstants';
+import {
+  DATE_FORMAT,
+  DATE_FORMAT_CONSTANT_FOR_CALENDER,
+} from '../../../constants/DateFormatConstants';
 import { ALERT_TYPE_ROW, checkAlertValue } from '../../../helpers/AlertHelper';
 import { handleGlobalSearchSelect } from '../../../helpers/GlobalSearchHelper';
 import Drawer from '../../Drawer/Drawer';
@@ -26,12 +29,12 @@ const HeaderNotification = () => {
   const [isAlertModal, setIsAlertModal] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const { notificationData, alertDetail } = useSelector(
-    ({ headerNotificationReducer }) => headerNotificationReducer ?? {},
+    ({ headerNotificationReducer }) => headerNotificationReducer ?? {}
   );
 
   const { notificationList, page, pages, total, hasMoreData } = notificationData ?? {};
   const { notificationAlertDetailsLoader, markAllAsReadLoader } = useSelector(
-    ({ generalLoaderReducer }) => generalLoaderReducer ?? false,
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const sortedNotificationList = useMemo(() => {
@@ -46,14 +49,20 @@ const HeaderNotification = () => {
             };
           acc[moment(cur.createdAt).format('DD/MM/YYYY')].notifications.push(cur);
           return acc;
-        }, {}),
+        }, {})
       );
-      list?.sort((a, b) => moment(b.createdAt, 'DD/MM/YYYY').toDate() - moment(a.createdAt, 'DD/MM/YYYY').toDate());
+      list?.sort(
+        (a, b) =>
+          moment(b.createdAt, 'DD/MM/YYYY').toDate() - moment(a.createdAt, 'DD/MM/YYYY').toDate()
+      );
     }
     return list ?? [];
   }, [notificationList]);
 
-  const openNotificationDrawer = useCallback(value => setNotificationDrawer(value !== undefined ? value : e => !e), []);
+  const openNotificationDrawer = useCallback(
+    value => setNotificationDrawer(value !== undefined ? value : e => !e),
+    []
+  );
 
   const onClickNotification = useCallback(notification => {
     if (notification?.entityType === 'alert') {
@@ -74,7 +83,7 @@ const HeaderNotification = () => {
 
   const alertModalButtons = useMemo(
     () => [{ title: 'Close', buttonType: 'primary-1', onClick: onCloseAlertModal }],
-    [],
+    []
   );
 
   const NotificationDrawerHeader = () => {
@@ -146,13 +155,18 @@ const HeaderNotification = () => {
             ? sortedNotificationList?.map(notification => (
                 <div className="notification-set">
                   <div className="notification-set-title">
-                    {moment(notification?.createdAt, DATE_FORMAT).calendar(null, DATE_FORMAT_CONSTANT_FOR_CALENDER)}
+                    {moment(notification?.createdAt, DATE_FORMAT).calendar(
+                      null,
+                      DATE_FORMAT_CONSTANT_FOR_CALENDER
+                    )}
                   </div>
                   {notification?.notifications?.map(singleNotification => (
                     <div
                       className={`notification-item-wrapper ${
                         singleNotification?.entityType === 'alert'
-                          ? `${ALERT_TYPE_ROW[singleNotification?.entityId?.priority]} cursor-pointer`
+                          ? `${
+                              ALERT_TYPE_ROW[singleNotification?.entityId?.priority]
+                            } cursor-pointer`
                           : 'secondary-tag'
                       }`}
                       key={singleNotification?._id}
@@ -174,7 +188,9 @@ const HeaderNotification = () => {
                         <span
                           className="material-icons-round font-placeholder cursor-pointer"
                           onClick={() =>
-                            dispatch(e => markNotificationAsReadAndDeleteAction(e, singleNotification?._id))
+                            dispatch(e =>
+                              markNotificationAsReadAndDeleteAction(e, singleNotification?._id)
+                            )
                           }
                         >
                           cancel
@@ -186,7 +202,9 @@ const HeaderNotification = () => {
                   ))}
                 </div>
               ))
-            : !notificationList?.length && <div className="no-record-found">No new notification</div>}
+            : !notificationList?.length && (
+                <div className="no-record-found">No new notification</div>
+              )}
           {pages > page && <Loader />}
         </>
       </Drawer>
@@ -210,7 +228,9 @@ const HeaderNotification = () => {
                         {alertDetail?.generalDetails?.map(detail => (
                           <>
                             <span>{detail?.label}</span>
-                            <div className="alert-detail-value-field">{checkAlertValue(detail)}</div>
+                            <div className="alert-detail-value-field">
+                              {checkAlertValue(detail)}
+                            </div>
                           </>
                         ))}
                       </div>
@@ -223,7 +243,9 @@ const HeaderNotification = () => {
                         {alertDetail?.alertDetails?.map(detail => (
                           <>
                             <span>{detail?.label}</span>
-                            <div className="alert-detail-value-field">{checkAlertValue(detail)}</div>
+                            <div className="alert-detail-value-field">
+                              {checkAlertValue(detail)}
+                            </div>
                           </>
                         ))}
                       </div>

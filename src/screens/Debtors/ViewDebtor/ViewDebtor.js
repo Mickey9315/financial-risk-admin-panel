@@ -52,7 +52,7 @@ const ViewInsurer = () => {
 
   const backToDebtor = useCallback(() => {
     history.push(`/debtors/debtor/view/${id}`);
-    dispatch({type: DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE})
+    dispatch({ type: DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE });
   }, []);
 
   const backToDebtorList = useCallback(() => {

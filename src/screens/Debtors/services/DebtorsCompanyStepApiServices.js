@@ -18,6 +18,7 @@ const DebtorsCompanyStepApiServices = {
     }),
   deleteDebtorsPersonIndividualData: personId =>
     ApiService.deleteData(`${DEBTORS_URLS.COMPANY.DELETE_APPLICATION_PERSONS}${personId}`),
-    generateRandomRegistrationNumber: params => ApiService.getData(DEBTORS_URLS.COMPANY.GENERATE_RANDOM_REGISTRATION_NUMBER, {params})
+  generateRandomRegistrationNumber: params =>
+    ApiService.getData(DEBTORS_URLS.COMPANY.GENERATE_RANDOM_REGISTRATION_NUMBER, { params }),
 };
 export default DebtorsCompanyStepApiServices;

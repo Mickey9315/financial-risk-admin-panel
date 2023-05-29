@@ -60,9 +60,7 @@ export const processTableDataByType = ({ header, row, actions }) => {
       );
 
     case 'amount':
-      return currentData?.toString()?.trim()?.length > 0
-        ? NumberCommaSeparator(currentData)
-        : '-';
+      return currentData?.toString()?.trim()?.length > 0 ? NumberCommaSeparator(currentData) : '-';
 
     case 'redirectLink':
       return currentData && currentData.toString().trim().length > 0 ? (

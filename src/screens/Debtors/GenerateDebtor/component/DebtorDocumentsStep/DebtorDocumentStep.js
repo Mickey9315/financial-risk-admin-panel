@@ -50,10 +50,7 @@ const DebtorDocumentStep = () => {
   const { documentTypeList, uploadDocumentDebtorData } = useSelector(
     ({ debtorsManagement }) => debtorsManagement.editDebtor?.documents
   );
-  const documentData = useMemo(
-    () => uploadDocumentDebtorData,
-    [uploadDocumentDebtorData]
-  );
+  const documentData = useMemo(() => uploadDocumentDebtorData, [uploadDocumentDebtorData]);
 
   const dispatch = useDispatch();
   const [fileData, setFileData] = useState('');
@@ -74,10 +71,8 @@ const DebtorDocumentStep = () => {
     [selectedDebtorDocuments]
   );
 
-  const {
-    viewDebtorUploadDocumentButtonLoaderAction,
-    viewDebtorDeleteDocumentButtonLoaderAction,
-  } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
+  const { viewDebtorUploadDocumentButtonLoaderAction, viewDebtorDeleteDocumentButtonLoaderAction } =
+    useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
   const [uploadModel, setUploadModel] = useState(false);
   const [fileExtensionErrorMessage, setFileExtensionErrorMessage] = useState(false);
@@ -89,14 +84,14 @@ const DebtorDocumentStep = () => {
 
   const documentTypeOptions = useMemo(() => {
     const finalData = documentTypeList ?? [];
-    
-    try{
+
+    try {
       return finalData.map(e => ({
         name: 'documentType',
         label: e.documentTitle,
         value: e._id,
       }));
-    }catch(ex) {
+    } catch (ex) {
       return finalData?.docs.map(e => ({
         name: 'documentType',
         label: e.documentTitle,
@@ -207,12 +202,12 @@ const DebtorDocumentStep = () => {
           },
         };
         await dispatch(uploadDocument(formData, config));
-      dispatchSelectedDebtorDocuments({
+        dispatchSelectedDebtorDocuments({
           type: DEBTOR_DOCUMENT_REDUCER_ACTIONS.RESET_STATE,
         });
-      getDebtorDocumentDataList();
-      setFileData('');
-      toggleUploadModel();
+        getDebtorDocumentDataList();
+        setFileData('');
+        toggleUploadModel();
       } catch (e) {
         /**/
       }
@@ -236,11 +231,7 @@ const DebtorDocumentStep = () => {
         isLoading: viewDebtorUploadDocumentButtonLoaderAction,
       },
     ],
-    [
-      onCloseUploadDocumentButton,
-      onClickUploadDocument,
-      viewDebtorUploadDocumentButtonLoaderAction,
-    ]
+    [onCloseUploadDocumentButton, onClickUploadDocument, viewDebtorUploadDocumentButtonLoaderAction]
   );
 
   useEffect(() => {
@@ -336,7 +327,7 @@ const DebtorDocumentStep = () => {
               <th align="left">Description</th>
               <th />
             </tr>
-            {documentData?.map((document) => (
+            {documentData?.map(document => (
               <tr>
                 <td>
                   {document?.documentTypeId?.length > 50 ? (
