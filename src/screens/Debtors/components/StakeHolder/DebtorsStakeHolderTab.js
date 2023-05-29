@@ -355,7 +355,7 @@ const DebtorsStakeHolderTab = () => {
         type: 'search',
         name: 'abn',
         value: stakeHolder?.abn,
-        isOr: true
+        isOr: true,
       },
       {
         label: 'Trading Name',
@@ -589,14 +589,13 @@ const DebtorsStakeHolderTab = () => {
   const handleTextInputChange = useCallback(
     e => {
       const { name, value } = e.target;
-      if(name === 'driverLicenceNumber' && value.toString().trim().length > 0) {
-        if(ALPHA_NEUMERIC_REGEX.test(value)) {
+      if (name === 'driverLicenceNumber' && value.toString().trim().length > 0) {
+        if (ALPHA_NEUMERIC_REGEX.test(value)) {
           updateStakeHolderSingleDetail(name, value);
         }
+      } else {
+        updateStakeHolderSingleDetail(name, value);
       }
-     else {
-      updateStakeHolderSingleDetail(name, value);
-     }
     },
     [updateStakeHolderSingleDetail]
   );
@@ -895,17 +894,17 @@ const DebtorsStakeHolderTab = () => {
         case 'search':
           component = (
             <div className={input?.isOr && 'application-input-or is-or-person-step'}>
-            <Input
-              type="text"
-              name={input.name}
-              placeholder={input.placeholder}
-              suffix="search"
-              suffixClass="application-search-suffix"
-              suffixClick={handleSearchTextOnSearchClick}
-              value={input?.value ?? ''}
-              onKeyDown={handleSearchTextInputKeyDown}
-              onChange={handleTextInputChange}
-            />
+              <Input
+                type="text"
+                name={input.name}
+                placeholder={input.placeholder}
+                suffix="search"
+                suffixClass="application-search-suffix"
+                suffixClick={handleSearchTextOnSearchClick}
+                value={input?.value ?? ''}
+                onKeyDown={handleSearchTextInputKeyDown}
+                onChange={handleTextInputChange}
+              />
             </div>
           );
           break;
@@ -965,13 +964,12 @@ const DebtorsStakeHolderTab = () => {
             </div>
           );
           break;
-          case 'button':
-            component = 
-              !isAusOrNewStakeHolder && (
-                <Button buttonType="primary-small" title={input.label} onClick={input.onClick} />
-              )
-              break;
-            
+        case 'button':
+          component = !isAusOrNewStakeHolder && (
+            <Button buttonType="primary-small" title={input.label} onClick={input.onClick} />
+          );
+          break;
+
         case 'main-title':
           component = <div className="main-title">{input.label}</div>;
           break;
@@ -1020,9 +1018,8 @@ const DebtorsStakeHolderTab = () => {
 
       return (
         <>
-          {!['main-title', 'checkbox', 'blank', 'radio'].includes(input.type) && (
-            input.type === 'button' ? <div /> : <span>{input.label}</span>
-          )}
+          {!['main-title', 'checkbox', 'blank', 'radio'].includes(input.type) &&
+            (input.type === 'button' ? <div /> : <span>{input.label}</span>)}
           {['main-title', 'radio', 'blank', 'checkbox'].includes(input.type) ? (
             finalComponent
           ) : (

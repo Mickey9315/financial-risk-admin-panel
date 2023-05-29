@@ -15,14 +15,17 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
   let preparedData = {};
   if (data?.type === 'company') {
     if (['AUS', 'NZL'].includes(data?.stakeholderCountry?.value)) {
-      if ((!data?.abn || data?.abn?.trim()?.length <= 0) && (!data?.acn || data?.acn?.toString()?.trim()?.length <= 0)) {
+      if (
+        (!data?.abn || data?.abn?.trim()?.length <= 0) &&
+        (!data?.acn || data?.acn?.toString()?.trim()?.length <= 0)
+      ) {
         validated = false;
         errors.acn = 'Please enter ABN or ACN number before continue';
       }
       if (
         data?.abn &&
         (!NUMBER_REGEX.test(data?.abn) ||
-        data?.abn?.trim()?.length < 11 ||
+          data?.abn?.trim()?.length < 11 ||
           data?.abn?.trim()?.length > 13)
       ) {
         validated = false;
@@ -112,8 +115,11 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       errors.country = 'Please select country before continue';
     }
 
-    if (data?.dateOfBirth === undefined && data?.driverLicenceNumber?.toString()?.trim()?.length === 0 || 
-    (data?.dateOfBirth === undefined && data?.driverLicenceNumber === undefined)) {
+    if (
+      (data?.dateOfBirth === undefined &&
+        data?.driverLicenceNumber?.toString()?.trim()?.length === 0) ||
+      (data?.dateOfBirth === undefined && data?.driverLicenceNumber === undefined)
+    ) {
       validated = false;
       errors.driverLicenceNumber =
         'Please provide at least one - either a driver licence number or date of birth';

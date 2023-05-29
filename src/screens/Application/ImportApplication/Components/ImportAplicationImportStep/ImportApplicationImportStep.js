@@ -13,9 +13,10 @@ const ImportApplicationImportStep = () => {
   const hiddenFileInput = useRef(null);
 
   const { importApplication } = useSelector(({ application }) => application ?? {});
-  const { file, error } = useMemo(() => importApplication?.importFile ?? {}, [
-    importApplication?.importFile,
-  ]);
+  const { file, error } = useMemo(
+    () => importApplication?.importFile ?? {},
+    [importApplication?.importFile]
+  );
 
   const handleClick = () => {
     hiddenFileInput.current.click();

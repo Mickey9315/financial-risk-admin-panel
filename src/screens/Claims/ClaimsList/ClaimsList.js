@@ -74,7 +74,7 @@ const ClaimsList = () => {
     [claimsColumnList]
   );
 
-  const { page: paramPage, limit: paramLimit} = useQueryParams();
+  const { page: paramPage, limit: paramLimit } = useQueryParams();
 
   const getClaimsByFilter = useCallback(
     async (initialParams = { page: 1, limit: 15 }) => {
@@ -92,7 +92,7 @@ const ClaimsList = () => {
         type: LIST_FILTER_REDUCER_ACTIONS.APPLY_DATA,
       });
     },
-    [page, limit, {...tempFilter}]
+    [page, limit, { ...tempFilter }]
   );
 
   const onClickApplyFilter = useCallback(async () => {

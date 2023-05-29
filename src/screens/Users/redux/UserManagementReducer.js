@@ -91,7 +91,7 @@ export const userManagementColumnList = (state = initialUserColumnManagementStat
               ...e,
               isChecked: value,
             }
-          : e,
+          : e
       );
 
       return {
@@ -115,8 +115,8 @@ export const selectedUserData = (state = null, action) => {
           email: action?.data?.email,
           contactNumber: action?.data?.contactNumber,
           maxCreditLimit: action?.data?.maxCreditLimit,
-          clientIds: action?.data?.clientIds
-        }
+          clientIds: action?.data?.clientIds,
+        },
       };
     case USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UPDATE_USER_ACTION:
       return {

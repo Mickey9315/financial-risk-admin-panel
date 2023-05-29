@@ -76,8 +76,8 @@ const GlobalSearch = () => {
     if (value?.trim()?.length > 0 && headerSearchFocused) {
       setSearchStart(true);
       dispatch(searchGlobalData(value));
-    } 
-  }
+    }
+  };
 
   const handleOnSearchChange = useCallback(e => {
     setSearchedString(e?.target?.value);
@@ -112,39 +112,47 @@ const GlobalSearch = () => {
           onChange={handleOnSearchChange}
           value={searchedString}
         />
-        <span className="material-icons-round ga-search-icon" onClick={onSearchButtonClick}>search</span>
+        <span className="material-icons-round ga-search-icon" onClick={onSearchButtonClick}>
+          search
+        </span>
       </div>
       {searchStart && (
         <div className="header-search-results">
-            {gloabalSearchLoaderAction ? (<div className="global-search-loading-text">
-            Loading
-            <span className="loader__dot">.</span>
-            <span className="loader__dot">.</span>
-            <span className="loader__dot">.</span>
-            </div>) :
-           [searchStart && globalSearchResult?.length > 0 ? (
-             <ul>
-            {globalSearchResult?.map((searchResult, index) => (
-              <li
-                className={index === cursor && 'header-active-search'}
-                onClick={() => {
-                  onSearchResultSelection(searchResult);
-                  setSearchStart(false);
-                  setSearchedString('');
-                  setCursor(0);
-                }}
-              >
-                <span className="gs-value">{searchResult?.title}</span>
-                <span className="gs-tag">
-                  {searchResult?.module?.charAt(0)?.toUpperCase() +
-                    searchResult?.module?.substring(1)}
-                </span>
-              </li>
-            ))}
-          </ul>) : (
-            <div className="ml-10">No Record Found</div>
-          )]}
-          <div className="got-dummy-bottom-block"/>
+          {gloabalSearchLoaderAction ? (
+            <div className="global-search-loading-text">
+              Loading
+              <span className="loader__dot">.</span>
+              <span className="loader__dot">.</span>
+              <span className="loader__dot">.</span>
+            </div>
+          ) : (
+            [
+              searchStart && globalSearchResult?.length > 0 ? (
+                <ul>
+                  {globalSearchResult?.map((searchResult, index) => (
+                    <li
+                      className={index === cursor && 'header-active-search'}
+                      onClick={() => {
+                        onSearchResultSelection(searchResult);
+                        setSearchStart(false);
+                        setSearchedString('');
+                        setCursor(0);
+                      }}
+                    >
+                      <span className="gs-value">{searchResult?.title}</span>
+                      <span className="gs-tag">
+                        {searchResult?.module?.charAt(0)?.toUpperCase() +
+                          searchResult?.module?.substring(1)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="ml-10">No Record Found</div>
+              ),
+            ]
+          )}
+          <div className="got-dummy-bottom-block" />
         </div>
       )}
     </div>

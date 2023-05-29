@@ -139,8 +139,8 @@ const MyWorkTasks = () => {
           isCompleted: tempFilter?.isCompleted || undefined,
           assigneeId: (tempFilter?.assigneeId?.length ?? -1) > 0 ? tempFilter?.assigneeId : userId,
           startDate: tempFilter?.startDate
-          ? moment(tempFilter?.startDate)?.set({ hour: 23, minute: 59, second: 59 }).toDate()
-          : undefined,
+            ? moment(tempFilter?.startDate)?.set({ hour: 23, minute: 59, second: 59 }).toDate()
+            : undefined,
           endDate,
           columnFor: 'task',
           ...params,
@@ -467,7 +467,7 @@ const MyWorkTasks = () => {
       {!myWorkTasksListLoader ? (
         <>
           <div className="my-work-task-action-row">
-          <IconButton
+            <IconButton
               className="mr-10"
               buttonType="primary"
               title="cloud_download"

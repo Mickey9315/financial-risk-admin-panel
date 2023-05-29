@@ -45,7 +45,9 @@ export const reports = (state = initialReports, action) => {
         ...state.reportColumnList,
       };
       const { type, name, value } = action?.data;
-      columnList[type] = columnList[type].map(field => (field.name === name ? { ...field, isChecked: value } : field));
+      columnList[type] = columnList[type].map(field =>
+        field.name === name ? { ...field, isChecked: value } : field
+      );
       return {
         ...state,
         reportColumnList: columnList,

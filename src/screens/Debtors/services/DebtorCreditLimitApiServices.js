@@ -24,7 +24,7 @@ const DebtorCreditLimitApiServices = {
       url: `${DEBTORS_URLS.CREDIT_LIMIT.DOWNLOAD_DEBTOR_CREDIT_LIMIT_DECISION_LETTER}${id}`,
       method: 'GET',
       responseType: 'blob',
-      timeout: 60000
+      timeout: 60000,
     }),
 };
 export default DebtorCreditLimitApiServices;

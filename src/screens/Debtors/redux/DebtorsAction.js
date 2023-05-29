@@ -4,9 +4,10 @@ import DebtorsNotesApiService from '../services/DebtorsNotesApiService';
 import {
   DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS,
   DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS,
+  DEBTORS_FILTER_LIST_REDUX_CONSTANTS,
   DEBTORS_REDUX_CONSTANTS,
 } from './DebtorsReduxConstants';
-import DebtorsDocumentApiServices from '../services/DebtorsDocumentApiServices';
+import { DebtorsDocumentApiServices } from '../services/DebtorsDocumentApiServices';
 import DebtorTaskApiService from '../services/DebtorTaskApiServices';
 import DebtorApplicationApiServices from '../services/DebtorApplicationApiServices';
 import DebtorCreditLimitApiServices from '../services/DebtorCreditLimitApiServices';
@@ -21,7 +22,7 @@ import DebtorsReportsApiServices from '../services/DebtorsReportsApiServices';
 import { DebtorOverdueApiServices } from '../services/DebtorOverdueApiServices';
 import DebtorAlertsApiServices from '../services/DebtorAlertsApiServices';
 import { DashboardApiService } from '../../Dashboard/services/DashboardApiService';
-import ApplicationCompanyStepApiServices from '../../Application/services/ApplicationCompanyStepApiServices';
+import DebtorsCompanyStepApiServices from '../services/DebtorsCompanyStepApiServices';
 
 export const getDebtorsList = (params = { page: 1, limit: 15 }) => {
   return async dispatch => {
@@ -434,10 +435,10 @@ export const getDocumentTypeList = () => {
         listFor: 'debtor',
       };
 
-      const response = await DebtorsDocumentApiServices.getDocumentTypeList(params);
+      const response = await DebtorsDocumentApiServices.getDocumentTypeListData(params);
       if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENT_TYPE_LIST_USER_ACTION,
+          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_TYPE_LIST_DATA,
           data: response?.data?.data,
         });
       }
@@ -1707,17 +1708,344 @@ export const getDebtorTaskDropDownDataBySearch = options => {
 export const generateRandomRegistrationNumberForDebtorStakeholder = () => {
   return async dispatch => {
     try {
-      const response = await ApplicationCompanyStepApiServices.generateRandomRegistrationNumber();
-      if(response?.data?.status === 'SUCCESS') {
+      const response = await DebtorsCompanyStepApiServices.generateRandomRegistrationNumber();
+      if (response?.data?.status === 'SUCCESS') {
         dispatch({
-          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER,
-          data: response.data.data
-        })
-      return response.data.data;
+          type: DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER
+            .GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER,
+          data: response.data.data,
+        });
+        return response.data.data;
       }
-    } catch(e) {
+    } catch (e) {
       displayErrors(e);
     }
     return false;
-  }
-}
+  };
+};
+
+export const updateEditDebtorField = (stepName, name, value) => {
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_UPDATE_FIELD,
+      stepName,
+      name,
+      value,
+    });
+  };
+};
+
+export const changeEditDebtorFieldValue = (name, value) => {
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_CHANGE_FIELD_VALUE,
+      name,
+      value,
+    });
+  };
+};
+
+export const saveDebtorStepDataToBackend = data => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('generateDebtorsSaveAndNextButtonLoaderAction');
+      const response = await DebtorsApiServices.saveDebtorStepDataToBackend(data);
+      if (response?.data?.status === 'SUCCESS') {
+        if (response?.data?.data?.debtorStage) {
+          const { _id } = response?.data?.data;
+          dispatch(changeEditDebtorFieldValue('_id', _id));
+        }
+        successNotification(response?.data?.message || 'Debtors step saved successfully');
+        stopGeneralLoaderOnSuccessOrFail('generateDebtorsSaveAndNextButtonLoaderAction');
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('generateDebtorsSaveAndNextButtonLoaderAction');
+      if (e?.response?.data?.messageCode === 'ENTITY_TYPE_CHANGED') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.ENTITY_TYPE_CHANGED,
+          data: { data, openModal: true },
+        });
+      } else displayErrors(e);
+      throw Error();
+    }
+  };
+};
+
+export const updateEditDebtorData = (stepName, data) => {
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_UPDATE_ALL_DATA,
+      stepName,
+      data,
+    });
+  };
+};
+
+export const generateRandomRegistrationNumber = params => {
+  return async dispatch => {
+    try {
+      const response = await DebtorsCompanyStepApiServices.generateRandomRegistrationNumber(params);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.SET_RANDOM_GENERATED_REGISTRATION_NUMBER,
+          data: response.data.data,
+        });
+        return response.data.data;
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+    return false;
+  };
+};
+
+export const getDebtorCompanyDataFromABNOrACN = params => {
+  return async dispatch => {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const response = await DebtorsCompanyStepApiServices.getApplicationCompanyDataFromABNorACN({
+        ...params,
+        step: 'company',
+      });
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS,
+        });
+        return response.data;
+      }
+    } catch (e) {
+      displayErrors(e);
+      throw e;
+    }
+    return null;
+  };
+};
+
+export const getDebtorCompanyDataFromDebtor = (id, params) => {
+  return async dispatch => {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const finalParams = {
+        ...params,
+        requestFrom: 'application',
+      };
+      const response = await DebtorsCompanyStepApiServices.getApplicationCompanyDataFromDebtor(
+        id,
+        finalParams
+      );
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_WIPE_OUT_OLD_DATA_ON_SUCCESS,
+          isDebtor: true,
+        });
+        return response.data;
+      }
+    } catch (e) {
+      throw e;
+    }
+
+    return null;
+  };
+};
+
+export const getDebtorCompanyDropDownData = () => {
+  return async dispatch => {
+    try {
+      const response = await DebtorsCompanyStepApiServices.getDebtorsCompanyStepDropdownData();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_DROP_DOWN_DATA,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const getDebtorCompanyStepDropDownDataBySearch = options => {
+  return async dispatch => {
+    try {
+      const response = await DashboardApiService.getEntitiesBySearch({
+        ...options,
+        isForRisk: true,
+      });
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_SEARCH_DROP_DOWN_DATA,
+          data: response?.data?.data,
+          name: options.entityType,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const getDebtorDetail = debtorId => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('generateDebtorPageLoaderAction');
+      const response = await DebtorsApiServices.getDebtorDetail(debtorId);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.DEBTOR_DETAILS,
+          data: response?.data?.data,
+        });
+        stopGeneralLoaderOnSuccessOrFail('generateDebtorPageLoaderAction');
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('generateDebtorPageLoaderAction');
+      displayErrors(e);
+    }
+  };
+};
+
+export const getDebtorDocumentDataList = id => {
+  return async dispatch => {
+    try {
+      const param = {
+        documentFor: 'debtor',
+        requestFrom: 'debtor',
+      };
+      const response = await DebtorsDocumentApiServices.getDebtorDocumentsList(id, param);
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA,
+          data: response?.data?.data && response?.data?.data.docs ? response?.data?.data.docs : [],
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const getDebtorFilter = () => {
+  return async dispatch => {
+    try {
+      const response = await DebtorsApiServices.getDebtorFilter();
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_FILTER_LIST_REDUX_CONSTANTS.DEBTOR_FILTER_LIST_ACTION,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  };
+};
+
+export const resetEditDebtorFieldValue = {
+  type: DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_RESET_DATA,
+};
+
+export const searchDebtorCompanyEntityName = params => {
+  return async dispatch => {
+    try {
+      dispatch({
+        type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_ENTITY_TYPE_DATA,
+        data: {
+          isLoading: params?.page === 0 && true,
+          error: false,
+          errorMessage: '',
+        },
+      });
+      const response = await DebtorsCompanyStepApiServices.searchDebtorsCompanyEntityName(params);
+
+      if (response?.data?.status === 'SUCCESS') {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_ENTITY_TYPE_DATA,
+          data: {
+            isLoading: false,
+            error: false,
+            errorMessage: '',
+            data: response?.data?.data,
+          },
+        });
+      }
+    } catch (e) {
+      if (e.response && e.response.data) {
+        if (e.response?.data?.status === undefined) {
+          errorNotification('It seems like server is down, Please try again later.');
+        } else if (e.response?.data?.status === 'INTERNAL_SERVER_ERROR') {
+          errorNotification('Internal server error');
+        } else {
+          dispatch({
+            type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_ENTITY_TYPE_DATA,
+            data: {
+              isLoading: false,
+              error: true,
+              errorMessage: e.response.data.message ?? 'Please try again later.',
+            },
+          });
+        }
+      } else {
+        dispatch({
+          type: DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_ENTITY_TYPE_DATA,
+          data: {
+            isLoading: false,
+            error: true,
+            errorMessage: 'ABR Lookup is not responding, please try again.',
+            data: [],
+          },
+        });
+      }
+    }
+  };
+};
+
+export const addPersonDetail = type => {
+  const companyData = {
+    type: 'company',
+    stakeholderCountry: [],
+    abn: '',
+    acn: '',
+    entityType: '',
+    entityName: '',
+    tradingName: '',
+    errors: {},
+  };
+
+  const individualData = {
+    type: 'individual',
+    title: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    dateOfBirth: '',
+    driverLicenceNumber: '',
+    phoneNumber: '',
+    mobileNumber: '',
+    email: '',
+    allowToCheckCreditHistory: false,
+    property: '',
+    unitNumber: '',
+    streetNumber: '',
+    streetName: '',
+    streetType: '',
+    suburb: '',
+    state: '',
+    country: '',
+    postCode: '',
+    stakeholderCountry: {
+      label: 'Australia',
+      name: 'country',
+      value: 'AUS',
+    },
+    errors: {},
+  };
+  const data = type === 'individual' ? individualData : companyData;
+  return dispatch => {
+    dispatch({
+      type: DEBTORS_REDUX_CONSTANTS.PERSON.ADD_DEBTOR_PERSON,
+      data,
+    });
+  };
+};

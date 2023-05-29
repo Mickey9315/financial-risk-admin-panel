@@ -20,14 +20,16 @@ const SettingsApiIntegrationTab = () => {
     ({ settingReducer }) => settingReducer?.apiIntegration ?? {}
   );
 
-  const apiIntegrationDetails = useMemo(() => apiIntegrationData?.integration ?? {}, [
-    apiIntegrationData,
-  ]);
+  const apiIntegrationDetails = useMemo(
+    () => apiIntegrationData?.integration ?? {},
+    [apiIntegrationData]
+  );
 
   const [errorElementList, setErrorElementList] = useState([]);
-  const { illion, rss, abn, nzbn } = useMemo(() => apiIntegrationDetails ?? {}, [
-    apiIntegrationDetails,
-  ]);
+  const { illion, rss, abn, nzbn } = useMemo(
+    () => apiIntegrationDetails ?? {},
+    [apiIntegrationDetails]
+  );
 
   const settingsApiIntegrationRow = useMemo(
     () => [

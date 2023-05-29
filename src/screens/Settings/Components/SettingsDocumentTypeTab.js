@@ -176,10 +176,10 @@ const SettingsDocumentTypeTab = () => {
     }
   }, [documentFor, documentTitle, callBackOnAdd]);
 
-const closeAddDocumentType = () => {
-  toggleAddDocModal();
-  dispatch(resetAddDocType())
-}
+  const closeAddDocumentType = () => {
+    toggleAddDocModal();
+    dispatch(resetAddDocType());
+  };
 
   const deleteDocument = useCallback(
     data => {

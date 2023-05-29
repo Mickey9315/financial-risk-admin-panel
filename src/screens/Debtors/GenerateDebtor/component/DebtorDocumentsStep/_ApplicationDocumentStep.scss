@@ -1,0 +1,22 @@
+.documents-table {
+  width: 100%;
+  font-size: $subtitle;
+  color: $field-color;
+  border-collapse: collapse;
+  td,
+  th {
+    padding: 0.313rem 1.25rem;
+  }
+}
+
+.documents-table tr:nth-child(even) {
+  background-color: $background-color;
+}
+
+.documents-table tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.upload-document-row {
+  margin-bottom: 30px;
+}

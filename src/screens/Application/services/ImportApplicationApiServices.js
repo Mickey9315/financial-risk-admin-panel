@@ -7,7 +7,7 @@ const ImportApplicationApiServices = {
       url: `${APPLICATION_URLS.IMPORT_APPLICATION_URLS.DOWNLOAD_SAMPLE}`,
       method: 'GET',
       responseType: 'blob',
-      timeout: 60000
+      timeout: 60000,
     }),
   deleteApplicationDump: id =>
     ApiService.deleteData(`${APPLICATION_URLS.IMPORT_APPLICATION_URLS.UPLOAD_DUMP}${id}`),
