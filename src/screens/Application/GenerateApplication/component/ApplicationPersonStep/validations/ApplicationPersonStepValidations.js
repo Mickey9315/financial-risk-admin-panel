@@ -138,10 +138,10 @@ export const applicationPersonStepValidation = async (dispatch, data, editApplic
           validated = false;
           errors.streetNumber = 'Please enter street number before continue';
         }
-        if (item?.streetNumber && !NUMBER_REGEX.test(item?.streetNumber)) {
-          validated = false;
-          errors.streetNumber = 'Street number should be number';
-        }
+        // if (item?.streetNumber && !NUMBER_REGEX.test(item?.streetNumber)) {
+        //   validated = false;
+        //   errors.streetNumber = 'Street number should be number';
+        // }
         if (!item?.postCode || item?.postCode?.length <= 0) {
           validated = false;
           errors.postCode = 'Please enter post code before continue';
