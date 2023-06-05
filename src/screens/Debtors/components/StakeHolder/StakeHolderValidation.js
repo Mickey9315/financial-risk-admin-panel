@@ -134,10 +134,10 @@ export const stakeHolderValidation = async (dispatch, data, debtorData, callBack
       validated = false;
       errors.streetNumber = 'Please enter street number before continue';
     }
-    if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber)) {
-      validated = false;
-      errors.streetNumber = 'Street number should be number';
-    }
+    // if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber)) {
+    //   validated = false;
+    //   errors.streetNumber = 'Street number should be number';
+    // }
     if (!data?.postCode || data?.postCode?.length <= 0) {
       validated = false;
       errors.postCode = 'Please enter post code before continue';

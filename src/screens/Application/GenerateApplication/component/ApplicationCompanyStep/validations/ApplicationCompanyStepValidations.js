@@ -69,10 +69,10 @@ export const applicationCompanyStepValidations = async (dispatch, data, editAppl
     validated = false;
     errors.country = 'Please select country before continue';
   }
-  if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber?.toString()?.trim())) {
-    validated = false;
-    errors.streetNumber = 'Street number should be number';
-  }
+  // if (data?.streetNumber && !NUMBER_REGEX.test(data?.streetNumber?.toString()?.trim())) {
+  //   validated = false;
+  //   errors.streetNumber = 'Street number should be number';
+  // }
   if (
     (!data?.state && data?.entityType?.value === 'TRUST') ||
     (data?.state?.toString().trim().length <= 0 && data?.entityType?.value === 'TRUST')
