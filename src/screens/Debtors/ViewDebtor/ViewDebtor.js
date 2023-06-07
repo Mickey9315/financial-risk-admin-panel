@@ -52,7 +52,7 @@ const ViewInsurer = () => {
 
   const backToDebtor = useCallback(() => {
     history.push(`/debtors/debtor/view/${id}`);
-    dispatch({type: DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE})
+    dispatch({ type: DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE });
   }, []);
 
   const backToDebtorList = useCallback(() => {
@@ -123,6 +123,14 @@ const ViewInsurer = () => {
         type: 'text',
         name: 'debtorCode',
         value: debtorData?.debtorCode || '-',
+      },
+      {
+        isEditable: false,
+        label: 'Status',
+        placeholder: '-',
+        type: 'text',
+        name: 'status',
+        value: debtorData?.status || 'SUBMITTED',
       },
       {
         isEditable: false,

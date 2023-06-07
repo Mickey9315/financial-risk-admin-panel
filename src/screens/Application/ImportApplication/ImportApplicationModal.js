@@ -48,9 +48,7 @@ const ImportApplicationModal = () => {
       debtorId: applicationListFilters?.debtorId,
 
       status:
-        (paramStatus?.trim()?.length ?? -1) > 0
-          ? paramStatus
-          : applicationListFilters?.status,
+        (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : applicationListFilters?.status,
       minCreditLimit:
         (paramMinCreditLimit?.trim()?.length ?? -1) > 0
           ? paramMinCreditLimit
@@ -65,7 +63,7 @@ const ImportApplicationModal = () => {
 
     if (activeStep >= 2 && activeStep <= 4) dispatch(deleteDumpFromBackend(importId));
 
-    if (activeStep === 4) dispatch(getApplicationsListByFilter({...params, ...filters}));
+    if (activeStep === 4) dispatch(getApplicationsListByFilter({ ...params, ...filters }));
     dispatch(resetImportApplicationStepper());
     toggleImportApplicationModal();
   }, [activeStep, importId]);

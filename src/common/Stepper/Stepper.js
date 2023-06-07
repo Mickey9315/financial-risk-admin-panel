@@ -83,15 +83,16 @@ const Stepper = props => {
       <div className="step-content">{children}</div>
       <div className="stepper-buttons-row">
         <div>
-          {steps?.[activeStep]?.name === 'partners' && steps?.[activeStep]?.text !== 'Sole Trader' && (
-            <Button
-              buttonType="secondary"
-              title={getLabelFromValues(entityType, entityTypeMapperObjectForPersonStep)}
-              onClick={() => {
-                addStepClick();
-              }}
-            />
-          )}
+          {steps?.[activeStep]?.name === 'partners' &&
+            steps?.[activeStep]?.text !== 'Sole Trader' && (
+              <Button
+                buttonType="secondary"
+                title={getLabelFromValues(entityType, entityTypeMapperObjectForPersonStep)}
+                onClick={() => {
+                  addStepClick();
+                }}
+              />
+            )}
         </div>
         <div className="d-flex">
           {activeStep > 0 && (

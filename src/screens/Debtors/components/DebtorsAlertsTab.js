@@ -29,9 +29,10 @@ const DebtorsAlertsTab = () => {
     ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
-  const { total, headers, pages, docs, page, limit } = useMemo(() => alertsList ?? {}, [
-    alertsList,
-  ]);
+  const { total, headers, pages, docs, page, limit } = useMemo(
+    () => alertsList ?? {},
+    [alertsList]
+  );
 
   const getDebtorAlertsList = useCallback(
     (params = {}, cb) => {

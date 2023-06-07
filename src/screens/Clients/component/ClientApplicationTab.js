@@ -32,12 +32,13 @@ const ClientApplicationTab = () => {
   const {
     viewClientApplicationColumnSaveButtonLoaderAction,
     viewClientApplicationColumnResetButtonLoaderAction,
-    ClientDownloadApplicationCSVButtonLoaderAction
+    ClientDownloadApplicationCSVButtonLoaderAction,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { total, headers, pages, docs, page, limit } = useMemo(() => applicationList ?? {}, [
-    applicationList,
-  ]);
+  const { total, headers, pages, docs, page, limit } = useMemo(
+    () => applicationList ?? {},
+    [applicationList]
+  );
 
   const getClientApplicationList = useCallback(
     (params = {}, cb) => {
@@ -197,7 +198,11 @@ const ClientApplicationTab = () => {
             placeholder="Search here"
             onKeyUp={checkIfEnterKeyPressed}
           />
-          <IconButton buttonType="primary" title="format_line_spacing" onClick={toggleCustomField} />
+          <IconButton
+            buttonType="primary"
+            title="format_line_spacing"
+            onClick={toggleCustomField}
+          />
           <IconButton
             buttonType="primary-1"
             title="cloud_download"
@@ -213,7 +218,13 @@ const ClientApplicationTab = () => {
         docs.length > 0 ? (
           <>
             <div className="tab-table-container">
-              <Table align="left" valign="center" tableClass="white-header-table" data={docs} headers={headers} />
+              <Table
+                align="left"
+                valign="center"
+                tableClass="white-header-table"
+                data={docs}
+                headers={headers}
+              />
             </div>
             <Pagination
               className="common-list-pagination"

@@ -29,8 +29,8 @@ export const getClientList = (params = { page: 1, limit: 15 }) => {
       const finalParams = {
         ...params,
         riskAnalystId: params?.riskAnalystId?.value,
-        serviceManagerId: params?.serviceManagerId?.value
-      }
+        serviceManagerId: params?.serviceManagerId?.value,
+      };
       startGeneralLoaderOnRequest('clientListLoader');
       const response = await ClientApiService.getAllClientList(finalParams);
       if (response?.data?.status === 'SUCCESS') {
@@ -1524,4 +1524,3 @@ export const downloadClientTabApplicationCSV = id => {
     return false;
   };
 };
-

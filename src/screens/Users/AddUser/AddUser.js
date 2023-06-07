@@ -152,7 +152,7 @@ const AddUser = () => {
   const onChangeUserAccess = useCallback((module, access) => {
     const { name } = module;
     const { value } = access;
-    
+
     const hasFullAccess = module.accessTypes.includes('full-access');
     const hasReadAccess = module.accessTypes.includes('read');
     const hasWriteAccess = module.accessTypes.includes('write');
@@ -214,12 +214,16 @@ const AddUser = () => {
     } else {
       try {
         if (action === 'add') {
-          const response = await dispatch(addNewUser({...selectedUser, duplicateUserDetails: undefined}));
+          const response = await dispatch(
+            addNewUser({ ...selectedUser, duplicateUserDetails: undefined })
+          );
           if (response) {
             history.replace(`/users/user/view/${response}`);
           }
         } else if (action === 'edit') {
-          await dispatch(updateUserDetails(id, {...selectedUser, duplicateUserDetails: undefined}));
+          await dispatch(
+            updateUserDetails(id, { ...selectedUser, duplicateUserDetails: undefined })
+          );
           history.replace(`/users/user/view/${id}`);
         }
       } catch (e) {
@@ -302,13 +306,16 @@ const AddUser = () => {
       history.replace('/users');
     } else {
       history.replace(`/users/user/view/${id}`);
-      dispatch({type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UNDO_SELECTED_USER_DATA_ON_CLOSE})
+      dispatch({
+        type: USER_MANAGEMENT_CRUD_REDUX_CONSTANTS.USER_MANAGEMENT_UNDO_SELECTED_USER_DATA_ON_CLOSE,
+      });
     }
   }, [history, id]);
 
   return (
     <>
-      {!viewUserPageLoaderAction ? [(
+      {!viewUserPageLoaderAction ? (
+        [
           !_.isEmpty(selectedUser) ? (
             <>
               {showModal && (
@@ -442,7 +449,9 @@ const AddUser = () => {
                   </div>
                   {role !== 'superAdmin' && (
                     <div className="common-detail-field user-select-client">
-                      <div className="common-detail-title">{action === 'view' ? 'Selected Clients' : 'Select Client'}</div>
+                      <div className="common-detail-title">
+                        {action === 'view' ? 'Selected Clients' : 'Select Client'}
+                      </div>
                       <Select
                         isMulti
                         value={clientIds}
@@ -496,8 +505,9 @@ const AddUser = () => {
             </>
           ) : (
             id !== 'new' && <div className="no-record-found">No record found</div>
-          )
-      )] : (
+          ),
+        ]
+      ) : (
         <Loader />
       )}
     </>

@@ -124,7 +124,7 @@ export const addOverdueValidations = async (
     ninetyPlusDaysAmount,
     outstandingAmount,
     status,
-    index
+    index,
   } = data;
   preparedData = {
     debtorId,

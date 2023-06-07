@@ -46,7 +46,7 @@ const Tab = props => {
           tabs.map((tab, index) => (
             <div
               key={tab}
-              className={`tab ${activeTabIndex === index && 'active-tab'}`} 
+              className={`tab ${activeTabIndex === index && 'active-tab'}`}
               onClick={() => tabActive(index)}
             >
               {tab}

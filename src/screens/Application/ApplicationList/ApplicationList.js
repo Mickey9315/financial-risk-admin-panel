@@ -104,7 +104,6 @@ const ApplicationList = () => {
       debtorId:
         tempFilter?.debtorId?.value?.toString()?.trim()?.length > 0
           ? tempFilter?.debtorId
-
           : undefined,
       status: tempFilter?.status?.toString()?.trim()?.length > 0 ? tempFilter?.status : undefined,
       minCreditLimit:
@@ -385,9 +384,7 @@ const ApplicationList = () => {
       debtorId: applicationListFilters?.debtorId,
 
       status:
-        (paramStatus?.trim()?.length ?? -1) > 0
-          ? paramStatus
-          : applicationListFilters?.status,
+        (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : applicationListFilters?.status,
       minCreditLimit:
         (paramMinCreditLimit?.trim()?.length ?? -1) > 0
           ? paramMinCreditLimit
@@ -432,7 +429,6 @@ const ApplicationList = () => {
           : undefined,
       clientId:
         finalFilter?.clientId?.value?.toString()?.trim()?.length > 0
-
           ? finalFilter?.clientId?.value
           : undefined,
       debtorId:
@@ -453,7 +449,7 @@ const ApplicationList = () => {
     },
     [page, limit, { ...finalFilter }]
   );
- 
+
   const applicationStatusSelectedValue = useMemo(() => {
     const foundValue = dropdownData?.applicationStatus?.filter(e => {
       return tempFilter?.status?.split(',').includes(e.value);
@@ -476,7 +472,7 @@ const ApplicationList = () => {
         const finalFilters = {
           ...appliedFilters,
           clientId: appliedFilters?.clientId?.value,
-          debtorId: appliedFilters?.debtorId?.value
+          debtorId: appliedFilters?.debtorId?.value,
         };
         const response = await applicationDownloadAction(finalFilters);
         if (response) downloadAll(response);
@@ -509,26 +505,33 @@ const ApplicationList = () => {
   const [applicationId, setApplicationId] = useState('');
   const toggleConfirmationModal = useCallback(
     value => setShowConfirmModal(value !== undefined ? value : e => !e),
-    [setShowConfirmModal],
+    [setShowConfirmModal]
   );
 
   const { generateApplicationDeleteButtonLoaderAction } = useSelector(
-    ({ generalLoaderReducer }) => generalLoaderReducer ?? false,
+    ({ generalLoaderReducer }) => generalLoaderReducer ?? false
   );
 
   const callBack = useCallback(() => {
     toggleConfirmationModal();
     const filters = {
       entityType:
-        (paramEntityType?.trim()?.length ?? -1) > 0 ? paramEntityType : applicationListFilters?.entityType ?? undefined,
+        (paramEntityType?.trim()?.length ?? -1) > 0
+          ? paramEntityType
+          : applicationListFilters?.entityType ?? undefined,
       clientId: applicationListFilters?.clientId,
       debtorId: applicationListFilters?.debtorId,
 
-      status: (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : applicationListFilters?.status,
+      status:
+        (paramStatus?.trim()?.length ?? -1) > 0 ? paramStatus : applicationListFilters?.status,
       minCreditLimit:
-        (paramMinCreditLimit?.trim()?.length ?? -1) > 0 ? paramMinCreditLimit : applicationListFilters?.minCreditLimit,
+        (paramMinCreditLimit?.trim()?.length ?? -1) > 0
+          ? paramMinCreditLimit
+          : applicationListFilters?.minCreditLimit,
       maxCreditLimit:
-        (paramMaxCreditLimit?.trim()?.length ?? -1) > 0 ? paramMaxCreditLimit : applicationListFilters?.maxCreditLimit,
+        (paramMaxCreditLimit?.trim()?.length ?? -1) > 0
+          ? paramMaxCreditLimit
+          : applicationListFilters?.maxCreditLimit,
       startDate: paramStartDate || applicationListFilters?.startDate,
       endDate: paramEndDate || applicationListFilters?.endDate,
     };
@@ -558,9 +561,8 @@ const ApplicationList = () => {
         isLoading: generateApplicationDeleteButtonLoaderAction,
       },
     ],
-    [toggleConfirmationModal, applicationId, generateApplicationDeleteButtonLoaderAction],
+    [toggleConfirmationModal, applicationId, generateApplicationDeleteButtonLoaderAction]
   );
-
 
   const deleteApplication = appId => {
     setApplicationId(appId);
@@ -634,8 +636,14 @@ const ApplicationList = () => {
           )}
 
           {showConfirmModal && (
-            <Modal header="Delete Application" buttons={deleteButtons} hideModal={toggleConfirmationModal}>
-              <span className="confirmation-message">Are you sure you want to delete this Application?</span>
+            <Modal
+              header="Delete Application"
+              buttons={deleteButtons}
+              hideModal={toggleConfirmationModal}
+            >
+              <span className="confirmation-message">
+                Are you sure you want to delete this Application?
+              </span>
             </Modal>
           )}
 

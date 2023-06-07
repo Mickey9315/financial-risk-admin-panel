@@ -52,7 +52,7 @@ IconButton.propTypes = {
   isLoading: PropTypes.bool,
   isBadge: PropTypes.bool,
   badgeCount: PropTypes.number,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
 };
 
 IconButton.defaultProps = {
@@ -62,7 +62,7 @@ IconButton.defaultProps = {
   isLoading: false,
   isBadge: false,
   badgeCount: 0,
-  disabled: false
+  disabled: false,
 };
 
 export default IconButton;

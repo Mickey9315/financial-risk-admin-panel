@@ -161,6 +161,63 @@ const initialDebtorState = {
     alertsList: {},
     alertDetail: {},
   },
+  editDebtor: {
+    debtorStage: 0,
+    _id: '',
+    entityType: '',
+    company: {
+      onEntityChange: { data: {}, openModal: false },
+      clientId: [],
+      postCode: '',
+      state: [],
+      country: {
+        label: 'Australia',
+        name: 'country',
+        value: 'AUS',
+      },
+      suburb: '',
+      streetType: [],
+      streetName: '',
+      streetNumber: '',
+      unitNumber: '',
+      property: '',
+      address: '',
+      entityType: [],
+      phoneNumber: '',
+      entityName: [],
+      acn: '',
+      abn: '',
+      tradingName: '',
+      debtorId: [],
+      clientList: [],
+      wipeOutDetails: false,
+      registrationNo: '',
+      errors: {},
+      isActive: true,
+    },
+    documents: {
+      documentTypeList: { docs: [], total: 1, limit: 15, page: 1, pages: 1 },
+      uploadDocumentDebtorData: [],
+    },
+  },
+  companyData: {
+    dropdownData: {
+      clients: [],
+      debtors: [],
+      streetType: [],
+      australianStates: [],
+      newZealandStates: [],
+      entityType: [],
+      countryList: [],
+    },
+    entityNameSearch: {
+      isLoading: false,
+      error: false,
+      errorMessage: '',
+      data: [],
+      hasMoreData: false,
+    },
+  },
 };
 
 export const debtorsManagement = (state = initialDebtorState, action) => {
@@ -180,6 +237,49 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         ...state,
         debtorsList: { ...state?.debtorsList, isLoading: false, error: null },
       };
+
+    // edit debtor
+    case DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_CHANGE_FIELD_VALUE:
+      return {
+        ...state,
+        editDebtor: {
+          ...state?.editDebtor,
+          [action?.name]: action?.value,
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_RESET_DATA: {
+      return {
+        ...state,
+        editDebtor: {
+          ...initialDebtorState?.editDebtor,
+        },
+      };
+    }
+    case DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_UPDATE_ALL_DATA:
+      return {
+        ...state,
+        editDebtor: {
+          ...state?.editDebtor,
+          [action?.stepName]: { ...state?.editDebtor?.[action.stepName], ...action?.data },
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.EDIT_DEBTOR.DEBTOR_COMPANY_EDIT_DEBTOR_UPDATE_FIELD:
+      return {
+        ...state,
+        editDebtor: {
+          ...state?.editDebtor,
+          [action?.stepName]: {
+            ...state?.editDebtor?.[action?.stepName],
+            [action?.name]: action?.value,
+          },
+        },
+      };
+    case DEBTORS_REDUX_CONSTANTS.DEBTOR_DETAILS:
+      return {
+        ...state,
+        editDebtor: { ...state?.editDebtor, ...action?.data },
+      };
+
     case DEBTORS_MANAGEMENT_COLUMN_LIST_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_COLUMN_LIST_ACTION:
       return {
         ...state,
@@ -229,16 +329,16 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           contactNumber: action?.data?.contactNumber,
           unitNumber: action?.data?.unitNumber,
           streetName: action?.data?.streetName,
-          suburb: action?.data?.suburb
-        }
+          suburb: action?.data?.suburb,
+        },
       };
 
-      case DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE:
-        return {
-          ...state,
-          selectedDebtorData: {
-            ...state?.selectedDebtorData,
-            tradingName: state?.duplicateSelectedDebtorData?.tradingName,
+    case DEBTORS_REDUX_CONSTANTS.DEBTOR_UNDO_SELECTED_USER_DATA_ON_CLOSE:
+      return {
+        ...state,
+        selectedDebtorData: {
+          ...state?.selectedDebtorData,
+          tradingName: state?.duplicateSelectedDebtorData?.tradingName,
           property: state?.duplicateSelectedDebtorData?.property,
           streetNumber: state?.duplicateSelectedDebtorData?.streetNumber,
           streetType: state?.duplicateSelectedDebtorData?.streetType,
@@ -246,9 +346,9 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           contactNumber: state?.duplicateSelectedDebtorData?.contactNumber,
           unitNumber: state?.duplicateSelectedDebtorData?.unitNumber,
           streetName: state?.duplicateSelectedDebtorData?.streetName,
-          suburb: state?.duplicateSelectedDebtorData?.suburb
-          }
-        }
+          suburb: state?.duplicateSelectedDebtorData?.suburb,
+        },
+      };
 
     case DEBTOR_MANAGEMENT_CRUD_REDUX_CONSTANTS.DEBTORS_MANAGEMENT_DROPDOWN_LIST_REDUX_CONSTANTS: {
       const dropdownData = { ...state?.dropdownData };
@@ -399,14 +499,38 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
     }
-
-    case DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DEBTOR_ACTION: {
+    // Documents
+    case DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DOCUMENT_TYPE_LIST_DATA:
       return {
         ...state,
-        documents: {
-          ...state?.documents,
-          uploadDocumentData: action?.data,
+        editDebtor: {
+          ...state?.editDebtor,
+          documents: {
+            ...state?.editDebtor?.documents,
+            documentTypeList: action?.data,
+          },
         },
+      };
+
+    case DEBTORS_REDUX_CONSTANTS.DOCUMENTS.UPLOAD_DOCUMENT_DEBTOR_ACTION: {
+      const editDebtor = { ...state?.editDebtor };
+      const documents = { ...editDebtor?.documents };
+      const uploadDocumentDebtorData = [...documents?.uploadDocumentDebtorData];
+
+      return {
+        ...state,
+        editDebtor: {
+          ...editDebtor,
+          documents: {
+            ...documents,
+            // uploadDocumentDebtorData,
+            uploadDocumentDebtorData: [...uploadDocumentDebtorData, action?.data],
+          },
+        },
+        // documents: {
+        //   ...state?.documents,
+        //   uploadDocumentData: action?.data,
+        // },
       };
     }
 
@@ -909,17 +1033,17 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
         },
       };
 
-    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER: 
+    case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.GENERATE_RANDOM_REGISTRATION_NUMBER_FOR_STAKEHOLDER:
       return {
         ...state,
         stakeHolder: {
           ...state.stakeHolder,
           stakeHolderDetails: {
             ...state.stakeHolder.stakeHolderDetails,
-            registrationNumber: action?.data
-          }
-        }
-      }
+            registrationNumber: action?.data,
+          },
+        },
+      };
 
     case DEBTORS_REDUX_CONSTANTS.STAKE_HOLDER.STAKE_HOLDER_CRUD.GET_STAKEHOLDER_DROPDOWN_DATA: {
       const dropDownData = { ...state?.stakeHolder?.stakeHolderDropDownData };
@@ -1091,6 +1215,22 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           alertDetail: action?.data,
         },
       };
+    case DEBTORS_REDUX_CONSTANTS.DOCUMENTS.DEBTOR_DOCUMENT_GET_UPLOAD_DOCUMENT_DATA: {
+      const editDebtor = { ...state?.editDebtor };
+      const documents = { ...editDebtor?.documents };
+      const uploadDocumentDebtorData = [...action?.data];
+
+      return {
+        ...state,
+        editDebtor: {
+          ...editDebtor,
+          documents: {
+            ...documents,
+            uploadDocumentDebtorData,
+          },
+        },
+      };
+    }
     case DEBTORS_REDUX_CONSTANTS.ALERTS.CLEAR_DEBTOR_ALERTS_DETAILS:
       return {
         ...state,
@@ -1099,7 +1239,25 @@ export const debtorsManagement = (state = initialDebtorState, action) => {
           alertDetail: {},
         },
       };
-
+    // Company step
+    case DEBTORS_REDUX_CONSTANTS.COMPANY.DEBTOR_COMPANY_DROP_DOWN_DATA: {
+      const dropdownData = { ...state?.companyData?.dropdownData };
+      Object.entries(action?.data)?.forEach(([key, value]) => {
+        dropdownData[key] = value.data.map(entity => ({
+          label: entity.name,
+          name: value.field,
+          value: entity._id,
+        }));
+      });
+      const companyData = {
+        ...state?.companyData,
+        dropdownData,
+      };
+      return {
+        ...state,
+        companyData,
+      };
+    }
     default:
       return state;
   }

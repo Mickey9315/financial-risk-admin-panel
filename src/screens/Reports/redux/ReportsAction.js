@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
   startGeneralLoaderOnRequest,
-  stopGeneralLoaderOnSuccessOrFail
+  stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
@@ -17,7 +17,9 @@ export const getReportList = (params, currentFilter) => {
       Object.entries(params).forEach(([key, value]) => {
         if (_.isArray(value)) {
           finalParams[key] = value
-            ?.map(record => (currentFilter === 'claimsReport' ? record?.secondValue : record?.value))
+            ?.map(record =>
+              currentFilter === 'claimsReport' ? record?.secondValue : record?.value
+            )
             .join(',');
         } else if (_.isObject(value)) {
           finalParams[key] = currentFilter === 'claimsReport' ? value?.secondValue : value?.value;
@@ -77,15 +79,21 @@ export const changeReportColumnList = data => {
 export const saveReportColumnList = ({ reportColumnList = {}, isReset = false, reportFor }) => {
   return async dispatch => {
     try {
-      startGeneralLoaderOnRequest(`reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+      startGeneralLoaderOnRequest(
+        `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       let data = {
         isReset: true,
         columns: [],
         columnFor: reportFor,
       };
       if (!isReset) {
-        const defaultFields = reportColumnList.defaultFields.filter(field => field.isChecked).map(e => e.name);
-        const customFields = reportColumnList.customFields.filter(field => field.isChecked).map(e => e.name);
+        const defaultFields = reportColumnList.defaultFields
+          .filter(field => field.isChecked)
+          .map(e => e.name);
+        const customFields = reportColumnList.customFields
+          .filter(field => field.isChecked)
+          .map(e => e.name);
         data = {
           isReset: false,
           columns: [...defaultFields, ...customFields],
@@ -93,7 +101,9 @@ export const saveReportColumnList = ({ reportColumnList = {}, isReset = false, r
         };
         if (data.columns.length < 1) {
           errorNotification('Please select at least one column to continue.');
-          stopGeneralLoaderOnSuccessOrFail(`reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+          stopGeneralLoaderOnSuccessOrFail(
+            `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+          );
           throw Error();
         }
       }
@@ -104,10 +114,14 @@ export const saveReportColumnList = ({ reportColumnList = {}, isReset = false, r
           data: reportColumnList,
         });
         successNotification('Columns updated successfully');
-        stopGeneralLoaderOnSuccessOrFail(`reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+        stopGeneralLoaderOnSuccessOrFail(
+          `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+        );
       }
     } catch (e) {
-      stopGeneralLoaderOnSuccessOrFail(`reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
+      stopGeneralLoaderOnSuccessOrFail(
+        `reportListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
+      );
       displayErrors(e);
       throw Error();
     }
@@ -179,7 +193,7 @@ export const reportDownloadAction = async (reportFor, filters) => {
     stopGeneralLoaderOnSuccessOrFail(`reportDownloadButtonLoaderAction`);
     if (e?.response?.status === 400) {
       errorNotification(
-        'User cannot download more than 500 records at a time. Please apply filter to narrow down the list',
+        'User cannot download more than 500 records at a time. Please apply filter to narrow down the list'
       );
     } else {
       displayErrors(e);
