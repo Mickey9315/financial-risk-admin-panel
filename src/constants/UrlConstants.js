@@ -316,6 +316,15 @@ export const REPORTS_URLS = {
   GET_ALERT_FILTER_DATA: `${BASE_URL}report/alert-entity-list`,
 };
 
+export const ALERTS_URLS = {
+  GET_ALERTS_LIST: `${BASE_URL}alert`,
+  GET_ALERTS_COLUMN_LIST: `${BASE_URL}alert/column-name`,
+  UPDATE_ALERTS_COLUMN_LIST: `${BASE_URL}alert/column-name`,
+  GET_ALERT_CLIENT_LIST: `${BASE_URL}alert/entity-list`,
+  DOWNLOAD_ALERT: `${BASE_URL}alert/download`,
+  GET_ALERT_FILTER_DATA: `${BASE_URL}alert/alert-entity-list`,
+};
+
 export const MY_WORK_URL = {
   TASK: {
     TASK_LIST_URL: `${BASE_URL}task/`,

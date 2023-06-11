@@ -10,13 +10,12 @@ const SideMenu = () => {
   const dispatch = useDispatch();
 
   const userPrivilegesData = useSelector(({ userPrivileges }) => userPrivileges);
-
   const userAccessibleMenu = useMemo(() => {
     let accessibleModules =
       userPrivilegesData?.filter(module => module.accessTypes.length > 0) ?? [];
     accessibleModules =
       SIDEBAR_URLS.filter(e =>
-        accessibleModules?.some(f => e.name === f.name || e.name === 'myWork')
+        accessibleModules?.some(f => e.name === f.name || e.name === 'myWork' || e.name === 'alerts')
       ) ?? [];
 
     return accessibleModules;

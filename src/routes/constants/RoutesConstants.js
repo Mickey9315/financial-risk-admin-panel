@@ -17,6 +17,7 @@ const ViewInsurer = lazy(() => import('../../screens/Insurer/ViewInsurer/ViewIns
 const ApplicationList = lazy(() =>
   import('../../screens/Application/ApplicationList/ApplicationList')
 );
+const AlertList = lazy(() => import('../../screens/Alerts/AlertList/AlertList'));
 const InsurerList = lazy(() => import('../../screens/Insurer/InsurerList/InsurerList'));
 const GenerateApplication = lazy(() =>
   import('../../screens/Application/GenerateApplication/GenerateApplication')
@@ -115,6 +116,11 @@ export const ROUTES_CONSTANTS = [
   {
     path: '/applications/detail/:action/:id',
     component: ViewApplication,
+    authenticated: true,
+  },
+  {
+    path: '/alerts',
+    component: AlertList,
     authenticated: true,
   },
   {
