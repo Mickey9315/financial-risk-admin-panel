@@ -242,3 +242,47 @@ export const getAlertFilterDropdownData = () => {
     }
   };
 };
+
+export const getAlertDetails = id => {
+  return async dispatch => {
+    try {
+      startGeneralLoaderOnRequest('alertDetailsLoader');
+      const response = await AlertsApiService.getAlertDetails(id);
+      if (response?.data?.status === 'SUCCESS') {
+        stopGeneralLoaderOnSuccessOrFail('alertDetailsLoader');
+        dispatch({
+          type: ALERTS_REDUX_CONSTANTS.GET_ALERT_DETAILS,
+          data: response?.data?.data,
+        });
+      }
+    } catch (e) {
+      stopGeneralLoaderOnSuccessOrFail('alertDetailsLoader');
+      displayErrors(e);
+    }
+  }
+};
+
+export const clearAlertDetails = () => {
+  return dispatch => {
+    dispatch({
+      type: ALERTS_REDUX_CONSTANTS.CLEAR_ALERT_DETAILS,
+    });
+  };
+};
+
+export const updateAlertStatus = (alertId, data) => {
+  return async () => {
+    try {
+      const response = await AlertsApiService.updateAlertStatus(alertId, data);
+      if (response.data.status === 'SUCCESS') {
+        console.log("sucess");
+        // dispatch({
+        //   type: ALERTS_REDUX_CONSTANTS.GET_DROPDOWN_CLIENT_LIST,
+        //   data: response?.data?.data,
+        // });
+      }
+    } catch (e) {
+      displayErrors(e);
+    }
+  }
+}

@@ -1,22 +1,25 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import DatePicker from 'react-datepicker';
-import {
+import { 
   applyFinalFilter,
-  changeReportColumnList,
-  changeReportsFilterFields,
+  changeAlertColumnList,
+  changeAlertsFilterFields,
+  getAlertColumnList,
   getAlertFilterDropdownData,
-  getReportColumnList,
-  getReportList,
-  getReportsClientDropdownData,
-  getReportsFilterDropDownDataBySearch,
-  reportDownloadAction,
+  getAlertsList,
+  getAlertsClientDropdownData,
+  getAlertsFilterDropDownDataBySearch,
+  alertDownloadAction,
   resetCurrentFilter,
-  resetReportListData,
-  saveReportColumnList,
-} from '../../Reports/redux/ReportsAction';
+  resetAlertListData,
+  saveAlertColumnList,
+  getAlertDetails,
+  clearAlertDetails,
+  updateAlertStatus,
+} from '../redux/AlertsAction';
 import Table from '../../../common/Table/Table';
 import Pagination from '../../../common/Pagination/Pagination';
 import Loader from '../../../common/Loader/Loader';
@@ -24,52 +27,46 @@ import { useQueryParams } from '../../../hooks/GetQueryParamHook';
 import IconButton from '../../../common/IconButton/IconButton';
 import CustomFieldModal from '../../../common/Modal/CustomFieldModal/CustomFieldModal';
 import { errorNotification } from '../../../common/Toast';
-import { REPORTS_REDUX_CONSTANTS } from '../../Reports/redux/ReportsReduxConstants';
+import { ALERTS_REDUX_CONSTANTS } from '../redux/AlertsReduxConstants';
 import Modal from '../../../common/Modal/Modal';
 import CustomSelect from '../../../common/CustomSelect/CustomSelect';
 import { downloadAll } from '../../../helpers/DownloadHelper';
 import { startGeneralLoaderOnRequest } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import Select from '../../../common/Select/Select';
 import { REPORTS_SEARCH_ENTITIES } from '../../../constants/EntitySearchConstants';
-import { filterDateValidations } from '../../Reports/reportFilterValidations';
+import { filterDateValidations } from '../alertFilterValidations';
+import { ALERT_TYPE_ROW, checkAlertValue } from '../../../helpers/AlertHelper';
 
 const AlertList = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { type: paramReport } = useParams();
   const { page: paramPage, limit: paramLimit } = useQueryParams();
   const [customFieldModal, setCustomFieldModal] = useState(false);
-
-  const reportList = useSelector(({ reports }) => reports?.reportsList ?? {});
-  const { reportColumnList, reportDefaultColumnList } = useSelector(({ reports }) => reports ?? {});
+  const [isAlertModal, setIsAlertModal] = useState(false);
+  const alertList = useSelector(({ alerts }) => alerts?.alertsList ?? {});
+  const alertDetail = useSelector(({ alerts }) => alerts?.alertDetail ?? {});
+  const { alertColumnList, alertDefaultColumnList } = useSelector(({ alerts }) => alerts ?? {});
 
   const {
-    reportListColumnSaveButtonLoaderAction,
-    reportListColumnResetButtonLoaderAction,
-    reportDownloadButtonLoaderAction,
-    viewReportListLoader,
-    onlyReportListLoader,
+    alertListColumnSaveButtonLoaderAction,
+    alertListColumnResetButtonLoaderAction,
+    alertDownloadButtonLoaderAction,
+    viewAlertListLoader,
+    onlyAlertListLoader,
+    alertDetailsLoader,
   } = useSelector(({ generalLoaderReducer }) => generalLoaderReducer ?? false);
 
-  const { docs, headers, page, limit, pages, total } = useMemo(() => reportList, [reportList]);
-  // const reportName = useMemo(() => {
-  //   const selectedReport = reportType.filter(report => report?.url === paramReport);
-  //   return selectedReport ? selectedReport?.[0]?.name : '';
-  // }, [paramReport]);
+  const { docs, headers, page, limit, pages, total } = useMemo(() => alertList, [alertList]);
 
-  // filter
-  const currentFilter = {
-    url: 'alert',
-    name: 'Alert Report',
-    filter: 'alert',
-  }
-  const reportFilters = useSelector(({ reportAllFilters }) => reportAllFilters ?? {});
-  const reportEntityListData = useSelector(({ reports }) => reports?.reportEntityListData ?? []);
+  const alertFilters = useSelector(({ alertAllFilters }) => alertAllFilters ?? {});
+  const alertEntityListData = useSelector(({ alerts }) => alerts?.alertEntityListData ?? []);
+  const alertStatusListData = useSelector(({ alerts }) => alerts?.alertStatusListData ?? []);
+  const alertId = useSelector(({ alerts }) => alerts?.alertId ?? '');
   // end
 
   const { defaultFields, customFields } = useMemo(
-    () => reportColumnList ?? { defaultFields: [], customFields: [] },
-    [reportColumnList]
+    () => alertColumnList ?? { defaultFields: [], customFields: [] },
+    [alertColumnList]
   );
 
   const toggleCustomField = useCallback(
@@ -78,72 +75,71 @@ const AlertList = () => {
   );
   const tempFilters = useMemo(() => {
     const params = {};
-    Object.entries(reportFilters?.[alert]?.tempFilter ?? {})?.forEach(
+    Object.entries(alertFilters?.tempFilter ?? {})?.forEach(
       ([key, value]) => {
         params[key] = value || undefined;
       }
     );
 
     return { ...params };
-  }, [reportFilters]);
+  }, [alertFilters]);
   const finalFilters = useMemo(() => {
     const params = {};
-    Object.entries(reportFilters?.[currentFilter.filter]?.finalFilter ?? {})?.forEach(
+    Object.entries(alertFilters?.finalFilter ?? {})?.forEach(
       ([key, value]) => {
         params[key] = value || undefined;
       }
     );
 
     return { ...params };
-  }, [reportFilters]);
+  }, [alertFilters]);
 
-  const getReportListByFilter = useCallback(
+  const getAlertListByFilter = useCallback(
     async (initialParams = { page: 1, limit: 15 }, cb, isReset) => {
       // eslint-disable-next-line no-unused-vars
       const appliedFilters = isReset ? {} : tempFilters;
       const params = {
         page: page ?? 1,
         limit: limit ?? 15,
-        columnFor: paramReport ?? '',
         ...initialParams,
         ...appliedFilters,
       };
 
       let isFiltersValid = true;
-      isFiltersValid = filterDateValidations(currentFilter.filter, tempFilters);
+      isFiltersValid = filterDateValidations(tempFilters);
       try {
         if (isFiltersValid) {
-          startGeneralLoaderOnRequest('viewReportListLoader');
-          await dispatch(getReportList(params, currentFilter?.filter));
+          startGeneralLoaderOnRequest('viewAlertListLoader');
+          await dispatch(getAlertsList(params));
           if (cb && typeof cb === 'function') {
             cb();
           }
         } else {
-          await dispatch(resetCurrentFilter(currentFilter.filter));
+          await dispatch(resetCurrentFilter());
         }
       } catch (e) {
         /**/
       }
     },
-    [page, limit, tempFilters, paramReport]
+    [page, limit, tempFilters]
   );
 
   const onClickCloseColumnSelection = useCallback(() => {
     dispatch({
-      type: REPORTS_REDUX_CONSTANTS.GET_REPORT_COLUMN_LIST,
-      data: reportDefaultColumnList,
+      type: ALERTS_REDUX_CONSTANTS.GET_ALERT_COLUMN_LIST,
+      data: alertDefaultColumnList,
     });
     setCustomFieldModal(false);
-  }, [reportDefaultColumnList]);
+  }, [alertDefaultColumnList]);
 
   const onClickSaveColumnSelection = useCallback(async () => {
     try {
-      const isBothEqual = _.isEqual(reportColumnList, reportDefaultColumnList);
+      const isBothEqual = _.isEqual(alertColumnList, alertDefaultColumnList);
       if (!isBothEqual) {
-        await dispatch(saveReportColumnList({ reportColumnList, reportFor: paramReport }));
+        await dispatch(saveAlertColumnList({ alertColumnList }));
         toggleCustomField();
-        startGeneralLoaderOnRequest('onlyReportListLoader');
-        await getReportListByFilter();
+        startGeneralLoaderOnRequest('onlyAlertListLoader');
+        await getAlertListByFilter();
       } else {
         errorNotification('Please select different columns to apply changes.');
         toggleCustomField();
@@ -154,22 +150,21 @@ const AlertList = () => {
     }
   }, [
     toggleCustomField,
-    reportColumnList,
-    getReportListByFilter,
-    reportDefaultColumnList,
-    paramReport,
+    alertColumnList,
+    getAlertListByFilter,
+    alertDefaultColumnList,
   ]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveReportColumnList({ isReset: true, reportFor: paramReport }));
-      dispatch(getReportColumnList(paramReport));
-      await getReportListByFilter();
+      await dispatch(saveAlertColumnList({ isReset: true, }));
+      dispatch(getAlertColumnList());
+      await getAlertListByFilter();
       setCustomFieldModal(false);
     } catch (e) {
       /**/
     }
-  }, [getReportListByFilter, paramReport]);
+  }, [getAlertListByFilter]);
 
   const customFieldsModalButtons = useMemo(
     () => [
@@ -177,43 +172,43 @@ const AlertList = () => {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
         onClick: onClickResetDefaultColumnSelection,
-        isLoading: reportListColumnResetButtonLoaderAction,
+        isLoading: alertListColumnResetButtonLoaderAction,
       },
       { title: 'Close', buttonType: 'primary-1', onClick: onClickCloseColumnSelection },
       {
         title: 'Save',
         buttonType: 'primary',
         onClick: onClickSaveColumnSelection,
-        isLoading: reportListColumnSaveButtonLoaderAction,
+        isLoading: alertListColumnSaveButtonLoaderAction,
       },
     ],
     [
       onClickResetDefaultColumnSelection,
       onClickCloseColumnSelection,
       onClickSaveColumnSelection,
-      reportListColumnSaveButtonLoaderAction,
-      reportListColumnResetButtonLoaderAction,
+      alertListColumnSaveButtonLoaderAction,
+      alertListColumnResetButtonLoaderAction,
     ]
   );
   const onChangeSelectedColumn = useCallback((type, name, value) => {
     const data = { type, name, value };
-    dispatch(changeReportColumnList(data));
+    dispatch(changeAlertColumnList(data));
   }, []);
 
   // on record limit changed
   const onSelectLimit = useCallback(
     async newLimit => {
-      await getReportListByFilter({ page: 1, limit: newLimit });
+      await getAlertListByFilter({ page: 1, limit: newLimit });
     },
-    [getReportListByFilter]
+    [getAlertListByFilter]
   );
 
   // on pagination changed
   const pageActionClick = useCallback(
     async newPage => {
-      await getReportListByFilter({ page: newPage, limit });
+      await getAlertListByFilter({ page: newPage, limit });
     },
-    [getReportListByFilter, limit]
+    [getAlertListByFilter, limit]
   );
 
   /*
@@ -228,9 +223,9 @@ const AlertList = () => {
 
   const changeFilterFields = useCallback(
     (name, value) => {
-      dispatch(changeReportsFilterFields(currentFilter.filter, name, value));
+      dispatch(changeAlertsFilterFields(name, value));
     },
-    [reportFilters]
+    [alertFilters]
   );
 
   const handleSelectInputChange = useCallback(e => {
@@ -251,7 +246,7 @@ const AlertList = () => {
       entityType: REPORTS_SEARCH_ENTITIES?.[searchEntity],
       requestFrom: 'report',
     };
-    dispatch(getReportsFilterDropDownDataBySearch(options));
+    dispatch(getAlertsFilterDropDownDataBySearch(options));
   }, []);
 
   const handleCustomSearch = (text, fieldName) => {
@@ -259,7 +254,7 @@ const AlertList = () => {
       handleOnSelectSearchInputChange(fieldName, text);
     }
   };
-
+  
   const onSearchChange = _.debounce(handleCustomSearch, 800);
   const getComponentFromType = useCallback(
     input => {
@@ -272,8 +267,8 @@ const AlertList = () => {
               placeholder={input.placeHolder}
               name="role"
               isSearchble
-              options={reportEntityListData?.[input.name]}
-              value={reportFilters?.[currentFilter.filter]?.tempFilter[input.name]}
+              options={alertEntityListData?.[input.name]}
+              value={alertFilters?.tempFilter[input.name]}
               onChange={handleSelectInputChange}
               onInputChange={
                 ['debtorId'].includes(input?.name)
@@ -287,12 +282,12 @@ const AlertList = () => {
         case 'multiSelect': {
           component = (
             <CustomSelect
-              options={reportEntityListData?.[input.name]}
+              options={alertEntityListData?.[input.name]}
               placeholder={input.placeHolder}
               onChangeCustomSelect={selectedList =>
                 handleMultiSelectInputChange(input.name, selectedList)
               }
-              value={reportFilters?.[currentFilter.filter]?.tempFilter?.[input.name]}
+              value={alertFilters?.tempFilter?.[input.name]}
               onSearchChange={text => onSearchChange(text, input.name)}
             />
           );
@@ -305,8 +300,8 @@ const AlertList = () => {
                 name={date.name}
                 className="filter-date-picker"
                 selected={
-                  reportFilters?.[currentFilter.filter]?.tempFilter[date.name]
-                    ? new Date(reportFilters?.[currentFilter.filter]?.tempFilter[date.name])
+                  alertFilters?.tempFilter[date.name]
+                    ? new Date(alertFilters?.tempFilter[date.name])
                     : null
                 }
                 onChange={selectedDate => handleDateInputChange(date.name, selectedDate)}
@@ -333,8 +328,8 @@ const AlertList = () => {
       );
     },
     [
-      reportEntityListData,
-      reportFilters,
+      alertEntityListData,
+      alertFilters,
       handleSelectInputChange,
       handleDateInputChange,
       handleMultiSelectInputChange,
@@ -342,18 +337,18 @@ const AlertList = () => {
     ]
   );
 
-  const applyReportsFilter = useCallback(async () => {
+  const applyAlertsFilter = useCallback(async () => {
     toggleFilterModal();
-    await getReportListByFilter();
-    dispatch(applyFinalFilter(currentFilter.filter));
-  }, [getReportListByFilter, toggleFilterModal]);
+    await getAlertListByFilter();
+    dispatch(applyFinalFilter());
+  }, [getAlertListByFilter, toggleFilterModal]);
 
-  const resetReportsFilter = useCallback(
+  const resetAlertsFilter = useCallback(
     async params => {
-      await dispatch(resetCurrentFilter(currentFilter.filter));
+      await dispatch(resetCurrentFilter());
       setFilterModal(false);
-      await getReportListByFilter(params ?? {}, () => { }, true);
-      dispatch(applyFinalFilter(currentFilter.filter));
+      await getAlertListByFilter(params ?? {}, () => { }, true);
+      dispatch(applyFinalFilter());
     },
     [tempFilters]
   );
@@ -363,15 +358,14 @@ const AlertList = () => {
       {
         title: 'Reset Defaults',
         buttonType: 'outlined-primary',
-        onClick: resetReportsFilter,
+        onClick: resetAlertsFilter,
       },
       {
         title: 'Close',
         buttonType: 'primary-1',
         onClick: () => {
           dispatch({
-            type: REPORTS_REDUX_CONSTANTS.CLOSE_REPORT_FILTER_ACTION,
-            filterFor: currentFilter.filter,
+            type: ALERTS_REDUX_CONSTANTS.CLOSE_ALERT_FILTER_ACTION,
           });
           toggleFilterModal();
         },
@@ -379,10 +373,10 @@ const AlertList = () => {
       {
         title: 'Apply',
         buttonType: 'primary',
-        onClick: applyReportsFilter,
+        onClick: applyAlertsFilter,
       },
     ],
-    [toggleFilterModal, applyReportsFilter, resetReportsFilter]
+    [toggleFilterModal, applyAlertsFilter, resetAlertsFilter]
   );
 
   useEffect(async () => {
@@ -390,16 +384,14 @@ const AlertList = () => {
       page: paramPage ?? page ?? 1,
       limit: paramLimit ?? limit ?? 15,
     };
-    startGeneralLoaderOnRequest('viewReportListLoader');
-    await dispatch(getReportsClientDropdownData());
-    if (paramReport === 'alert') {
-      await dispatch(getAlertFilterDropdownData());
-    }
-    await getReportListByFilter({ ...params, ...finalFilters });
-    dispatch(getReportColumnList(paramReport));
+    startGeneralLoaderOnRequest('viewAlertListLoader');
+    await dispatch(getAlertsClientDropdownData());
+    await dispatch(getAlertFilterDropdownData());
+    await getAlertListByFilter({ ...params, ...finalFilters });
+    dispatch(getAlertColumnList());
     return () => {
-      dispatch(resetReportListData());
-      startGeneralLoaderOnRequest('viewReportListLoader');
+      dispatch(resetAlertListData());
+      startGeneralLoaderOnRequest('viewAlertListLoader');
     };
   }, []);
 
@@ -409,13 +401,10 @@ const AlertList = () => {
     Object.entries(finalFilters).forEach(([key, value]) => {
       if (_.isArray(value)) {
         otherFilters[key] = value
-          ?.map(record =>
-            currentFilter?.filter === 'claimsReport' ? record?.secondValue : record?.value
-          )
+          ?.map(record => record?.value)
           .join(',');
       } else if (_.isObject(value)) {
-        otherFilters[key] =
-          currentFilter?.filter === 'claimsReport' ? value?.secondValue : value?.value;
+        otherFilters[key] = value?.value;
       } else {
         otherFilters[key] = value || undefined;
       }
@@ -430,16 +419,50 @@ const AlertList = () => {
       ?.map(([k, v]) => `${k}=${v}`)
       ?.join('&');
     history.push(`${history?.location?.pathname}?${url}`);
-  }, [history, total, pages, page, limit, tempFilters]);
+  }, [history, total, pages, page, limit]);
 
   useEffect(() => {
-    dispatch({ type: REPORTS_REDUX_CONSTANTS.INITIALIZE_FILTERS });
+    dispatch({ type: ALERTS_REDUX_CONSTANTS.INITIALIZE_FILTERS });
   }, []);
+
+  const onSelectRecord = useCallback(
+    id => {
+      dispatch(getAlertDetails(id));
+      dispatch({
+        type: ALERTS_REDUX_CONSTANTS.SAVE_ALERT_ID,
+        data: id,
+      });
+      setIsAlertModal(true);
+    },
+    []
+  );
+
+  const onCloseAlertModal = useCallback(() => {
+    setIsAlertModal(false);
+    dispatch(clearAlertDetails());
+    dispatch({
+      type: ALERTS_REDUX_CONSTANTS.REMOVE_ALERT_ID,
+    });
+  }, []);
+
+  const alertModalButtons = useMemo(
+    () => [{ title: 'Close', buttonType: 'primary-1', onClick: onCloseAlertModal }],
+    []
+  );
+
+  const handleOnSelectStatusInputChange = useCallback((event) => {
+    dispatch(updateAlertStatus(alertId, event));
+    dispatch({
+      type: ALERTS_REDUX_CONSTANTS.UPDATE_ALERT_DETAILS_STATUS,
+      data: event?.value,
+    });
+  }, [alertId]);
+
   // download
   const downloadReport = useCallback(async () => {
     if (docs?.length > 0) {
       try {
-        const response = await reportDownloadAction(paramReport, tempFilters);
+        const response = await alertDownloadAction(tempFilters);
         if (response) downloadAll(response);
       } catch (e) {
         /**/
@@ -447,11 +470,11 @@ const AlertList = () => {
     } else {
       errorNotification('No records to download');
     }
-  }, [paramReport, tempFilters, docs?.length]);
+  }, [tempFilters, docs?.length]);
 
   return (
     <>
-      {!viewReportListLoader ? (
+      {!viewAlertListLoader ? (
         <>
           <div className="page-header">
             <div className="page-header-name">
@@ -464,7 +487,7 @@ const AlertList = () => {
                 className="mr-10"
                 buttonTitle="Click to download alerts"
                 onClick={downloadReport}
-                isLoading={reportDownloadButtonLoaderAction}
+                isLoading={alertDownloadButtonLoaderAction}
               />
               <IconButton
                 buttonType="secondary"
@@ -484,7 +507,7 @@ const AlertList = () => {
 
           {docs?.length > 0 ? (
             [
-              !onlyReportListLoader ? (
+              !onlyAlertListLoader ? (
                 <>
                   <div className="common-list-container">
                     <Table
@@ -493,6 +516,8 @@ const AlertList = () => {
                       tableClass="main-list-table"
                       data={docs}
                       headers={headers}
+                      recordSelected={onSelectRecord}
+                      rowClass="cursor-pointer"
                     />
                   </div>
                   <Pagination
@@ -529,12 +554,87 @@ const AlertList = () => {
               buttons={filterModalButtons}
               className="filter-modal overdue-filter-modal"
             >
-              <>{reportFilters?.[currentFilter?.filter]?.filterInputs?.map(getComponentFromType)}</>
+              <>{alertFilters?.filterInputs?.map(getComponentFromType)}</>
             </Modal>
           )}
         </>
       ) : (
         <Loader />
+      )}
+      {isAlertModal && (
+        <Modal header="Alerts" buttons={alertModalButtons} className="alert-details-modal">
+          {!alertDetailsLoader ? (
+            (() =>
+              !_.isEmpty(alertDetail) ? (
+                <>
+                  <div className={`alert-type ${ALERT_TYPE_ROW[alertDetail?.priority]}`}>
+                    <span className="material-icons-round f-h2">warning</span>
+                    <div className="alert-type-right-texts">
+                      <div className="f-16 f-bold">{alertDetail?.priority}</div>
+                      <div className="font-primary f-14">{alertDetail?.name}</div>
+                    </div>
+                  </div>
+                  {alertDetail?.generalDetails?.length > 0 && (
+                    <div className="alert-details-wrapper">
+                      <span className="font-primary f-16 f-bold">General Details</span>
+                      <div className="alert-general-details">
+                        {alertDetail?.generalDetails?.map(detail => (
+                          <>
+                            <span>{detail?.label}</span>
+                            <div className="alert-detail-value-field">
+                              {checkAlertValue(detail)}
+                            </div>
+                          </>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {alertDetail?.alertDetails?.length > 0 && (
+                    <div className="alert-details-wrapper">
+                      <span className="font-primary f-16 f-bold">Alert Details</span>
+                      <div className="alert-detail">
+                        {alertDetail?.alertDetails?.map(detail => {
+                          if (detail.label === 'Status') {
+                            return (
+                              <>
+                                <span>{detail?.label}</span>
+                                <Select
+                                  className="filter-select"
+                                  placeholder="Select Status"
+                                  name="role"
+                                  options={alertStatusListData}
+                                  value={
+                                    detail?.value === 'Pending'
+                                      ? alertStatusListData[0]
+                                      : alertStatusListData[1]
+                                  }
+                                  onChange={handleOnSelectStatusInputChange}
+                                  isSearchble
+                                />
+                              </>
+                            );
+                          }
+                          return (
+                            <>
+                              <span>{detail?.label}</span>
+                              <div className="alert-detail-value-field">
+                                {checkAlertValue(detail)}
+                              </div>
+                            </>
+                          );
+                        } 
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="no-record-found">No record found</div>
+              ))()
+          ) : (
+            <Loader />
+          )}
+        </Modal>
       )}
     </>
   );

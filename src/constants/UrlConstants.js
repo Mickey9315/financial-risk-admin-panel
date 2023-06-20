@@ -317,12 +317,14 @@ export const REPORTS_URLS = {
 };
 
 export const ALERTS_URLS = {
-  GET_ALERTS_LIST: `${BASE_URL}alert`,
-  GET_ALERTS_COLUMN_LIST: `${BASE_URL}alert/column-name`,
-  UPDATE_ALERTS_COLUMN_LIST: `${BASE_URL}alert/column-name`,
-  GET_ALERT_CLIENT_LIST: `${BASE_URL}alert/entity-list`,
-  DOWNLOAD_ALERT: `${BASE_URL}alert/download`,
-  GET_ALERT_FILTER_DATA: `${BASE_URL}alert/alert-entity-list`,
+  GET_ALERTS_LIST: `${BASE_URL}alerts`,
+  GET_ALERTS_COLUMN_LIST: `${BASE_URL}alerts/column-name`,
+  UPDATE_ALERTS_COLUMN_LIST: `${BASE_URL}alerts/column-name`,
+  GET_ALERT_CLIENT_LIST: `${BASE_URL}alerts/entity-list`,
+  DOWNLOAD_ALERT: `${BASE_URL}alerts/download`,
+  GET_ALERT_FILTER_DATA: `${BASE_URL}alerts/alert-entity-list`,
+  GET_ALERT_DETAIL: `${BASE_URL}alerts/detail/`,
+  UPDATE_ALERT_STATUS: `${BASE_URL}alerts/detail/`,
 };
 
 export const MY_WORK_URL = {
