@@ -24,6 +24,7 @@ import {
   loggedUserProfile,
 } from '../common/Header/redux/HeaderReducer';
 import { myWorkReducer } from '../screens/MyWork/redux/MyWorkReducer';
+import { alerts, alertAllFilters } from '../screens/Alerts/redux/AlertsReducer';
 import { debtorsManagement } from '../screens/Debtors/redux/DebtorsReducer';
 import { settingReducer } from '../screens/Settings/redux/SettingReducer';
 import { LOGIN_REDUX_CONSTANTS } from '../screens/auth/login/redux/LoginReduxConstants';
@@ -66,6 +67,8 @@ const appReducer = combineReducers({
   clientManagementFilterList,
   syncClientWithCrm,
   application,
+  alerts,
+  alertAllFilters,
   insurer,
   debtorsManagement,
   myWorkReducer,
