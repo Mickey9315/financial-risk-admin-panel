@@ -33,6 +33,9 @@ const initialAlerts = {
 
 export const alerts = (state = initialAlerts, action) => {
   switch (action.type) {
+    case ALERTS_REDUX_CONSTANTS.INITIALIZE_ALERTS:
+      return state || initialAlerts;
+
     case ALERTS_REDUX_CONSTANTS.GET_ALERT_LIST_SUCCESS:
       return {
         ...state,

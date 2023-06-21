@@ -423,6 +423,7 @@ const AlertList = () => {
 
   useEffect(() => {
     dispatch({ type: ALERTS_REDUX_CONSTANTS.INITIALIZE_FILTERS });
+    dispatch({ type: ALERTS_REDUX_CONSTANTS.INITIALIZE_ALERTS });
   }, []);
 
   const onSelectRecord = useCallback(
