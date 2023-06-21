@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import DatePicker from 'react-datepicker';
-import { 
+import {
   applyFinalFilter,
   changeAlertColumnList,
   changeAlertsFilterFields,
@@ -75,21 +75,17 @@ const AlertList = () => {
   );
   const tempFilters = useMemo(() => {
     const params = {};
-    Object.entries(alertFilters?.tempFilter ?? {})?.forEach(
-      ([key, value]) => {
-        params[key] = value || undefined;
-      }
-    );
+    Object.entries(alertFilters?.tempFilter ?? {})?.forEach(([key, value]) => {
+      params[key] = value || undefined;
+    });
 
     return { ...params };
   }, [alertFilters]);
   const finalFilters = useMemo(() => {
     const params = {};
-    Object.entries(alertFilters?.finalFilter ?? {})?.forEach(
-      ([key, value]) => {
-        params[key] = value || undefined;
-      }
-    );
+    Object.entries(alertFilters?.finalFilter ?? {})?.forEach(([key, value]) => {
+      params[key] = value || undefined;
+    });
 
     return { ...params };
   }, [alertFilters]);
@@ -148,16 +144,11 @@ const AlertList = () => {
     } catch (e) {
       /**/
     }
-  }, [
-    toggleCustomField,
-    alertColumnList,
-    getAlertListByFilter,
-    alertDefaultColumnList,
-  ]);
+  }, [toggleCustomField, alertColumnList, getAlertListByFilter, alertDefaultColumnList]);
 
   const onClickResetDefaultColumnSelection = useCallback(async () => {
     try {
-      await dispatch(saveAlertColumnList({ isReset: true, }));
+      await dispatch(saveAlertColumnList({ isReset: true }));
       dispatch(getAlertColumnList());
       await getAlertListByFilter();
       setCustomFieldModal(false);
@@ -254,7 +245,7 @@ const AlertList = () => {
       handleOnSelectSearchInputChange(fieldName, text);
     }
   };
-  
+
   const onSearchChange = _.debounce(handleCustomSearch, 800);
   const getComponentFromType = useCallback(
     input => {
@@ -347,7 +338,7 @@ const AlertList = () => {
     async params => {
       await dispatch(resetCurrentFilter());
       setFilterModal(false);
-      await getAlertListByFilter(params ?? {}, () => { }, true);
+      await getAlertListByFilter(params ?? {}, () => {}, true);
       dispatch(applyFinalFilter());
     },
     [tempFilters]
@@ -400,9 +391,7 @@ const AlertList = () => {
     const otherFilters = {};
     Object.entries(finalFilters).forEach(([key, value]) => {
       if (_.isArray(value)) {
-        otherFilters[key] = value
-          ?.map(record => record?.value)
-          .join(',');
+        otherFilters[key] = value?.map(record => record?.value).join(',');
       } else if (_.isObject(value)) {
         otherFilters[key] = value?.value;
       } else {
@@ -423,19 +412,17 @@ const AlertList = () => {
 
   useEffect(() => {
     dispatch({ type: ALERTS_REDUX_CONSTANTS.INITIALIZE_FILTERS });
+    dispatch({ type: ALERTS_REDUX_CONSTANTS.INITIALIZE_ALERTS });
   }, []);
 
-  const onSelectRecord = useCallback(
-    id => {
-      dispatch(getAlertDetails(id));
-      dispatch({
-        type: ALERTS_REDUX_CONSTANTS.SAVE_ALERT_ID,
-        data: id,
-      });
-      setIsAlertModal(true);
-    },
-    []
-  );
+  const onSelectRecord = useCallback(id => {
+    dispatch(getAlertDetails(id));
+    dispatch({
+      type: ALERTS_REDUX_CONSTANTS.SAVE_ALERT_ID,
+      data: id,
+    });
+    setIsAlertModal(true);
+  }, []);
 
   const onCloseAlertModal = useCallback(() => {
     setIsAlertModal(false);
@@ -450,13 +437,16 @@ const AlertList = () => {
     []
   );
 
-  const handleOnSelectStatusInputChange = useCallback((event) => {
-    dispatch(updateAlertStatus(alertId, event));
-    dispatch({
-      type: ALERTS_REDUX_CONSTANTS.UPDATE_ALERT_DETAILS_STATUS,
-      data: event?.value,
-    });
-  }, [alertId]);
+  const handleOnSelectStatusInputChange = useCallback(
+    event => {
+      dispatch(updateAlertStatus(alertId, event));
+      dispatch({
+        type: ALERTS_REDUX_CONSTANTS.UPDATE_ALERT_DETAILS_STATUS,
+        data: event?.value,
+      });
+    },
+    [alertId]
+  );
 
   // download
   const downloadReport = useCallback(async () => {
@@ -477,9 +467,7 @@ const AlertList = () => {
       {!viewAlertListLoader ? (
         <>
           <div className="page-header">
-            <div className="page-header-name">
-              Alert List
-            </div>
+            <div className="page-header-name">Alert List</div>
             <div className="page-header-button-container">
               <IconButton
                 buttonType="primary-1"
@@ -622,8 +610,7 @@ const AlertList = () => {
                               </div>
                             </>
                           );
-                        } 
-                        )}
+                        })}
                       </div>
                     </div>
                   )}

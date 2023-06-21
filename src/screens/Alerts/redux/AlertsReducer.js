@@ -1,6 +1,6 @@
-import { LOGIN_REDUX_CONSTANTS } from "../../auth/login/redux/LoginReduxConstants";
-import { ALERTS_REDUX_CONSTANTS } from "./AlertsReduxConstants";
-import { REPORTS_FIELD_NAME_BY_ENTITIES } from "../../../constants/EntitySearchConstants";
+import { LOGIN_REDUX_CONSTANTS } from '../../auth/login/redux/LoginReduxConstants';
+import { ALERTS_REDUX_CONSTANTS } from './AlertsReduxConstants';
+import { REPORTS_FIELD_NAME_BY_ENTITIES } from '../../../constants/EntitySearchConstants';
 
 const initialAlerts = {
   alertsList: {
@@ -26,13 +26,16 @@ const initialAlerts = {
     {
       label: 'Processed',
       name: 'status',
-      value: 'Processed'
+      value: 'Processed',
     },
   ],
 };
 
 export const alerts = (state = initialAlerts, action) => {
   switch (action.type) {
+    case ALERTS_REDUX_CONSTANTS.INITIALIZE_ALERTS:
+      return state || initialAlerts;
+
     case ALERTS_REDUX_CONSTANTS.GET_ALERT_LIST_SUCCESS:
       return {
         ...state,
@@ -81,7 +84,7 @@ export const alerts = (state = initialAlerts, action) => {
       return {
         ...state,
         alertEntityListData,
-      }
+      };
     }
 
     case ALERTS_REDUX_CONSTANTS.GET_ALERT_FILTER_DROPDOWN_DATA: {
@@ -152,26 +155,26 @@ export const alerts = (state = initialAlerts, action) => {
         ...state,
         alertDetail: {
           ...state.alertDetail,
-          alertDetails: state?.alertDetail?.alertDetails.map((i) => {
+          alertDetails: state?.alertDetail?.alertDetails.map(i => {
             if (i.label === 'Status') {
               const temp = i;
               temp.value = action.data;
               return temp;
             }
             return i;
-          })
+          }),
         },
         alertsList: {
           ...state.alertsList,
-          docs: state.alertsList.docs.map((i) => {
+          docs: state.alertsList.docs.map(i => {
             if (i._id === state.alertId) {
               const temp = i;
               temp.status = action.data;
               return temp;
             }
             return i;
-          })
-        }
+          }),
+        },
       };
     default:
       return state;
@@ -227,7 +230,7 @@ const initialFilterState = {
 
 export const alertAllFilters = (state = initialFilterState, action) => {
   switch (action.type) {
-    case ALERTS_REDUX_CONSTANTS.INITIALIZE_FILTERS:{
+    case ALERTS_REDUX_CONSTANTS.INITIALIZE_FILTERS: {
       return state || initialFilterState;
     }
     case ALERTS_REDUX_CONSTANTS.UPDATE_ALERT_FILTER_FIELDS:
@@ -247,15 +250,15 @@ export const alertAllFilters = (state = initialFilterState, action) => {
       return {
         ...state,
         tempFilter: state?.finalFilter,
-      }
+      };
     case ALERTS_REDUX_CONSTANTS.RESET_ALERT_FILTER:
       return {
         ...state,
-        initialFilterState
+        initialFilterState,
       };
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return {};
     default:
       return state;
   }
-}
+};
