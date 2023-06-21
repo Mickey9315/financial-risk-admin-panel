@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
   startGeneralLoaderOnRequest,
-  stopGeneralLoaderOnSuccessOrFail
+  stopGeneralLoaderOnSuccessOrFail,
 } from '../../../common/GeneralLoader/redux/GeneralLoaderAction';
 import { errorNotification, successNotification } from '../../../common/Toast';
 import { displayErrors } from '../../../helpers/ErrorNotifyHelper';
@@ -9,16 +9,14 @@ import { DashboardApiService } from '../../Dashboard/services/DashboardApiServic
 import { AlertsApiService } from '../services/AlertsApiService';
 import { ALERTS_REDUX_CONSTANTS } from './AlertsReduxConstants';
 
-export const getAlertsList = (params) => {
+export const getAlertsList = params => {
   return async dispatch => {
     try {
       const finalParams = {};
       // eslint-disable-next-line no-unused-vars
       Object.entries(params).forEach(([key, value]) => {
         if (_.isArray(value)) {
-          finalParams[key] = value
-            ?.map(record => record?.value)
-            .join(',');
+          finalParams[key] = value?.map(record => record?.value).join(',');
         } else if (_.isObject(value)) {
           finalParams[key] = value?.value;
         } else {
@@ -71,12 +69,10 @@ export const changeAlertColumnList = data => {
   };
 };
 
-export const saveAlertColumnList = ({ alertColumnList = {}, isReset = false}) => {
+export const saveAlertColumnList = ({ alertColumnList = {}, isReset = false }) => {
   return async dispatch => {
     try {
-      startGeneralLoaderOnRequest(
-        `alertListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`
-      );
+      startGeneralLoaderOnRequest(`alertListColumn${isReset ? 'Reset' : 'Save'}ButtonLoaderAction`);
       let data = {
         isReset: true,
         columns: [],
@@ -155,14 +151,12 @@ export const resetCurrentFilter = () => {
   };
 };
 
-export const alertDownloadAction = async (filters) => {
+export const alertDownloadAction = async filters => {
   startGeneralLoaderOnRequest('alertDownloadButtonLoaderAction');
   const finalFilters = {};
   Object.entries(filters).forEach(([key, value]) => {
     if (_.isArray(value)) {
-      finalFilters[key] = value
-        ?.map(record => record?.value)
-        .join(',');
+      finalFilters[key] = value?.map(record => record?.value).join(',');
     } else if (_.isObject(value)) {
       finalFilters[key] = value?.value;
     } else {
@@ -259,7 +253,7 @@ export const getAlertDetails = id => {
       stopGeneralLoaderOnSuccessOrFail('alertDetailsLoader');
       displayErrors(e);
     }
-  }
+  };
 };
 
 export const clearAlertDetails = () => {
@@ -275,7 +269,7 @@ export const updateAlertStatus = (alertId, data) => {
     try {
       const response = await AlertsApiService.updateAlertStatus(alertId, data);
       if (response.data.status === 'SUCCESS') {
-        console.log("sucess");
+        console.log('sucess');
         // dispatch({
         //   type: ALERTS_REDUX_CONSTANTS.GET_DROPDOWN_CLIENT_LIST,
         //   data: response?.data?.data,
@@ -284,5 +278,5 @@ export const updateAlertStatus = (alertId, data) => {
     } catch (e) {
       displayErrors(e);
     }
-  }
-}
+  };
+};

@@ -15,7 +15,9 @@ const SideMenu = () => {
       userPrivilegesData?.filter(module => module.accessTypes.length > 0) ?? [];
     accessibleModules =
       SIDEBAR_URLS.filter(e =>
-        accessibleModules?.some(f => e.name === f.name || e.name === 'myWork' || e.name === 'alerts')
+        accessibleModules?.some(
+          f => e.name === f.name || e.name === 'myWork' || e.name === 'alerts'
+        )
       ) ?? [];
 
     return accessibleModules;
