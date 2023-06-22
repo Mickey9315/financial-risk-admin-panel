@@ -252,10 +252,7 @@ export const alertAllFilters = (state = initialFilterState, action) => {
         tempFilter: state?.finalFilter,
       };
     case ALERTS_REDUX_CONSTANTS.RESET_ALERT_FILTER:
-      return {
-        ...state,
-        initialFilterState,
-      };
+      return initialFilterState;
     case LOGIN_REDUX_CONSTANTS.LOGOUT_USER_ACTION:
       return {};
     default:
