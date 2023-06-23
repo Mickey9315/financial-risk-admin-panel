@@ -47,14 +47,9 @@ const ViewApplicationEditableRowComponent = props => {
   const [selectedLimitType, setSelectedLimitType] = useState([]);
   const [selectedExpiryDate, setSelectedExpiryDate] = useState(null);
   const isUpdatable = useModulePrivileges(SIDEBAR_NAMES.APPLICATION).hasWriteAccess;
-  const { applicationDetail } = useSelector(
-    ({ application }) => application?.viewApplication ?? {}
-  );
+  const { applicationDetail } = useSelector(({ application }) => application?.viewApplication ?? {});
 
-  const { limitType, isAllowToUpdate, expiryDate } = useMemo(
-    () => applicationDetail ?? {},
-    [applicationDetail]
-  );
+  const { limitType, isAllowToUpdate, expiryDate } = useMemo(() => applicationDetail ?? {}, [applicationDetail]);
   const handleApplicationLimitTypeChange = e => {
     setSelectedLimitType(e);
     try {
@@ -78,8 +73,9 @@ const ViewApplicationEditableRowComponent = props => {
     }
   };
 
-  const aYearFromNow = new Date();
-  aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+  const date = new Date();
+  let aYearFromNow = new Date(date.setMonth(date.getMonth() + 12));
+  aYearFromNow = new Date(aYearFromNow.setDate(aYearFromNow.getDate() - 1));
 
   const handleExpiryDateChange = useCallback(
     e => {
@@ -92,8 +88,7 @@ const ViewApplicationEditableRowComponent = props => {
           };
           dispatch(changeApplicationStatus(id, dataNew));
           dispatch({
-            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION
-              .APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
+            type: APPLICATION_REDUX_CONSTANTS.VIEW_APPLICATION.APPLICATION_EDITABLE_ROW_FIELD_CHANGE,
             fieldName: 'expiryDate',
             value: aYearFromNow,
           });
@@ -113,7 +108,7 @@ const ViewApplicationEditableRowComponent = props => {
         }
       }
     },
-    [id]
+    [id],
   );
 
   useEffect(() => {
@@ -130,9 +125,7 @@ const ViewApplicationEditableRowComponent = props => {
             placeholder={!isApprovedOrDeclined && isAllowToUpdate ? 'Select Limit Type' : '-'}
             name="applicationStatus"
             className={
-              !isUpdatable ||
-              !isAllowToUpdate ||
-              (isApprovedOrDeclined && 'view-application-limit-type-disabled')
+              !isUpdatable || !isAllowToUpdate || (isApprovedOrDeclined && 'view-application-limit-type-disabled')
             }
             value={selectedLimitType ?? []}
             options={LimitTypeOptions}
