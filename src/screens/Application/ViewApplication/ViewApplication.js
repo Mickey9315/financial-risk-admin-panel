@@ -19,6 +19,7 @@ import {
   getViewApplicationDocumentTypeList,
   resetApplicationDetail,
 } from '../redux/ApplicationAction';
+import { getDebtorCreditLimitData } from '../../Debtors/redux/DebtorsAction';
 import TableApiService from '../../../common/Table/TableApiService';
 import Drawer from '../../../common/Drawer/Drawer';
 import ApplicationReportAccordion from './component/ApplicationReportAccordion';
@@ -34,6 +35,7 @@ import ViewApplicationStatusComponent from './component/ViewApplicationStatusCom
 import ViewApplicationEditableRowComponent from './component/ViewApplicationEditableRowComponent';
 import ApplicationClientReferenceAccordion from './component/ApplicationClientReferenceAccordion';
 import ApplicationCommentAccordion from './component/ApplicationCommentAccordion';
+import ApplicationActiveCreditLimitsAccordion from './component/ApplicationActiveCreditLimitsAccordion';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import { APPLICATION_REDUX_CONSTANTS } from '../redux/ApplicationReduxConstants';
@@ -175,6 +177,7 @@ const ViewApplication = () => {
   useEffect(() => {
     if (debtorId?.length > 0) {
       dispatch(getApplicationAlertsListData(debtorId?.[0]?._id));
+      dispatch(getDebtorCreditLimitData(debtorId?.[0]?._id));
     }
   }, [debtorId]);
 
@@ -444,6 +447,10 @@ const ViewApplication = () => {
                       <ApplicationLogsAccordion index={5} />
                       <ApplicationClientReferenceAccordion index={6} />
                       <ApplicationCommentAccordion index={7} />
+                      <ApplicationActiveCreditLimitsAccordion
+                        debtorId={debtorId?.[0]?._id}
+                        index={8}
+                      />
                     </Accordion>
                   </div>
                 </div>
