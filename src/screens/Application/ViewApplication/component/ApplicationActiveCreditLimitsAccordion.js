@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import AccordionItem from '../../../../common/Accordion/AccordionItem';
+import { NumberCommaSeparator } from '../../../../helpers/NumberCommaSeparator';
 
 const ApplicationActiveClientLimitAccordion = props => {
   const { index } = props;
@@ -36,7 +37,7 @@ const ApplicationActiveClientLimitAccordion = props => {
                 <div className="d-flex">
                   <div className="font-field">Approve Amount:</div>
                   <div className="font-primary ml-10">
-                    {i?.creditLimit ? `$${i.creditLimit}` : '-'}
+                    {i?.creditLimit ? `$${NumberCommaSeparator(i.creditLimit)}` : '-'}
                   </div>
                 </div>
                 <div className="d-flex">
