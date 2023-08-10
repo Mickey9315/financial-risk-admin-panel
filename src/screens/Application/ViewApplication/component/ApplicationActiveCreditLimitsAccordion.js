@@ -35,7 +35,9 @@ const ApplicationActiveClientLimitAccordion = props => {
                 </div>
                 <div className="d-flex">
                   <div className="font-field">Approve Amount:</div>
-                  <div className="font-primary ml-10">{i?.creditLimit ?? '-'}</div>
+                  <div className="font-primary ml-10">
+                    {i?.creditLimit ? `$${i.creditLimit}` : '-'}
+                  </div>
                 </div>
                 <div className="d-flex">
                   <div className="font-field">Approval Date:</div>
