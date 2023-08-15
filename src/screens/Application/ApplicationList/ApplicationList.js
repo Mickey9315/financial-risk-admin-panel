@@ -86,7 +86,7 @@ const ApplicationList = () => {
   });
   const { tempFilter, finalFilter } = useMemo(() => filter ?? {}, [filter]);
   const defaultApplicationStatus =
-    'SENT_TO_INSURER,REVIEW_APPLICATION,UNDER_REVIEW,PENDING_INSURER_REVIEW,AWAITING_INFORMATION,DRAFT,REVIEW_SURRENDERED';
+    'PENDING_WITH_INSURER,REVIEW_APPLICATION,PENDING_DIRECT_APPROACH,AWAITING_INFORMATION,DRAFT,REVIEW_SURRENDERED';
 
   const appliedFilters = useMemo(() => {
     const endDate = tempFilter?.endDate
