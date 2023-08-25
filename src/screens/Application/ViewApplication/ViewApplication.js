@@ -35,7 +35,7 @@ import ViewApplicationStatusComponent from './component/ViewApplicationStatusCom
 import ViewApplicationEditableRowComponent from './component/ViewApplicationEditableRowComponent';
 import ApplicationClientReferenceAccordion from './component/ApplicationClientReferenceAccordion';
 import ApplicationCommentAccordion from './component/ApplicationCommentAccordion';
-import ApplicationActiveCreditLimitsAccordion from './component/ApplicationActiveCreditLimitsAccordion';
+// import ApplicationActiveCreditLimitsAccordion from './component/ApplicationActiveCreditLimitsAccordion';
 import { useModulePrivileges } from '../../../hooks/userPrivileges/useModulePrivilegesHook';
 import { SIDEBAR_NAMES } from '../../../constants/SidebarConstants';
 import { APPLICATION_REDUX_CONSTANTS } from '../redux/ApplicationReduxConstants';
@@ -447,10 +447,10 @@ const ViewApplication = () => {
                       <ApplicationLogsAccordion index={5} />
                       <ApplicationClientReferenceAccordion index={6} />
                       <ApplicationCommentAccordion index={7} />
-                      <ApplicationActiveCreditLimitsAccordion
+                      {/* <ApplicationActiveCreditLimitsAccordion
                         debtorId={debtorId?.[0]?._id}
                         index={8}
-                      />
+                      /> */}
                     </Accordion>
                   </div>
                 </div>
