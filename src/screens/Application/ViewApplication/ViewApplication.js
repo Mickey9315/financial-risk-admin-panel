@@ -447,7 +447,7 @@ const ViewApplication = () => {
                       <ApplicationLogsAccordion index={5} />
                       <ApplicationClientReferenceAccordion index={6} />
                       <ApplicationCommentAccordion index={7} />
-                      {/* <ApplicationActiveCreditLimitsAccordion
+                      {/*  <ApplicationActiveCreditLimitsAccordion
                         debtorId={debtorId?.[0]?._id}
                         index={8}
                       /> */}
