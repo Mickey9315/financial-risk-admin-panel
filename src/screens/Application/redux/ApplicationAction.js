@@ -508,7 +508,11 @@ export const saveApplicationStepDataToBackend = data => {
       if (response?.data?.status === 'SUCCESS') {
         if (response?.data?.data?.applicationStage) {
           const { _id } = response?.data?.data;
+          const { clientReference } = response?.data?.data;
           dispatch(changeEditApplicationFieldValue('_id', _id));
+          if (clientReference) {
+            dispatch(updateEditApplicationField('creditLimit', 'clientReference', clientReference));
+          }
         }
         successNotification(response?.data?.message || 'Application step saved successfully');
         stopGeneralLoaderOnSuccessOrFail('generateApplicationSaveAndNextButtonLoaderAction');
